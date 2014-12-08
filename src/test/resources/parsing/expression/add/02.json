@@ -1,0 +1,1 @@
+{"type":"Script","body":{"type":"FunctionBody","directives":[],"statements":[{"type":"ExpressionStatement","expression":{"type":"BinaryExpression","operator":"+","left":{"type":"LiteralStringExpression","value":"use strict"},"right":{"type":"LiteralNumericExpression","value":42.0}}}]},"source":"\"use strict\" + 42"}
