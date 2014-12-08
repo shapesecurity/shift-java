@@ -1,0 +1,1 @@
+{"type":"Script","body":{"type":"FunctionBody","directives":[],"statements":[{"type":"ExpressionStatement","expression":{"type":"NewExpression","callee":{"type":"StaticMemberExpression","object":{"type":"IdentifierExpression","identifier":{"type":"Identifier","name":"foo"}},"property":{"type":"Identifier","name":"bar"}},"arguments":[]}}]},"source":"new foo.bar()"}
