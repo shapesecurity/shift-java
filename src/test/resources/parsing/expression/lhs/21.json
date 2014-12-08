@@ -1,0 +1,1 @@
+{"type":"Script","body":{"type":"FunctionBody","directives":[],"statements":[{"type":"ExpressionStatement","expression":{"type":"StaticMemberExpression","object":{"type":"IdentifierExpression","identifier":{"type":"Identifier","name":"universe"}},"property":{"type":"Identifier","name":"false"}}}]},"source":"universe.false"}

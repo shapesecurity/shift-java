@@ -1,0 +1,1 @@
+{"type":"Script","body":{"type":"FunctionBody","directives":[],"statements":[{"type":"VariableDeclarationStatement","declaration":{"type":"VariableDeclaration","kind":"var","declarators":[{"type":"VariableDeclarator","binding":{"type":"Identifier","name":"x"},"init":{"type":"LiteralRegexExpression","value":"/[a-z]/i"}}]}}]},"source":"var x = /[a-z]/i"}

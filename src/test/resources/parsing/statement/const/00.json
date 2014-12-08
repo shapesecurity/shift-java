@@ -1,0 +1,1 @@
+{"type":"Script","body":{"type":"FunctionBody","directives":[],"statements":[{"type":"VariableDeclarationStatement","declaration":{"type":"VariableDeclaration","kind":"const","declarators":[{"type":"VariableDeclarator","binding":{"type":"Identifier","name":"x"},"init":{"type":"LiteralNumericExpression","value":42.0}}]}}]},"source":"const x = 42"}

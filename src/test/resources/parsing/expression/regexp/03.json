@@ -1,0 +1,1 @@
+{"type":"Script","body":{"type":"FunctionBody","directives":[],"statements":[{"type":"VariableDeclarationStatement","declaration":{"type":"VariableDeclaration","kind":"var","declarators":[{"type":"VariableDeclarator","binding":{"type":"Identifier","name":"x"},"init":{"type":"LiteralRegexExpression","value":"/[P QR]/i"}}]}}]},"source":"var x = /[P QR]/i"}
