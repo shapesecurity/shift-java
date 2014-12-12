@@ -1,21 +1,19 @@
-Scope Analysis
---------------
+LaserBat AST Constructors for Java
+===========================
+
+## Description
 
 The ScopeAnalyzer class collects variable scoping information into a scope tree.
 
-## Imports
 
+## Usage
 ```
 import com.shapesecurity.laserbat.js.parser.Parser;
 import com.shapesecurity.laserbat.js.ast.Program;
 import com.shapesecurity.laserbat.js.scope.ScopeAnalyzer;
 import com.shapesecurity.laserbat.js.scope.GlobalScope;
-```
 
-
-## Method Invocation
-```
-String source = "...";
+String source = "a; b;";
 Script program = Parser.parse(source);
 GlobalScope global = ScopeAnalyzer.analyze(program);
 

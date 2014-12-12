@@ -1,9 +1,9 @@
-LaserBat AST Tooling for Java
-=======================
+LaserBat AST Constructors for Java
+===========================
 
 ## Description
 
-The Parser class takes an ECMAScript program and generates a LaserBat AST object.
+The Parser class takes an ECMAScript program and generates a LaserBat AST.
 
 ## Usage
 
