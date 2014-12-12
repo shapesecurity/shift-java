@@ -39,8 +39,8 @@ import com.shapesecurity.laserbat.js.ast.statement.FunctionDeclaration;
 import com.shapesecurity.laserbat.js.ast.statement.LabeledStatement;
 import com.shapesecurity.laserbat.js.ast.statement.VariableDeclarationStatement;
 import com.shapesecurity.laserbat.js.ast.statement.WhileStatement;
-import com.shapesecurity.laserbat.js.valid.ValidationError;
-import com.shapesecurity.laserbat.js.valid.Validator;
+import com.shapesecurity.laserbat.js.validator.ValidationError;
+import com.shapesecurity.laserbat.js.validator.Validator;
 
 import org.junit.Assert;
 

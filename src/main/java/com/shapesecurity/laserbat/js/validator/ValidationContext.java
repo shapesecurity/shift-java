@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.shapesecurity.laserbat.js.valid;
+package com.shapesecurity.laserbat.js.validator;
 
 import com.shapesecurity.laserbat.functional.data.List;
 import com.shapesecurity.laserbat.functional.data.Monoid;
