@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.shapesecurity.laserbat.js.validate;
+package com.shapesecurity.laserbat.js.validator;
 
 import static com.shapesecurity.laserbat.functional.data.List.list;
 
@@ -44,7 +44,6 @@ import com.shapesecurity.laserbat.js.ast.property.Setter;
 import com.shapesecurity.laserbat.js.ast.statement.FunctionDeclaration;
 import com.shapesecurity.laserbat.js.ast.statement.TryCatchStatement;
 import com.shapesecurity.laserbat.js.ast.statement.WithStatement;
-import com.shapesecurity.laserbat.js.valid.Validator;
 
 import org.junit.Test;
 
