@@ -18,10 +18,10 @@ Please see our [roadmap](https://github.com/shapesecurity/shift-java/blob/master
 
 * Open a Github issue with a description of your desired change. If one exists already, leave a message stating that you are working on it with the date you expect it to be complete.
 * Fork this repo, and clone the forked repo.
-* Install dependencies with `npm install`.
-* Build and test in your environment with `npm run build && npm test`.
+* Install dependencies with `mvn`.
+* Build and test in your environment with `mvn compile test`.
 * Create a feature branch. Make your changes. Add tests.
-* Build and test in your environment with `npm run build && npm test`.
+* Build and test in your environment with `mvn compile test`.
 * Make a commit that includes the text "fixes #*XX*" where *XX* is the Github issue.
 * Open a Pull Request on Github.
 
