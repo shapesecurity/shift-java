@@ -5,10 +5,10 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.shapesecurity</groupId>
-    <artifactId>lazerbat-js</artifactId>
+    <artifactId>shift-ast</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
-    <name>lazerbat</name>
+    <name>shift-ast</name>
     <dependencies>
         <dependency>
             <groupId>junit</groupId>
