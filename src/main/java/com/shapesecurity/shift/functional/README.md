@@ -3,7 +3,7 @@ Functional Programming Library for Java
 
 ## Description
 
-This is a functional programming library for Java used by [Shift format](https://github.com/shapesecurity/shift-ast-java). The following classes are provided:
+This is a functional programming library for Java used by [Shift format](https://github.com/shapesecurity/shift-java). The following classes are provided:
 
 * `Effect`: Description
 * `F`: Description

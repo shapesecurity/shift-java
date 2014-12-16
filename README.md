@@ -7,7 +7,7 @@ This project provides constructors for [Shift format](https://github.com/shapese
 
 ## Status
 
-Please see our [roadmap](https://github.com/shapesecurity/shift-ast-java/ROADMAP.md)
+Please see our [roadmap](https://github.com/shapesecurity/shift-java/ROADMAP.md)
 
 ## Usage
 
