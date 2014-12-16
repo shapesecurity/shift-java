@@ -3,11 +3,11 @@ Shift AST Constructors for Java
 
 ## About
 
-This project provides constructors for [Shift AST format](https://github.com/shapesecurity/shift-spec) AST nodes.
+This project provides constructors for [Shift format](https://github.com/shapesecurity/shift-spec) AST nodes.
 
 ## Status
 
-Please see our [roadmap](https://github.com/shapesecurity/shift/ROADMAP.md)
+Please see our [roadmap](https://github.com/shapesecurity/shift-java/ROADMAP.md)
 
 ## Usage
 
