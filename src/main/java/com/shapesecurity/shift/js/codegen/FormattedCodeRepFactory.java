@@ -16,23 +16,12 @@
 
 package com.shapesecurity.shift.js.codegen;
 
-import com.shapesecurity.shift.js.ast.Script;
-
 import javax.annotation.Nonnull;
 
-public class FormattedCodeGen extends CodeGen {
-  public static final FormattedCodeGen INSTANCE = new FormattedCodeGen();
+import com.shapesecurity.shift.js.ast.Script;
 
-  protected FormattedCodeGen() {
-    super();
-  }
-
-  public static String codeGen(@Nonnull Script script) {
-    StringBuilder sb = new StringBuilder();
-    TokenStream ts = new TokenStream(sb);
-    script.reduce(INSTANCE).code.emit(ts, false);
-    return sb.toString();
-  }
+public class FormattedCodeRepFactory extends CodeRepFactory {
+  public static final FormattedCodeRepFactory INSTANCE = new FormattedCodeRepFactory();
 
   @Nonnull
   protected static CodeRep semi(@Nonnull CodeRep rep) {
@@ -41,13 +30,13 @@ public class FormattedCodeGen extends CodeGen {
 
   @Nonnull
   @Override
-  protected CodeRep brace(@Nonnull CodeRep rep) {
+  public CodeRep brace(@Nonnull CodeRep rep) {
     return new FormattedCodeRep.Brace(rep);
   }
 
   @Nonnull
   @Override
-  protected CodeRep semiOp() {
+  public CodeRep semiOp() {
     return new FormattedCodeRep.SemiOp();
   }
 }

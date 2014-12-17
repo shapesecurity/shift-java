@@ -86,7 +86,9 @@ public class CodeGenTest extends TestBase {
 
   private void testPretty(String source) throws JsError {
     Script script = new Parser(source).parse();
-    String code = FormattedCodeGen.codeGen(script);
+    String code = CodeGen.codeGen(script, true);
+    assertEquals(source, code);
+    code = CodeGen.codeGen(script, FormattedCodeRepFactory.INSTANCE);
     assertEquals(source, code);
   }
 

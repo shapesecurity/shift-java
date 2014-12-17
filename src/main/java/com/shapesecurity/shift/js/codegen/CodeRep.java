@@ -16,13 +16,18 @@
 
 package com.shapesecurity.shift.js.codegen;
 
+import javax.annotation.Nonnull;
+
 import com.shapesecurity.shift.functional.data.List;
 import com.shapesecurity.shift.functional.data.Maybe;
 import com.shapesecurity.shift.functional.data.NonEmptyList;
 
-import javax.annotation.Nonnull;
-
 public abstract class CodeRep {
+  public boolean containsIn;
+  public boolean containsGroup;
+  public boolean startsWithFunctionOrCurly;
+  public boolean endsWithMissingElse;
+
   protected CodeRep() {
   }
 
@@ -173,9 +178,9 @@ public abstract class CodeRep {
     @Nonnull
     private final CodeRep lhs;
     @Nonnull
-    private final Maybe<CodeRep> rhs;
+    private final CodeRep rhs;
 
-    public Init(@Nonnull CodeRep lhs, @Nonnull Maybe<CodeRep> rhs) {
+    public Init(@Nonnull CodeRep lhs, @Nonnull CodeRep rhs) {
       super();
       this.lhs = lhs;
       this.rhs = rhs;
@@ -184,10 +189,8 @@ public abstract class CodeRep {
     @Override
     public void emit(@Nonnull final TokenStream ts, final boolean noIn) {
       this.lhs.emit(ts, false);
-      if (this.rhs.isJust()) {
-        ts.put("=");
-        this.rhs.just().emit(ts, noIn);
-      }
+      ts.put("=");
+      this.rhs.emit(ts, noIn);
     }
   }
 
