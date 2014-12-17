@@ -1,9 +1,9 @@
 Functional Programming Library for Java
-===============================
+=======================================
 
 ## Description
 
-This is a functional programming library for Java used by [LaserBat format](https://github.com/shapesecurity/laserbat-java). The following classes are provided:
+This is a functional programming library for Java used by [Shift AST format](https://github.com/shapesecurity/shift-spec). The following classes are provided:
 
 * `Effect`: Description
 * `F`: Description

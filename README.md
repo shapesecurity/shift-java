@@ -1,13 +1,13 @@
-LaserBat AST Constructors for Java
-===========================
+Shift AST Constructors for Java
+===============================
 
 ## About
 
-This project provides constructors for [LaserBat format](https://github.com/shapesecurity/laserbat) AST nodes.
+This project provides constructors for [Shift AST format](https://github.com/shapesecurity/shift-spec) AST nodes.
 
 ## Status
 
-Please see our [roadmap](https://github.com/shapesecurity/laserbat/ROADMAP.md)
+Please see our [roadmap](https://github.com/shapesecurity/shift/ROADMAP.md)
 
 ## Usage
 

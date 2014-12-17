@@ -1,5 +1,5 @@
-LaserBat AST Constructors for Java
-===========================
+Shift AST Constructors for Java
+===============================
 
 ##Description
 
@@ -8,8 +8,8 @@ The CodeGen class takes a Script object and generates the javascript string repr
 ## Usage
 
 ```java
-import com.shapesecurity.laserbat.js.parser.Parser;
-import com.shapesecurity.laserbat.js.codegen.CodeGen;
+import com.shapesecurity.shift.js.parser.Parser;
+import com.shapesecurity.shift.js.codegen.CodeGen;
 
 
 String js = "a; b;";
