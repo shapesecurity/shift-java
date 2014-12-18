@@ -16,20 +16,21 @@
 
 package com.shapesecurity.shift.js.ast.expression;
 
+import javax.annotation.Nonnull;
+
 import com.shapesecurity.shift.functional.data.List;
 import com.shapesecurity.shift.functional.data.Maybe;
 import com.shapesecurity.shift.functional.data.NonEmptyList;
 import com.shapesecurity.shift.js.ast.Expression;
 import com.shapesecurity.shift.js.ast.Node;
 import com.shapesecurity.shift.js.ast.ReplacementChild;
+import com.shapesecurity.shift.js.ast.Type;
 import com.shapesecurity.shift.js.ast.operators.Assignment;
 import com.shapesecurity.shift.js.ast.operators.Precedence;
 import com.shapesecurity.shift.js.path.Branch;
 import com.shapesecurity.shift.js.path.BranchType;
 import com.shapesecurity.shift.js.visitor.ReducerP;
 import com.shapesecurity.shift.js.visitor.TransformerP;
-
-import javax.annotation.Nonnull;
 
 public class AssignmentExpression extends Expression {
   @Nonnull
@@ -70,7 +71,8 @@ public class AssignmentExpression extends Expression {
       @Nonnull final List<Branch> path) {
     Branch bindingBranch = new Branch(BranchType.BINDING);
     Branch expressionBranch = new Branch(BranchType.EXPRESSION);
-    return reducer.reduceAssignmentExpression(this, path, this.binding.reduce(reducer, path.cons(bindingBranch)),
+    return reducer.reduceAssignmentExpression(
+        this, path, this.binding.reduce(reducer, path.cons(bindingBranch)),
         this.expression.reduce(reducer, path.cons(expressionBranch)));
   }
 
@@ -111,10 +113,16 @@ public class AssignmentExpression extends Expression {
     return new AssignmentExpression(operator, binding, expression);
   }
 
+  @Nonnull
+  @Override
+  public Type type() {
+    return Type.AssignmentExpression;
+  }
+
   @Override
   public boolean equals(Object object) {
     return object instanceof AssignmentExpression && this.operator.equals(((AssignmentExpression) object).operator) &&
-        this.binding.equals(((AssignmentExpression) object).binding) &&
-        this.expression.equals(((AssignmentExpression) object).expression);
+           this.binding.equals(((AssignmentExpression) object).binding) &&
+           this.expression.equals(((AssignmentExpression) object).expression);
   }
 }

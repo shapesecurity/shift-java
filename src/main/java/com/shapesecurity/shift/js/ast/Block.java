@@ -89,6 +89,12 @@ public class Block extends Node {
     return new Block(statements);
   }
 
+  @Nonnull
+  @Override
+  public Type type() {
+    return Type.Block;
+  }
+
   @Override
   public boolean equals(Object obj) {
     return obj == this || obj instanceof Block && ((Block) obj).statements.equals(this.statements);

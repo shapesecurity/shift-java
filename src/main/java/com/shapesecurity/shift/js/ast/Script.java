@@ -88,6 +88,12 @@ public class Script extends Node {
     return new Script(body);
   }
 
+  @Nonnull
+  @Override
+  public Type type() {
+    return Type.Script;
+  }
+
   @Override
   public boolean equals(Object object) {
     return object instanceof Script && this.body.equals(((Script) object).body);

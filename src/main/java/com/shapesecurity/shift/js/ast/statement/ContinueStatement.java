@@ -23,6 +23,7 @@ import com.shapesecurity.shift.js.ast.Identifier;
 import com.shapesecurity.shift.js.ast.Node;
 import com.shapesecurity.shift.js.ast.ReplacementChild;
 import com.shapesecurity.shift.js.ast.Statement;
+import com.shapesecurity.shift.js.ast.Type;
 import com.shapesecurity.shift.js.path.Branch;
 import com.shapesecurity.shift.js.path.BranchType;
 import com.shapesecurity.shift.js.visitor.ReducerP;
@@ -88,6 +89,12 @@ public class ContinueStatement extends Statement {
       children = childrenNE.tail();
     }
     return new ContinueStatement(label);
+  }
+
+  @Nonnull
+  @Override
+  public Type type() {
+    return Type.ContinueStatement;
   }
 
   @Override

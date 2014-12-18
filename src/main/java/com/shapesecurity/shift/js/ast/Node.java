@@ -76,4 +76,7 @@ public abstract class Node {
 
   @Nonnull
   public abstract Node replicate(@Nonnull List<? extends ReplacementChild> children);
+
+  @Nonnull
+  public abstract Type type();
 }

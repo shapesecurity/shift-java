@@ -25,6 +25,7 @@ import com.shapesecurity.shift.js.ast.ReplacementChild;
 import com.shapesecurity.shift.js.ast.Statement;
 import com.shapesecurity.shift.js.ast.SwitchCase;
 import com.shapesecurity.shift.js.ast.SwitchDefault;
+import com.shapesecurity.shift.js.ast.Type;
 import com.shapesecurity.shift.js.path.Branch;
 import com.shapesecurity.shift.js.path.BranchType;
 import com.shapesecurity.shift.js.visitor.ReducerP;
@@ -136,6 +137,12 @@ public class SwitchStatementWithDefault extends Statement {
     List<SwitchCase> postDefaultCases = Node.replaceIndex(this.postDefaultCases, postDefaultCasesMax,
         postDefaultCasesChanges);
     return new SwitchStatementWithDefault(discriminant, preDefaultCases, defaultCase, postDefaultCases);
+  }
+
+  @Nonnull
+  @Override
+  public Type type() {
+    return Type.SwitchStatementWithDefault;
   }
 
   @Override

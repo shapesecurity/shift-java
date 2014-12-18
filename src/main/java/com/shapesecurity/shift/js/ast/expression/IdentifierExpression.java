@@ -22,6 +22,7 @@ import com.shapesecurity.shift.functional.data.NonEmptyList;
 import com.shapesecurity.shift.js.ast.Identifier;
 import com.shapesecurity.shift.js.ast.Node;
 import com.shapesecurity.shift.js.ast.ReplacementChild;
+import com.shapesecurity.shift.js.ast.Type;
 import com.shapesecurity.shift.js.path.Branch;
 import com.shapesecurity.shift.js.path.BranchType;
 import com.shapesecurity.shift.js.visitor.ReducerP;
@@ -84,6 +85,12 @@ public class IdentifierExpression extends PrimaryExpression {
       children = childrenNE.tail();
     }
     return new IdentifierExpression(identifier);
+  }
+
+  @Nonnull
+  @Override
+  public Type type() {
+    return Type.IdentifierExpression;
   }
 
   @Override

@@ -25,6 +25,7 @@ import com.shapesecurity.shift.js.ast.Identifier;
 import com.shapesecurity.shift.js.ast.Node;
 import com.shapesecurity.shift.js.ast.ReplacementChild;
 import com.shapesecurity.shift.js.ast.Statement;
+import com.shapesecurity.shift.js.ast.Type;
 import com.shapesecurity.shift.js.path.Branch;
 import com.shapesecurity.shift.js.path.BranchType;
 import com.shapesecurity.shift.js.visitor.ReducerP;
@@ -116,6 +117,12 @@ public class FunctionDeclaration extends Statement implements Function {
     }
     List<Identifier> params = Node.replaceIndex(this.parameters, paramsMax, paramsChanges);
     return new FunctionDeclaration(name, params, body);
+  }
+
+  @Nonnull
+  @Override
+  public Type type() {
+    return Type.FunctionDeclaration;
   }
 
   @Override

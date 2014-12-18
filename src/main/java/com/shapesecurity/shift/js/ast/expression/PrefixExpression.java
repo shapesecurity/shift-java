@@ -22,6 +22,7 @@ import com.shapesecurity.shift.functional.data.NonEmptyList;
 import com.shapesecurity.shift.js.ast.Expression;
 import com.shapesecurity.shift.js.ast.Node;
 import com.shapesecurity.shift.js.ast.ReplacementChild;
+import com.shapesecurity.shift.js.ast.Type;
 import com.shapesecurity.shift.js.ast.operators.Precedence;
 import com.shapesecurity.shift.js.ast.operators.PrefixOperator;
 import com.shapesecurity.shift.js.path.Branch;
@@ -90,6 +91,12 @@ public class PrefixExpression extends UnaryExpression {
       children = childrenNE.tail();
     }
     return new PrefixExpression(operator, operand);
+  }
+
+  @Nonnull
+  @Override
+  public Type type() {
+    return Type.PrefixExpression;
   }
 
   @Override

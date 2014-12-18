@@ -94,6 +94,12 @@ public class VariableDeclaration extends Node {
     return new VariableDeclaration(this.kind, declarators);
   }
 
+  @Nonnull
+  @Override
+  public Type type() {
+    return Type.VariableDeclaration;
+  }
+
   @Override
   public boolean equals(Object obj) {
     return obj instanceof VariableDeclaration &&

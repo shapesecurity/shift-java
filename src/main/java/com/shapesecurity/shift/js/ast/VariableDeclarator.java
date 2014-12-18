@@ -95,6 +95,12 @@ public class VariableDeclarator extends Node {
     return new VariableDeclarator(binding, init);
   }
 
+  @Nonnull
+  @Override
+  public Type type() {
+    return Type.VariableDeclarator;
+  }
+
   @Override
   public boolean equals(Object object) {
     return object instanceof VariableDeclarator && this.binding.equals(((VariableDeclarator) object).binding) &&

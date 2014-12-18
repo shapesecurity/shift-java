@@ -22,6 +22,7 @@ import com.shapesecurity.shift.functional.data.NonEmptyList;
 import com.shapesecurity.shift.js.ast.Node;
 import com.shapesecurity.shift.js.ast.ReplacementChild;
 import com.shapesecurity.shift.js.ast.Statement;
+import com.shapesecurity.shift.js.ast.Type;
 import com.shapesecurity.shift.js.ast.VariableDeclaration;
 import com.shapesecurity.shift.js.path.Branch;
 import com.shapesecurity.shift.js.path.BranchType;
@@ -84,6 +85,12 @@ public class VariableDeclarationStatement extends Statement {
       children = childrenNE.tail();
     }
     return new VariableDeclarationStatement(declaration);
+  }
+
+  @Nonnull
+  @Override
+  public Type type() {
+    return Type.VariableDeclarationStatement;
   }
 
   @Override

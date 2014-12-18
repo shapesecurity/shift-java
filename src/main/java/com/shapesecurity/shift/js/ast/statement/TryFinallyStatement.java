@@ -24,6 +24,7 @@ import com.shapesecurity.shift.js.ast.CatchClause;
 import com.shapesecurity.shift.js.ast.Node;
 import com.shapesecurity.shift.js.ast.ReplacementChild;
 import com.shapesecurity.shift.js.ast.Statement;
+import com.shapesecurity.shift.js.ast.Type;
 import com.shapesecurity.shift.js.path.Branch;
 import com.shapesecurity.shift.js.path.BranchType;
 import com.shapesecurity.shift.js.visitor.ReducerP;
@@ -106,6 +107,12 @@ public class TryFinallyStatement extends Statement {
       children = childrenNE.tail();
     }
     return new TryFinallyStatement(block, catchClause, finalizer);
+  }
+
+  @Nonnull
+  @Override
+  public Type type() {
+    return Type.TryFinallyStatement;
   }
 
   @Override

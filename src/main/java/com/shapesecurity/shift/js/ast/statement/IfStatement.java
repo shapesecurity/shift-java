@@ -23,6 +23,7 @@ import com.shapesecurity.shift.js.ast.Expression;
 import com.shapesecurity.shift.js.ast.Node;
 import com.shapesecurity.shift.js.ast.ReplacementChild;
 import com.shapesecurity.shift.js.ast.Statement;
+import com.shapesecurity.shift.js.ast.Type;
 import com.shapesecurity.shift.js.path.Branch;
 import com.shapesecurity.shift.js.path.BranchType;
 import com.shapesecurity.shift.js.visitor.ReducerP;
@@ -115,6 +116,12 @@ public class IfStatement extends Statement {
       children = childrenNE.tail();
     }
     return new IfStatement(test, consequent, alternate);
+  }
+
+  @Nonnull
+  @Override
+  public Type type() {
+    return Type.IfStatement;
   }
 
   @Override

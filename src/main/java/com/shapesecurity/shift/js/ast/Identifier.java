@@ -67,6 +67,12 @@ public final class Identifier extends Node {
     return new Identifier(name);
   }
 
+  @Nonnull
+  @Override
+  public Type type() {
+    return Type.Identifier;
+  }
+
   @Override
   public boolean equals(Object object) {
     return this == object || object instanceof Identifier && this.name.equals(((Identifier) object).name);

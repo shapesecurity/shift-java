@@ -22,6 +22,7 @@ import com.shapesecurity.shift.functional.data.NonEmptyList;
 import com.shapesecurity.shift.js.ast.Expression;
 import com.shapesecurity.shift.js.ast.Node;
 import com.shapesecurity.shift.js.ast.ReplacementChild;
+import com.shapesecurity.shift.js.ast.Type;
 import com.shapesecurity.shift.js.ast.operators.BinaryOperator;
 import com.shapesecurity.shift.js.ast.operators.Precedence;
 import com.shapesecurity.shift.js.path.Branch;
@@ -106,6 +107,12 @@ public class BinaryExpression extends Expression {
       children = childrenNE.tail();
     }
     return new BinaryExpression(operator, left, right);
+  }
+
+  @Nonnull
+  @Override
+  public Type type() {
+    return Type.BinaryExpression;
   }
 
   @Override

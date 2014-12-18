@@ -22,6 +22,7 @@ import com.shapesecurity.shift.functional.data.NonEmptyList;
 import com.shapesecurity.shift.js.ast.Expression;
 import com.shapesecurity.shift.js.ast.Node;
 import com.shapesecurity.shift.js.ast.ReplacementChild;
+import com.shapesecurity.shift.js.ast.Type;
 import com.shapesecurity.shift.js.path.Branch;
 import com.shapesecurity.shift.js.path.BranchType;
 import com.shapesecurity.shift.js.visitor.ReducerP;
@@ -91,6 +92,12 @@ public class ArrayExpression extends PrimaryExpression {
     List<Maybe<Expression>> elements = Node.replaceIndex(this.elements, elementsMax,
         (Maybe<Expression>[]) elementsChanges);
     return new ArrayExpression(elements);
+  }
+
+  @Nonnull
+  @Override
+  public Type type() {
+    return Type.ArrayExpression;
   }
 
   @Override

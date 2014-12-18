@@ -109,6 +109,12 @@ public class FunctionBody extends Node {
     return new FunctionBody(directives, sourceElements);
   }
 
+  @Nonnull
+  @Override
+  public Type type() {
+    return Type.FunctionBody;
+  }
+
   @Override
   public boolean equals(Object object) {
     return object instanceof FunctionBody &&

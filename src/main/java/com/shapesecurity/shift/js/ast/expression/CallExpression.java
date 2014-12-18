@@ -22,6 +22,7 @@ import com.shapesecurity.shift.functional.data.NonEmptyList;
 import com.shapesecurity.shift.js.ast.Expression;
 import com.shapesecurity.shift.js.ast.Node;
 import com.shapesecurity.shift.js.ast.ReplacementChild;
+import com.shapesecurity.shift.js.ast.Type;
 import com.shapesecurity.shift.js.ast.operators.Precedence;
 import com.shapesecurity.shift.js.path.Branch;
 import com.shapesecurity.shift.js.path.BranchType;
@@ -106,6 +107,12 @@ public class CallExpression extends LeftHandSideExpression {
     }
     List<Expression> arguments = Node.replaceIndex(this.arguments, argumentsMax, argumentsChanges);
     return new CallExpression(callee, arguments);
+  }
+
+  @Nonnull
+  @Override
+  public Type type() {
+    return Type.CallExpression;
   }
 
   @Override

@@ -97,6 +97,12 @@ public class SwitchCase extends Node {
     return new SwitchCase(test, consequent);
   }
 
+  @Nonnull
+  @Override
+  public Type type() {
+    return Type.SwitchCase;
+  }
+
   @Override
   public boolean equals(Object object) {
     return object instanceof SwitchCase && this.test.equals(((SwitchCase) object).test) && this.consequent.equals(

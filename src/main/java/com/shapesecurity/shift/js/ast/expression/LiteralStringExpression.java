@@ -20,6 +20,7 @@ import com.shapesecurity.shift.functional.data.List;
 import com.shapesecurity.shift.functional.data.Maybe;
 import com.shapesecurity.shift.js.ast.Node;
 import com.shapesecurity.shift.js.ast.ReplacementChild;
+import com.shapesecurity.shift.js.ast.Type;
 import com.shapesecurity.shift.js.path.Branch;
 import com.shapesecurity.shift.js.visitor.ReducerP;
 import com.shapesecurity.shift.js.visitor.TransformerP;
@@ -72,6 +73,12 @@ public class LiteralStringExpression extends LiteralExpression {
   @Override
   public Node replicate(@Nonnull List<? extends ReplacementChild> children) {
     return new LiteralStringExpression(value, raw);
+  }
+
+  @Nonnull
+  @Override
+  public Type type() {
+    return Type.LiteralStringExpression;
   }
 
   @Override

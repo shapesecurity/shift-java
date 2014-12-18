@@ -92,6 +92,12 @@ public class CatchClause extends Node {
     return new CatchClause(binding, body);
   }
 
+  @Nonnull
+  @Override
+  public Type type() {
+    return Type.CatchClause;
+  }
+
   @Override
   public boolean equals(Object object) {
     return object instanceof CatchClause && this.binding.equals(((CatchClause) object).binding) &&
