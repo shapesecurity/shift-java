@@ -74,7 +74,7 @@ import com.shapesecurity.shift.js.ast.statement.WithStatement;
 
 import javax.annotation.Nonnull;
 
-public interface TransformerP<ProgramState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> {
+public interface TransformerP<ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> {
   @Nonnull
   CatchClauseState transform(@Nonnull CatchClause node);
 
@@ -151,7 +151,7 @@ public interface TransformerP<ProgramState, ProgramBodyState, PropertyState, Pro
   ProgramBodyState transform(@Nonnull FunctionBody node);
 
   @Nonnull
-  ProgramState transform(@Nonnull Script node);
+  ScriptState transform(@Nonnull Script node);
 
   @Nonnull
   PropertyNameState transform(@Nonnull PropertyName node);

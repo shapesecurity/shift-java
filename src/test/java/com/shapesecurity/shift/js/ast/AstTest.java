@@ -16,7 +16,10 @@
 
 package com.shapesecurity.shift.js.ast;
 
-import static org.junit.Assert.assertTrue;
+import java.io.IOException;
+import java.util.function.Consumer;
+
+import javax.annotation.Nonnull;
 
 import com.shapesecurity.shift.functional.data.List;
 import com.shapesecurity.shift.functional.data.Maybe;
@@ -27,12 +30,9 @@ import com.shapesecurity.shift.js.parser.Parser;
 import com.shapesecurity.shift.js.path.Branch;
 import com.shapesecurity.shift.js.path.BranchType;
 
+import static org.junit.Assert.assertTrue;
+
 import org.junit.Test;
-
-import java.io.IOException;
-import java.util.function.Consumer;
-
-import javax.annotation.Nonnull;
 
 public class AstTest extends AstHelper {
   private final static Script script;
@@ -65,6 +65,7 @@ public class AstTest extends AstHelper {
   @Test
   public void testReplication() throws IOException {
     forASTs((node) -> forBranches((branch) -> {
+      assertEquals(node.getClass().getSimpleName(), node.type().name());
       Maybe<? extends Node> maybe = node.branchChild(branch);
       if (maybe.isJust()) {
         Node replicate = node.replicate(List.list(new ReplacementChild(branch, maybe.just())));

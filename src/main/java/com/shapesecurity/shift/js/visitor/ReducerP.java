@@ -79,9 +79,9 @@ import com.shapesecurity.shift.js.path.Branch;
 
 import javax.annotation.Nonnull;
 
-public interface ReducerP<ProgramState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> {
+public interface ReducerP<ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> {
   @Nonnull
-  ProgramState reduceScript(@Nonnull Script node, @Nonnull List<Branch> path, @Nonnull ProgramBodyState body);
+  ScriptState reduceScript(@Nonnull Script node, @Nonnull List<Branch> path, @Nonnull ProgramBodyState body);
 
   @Nonnull
   IdentifierState reduceIdentifier(@Nonnull Identifier node, @Nonnull List<Branch> path);
