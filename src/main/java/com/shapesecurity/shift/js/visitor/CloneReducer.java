@@ -131,7 +131,7 @@ public class CloneReducer
 
   @Nonnull
   @Override
-  public Expression reduceLiteralRegexExpression(@Nonnull LiteralRegExpExpression node, @Nonnull List<Branch> path) {
+  public Expression reduceLiteralRegExpExpression(@Nonnull LiteralRegExpExpression node, @Nonnull List<Branch> path) {
     return new LiteralRegExpExpression(node.value);
   }
 
@@ -152,10 +152,10 @@ public class CloneReducer
   public Expression reduceFunctionExpression(
       @Nonnull FunctionExpression node,
       @Nonnull List<Branch> path,
-      @Nonnull Maybe<Identifier> id,
-      @Nonnull List<Identifier> params,
+      @Nonnull Maybe<Identifier> name,
+      @Nonnull List<Identifier> parameters,
       @Nonnull FunctionBody body) {
-    return new FunctionExpression(id, params, body);
+    return new FunctionExpression(name, parameters, body);
   }
 
   @Nonnull

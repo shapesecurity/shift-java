@@ -16,15 +16,11 @@
 
 package com.shapesecurity.shift.js.ast;
 
-import com.shapesecurity.shift.functional.data.List;
-import com.shapesecurity.shift.functional.data.Maybe;
-import com.shapesecurity.shift.functional.data.NonEmptyList;
-import com.shapesecurity.shift.js.path.Branch;
-import com.shapesecurity.shift.js.path.BranchType;
-import com.shapesecurity.shift.js.visitor.ReducerP;
-import com.shapesecurity.shift.js.visitor.TransformerP;
-
 import javax.annotation.Nonnull;
+
+import com.shapesecurity.shift.functional.data.List;
+import com.shapesecurity.shift.js.ast.types.Type;
+import com.shapesecurity.shift.js.visitor.TransformerP;
 
 public class SwitchCase extends Node {
   @Nonnull
@@ -45,59 +41,6 @@ public class SwitchCase extends Node {
   }
 
   @Nonnull
-  public <ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> SwitchCaseState reduce(
-      @Nonnull final ReducerP<ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> reducer,
-      @Nonnull final List<Branch> path) {
-    final Branch testBranch = new Branch(BranchType.TEST);
-    return reducer.reduceSwitchCase(this, path, this.test.reduce(reducer, path.cons(testBranch)),
-        this.consequent.mapWithIndex((index, iStatement) -> iStatement.reduce(reducer, path.cons(new Branch(
-            BranchType.CONSEQUENT, index)))));
-  }
-
-  @Nonnull
-  @Override
-  public Maybe<? extends Node> branchChild(@Nonnull Branch branch) {
-    switch (branch.branchType) {
-    case TEST:
-      return Maybe.<Node>just(this.test);
-    case CONSEQUENT:
-      return this.consequent.index(branch.index);
-    default:
-      return Maybe.<Node>nothing();
-    }
-  }
-
-  @Nonnull
-  @Override
-  public Node replicate(@Nonnull List<? extends ReplacementChild> children) {
-    Expression test = this.test;
-    int consequentLength = consequent.length();
-    Statement consequentChanges[] = new Statement[consequentLength];
-    int consequentMax = -1;
-    while (children instanceof NonEmptyList) {
-      NonEmptyList<? extends ReplacementChild> childrenNE = (NonEmptyList<? extends ReplacementChild>) children;
-      ReplacementChild rc = childrenNE.head;
-      Branch branch = rc.branch;
-      Node child = rc.child;
-      switch (branch.branchType) {
-      case TEST:
-        test = (Expression) child;
-        break;
-      case CONSEQUENT:
-        if (branch.index < consequentLength) {
-          consequentChanges[branch.index] = (Statement) child;
-          consequentMax = Math.max(consequentMax, branch.index);
-        }
-        break;
-      default:
-      }
-      children = childrenNE.tail();
-    }
-    List<Statement> consequent = Node.replaceIndex(this.consequent, consequentMax, consequentChanges);
-    return new SwitchCase(test, consequent);
-  }
-
-  @Nonnull
   @Override
   public Type type() {
     return Type.SwitchCase;
@@ -107,5 +50,25 @@ public class SwitchCase extends Node {
   public boolean equals(Object object) {
     return object instanceof SwitchCase && this.test.equals(((SwitchCase) object).test) && this.consequent.equals(
         ((SwitchCase) object).consequent);
+  }
+
+  @Nonnull
+  public Expression getTest() {
+    return test;
+  }
+
+  @Nonnull
+  public List<Statement> getConsequent() {
+    return consequent;
+  }
+
+  @Nonnull
+  public SwitchCase setTest(@Nonnull Expression test) {
+    return new SwitchCase(test, consequent);
+  }
+
+  @Nonnull
+  public SwitchCase setConsequent(@Nonnull List<Statement> consequent) {
+    return new SwitchCase(test, consequent);
   }
 }

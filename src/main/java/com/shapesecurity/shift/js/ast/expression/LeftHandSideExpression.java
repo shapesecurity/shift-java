@@ -17,6 +17,10 @@
 package com.shapesecurity.shift.js.ast.expression;
 
 import com.shapesecurity.shift.js.ast.Expression;
+import com.shapesecurity.shift.js.ast.operators.Precedence;
 
 public abstract class LeftHandSideExpression extends Expression {
+  public Precedence getPrecedence() {
+    return Precedence.PRIMARY;
+  }
 }

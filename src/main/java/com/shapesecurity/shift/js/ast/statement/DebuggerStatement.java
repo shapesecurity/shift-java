@@ -16,14 +16,8 @@
 
 package com.shapesecurity.shift.js.ast.statement;
 
-import com.shapesecurity.shift.functional.data.List;
-import com.shapesecurity.shift.functional.data.Maybe;
-import com.shapesecurity.shift.js.ast.Node;
-import com.shapesecurity.shift.js.ast.ReplacementChild;
 import com.shapesecurity.shift.js.ast.Statement;
-import com.shapesecurity.shift.js.ast.Type;
-import com.shapesecurity.shift.js.path.Branch;
-import com.shapesecurity.shift.js.visitor.ReducerP;
+import com.shapesecurity.shift.js.ast.types.Type;
 import com.shapesecurity.shift.js.visitor.TransformerP;
 
 import javax.annotation.Nonnull;
@@ -34,29 +28,6 @@ public class DebuggerStatement extends Statement {
   public <ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> StatementState transform(
       @Nonnull TransformerP<ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> transformer) {
     return transformer.transform(this);
-  }
-
-  @Nonnull
-  @Override
-  public <ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> StatementState reduce(
-      @Nonnull final ReducerP<ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> reducer,
-      @Nonnull final List<Branch> path) {
-    return reducer.reduceDebuggerStatement(this, path);
-  }
-
-  @Nonnull
-  @Override
-  public Maybe<Node> branchChild(@Nonnull Branch branch) {
-    switch (branch.branchType) {
-    default:
-      return Maybe.<Node>nothing();
-    }
-  }
-
-  @Nonnull
-  @Override
-  public Node replicate(@Nonnull List<? extends ReplacementChild> children) {
-    return new DebuggerStatement();
   }
 
   @Nonnull

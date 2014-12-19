@@ -16,20 +16,12 @@
 
 package com.shapesecurity.shift.js.ast.property;
 
-import com.shapesecurity.shift.functional.data.List;
-import com.shapesecurity.shift.functional.data.Maybe;
-import com.shapesecurity.shift.functional.data.NonEmptyList;
+import javax.annotation.Nonnull;
+
 import com.shapesecurity.shift.js.ast.FunctionBody;
 import com.shapesecurity.shift.js.ast.Identifier;
-import com.shapesecurity.shift.js.ast.Node;
-import com.shapesecurity.shift.js.ast.ReplacementChild;
-import com.shapesecurity.shift.js.ast.Type;
-import com.shapesecurity.shift.js.path.Branch;
-import com.shapesecurity.shift.js.path.BranchType;
-import com.shapesecurity.shift.js.visitor.ReducerP;
+import com.shapesecurity.shift.js.ast.types.Type;
 import com.shapesecurity.shift.js.visitor.TransformerP;
-
-import javax.annotation.Nonnull;
 
 public class Setter extends AccessorProperty {
   @Nonnull
@@ -55,61 +47,6 @@ public class Setter extends AccessorProperty {
 
   @Nonnull
   @Override
-  public <ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> PropertyState reduce(
-      @Nonnull final ReducerP<ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> reducer,
-      @Nonnull final List<Branch> path) {
-    Branch nameBranch = new Branch(BranchType.NAME);
-    Branch parameterBranch = new Branch(BranchType.PARAMETER);
-    Branch bodyBranch = new Branch(BranchType.BODY);
-    return reducer.reduceSetter(this, path, this.name.reduce(reducer, path.cons(nameBranch)), this.parameter.reduce(
-        reducer, path.cons(parameterBranch)), this.body.reduce(reducer, path.cons(bodyBranch)));
-  }
-
-  @Nonnull
-  @Override
-  public Maybe<Node> branchChild(@Nonnull Branch branch) {
-    switch (branch.branchType) {
-    case NAME:
-      return Maybe.<Node>just(this.name);
-    case PARAMETER:
-      return Maybe.<Node>just(this.parameter);
-    case BODY:
-      return Maybe.<Node>just(this.body);
-    default:
-      return Maybe.<Node>nothing();
-    }
-  }
-
-  @Nonnull
-  @Override
-  public Node replicate(@Nonnull List<? extends ReplacementChild> children) {
-    PropertyName name = this.name;
-    Identifier parameter = this.parameter;
-    FunctionBody body = this.body;
-    while (children instanceof NonEmptyList) {
-      NonEmptyList<? extends ReplacementChild> childrenNE = (NonEmptyList<? extends ReplacementChild>) children;
-      ReplacementChild rc = childrenNE.head;
-      Branch branch = rc.branch;
-      Node child = rc.child;
-      switch (branch.branchType) {
-      case NAME:
-        name = (PropertyName) child;
-        break;
-      case PARAMETER:
-        parameter = (Identifier) child;
-        break;
-      case BODY:
-        body = (FunctionBody) child;
-        break;
-      default:
-      }
-      children = childrenNE.tail();
-    }
-    return new Setter(name, parameter, body);
-  }
-
-  @Nonnull
-  @Override
   public Type type() {
     return Type.Setter;
   }
@@ -120,5 +57,25 @@ public class Setter extends AccessorProperty {
         this.name.equals(((Setter) object).name) &&
         this.parameter.equals(((Setter) object).parameter) &&
         this.body.equals(((Setter) object).body);
+  }
+
+  @Nonnull
+  public Identifier getParameter() {
+    return parameter;
+  }
+
+  @Nonnull
+  public Setter setName(@Nonnull PropertyName name) {
+    return new Setter(name, parameter, body);
+  }
+
+  @Nonnull
+  public Setter setParameter(@Nonnull Identifier parameter) {
+    return new Setter(name, parameter, body);
+  }
+
+  @Nonnull
+  public Setter setBody(@Nonnull FunctionBody body) {
+    return new Setter(name, parameter, body);
   }
 }

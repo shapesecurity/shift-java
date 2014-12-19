@@ -16,20 +16,12 @@
 
 package com.shapesecurity.shift.js.ast.statement;
 
-import com.shapesecurity.shift.functional.data.List;
-import com.shapesecurity.shift.functional.data.Maybe;
-import com.shapesecurity.shift.functional.data.NonEmptyList;
-import com.shapesecurity.shift.js.ast.Node;
-import com.shapesecurity.shift.js.ast.ReplacementChild;
-import com.shapesecurity.shift.js.ast.Statement;
-import com.shapesecurity.shift.js.ast.Type;
-import com.shapesecurity.shift.js.ast.VariableDeclaration;
-import com.shapesecurity.shift.js.path.Branch;
-import com.shapesecurity.shift.js.path.BranchType;
-import com.shapesecurity.shift.js.visitor.ReducerP;
-import com.shapesecurity.shift.js.visitor.TransformerP;
-
 import javax.annotation.Nonnull;
+
+import com.shapesecurity.shift.js.ast.Statement;
+import com.shapesecurity.shift.js.ast.VariableDeclaration;
+import com.shapesecurity.shift.js.ast.types.Type;
+import com.shapesecurity.shift.js.visitor.TransformerP;
 
 public class VariableDeclarationStatement extends Statement {
   @Nonnull
@@ -47,46 +39,6 @@ public class VariableDeclarationStatement extends Statement {
     return transformer.transform(this);
   }
 
-  @Override
-  @Nonnull
-  public <ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> StatementState reduce(
-      @Nonnull final ReducerP<ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> reducer,
-      @Nonnull final List<Branch> path) {
-    return reducer.reduceVariableDeclarationStatement(this, path, this.declaration.reduce(reducer, path.cons(new Branch(
-        BranchType.DECLARATION, 0))));
-  }
-
-  @Nonnull
-  @Override
-  public Maybe<? extends Node> branchChild(@Nonnull Branch branch) {
-    switch (branch.branchType) {
-    case DECLARATION:
-      return Maybe.just(this.declaration);
-    default:
-      return Maybe.<Node>nothing();
-    }
-  }
-
-  @Nonnull
-  @Override
-  public Node replicate(@Nonnull List<? extends ReplacementChild> children) {
-    VariableDeclaration declaration = this.declaration;
-    while (children instanceof NonEmptyList) {
-      NonEmptyList<? extends ReplacementChild> childrenNE = (NonEmptyList<? extends ReplacementChild>) children;
-      ReplacementChild rc = childrenNE.head;
-      Branch branch = rc.branch;
-      Node child = rc.child;
-      switch (branch.branchType) {
-      case DECLARATION:
-        declaration = (VariableDeclaration) child;
-        break;
-      default:
-      }
-      children = childrenNE.tail();
-    }
-    return new VariableDeclarationStatement(declaration);
-  }
-
   @Nonnull
   @Override
   public Type type() {
@@ -97,5 +49,15 @@ public class VariableDeclarationStatement extends Statement {
   public boolean equals(Object object) {
     return object instanceof VariableDeclarationStatement && this.declaration.equals(
         ((VariableDeclarationStatement) object).declaration);
+  }
+
+  @Nonnull
+  public VariableDeclaration getDeclaration() {
+    return declaration;
+  }
+
+  @Nonnull
+  public VariableDeclarationStatement setDeclaration(@Nonnull VariableDeclaration declaration) {
+    return new VariableDeclarationStatement(declaration);
   }
 }

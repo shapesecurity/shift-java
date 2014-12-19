@@ -16,13 +16,10 @@
 
 package com.shapesecurity.shift.js.ast.property;
 
-import com.shapesecurity.shift.functional.data.List;
-import com.shapesecurity.shift.js.ast.Node;
-import com.shapesecurity.shift.js.path.Branch;
-import com.shapesecurity.shift.js.visitor.ReducerP;
-import com.shapesecurity.shift.js.visitor.TransformerP;
-
 import javax.annotation.Nonnull;
+
+import com.shapesecurity.shift.js.ast.Node;
+import com.shapesecurity.shift.js.visitor.TransformerP;
 
 public abstract class ObjectProperty extends Node {
   @Nonnull
@@ -40,14 +37,14 @@ public abstract class ObjectProperty extends Node {
   @Nonnull
   public abstract ObjectPropertyKind getKind();
 
-  @Nonnull
-  public abstract <ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> PropertyState reduce(
-      @Nonnull final ReducerP<ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> reducer,
-      @Nonnull final List<Branch> path);
-
   public static enum ObjectPropertyKind {
     InitProperty,
     GetterProperty,
     SetterProperty
+  }
+
+  @Nonnull
+  public PropertyName getName() {
+    return name;
   }
 }

@@ -16,82 +16,30 @@
 
 package com.shapesecurity.shift.js.ast;
 
-import com.shapesecurity.shift.functional.data.List;
-import com.shapesecurity.shift.functional.data.Maybe;
-import com.shapesecurity.shift.functional.data.NonEmptyList;
-import com.shapesecurity.shift.js.path.Branch;
-import com.shapesecurity.shift.js.path.BranchType;
-import com.shapesecurity.shift.js.visitor.ReducerP;
-import com.shapesecurity.shift.js.visitor.TransformerP;
-
 import javax.annotation.Nonnull;
+
+import com.shapesecurity.shift.functional.data.NonEmptyList;
+import com.shapesecurity.shift.js.ast.types.Type;
+import com.shapesecurity.shift.js.visitor.TransformerP;
 
 public class VariableDeclaration extends Node {
   @Nonnull
-  public final NonEmptyList<VariableDeclarator> declarators;
-  @Nonnull
   public final VariableDeclarationKind kind;
+  @Nonnull
+  public final NonEmptyList<VariableDeclarator> declarators;
 
   public VariableDeclaration(
       @Nonnull VariableDeclarationKind kind,
       @Nonnull NonEmptyList<VariableDeclarator> declarators) {
     super();
-    this.declarators = declarators;
     this.kind = kind;
+    this.declarators = declarators;
   }
 
   @Nonnull
   public <ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> DeclarationState transform(
       @Nonnull TransformerP<ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> transformer) {
     return transformer.transform(this);
-  }
-
-  @Nonnull
-  public <ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> DeclarationState reduce(
-      @Nonnull final ReducerP<ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> reducer,
-      @Nonnull final List<Branch> path) {
-    NonEmptyList<DeclaratorState> reducedDeclarators = this.declarators.mapWithIndex(
-        (index, variableDeclarator) -> variableDeclarator.reduce(reducer, path.cons(new Branch(BranchType.DECLARATORS,
-            index))));
-    return reducer.reduceVariableDeclaration(this, path, reducedDeclarators);
-  }
-
-  @Nonnull
-  @Override
-  public Maybe<? extends Node> branchChild(@Nonnull Branch branch) {
-    switch (branch.branchType) {
-    case DECLARATORS:
-      return this.declarators.index(branch.index);
-    default:
-      return Maybe.<Node>nothing();
-    }
-  }
-
-  @Nonnull
-  @Override
-  public Node replicate(@Nonnull List<? extends ReplacementChild> children) {
-    int declaratorsLength = declarators.length();
-    VariableDeclarator declaratorsChanges[] = new VariableDeclarator[declaratorsLength];
-    int declaratorsMax = -1;
-    while (children instanceof NonEmptyList) {
-      NonEmptyList<? extends ReplacementChild> childrenNE = (NonEmptyList<? extends ReplacementChild>) children;
-      ReplacementChild rc = childrenNE.head;
-      Branch branch = rc.branch;
-      Node child = rc.child;
-      switch (branch.branchType) {
-      case DECLARATORS:
-        if (branch.index < declaratorsLength) {
-          declaratorsChanges[branch.index] = (VariableDeclarator) child;
-          declaratorsMax = Math.max(declaratorsMax, branch.index);
-        }
-        break;
-      default:
-      }
-      children = childrenNE.tail();
-    }
-    NonEmptyList<VariableDeclarator> declarators = (NonEmptyList<VariableDeclarator>) Node.replaceIndex(
-        this.declarators, declaratorsMax, declaratorsChanges);
-    return new VariableDeclaration(this.kind, declarators);
   }
 
   @Nonnull
@@ -103,8 +51,8 @@ public class VariableDeclaration extends Node {
   @Override
   public boolean equals(Object obj) {
     return obj instanceof VariableDeclaration &&
-        ((VariableDeclaration) obj).declarators.equals(this.declarators) &&
-        ((VariableDeclaration) obj).kind.equals(this.kind);
+           ((VariableDeclaration) obj).declarators.equals(this.declarators) &&
+           ((VariableDeclaration) obj).kind.equals(this.kind);
   }
 
   public static enum VariableDeclarationKind {
@@ -121,5 +69,25 @@ public class VariableDeclaration extends Node {
     public String toString() {
       return this.name;
     }
+  }
+
+  @Nonnull
+  public VariableDeclarationKind getKind() {
+    return kind;
+  }
+
+  @Nonnull
+  public NonEmptyList<VariableDeclarator> getDeclarators() {
+    return declarators;
+  }
+
+  @Nonnull
+  public VariableDeclaration setKind(@Nonnull VariableDeclarationKind kind) {
+    return new VariableDeclaration(kind, declarators);
+  }
+
+  @Nonnull
+  public VariableDeclaration setDeclarators(@Nonnull NonEmptyList<VariableDeclarator> declarators) {
+    return new VariableDeclaration(kind, declarators);
   }
 }

@@ -40,4 +40,9 @@ public abstract class MemberExpression extends LeftHandSideExpression {
   public boolean equals(Object obj) {
     return obj instanceof MemberExpression && this.object.equals(((MemberExpression) obj).object);
   }
+
+  @Nonnull
+  public Expression getObject() {
+    return object;
+  }
 }

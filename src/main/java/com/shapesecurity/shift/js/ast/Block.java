@@ -16,15 +16,11 @@
 
 package com.shapesecurity.shift.js.ast;
 
-import com.shapesecurity.shift.functional.data.List;
-import com.shapesecurity.shift.functional.data.Maybe;
-import com.shapesecurity.shift.functional.data.NonEmptyList;
-import com.shapesecurity.shift.js.path.Branch;
-import com.shapesecurity.shift.js.path.BranchType;
-import com.shapesecurity.shift.js.visitor.ReducerP;
-import com.shapesecurity.shift.js.visitor.TransformerP;
-
 import javax.annotation.Nonnull;
+
+import com.shapesecurity.shift.functional.data.List;
+import com.shapesecurity.shift.js.ast.types.Type;
+import com.shapesecurity.shift.js.visitor.TransformerP;
 
 public class Block extends Node {
   // ECMAScript 5 does not allow FunctionDeclarations in block statements, but no
@@ -44,52 +40,6 @@ public class Block extends Node {
   }
 
   @Nonnull
-  public <ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> BlockState reduce(
-      @Nonnull final ReducerP<ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> reducer,
-      @Nonnull final List<Branch> path) {
-    return reducer.reduceBlock(this, path, this.statements.mapWithIndex((index, iStatement) -> iStatement.reduce(
-        reducer, path.cons(new Branch(BranchType.STATEMENTS, index)))));
-  }
-
-  @Nonnull
-  @Override
-  public Maybe<? extends Node> branchChild(@Nonnull Branch branch) {
-    switch (branch.branchType) {
-    case STATEMENTS:
-      return this.statements.index(branch.index);
-    default:
-      return Maybe.<Node>nothing();
-    }
-  }
-
-  @Nonnull
-  @Override
-  public Node replicate(@Nonnull List<? extends ReplacementChild> children) {
-    int statementsLength = statements.length();
-    Statement statementsChanges[] = new Statement[statementsLength];
-    int statementsMax = -1;
-    while (children instanceof NonEmptyList) {
-      @SuppressWarnings("unchecked")
-      NonEmptyList<? extends ReplacementChild> childrenNE = (NonEmptyList<? extends ReplacementChild>) children;
-      ReplacementChild rc = childrenNE.head;
-      Branch branch = rc.branch;
-      Node child = rc.child;
-      switch (branch.branchType) {
-      case STATEMENTS:
-        if (branch.index < statementsLength) {
-          statementsChanges[branch.index] = (Statement) child;
-          statementsMax = Math.max(statementsMax, branch.index);
-        }
-        break;
-      default:
-      }
-      children = childrenNE.tail();
-    }
-    List<Statement> statements = Node.replaceIndex(this.statements, statementsMax, statementsChanges);
-    return new Block(statements);
-  }
-
-  @Nonnull
   @Override
   public Type type() {
     return Type.Block;
@@ -98,5 +48,15 @@ public class Block extends Node {
   @Override
   public boolean equals(Object obj) {
     return obj == this || obj instanceof Block && ((Block) obj).statements.equals(this.statements);
+  }
+
+  @Nonnull
+  public List<Statement> getStatements() {
+    return statements;
+  }
+
+  @Nonnull
+  public Block setStatements(@Nonnull List<Statement> statements) {
+    return new Block(statements);
   }
 }

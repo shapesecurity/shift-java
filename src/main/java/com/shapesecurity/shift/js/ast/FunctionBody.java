@@ -16,22 +16,19 @@
 
 package com.shapesecurity.shift.js.ast;
 
-import com.shapesecurity.shift.functional.data.List;
-import com.shapesecurity.shift.functional.data.Maybe;
-import com.shapesecurity.shift.functional.data.NonEmptyList;
-import com.shapesecurity.shift.js.ast.directive.UseStrictDirective;
-import com.shapesecurity.shift.js.path.Branch;
-import com.shapesecurity.shift.js.path.BranchType;
-import com.shapesecurity.shift.js.visitor.ReducerP;
-import com.shapesecurity.shift.js.visitor.TransformerP;
-
 import javax.annotation.Nonnull;
+
+import com.shapesecurity.shift.functional.data.List;
+import com.shapesecurity.shift.js.ast.directive.UseStrictDirective;
+import com.shapesecurity.shift.js.ast.types.Type;
+import com.shapesecurity.shift.js.visitor.TransformerP;
 
 public class FunctionBody extends Node {
   @Nonnull
   public final List<Directive> directives;
   @Nonnull
   public final List<Statement> statements;
+
   private final boolean isStrict;
 
   public FunctionBody(@Nonnull List<Directive> directives, @Nonnull List<Statement> statements) {
@@ -52,64 +49,6 @@ public class FunctionBody extends Node {
   }
 
   @Nonnull
-  public <ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> ProgramBodyState reduce(
-      @Nonnull final ReducerP<ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> reducer,
-      @Nonnull final List<Branch> path) {
-    return reducer.reduceFunctionBody(this, path, this.directives.mapWithIndex((index, iDirective) -> iDirective.reduce(
-        reducer, path.cons(new Branch(BranchType.DIRECTIVES, index)))), this.statements.mapWithIndex(
-        (index, iStatement) -> iStatement.reduce(reducer, path.cons(new Branch(BranchType.STATEMENTS, index)))));
-  }
-
-  @Nonnull
-  @Override
-  public Maybe<? extends Node> branchChild(@Nonnull Branch branch) {
-    switch (branch.branchType) {
-    case DIRECTIVES:
-      return this.directives.index(branch.index);
-    case STATEMENTS:
-      return this.statements.index(branch.index);
-    default:
-      return Maybe.<Node>nothing();
-    }
-  }
-
-  @Nonnull
-  @Override
-  public Node replicate(@Nonnull List<? extends ReplacementChild> children) {
-    int directivesLength = directives.length();
-    Directive directivesChanges[] = new Directive[directivesLength];
-    int directivesMax = -1;
-    int sourceElementsLength = statements.length();
-    Statement sourceElementsChanges[] = new Statement[sourceElementsLength];
-    int sourceElementsMax = -1;
-    while (children instanceof NonEmptyList) {
-      NonEmptyList<? extends ReplacementChild> childrenNE = (NonEmptyList<? extends ReplacementChild>) children;
-      ReplacementChild rc = childrenNE.head;
-      Branch branch = rc.branch;
-      Node child = rc.child;
-      switch (branch.branchType) {
-      case DIRECTIVES:
-        if (branch.index < directivesLength) {
-          directivesChanges[branch.index] = (Directive) child;
-          directivesMax = Math.max(directivesMax, branch.index);
-        }
-        break;
-      case STATEMENTS:
-        if (branch.index < sourceElementsLength) {
-          sourceElementsChanges[branch.index] = (Statement) child;
-          sourceElementsMax = Math.max(sourceElementsMax, branch.index);
-        }
-        break;
-      default:
-      }
-      children = childrenNE.tail();
-    }
-    List<Directive> directives = Node.replaceIndex(this.directives, directivesMax, directivesChanges);
-    List<Statement> sourceElements = Node.replaceIndex(this.statements, sourceElementsMax, sourceElementsChanges);
-    return new FunctionBody(directives, sourceElements);
-  }
-
-  @Nonnull
   @Override
   public Type type() {
     return Type.FunctionBody;
@@ -121,5 +60,25 @@ public class FunctionBody extends Node {
         this.directives.equals(((FunctionBody) object).directives) &&
         this.statements.equals(((FunctionBody) object).statements) &&
         this.isStrict == ((FunctionBody) object).isStrict;
+  }
+
+  @Nonnull
+  public List<Directive> getDirectives() {
+    return directives;
+  }
+
+  @Nonnull
+  public List<Statement> getStatements() {
+    return statements;
+  }
+
+  @Nonnull
+  public FunctionBody setDirectives(@Nonnull List<Directive> directives) {
+    return new FunctionBody(directives, statements);
+  }
+
+  @Nonnull
+  public FunctionBody setStatements(@Nonnull List<Statement> statements) {
+    return new FunctionBody(directives, statements);
   }
 }

@@ -16,9 +16,10 @@
 
 package com.shapesecurity.shift.js.ast.expression;
 
-import com.shapesecurity.shift.js.ast.Expression;
-
 import javax.annotation.Nonnull;
+
+import com.shapesecurity.shift.js.ast.Expression;
+import com.shapesecurity.shift.js.ast.operators.Precedence;
 
 public abstract class UnaryExpression extends Expression {
   @Nonnull
@@ -32,5 +33,14 @@ public abstract class UnaryExpression extends Expression {
   @Override
   public boolean equals(Object object) {
     return object instanceof UnaryExpression && this.operand.equals(((UnaryExpression) object).operand);
+  }
+
+  public Precedence getPrecedence() {
+    return Precedence.PRIMARY;
+  }
+
+  @Nonnull
+  public Expression getOperand() {
+    return operand;
   }
 }

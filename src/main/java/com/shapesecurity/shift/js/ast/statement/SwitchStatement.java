@@ -16,21 +16,14 @@
 
 package com.shapesecurity.shift.js.ast.statement;
 
+import javax.annotation.Nonnull;
+
 import com.shapesecurity.shift.functional.data.List;
-import com.shapesecurity.shift.functional.data.Maybe;
-import com.shapesecurity.shift.functional.data.NonEmptyList;
 import com.shapesecurity.shift.js.ast.Expression;
-import com.shapesecurity.shift.js.ast.Node;
-import com.shapesecurity.shift.js.ast.ReplacementChild;
 import com.shapesecurity.shift.js.ast.Statement;
 import com.shapesecurity.shift.js.ast.SwitchCase;
-import com.shapesecurity.shift.js.ast.Type;
-import com.shapesecurity.shift.js.path.Branch;
-import com.shapesecurity.shift.js.path.BranchType;
-import com.shapesecurity.shift.js.visitor.ReducerP;
+import com.shapesecurity.shift.js.ast.types.Type;
 import com.shapesecurity.shift.js.visitor.TransformerP;
-
-import javax.annotation.Nonnull;
 
 public class SwitchStatement extends Statement {
   @Nonnull
@@ -53,61 +46,6 @@ public class SwitchStatement extends Statement {
 
   @Nonnull
   @Override
-  public <ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> StatementState
-  reduce(
-      @Nonnull final ReducerP<ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> reducer,
-      @Nonnull final List<Branch> path) {
-    Branch discriminantBranch = new Branch(BranchType.DISCRIMINANT);
-    return reducer.reduceSwitchStatement(this, path, this.discriminant.reduce(reducer, path.cons(discriminantBranch)),
-        this.cases.mapWithIndex((index, switchCase) -> switchCase.reduce(reducer, path.cons(new Branch(BranchType.CASES,
-            index)))));
-  }
-
-  @Nonnull
-  @Override
-  public Maybe<? extends Node> branchChild(@Nonnull Branch branch) {
-    switch (branch.branchType) {
-    case DISCRIMINANT:
-      return Maybe.<Node>just(this.discriminant);
-    case CASES:
-      return this.cases.index(branch.index);
-    default:
-      return Maybe.<Node>nothing();
-    }
-  }
-
-  @Nonnull
-  @Override
-  public Node replicate(@Nonnull List<? extends ReplacementChild> children) {
-    Expression discriminant = this.discriminant;
-    int casesLength = cases.length();
-    SwitchCase casesChanges[] = new SwitchCase[casesLength];
-    int casesMax = -1;
-    while (children instanceof NonEmptyList) {
-      NonEmptyList<? extends ReplacementChild> childrenNE = (NonEmptyList<? extends ReplacementChild>) children;
-      ReplacementChild rc = childrenNE.head;
-      Branch branch = rc.branch;
-      Node child = rc.child;
-      switch (branch.branchType) {
-      case DISCRIMINANT:
-        discriminant = (Expression) child;
-        break;
-      case CASES:
-        if (branch.index < casesLength) {
-          casesChanges[branch.index] = (SwitchCase) child;
-          casesMax = Math.max(casesMax, branch.index);
-        }
-        break;
-      default:
-      }
-      children = childrenNE.tail();
-    }
-    List<SwitchCase> cases = Node.replaceIndex(this.cases, casesMax, casesChanges);
-    return new SwitchStatement(discriminant, cases);
-  }
-
-  @Nonnull
-  @Override
   public Type type() {
     return Type.SwitchStatement;
   }
@@ -116,5 +54,25 @@ public class SwitchStatement extends Statement {
   public boolean equals(Object object) {
     return object instanceof SwitchStatement && this.discriminant.equals(((SwitchStatement) object).discriminant) &&
         this.cases.equals(((SwitchStatement) object).cases);
+  }
+
+  @Nonnull
+  public Expression getDiscriminant() {
+    return discriminant;
+  }
+
+  @Nonnull
+  public List<SwitchCase> getCases() {
+    return cases;
+  }
+
+  @Nonnull
+  public SwitchStatement setDiscriminant(@Nonnull Expression discriminant) {
+    return new SwitchStatement(discriminant, cases);
+  }
+
+  @Nonnull
+  public SwitchStatement setCases(@Nonnull List<SwitchCase> cases) {
+    return new SwitchStatement(discriminant, cases);
   }
 }

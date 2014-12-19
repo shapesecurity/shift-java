@@ -16,17 +16,10 @@
 
 package com.shapesecurity.shift.js.ast.statement;
 
-import com.shapesecurity.shift.functional.data.List;
 import com.shapesecurity.shift.functional.data.Maybe;
-import com.shapesecurity.shift.functional.data.NonEmptyList;
 import com.shapesecurity.shift.js.ast.Identifier;
-import com.shapesecurity.shift.js.ast.Node;
-import com.shapesecurity.shift.js.ast.ReplacementChild;
 import com.shapesecurity.shift.js.ast.Statement;
-import com.shapesecurity.shift.js.ast.Type;
-import com.shapesecurity.shift.js.path.Branch;
-import com.shapesecurity.shift.js.path.BranchType;
-import com.shapesecurity.shift.js.visitor.ReducerP;
+import com.shapesecurity.shift.js.ast.types.Type;
 import com.shapesecurity.shift.js.visitor.TransformerP;
 
 import javax.annotation.Nonnull;
@@ -51,45 +44,6 @@ public class BreakStatement extends Statement {
     return transformer.transform(this);
   }
 
-  @Nonnull
-  @Override
-  public <ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> StatementState reduce(
-      @Nonnull final ReducerP<ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> reducer,
-      @Nonnull final List<Branch> path) {
-    return reducer.reduceBreakStatement(this, path, this.label.map((identifier) -> identifier.reduce(reducer, path.cons(
-        new Branch(BranchType.LABEL)))));
-  }
-
-  @Nonnull
-  @Override
-  public Maybe<? extends Node> branchChild(@Nonnull Branch branch) {
-    switch (branch.branchType) {
-    case LABEL:
-      return this.label;
-    default:
-      return Maybe.<Node>nothing();
-    }
-  }
-
-  @Nonnull
-  @Override
-  public Node replicate(@Nonnull List<? extends ReplacementChild> children) {
-    Maybe<Identifier> label = this.label;
-    while (children instanceof NonEmptyList) {
-      NonEmptyList<? extends ReplacementChild> childrenNE = (NonEmptyList<? extends ReplacementChild>) children;
-      ReplacementChild rc = childrenNE.head;
-      Branch branch = rc.branch;
-      Node child = rc.child;
-      switch (branch.branchType) {
-      case LABEL:
-        label = Maybe.<Identifier>just((Identifier) child);
-        break;
-      default:
-      }
-      children = childrenNE.tail();
-    }
-    return new BreakStatement(label);
-  }
 
   @Nonnull
   @Override
@@ -100,5 +54,15 @@ public class BreakStatement extends Statement {
   @Override
   public boolean equals(Object object) {
     return object instanceof BreakStatement && this.label.equals(((BreakStatement) object).label);
+  }
+
+  @Nonnull
+  public Maybe<Identifier> getLabel() {
+    return label;
+  }
+
+  @Nonnull
+  public BreakStatement setLabel(@Nonnull Maybe<Identifier> label) {
+    return new BreakStatement(label);
   }
 }

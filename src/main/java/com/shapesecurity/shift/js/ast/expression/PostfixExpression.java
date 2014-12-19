@@ -16,21 +16,13 @@
 
 package com.shapesecurity.shift.js.ast.expression;
 
-import com.shapesecurity.shift.functional.data.List;
-import com.shapesecurity.shift.functional.data.Maybe;
-import com.shapesecurity.shift.functional.data.NonEmptyList;
+import javax.annotation.Nonnull;
+
 import com.shapesecurity.shift.js.ast.Expression;
-import com.shapesecurity.shift.js.ast.Node;
-import com.shapesecurity.shift.js.ast.ReplacementChild;
-import com.shapesecurity.shift.js.ast.Type;
 import com.shapesecurity.shift.js.ast.operators.PostfixOperator;
 import com.shapesecurity.shift.js.ast.operators.Precedence;
-import com.shapesecurity.shift.js.path.Branch;
-import com.shapesecurity.shift.js.path.BranchType;
-import com.shapesecurity.shift.js.visitor.ReducerP;
+import com.shapesecurity.shift.js.ast.types.Type;
 import com.shapesecurity.shift.js.visitor.TransformerP;
-
-import javax.annotation.Nonnull;
 
 public class PostfixExpression extends UnaryExpression {
   @Nonnull
@@ -55,46 +47,6 @@ public class PostfixExpression extends UnaryExpression {
 
   @Nonnull
   @Override
-  public <ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> ExpressionState reduce(
-      @Nonnull final ReducerP<ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> reducer,
-      @Nonnull final List<Branch> path) {
-    Branch operandBranch = new Branch(BranchType.OPERAND);
-    return reducer.reducePostfixExpression(this, path, this.operand.reduce(reducer, path.cons(operandBranch)));
-  }
-
-  @Nonnull
-  @Override
-  public Maybe<Node> branchChild(@Nonnull Branch branch) {
-    switch (branch.branchType) {
-    case OPERAND:
-      return Maybe.<Node>just(this.operand);
-    default:
-      return Maybe.<Node>nothing();
-    }
-  }
-
-  @Nonnull
-  @Override
-  public Node replicate(@Nonnull List<? extends ReplacementChild> children) {
-    Expression operand = this.operand;
-    while (children instanceof NonEmptyList) {
-      NonEmptyList<? extends ReplacementChild> childrenNE = (NonEmptyList<? extends ReplacementChild>) children;
-      ReplacementChild rc = childrenNE.head;
-      Branch branch = rc.branch;
-      Node child = rc.child;
-      switch (branch.branchType) {
-      case OPERAND:
-        operand = (Expression) child;
-        break;
-      default:
-      }
-      children = childrenNE.tail();
-    }
-    return new PostfixExpression(operator, operand);
-  }
-
-  @Nonnull
-  @Override
   public Type type() {
     return Type.PostfixExpression;
   }
@@ -103,5 +55,20 @@ public class PostfixExpression extends UnaryExpression {
   public boolean equals(Object object) {
     return object instanceof PostfixExpression && this.operand.equals(((PostfixExpression) object).operand) &&
         this.operator.equals(((PostfixExpression) object).operator);
+  }
+
+  @Nonnull
+  public PostfixOperator getOperator() {
+    return operator;
+  }
+
+  @Nonnull
+  public PostfixExpression setOperator(@Nonnull PostfixOperator operator) {
+    return new PostfixExpression(operator, operand);
+  }
+
+  @Nonnull
+  public PostfixExpression setOperand(@Nonnull Expression operand) {
+    return new PostfixExpression(operator, operand);
   }
 }

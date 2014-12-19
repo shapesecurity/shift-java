@@ -16,15 +16,10 @@
 
 package com.shapesecurity.shift.js.ast;
 
-import com.shapesecurity.shift.functional.data.List;
-import com.shapesecurity.shift.functional.data.Maybe;
-import com.shapesecurity.shift.functional.data.NonEmptyList;
-import com.shapesecurity.shift.js.path.Branch;
-import com.shapesecurity.shift.js.path.BranchType;
-import com.shapesecurity.shift.js.visitor.ReducerP;
-import com.shapesecurity.shift.js.visitor.TransformerP;
-
 import javax.annotation.Nonnull;
+
+import com.shapesecurity.shift.js.ast.types.Type;
+import com.shapesecurity.shift.js.visitor.TransformerP;
 
 public class CatchClause extends Node {
   @Nonnull
@@ -45,54 +40,6 @@ public class CatchClause extends Node {
   }
 
   @Nonnull
-  public <ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> CatchClauseState reduce(
-      @Nonnull final ReducerP<ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> reducer,
-      @Nonnull final List<Branch> path) {
-    Branch paramBranch = new Branch(BranchType.BINDING);
-    Branch bodyBranch = new Branch(BranchType.BODY);
-    return reducer.reduceCatchClause(this, path, this.binding.reduce(reducer, path.cons(paramBranch)), this.body.reduce(
-        reducer, path.cons(bodyBranch)));
-  }
-
-  @Nonnull
-  @Override
-  public Maybe<Node> branchChild(@Nonnull Branch branch) {
-    switch (branch.branchType) {
-    case BINDING:
-      return Maybe.<Node>just(this.binding);
-    case BODY:
-      return Maybe.<Node>just(this.body);
-    default:
-      return Maybe.<Node>nothing();
-    }
-  }
-
-  @Nonnull
-  @Override
-  public Node replicate(@Nonnull List<? extends ReplacementChild> children) {
-    Identifier binding = this.binding;
-    Block body = this.body;
-    while (children instanceof NonEmptyList) {
-      @SuppressWarnings("unchecked")
-      NonEmptyList<? extends ReplacementChild> childrenNE = (NonEmptyList<? extends ReplacementChild>) children;
-      ReplacementChild rc = childrenNE.head;
-      Branch branch = rc.branch;
-      Node child = rc.child;
-      switch (branch.branchType) {
-      case BINDING:
-        binding = (Identifier) child;
-        break;
-      case BODY:
-        body = (Block) child;
-        break;
-      default:
-      }
-      children = childrenNE.tail();
-    }
-    return new CatchClause(binding, body);
-  }
-
-  @Nonnull
   @Override
   public Type type() {
     return Type.CatchClause;
@@ -101,6 +48,26 @@ public class CatchClause extends Node {
   @Override
   public boolean equals(Object object) {
     return object instanceof CatchClause && this.binding.equals(((CatchClause) object).binding) &&
-        this.body.equals(((CatchClause) object).body);
+           this.body.equals(((CatchClause) object).body);
+  }
+
+  @Nonnull
+  public Identifier getBinding() {
+    return binding;
+  }
+
+  @Nonnull
+  public Block getBody() {
+    return body;
+  }
+
+  @Nonnull
+  public CatchClause setBinding(@Nonnull Identifier binding) {
+    return new CatchClause(binding, body);
+  }
+
+  @Nonnull
+  public CatchClause setBody(@Nonnull Block body) {
+    return new CatchClause(binding, body);
   }
 }

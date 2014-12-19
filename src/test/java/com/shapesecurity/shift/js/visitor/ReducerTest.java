@@ -16,6 +16,10 @@
 
 package com.shapesecurity.shift.js.visitor;
 
+import java.io.IOException;
+
+import javax.annotation.Nonnull;
+
 import com.shapesecurity.shift.functional.data.List;
 import com.shapesecurity.shift.functional.data.Maybe;
 import com.shapesecurity.shift.js.TestBase;
@@ -29,20 +33,16 @@ import com.shapesecurity.shift.js.path.Branch;
 
 import org.junit.Test;
 
-import java.io.IOException;
-
-import javax.annotation.Nonnull;
-
 public class ReducerTest extends TestBase {
   private void count(String source, int expectedCount, Counter counter) throws JsError {
     Script script = new Parser(source).parse();
-    assertEquals(expectedCount, script.reduce(counter, List.<Branch>nil()));
+    assertEquals(expectedCount, script.reduce(counter));
   }
 
   private void countLibrary(String fileName, int expectedCount, Counter counter) throws JsError, IOException {
     String source = readLibrary(fileName);
     Script script = Parser.parse(source);
-    assertEquals(expectedCount, script.reduce(counter, List.<Branch>nil()));
+    assertEquals(expectedCount, script.reduce(counter));
   }
 
   @Test

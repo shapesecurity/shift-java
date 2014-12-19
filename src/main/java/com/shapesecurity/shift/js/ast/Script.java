@@ -16,15 +16,14 @@
 
 package com.shapesecurity.shift.js.ast;
 
+import javax.annotation.Nonnull;
+
 import com.shapesecurity.shift.functional.data.List;
-import com.shapesecurity.shift.functional.data.Maybe;
-import com.shapesecurity.shift.functional.data.NonEmptyList;
+import com.shapesecurity.shift.js.ast.types.Type;
 import com.shapesecurity.shift.js.path.Branch;
-import com.shapesecurity.shift.js.path.BranchType;
+import com.shapesecurity.shift.js.visitor.Director;
 import com.shapesecurity.shift.js.visitor.ReducerP;
 import com.shapesecurity.shift.js.visitor.TransformerP;
-
-import javax.annotation.Nonnull;
 
 public class Script extends Node {
   @Nonnull
@@ -42,53 +41,6 @@ public class Script extends Node {
   }
 
   @Nonnull
-  public <ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> ScriptState reduce(
-      @Nonnull ReducerP<ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> reducer,
-      List<Branch> path) {
-    Branch bodyBranch = new Branch(BranchType.BODY);
-    return reducer.reduceScript(this, path, this.body.reduce(reducer, path.cons(bodyBranch)));
-  }
-
-  //Overloaded function for the purpose of simplifying one of the most common reducer calls.  This is a stopgap for
-  //a better solution down the road.
-  @Nonnull
-  public <ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> ScriptState reduce(
-      @Nonnull ReducerP<ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> reducer) {
-    return reduce(reducer, List.<Branch>nil());
-  }
-
-  @Nonnull
-  @Override
-  public Maybe<Node> branchChild(@Nonnull Branch branch) {
-    switch (branch.branchType) {
-    case BODY:
-      return Maybe.<Node>just(this.body);
-    default:
-      return Maybe.<Node>nothing();
-    }
-  }
-
-  @Nonnull
-  @Override
-  public Node replicate(@Nonnull List<? extends ReplacementChild> children) {
-    FunctionBody body = this.body;
-    while (children instanceof NonEmptyList) {
-      NonEmptyList<? extends ReplacementChild> childrenNE = (NonEmptyList<? extends ReplacementChild>) children;
-      ReplacementChild rc = childrenNE.head;
-      Branch branch = rc.branch;
-      Node child = rc.child;
-      switch (branch.branchType) {
-      case BODY:
-        body = (FunctionBody) child;
-        break;
-      default:
-      }
-      children = childrenNE.tail();
-    }
-    return new Script(body);
-  }
-
-  @Nonnull
   @Override
   public Type type() {
     return Type.Script;
@@ -97,5 +49,21 @@ public class Script extends Node {
   @Override
   public boolean equals(Object object) {
     return object instanceof Script && this.body.equals(((Script) object).body);
+  }
+
+  @Nonnull
+  public FunctionBody getBody() {
+    return body;
+  }
+
+  @Nonnull
+  public Script setBody(@Nonnull FunctionBody body) {
+    return new Script(body);
+  }
+
+  public <ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState>
+  ScriptState reduce(
+      @Nonnull ReducerP<ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> reducer) {
+    return new Director<>(reducer).reduceScript(this, List.<Branch>nil());
   }
 }

@@ -16,31 +16,20 @@
 
 package com.shapesecurity.shift.js.ast.statement;
 
-import com.shapesecurity.shift.functional.data.List;
-import com.shapesecurity.shift.functional.data.Maybe;
-import com.shapesecurity.shift.functional.data.NonEmptyList;
-import com.shapesecurity.shift.js.ast.Expression;
-import com.shapesecurity.shift.js.ast.Node;
-import com.shapesecurity.shift.js.ast.ReplacementChild;
-import com.shapesecurity.shift.js.ast.Statement;
-import com.shapesecurity.shift.js.ast.Type;
-import com.shapesecurity.shift.js.path.Branch;
-import com.shapesecurity.shift.js.path.BranchType;
-import com.shapesecurity.shift.js.visitor.ReducerP;
-import com.shapesecurity.shift.js.visitor.TransformerP;
-
 import javax.annotation.Nonnull;
 
-public class WhileStatement extends Statement {
+import com.shapesecurity.shift.js.ast.Expression;
+import com.shapesecurity.shift.js.ast.Statement;
+import com.shapesecurity.shift.js.ast.types.Type;
+import com.shapesecurity.shift.js.visitor.TransformerP;
+
+public class WhileStatement extends IterationStatement {
   @Nonnull
   public final Expression test;
-  @Nonnull
-  public final Statement body;
 
   public WhileStatement(@Nonnull Expression test, @Nonnull Statement body) {
-    super();
+    super(body);
     this.test = test;
-    this.body = body;
   }
 
   @Nonnull
@@ -48,54 +37,6 @@ public class WhileStatement extends Statement {
   public <ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> StatementState transform(
       @Nonnull TransformerP<ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> transformer) {
     return transformer.transform(this);
-  }
-
-  @Nonnull
-  @Override
-  public <ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> StatementState reduce(
-      @Nonnull ReducerP<ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> reducer,
-      @Nonnull final List<Branch> path) {
-    Branch testBranch = new Branch(BranchType.TEST);
-    Branch bodyBranch = new Branch(BranchType.BODY);
-    return reducer.reduceWhileStatement(this, path, this.test.reduce(reducer, path.cons(testBranch)), this.body.reduce(
-        reducer, path.cons(bodyBranch)));
-  }
-
-  @Nonnull
-  @Override
-  public Maybe<Node> branchChild(@Nonnull Branch branch) {
-    switch (branch.branchType) {
-    case TEST:
-      return Maybe.<Node>just(this.test);
-    case BODY:
-      return Maybe.<Node>just(this.body);
-    default:
-      return Maybe.<Node>nothing();
-    }
-  }
-
-  @Nonnull
-  @Override
-  public Node replicate(@Nonnull List<? extends ReplacementChild> children) {
-    Expression test = this.test;
-    Statement body = this.body;
-    while (children instanceof NonEmptyList) {
-      NonEmptyList<? extends ReplacementChild> childrenNE = (NonEmptyList<? extends ReplacementChild>) children;
-      ReplacementChild rc = childrenNE.head;
-      Branch branch = rc.branch;
-      Node child = rc.child;
-      switch (branch.branchType) {
-      case TEST:
-        test = (Expression) child;
-        break;
-      case BODY:
-        body = (Statement) child;
-        break;
-      default:
-      }
-      children = childrenNE.tail();
-    }
-    return new WhileStatement(test, body);
   }
 
   @Nonnull
@@ -108,5 +49,20 @@ public class WhileStatement extends Statement {
   public boolean equals(Object object) {
     return object instanceof WhileStatement && this.test.equals(((WhileStatement) object).test) &&
         this.body.equals(((WhileStatement) object).body);
+  }
+
+  @Nonnull
+  public Expression getTest() {
+    return test;
+  }
+
+  @Nonnull
+  public WhileStatement setTest(@Nonnull Expression test) {
+    return new WhileStatement(test, body);
+  }
+
+  @Nonnull
+  public WhileStatement setBody(@Nonnull Statement body) {
+    return new WhileStatement(test, body);
   }
 }

@@ -16,11 +16,11 @@
 
 package com.shapesecurity.shift.functional.data;
 
+import javax.annotation.Nonnull;
+
 import com.shapesecurity.shift.functional.F;
 import com.shapesecurity.shift.functional.F2;
 import com.shapesecurity.shift.functional.Pair;
-
-import javax.annotation.Nonnull;
 
 public final class Nil<T> extends List<T> {
   private final static int DEFAULT_HASH_CODE;
@@ -91,18 +91,15 @@ public final class Nil<T> extends List<T> {
     return this;
   }
 
-  @SuppressWarnings("unchecked")
   @Nonnull
   @Override
   public <B> List<B> map(@Nonnull F<T, B> f) {
-    return (List<B>) this;
+    return nil();
   }
-
-  @SuppressWarnings("unchecked")
   @Nonnull
   @Override
-  protected final <B> List<B> mapWithIndex(@Nonnull F2<Integer, T, B> f, int index) {
-    return (List<B>) this;
+  public <B> List<B> mapWithIndex(@Nonnull F2<Integer, T, B> f) {
+    return nil();
   }
 
   @Nonnull

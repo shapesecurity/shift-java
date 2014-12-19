@@ -16,19 +16,13 @@
 
 package com.shapesecurity.shift.js.ast.expression;
 
+import javax.annotation.Nonnull;
+
 import com.shapesecurity.shift.functional.data.List;
 import com.shapesecurity.shift.functional.data.Maybe;
-import com.shapesecurity.shift.functional.data.NonEmptyList;
 import com.shapesecurity.shift.js.ast.Expression;
-import com.shapesecurity.shift.js.ast.Node;
-import com.shapesecurity.shift.js.ast.ReplacementChild;
-import com.shapesecurity.shift.js.ast.Type;
-import com.shapesecurity.shift.js.path.Branch;
-import com.shapesecurity.shift.js.path.BranchType;
-import com.shapesecurity.shift.js.visitor.ReducerP;
+import com.shapesecurity.shift.js.ast.types.Type;
 import com.shapesecurity.shift.js.visitor.TransformerP;
-
-import javax.annotation.Nonnull;
 
 public class ArrayExpression extends PrimaryExpression {
   @Nonnull
@@ -48,54 +42,6 @@ public class ArrayExpression extends PrimaryExpression {
 
   @Nonnull
   @Override
-  public <ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> ExpressionState reduce(
-      @Nonnull final ReducerP<ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> reducer,
-      @Nonnull final List<Branch> path) {
-    return reducer.reduceArrayExpression(this, path, this.elements.mapWithIndex((index, expression) -> expression.map(
-        iExpression -> iExpression.reduce(reducer, path.cons(new Branch(BranchType.ELEMENTS, index))))));
-  }
-
-  @Nonnull
-  @Override
-  public Maybe<? extends Node> branchChild(@Nonnull Branch branch) {
-    switch (branch.branchType) {
-    case ELEMENTS:
-      Maybe<Maybe<Expression>> maybeMaybeIExp = this.elements.index(branch.index);
-      return maybeMaybeIExp.isNothing() ? Maybe.<Node>nothing() : maybeMaybeIExp.just();
-    default:
-      return Maybe.<Node>nothing();
-    }
-  }
-
-  @Nonnull
-  @Override
-  public Node replicate(@Nonnull List<? extends ReplacementChild> children) {
-    int elementsLength = elements.length();
-    Maybe<?> elementsChanges[] = new Maybe<?>[elementsLength];
-    int elementsMax = -1;
-    while (children instanceof NonEmptyList) {
-      NonEmptyList<? extends ReplacementChild> childrenNE = (NonEmptyList<? extends ReplacementChild>) children;
-      ReplacementChild rc = childrenNE.head;
-      Branch branch = rc.branch;
-      Node child = rc.child;
-      switch (branch.branchType) {
-      case ELEMENTS:
-        if (branch.index < elementsLength) {
-          elementsChanges[branch.index] = Maybe.<Expression>just((Expression) child);
-          elementsMax = Math.max(elementsMax, branch.index);
-        }
-        break;
-      default:
-      }
-      children = childrenNE.tail();
-    }
-    List<Maybe<Expression>> elements = Node.replaceIndex(this.elements, elementsMax,
-        (Maybe<Expression>[]) elementsChanges);
-    return new ArrayExpression(elements);
-  }
-
-  @Nonnull
-  @Override
   public Type type() {
     return Type.ArrayExpression;
   }
@@ -103,5 +49,15 @@ public class ArrayExpression extends PrimaryExpression {
   @Override
   public boolean equals(Object object) {
     return object instanceof ArrayExpression && this.elements.equals(((ArrayExpression) object).elements);
+  }
+
+  @Nonnull
+  public List<Maybe<Expression>> getElements() {
+    return elements;
+  }
+
+  @Nonnull
+  public ArrayExpression setElements(@Nonnull List<Maybe<Expression>> elements) {
+    return new ArrayExpression(elements);
   }
 }

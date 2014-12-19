@@ -16,9 +16,9 @@
 
 package com.shapesecurity.shift.functional.data;
 
-import com.shapesecurity.shift.functional.F;
-
 import javax.annotation.Nonnull;
+
+import com.shapesecurity.shift.functional.F;
 
 public abstract class Either<A, B> {
   // class local
@@ -77,7 +77,7 @@ public abstract class Either<A, B> {
 
   public static final class Left<A, B> extends Either<A, B> {
     @Nonnull
-    private final A a;
+    public final A a;
 
     private Left(@Nonnull A a) {
       super();
@@ -138,7 +138,7 @@ public abstract class Either<A, B> {
 
   public static final class Right<A, B> extends Either<A, B> {
     @Nonnull
-    private final B b;
+    public final B b;
 
     private Right(@Nonnull B b) {
       super();

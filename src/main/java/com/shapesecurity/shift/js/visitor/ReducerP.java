@@ -102,7 +102,7 @@ public interface ReducerP<ScriptState, ProgramBodyState, PropertyState, Property
   ExpressionState reduceLiteralStringExpression(@Nonnull LiteralStringExpression node, @Nonnull List<Branch> path);
 
   @Nonnull
-  ExpressionState reduceLiteralRegexExpression(@Nonnull LiteralRegExpExpression node, @Nonnull List<Branch> path);
+  ExpressionState reduceLiteralRegExpExpression(@Nonnull LiteralRegExpExpression node, @Nonnull List<Branch> path);
 
   @Nonnull
   ExpressionState reduceLiteralNumericExpression(@Nonnull LiteralNumericExpression node, @Nonnull List<Branch> path);
@@ -114,8 +114,8 @@ public interface ReducerP<ScriptState, ProgramBodyState, PropertyState, Property
   ExpressionState reduceFunctionExpression(
       @Nonnull FunctionExpression node,
       @Nonnull List<Branch> path,
-      @Nonnull Maybe<IdentifierState> id,
-      @Nonnull List<IdentifierState> params,
+      @Nonnull Maybe<IdentifierState> name,
+      @Nonnull List<IdentifierState> parameters,
       @Nonnull ProgramBodyState body);
 
   @Nonnull

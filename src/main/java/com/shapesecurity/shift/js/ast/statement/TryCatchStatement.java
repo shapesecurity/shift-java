@@ -16,21 +16,13 @@
 
 package com.shapesecurity.shift.js.ast.statement;
 
-import com.shapesecurity.shift.functional.data.List;
-import com.shapesecurity.shift.functional.data.Maybe;
-import com.shapesecurity.shift.functional.data.NonEmptyList;
+import javax.annotation.Nonnull;
+
 import com.shapesecurity.shift.js.ast.Block;
 import com.shapesecurity.shift.js.ast.CatchClause;
-import com.shapesecurity.shift.js.ast.Node;
-import com.shapesecurity.shift.js.ast.ReplacementChild;
 import com.shapesecurity.shift.js.ast.Statement;
-import com.shapesecurity.shift.js.ast.Type;
-import com.shapesecurity.shift.js.path.Branch;
-import com.shapesecurity.shift.js.path.BranchType;
-import com.shapesecurity.shift.js.visitor.ReducerP;
+import com.shapesecurity.shift.js.ast.types.Type;
 import com.shapesecurity.shift.js.visitor.TransformerP;
-
-import javax.annotation.Nonnull;
 
 public class TryCatchStatement extends Statement {
   @Nonnull
@@ -53,52 +45,6 @@ public class TryCatchStatement extends Statement {
 
   @Nonnull
   @Override
-  public <ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> StatementState reduce(
-      @Nonnull final ReducerP<ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> reducer,
-      @Nonnull final List<Branch> path) {
-    return reducer.reduceTryCatchStatement(this, path, this.body.reduce(reducer, path.cons(new Branch(
-        BranchType.BODY))), this.catchClause.reduce(reducer, path.cons(new Branch(BranchType.CATCH))));
-  }
-
-  @Nonnull
-  @Override
-  public Maybe<? extends Node> branchChild(@Nonnull Branch branch) {
-    switch (branch.branchType) {
-    case BODY:
-      return Maybe.just(this.body);
-    case CATCH:
-      return Maybe.just(this.catchClause);
-    default:
-      return Maybe.nothing();
-    }
-  }
-
-  @Nonnull
-  @Override
-  public Node replicate(@Nonnull List<? extends ReplacementChild> children) {
-    Block body = this.body;
-    CatchClause catchClause = this.catchClause;
-    while (children instanceof NonEmptyList) {
-      NonEmptyList<? extends ReplacementChild> childrenNE = (NonEmptyList<? extends ReplacementChild>) children;
-      ReplacementChild rc = childrenNE.head;
-      Branch branch = rc.branch;
-      Node child = rc.child;
-      switch (branch.branchType) {
-      case BODY:
-        body = (Block) child;
-        break;
-      case CATCH:
-        catchClause = (CatchClause) child;
-        break;
-      default:
-      }
-      children = childrenNE.tail();
-    }
-    return new TryCatchStatement(body, catchClause);
-  }
-
-  @Nonnull
-  @Override
   public Type type() {
     return Type.TryCatchStatement;
   }
@@ -108,5 +54,25 @@ public class TryCatchStatement extends Statement {
     return object instanceof TryCatchStatement &&
         this.body.equals(((TryCatchStatement) object).body) &&
         this.catchClause.equals(((TryCatchStatement) object).catchClause);
+  }
+
+  @Nonnull
+  public Block getBody() {
+    return body;
+  }
+
+  @Nonnull
+  public CatchClause getCatchClause() {
+    return catchClause;
+  }
+
+  @Nonnull
+  public TryCatchStatement setBody(@Nonnull Block body) {
+    return new TryCatchStatement(body, catchClause);
+  }
+
+  @Nonnull
+  public TryCatchStatement setCatchClause(@Nonnull CatchClause catchClause) {
+    return new TryCatchStatement(body, catchClause);
   }
 }

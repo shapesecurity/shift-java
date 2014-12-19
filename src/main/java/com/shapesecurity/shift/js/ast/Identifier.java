@@ -17,7 +17,7 @@
 package com.shapesecurity.shift.js.ast;
 
 import com.shapesecurity.shift.functional.data.List;
-import com.shapesecurity.shift.functional.data.Maybe;
+import com.shapesecurity.shift.js.ast.types.Type;
 import com.shapesecurity.shift.js.path.Branch;
 import com.shapesecurity.shift.js.visitor.ReducerP;
 import com.shapesecurity.shift.js.visitor.TransformerP;
@@ -50,21 +50,6 @@ public final class Identifier extends Node {
   public <ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> IdentifierState transform(
       @Nonnull TransformerP<ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> transformer) {
     return transformer.transform(this);
-  }
-
-  @Nonnull
-  @Override
-  public Maybe<Node> branchChild(@Nonnull Branch branch) {
-    switch (branch.branchType) {
-    default:
-      return Maybe.<Node>nothing();
-    }
-  }
-
-  @Nonnull
-  @Override
-  public Node replicate(@Nonnull List<? extends ReplacementChild> children) {
-    return new Identifier(name);
   }
 
   @Nonnull

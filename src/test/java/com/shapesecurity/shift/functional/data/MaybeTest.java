@@ -42,8 +42,8 @@ public class MaybeTest extends TestBase {
 
   @Test
   public void testToNullable() {
-    assertEquals((Integer) 3, Maybe.toNullable(Maybe.just(notNull)));
-    assertEquals(null, Maybe.toNullable(Maybe.<Integer>nothing()));
+    assertEquals((Integer) 3, Maybe.just(notNull).toNullable());
+    assertEquals(null, Maybe.<Integer>nothing().toNullable());
   }
 
   @Test

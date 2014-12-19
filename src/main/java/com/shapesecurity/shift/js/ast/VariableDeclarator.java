@@ -16,15 +16,11 @@
 
 package com.shapesecurity.shift.js.ast;
 
-import com.shapesecurity.shift.functional.data.List;
-import com.shapesecurity.shift.functional.data.Maybe;
-import com.shapesecurity.shift.functional.data.NonEmptyList;
-import com.shapesecurity.shift.js.path.Branch;
-import com.shapesecurity.shift.js.path.BranchType;
-import com.shapesecurity.shift.js.visitor.ReducerP;
-import com.shapesecurity.shift.js.visitor.TransformerP;
-
 import javax.annotation.Nonnull;
+
+import com.shapesecurity.shift.functional.data.Maybe;
+import com.shapesecurity.shift.js.ast.types.Type;
+import com.shapesecurity.shift.js.visitor.TransformerP;
 
 public class VariableDeclarator extends Node {
   @Nonnull
@@ -49,53 +45,6 @@ public class VariableDeclarator extends Node {
   }
 
   @Nonnull
-  public <ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> DeclaratorState reduce(
-      @Nonnull final ReducerP<ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> reducer,
-      @Nonnull final List<Branch> path) {
-    Branch idBranch = new Branch(BranchType.BINDING);
-    Branch initBranch = new Branch(BranchType.INIT);
-    return reducer.reduceVariableDeclarator(this, path, this.binding.reduce(reducer, path.cons(idBranch)),
-        this.init.map(iExpression -> iExpression.reduce(reducer, path.cons(initBranch))));
-  }
-
-  @Nonnull
-  @Override
-  public Maybe<? extends Node> branchChild(@Nonnull Branch branch) {
-    switch (branch.branchType) {
-    case BINDING:
-      return Maybe.<Node>just(this.binding);
-    case INIT:
-      return this.init;
-    default:
-      return Maybe.<Node>nothing();
-    }
-  }
-
-  @Nonnull
-  @Override
-  public Node replicate(@Nonnull List<? extends ReplacementChild> children) {
-    Identifier binding = this.binding;
-    Maybe<Expression> init = this.init;
-    while (children instanceof NonEmptyList) {
-      NonEmptyList<? extends ReplacementChild> childrenNE = (NonEmptyList<? extends ReplacementChild>) children;
-      ReplacementChild rc = childrenNE.head;
-      Branch branch = rc.branch;
-      Node child = rc.child;
-      switch (branch.branchType) {
-      case BINDING:
-        binding = (Identifier) child;
-        break;
-      case INIT:
-        init = Maybe.<Expression>just((Expression) child);
-        break;
-      default:
-      }
-      children = childrenNE.tail();
-    }
-    return new VariableDeclarator(binding, init);
-  }
-
-  @Nonnull
   @Override
   public Type type() {
     return Type.VariableDeclarator;
@@ -105,5 +54,23 @@ public class VariableDeclarator extends Node {
   public boolean equals(Object object) {
     return object instanceof VariableDeclarator && this.binding.equals(((VariableDeclarator) object).binding) &&
         this.init.equals(((VariableDeclarator) object).init);
+  }
+
+  @Nonnull
+  public Identifier getBinding() {
+    return binding;
+  }
+
+  @Nonnull
+  public Maybe<Expression> getInit() {
+    return init;
+  }
+
+  public VariableDeclarator setBinding(@Nonnull Identifier binding) {
+    return new VariableDeclarator(binding, init);
+  }
+
+  public VariableDeclarator setInit(@Nonnull Maybe<Expression> init) {
+    return new VariableDeclarator(binding, init);
   }
 }

@@ -16,6 +16,11 @@
 
 package com.shapesecurity.shift.js.codegen;
 
+import java.io.File;
+import java.io.IOException;
+
+import javax.annotation.Nonnull;
+
 import com.shapesecurity.shift.functional.data.List;
 import com.shapesecurity.shift.functional.data.Maybe;
 import com.shapesecurity.shift.js.TestBase;
@@ -38,50 +43,35 @@ import com.shapesecurity.shift.js.ast.statement.WithStatement;
 import com.shapesecurity.shift.js.parser.JsError;
 import com.shapesecurity.shift.js.parser.Parser;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import org.junit.Test;
 
-import java.io.File;
-import java.io.IOException;
-
-import javax.annotation.Nonnull;
-
 public class CodeGenTest extends TestBase {
-  private static final Gson GSON = new GsonBuilder().disableHtmlEscaping().serializeNulls().create();
 
   @Nonnull
   private static Script statement(@Nonnull Statement stmt) {
     return new Script(new FunctionBody(List.<Directive>nil(), List.list(stmt)));
   }
 
-  @Nonnull
-  String toJson(@Nonnull Script script) {
-    return GSON.toJson(script);
-  }
-
   private void testLibrary(String fileName) throws JsError, IOException {
     String source = readLibrary(fileName);
     Script script = new Parser(source).parse();
     String code = CodeGen.codeGen(script);
-    String actual = toJson(new Parser(code).parse());
-    String expected = toJson(script);
-    boolean match = actual.equals(expected);
-    assertEquals(fileName, match, true);
+    Script actual = new Parser(code).parse();
+    assertEquals(fileName, script, actual);
   }
 
   private void test(String expected, String source) throws JsError {
     Script script = new Parser(source).parse();
     String code = CodeGen.codeGen(script);
     assertEquals(expected, code);
-    assertEquals(toJson(script), toJson(new Parser(code).parse()));
+    assertEquals(script, new Parser(code).parse());
   }
 
   private void test(String source) throws JsError {
     Script script = new Parser(source).parse();
     String code = CodeGen.codeGen(script);
     assertEquals(source, code);
-    assertEquals(toJson(script), toJson(new Parser(code).parse()));
+    assertEquals(script, new Parser(code).parse());
   }
 
   private void testPretty(String source) throws JsError {

@@ -18,17 +18,12 @@ package com.shapesecurity.shift.js.ast.property;
 
 import javax.annotation.Nonnull;
 
-import com.shapesecurity.shift.functional.data.List;
-import com.shapesecurity.shift.functional.data.Maybe;
 import com.shapesecurity.shift.js.ast.Identifier;
 import com.shapesecurity.shift.js.ast.Node;
-import com.shapesecurity.shift.js.ast.ReplacementChild;
-import com.shapesecurity.shift.js.ast.Type;
+import com.shapesecurity.shift.js.ast.types.Type;
 import com.shapesecurity.shift.js.ast.expression.LiteralNumericExpression;
 import com.shapesecurity.shift.js.ast.expression.LiteralStringExpression;
-import com.shapesecurity.shift.js.path.Branch;
 import com.shapesecurity.shift.js.utils.D2A;
-import com.shapesecurity.shift.js.visitor.ReducerP;
 import com.shapesecurity.shift.js.visitor.TransformerP;
 
 public final class PropertyName extends Node {
@@ -72,28 +67,6 @@ public final class PropertyName extends Node {
   public <ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> PropertyNameState transform(
       @Nonnull TransformerP<ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> transformer) {
     return transformer.transform(this);
-  }
-
-  @Nonnull
-  public final <ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> PropertyNameState reduce(
-      ReducerP<ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> reducer,
-      @Nonnull final List<Branch> path) {
-    return reducer.reducePropertyName(this, path);
-  }
-
-  @Nonnull
-  @Override
-  public Maybe<Node> branchChild(@Nonnull Branch branch) {
-    switch (branch.branchType) {
-    default:
-      return Maybe.<Node>nothing();
-    }
-  }
-
-  @Nonnull
-  @Override
-  public Node replicate(@Nonnull List<? extends ReplacementChild> children) {
-    return new PropertyName(this);
   }
 
   @Nonnull

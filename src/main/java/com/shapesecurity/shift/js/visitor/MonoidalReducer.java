@@ -131,7 +131,7 @@ public class MonoidalReducer<State, Def extends Monoid<State>> implements Reduce
 
   @Nonnull
   @Override
-  public State reduceLiteralRegexExpression(@Nonnull LiteralRegExpExpression node, @Nonnull List<Branch> path) {
+  public State reduceLiteralRegExpExpression(@Nonnull LiteralRegExpExpression node, @Nonnull List<Branch> path) {
     return this.identity;
   }
 
@@ -152,10 +152,10 @@ public class MonoidalReducer<State, Def extends Monoid<State>> implements Reduce
   public State reduceFunctionExpression(
       @Nonnull FunctionExpression node,
       @Nonnull List<Branch> path,
-      @Nonnull Maybe<State> id,
-      @Nonnull List<State> params,
+      @Nonnull Maybe<State> name,
+      @Nonnull List<State> parameters,
       @Nonnull State body) {
-    return append(fold1(params, o(id)), body);
+    return append(fold1(parameters, o(name)), body);
   }
 
   private State append(State a, State b) {

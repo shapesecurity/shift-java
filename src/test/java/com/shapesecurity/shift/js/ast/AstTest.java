@@ -25,12 +25,14 @@ import com.shapesecurity.shift.functional.data.List;
 import com.shapesecurity.shift.functional.data.Maybe;
 import com.shapesecurity.shift.js.AstHelper;
 import com.shapesecurity.shift.js.TestReducer;
+import com.shapesecurity.shift.js.TestReducerWithPath;
 import com.shapesecurity.shift.js.parser.JsError;
 import com.shapesecurity.shift.js.parser.Parser;
 import com.shapesecurity.shift.js.path.Branch;
-import com.shapesecurity.shift.js.path.BranchType;
+import com.shapesecurity.shift.js.path.StaticBranch;
+import com.shapesecurity.shift.js.visitor.Director;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import org.junit.Test;
 
@@ -46,10 +48,9 @@ public class AstTest extends AstHelper {
   }
 
   private void forBranches(@Nonnull Consumer<Branch> f) {
-    BranchType[] branchTypes = BranchType.values();
-    for (BranchType branchType : branchTypes) {
-      Branch branch = new Branch(branchType);
-      f.accept(branch);
+    StaticBranch[] staticBranches = StaticBranch.values();
+    for (StaticBranch staticBranch : staticBranches) {
+      f.accept(staticBranch);
     }
   }
 
@@ -66,12 +67,30 @@ public class AstTest extends AstHelper {
   public void testReplication() throws IOException {
     forASTs((node) -> forBranches((branch) -> {
       assertEquals(node.getClass().getSimpleName(), node.type().name());
-      Maybe<? extends Node> maybe = node.branchChild(branch);
+      Maybe<? extends Node> maybe = node.get(branch);
       if (maybe.isJust()) {
-        Node replicate = node.replicate(List.list(new ReplacementChild(branch, maybe.just())));
+        Node replicate = node.set(List.list(new ReplacementChild(branch, maybe.just())));
         assertTrue(replicate != node);
         assertEquals(node, replicate);
       }
     }));
+  }
+
+  private Node track(List<Branch> path) {
+    Node node = script;
+    for (Branch branch : path.reverse()) {
+      node = node.get(branch).just();
+    }
+    return node;
+  }
+
+  @Test
+  public void testPath() throws IOException {
+    script.reduce(new TestReducerWithPath() {
+      @Override
+      protected void accept(@Nonnull Node node, @Nonnull List<Branch> path) {
+        assertTrue(node == track(path));
+      }
+    });
   }
 }

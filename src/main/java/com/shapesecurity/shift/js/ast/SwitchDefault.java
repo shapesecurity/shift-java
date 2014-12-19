@@ -16,15 +16,11 @@
 
 package com.shapesecurity.shift.js.ast;
 
-import com.shapesecurity.shift.functional.data.List;
-import com.shapesecurity.shift.functional.data.Maybe;
-import com.shapesecurity.shift.functional.data.NonEmptyList;
-import com.shapesecurity.shift.js.path.Branch;
-import com.shapesecurity.shift.js.path.BranchType;
-import com.shapesecurity.shift.js.visitor.ReducerP;
-import com.shapesecurity.shift.js.visitor.TransformerP;
-
 import javax.annotation.Nonnull;
+
+import com.shapesecurity.shift.functional.data.List;
+import com.shapesecurity.shift.js.ast.types.Type;
+import com.shapesecurity.shift.js.visitor.TransformerP;
 
 public class SwitchDefault extends Node {
   @Nonnull
@@ -33,32 +29,6 @@ public class SwitchDefault extends Node {
   public SwitchDefault(@Nonnull List<Statement> consequent) {
     super();
     this.consequent = consequent;
-  }
-
-  @Nonnull
-  @Override
-  public Node replicate(@Nonnull List<? extends ReplacementChild> children) {
-    int consequentLength = consequent.length();
-    Statement consequentChanges[] = new Statement[consequentLength];
-    int consequentMax = -1;
-    while (children instanceof NonEmptyList) {
-      NonEmptyList<? extends ReplacementChild> childrenNE = (NonEmptyList<? extends ReplacementChild>) children;
-      ReplacementChild rc = childrenNE.head;
-      Branch branch = rc.branch;
-      Node child = rc.child;
-      switch (branch.branchType) {
-      case CONSEQUENT:
-        if (branch.index < consequentLength) {
-          consequentChanges[branch.index] = (Statement) child;
-          consequentMax = Math.max(consequentMax, branch.index);
-        }
-        break;
-      default:
-      }
-      children = childrenNE.tail();
-    }
-    List<Statement> consequent = Node.replaceIndex(this.consequent, consequentMax, consequentChanges);
-    return new SwitchDefault(consequent);
   }
 
   @Nonnull
@@ -73,27 +43,18 @@ public class SwitchDefault extends Node {
     return transformer.transform(this);
   }
 
-  @Nonnull
-  public <ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> SwitchDefaultState reduce(
-      @Nonnull final ReducerP<ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> reducer,
-      @Nonnull final List<Branch> path) {
-    return reducer.reduceSwitchDefault(this, path, this.consequent.mapWithIndex(
-        (index, iStatement) -> iStatement.reduce(reducer, path.cons(new Branch(BranchType.CONSEQUENT, index)))));
-  }
-
-  @Nonnull
-  @Override
-  public Maybe<? extends Node> branchChild(@Nonnull Branch branch) {
-    switch (branch.branchType) {
-    case CONSEQUENT:
-      return this.consequent.index(branch.index);
-    default:
-      return Maybe.<Node>nothing();
-    }
-  }
-
   @Override
   public boolean equals(Object object) {
     return object instanceof SwitchDefault && this.consequent.equals(((SwitchDefault) object).consequent);
+  }
+
+  @Nonnull
+  public List<Statement> getConsequent() {
+    return consequent;
+  }
+
+  @Nonnull
+  public SwitchDefault setConsequent(@Nonnull List<Statement> consequent) {
+    return new SwitchDefault(consequent);
   }
 }
