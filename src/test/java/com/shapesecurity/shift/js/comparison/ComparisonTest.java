@@ -16,8 +16,7 @@
 
 package com.shapesecurity.shift.js.comparison;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import java.io.IOException;
 
 import com.shapesecurity.shift.functional.F;
 import com.shapesecurity.shift.functional.data.List;
@@ -84,10 +83,12 @@ import com.shapesecurity.shift.js.codegen.CodeGen;
 import com.shapesecurity.shift.js.parser.JsError;
 import com.shapesecurity.shift.js.parser.Parser;
 import com.shapesecurity.shift.js.visitor.CloneReducer;
+import com.shapesecurity.shift.js.visitor.Director;
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
-
-import java.io.IOException;
 
 public class ComparisonTest extends AstHelper {
   @Test

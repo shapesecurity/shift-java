@@ -8,7 +8,10 @@
     <artifactId>shift</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
-    <name>shift</name>
+    <name>Shift AST</name>
+
+
+
     <dependencies>
         <dependency>
             <groupId>junit</groupId>

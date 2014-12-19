@@ -16,12 +16,12 @@
 
 package com.shapesecurity.shift.functional.data;
 
+import javax.annotation.Nonnull;
+
 import com.shapesecurity.shift.functional.F;
 import com.shapesecurity.shift.functional.F2;
 import com.shapesecurity.shift.functional.Pair;
 import com.shapesecurity.shift.functional.Thunk;
-
-import javax.annotation.Nonnull;
 
 public abstract class NonEmptyList<T> extends List<T> {
   @Nonnull
@@ -130,13 +130,19 @@ public abstract class NonEmptyList<T> extends List<T> {
   @Override
   @Nonnull
   public final <B> NonEmptyList<B> mapWithIndex(@Nonnull F2<Integer, T, B> f) {
-    return this.mapWithIndex(f, 0);
-  }
-
-  @Nonnull
-  @Override
-  protected final <B> NonEmptyList<B> mapWithIndex(@Nonnull F2<Integer, T, B> f, int i) {
-    return List.cons(f.apply(i, this.head), this.tail().mapWithIndex(f, i + 1));
+    int length = this.length();
+    @SuppressWarnings("unchecked")
+    B[] result = (B[]) new Object[length];
+    List<T> list = this;
+    for (int i = 0; i < length; i++) {
+      result[i] = f.apply(i, ((NonEmptyList<T>) list).head);
+      list = ((NonEmptyList<T>) list).tail();
+    }
+    List<B> nList = nil();
+    for (int i = length - 1; i >= 0; i--) {
+      nList = nList.cons(result[i]);
+    }
+    return (NonEmptyList<B>) nList;
   }
 
   @Nonnull

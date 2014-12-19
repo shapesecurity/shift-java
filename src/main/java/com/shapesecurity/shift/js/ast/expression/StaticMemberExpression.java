@@ -16,19 +16,12 @@
 
 package com.shapesecurity.shift.js.ast.expression;
 
-import com.shapesecurity.shift.functional.data.List;
-import com.shapesecurity.shift.functional.data.Maybe;
-import com.shapesecurity.shift.functional.data.NonEmptyList;
+import javax.annotation.Nonnull;
+
 import com.shapesecurity.shift.js.ast.Expression;
 import com.shapesecurity.shift.js.ast.Identifier;
-import com.shapesecurity.shift.js.ast.Node;
-import com.shapesecurity.shift.js.ast.ReplacementChild;
-import com.shapesecurity.shift.js.path.Branch;
-import com.shapesecurity.shift.js.path.BranchType;
-import com.shapesecurity.shift.js.visitor.ReducerP;
+import com.shapesecurity.shift.js.ast.types.Type;
 import com.shapesecurity.shift.js.visitor.TransformerP;
-
-import javax.annotation.Nonnull;
 
 public class StaticMemberExpression extends MemberExpression {
   @Nonnull
@@ -41,57 +34,15 @@ public class StaticMemberExpression extends MemberExpression {
 
   @Nonnull
   @Override
-  public <ProgramState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> ExpressionState transform(
-      @Nonnull TransformerP<ProgramState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> transformer) {
+  public <ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> ExpressionState transform(
+      @Nonnull TransformerP<ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> transformer) {
     return transformer.transform(this);
   }
 
   @Nonnull
   @Override
-  public <ProgramState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> ExpressionState reduce(
-      @Nonnull final ReducerP<ProgramState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> reducer,
-      @Nonnull final List<Branch> path) {
-    Branch objectBranch = new Branch(BranchType.OBJECT);
-    Branch propertyBranch = new Branch(BranchType.PROPERTY);
-    return reducer.reduceStaticMemberExpression(this, path, this.object.reduce(reducer, path.cons(objectBranch)),
-        this.property.reduce(reducer, path.cons(propertyBranch)));
-  }
-
-  @Nonnull
-  @Override
-  public Maybe<Node> branchChild(@Nonnull Branch branch) {
-    switch (branch.branchType) {
-    case OBJECT:
-      return Maybe.<Node>just(this.object);
-    case PROPERTY:
-      return Maybe.<Node>just(this.property);
-    default:
-      return Maybe.<Node>nothing();
-    }
-  }
-
-  @Nonnull
-  @Override
-  public Node replicate(@Nonnull List<? extends ReplacementChild> children) {
-    Expression object = this.object;
-    Identifier property = this.property;
-    while (children instanceof NonEmptyList) {
-      NonEmptyList<? extends ReplacementChild> childrenNE = (NonEmptyList<? extends ReplacementChild>) children;
-      ReplacementChild rc = childrenNE.head;
-      Branch branch = rc.branch;
-      Node child = rc.child;
-      switch (branch.branchType) {
-      case OBJECT:
-        object = (Expression) child;
-        break;
-      case PROPERTY:
-        property = (Identifier) child;
-        break;
-      default:
-      }
-      children = childrenNE.tail();
-    }
-    return new StaticMemberExpression(object, property);
+  public Type type() {
+    return Type.StaticMemberExpression;
   }
 
   @Override
@@ -99,5 +50,20 @@ public class StaticMemberExpression extends MemberExpression {
     return object instanceof StaticMemberExpression &&
         this.object.equals(((StaticMemberExpression) object).object) &&
         this.property.equals(((StaticMemberExpression) object).property);
+  }
+
+  @Nonnull
+  public Identifier getProperty() {
+    return property;
+  }
+
+  @Nonnull
+  public StaticMemberExpression setObject(@Nonnull Expression object) {
+    return new StaticMemberExpression(object, property);
+  }
+
+  @Nonnull
+  public StaticMemberExpression setProperty(@Nonnull Identifier property) {
+    return new StaticMemberExpression(object, property);
   }
 }

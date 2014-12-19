@@ -50,12 +50,7 @@ public abstract class Maybe<A> {
   }
 
   @Nullable
-  public static <A> A toNullable(@Nonnull Maybe<A> maybe) {
-    if (maybe instanceof Nothing) {
-      return null;
-    }
-    return maybe.just();
-  }
+  public abstract A toNullable();
 
   @Nonnull
   public static <A> List<A> catMaybes(@Nonnull List<Maybe<A>> l) {
@@ -137,6 +132,12 @@ public abstract class Maybe<A> {
       return HashCodeBuilder.put(this.value.hashCode(), "Just");
     }
 
+    @Nullable
+    @Override
+    public A toNullable() {
+      return value;
+    }
+
     @Override
     public boolean eq(@Nonnull Maybe<A> maybe) {
       return maybe instanceof Just && maybe.just().equals(this.value);
@@ -198,6 +199,12 @@ public abstract class Maybe<A> {
 
   private static class Nothing<A> extends Maybe<A> {
     private final static int HASH_CODE = HashCodeBuilder.put(HashCodeBuilder.init(), "Nothing");
+
+    @Nullable
+    @Override
+    public A toNullable() {
+      return null;
+    }
 
     @Override
     public boolean eq(@Nonnull Maybe<A> maybe) {

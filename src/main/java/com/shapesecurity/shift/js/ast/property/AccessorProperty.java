@@ -16,16 +16,21 @@
 
 package com.shapesecurity.shift.js.ast.property;
 
-import com.shapesecurity.shift.js.ast.FunctionBody;
-
 import javax.annotation.Nonnull;
+
+import com.shapesecurity.shift.js.ast.FunctionBody;
 
 public abstract class AccessorProperty extends ObjectProperty {
   @Nonnull
   public final FunctionBody body;
 
-  AccessorProperty(@Nonnull PropertyName name, @Nonnull FunctionBody body) {
+  protected AccessorProperty(@Nonnull PropertyName name, @Nonnull FunctionBody body) {
     super(name);
     this.body = body;
+  }
+
+  @Nonnull
+  public FunctionBody getBody() {
+    return body;
   }
 }

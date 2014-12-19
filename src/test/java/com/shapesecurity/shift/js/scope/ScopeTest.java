@@ -16,27 +16,33 @@
 
 package com.shapesecurity.shift.js.scope;
 
-import static com.shapesecurity.shift.js.path.BranchType.ARGUMENTS;
-import static com.shapesecurity.shift.js.path.BranchType.BINDING;
-import static com.shapesecurity.shift.js.path.BranchType.BLOCK;
-import static com.shapesecurity.shift.js.path.BranchType.BODY;
-import static com.shapesecurity.shift.js.path.BranchType.CALLEE;
-import static com.shapesecurity.shift.js.path.BranchType.CATCH;
-import static com.shapesecurity.shift.js.path.BranchType.CONSEQUENT;
-import static com.shapesecurity.shift.js.path.BranchType.DECLARATION;
-import static com.shapesecurity.shift.js.path.BranchType.DECLARATORS;
-import static com.shapesecurity.shift.js.path.BranchType.EXPRESSION;
-import static com.shapesecurity.shift.js.path.BranchType.IDENTIFIER;
-import static com.shapesecurity.shift.js.path.BranchType.INIT;
-import static com.shapesecurity.shift.js.path.BranchType.LEFT;
-import static com.shapesecurity.shift.js.path.BranchType.NAME;
-import static com.shapesecurity.shift.js.path.BranchType.OBJECT;
-import static com.shapesecurity.shift.js.path.BranchType.OPERAND;
-import static com.shapesecurity.shift.js.path.BranchType.PARAMETERS;
-import static com.shapesecurity.shift.js.path.BranchType.RIGHT;
-import static com.shapesecurity.shift.js.path.BranchType.STATEMENTS;
-import static com.shapesecurity.shift.js.path.BranchType.TEST;
+import static com.shapesecurity.shift.js.path.StaticBranch.ARGUMENTS;
+import static com.shapesecurity.shift.js.path.StaticBranch.BINDING;
+import static com.shapesecurity.shift.js.path.StaticBranch.BLOCK;
+import static com.shapesecurity.shift.js.path.StaticBranch.BODY;
+import static com.shapesecurity.shift.js.path.StaticBranch.CALLEE;
+import static com.shapesecurity.shift.js.path.StaticBranch.CATCHCLAUSE;
+import static com.shapesecurity.shift.js.path.StaticBranch.CONSEQUENT;
+import static com.shapesecurity.shift.js.path.StaticBranch.DECLARATION;
+import static com.shapesecurity.shift.js.path.StaticBranch.DECLARATORS;
+import static com.shapesecurity.shift.js.path.StaticBranch.EXPRESSION;
+import static com.shapesecurity.shift.js.path.StaticBranch.IDENTIFIER;
+import static com.shapesecurity.shift.js.path.StaticBranch.INIT;
+import static com.shapesecurity.shift.js.path.StaticBranch.JUST;
+import static com.shapesecurity.shift.js.path.StaticBranch.LEFT;
+import static com.shapesecurity.shift.js.path.StaticBranch.NAME;
+import static com.shapesecurity.shift.js.path.StaticBranch.OBJECT;
+import static com.shapesecurity.shift.js.path.StaticBranch.OPERAND;
+import static com.shapesecurity.shift.js.path.StaticBranch.PARAMETERS;
+import static com.shapesecurity.shift.js.path.StaticBranch.RIGHT;
+import static com.shapesecurity.shift.js.path.StaticBranch.STATEMENTS;
+import static com.shapesecurity.shift.js.path.StaticBranch.TEST;
 import static org.junit.Assert.assertTrue;
+
+import javax.annotation.Nonnull;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import com.shapesecurity.shift.functional.Pair;
 import com.shapesecurity.shift.functional.data.List;
@@ -48,19 +54,10 @@ import com.shapesecurity.shift.js.ast.Script;
 import com.shapesecurity.shift.js.parser.JsError;
 import com.shapesecurity.shift.js.parser.Parser;
 import com.shapesecurity.shift.js.path.Branch;
-import com.shapesecurity.shift.js.path.BranchType;
-import com.shapesecurity.shift.js.serialization.Serializer;
+import com.shapesecurity.shift.js.path.IndexedBranch;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonObject;
 import org.junit.Assert;
 import org.junit.Test;
-
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.annotation.Nonnull;
 
 public class ScopeTest extends TestBase {
 
@@ -105,19 +102,14 @@ public class ScopeTest extends TestBase {
 
     @Nonnull
     private Getter d(@Nonnull Branch branch) {
-      Maybe<? extends Node> maybe = node.branchChild(branch);
+      Maybe<? extends Node> maybe = node.get(branch);
       assertTrue("Failed to follow branches.", maybe.isJust());
       return new Getter(maybe.just(), from.cons(branch));
     }
 
     @Nonnull
-    public Getter d(@Nonnull BranchType branchType) {
-      return d(new Branch(branchType));
-    }
-
-    @Nonnull
-    public Getter d(@Nonnull BranchType branchType, int index) {
-      return d(new Branch(branchType, index));
+    public Getter d(@Nonnull Branch staticBranch, int index) {
+      return d(staticBranch).d(IndexedBranch.from(index));
     }
 
     @Nonnull
@@ -192,7 +184,7 @@ public class ScopeTest extends TestBase {
     final IdentifierP v1Node1 = new Getter(script).d(BODY).d(STATEMENTS, 0).d(EXPRESSION).d(BINDING).d(IDENTIFIER)
         .done();
     final IdentifierP v1Node2 = new Getter(script).d(BODY).d(STATEMENTS, 1).d(DECLARATION).d(DECLARATORS, 0).d(INIT).d(
-        LEFT).d(IDENTIFIER).done();
+        JUST).d(LEFT).d(IDENTIFIER).done();
     final IdentifierP v2Node1 = new Getter(script).d(BODY).d(STATEMENTS, 1).d(DECLARATION).d(DECLARATORS, 0).d(BINDING)
         .done();
     { // global scope
@@ -223,7 +215,7 @@ public class ScopeTest extends TestBase {
     final IdentifierP v2Node1 = new Getter(script).d(BODY).d(STATEMENTS, 0).d(DECLARATION).d(DECLARATORS, 0).d(BINDING)
         .done();
     final IdentifierP v1Node1 = new Getter(script).d(BODY).d(STATEMENTS, 0).d(DECLARATION).d(DECLARATORS, 0).d(INIT).d(
-        LEFT).d(IDENTIFIER).done();
+        JUST).d(LEFT).d(IDENTIFIER).done();
     final IdentifierP v1Node2 = new Getter(script).d(BODY).d(STATEMENTS, 1).d(DECLARATION).d(DECLARATORS, 0).d(BINDING)
         .done();
     { // global scope
@@ -256,7 +248,7 @@ public class ScopeTest extends TestBase {
     final IdentifierP v1Node2 = new Getter(script).d(BODY).d(STATEMENTS, 1).d(DECLARATION).d(DECLARATORS, 0).d(BINDING)
         .done();
     final IdentifierP v1Node3 = new Getter(script).d(BODY).d(STATEMENTS, 2).d(DECLARATION).d(DECLARATORS, 0).d(INIT).d(
-        LEFT).d(IDENTIFIER).done();
+        JUST).d(LEFT).d(IDENTIFIER).done();
     final IdentifierP v2Node1 = new Getter(script).d(BODY).d(STATEMENTS, 2).d(DECLARATION).d(DECLARATORS, 0).d(BINDING)
         .done();
     { // global scope
@@ -298,28 +290,28 @@ public class ScopeTest extends TestBase {
 
     final IdentifierP f1Node1 = new Getter(script).d(BODY).d(STATEMENTS, 0).d(NAME).done();
     final IdentifierP f1Node2 = new Getter(script).d(BODY).d(STATEMENTS, 1).d(DECLARATION).d(DECLARATORS, 0).d(INIT).d(
-        CALLEE).d(IDENTIFIER).done();
+        JUST).d(CALLEE).d(IDENTIFIER).done();
     final IdentifierP f2Node1 = new Getter(script).d(BODY).d(STATEMENTS, 0).d(BODY).d(STATEMENTS, 1).d(NAME).done();
     final IdentifierP f2Node2 = new Getter(script).d(BODY).d(STATEMENTS, 0).d(BODY).d(STATEMENTS, 2).d(EXPRESSION).d(
-        IDENTIFIER).done();
+        JUST).d(IDENTIFIER).done();
     final IdentifierP p1Node1 = new Getter(script).d(BODY).d(STATEMENTS, 0).d(PARAMETERS, 0).done();
     final IdentifierP p1Node2 = new Getter(script).d(BODY).d(STATEMENTS, 0).d(BODY).d(STATEMENTS, 1).d(PARAMETERS, 0)
         .done();
     final IdentifierP p1Node3 = new Getter(script).d(BODY).d(STATEMENTS, 0).d(BODY).d(STATEMENTS, 1).d(BODY).d(
-        STATEMENTS, 0).d(DECLARATION).d(DECLARATORS, 0).d(INIT).d(LEFT).d(LEFT).d(IDENTIFIER).done();
+        STATEMENTS, 0).d(DECLARATION).d(DECLARATORS, 0).d(INIT).d(JUST).d(LEFT).d(LEFT).d(IDENTIFIER).done();
     final IdentifierP p2Node1 = new Getter(script).d(BODY).d(STATEMENTS, 0).d(PARAMETERS, 1).done();
     final IdentifierP p2Node2 = new Getter(script).d(BODY).d(STATEMENTS, 0).d(BODY).d(STATEMENTS, 1).d(BODY).d(
-        STATEMENTS, 0).d(DECLARATION).d(DECLARATORS, 0).d(INIT).d(RIGHT).d(IDENTIFIER).done();
+        STATEMENTS, 0).d(DECLARATION).d(DECLARATORS, 0).d(INIT).d(JUST).d(RIGHT).d(IDENTIFIER).done();
     final IdentifierP rNode1 = new Getter(script).d(BODY).d(STATEMENTS, 1).d(DECLARATION).d(DECLARATORS, 0).d(BINDING)
         .done();
     final IdentifierP v1Node1 = new Getter(script).d(BODY).d(STATEMENTS, 0).d(BODY).d(STATEMENTS, 0).d(DECLARATION).d(
         DECLARATORS, 0).d(BINDING).done();
     final IdentifierP v1Node2 = new Getter(script).d(BODY).d(STATEMENTS, 0).d(BODY).d(STATEMENTS, 1).d(BODY).d(
-        STATEMENTS, 0).d(DECLARATION).d(DECLARATORS, 0).d(INIT).d(LEFT).d(RIGHT).d(IDENTIFIER).done();
+        STATEMENTS, 0).d(DECLARATION).d(DECLARATORS, 0).d(INIT).d(JUST).d(LEFT).d(RIGHT).d(IDENTIFIER).done();
     final IdentifierP v2Node1 = new Getter(script).d(BODY).d(STATEMENTS, 0).d(BODY).d(STATEMENTS, 1).d(BODY).d(
         STATEMENTS, 0).d(DECLARATION).d(DECLARATORS, 0).d(BINDING).done();
     final IdentifierP v2Node2 = new Getter(script).d(BODY).d(STATEMENTS, 0).d(BODY).d(STATEMENTS, 1).d(BODY).d(
-        STATEMENTS, 1).d(EXPRESSION).d(IDENTIFIER).done();
+        STATEMENTS, 1).d(EXPRESSION).d(JUST).d(IDENTIFIER).done();
 
     { // global scope
 
@@ -436,6 +428,7 @@ public class ScopeTest extends TestBase {
     final IdentifierP fNode1 = new Getter(script).d(BODY).d(STATEMENTS, 0).d(DECLARATION).d(DECLARATORS, 0).d(BINDING)
         .done();
     final IdentifierP fNode2 = new Getter(script).d(BODY).d(STATEMENTS, 0).d(DECLARATION).d(DECLARATORS, 0).d(INIT).d(
+        JUST).d(
         BODY).d(STATEMENTS, 0).d(EXPRESSION).d(BINDING).d(IDENTIFIER).done();
     final IdentifierP fNode3 = new Getter(script).d(BODY).d(STATEMENTS, 1).d(EXPRESSION).d(CALLEE).d(IDENTIFIER).done();
     { // global scope
@@ -479,9 +472,9 @@ public class ScopeTest extends TestBase {
     Scope functionNameScope = globalScope.children.maybeHead().just();
     Scope functionScope = functionNameScope.children.maybeHead().just();
     final IdentifierP f1Node1 = new Getter(script).d(BODY).d(STATEMENTS, 0).d(DECLARATION).d(DECLARATORS, 0).d(INIT).d(
-        NAME).done();
+        JUST).d(NAME).d(JUST).done();
     final IdentifierP f1Node2 = new Getter(script).d(BODY).d(STATEMENTS, 0).d(DECLARATION).d(DECLARATORS, 0).d(INIT).d(
-        BODY).d(STATEMENTS, 0).d(EXPRESSION).d(BINDING).d(IDENTIFIER).done();
+        JUST).d(BODY).d(STATEMENTS, 0).d(EXPRESSION).d(BINDING).d(IDENTIFIER).done();
     final IdentifierP f1Node3 = new Getter(script).d(BODY).d(STATEMENTS, 1).d(EXPRESSION).d(CALLEE).d(IDENTIFIER)
         .done();
     final IdentifierP f2Node1 = new Getter(script).d(BODY).d(STATEMENTS, 0).d(DECLARATION).d(DECLARATORS, 0).d(BINDING)
@@ -694,6 +687,7 @@ public class ScopeTest extends TestBase {
     final IdentifierP fooNode1 = new Getter(script).d(BODY).d(STATEMENTS, 0).d(NAME).done();
     final IdentifierP barNode1 = new Getter(script).d(BODY).d(STATEMENTS, 0).d(BODY).d(STATEMENTS, 0).d(NAME).done();
     final IdentifierP barNode2 = new Getter(script).d(BODY).d(STATEMENTS, 0).d(BODY).d(STATEMENTS, 1).d(EXPRESSION).d(
+        JUST).d(
         CALLEE).d(IDENTIFIER).done();
     final IdentifierP barNode3 = new Getter(script).d(BODY).d(STATEMENTS, 0).d(BODY).d(STATEMENTS, 2).d(NAME).done();
     { // global scope
@@ -814,7 +808,7 @@ public class ScopeTest extends TestBase {
     Scope barScope2 = fooScope.children.maybeTail().just().maybeHead().just();
     final IdentifierP fooNode1 = new Getter(script).d(BODY).d(STATEMENTS, 0).d(NAME).done();
     final IdentifierP barNode1 = new Getter(script).d(BODY).d(STATEMENTS, 0).d(BODY).d(STATEMENTS, 0).d(EXPRESSION).d(
-        CALLEE).d(IDENTIFIER).done();
+        JUST).d(CALLEE).d(IDENTIFIER).done();
     final IdentifierP barNode2 = new Getter(script).d(BODY).d(STATEMENTS, 0).d(BODY).d(STATEMENTS, 1).d(DECLARATION).d(
         DECLARATORS, 0).d(BINDING).done();
     final IdentifierP barNode3 = new Getter(script).d(BODY).d(STATEMENTS, 0).d(BODY).d(STATEMENTS, 2).d(DECLARATION).d(
@@ -985,9 +979,9 @@ public class ScopeTest extends TestBase {
     final IdentifierP v1Node1 = new Getter(script).d(BODY).d(STATEMENTS, 0).d(BODY).d(STATEMENTS, 0).d(DECLARATION).d(
         DECLARATORS, 0).d(BINDING).done();
     final IdentifierP arg1Node2 = new Getter(script).d(BODY).d(STATEMENTS, 0).d(BODY).d(STATEMENTS, 0).d(DECLARATION).d(
-        DECLARATORS, 0).d(INIT).d(LEFT).d(LEFT).d(IDENTIFIER).done();
+        DECLARATORS, 0).d(INIT).d(JUST).d(LEFT).d(LEFT).d(IDENTIFIER).done();
     final IdentifierP arg2Node2 = new Getter(script).d(BODY).d(STATEMENTS, 0).d(BODY).d(STATEMENTS, 0).d(DECLARATION).d(
-        DECLARATORS, 0).d(INIT).d(LEFT).d(RIGHT).d(IDENTIFIER).done();
+        DECLARATORS, 0).d(INIT).d(JUST).d(LEFT).d(RIGHT).d(IDENTIFIER).done();
 
     { // global scope
 
@@ -1035,7 +1029,7 @@ public class ScopeTest extends TestBase {
     final IdentifierP v1Node1 = new Getter(script).d(BODY).d(STATEMENTS, 0).d(BODY).d(STATEMENTS, 0).d(DECLARATION).d(
         DECLARATORS, 0).d(BINDING).done();
     final IdentifierP argumentsNode1 = new Getter(script).d(BODY).d(STATEMENTS, 0).d(BODY).d(STATEMENTS, 0).d(
-        DECLARATION).d(DECLARATORS, 0).d(INIT).d(LEFT).d(OBJECT).d(IDENTIFIER).done();
+        DECLARATION).d(DECLARATORS, 0).d(INIT).d(JUST).d(LEFT).d(OBJECT).d(IDENTIFIER).done();
     { // global scope
 
       List<Scope> children = List.list(fScope);
@@ -1079,9 +1073,9 @@ public class ScopeTest extends TestBase {
     final IdentifierP xNode1 = new Getter(script).d(BODY).d(STATEMENTS, 0).d(BODY).d(BLOCK).d(STATEMENTS, 0).d(
         DECLARATION).d(DECLARATORS, 0).d(BINDING).done();
     final IdentifierP cosNode1 = new Getter(script).d(BODY).d(STATEMENTS, 0).d(BODY).d(BLOCK).d(STATEMENTS, 0).d(
-        DECLARATION).d(DECLARATORS, 0).d(INIT).d(CALLEE).d(IDENTIFIER).done();
+        DECLARATION).d(DECLARATORS, 0).d(INIT).d(JUST).d(CALLEE).d(IDENTIFIER).done();
     final IdentifierP piNode1 = new Getter(script).d(BODY).d(STATEMENTS, 0).d(BODY).d(BLOCK).d(STATEMENTS, 0).d(
-        DECLARATION).d(DECLARATORS, 0).d(INIT).d(ARGUMENTS, 0).d(RIGHT).d(IDENTIFIER).done();
+        DECLARATION).d(DECLARATORS, 0).d(INIT).d(JUST).d(ARGUMENTS, 0).d(RIGHT).d(IDENTIFIER).done();
     final IdentifierP alertNode1 = new Getter(script).d(BODY).d(STATEMENTS, 0).d(BODY).d(BLOCK).d(STATEMENTS, 1).d(
         EXPRESSION).d(CALLEE).d(IDENTIFIER).done();
     final IdentifierP xNode2 = new Getter(script).d(BODY).d(STATEMENTS, 0).d(BODY).d(BLOCK).d(STATEMENTS, 1).d(
@@ -1201,10 +1195,15 @@ public class ScopeTest extends TestBase {
     Scope catchScope = globalScope.children.maybeHead().just();
     final IdentifierP alertNode1 = new Getter(script).d(BODY).d(STATEMENTS, 0).d(BODY).d(STATEMENTS, 0).d(EXPRESSION).d(
         CALLEE).d(IDENTIFIER).done();
-    final IdentifierP errNode1 = new Getter(script).d(BODY).d(STATEMENTS, 0).d(CATCH).d(BINDING).done();
-    final IdentifierP alertNode2 = new Getter(script).d(BODY).d(STATEMENTS, 0).d(CATCH).d(BODY).d(STATEMENTS, 0).d(
+    final IdentifierP errNode1 = new Getter(script).d(BODY).d(STATEMENTS, 0).d(CATCHCLAUSE).d(BINDING).done();
+    final IdentifierP alertNode2 = new Getter(script).d(BODY)
+        .d(STATEMENTS, 0)
+        .d(CATCHCLAUSE)
+        .d(BODY)
+        .d(STATEMENTS, 0)
+        .d(
         EXPRESSION).d(CALLEE).d(IDENTIFIER).done();
-    final IdentifierP errNode2 = new Getter(script).d(BODY).d(STATEMENTS, 0).d(CATCH).d(BODY).d(STATEMENTS, 0).d(
+    final IdentifierP errNode2 = new Getter(script).d(BODY).d(STATEMENTS, 0).d(CATCHCLAUSE).d(BODY).d(STATEMENTS, 0).d(
         EXPRESSION).d(ARGUMENTS, 0).d(IDENTIFIER).done();
     { // global scope
 
@@ -1257,18 +1256,44 @@ public class ScopeTest extends TestBase {
     Scope catchScope2 = catchScope1.children.maybeHead().just();
     final IdentifierP alertNode1 = new Getter(script).d(BODY).d(STATEMENTS, 0).d(BODY).d(STATEMENTS, 0).d(EXPRESSION).d(
         CALLEE).d(IDENTIFIER).done();
-    final IdentifierP err1Node1 = new Getter(script).d(BODY).d(STATEMENTS, 0).d(CATCH).d(BINDING).done();
-    final IdentifierP err1Node2 = new Getter(script).d(BODY).d(STATEMENTS, 0).d(CATCH).d(BODY).d(STATEMENTS, 0).d(BODY)
+    final IdentifierP err1Node1 = new Getter(script).d(BODY).d(STATEMENTS, 0).d(CATCHCLAUSE).d(BINDING).done();
+    final IdentifierP err1Node2 = new Getter(script).d(BODY).d(STATEMENTS, 0).d(CATCHCLAUSE).d(BODY).d(STATEMENTS, 0).d(
+        BODY)
         .d(STATEMENTS, 0).d(EXPRESSION).d(OBJECT).d(IDENTIFIER).done();
-    final IdentifierP err2Node1 = new Getter(script).d(BODY).d(STATEMENTS, 0).d(CATCH).d(BODY).d(STATEMENTS, 0).d(CATCH)
+    final IdentifierP err2Node1 = new Getter(script).d(BODY).d(STATEMENTS, 0).d(CATCHCLAUSE).d(BODY).d(STATEMENTS, 0).d(
+        CATCHCLAUSE)
         .d(BINDING).done();
-    final IdentifierP alertNode2 = new Getter(script).d(BODY).d(STATEMENTS, 0).d(CATCH).d(BODY).d(STATEMENTS, 0).d(
-        CATCH).d(BODY).d(STATEMENTS, 0).d(EXPRESSION).d(CALLEE).d(IDENTIFIER).done();
-    final IdentifierP err1Node3 = new Getter(script).d(BODY).d(STATEMENTS, 0).d(CATCH).d(BODY).d(STATEMENTS, 0).d(CATCH)
+    final IdentifierP alertNode2 = new Getter(script).d(BODY)
+        .d(STATEMENTS, 0)
+        .d(CATCHCLAUSE)
+        .d(BODY)
+        .d(STATEMENTS, 0)
+        .d(
+            CATCHCLAUSE)
+        .d(BODY)
+        .d(STATEMENTS, 0)
+        .d(EXPRESSION)
+        .d(CALLEE)
+        .d(IDENTIFIER)
+        .done();
+    final IdentifierP err1Node3 = new Getter(script).d(BODY).d(STATEMENTS, 0).d(CATCHCLAUSE).d(BODY).d(STATEMENTS, 0).d(
+        CATCHCLAUSE)
         .d(BODY).d(STATEMENTS, 0).d(EXPRESSION).d(ARGUMENTS, 0).d(IDENTIFIER).done();
-    final IdentifierP alertNode3 = new Getter(script).d(BODY).d(STATEMENTS, 0).d(CATCH).d(BODY).d(STATEMENTS, 0).d(
-        CATCH).d(BODY).d(STATEMENTS, 1).d(EXPRESSION).d(CALLEE).d(IDENTIFIER).done();
-    final IdentifierP err2Node2 = new Getter(script).d(BODY).d(STATEMENTS, 0).d(CATCH).d(BODY).d(STATEMENTS, 0).d(CATCH)
+    final IdentifierP alertNode3 = new Getter(script).d(BODY)
+        .d(STATEMENTS, 0)
+        .d(CATCHCLAUSE)
+        .d(BODY)
+        .d(STATEMENTS, 0)
+        .d(
+            CATCHCLAUSE)
+        .d(BODY)
+        .d(STATEMENTS, 1)
+        .d(EXPRESSION)
+        .d(CALLEE)
+        .d(IDENTIFIER)
+        .done();
+    final IdentifierP err2Node2 = new Getter(script).d(BODY).d(STATEMENTS, 0).d(CATCHCLAUSE).d(BODY).d(STATEMENTS, 0).d(
+        CATCHCLAUSE)
         .d(BODY).d(STATEMENTS, 1).d(EXPRESSION).d(ARGUMENTS, 0).d(IDENTIFIER).done();
     { // global scope
 
@@ -1328,8 +1353,8 @@ public class ScopeTest extends TestBase {
     Scope catchScope = globalScope.children.maybeHead().just();
     final IdentifierP alertNode1 = new Getter(script).d(BODY).d(STATEMENTS, 0).d(BODY).d(STATEMENTS, 0).d(EXPRESSION).d(
         CALLEE).d(IDENTIFIER).done();
-    final IdentifierP errNode1 = new Getter(script).d(BODY).d(STATEMENTS, 0).d(CATCH).d(BINDING).done();
-    final IdentifierP errNode2 = new Getter(script).d(BODY).d(STATEMENTS, 0).d(CATCH).d(BODY).d(STATEMENTS, 0).d(
+    final IdentifierP errNode1 = new Getter(script).d(BODY).d(STATEMENTS, 0).d(CATCHCLAUSE).d(BINDING).done();
+    final IdentifierP errNode2 = new Getter(script).d(BODY).d(STATEMENTS, 0).d(CATCHCLAUSE).d(BODY).d(STATEMENTS, 0).d(
         DECLARATION).d(DECLARATORS, 0).d(BINDING).done();
     { // global scope
 
@@ -1417,19 +1442,7 @@ public class ScopeTest extends TestBase {
     }
   }
 
-  private final boolean printAST = Math.abs(3) < 3;
-
   private Script parse(String source) throws JsError {
-    Parser parser = new Parser(source);
-    Script node = parser.parse();
-    if (this.printAST) {
-      // print the AST if needed
-      JsonObject jsonObject = Serializer.serialize(node);
-      jsonObject.addProperty("source", source);
-      Gson gson = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().serializeNulls().create();
-      String jsonString = gson.toJson(jsonObject);
-      System.out.println(jsonString);
-    }
-    return node;
+    return Parser.parse(source);
   }
 }

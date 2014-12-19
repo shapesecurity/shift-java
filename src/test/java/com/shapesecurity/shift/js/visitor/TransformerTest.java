@@ -16,7 +16,10 @@
 
 package com.shapesecurity.shift.js.visitor;
 
-import static org.junit.Assert.assertTrue;
+import java.io.File;
+import java.io.IOException;
+
+import javax.annotation.Nonnull;
 
 import com.shapesecurity.shift.functional.data.List;
 import com.shapesecurity.shift.js.TestBase;
@@ -27,26 +30,23 @@ import com.shapesecurity.shift.js.parser.JsError;
 import com.shapesecurity.shift.js.parser.Parser;
 import com.shapesecurity.shift.js.path.Branch;
 
+import static org.junit.Assert.assertTrue;
+
 import org.junit.Test;
-
-import java.io.File;
-import java.io.IOException;
-
-import javax.annotation.Nonnull;
 
 public class TransformerTest extends TestBase {
   public static final double NANOS_TO_SECONDS = 1e-9;
 
   private void testClone(String text) throws JsError {
     Script script = Parser.parse(text);
-    Script script2 = script.reduce(CloneReducer.INSTANCE, List.<Branch>nil());
+    Script script2 = script.reduce(CloneReducer.INSTANCE);
     assertEquals(script, script2);
-    Script script3 = script.reduce(LazyCloner.INSTANCE, List.<Branch>nil()).node;
+    Script script3 = script.reduce(LazyCloner.INSTANCE).node;
     assertTrue(script3 == script);
   }
 
   private void testTransform(String expected, String text, CloneReducer transformer) throws JsError {
-    Script script = Parser.parse(text).reduce(transformer, List.<Branch>nil());
+    Script script = Parser.parse(text).reduce(transformer);
     Script script2 = Parser.parse(expected);
     assertEquals(script, script2);
   }
@@ -54,30 +54,32 @@ public class TransformerTest extends TestBase {
   private void testLibrary(String fileName) throws IOException, JsError {
     String source = readLibrary(fileName);
     Script script = Parser.parse(source);
-    Script script2 = script.reduce(new CloneReducer(), List.<Branch>nil());
+    Script script2 = script.reduce(new CloneReducer());
     assertEquals(script, script2);
   }
 
   @Test
   public void testTransformSimple() throws JsError {
-    testTransform("3", "2", new CloneReducer() {
-      @Nonnull
-      @Override
-      public Expression reduceLiteralNumericExpression(
-          @Nonnull LiteralNumericExpression node,
-          @Nonnull List<Branch> path) {
-        return new LiteralNumericExpression(node.value + 1);
-      }
-    });
-    testTransform("3+5", "2+4", new CloneReducer() {
-      @Nonnull
-      @Override
-      public Expression reduceLiteralNumericExpression(
-          @Nonnull LiteralNumericExpression node,
-          @Nonnull List<Branch> path) {
-        return new LiteralNumericExpression(node.value + 1);
-      }
-    });
+    testTransform(
+        "3", "2", new CloneReducer() {
+          @Nonnull
+          @Override
+          public Expression reduceLiteralNumericExpression(
+              @Nonnull LiteralNumericExpression node,
+              @Nonnull List<Branch> path) {
+            return new LiteralNumericExpression(node.value + 1);
+          }
+        });
+    testTransform(
+        "3+5", "2+4", new CloneReducer() {
+          @Nonnull
+          @Override
+          public Expression reduceLiteralNumericExpression(
+              @Nonnull LiteralNumericExpression node,
+              @Nonnull List<Branch> path) {
+            return new LiteralNumericExpression(node.value + 1);
+          }
+        });
   }
 
   @Test
@@ -116,7 +118,7 @@ public class TransformerTest extends TestBase {
     int i = 0;
     for (String jsLib : jsFiles) {
       System.out.print(".");
-      if (i++ == 80) {
+      if (++i == 80) {
         i = 0;
         System.out.println();
       }

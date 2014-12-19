@@ -14,42 +14,14 @@
  * limitations under the License.
  */
 
-package com.shapesecurity.shift.js.path;
 
-public enum BranchType {
-  ELEMENTS,
-  LEFT,
-  RIGHT,
-  BINDING,
-  CALLEE,
-  ARGUMENTS,
-  OBJECT,
-  PROPERTY,
-  EXPRESSION,
-  ALTERNATE,
-  CONSEQUENT,
-  TEST,
-  BODY,
-  IDENTIFIER,
-  PARAMETERS,
-  NAME,
-  VALUE,
-  PROPERTIES,
-  OPERAND,
-  PARAMETER,
-  STATEMENTS,
-  LABEL,
-  INIT,
-  UPDATE,
-  DISCRIMINANT,
-  CASES,
-  DEFAULTCASE,
-  PREDEFAULTCASES,
-  POSTDEFAULTCASES,
-  BLOCK,
-  CATCH,
-  FINALIZER,
-  DECLARATORS,
-  DECLARATION,
-  DIRECTIVES
+package com.shapesecurity.shift.js.ast.types;
+
+import javax.annotation.Nonnull;
+
+public interface GenType {
+  @Nonnull
+  Type rawType();
+
+  boolean isAssignableFrom(@Nonnull GenType type);
 }

@@ -276,12 +276,7 @@ public abstract class List<A> implements Iterable<A> {
    * @return The new {@link List} containing the result.
    */
   @Nonnull
-  public <B> List<B> mapWithIndex(@Nonnull F2<Integer, A, B> f) {
-    return this.mapWithIndex(f, 0);
-  }
-
-  @Nonnull
-  protected abstract <B> List<B> mapWithIndex(@Nonnull F2<Integer, A, B> f, int index);
+  public abstract <B> List<B> mapWithIndex(@Nonnull F2<Integer, A, B> f);
 
   /**
    * The the first <code>n</code> elements of the list and create a new List of them. If the original

@@ -16,18 +16,11 @@
 
 package com.shapesecurity.shift.js.ast.property;
 
-import com.shapesecurity.shift.functional.data.List;
-import com.shapesecurity.shift.functional.data.Maybe;
-import com.shapesecurity.shift.functional.data.NonEmptyList;
-import com.shapesecurity.shift.js.ast.FunctionBody;
-import com.shapesecurity.shift.js.ast.Node;
-import com.shapesecurity.shift.js.ast.ReplacementChild;
-import com.shapesecurity.shift.js.path.Branch;
-import com.shapesecurity.shift.js.path.BranchType;
-import com.shapesecurity.shift.js.visitor.ReducerP;
-import com.shapesecurity.shift.js.visitor.TransformerP;
-
 import javax.annotation.Nonnull;
+
+import com.shapesecurity.shift.js.ast.FunctionBody;
+import com.shapesecurity.shift.js.ast.types.Type;
+import com.shapesecurity.shift.js.visitor.TransformerP;
 
 public class Getter extends AccessorProperty {
   public Getter(@Nonnull PropertyName name, @Nonnull FunctionBody body) {
@@ -42,62 +35,30 @@ public class Getter extends AccessorProperty {
 
   @Nonnull
   @Override
-  public <ProgramState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> PropertyState transform(
-      @Nonnull TransformerP<ProgramState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> transformer) {
+  public <ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> PropertyState transform(
+      @Nonnull TransformerP<ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> transformer) {
     return transformer.transform(this);
   }
 
   @Nonnull
   @Override
-  public <ProgramState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> PropertyState reduce(
-      @Nonnull final ReducerP<ProgramState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> reducer,
-      @Nonnull final List<Branch> path) {
-    Branch nameBranch = new Branch(BranchType.NAME);
-    Branch bodyBranch = new Branch(BranchType.BODY);
-    return reducer.reduceGetter(this, path, this.name.reduce(reducer, path.cons(nameBranch)), this.body.reduce(reducer,
-        path.cons(bodyBranch)));
-  }
-
-  @Nonnull
-  @Override
-  public Maybe<Node> branchChild(@Nonnull Branch branch) {
-    switch (branch.branchType) {
-    case NAME:
-      return Maybe.<Node>just(this.name);
-    case BODY:
-      return Maybe.<Node>just(this.body);
-    default:
-      return Maybe.<Node>nothing();
-    }
-  }
-
-  @Nonnull
-  @Override
-  public Node replicate(@Nonnull List<? extends ReplacementChild> children) {
-    PropertyName name = this.name;
-    FunctionBody body = this.body;
-    while (children instanceof NonEmptyList) {
-      NonEmptyList<? extends ReplacementChild> childrenNE = (NonEmptyList<? extends ReplacementChild>) children;
-      ReplacementChild rc = childrenNE.head;
-      Branch branch = rc.branch;
-      Node child = rc.child;
-      switch (branch.branchType) {
-      case NAME:
-        name = (PropertyName) child;
-        break;
-      case BODY:
-        body = (FunctionBody) child;
-        break;
-      default:
-      }
-      children = childrenNE.tail();
-    }
-    return new Getter(name, body);
+  public Type type() {
+    return Type.Getter;
   }
 
   @Override
   public boolean equals(Object object) {
     return object instanceof Getter && this.name.equals(((Getter) object).name) &&
-        this.body.equals(((Getter) object).body);
+           this.body.equals(((Getter) object).body);
+  }
+
+  @Nonnull
+  public Getter setName(@Nonnull PropertyName name) {
+    return new Getter(name, body);
+  }
+
+  @Nonnull
+  public Getter setBody(@Nonnull FunctionBody body) {
+    return new Getter(name, body);
   }
 }

@@ -17,35 +17,38 @@
 package com.shapesecurity.shift.js.path;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
-public class Branch {
+import com.shapesecurity.shift.functional.data.Either;
+import com.shapesecurity.shift.functional.data.List;
+import com.shapesecurity.shift.functional.data.Maybe;
+import com.shapesecurity.shift.js.ast.EitherNode;
+import com.shapesecurity.shift.js.ast.ListNode;
+import com.shapesecurity.shift.js.ast.MaybeNode;
+import com.shapesecurity.shift.js.ast.Node;
+import com.shapesecurity.shift.js.ast.types.EitherType;
+import com.shapesecurity.shift.js.ast.types.GenType;
+import com.shapesecurity.shift.js.ast.types.ListType;
+import com.shapesecurity.shift.js.ast.types.MaybeType;
+
+public interface Branch {
+  @Nullable
+  Node view(@Nonnull Node parent);
+
   @Nonnull
-  public final BranchType branchType;
-  public final int index;
+  Node set(@Nonnull Node parent, @Nonnull Node child);
 
-  public Branch(@Nonnull BranchType branchType) {
-    this(branchType, 0);
-  }
-
-  public Branch(@Nonnull BranchType branchType, int index) {
-    this.branchType = branchType;
-    this.index = index;
-  }
-
-  @Override
-  public int hashCode() {
-    return branchType.hashCode() ^ (index << 15) ^ (index >>> (32 - 15));
-  }
-
-  @Override
-  public boolean equals(Object obj) {
-    if (obj == this) {
-      return true;
+  @SuppressWarnings("unchecked")
+  @Nonnull
+  static Node wrap(@Nonnull Object obj, @Nonnull GenType suggestedType) {
+    if (obj instanceof Either) {
+      return new EitherNode((Either) obj, (EitherType) suggestedType);
+    } else if (obj instanceof List) {
+      return new ListNode((List) obj, (ListType) suggestedType);
+    } else if (obj instanceof Maybe) {
+      return new MaybeNode<>((Maybe) obj, (MaybeType) suggestedType);
+    } else {
+      return (Node) obj;
     }
-    if (obj instanceof Branch) {
-      Branch br = (Branch) obj;
-      return br.branchType == this.branchType && br.index == this.index;
-    }
-    return false;
   }
 }

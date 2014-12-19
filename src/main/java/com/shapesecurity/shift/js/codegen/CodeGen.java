@@ -87,6 +87,7 @@ import com.shapesecurity.shift.js.ast.statement.WhileStatement;
 import com.shapesecurity.shift.js.ast.statement.WithStatement;
 import com.shapesecurity.shift.js.path.Branch;
 import com.shapesecurity.shift.js.utils.Utils;
+import com.shapesecurity.shift.js.visitor.Director;
 import com.shapesecurity.shift.js.visitor.Reducer;
 
 public final class CodeGen implements Reducer<CodeRep> {
@@ -175,7 +176,7 @@ public final class CodeGen implements Reducer<CodeRep> {
 
   @Override
   @Nonnull
-  public CodeRep reduceLiteralRegexExpression(@Nonnull LiteralRegExpExpression node, @Nonnull List<Branch> path) {
+  public CodeRep reduceLiteralRegExpExpression(@Nonnull LiteralRegExpExpression node, @Nonnull List<Branch> path) {
     return factory.token(node.value);
   }
 
@@ -196,11 +197,11 @@ public final class CodeGen implements Reducer<CodeRep> {
   public CodeRep reduceFunctionExpression(
       @Nonnull FunctionExpression node,
       @Nonnull List<Branch> path,
-      @Nonnull Maybe<CodeRep> id,
-      @Nonnull List<CodeRep> params,
+      @Nonnull Maybe<CodeRep> name,
+      @Nonnull List<CodeRep> parameters,
       @Nonnull CodeRep body) {
-    final CodeRep argBody = seqVA(factory.paren(factory.commaSep(params)), factory.brace(body));
-    CodeRep result = seqVA(factory.token("function"), id.maybe(argBody, state -> seqVA(state, argBody)));
+    final CodeRep argBody = seqVA(factory.paren(factory.commaSep(parameters)), factory.brace(body));
+    CodeRep result = seqVA(factory.token("function"), name.maybe(argBody, state -> seqVA(state, argBody)));
     result.startsWithFunctionOrCurly = true;
     return result;
   }

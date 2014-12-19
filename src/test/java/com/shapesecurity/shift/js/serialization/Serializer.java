@@ -76,6 +76,7 @@ import com.shapesecurity.shift.js.ast.statement.VariableDeclarationStatement;
 import com.shapesecurity.shift.js.ast.statement.WhileStatement;
 import com.shapesecurity.shift.js.ast.statement.WithStatement;
 import com.shapesecurity.shift.js.path.Branch;
+import com.shapesecurity.shift.js.visitor.Director;
 import com.shapesecurity.shift.js.visitor.Reducer;
 
 import com.google.gson.JsonArray;
@@ -93,7 +94,7 @@ public class Serializer implements Reducer<JsonElement> {
 
   @Nonnull
   public static JsonObject serialize(@Nonnull Script script) {
-    return (JsonObject) script.reduce(INSTANCE, List.<Branch>nil());
+    return (JsonObject) script.reduce(INSTANCE);
   }
 
   @Nonnull
@@ -179,7 +180,7 @@ public class Serializer implements Reducer<JsonElement> {
 
   @Nonnull
   @Override
-  public JsonElement reduceLiteralRegexExpression(@Nonnull LiteralRegExpExpression node, @Nonnull List<Branch> path) {
+  public JsonElement reduceLiteralRegExpExpression(@Nonnull LiteralRegExpExpression node, @Nonnull List<Branch> path) {
     return b("LiteralRegexExpression").add("value", node.value).object;
   }
 
@@ -202,10 +203,10 @@ public class Serializer implements Reducer<JsonElement> {
   public JsonElement reduceFunctionExpression(
       @Nonnull FunctionExpression node,
       @Nonnull List<Branch> path,
-      @Nonnull Maybe<JsonElement> id,
-      @Nonnull List<JsonElement> params,
+      @Nonnull Maybe<JsonElement> name,
+      @Nonnull List<JsonElement> parameters,
       @Nonnull JsonElement body) {
-    return b("FunctionExpression").add("name", id).add("parameters", list(params)).add("body", body).object;
+    return b("FunctionExpression").add("name", name).add("parameters", list(parameters)).add("body", body).object;
   }
 
   @Nonnull

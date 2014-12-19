@@ -79,9 +79,9 @@ import com.shapesecurity.shift.js.path.Branch;
 
 import javax.annotation.Nonnull;
 
-public interface ReducerP<ProgramState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> {
+public interface ReducerP<ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> {
   @Nonnull
-  ProgramState reduceScript(@Nonnull Script node, @Nonnull List<Branch> path, @Nonnull ProgramBodyState body);
+  ScriptState reduceScript(@Nonnull Script node, @Nonnull List<Branch> path, @Nonnull ProgramBodyState body);
 
   @Nonnull
   IdentifierState reduceIdentifier(@Nonnull Identifier node, @Nonnull List<Branch> path);
@@ -102,7 +102,7 @@ public interface ReducerP<ProgramState, ProgramBodyState, PropertyState, Propert
   ExpressionState reduceLiteralStringExpression(@Nonnull LiteralStringExpression node, @Nonnull List<Branch> path);
 
   @Nonnull
-  ExpressionState reduceLiteralRegexExpression(@Nonnull LiteralRegExpExpression node, @Nonnull List<Branch> path);
+  ExpressionState reduceLiteralRegExpExpression(@Nonnull LiteralRegExpExpression node, @Nonnull List<Branch> path);
 
   @Nonnull
   ExpressionState reduceLiteralNumericExpression(@Nonnull LiteralNumericExpression node, @Nonnull List<Branch> path);
@@ -114,8 +114,8 @@ public interface ReducerP<ProgramState, ProgramBodyState, PropertyState, Propert
   ExpressionState reduceFunctionExpression(
       @Nonnull FunctionExpression node,
       @Nonnull List<Branch> path,
-      @Nonnull Maybe<IdentifierState> id,
-      @Nonnull List<IdentifierState> params,
+      @Nonnull Maybe<IdentifierState> name,
+      @Nonnull List<IdentifierState> parameters,
       @Nonnull ProgramBodyState body);
 
   @Nonnull

@@ -178,7 +178,7 @@ public class LazyCloner
 
   @Nonnull
   @Override
-  public DirtyState<Expression> reduceLiteralRegexExpression(
+  public DirtyState<Expression> reduceLiteralRegExpExpression(
       @Nonnull LiteralRegExpExpression node,
       @Nonnull List<Branch> path) {
     return clean((Expression) node);
@@ -205,11 +205,11 @@ public class LazyCloner
   public DirtyState<Expression> reduceFunctionExpression(
       @Nonnull FunctionExpression node,
       @Nonnull List<Branch> path,
-      @Nonnull Maybe<DirtyState<Identifier>> id,
-      @Nonnull List<DirtyState<Identifier>> params,
+      @Nonnull Maybe<DirtyState<Identifier>> name,
+      @Nonnull List<DirtyState<Identifier>> parameters,
       @Nonnull DirtyState<FunctionBody> body) {
-    DirtyState<Maybe<Identifier>> i = op(id);
-    DirtyState<List<Identifier>> p = l(params);
+    DirtyState<Maybe<Identifier>> i = op(name);
+    DirtyState<List<Identifier>> p = l(parameters);
     if (i.dirty || p.dirty || body.dirty) {
       return dirty((Expression) new FunctionExpression(i.node, p.node, body.node));
     }

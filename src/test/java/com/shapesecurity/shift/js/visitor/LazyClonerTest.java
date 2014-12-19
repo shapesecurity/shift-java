@@ -16,7 +16,10 @@
 
 package com.shapesecurity.shift.js.visitor;
 
-import static org.junit.Assert.assertTrue;
+import java.io.File;
+import java.io.IOException;
+
+import javax.annotation.Nonnull;
 
 import com.shapesecurity.shift.functional.data.List;
 import com.shapesecurity.shift.js.TestBase;
@@ -28,18 +31,15 @@ import com.shapesecurity.shift.js.parser.JsError;
 import com.shapesecurity.shift.js.parser.Parser;
 import com.shapesecurity.shift.js.path.Branch;
 
+import static org.junit.Assert.assertTrue;
+
 import org.junit.Test;
-
-import java.io.File;
-import java.io.IOException;
-
-import javax.annotation.Nonnull;
 
 public class LazyClonerTest extends TestBase {
   @Test
   public void testLibraries() throws IOException, JsError {
     List<String> jsFiles = List.nil();
-    setFatal(false); // Collect the failures in an ErrorCollector
+    setFatal(true); // Collect the failures in an ErrorCollector
 
     // Get a list of the js files within the resources directory to process
     File[] files = new File(getPath("libraries").toString()).listFiles();
@@ -59,7 +59,7 @@ public class LazyClonerTest extends TestBase {
     int i = 0;
     for (String jsLib : jsFiles) {
       System.out.print(".");
-      if (i++ == 80) {
+      if (++i == 80) {
         i = 0;
         System.out.println();
       }
@@ -92,6 +92,11 @@ public class LazyClonerTest extends TestBase {
         return DirtyState.dirty(new LiteralStringExpression("a"));
       }
     };
-    assertEquals(script.reduce(a).node.reduce(b).node, script.reduce(b).node.reduce(a).node);
+    Script r1 = script.reduce(a).node;
+    Script r2 = r1.reduce(b).node;
+
+    Script r3 = script.reduce(b).node;
+    Script r4 = r3.reduce(a).node;
+    assertEquals(r2, r4);
   }
 }

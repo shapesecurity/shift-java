@@ -23,31 +23,14 @@ import javax.annotation.Nonnull;
 
 import com.shapesecurity.shift.functional.Thunk;
 import com.shapesecurity.shift.functional.data.HashCodeBuilder;
-import com.shapesecurity.shift.functional.data.List;
 import com.shapesecurity.shift.functional.data.Maybe;
 import com.shapesecurity.shift.functional.data.NonEmptyList;
+import com.shapesecurity.shift.js.ast.types.GenType;
+import com.shapesecurity.shift.js.ast.types.Type;
 import com.shapesecurity.shift.js.path.Branch;
 
 public abstract class Node {
   private final Thunk<Integer> hashCodeThunk = Thunk.from(this::calcHashCode);
-
-  // rebuild list with changed elements stored in an array, sharing the unchanged portion of the list
-  @Nonnull
-  private static <N> List<N> internalReplaceIndex(@Nonnull List<N> lst, int slotsLeft, int max, @Nonnull N[] changed) {
-    if (slotsLeft == -1) {
-      return lst;
-    } else {
-      NonEmptyList<N> lstNE = (NonEmptyList<N>) lst;
-      int index = max - slotsLeft;
-      N replacement = (changed[index] == null) ? lstNE.head : changed[index];
-      return internalReplaceIndex(lstNE.tail(), slotsLeft - 1, max, changed).cons(replacement);
-    }
-  }
-
-  @Nonnull
-  public static <N> List<N> replaceIndex(@Nonnull List<N> lst, int max, @Nonnull N[] changed) {
-    return internalReplaceIndex(lst, max, max, changed);
-  }
 
   private int calcHashCode() {
     int start = 0;
@@ -72,8 +55,20 @@ public abstract class Node {
   }
 
   @Nonnull
-  public abstract Maybe<? extends Node> branchChild(@Nonnull Branch branch);
+  public abstract Type type();
 
   @Nonnull
-  public abstract Node replicate(@Nonnull List<? extends ReplacementChild> children);
+  public GenType genType() {
+    return type();
+  }
+
+  @Nonnull
+  public Maybe<Node> get(@Nonnull Branch branch) {
+    return Maybe.fromNullable(branch.view(this));
+  }
+
+  @Nonnull
+  public Node set(NonEmptyList<ReplacementChild> list) {
+    return list.foldLeft((me, rep) -> rep.branch.set(me, rep.child), this);
+  }
 }

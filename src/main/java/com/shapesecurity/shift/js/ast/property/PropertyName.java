@@ -16,19 +16,15 @@
 
 package com.shapesecurity.shift.js.ast.property;
 
-import com.shapesecurity.shift.functional.data.List;
-import com.shapesecurity.shift.functional.data.Maybe;
+import javax.annotation.Nonnull;
+
 import com.shapesecurity.shift.js.ast.Identifier;
 import com.shapesecurity.shift.js.ast.Node;
-import com.shapesecurity.shift.js.ast.ReplacementChild;
+import com.shapesecurity.shift.js.ast.types.Type;
 import com.shapesecurity.shift.js.ast.expression.LiteralNumericExpression;
 import com.shapesecurity.shift.js.ast.expression.LiteralStringExpression;
-import com.shapesecurity.shift.js.path.Branch;
 import com.shapesecurity.shift.js.utils.D2A;
-import com.shapesecurity.shift.js.visitor.ReducerP;
 import com.shapesecurity.shift.js.visitor.TransformerP;
-
-import javax.annotation.Nonnull;
 
 public final class PropertyName extends Node {
   @Nonnull
@@ -68,37 +64,21 @@ public final class PropertyName extends Node {
   }
 
   @Nonnull
-  public <ProgramState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> PropertyNameState transform(
-      @Nonnull TransformerP<ProgramState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> transformer) {
+  public <ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> PropertyNameState transform(
+      @Nonnull TransformerP<ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> transformer) {
     return transformer.transform(this);
   }
 
   @Nonnull
-  public final <ProgramState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> PropertyNameState reduce(
-      ReducerP<ProgramState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> reducer,
-      @Nonnull final List<Branch> path) {
-    return reducer.reducePropertyName(this, path);
-  }
-
-  @Nonnull
   @Override
-  public Maybe<Node> branchChild(@Nonnull Branch branch) {
-    switch (branch.branchType) {
-    default:
-      return Maybe.<Node>nothing();
-    }
-  }
-
-  @Nonnull
-  @Override
-  public Node replicate(@Nonnull List<? extends ReplacementChild> children) {
-    return new PropertyName(this);
+  public Type type() {
+    return Type.PropertyName;
   }
 
   @Override
   public boolean equals(Object object) {
     return object instanceof PropertyName && this.kind.equals(((PropertyName) object).kind) &&
-        this.value.equals(((PropertyName) object).value);
+           this.value.equals(((PropertyName) object).value);
   }
 
   public static enum PropertyNameKind {

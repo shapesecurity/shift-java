@@ -44,6 +44,7 @@ import com.shapesecurity.shift.js.ast.statement.FunctionDeclaration;
 import com.shapesecurity.shift.js.ast.statement.WithStatement;
 import com.shapesecurity.shift.js.path.Branch;
 import com.shapesecurity.shift.js.scope.Declaration.Kind;
+import com.shapesecurity.shift.js.visitor.Director;
 import com.shapesecurity.shift.js.visitor.MonoidalReducer;
 
 import java.util.HashMap;
@@ -62,7 +63,7 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State, Sc
 
   @Nonnull
   public static GlobalScope analyze(@Nonnull Script script) {
-    return (GlobalScope) script.reduce(INSTANCE, List.<Branch>nil()).children.maybeHead().just();
+    return (GlobalScope) script.reduce(INSTANCE).children.maybeHead().just();
   }
 
   @Nonnull
@@ -166,13 +167,13 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State, Sc
   public State reduceFunctionExpression(
       @Nonnull FunctionExpression node,
       @Nonnull List<Branch> path,
-      @Nonnull Maybe<State> id,
-      @Nonnull List<State> params,
+      @Nonnull Maybe<State> name,
+      @Nonnull List<State> parameters,
       @Nonnull State programBody) {
-    params = params.map(s -> s.addDeclaration(Kind.Param));
-    State s = super.reduceFunctionExpression(node, path, id, params, programBody).finish(node, Scope.Type.Function);
-    if (id.isJust()) {
-      s = s.target(id.just()).addDeclaration(Kind.FunctionName);
+    parameters = parameters.map(s -> s.addDeclaration(Kind.Param));
+    State s = super.reduceFunctionExpression(node, path, name, parameters, programBody).finish(node, Scope.Type.Function);
+    if (name.isJust()) {
+      s = s.target(name.just()).addDeclaration(Kind.FunctionName);
       s = s.finish(node, Scope.Type.FunctionName);
     }
     return s;

@@ -16,20 +16,14 @@
 
 package com.shapesecurity.shift.js.ast.statement;
 
-import com.shapesecurity.shift.functional.data.List;
+import javax.annotation.Nonnull;
+
 import com.shapesecurity.shift.functional.data.Maybe;
-import com.shapesecurity.shift.functional.data.NonEmptyList;
 import com.shapesecurity.shift.js.ast.Block;
 import com.shapesecurity.shift.js.ast.CatchClause;
-import com.shapesecurity.shift.js.ast.Node;
-import com.shapesecurity.shift.js.ast.ReplacementChild;
 import com.shapesecurity.shift.js.ast.Statement;
-import com.shapesecurity.shift.js.path.Branch;
-import com.shapesecurity.shift.js.path.BranchType;
-import com.shapesecurity.shift.js.visitor.ReducerP;
+import com.shapesecurity.shift.js.ast.types.Type;
 import com.shapesecurity.shift.js.visitor.TransformerP;
-
-import javax.annotation.Nonnull;
 
 public class TryFinallyStatement extends Statement {
   @Nonnull
@@ -48,64 +42,15 @@ public class TryFinallyStatement extends Statement {
 
   @Nonnull
   @Override
-  public <ProgramState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> StatementState transform(
-      @Nonnull TransformerP<ProgramState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> transformer) {
+  public <ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> StatementState transform(
+      @Nonnull TransformerP<ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> transformer) {
     return transformer.transform(this);
   }
 
   @Nonnull
   @Override
-  public <ProgramState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> StatementState reduce(
-      @Nonnull final ReducerP<ProgramState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> reducer,
-      @Nonnull final List<Branch> path) {
-    final List<Branch> blockPath = path.cons(new Branch(BranchType.BODY));
-    final List<Branch> catchPath = path.cons(new Branch(BranchType.CATCH));
-    final List<Branch> finalizerPath = path.cons(new Branch(BranchType.FINALIZER));
-    return reducer.reduceTryFinallyStatement(this, path, this.body.reduce(reducer, blockPath), this.catchClause.map(
-        catchClause1 -> catchClause1.reduce(reducer, catchPath)), this.finalizer.reduce(reducer, finalizerPath));
-  }
-
-  @Nonnull
-  @Override
-  public Maybe<? extends Node> branchChild(@Nonnull Branch branch) {
-    switch (branch.branchType) {
-    case BODY:
-      return Maybe.<Node>just(this.body);
-    case CATCH:
-      return this.catchClause;
-    case FINALIZER:
-      return Maybe.just(this.finalizer);
-    default:
-      return Maybe.<Node>nothing();
-    }
-  }
-
-  @Nonnull
-  @Override
-  public Node replicate(@Nonnull List<? extends ReplacementChild> children) {
-    Block block = this.body;
-    Maybe<CatchClause> catchClause = this.catchClause;
-    Block finalizer = this.finalizer;
-    while (children instanceof NonEmptyList) {
-      NonEmptyList<? extends ReplacementChild> childrenNE = (NonEmptyList<? extends ReplacementChild>) children;
-      ReplacementChild rc = childrenNE.head;
-      Branch branch = rc.branch;
-      Node child = rc.child;
-      switch (branch.branchType) {
-      case BODY:
-        block = (Block) child;
-        break;
-      case CATCH:
-        catchClause = Maybe.<CatchClause>just((CatchClause) child);
-        break;
-      case FINALIZER:
-        finalizer = (Block) child;
-        break;
-      default:
-      }
-      children = childrenNE.tail();
-    }
-    return new TryFinallyStatement(block, catchClause, finalizer);
+  public Type type() {
+    return Type.TryFinallyStatement;
   }
 
   @Override
@@ -114,5 +59,33 @@ public class TryFinallyStatement extends Statement {
         this.body.equals(((TryFinallyStatement) object).body) &&
         this.catchClause.equals(((TryFinallyStatement) object).catchClause) &&
         this.finalizer.equals(((TryFinallyStatement) object).finalizer);
+  }
+
+  @Nonnull
+  public Block getBody() {
+    return body;
+  }
+
+  @Nonnull
+  public Maybe<CatchClause> getCatchClause() {
+    return catchClause;
+  }
+
+  @Nonnull
+  public Block getFinalizer() {
+    return finalizer;
+  }
+
+  @Nonnull
+  public TryFinallyStatement setBody(@Nonnull Block body) {
+    return new TryFinallyStatement(body, catchClause, finalizer);
+  }
+
+  public TryFinallyStatement setCatchClause(@Nonnull Maybe<CatchClause> catchClause) {
+    return new TryFinallyStatement(body, catchClause, finalizer);
+  }
+
+  public TryFinallyStatement setFinalizer(@Nonnull Block finalizer) {
+    return new TryFinallyStatement(body, catchClause, finalizer);
   }
 }

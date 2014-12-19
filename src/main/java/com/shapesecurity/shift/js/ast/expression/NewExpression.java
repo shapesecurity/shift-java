@@ -16,19 +16,14 @@
 
 package com.shapesecurity.shift.js.ast.expression;
 
-import com.shapesecurity.shift.functional.data.List;
-import com.shapesecurity.shift.functional.data.Maybe;
-import com.shapesecurity.shift.functional.data.NonEmptyList;
-import com.shapesecurity.shift.js.ast.Expression;
-import com.shapesecurity.shift.js.ast.Node;
-import com.shapesecurity.shift.js.ast.ReplacementChild;
-import com.shapesecurity.shift.js.ast.operators.Precedence;
-import com.shapesecurity.shift.js.path.Branch;
-import com.shapesecurity.shift.js.path.BranchType;
-import com.shapesecurity.shift.js.visitor.ReducerP;
-import com.shapesecurity.shift.js.visitor.TransformerP;
-
 import javax.annotation.Nonnull;
+
+import com.shapesecurity.shift.functional.data.List;
+import com.shapesecurity.shift.js.ast.Expression;
+import com.shapesecurity.shift.js.ast.ListNode;
+import com.shapesecurity.shift.js.ast.operators.Precedence;
+import com.shapesecurity.shift.js.ast.types.Type;
+import com.shapesecurity.shift.js.visitor.TransformerP;
 
 public class NewExpression extends LeftHandSideExpression {
   @Nonnull
@@ -49,68 +44,40 @@ public class NewExpression extends LeftHandSideExpression {
 
   @Nonnull
   @Override
-  public <ProgramState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> ExpressionState transform(
-      @Nonnull TransformerP<ProgramState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> transformer) {
+  public <ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> ExpressionState transform(
+      @Nonnull TransformerP<ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> transformer) {
     return transformer.transform(this);
   }
 
   @Nonnull
   @Override
-  public <ProgramState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> ExpressionState reduce(
-      @Nonnull final ReducerP<ProgramState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> reducer,
-      @Nonnull final List<Branch> path) {
-    Branch calleeBranch = new Branch(BranchType.CALLEE);
-    return reducer.reduceNewExpression(this, path, this.callee.reduce(reducer, path.cons(calleeBranch)),
-        this.arguments.mapWithIndex((index, iExpression) -> iExpression.reduce(reducer, path.cons(new Branch(
-            BranchType.ARGUMENTS, index)))));
-  }
-
-  @Nonnull
-  @Override
-  public Maybe<? extends Node> branchChild(@Nonnull Branch branch) {
-    switch (branch.branchType) {
-    case CALLEE:
-      return Maybe.<Node>just(this.callee);
-    case ARGUMENTS:
-      return this.arguments.index(branch.index);
-    default:
-      return Maybe.<Node>nothing();
-    }
-  }
-
-  @Nonnull
-  @Override
-  public Node replicate(@Nonnull List<? extends ReplacementChild> children) {
-    Expression callee = this.callee;
-    int argumentsLength = arguments.length();
-    Expression argumentsChanges[] = new Expression[argumentsLength];
-    int argumentsMax = -1;
-    while (children instanceof NonEmptyList) {
-      NonEmptyList<? extends ReplacementChild> childrenNE = (NonEmptyList<? extends ReplacementChild>) children;
-      ReplacementChild rc = childrenNE.head;
-      Branch branch = rc.branch;
-      Node child = rc.child;
-      switch (branch.branchType) {
-      case CALLEE:
-        callee = (Expression) child;
-        break;
-      case ARGUMENTS:
-        if (branch.index < argumentsLength) {
-          argumentsChanges[branch.index] = (Expression) child;
-          argumentsMax = Math.max(argumentsMax, branch.index);
-        }
-        break;
-      default:
-      }
-      children = childrenNE.tail();
-    }
-    List<Expression> arguments = Node.replaceIndex(this.arguments, argumentsMax, argumentsChanges);
-    return new NewExpression(callee, arguments);
+  public Type type() {
+    return Type.NewExpression;
   }
 
   @Override
   public boolean equals(Object object) {
     return object instanceof NewExpression && this.callee.equals(((NewExpression) object).callee) &&
-        this.arguments.equals(((NewExpression) object).arguments);
+           this.arguments.equals(((NewExpression) object).arguments);
+  }
+
+  @Nonnull
+  public Expression getCallee() {
+    return callee;
+  }
+
+  @Nonnull
+  public List<Expression> getArguments() {
+    return arguments;
+  }
+
+  @Nonnull
+  public NewExpression setCallee(@Nonnull Expression callee) {
+    return new NewExpression(callee, arguments);
+  }
+
+  @Nonnull
+  public NewExpression setArguments(@Nonnull List<Expression> arguments) {
+    return new NewExpression(callee, arguments);
   }
 }

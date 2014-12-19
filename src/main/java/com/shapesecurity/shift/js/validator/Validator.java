@@ -16,6 +16,10 @@
 
 package com.shapesecurity.shift.js.validator;
 
+import java.util.HashSet;
+
+import javax.annotation.Nonnull;
+
 import com.shapesecurity.shift.functional.data.Either;
 import com.shapesecurity.shift.functional.data.List;
 import com.shapesecurity.shift.functional.data.Maybe;
@@ -48,11 +52,8 @@ import com.shapesecurity.shift.js.ast.statement.WhileStatement;
 import com.shapesecurity.shift.js.ast.statement.WithStatement;
 import com.shapesecurity.shift.js.path.Branch;
 import com.shapesecurity.shift.js.utils.Utils;
+import com.shapesecurity.shift.js.visitor.Director;
 import com.shapesecurity.shift.js.visitor.MonoidalReducer;
-
-import java.util.HashSet;
-
-import javax.annotation.Nonnull;
 
 public class Validator extends MonoidalReducer<ValidationContext, Monoid<ValidationContext>> {
   public Validator() {
@@ -60,7 +61,7 @@ public class Validator extends MonoidalReducer<ValidationContext, Monoid<Validat
   }
 
   public static List<ValidationError> validate(Script node) {
-    return node.reduce(new Validator(), List.<Branch>nil()).errors.toList();
+    return node.reduce(new Validator()).errors.toList();
   }
 
   @Nonnull
@@ -70,8 +71,11 @@ public class Validator extends MonoidalReducer<ValidationContext, Monoid<Validat
       @Nonnull List<Branch> path,
       @Nonnull Maybe<ValidationContext> label) {
     ValidationContext v = super.reduceBreakStatement(node, path, label);
-    return node.label.maybe(v.addFreeBreakStatement(new ValidationError(node,
-        "break must be nested within switch or iteration statement")), v::addFreeJumpTarget);
+    return node.label.maybe(
+        v.addFreeBreakStatement(
+            new ValidationError(
+                node,
+                "break must be nested within switch or iteration statement")), v::addFreeJumpTarget);
   }
 
   @Nonnull
@@ -139,17 +143,22 @@ public class Validator extends MonoidalReducer<ValidationContext, Monoid<Validat
       v = v.addStrictError(new ValidationError(node, "FunctionDeclaration must have unique parameter names"));
     }
 
-    v = node.parameters.foldLeft((v1, ident) -> {
-      if (Utils.isRestrictedWord(ident.name)) {
-        return v1.addStrictError(new ValidationError(ident,
-            "FunctionExpression parameter name must not be restricted word"));
-      }
-      return v1;
-    }, v);
+    v = node.parameters.foldLeft(
+        (v1, ident) -> {
+          if (Utils.isRestrictedWord(ident.name)) {
+            return v1.addStrictError(
+                new ValidationError(
+                    ident,
+                    "FunctionExpression parameter name must not be restricted word"));
+          }
+          return v1;
+        }, v);
 
     if (Utils.isRestrictedWord(node.name.name)) {
-      v = v.addStrictError(new ValidationError(node,
-          "FunctionDeclaration `name` must not be `eval` or `arguments` in strict mode"));
+      v = v.addStrictError(
+          new ValidationError(
+              node,
+              "FunctionDeclaration `name` must not be `eval` or `arguments` in strict mode"));
     }
     return v;
   }
@@ -159,24 +168,29 @@ public class Validator extends MonoidalReducer<ValidationContext, Monoid<Validat
   public ValidationContext reduceFunctionExpression(
       @Nonnull FunctionExpression node,
       @Nonnull List<Branch> path,
-      @Nonnull Maybe<ValidationContext> id,
-      @Nonnull List<ValidationContext> params,
+      @Nonnull Maybe<ValidationContext> name,
+      @Nonnull List<ValidationContext> parameters,
       @Nonnull ValidationContext programBody) {
-    ValidationContext v = super.reduceFunctionExpression(node, path, id, params, programBody).clearReturnStatements();
+    ValidationContext v = super.reduceFunctionExpression(node, path, name, parameters, programBody)
+        .clearReturnStatements();
     if (!Utils.areUniqueNames(node.parameters)) {
       v = v.addStrictError(new ValidationError(node, "FunctionExpression parameter names must be unique"));
     }
 
     for (Identifier ident : node.parameters) {
       if (Utils.isRestrictedWord(ident.name)) {
-        v = v.addStrictError(new ValidationError(ident,
-            "FunctionExpression parameter name must not be restricted word"));
+        v = v.addStrictError(
+            new ValidationError(
+                ident,
+                "FunctionExpression parameter name must not be restricted word"));
       }
     }
 
     if (node.name.maybe(false, ident -> Utils.isRestrictedWord(ident.name))) {
-      v = v.addStrictError(new ValidationError(node,
-          "FunctionExpression `name` must not be `eval` or `arguments` in strict mode"));
+      v = v.addStrictError(
+          new ValidationError(
+              node,
+              "FunctionExpression `name` must not be `eval` or `arguments` in strict mode"));
     }
     return v;
   }
@@ -220,8 +234,10 @@ public class Validator extends MonoidalReducer<ValidationContext, Monoid<Validat
     ValidationContext v = super.reduceForInStatement(node, path, left, right, body).clearFreeBreakStatements()
         .clearFreeContinueStatements();
     if (node.left.isLeft() && !node.left.left().just().declarators.tail().isEmpty()) {
-      v = v.addError(new ValidationError(node.left.left().just(),
-          "VariableDeclarationStatement in ForInVarStatement contains more than one VariableDeclarator"));
+      v = v.addError(
+          new ValidationError(
+              node.left.left().just(),
+              "VariableDeclarationStatement in ForInVarStatement contains more than one VariableDeclarator"));
     }
     return v;
   }
@@ -285,38 +301,52 @@ public class Validator extends MonoidalReducer<ValidationContext, Monoid<Validat
       switch (p.getKind()) {
       case InitProperty:
         if (dataKeys.contains(key)) {
-          v = v.addStrictError(new ValidationError(node,
-              "ObjectExpression must not have more that one data property with the same name"));
+          v = v.addStrictError(
+              new ValidationError(
+                  node,
+                  "ObjectExpression must not have more that one data property with the same name"));
         }
         if (getKeys.contains(key)) {
-          v = v.addError(new ValidationError(node,
-              "ObjectExpression must not have data and getter properties with same name"));
+          v = v.addError(
+              new ValidationError(
+                  node,
+                  "ObjectExpression must not have data and getter properties with same name"));
         }
         if (setKeys.contains(key)) {
-          v = v.addError(new ValidationError(node,
-              "ObjectExpression must not have data and setter properties with same name"));
+          v = v.addError(
+              new ValidationError(
+                  node,
+                  "ObjectExpression must not have data and setter properties with same name"));
         }
         dataKeys.add(key);
         break;
       case GetterProperty:
         if (getKeys.contains(key)) {
-          v = v.addError(new ValidationError(node,
-              "ObjectExpression must not have multiple getters with the same name"));
+          v = v.addError(
+              new ValidationError(
+                  node,
+                  "ObjectExpression must not have multiple getters with the same name"));
         }
         if (dataKeys.contains(key)) {
-          v = v.addError(new ValidationError(node,
-              "ObjectExpression must not have data and getter properties with the same name"));
+          v = v.addError(
+              new ValidationError(
+                  node,
+                  "ObjectExpression must not have data and getter properties with the same name"));
         }
         getKeys.add(key);
         break;
       case SetterProperty:
         if (setKeys.contains(key)) {
-          v = v.addError(new ValidationError(node,
-              "ObjectExpression must not have multiple setters with the same name"));
+          v = v.addError(
+              new ValidationError(
+                  node,
+                  "ObjectExpression must not have multiple setters with the same name"));
         }
         if (dataKeys.contains(key)) {
-          v = v.addError(new ValidationError(node,
-              "ObjectExpression must not have data and setter properties with the same name"));
+          v = v.addError(
+              new ValidationError(
+                  node,
+                  "ObjectExpression must not have data and setter properties with the same name"));
         }
         setKeys.add(key);
         break;
@@ -335,8 +365,10 @@ public class Validator extends MonoidalReducer<ValidationContext, Monoid<Validat
       @Nonnull ValidationContext operand) {
     ValidationContext v = super.reducePrefixExpression(node, path, operand);
     if (node.operator == PrefixOperator.Delete && node.operand instanceof IdentifierExpression) {
-      return v.addStrictError(new ValidationError(node,
-          "`delete` with unqualified identifier not allowed in strict mode"));
+      return v.addStrictError(
+          new ValidationError(
+              node,
+              "`delete` with unqualified identifier not allowed in strict mode"));
     }
     return v;
   }
@@ -359,8 +391,11 @@ public class Validator extends MonoidalReducer<ValidationContext, Monoid<Validat
       @Nonnull List<ValidationContext> sourceElements) {
     ValidationContext v = super.reduceFunctionBody(node, path, directives, sourceElements);
     if (v.freeJumpTargets.isNotEmpty()) {
-      v = v.freeJumpTargets.foldLeft((v1, ident) -> v1.addError(new ValidationError(ident,
-          "Unbound break/continue label")), v);
+      v = v.freeJumpTargets.foldLeft(
+          (v1, ident) -> v1.addError(
+              new ValidationError(
+                  ident,
+                  "Unbound break/continue label")), v);
     }
     if (node.isStrict()) {
       v = v.addErrors(v.strictErrors);
@@ -374,8 +409,10 @@ public class Validator extends MonoidalReducer<ValidationContext, Monoid<Validat
       @Nonnull ReturnStatement node,
       @Nonnull List<Branch> path,
       @Nonnull Maybe<ValidationContext> argument) {
-    return super.reduceReturnStatement(node, path, argument).addFreeReturnStatement(new ValidationError(node,
-        "Return statement must be inside of a function"));
+    return super.reduceReturnStatement(node, path, argument).addFreeReturnStatement(
+        new ValidationError(
+            node,
+            "Return statement must be inside of a function"));
   }
 
   @Nonnull
@@ -447,7 +484,9 @@ public class Validator extends MonoidalReducer<ValidationContext, Monoid<Validat
       @Nonnull List<Branch> path,
       @Nonnull ValidationContext object,
       @Nonnull ValidationContext body) {
-    return super.reduceWithStatement(node, path, object, body).addStrictError(new ValidationError(node,
-        "WithStatement not allowed in strict mode"));
+    return super.reduceWithStatement(node, path, object, body).addStrictError(
+        new ValidationError(
+            node,
+            "WithStatement not allowed in strict mode"));
   }
 }

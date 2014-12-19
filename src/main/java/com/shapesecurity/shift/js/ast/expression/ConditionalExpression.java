@@ -16,19 +16,12 @@
 
 package com.shapesecurity.shift.js.ast.expression;
 
-import com.shapesecurity.shift.functional.data.List;
-import com.shapesecurity.shift.functional.data.Maybe;
-import com.shapesecurity.shift.functional.data.NonEmptyList;
-import com.shapesecurity.shift.js.ast.Expression;
-import com.shapesecurity.shift.js.ast.Node;
-import com.shapesecurity.shift.js.ast.ReplacementChild;
-import com.shapesecurity.shift.js.ast.operators.Precedence;
-import com.shapesecurity.shift.js.path.Branch;
-import com.shapesecurity.shift.js.path.BranchType;
-import com.shapesecurity.shift.js.visitor.ReducerP;
-import com.shapesecurity.shift.js.visitor.TransformerP;
-
 import javax.annotation.Nonnull;
+
+import com.shapesecurity.shift.js.ast.Expression;
+import com.shapesecurity.shift.js.ast.operators.Precedence;
+import com.shapesecurity.shift.js.ast.types.Type;
+import com.shapesecurity.shift.js.visitor.TransformerP;
 
 public class ConditionalExpression extends Expression {
   @Nonnull
@@ -48,79 +41,58 @@ public class ConditionalExpression extends Expression {
     this.alternate = alternate;
   }
 
-  @Override
   public Precedence getPrecedence() {
     return Precedence.CONDITIONAL;
   }
 
   @Nonnull
   @Override
-  public <ProgramState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> ExpressionState reduce(
-      @Nonnull ReducerP<ProgramState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> reducer,
-      @Nonnull final List<Branch> path) {
-    Branch testBranch = new Branch(BranchType.TEST);
-    Branch consequentBranch = new Branch(BranchType.CONSEQUENT);
-    Branch alternateBranch = new Branch(BranchType.ALTERNATE);
-    return reducer.reduceConditionalExpression(this, path, this.test.reduce(reducer, path.cons(testBranch)),
-        this.consequent.reduce(reducer, path.cons(consequentBranch)), this.alternate.reduce(reducer, path.cons(
-            alternateBranch)));
-  }
-
-  @Nonnull
-  @Override
-  public <ProgramState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> ExpressionState transform(
-      @Nonnull TransformerP<ProgramState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> transformer) {
+  public <ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> ExpressionState transform(
+      @Nonnull TransformerP<ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> transformer) {
     return transformer.transform(this);
   }
 
   @Nonnull
   @Override
-  public Maybe<Node> branchChild(@Nonnull Branch branch) {
-    switch (branch.branchType) {
-    case TEST:
-      return Maybe.<Node>just(this.test);
-    case CONSEQUENT:
-      return Maybe.<Node>just(this.consequent);
-    case ALTERNATE:
-      return Maybe.<Node>just(this.alternate);
-    default:
-      return Maybe.<Node>nothing();
-    }
-  }
-
-  @Nonnull
-  @Override
-  public Node replicate(@Nonnull List<? extends ReplacementChild> children) {
-    Expression test = this.test;
-    Expression consequent = this.consequent;
-    Expression alternate = this.alternate;
-    while (children instanceof NonEmptyList) {
-      NonEmptyList<? extends ReplacementChild> childrenNE = (NonEmptyList<? extends ReplacementChild>) children;
-      ReplacementChild rc = childrenNE.head;
-      Branch branch = rc.branch;
-      Node child = rc.child;
-      switch (branch.branchType) {
-      case TEST:
-        test = (Expression) child;
-        break;
-      case CONSEQUENT:
-        consequent = (Expression) child;
-        break;
-      case ALTERNATE:
-        alternate = (Expression) child;
-        break;
-      default:
-      }
-      children = childrenNE.tail();
-    }
-    return new ConditionalExpression(test, consequent, alternate);
+  public Type type() {
+    return Type.ConditionalExpression;
   }
 
   @Override
   public boolean equals(Object object) {
     return object instanceof ConditionalExpression &&
-        this.test.equals(((ConditionalExpression) object).test) &&
-        this.consequent.equals(((ConditionalExpression) object).consequent) &&
-        this.alternate.equals(((ConditionalExpression) object).alternate);
+           this.test.equals(((ConditionalExpression) object).test) &&
+           this.consequent.equals(((ConditionalExpression) object).consequent) &&
+           this.alternate.equals(((ConditionalExpression) object).alternate);
+  }
+
+  @Nonnull
+  public Expression getTest() {
+    return test;
+  }
+
+  @Nonnull
+  public Expression getConsequent() {
+    return consequent;
+  }
+
+  @Nonnull
+  public Expression getAlternate() {
+    return alternate;
+  }
+
+  @Nonnull
+  public ConditionalExpression setTest(@Nonnull Expression test) {
+    return new ConditionalExpression(test, consequent, alternate);
+  }
+
+  @Nonnull
+  public ConditionalExpression setConsequent(@Nonnull Expression consequent) {
+    return new ConditionalExpression(test, consequent, alternate);
+  }
+
+  @Nonnull
+  public ConditionalExpression setAlternate(@Nonnull Expression alternate) {
+    return new ConditionalExpression(test, consequent, alternate);
   }
 }
