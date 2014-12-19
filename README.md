@@ -1,18 +1,9 @@
-Shift AST Constructors for Java
-===========================
+Shift Tools for Java
+====================
 
 ## About
 
-This project provides constructors for [Shift format](https://github.com/shapesecurity/shift-spec) AST nodes.
-
-## Status
-
-Please see our [roadmap](https://github.com/shapesecurity/shift-java/blob/master/ROADMAP.md)
-
-## Usage
-
-```java
-```
+This project provides Java tooling around the [Shift AST format](https://github.com/shapesecurity/shift-spec).
 
 ## Contributing
 
