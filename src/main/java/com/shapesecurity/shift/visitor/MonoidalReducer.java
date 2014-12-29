@@ -107,8 +107,8 @@ public class MonoidalReducer<State, Def extends Monoid<State>> implements Reduce
   public State reduceIdentifierExpression(
       @NotNull IdentifierExpression node,
       @NotNull List<Branch> path,
-      @NotNull State name) {
-    return name;
+      @NotNull State identifier) {
+    return identifier;
   }
 
   @NotNull
@@ -291,10 +291,10 @@ public class MonoidalReducer<State, Def extends Monoid<State>> implements Reduce
   public State reduceFunctionDeclaration(
       @NotNull FunctionDeclaration node,
       @NotNull List<Branch> path,
-      @NotNull State id,
+      @NotNull State name,
       @NotNull List<State> params,
       @NotNull State body) {
-    return append(fold1(params, id), body);
+    return append(fold1(params, name), body);
   }
 
   @NotNull
@@ -329,9 +329,9 @@ public class MonoidalReducer<State, Def extends Monoid<State>> implements Reduce
   public State reduceCatchClause(
       @NotNull CatchClause node,
       @NotNull List<Branch> path,
-      @NotNull State param,
+      @NotNull State binding,
       @NotNull State body) {
-    return append(param, body);
+    return append(binding, body);
   }
 
   @NotNull
@@ -427,8 +427,8 @@ public class MonoidalReducer<State, Def extends Monoid<State>> implements Reduce
   public State reduceReturnStatement(
       @NotNull ReturnStatement node,
       @NotNull List<Branch> path,
-      @NotNull Maybe<State> argument) {
-    return o(argument);
+      @NotNull Maybe<State> expression) {
+    return o(expression);
   }
 
   @NotNull
@@ -466,16 +466,16 @@ public class MonoidalReducer<State, Def extends Monoid<State>> implements Reduce
       @NotNull SwitchStatementWithDefault node,
       @NotNull List<Branch> path,
       @NotNull State discriminant,
-      @NotNull List<State> cases,
+      @NotNull List<State> preDefaultCases,
       @NotNull State defaultCase,
       @NotNull List<State> postDefaultCases) {
-    return append(discriminant, fold(cases), defaultCase, fold(postDefaultCases));
+    return append(discriminant, fold(preDefaultCases), defaultCase, fold(postDefaultCases));
   }
 
   @NotNull
   @Override
-  public State reduceThrowStatement(@NotNull ThrowStatement node, @NotNull List<Branch> path, @NotNull State argument) {
-    return argument;
+  public State reduceThrowStatement(@NotNull ThrowStatement node, @NotNull List<Branch> path, @NotNull State expression) {
+    return expression;
   }
 
   @NotNull
@@ -542,15 +542,15 @@ public class MonoidalReducer<State, Def extends Monoid<State>> implements Reduce
   public State reduceDataProperty(
       @NotNull DataProperty node,
       @NotNull List<Branch> path,
-      @NotNull State key,
+      @NotNull State name,
       @NotNull State value) {
-    return append(key, value);
+    return append(name, value);
   }
 
   @NotNull
   @Override
-  public State reduceGetter(@NotNull Getter node, @NotNull List<Branch> path, @NotNull State key, @NotNull State body) {
-    return append(key, body);
+  public State reduceGetter(@NotNull Getter node, @NotNull List<Branch> path, @NotNull State name, @NotNull State body) {
+    return append(name, body);
   }
 
   @NotNull
@@ -558,10 +558,10 @@ public class MonoidalReducer<State, Def extends Monoid<State>> implements Reduce
   public State reduceSetter(
       @NotNull Setter node,
       @NotNull List<Branch> path,
-      @NotNull State key,
+      @NotNull State name,
       @NotNull State parameter,
       @NotNull State body) {
-    return append(key, parameter, body);
+    return append(name, parameter, body);
   }
 
   @NotNull
@@ -576,8 +576,8 @@ public class MonoidalReducer<State, Def extends Monoid<State>> implements Reduce
       @NotNull FunctionBody node,
       @NotNull List<Branch> path,
       @NotNull List<State> directives,
-      @NotNull List<State> sourceElements) {
-    return append(fold(directives), fold(sourceElements));
+      @NotNull List<State> statements) {
+    return append(fold(directives), fold(statements));
   }
 
   @NotNull
@@ -585,9 +585,9 @@ public class MonoidalReducer<State, Def extends Monoid<State>> implements Reduce
   public State reduceVariableDeclarator(
       @NotNull VariableDeclarator node,
       @NotNull List<Branch> path,
-      @NotNull State id,
+      @NotNull State binding,
       @NotNull Maybe<State> init) {
-    return append(id, o(init));
+    return append(binding, o(init));
   }
 
   @NotNull

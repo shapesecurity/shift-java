@@ -151,8 +151,8 @@ public final class CodeGen implements Reducer<CodeRep> {
   @Override
   @NotNull
   public CodeRep reduceIdentifierExpression(
-      @NotNull IdentifierExpression node, @NotNull List<Branch> path, @NotNull CodeRep name) {
-    return name;
+      @NotNull IdentifierExpression node, @NotNull List<Branch> path, @NotNull CodeRep identifier) {
+    return identifier;
   }
 
   @Override
@@ -373,11 +373,11 @@ public final class CodeGen implements Reducer<CodeRep> {
   public CodeRep reduceFunctionDeclaration(
       @NotNull FunctionDeclaration node,
       @NotNull List<Branch> path,
-      @NotNull CodeRep id,
+      @NotNull CodeRep name,
       @NotNull List<CodeRep> params,
       @NotNull CodeRep body) {
     return seqVA(
-        factory.token("function"), id, factory.paren(factory.commaSep(params)), factory.brace(body));
+        factory.token("function"), name, factory.paren(factory.commaSep(params)), factory.brace(body));
   }
 
   @NotNull
@@ -412,8 +412,8 @@ public final class CodeGen implements Reducer<CodeRep> {
   @NotNull
   @Override
   public CodeRep reduceCatchClause(
-      @NotNull CatchClause node, @NotNull List<Branch> path, @NotNull CodeRep param, @NotNull CodeRep body) {
-    return seqVA(factory.token("catch"), factory.paren(param), body);
+      @NotNull CatchClause node, @NotNull List<Branch> path, @NotNull CodeRep binding, @NotNull CodeRep body) {
+    return seqVA(factory.token("catch"), factory.paren(binding), body);
   }
 
   @Override
@@ -520,9 +520,9 @@ public final class CodeGen implements Reducer<CodeRep> {
   @Override
   @NotNull
   public CodeRep reduceReturnStatement(
-      @NotNull ReturnStatement node, @NotNull List<Branch> path, @NotNull Maybe<CodeRep> argument) {
+      @NotNull ReturnStatement node, @NotNull List<Branch> path, @NotNull Maybe<CodeRep> expression) {
     return seqVA(
-        factory.token("return"), seqVA(argument.orJust(factory.empty())), factory.semiOp());
+        factory.token("return"), seqVA(expression.orJust(factory.empty())), factory.semiOp());
   }
 
   @NotNull
@@ -557,21 +557,21 @@ public final class CodeGen implements Reducer<CodeRep> {
       @NotNull SwitchStatementWithDefault node,
       @NotNull List<Branch> path,
       @NotNull CodeRep discriminant,
-      @NotNull List<CodeRep> cases,
+      @NotNull List<CodeRep> preDefaultCases,
       @NotNull CodeRep defaultCase,
       @NotNull List<CodeRep> postDefaultCases) {
     return seqVA(
         factory.token("switch"), factory.paren(discriminant), factory.brace(
             seqVA(
-                factory.seq(cases), defaultCase, factory.seq(
+                factory.seq(preDefaultCases), defaultCase, factory.seq(
                     postDefaultCases))));
   }
 
   @Override
   @NotNull
   public CodeRep reduceThrowStatement(
-      @NotNull ThrowStatement node, @NotNull List<Branch> path, @NotNull CodeRep argument) {
-    return seqVA(factory.token("throw"), argument, factory.semiOp());
+      @NotNull ThrowStatement node, @NotNull List<Branch> path, @NotNull CodeRep expression) {
+    return seqVA(factory.token("throw"), expression, factory.semiOp());
   }
 
   @NotNull
@@ -632,16 +632,16 @@ public final class CodeGen implements Reducer<CodeRep> {
   @Override
   @NotNull
   public CodeRep reduceDataProperty(
-      @NotNull DataProperty node, @NotNull List<Branch> path, @NotNull CodeRep key, @NotNull CodeRep value) {
-    return seqVA(key, factory.token(":"), value.containsGroup ? factory.paren(value) : value);
+      @NotNull DataProperty node, @NotNull List<Branch> path, @NotNull CodeRep name, @NotNull CodeRep value) {
+    return seqVA(name, factory.token(":"), value.containsGroup ? factory.paren(value) : value);
   }
 
   @Override
   @NotNull
   public CodeRep reduceGetter(
-      @NotNull Getter node, @NotNull List<Branch> path, @NotNull CodeRep key, @NotNull CodeRep body) {
+      @NotNull Getter node, @NotNull List<Branch> path, @NotNull CodeRep name, @NotNull CodeRep body) {
     return seqVA(
-        factory.token("get"), key, factory.paren(factory.empty()), factory.brace(
+        factory.token("get"), name, factory.paren(factory.empty()), factory.brace(
             body));
   }
 
@@ -650,10 +650,10 @@ public final class CodeGen implements Reducer<CodeRep> {
   public CodeRep reduceSetter(
       @NotNull Setter node,
       @NotNull List<Branch> path,
-      @NotNull CodeRep key,
+      @NotNull CodeRep name,
       @NotNull CodeRep parameter,
       @NotNull CodeRep body) {
-    return (seqVA(factory.token("set"), key, factory.paren(parameter), factory.brace(body)));
+    return (seqVA(factory.token("set"), name, factory.paren(parameter), factory.brace(body)));
   }
 
   @NotNull
@@ -671,12 +671,12 @@ public final class CodeGen implements Reducer<CodeRep> {
       @NotNull final FunctionBody node,
       @NotNull List<Branch> path,
       @NotNull List<CodeRep> directives,
-      @NotNull final List<CodeRep> sourceElements) {
+      @NotNull final List<CodeRep> statements) {
     CodeRep body;
-    if (sourceElements.isEmpty()) {
+    if (statements.isEmpty()) {
       body = factory.empty();
     } else {
-      NonEmptyList<CodeRep> seNel = ((NonEmptyList<CodeRep>) sourceElements);
+      NonEmptyList<CodeRep> seNel = ((NonEmptyList<CodeRep>) statements);
       body = parenToAvoidBeingDirective(((NonEmptyList<Statement>) node.statements).head, seNel.head);
       body = seqVA(body, factory.seq(seNel.tail()));
     }
@@ -686,9 +686,9 @@ public final class CodeGen implements Reducer<CodeRep> {
   @Override
   @NotNull
   public CodeRep reduceVariableDeclarator(
-      @NotNull VariableDeclarator node, @NotNull List<Branch> path, @NotNull CodeRep id, @NotNull Maybe<CodeRep> init) {
+      @NotNull VariableDeclarator node, @NotNull List<Branch> path, @NotNull CodeRep binding, @NotNull Maybe<CodeRep> init) {
     CodeRep result = factory.init(
-        id, init.map(
+        binding, init.map(
             state -> state.containsGroup ? factory.paren(state) : factory.testIn(state)));
     result.containsIn = init.maybe(false, state -> state.containsIn && !state.containsGroup);
     return result;
