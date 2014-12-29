@@ -31,7 +31,6 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.Arrays;
-import java.util.List;
 
 import org.junit.Test;
 
@@ -57,7 +56,7 @@ public class ParserTest extends TestBase {
   public void testSimple() throws JsError {
     Parser parser = new Parser("this");
     Script node = parser.parse();
-    assertEquals(1, node.body.statements.length());
+    assertEquals(1, node.body.statements.length);
     Statement stmt = node.body.statements.maybeHead().just();
     assertTrue(stmt instanceof ExpressionStatement);
     assertTrue(((ExpressionStatement) stmt).expression instanceof ThisExpression);

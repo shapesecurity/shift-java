@@ -555,7 +555,7 @@ public class CodeGenTest extends TestBase {
 
     // Test the hell out of it... ": )
     long start = System.nanoTime();
-    System.out.println("Testing " + jsFiles.length() + " javascript libraries.");
+    System.out.println("Testing " + jsFiles.length + " javascript libraries.");
     for (String jsLib : jsFiles) {
       System.out.print(".");
       testLibrary(jsLib);

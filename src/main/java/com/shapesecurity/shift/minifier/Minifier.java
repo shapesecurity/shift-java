@@ -60,8 +60,8 @@ public class Minifier {
       @NotNull Script script,
       @NotNull List<ReductionRule> reductionRules,
       @NotNull List<ExpansionRule> expansionRules) {
-    ReductionRule[] reductionRulesArray = reductionRules.toArray(new ReductionRule[reductionRules.length()]);
-    ExpansionRule[] expansionRulesArray = expansionRules.toArray(new ExpansionRule[expansionRules.length()]);
+    ReductionRule[] reductionRulesArray = reductionRules.toArray(new ReductionRule[reductionRules.length]);
+    ExpansionRule[] expansionRulesArray = expansionRules.toArray(new ExpansionRule[expansionRules.length]);
     FixPointTransformer reduction = new FixPointTransformer(new ComposedRule<>(reductionRulesArray));
     FixPointTransformer expansion = new FixPointTransformer(new ComposedRule<>(expansionRulesArray));
     return expansion.transform(reduction.transform(script, List.<Branch>nil()), List.<Branch>nil());

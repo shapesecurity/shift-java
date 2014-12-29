@@ -1403,10 +1403,10 @@ public class ScopeTest extends TestBase {
     Assert.assertEquals(scope.type, scopeType);
     Assert.assertEquals(scope.dynamic, isDynamic);
 
-    Assert.assertEquals(scope.children.length(), children.length());
+    Assert.assertEquals(scope.children.length, children.length);
     children.foreach(child -> assertTrue(scope.children.exists(scope1 -> scope1 == child)));
 
-    Assert.assertEquals(scope.through.size(), through.length());
+    Assert.assertEquals(scope.through.size(), through.length);
     through.foreach(name -> {
       ProjectionTree<Reference> references = scope.through.get(name);
       Assert.assertNotNull(references);
@@ -1420,14 +1420,14 @@ public class ScopeTest extends TestBase {
       Variable variable = maybeVariable.just();
 
       List<IdentifierP> declarations = variableEntry.getValue().a;
-      Assert.assertEquals(variable.declarations.length(), declarations.length());
+      Assert.assertEquals(variable.declarations.length(), declarations.length);
       for (final IdentifierP node : declarations) {
         assertTrue(variable.declarations.exists(declaration -> declaration.path.equals(node.from) && declaration.node
             .equals(node.node)));
       }
 
       List<IdentifierP> refs = variableEntry.getValue().b;
-      Assert.assertEquals(variable.references.length(), refs.length());
+      Assert.assertEquals(variable.references.length(), refs.length);
       for (final IdentifierP node : refs) {
         Maybe<Reference> maybeRef = variable.references.find(reference -> reference.path.equals(node.from)
             && reference.node.equals(node.node));

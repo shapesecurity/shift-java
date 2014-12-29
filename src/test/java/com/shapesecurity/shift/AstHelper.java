@@ -126,7 +126,7 @@ public class AstHelper extends TestBase {
     if (!errs.isEmpty()) {
       printErrs(errs);
     }
-    Assert.assertEquals(0, errs.length());
+    Assert.assertEquals(0, errs.length);
   }
 
   public static void validStmt(Statement s) {
@@ -136,7 +136,7 @@ public class AstHelper extends TestBase {
   public static void invalidStmt(int numExpectedErrs, Statement s) {
     List<ValidationError> errs = Validator.validate(wrapProgram(s));
     Assert.assertTrue(!errs.isEmpty());
-    Assert.assertEquals(errs.length(), numExpectedErrs);
+    Assert.assertEquals(errs.length, numExpectedErrs);
   }
 
   public static void validExpr(Expression e) {
@@ -146,6 +146,6 @@ public class AstHelper extends TestBase {
   public static void invalidExpr(int numExpectedErrs, Expression e) {
     List<ValidationError> errs = Validator.validate(wrapProgram(exprStmt(e)));
     Assert.assertTrue(!errs.isEmpty());
-    Assert.assertEquals(numExpectedErrs, errs.length());
+    Assert.assertEquals(numExpectedErrs, errs.length);
   }
 }
