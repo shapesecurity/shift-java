@@ -147,8 +147,8 @@ public class LazyCloner
   public DirtyState<Expression> reduceIdentifierExpression(
       @NotNull IdentifierExpression node,
       @NotNull List<Branch> path,
-      @NotNull DirtyState<Identifier> name) {
-    if (name.dirty) {
+      @NotNull DirtyState<Identifier> identifier) {
+    if (identifier.dirty) {
       return dirty((Expression) new IdentifierExpression(node.identifier));
     }
     return clean((Expression) node);
@@ -352,10 +352,10 @@ public class LazyCloner
   public DirtyState<Statement> reduceFunctionDeclaration(
       @NotNull FunctionDeclaration node,
       @NotNull List<Branch> path,
-      @NotNull DirtyState<Identifier> id,
+      @NotNull DirtyState<Identifier> name,
       @NotNull final List<DirtyState<Identifier>> params,
       @NotNull final DirtyState<FunctionBody> body) {
-    return get(node, id.bind(id1 -> l(params).bind(params1 -> body.bindLast(body1 -> new FunctionDeclaration(id1,
+    return get(node, name.bind(id1 -> l(params).bind(params1 -> body.bindLast(body1 -> new FunctionDeclaration(id1,
         params1, body1)))));
   }
 
@@ -400,9 +400,9 @@ public class LazyCloner
   public DirtyState<CatchClause> reduceCatchClause(
       @NotNull CatchClause node,
       @NotNull List<Branch> path,
-      @NotNull final DirtyState<Identifier> param,
+      @NotNull final DirtyState<Identifier> binding,
       @NotNull final DirtyState<Block> body) {
-    return get(node, param.bind(p -> body.bindLast(s -> new CatchClause(p, s))));
+    return get(node, binding.bind(p -> body.bindLast(s -> new CatchClause(p, s))));
   }
 
   @NotNull
@@ -512,11 +512,11 @@ public class LazyCloner
   public DirtyState<Statement> reduceReturnStatement(
       @NotNull ReturnStatement node,
       @NotNull List<Branch> path,
-      @NotNull Maybe<DirtyState<Expression>> argument) {
-    if (argument.isNothing() || !argument.just().dirty) {
+      @NotNull Maybe<DirtyState<Expression>> expression) {
+    if (expression.isNothing() || !expression.just().dirty) {
       return clean((Statement) node);
     }
-    return DirtyState.dirty((Statement) new ReturnStatement(Maybe.just(argument.just().node)));
+    return DirtyState.dirty((Statement) new ReturnStatement(Maybe.just(expression.just().node)));
   }
 
   @NotNull
@@ -555,10 +555,10 @@ public class LazyCloner
       @NotNull SwitchStatementWithDefault node,
       @NotNull List<Branch> path,
       @NotNull DirtyState<Expression> discriminant,
-      @NotNull List<DirtyState<SwitchCase>> cases,
+      @NotNull List<DirtyState<SwitchCase>> preDefaultCases,
       @NotNull DirtyState<SwitchDefault> defaultCase,
       @NotNull List<DirtyState<SwitchCase>> postDefaultCases) {
-    DirtyState<List<SwitchCase>> cs = l(cases);
+    DirtyState<List<SwitchCase>> cs = l(preDefaultCases);
     DirtyState<List<SwitchCase>> pcs = l(postDefaultCases);
 
     if (discriminant.dirty || cs.dirty || defaultCase.dirty || pcs.dirty) {
@@ -572,8 +572,8 @@ public class LazyCloner
   public DirtyState<Statement> reduceThrowStatement(
       @NotNull ThrowStatement node,
       @NotNull List<Branch> path,
-      @NotNull final DirtyState<Expression> argument) {
-    return get(node, argument.bindLast(ThrowStatement::new));
+      @NotNull final DirtyState<Expression> expression) {
+    return get(node, expression.bindLast(ThrowStatement::new));
   }
 
   @NotNull
@@ -657,10 +657,10 @@ public class LazyCloner
   public DirtyState<ObjectProperty> reduceDataProperty(
       @NotNull DataProperty node,
       @NotNull List<Branch> path,
-      @NotNull DirtyState<PropertyName> key,
+      @NotNull DirtyState<PropertyName> name,
       @NotNull final DirtyState<Expression> value) {
-    if (key.dirty || value.dirty) {
-      return dirty((ObjectProperty) new DataProperty(key.node, value.node));
+    if (name.dirty || value.dirty) {
+      return dirty((ObjectProperty) new DataProperty(name.node, value.node));
     }
     return clean((ObjectProperty) node);
   }
@@ -670,9 +670,9 @@ public class LazyCloner
   public DirtyState<ObjectProperty> reduceGetter(
       @NotNull Getter node,
       @NotNull List<Branch> path,
-      @NotNull final DirtyState<PropertyName> key,
+      @NotNull final DirtyState<PropertyName> name,
       @NotNull final DirtyState<FunctionBody> body) {
-    return get(node, key.bind(propertyName -> body.bindLast(programBody -> new Getter(propertyName, programBody))));
+    return get(node, name.bind(propertyName -> body.bindLast(programBody -> new Getter(propertyName, programBody))));
   }
 
   @NotNull
@@ -680,11 +680,11 @@ public class LazyCloner
   public DirtyState<ObjectProperty> reduceSetter(
       @NotNull Setter node,
       @NotNull List<Branch> path,
-      @NotNull DirtyState<PropertyName> key,
+      @NotNull DirtyState<PropertyName> name,
       @NotNull final DirtyState<Identifier> parameter,
       @NotNull final DirtyState<FunctionBody> body) {
-    if (key.dirty || parameter.dirty || body.dirty) {
-      return dirty((ObjectProperty) new Setter(key.node, parameter.node, body.node));
+    if (name.dirty || parameter.dirty || body.dirty) {
+      return dirty((ObjectProperty) new Setter(name.node, parameter.node, body.node));
     }
     return clean((ObjectProperty) node);
   }
@@ -701,9 +701,9 @@ public class LazyCloner
       @NotNull FunctionBody node,
       @NotNull List<Branch> path,
       @NotNull List<DirtyState<Directive>> directives,
-      @NotNull final List<DirtyState<Statement>> sourceElements) {
+      @NotNull final List<DirtyState<Statement>> statements) {
     DirtyState<List<Directive>> dirs = l(directives);
-    DirtyState<List<Statement>> ses = l(sourceElements);
+    DirtyState<List<Statement>> ses = l(statements);
     if (dirs.dirty || ses.dirty) {
       return DirtyState.dirty(new FunctionBody(dirs.node, ses.node));
     }
@@ -715,13 +715,13 @@ public class LazyCloner
   public DirtyState<VariableDeclarator> reduceVariableDeclarator(
       @NotNull VariableDeclarator node,
       @NotNull List<Branch> path,
-      @NotNull DirtyState<Identifier> id,
+      @NotNull DirtyState<Identifier> binding,
       @NotNull final Maybe<DirtyState<Expression>> init) {
-    if (id.dirty) {
-      return dirty(new VariableDeclarator(id.node, init.map(expr -> expr.node)));
+    if (binding.dirty) {
+      return dirty(new VariableDeclarator(binding.node, init.map(expr -> expr.node)));
     }
     if (init.isJust() && init.just().dirty) {
-      return dirty(new VariableDeclarator(id.node, Maybe.just(init.just().node)));
+      return dirty(new VariableDeclarator(binding.node, Maybe.just(init.just().node)));
     }
     return clean(node);
   }

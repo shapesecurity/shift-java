@@ -107,8 +107,8 @@ public class CloneReducer
   public Expression reduceIdentifierExpression(
       @NotNull IdentifierExpression node,
       @NotNull List<Branch> path,
-      @NotNull Identifier name) {
-    return new IdentifierExpression(name);
+      @NotNull Identifier identifier) {
+    return new IdentifierExpression(identifier);
   }
 
   @NotNull
@@ -270,10 +270,10 @@ public class CloneReducer
   public Statement reduceFunctionDeclaration(
       @NotNull FunctionDeclaration node,
       @NotNull List<Branch> path,
-      @NotNull Identifier id,
+      @NotNull Identifier name,
       @NotNull List<Identifier> params,
       @NotNull FunctionBody body) {
-    return new FunctionDeclaration(id, params, body);
+    return new FunctionDeclaration(name, params, body);
   }
 
   @NotNull
@@ -311,9 +311,9 @@ public class CloneReducer
   public CatchClause reduceCatchClause(
       @NotNull CatchClause node,
       @NotNull List<Branch> path,
-      @NotNull Identifier param,
+      @NotNull Identifier binding,
       @NotNull Block body) {
-    return new CatchClause(param, body);
+    return new CatchClause(binding, body);
   }
 
   @NotNull
@@ -405,8 +405,8 @@ public class CloneReducer
   public Statement reduceReturnStatement(
       @NotNull ReturnStatement node,
       @NotNull List<Branch> path,
-      @NotNull Maybe<Expression> argument) {
-    return new ReturnStatement(argument);
+      @NotNull Maybe<Expression> expression) {
+    return new ReturnStatement(expression);
   }
 
   @NotNull
@@ -444,10 +444,10 @@ public class CloneReducer
       @NotNull SwitchStatementWithDefault node,
       @NotNull List<Branch> path,
       @NotNull Expression discriminant,
-      @NotNull List<SwitchCase> cases,
+      @NotNull List<SwitchCase> preDefaultCases,
       @NotNull SwitchDefault defaultCase,
       @NotNull List<SwitchCase> postDefaultCases) {
-    return new SwitchStatementWithDefault(discriminant, cases, defaultCase, postDefaultCases);
+    return new SwitchStatementWithDefault(discriminant, preDefaultCases, defaultCase, postDefaultCases);
   }
 
   @NotNull
@@ -455,8 +455,8 @@ public class CloneReducer
   public Statement reduceThrowStatement(
       @NotNull ThrowStatement node,
       @NotNull List<Branch> path,
-      @NotNull Expression argument) {
-    return new ThrowStatement(argument);
+      @NotNull Expression expression) {
+    return new ThrowStatement(expression);
   }
 
   @NotNull
@@ -523,9 +523,9 @@ public class CloneReducer
   public ObjectProperty reduceDataProperty(
       @NotNull DataProperty node,
       @NotNull List<Branch> path,
-      @NotNull PropertyName key,
+      @NotNull PropertyName name,
       @NotNull Expression value) {
-    return new DataProperty(key, value);
+    return new DataProperty(name, value);
   }
 
   @NotNull
@@ -533,9 +533,9 @@ public class CloneReducer
   public ObjectProperty reduceGetter(
       @NotNull Getter node,
       @NotNull List<Branch> path,
-      @NotNull PropertyName key,
+      @NotNull PropertyName name,
       @NotNull FunctionBody body) {
-    return new Getter(key, body);
+    return new Getter(name, body);
   }
 
   @NotNull
@@ -543,10 +543,10 @@ public class CloneReducer
   public ObjectProperty reduceSetter(
       @NotNull Setter node,
       @NotNull List<Branch> path,
-      @NotNull PropertyName key,
+      @NotNull PropertyName name,
       @NotNull Identifier parameter,
       @NotNull FunctionBody body) {
-    return new Setter(key, parameter, body);
+    return new Setter(name, parameter, body);
   }
 
   @NotNull
@@ -561,8 +561,8 @@ public class CloneReducer
       @NotNull FunctionBody node,
       @NotNull List<Branch> path,
       @NotNull List<Directive> directives,
-      @NotNull List<Statement> sourceElements) {
-    return new FunctionBody(directives, sourceElements);
+      @NotNull List<Statement> statements) {
+    return new FunctionBody(directives, statements);
   }
 
   @NotNull
@@ -570,9 +570,9 @@ public class CloneReducer
   public VariableDeclarator reduceVariableDeclarator(
       @NotNull VariableDeclarator node,
       @NotNull List<Branch> path,
-      @NotNull Identifier id,
+      @NotNull Identifier binding,
       @NotNull Maybe<Expression> init) {
-    return new VariableDeclarator(id, init);
+    return new VariableDeclarator(binding, init);
   }
 
   @NotNull

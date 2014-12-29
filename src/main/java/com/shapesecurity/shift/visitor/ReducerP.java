@@ -90,7 +90,7 @@ public interface ReducerP<ScriptState, ProgramBodyState, PropertyState, Property
   ExpressionState reduceIdentifierExpression(
       @NotNull IdentifierExpression node,
       @NotNull List<Branch> path,
-      @NotNull IdentifierState name);
+      @NotNull IdentifierState identifier);
 
   @NotNull
   ExpressionState reduceThisExpression(@NotNull ThisExpression node, @NotNull List<Branch> path);
@@ -196,7 +196,7 @@ public interface ReducerP<ScriptState, ProgramBodyState, PropertyState, Property
   StatementState reduceFunctionDeclaration(
       @NotNull FunctionDeclaration node,
       @NotNull List<Branch> path,
-      @NotNull IdentifierState id,
+      @NotNull IdentifierState name,
       @NotNull List<IdentifierState> params,
       @NotNull ProgramBodyState body);
 
@@ -222,7 +222,7 @@ public interface ReducerP<ScriptState, ProgramBodyState, PropertyState, Property
   CatchClauseState reduceCatchClause(
       @NotNull CatchClause node,
       @NotNull List<Branch> path,
-      @NotNull IdentifierState param,
+      @NotNull IdentifierState binding,
       @NotNull BlockState body);
 
   @NotNull
@@ -286,7 +286,7 @@ public interface ReducerP<ScriptState, ProgramBodyState, PropertyState, Property
   StatementState reduceReturnStatement(
       @NotNull ReturnStatement node,
       @NotNull List<Branch> path,
-      @NotNull Maybe<ExpressionState> argument);
+      @NotNull Maybe<ExpressionState> expression);
 
   @NotNull
   SwitchCaseState reduceSwitchCase(
@@ -313,7 +313,7 @@ public interface ReducerP<ScriptState, ProgramBodyState, PropertyState, Property
       @NotNull SwitchStatementWithDefault node,
       @NotNull List<Branch> path,
       @NotNull ExpressionState discriminant,
-      @NotNull List<SwitchCaseState> cases,
+      @NotNull List<SwitchCaseState> preDefaultCases,
       @NotNull SwitchDefaultState defaultCase,
       @NotNull List<SwitchCaseState> postDefaultCases);
 
@@ -321,7 +321,7 @@ public interface ReducerP<ScriptState, ProgramBodyState, PropertyState, Property
   StatementState reduceThrowStatement(
       @NotNull ThrowStatement node,
       @NotNull List<Branch> path,
-      @NotNull ExpressionState argument);
+      @NotNull ExpressionState expression);
 
   @NotNull
   StatementState reduceTryCatchStatement(
@@ -368,21 +368,21 @@ public interface ReducerP<ScriptState, ProgramBodyState, PropertyState, Property
   PropertyState reduceDataProperty(
       @NotNull DataProperty node,
       @NotNull List<Branch> path,
-      @NotNull PropertyNameState key,
+      @NotNull PropertyNameState name,
       @NotNull ExpressionState value);
 
   @NotNull
   PropertyState reduceGetter(
       @NotNull Getter node,
       @NotNull List<Branch> path,
-      @NotNull PropertyNameState key,
+      @NotNull PropertyNameState name,
       @NotNull ProgramBodyState body);
 
   @NotNull
   PropertyState reduceSetter(
       @NotNull Setter node,
       @NotNull List<Branch> path,
-      @NotNull PropertyNameState key,
+      @NotNull PropertyNameState name,
       @NotNull IdentifierState parameter,
       @NotNull ProgramBodyState body);
 
@@ -394,13 +394,13 @@ public interface ReducerP<ScriptState, ProgramBodyState, PropertyState, Property
       @NotNull FunctionBody node,
       @NotNull List<Branch> path,
       @NotNull List<DirectiveState> directives,
-      @NotNull List<StatementState> sourceElements);
+      @NotNull List<StatementState> statements);
 
   @NotNull
   DeclaratorState reduceVariableDeclarator(
       @NotNull VariableDeclarator node,
       @NotNull List<Branch> path,
-      @NotNull IdentifierState id,
+      @NotNull IdentifierState binding,
       @NotNull Maybe<ExpressionState> init);
 
   @NotNull

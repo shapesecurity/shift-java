@@ -149,15 +149,15 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State, Sc
   public State reduceFunctionDeclaration(
       @NotNull FunctionDeclaration node,
       @NotNull List<Branch> path,
-      @NotNull State id,
+      @NotNull State name,
       @NotNull List<State> params,
       @NotNull State programBody) {
     params = params.map(s -> s.addDeclaration(Kind.Param));
-    List<Branch> lastPath = id.lastPath;
-    Identifier lastIdentifier = id.lastIdentifier;
+    List<Branch> lastPath = name.lastPath;
+    Identifier lastIdentifier = name.lastIdentifier;
     assert lastPath != null;
     assert lastIdentifier != null;
-    return super.reduceFunctionDeclaration(node, path, id, params, programBody).finish(node, Scope.Type.Function)
+    return super.reduceFunctionDeclaration(node, path, name, params, programBody).finish(node, Scope.Type.Function)
         .addDeclaration(lastPath, lastIdentifier, Kind.FunctionName);
   }
 
@@ -180,7 +180,7 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State, Sc
 
   @NotNull
   @Override
-  public State reduceGetter(@NotNull Getter node, @NotNull List<Branch> path, @NotNull State key, @NotNull State body) {
+  public State reduceGetter(@NotNull Getter node, @NotNull List<Branch> path, @NotNull State name, @NotNull State body) {
     return body.finish(node, Scope.Type.Function);
   }
 
@@ -189,10 +189,10 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State, Sc
   public State reduceSetter(
       @NotNull Setter node,
       @NotNull List<Branch> path,
-      @NotNull State key,
+      @NotNull State name,
       @NotNull State param,
       @NotNull State body) {
-    return super.reduceSetter(node, path, key, param.addDeclaration(Kind.Param), body).finish(node,
+    return super.reduceSetter(node, path, name, param.addDeclaration(Kind.Param), body).finish(node,
         Scope.Type.Function);
   }
 
@@ -211,9 +211,9 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State, Sc
   public State reduceCatchClause(
       @NotNull CatchClause node,
       @NotNull List<Branch> path,
-      @NotNull State param,
+      @NotNull State binding,
       @NotNull State body) {
-    return super.reduceCatchClause(node, path, param.addDeclaration(Kind.CatchParam), body).finish(node,
+    return super.reduceCatchClause(node, path, binding.addDeclaration(Kind.CatchParam), body).finish(node,
         Scope.Type.Catch);
   }
 
@@ -268,10 +268,11 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State, Sc
   public State reduceVariableDeclarator(
       @NotNull VariableDeclarator node,
       @NotNull List<Branch> path,
-      @NotNull State id,
+      @NotNull State binding,
       @NotNull Maybe<State> init) {
-    return super.reduceVariableDeclarator(node, path, init.isJust() ? id.addReference(Accessibility.Write) : id, init)
-        .target(id);
+    return super.reduceVariableDeclarator(node, path, init.isJust() ? binding
+        .addReference(Accessibility.Write) : binding, init)
+        .target(binding);
   }
 
   @SuppressWarnings("ProtectedInnerClass")
