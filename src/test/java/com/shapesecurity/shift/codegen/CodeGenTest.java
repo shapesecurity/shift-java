@@ -511,6 +511,18 @@ public class CodeGenTest extends TestBase {
         new EmptyStatement()
       )
     )));
+    testAst("\"use strict\";;", new Script(new FunctionBody(
+        List.list(new UseStrictDirective()),
+        List.list(new EmptyStatement())
+    )));
+    testAst("\"use strict\";(\"use strict\")", new Script(new FunctionBody(
+        List.list(new UseStrictDirective()),
+        List.list(new ExpressionStatement(new LiteralStringExpression("use strict")))
+    )));
+    testAst("\"use strict\";;\"use strict\"", new Script(new FunctionBody(
+        List.list(new UseStrictDirective()),
+        List.list(new EmptyStatement(), new ExpressionStatement(new LiteralStringExpression("use strict")))
+    )));
   }
 
   @Test
