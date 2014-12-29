@@ -105,7 +105,7 @@ public abstract class TestReducerWithPath implements Reducer<Unit> {
   public final Unit reduceIdentifierExpression(
       @NotNull IdentifierExpression node,
       @NotNull List<Branch> path,
-      @NotNull Unit name) {
+      @NotNull Unit identifier) {
     accept(node, path);
     return Unit.unit;
   }
@@ -287,7 +287,7 @@ public abstract class TestReducerWithPath implements Reducer<Unit> {
   public final Unit reduceFunctionDeclaration(
       @NotNull FunctionDeclaration node,
       @NotNull List<Branch> path,
-      @NotNull Unit id,
+      @NotNull Unit name,
       @NotNull List<Unit> params,
       @NotNull Unit body) {
     accept(node, path);
@@ -333,7 +333,7 @@ public abstract class TestReducerWithPath implements Reducer<Unit> {
   public final Unit reduceCatchClause(
       @NotNull CatchClause node,
       @NotNull List<Branch> path,
-      @NotNull Unit param,
+      @NotNull Unit binding,
       @NotNull Unit body) {
     accept(node, path);
     return Unit.unit;
@@ -437,7 +437,7 @@ public abstract class TestReducerWithPath implements Reducer<Unit> {
   public final Unit reduceReturnStatement(
       @NotNull ReturnStatement node,
       @NotNull List<Branch> path,
-      @NotNull Maybe<Unit> argument) {
+      @NotNull Maybe<Unit> expression) {
     accept(node, path);
     return Unit.unit;
   }
@@ -480,7 +480,7 @@ public abstract class TestReducerWithPath implements Reducer<Unit> {
       @NotNull SwitchStatementWithDefault node,
       @NotNull List<Branch> path,
       @NotNull Unit discriminant,
-      @NotNull List<Unit> cases,
+      @NotNull List<Unit> preDefaultCases,
       @NotNull Unit defaultCase,
       @NotNull List<Unit> postDefaultCases) {
     accept(node, path);
@@ -492,7 +492,7 @@ public abstract class TestReducerWithPath implements Reducer<Unit> {
   public final Unit reduceThrowStatement(
       @NotNull ThrowStatement node,
       @NotNull List<Branch> path,
-      @NotNull Unit argument) {
+      @NotNull Unit expression) {
     accept(node, path);
     return Unit.unit;
   }
@@ -567,7 +567,7 @@ public abstract class TestReducerWithPath implements Reducer<Unit> {
   public final Unit reduceDataProperty(
       @NotNull DataProperty node,
       @NotNull List<Branch> path,
-      @NotNull Unit key,
+      @NotNull Unit name,
       @NotNull Unit value) {
     accept(node, path);
     return Unit.unit;
@@ -578,7 +578,7 @@ public abstract class TestReducerWithPath implements Reducer<Unit> {
   public final Unit reduceGetter(
       @NotNull Getter node,
       @NotNull List<Branch> path,
-      @NotNull Unit key,
+      @NotNull Unit name,
       @NotNull Unit body) {
     accept(node, path);
     return Unit.unit;
@@ -589,7 +589,7 @@ public abstract class TestReducerWithPath implements Reducer<Unit> {
   public final Unit reduceSetter(
       @NotNull Setter node,
       @NotNull List<Branch> path,
-      @NotNull Unit key,
+      @NotNull Unit name,
       @NotNull Unit parameter,
       @NotNull Unit body) {
     accept(node, path);
@@ -609,7 +609,7 @@ public abstract class TestReducerWithPath implements Reducer<Unit> {
       @NotNull FunctionBody node,
       @NotNull List<Branch> path,
       @NotNull List<Unit> directives,
-      @NotNull List<Unit> sourceElements) {
+      @NotNull List<Unit> statements) {
     accept(node, path);
     return Unit.unit;
   }
@@ -619,7 +619,7 @@ public abstract class TestReducerWithPath implements Reducer<Unit> {
   public final Unit reduceVariableDeclarator(
       @NotNull VariableDeclarator node,
       @NotNull List<Branch> path,
-      @NotNull Unit id,
+      @NotNull Unit binding,
       @NotNull Maybe<Unit> init) {
     accept(node, path);
     return Unit.unit;

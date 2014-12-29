@@ -97,9 +97,9 @@ public class Validator extends MonoidalReducer<ValidationContext, Monoid<Validat
   public ValidationContext reduceCatchClause(
       @NotNull CatchClause node,
       @NotNull List<Branch> path,
-      @NotNull ValidationContext param,
+      @NotNull ValidationContext binding,
       @NotNull ValidationContext body) {
-    ValidationContext v = super.reduceCatchClause(node, path, param, body);
+    ValidationContext v = super.reduceCatchClause(node, path, binding, body);
     if (Utils.isRestrictedWord(node.binding.name)) {
       v = v.addStrictError(new ValidationError(node, "CatchClause binding must not be restricted in strict mode"));
     }
@@ -133,10 +133,10 @@ public class Validator extends MonoidalReducer<ValidationContext, Monoid<Validat
   public ValidationContext reduceFunctionDeclaration(
       @NotNull FunctionDeclaration node,
       @NotNull List<Branch> path,
-      @NotNull ValidationContext id,
+      @NotNull ValidationContext name,
       @NotNull List<ValidationContext> params,
       @NotNull ValidationContext programBody) {
-    ValidationContext v = super.reduceFunctionDeclaration(node, path, id, params, programBody).clearUsedLabelNames()
+    ValidationContext v = super.reduceFunctionDeclaration(node, path, name, params, programBody).clearUsedLabelNames()
         .clearReturnStatements();
     if (!Utils.areUniqueNames(node.parameters)) {
       v = v.addStrictError(new ValidationError(node, "FunctionDeclaration must have unique parameter names"));
@@ -387,8 +387,8 @@ public class Validator extends MonoidalReducer<ValidationContext, Monoid<Validat
       @NotNull FunctionBody node,
       @NotNull List<Branch> path,
       @NotNull List<ValidationContext> directives,
-      @NotNull List<ValidationContext> sourceElements) {
-    ValidationContext v = super.reduceFunctionBody(node, path, directives, sourceElements);
+      @NotNull List<ValidationContext> statements) {
+    ValidationContext v = super.reduceFunctionBody(node, path, directives, statements);
     if (v.freeJumpTargets.isNotEmpty()) {
       v = v.freeJumpTargets.foldLeft(
           (v1, ident) -> v1.addError(
@@ -407,8 +407,8 @@ public class Validator extends MonoidalReducer<ValidationContext, Monoid<Validat
   public ValidationContext reduceReturnStatement(
       @NotNull ReturnStatement node,
       @NotNull List<Branch> path,
-      @NotNull Maybe<ValidationContext> argument) {
-    return super.reduceReturnStatement(node, path, argument).addFreeReturnStatement(
+      @NotNull Maybe<ValidationContext> expression) {
+    return super.reduceReturnStatement(node, path, expression).addFreeReturnStatement(
         new ValidationError(
             node,
             "Return statement must be inside of a function"));
@@ -419,10 +419,10 @@ public class Validator extends MonoidalReducer<ValidationContext, Monoid<Validat
   public ValidationContext reduceSetter(
       @NotNull Setter node,
       @NotNull List<Branch> path,
-      @NotNull ValidationContext key,
+      @NotNull ValidationContext name,
       @NotNull ValidationContext param,
       @NotNull ValidationContext body) {
-    ValidationContext v = super.reduceSetter(node, path, key, param, body);
+    ValidationContext v = super.reduceSetter(node, path, name, param, body);
     if (Utils.isRestrictedWord(node.parameter.name)) {
       v = v.addStrictError(new ValidationError(node, "SetterProperty parameter must not be a restricted name"));
     }
@@ -445,10 +445,10 @@ public class Validator extends MonoidalReducer<ValidationContext, Monoid<Validat
       @NotNull SwitchStatementWithDefault node,
       @NotNull List<Branch> path,
       @NotNull ValidationContext discriminant,
-      @NotNull List<ValidationContext> cases,
+      @NotNull List<ValidationContext> preDefaultCases,
       @NotNull ValidationContext defaultCase,
       @NotNull List<ValidationContext> postDefaultCases) {
-    return super.reduceSwitchStatementWithDefault(node, path, discriminant, cases, defaultCase, postDefaultCases)
+    return super.reduceSwitchStatementWithDefault(node, path, discriminant, preDefaultCases, defaultCase, postDefaultCases)
         .clearFreeBreakStatements();
   }
 
@@ -457,9 +457,9 @@ public class Validator extends MonoidalReducer<ValidationContext, Monoid<Validat
   public ValidationContext reduceVariableDeclarator(
       @NotNull VariableDeclarator node,
       @NotNull List<Branch> path,
-      @NotNull ValidationContext id,
+      @NotNull ValidationContext binding,
       @NotNull Maybe<ValidationContext> init) {
-    ValidationContext v = super.reduceVariableDeclarator(node, path, id, init);
+    ValidationContext v = super.reduceVariableDeclarator(node, path, binding, init);
     if (Utils.isRestrictedWord(node.binding.name)) {
       v = v.addStrictError(new ValidationError(node, "VariableDeclarator must not be restricted name"));
     }

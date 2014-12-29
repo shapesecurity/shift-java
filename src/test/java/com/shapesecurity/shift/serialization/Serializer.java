@@ -378,10 +378,10 @@ public class Serializer implements Reducer<StringBuilder> {
   public StringBuilder reduceFunctionDeclaration(
       @NotNull FunctionDeclaration node,
       @NotNull List<Branch> path,
-      @NotNull StringBuilder id,
+      @NotNull StringBuilder name,
       @NotNull List<StringBuilder> params,
       @NotNull StringBuilder body) {
-    return b("FunctionDeclaration").add("name", id).add("parameters", list(params)).add("body", body).done();
+    return b("FunctionDeclaration").add("name", name).add("parameters", list(params)).add("body", body).done();
   }
 
   @NotNull
@@ -419,9 +419,9 @@ public class Serializer implements Reducer<StringBuilder> {
   public StringBuilder reduceCatchClause(
       @NotNull CatchClause node,
       @NotNull List<Branch> path,
-      @NotNull StringBuilder param,
+      @NotNull StringBuilder binding,
       @NotNull StringBuilder body) {
-    return b("CatchClause").add("binding", param).add("body", body).done();
+    return b("CatchClause").add("binding", binding).add("body", body).done();
   }
 
   @NotNull
@@ -553,10 +553,11 @@ public class Serializer implements Reducer<StringBuilder> {
       @NotNull SwitchStatementWithDefault node,
       @NotNull List<Branch> path,
       @NotNull StringBuilder discriminant,
-      @NotNull List<StringBuilder> cases,
+      @NotNull List<StringBuilder> preDefaultCases,
       @NotNull StringBuilder defaultCase,
       @NotNull List<StringBuilder> postDefaultCases) {
-    return b("SwitchStatementWithDefault").add("discriminant", discriminant).add("preDefaultCases", list(cases)).add(
+    return b("SwitchStatementWithDefault").add("discriminant", discriminant).add("preDefaultCases", list(
+            preDefaultCases)).add(
         "defaultCase", defaultCase).add("postDefaultCases", list(postDefaultCases)).done();
   }
 
@@ -671,8 +672,8 @@ public class Serializer implements Reducer<StringBuilder> {
       @NotNull FunctionBody node,
       @NotNull List<Branch> path,
       @NotNull List<StringBuilder> directives,
-      @NotNull List<StringBuilder> sourceElements) {
-    return b("FunctionBody").add("directives", list(directives)).add("statements", list(sourceElements)).done();
+      @NotNull List<StringBuilder> statements) {
+    return b("FunctionBody").add("directives", list(directives)).add("statements", list(statements)).done();
   }
 
   @NotNull
