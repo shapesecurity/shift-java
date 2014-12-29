@@ -100,8 +100,8 @@ public class ReducerTest extends TestBase {
       public Integer reduceReturnStatement(
           @NotNull ReturnStatement node,
           @NotNull List<Branch> path,
-          @NotNull Maybe<Integer> argument) {
-        return argument.orJust(0) + 1;
+          @NotNull Maybe<Integer> expression) {
+        return expression.orJust(0) + 1;
       }
     });
   }
@@ -115,8 +115,8 @@ public class ReducerTest extends TestBase {
       public Integer reduceReturnStatement(
           @NotNull ReturnStatement node,
           @NotNull List<Branch> path,
-          @NotNull Maybe<Integer> argument) {
-        return argument.orJust(0) + 1;
+          @NotNull Maybe<Integer> expression) {
+        return expression.orJust(0) + 1;
       }
     };
     countLibrary("backbone-1.1.0.js", 123, counter);
