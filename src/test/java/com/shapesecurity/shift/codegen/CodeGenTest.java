@@ -304,8 +304,8 @@ public class CodeGenTest extends TestBase {
     test("0");
     test("1");
     test("2");
-    testLoose("\"a\"", "('a')");
-    testLoose("\"'\"", "('\\'')");
+    testLoose("(\"a\")", "('a')");
+    testLoose("(\"'\")", "('\\'')");
     test(";\"a\"");
     test(";\"\\\"\"");
     test("/a/");
@@ -498,13 +498,11 @@ public class CodeGenTest extends TestBase {
   }
 
   @Test
-  public void testProgramBody() throws JsError {
+  public void testFunctionBody() throws JsError {
     test("");
     test("\"use strict\"");
     test(";\"use strict\"");
     testAst("\"use strict\"", new Script(new FunctionBody(List.list(new UseStrictDirective()), List.nil())));
-    // TODO: these tests are failing
-    /*
     testAst("(\"use strict\")", statement(new ExpressionStatement(new LiteralStringExpression("use strict"))));
     testAst("(\"use strict\");;", new Script(new FunctionBody(
       List.nil(),
@@ -512,15 +510,6 @@ public class CodeGenTest extends TestBase {
         new ExpressionStatement(new LiteralStringExpression("use strict")),
         new EmptyStatement()
       )
-    )));
-    */
-    testAst("\"use strict\";;", new Script(new FunctionBody(
-      List.list(new UseStrictDirective()),
-      List.list(new EmptyStatement())
-    )));
-    testAst("\"use strict\";\"use strict\"", new Script(new FunctionBody(
-      List.list(new UseStrictDirective()),
-      List.list(new ExpressionStatement(new LiteralStringExpression("use strict")))
     )));
   }
 
