@@ -131,7 +131,7 @@ public final class CodeGen implements Reducer<CodeRep> {
   private CodeRep parenToAvoidBeingDirective(@NotNull Node element, @NotNull CodeRep original) {
     if (element instanceof ExpressionStatement &&
         ((ExpressionStatement) element).expression instanceof LiteralStringExpression) {
-      return seqVA(((CodeRep.Seq)original).children.maybeHead().just(), factory.semiOp());
+      return seqVA(factory.paren(((CodeRep.Seq) original).children.maybeHead().just()), factory.semiOp());
     }
     return original;
   }
