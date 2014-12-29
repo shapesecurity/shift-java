@@ -23,7 +23,6 @@ import static org.junit.Assert.assertTrue;
 
 import com.shapesecurity.functional.Effect;
 import com.shapesecurity.functional.TestBase;
-import com.shapesecurity.functional.Thunk;
 
 import org.junit.Test;
 
@@ -40,7 +39,7 @@ public class NonEmptyListTest extends TestBase {
   }
 
   private void testLengthOneGreaterThanTail(NonEmptyList<Integer> list) {
-    assertEquals(list.length(), 1 + list.tail().length());
+    assertEquals(list.length, 1 + list.tail().length);
   }
 
   // Tests
@@ -51,7 +50,7 @@ public class NonEmptyListTest extends TestBase {
   public void testList() {
     int a = rand();
     NonEmptyList<Integer> list = List.list(a);
-    assertEquals(list.length(), 1);
+    assertEquals(list.length, 1);
     assertEquals(list.head.intValue(), a);
     assertEquals(list.tail(), List.<Integer>nil());
   }
@@ -90,7 +89,6 @@ public class NonEmptyListTest extends TestBase {
 
   public void testEquals(NonEmptyList<Integer> list) {
     assertEquals(list, list);
-    assertEquals(list, List.cons(list.head, Thunk.constant(list.tail())));
     assertNotEquals(list, List.<Integer>nil());
   }
 
@@ -107,7 +105,7 @@ public class NonEmptyListTest extends TestBase {
   }
 
   private void testLast(NonEmptyList<Integer> list) {
-    assertEquals(list.last(), list.index(list.length() - 1).just());
+    assertEquals(list.last(), list.index(list.length - 1).just());
   }
 
   @Test
@@ -116,6 +114,6 @@ public class NonEmptyListTest extends TestBase {
   }
 
   private void testInit(NonEmptyList<Integer> list) {
-    assertEquals(list.init(), list.take(list.length() - 1));
+    assertEquals(list.init(), list.take(list.length - 1));
   }
 }

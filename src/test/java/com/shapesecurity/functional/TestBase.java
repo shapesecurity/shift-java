@@ -18,7 +18,7 @@ package com.shapesecurity.functional;
 
 import com.shapesecurity.functional.data.List;
 import com.shapesecurity.functional.data.NonEmptyList;
-
+import org.jetbrains.annotations.NotNull;
 import org.junit.Before;
 
 import java.io.IOException;
@@ -29,8 +29,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Random;
-
-import org.jetbrains.annotations.NotNull;
 
 public abstract class TestBase {
   private static final String BASE_PATH = System.getenv("CONFIG_DIR") == null ? "src/test/resources" : System.getenv(
@@ -94,9 +92,10 @@ public abstract class TestBase {
 
   @NotNull
   public List<Integer> range(final int lower, final int upper, final int step) {
-    if (lower < upper) {
-      return List.cons(lower, Thunk.from(() -> range(lower + step, upper, step)));
+    List<Integer> result = List.nil();
+    for (int i = upper - ((upper - lower + step - 1) % step + 1); i >= lower; i -= step) {
+      result = result.cons(i);
     }
-    return List.nil();
+    return result;
   }
 }

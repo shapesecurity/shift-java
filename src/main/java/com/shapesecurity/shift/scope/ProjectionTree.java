@@ -115,9 +115,9 @@ public class ProjectionTree<E> implements Iterable<E> {
     }
     // first traverse paths to find least common ancestor path and the immediate branches from that lca
     List<Branch> myPath = path;
-    int myLength = myPath.length();
+    int myLength = myPath.length;
     List<Branch> otherPath = other.path;
-    int otherLength = otherPath.length();
+    int otherLength = otherPath.length;
     Maybe<Branch> maybeMyBranch = Maybe.nothing();
     while (myLength > otherLength) {
       maybeMyBranch = myPath.maybeHead();

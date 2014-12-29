@@ -114,7 +114,7 @@ public class TransformerTest extends TestBase {
 
     // Test the hell out of it... ": )
     long start = System.nanoTime();
-    System.out.println("Testing " + jsFiles.length() + " javascript libraries.");
+    System.out.println("Testing " + jsFiles.length + " javascript libraries.");
     int i = 0;
     for (String jsLib : jsFiles) {
       System.out.print(".");

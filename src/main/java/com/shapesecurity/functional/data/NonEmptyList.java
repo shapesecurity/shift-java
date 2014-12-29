@@ -19,21 +19,25 @@ package com.shapesecurity.functional.data;
 import com.shapesecurity.functional.F;
 import com.shapesecurity.functional.F2;
 import com.shapesecurity.functional.Pair;
-import com.shapesecurity.functional.Thunk;
-
 import org.jetbrains.annotations.NotNull;
 
-public abstract class NonEmptyList<T> extends List<T> {
+public final class NonEmptyList<T> extends List<T> {
   @NotNull
   public final T head;
 
-  protected NonEmptyList(@NotNull T head) {
-    super();
+  @NotNull
+  public final List<T> tail;
+
+  protected NonEmptyList(@NotNull T head, @NotNull final List<T> tail) {
+    super(tail.length + 1);
     this.head = head;
+    this.tail = tail;
   }
 
   @NotNull
-  public abstract List<T> tail();
+  public List<T> tail() {
+    return tail;
+  }
 
   @SuppressWarnings("unchecked")
   @Override
@@ -130,7 +134,7 @@ public abstract class NonEmptyList<T> extends List<T> {
   @Override
   @NotNull
   public final <B> NonEmptyList<B> mapWithIndex(@NotNull F2<Integer, T, B> f) {
-    int length = this.length();
+    int length = this.length;
     @SuppressWarnings("unchecked")
     B[] result = (B[]) new Object[length];
     List<T> list = this;
@@ -248,62 +252,12 @@ public abstract class NonEmptyList<T> extends List<T> {
     return ((NonEmptyList<T>) this.tail()).reverse(cons(this.head, acc));
   }
 
-  static final class Eager<T> extends NonEmptyList<T> {
-    @NotNull
-    public final List<T> tail;
-
-    Eager(@NotNull final T head, @NotNull final List<T> tail) {
-      super(head);
-      this.tail = tail;
-    }
-
-    @NotNull
-    @Override
-    public List<T> tail() {
-      return this.tail;
-    }
-
-    @Override
-    protected int calcLength() {
-      return 1 + tail.length();
-    }
-
-    @Override
-    protected int calcHashCode() {
-      int start = HashCodeBuilder.init();
-      start = HashCodeBuilder.put(start, "List");
-      start = HashCodeBuilder.put(start, head);
-      return HashCodeBuilder.put(start, tail);
-    }
-  }
-
-  static final class Lazy<T> extends NonEmptyList<T> {
-    @NotNull
-    public final Thunk<List<T>> tail;
-
-    Lazy(@NotNull T head, @NotNull Thunk<List<T>> tail) {
-      super(head);
-      this.tail = tail;
-    }
-
-    @NotNull
-    @Override
-    public List<T> tail() {
-      return this.tail.get();
-    }
-
-    @Override
-    protected int calcLength() {
-      return 1 + tail.get().length();
-    }
-
-    @Override
-    protected int calcHashCode() {
-      int start = HashCodeBuilder.init();
-      start = HashCodeBuilder.put(start, "List");
-      start = HashCodeBuilder.put(start, head);
-      return HashCodeBuilder.put(start, tail.get());
-    }
+  @Override
+  protected int calcHashCode() {
+    int start = HashCodeBuilder.init();
+    start = HashCodeBuilder.put(start, "List");
+    start = HashCodeBuilder.put(start, head);
+    return HashCodeBuilder.put(start, tail);
   }
 }
 
