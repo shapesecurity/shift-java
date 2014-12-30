@@ -51,7 +51,7 @@ public class RemoveEmptyStatements extends ReductionRule {
   @Override
   public DirtyState<Block> transform(@NotNull Block node) {
     List<Statement> filteredStatements = node.statements.filter(isNotEmptyStatement);
-    return filteredStatements.length() == node.statements.length() ? DirtyState.clean(node) : DirtyState.dirty(
+    return filteredStatements.length == node.statements.length ? DirtyState.clean(node) : DirtyState.dirty(
         new Block(filteredStatements));
   }
 
@@ -59,7 +59,7 @@ public class RemoveEmptyStatements extends ReductionRule {
   @Override
   public DirtyState<FunctionBody> transform(@NotNull FunctionBody node) {
     List<Statement> filteredStatements = node.statements.filter(isNotEmptyStatement);
-    return filteredStatements.length() == node.statements.length() ? DirtyState.clean(node) : DirtyState.dirty(
+    return filteredStatements.length == node.statements.length ? DirtyState.clean(node) : DirtyState.dirty(
         new FunctionBody(node.directives, filteredStatements));
   }
 
@@ -67,7 +67,7 @@ public class RemoveEmptyStatements extends ReductionRule {
   @Override
   public DirtyState<SwitchCase> transform(@NotNull SwitchCase node) {
     List<Statement> filteredStatements = node.consequent.filter(isNotEmptyStatement);
-    return filteredStatements.length() == node.consequent.length() ? DirtyState.clean(node) : DirtyState.dirty(
+    return filteredStatements.length == node.consequent.length ? DirtyState.clean(node) : DirtyState.dirty(
         new SwitchCase(node.test, filteredStatements));
   }
 
@@ -75,7 +75,7 @@ public class RemoveEmptyStatements extends ReductionRule {
   @Override
   public DirtyState<SwitchDefault> transform(@NotNull SwitchDefault node) {
     List<Statement> filteredStatements = node.consequent.filter(isNotEmptyStatement);
-    return filteredStatements.length() == node.consequent.length() ? DirtyState.clean(node) : DirtyState.dirty(
+    return filteredStatements.length == node.consequent.length ? DirtyState.clean(node) : DirtyState.dirty(
         new SwitchDefault(filteredStatements));
   }
 
