@@ -16,18 +16,13 @@
 
 package com.shapesecurity.functional.data;
 
-import com.shapesecurity.functional.Effect;
-import com.shapesecurity.functional.F;
-import com.shapesecurity.functional.F2;
-import com.shapesecurity.functional.Pair;
-import com.shapesecurity.functional.Thunk;
+import com.shapesecurity.functional.*;
+import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
-
-import org.jetbrains.annotations.NotNull;
 
 /**
  * An immutable singly linked list implementation. None of the operations in {@link List} changes the list itself. Therefore you can freely share the list in
@@ -47,11 +42,17 @@ public abstract class List<A> implements Iterable<A> {
   private static final List<Object> NIL = new Nil<>();
   @NotNull
   private final Thunk<Integer> hashCodeThunk = Thunk.from(this::calcHashCode);
-  @NotNull
-  private final Thunk<Integer> lengthThunk = Thunk.from(this::calcLength);
+
+  /**
+   * The length of the list.
+   */
+  public final int length;
 
   // package local
-  List() { super(); }
+  List(int length) {
+    super();
+    this.length = length;
+  }
 
   /**
    * Creating List from.
@@ -80,19 +81,7 @@ public abstract class List<A> implements Iterable<A> {
    * @return A {@link List} that is comprised of the head then the tail.
    */
   public static <T> NonEmptyList<T> cons(@NotNull T head, @NotNull List<T> tail) {
-    return new NonEmptyList.Eager<>(head, tail);
-  }
-
-  /**
-   * Prepends an head element to a {@link List} that is calculated only when needed.
-   *
-   * @param head The head element to be prepended to the {@link List}.
-   * @param tail The thunk where the tail List can be calculated from.
-   * @param <T>  The super type of both the element and the list
-   * @return An List that comprises the head then the tail.
-   */
-  public static <T> NonEmptyList<T> cons(@NotNull T head, @NotNull Thunk<List<T>> tail) {
-    return new NonEmptyList.Lazy<>(head, tail);
+    return new NonEmptyList<>(head, tail);
   }
 
   // Construction
@@ -139,8 +128,6 @@ public abstract class List<A> implements Iterable<A> {
     return l;
   }
 
-  protected abstract int calcLength();
-
   protected abstract int calcHashCode();
 
   @Override
@@ -171,7 +158,7 @@ public abstract class List<A> implements Iterable<A> {
 
       @Override
       public void remove() {
-
+        throw new UnsupportedOperationException();
       }
     };
   }
@@ -317,15 +304,6 @@ public abstract class List<A> implements Iterable<A> {
   public abstract <B> Maybe<B> decons(@NotNull F2<A, List<A>, B> f);
 
   /**
-   * Length of the list.
-   *
-   * @return The length of the list.
-   */
-  public int length() {
-    return lengthThunk.get();
-  }
-
-  /**
    * Takes another list and feeds the elements of both lists to a function at the same pace, then collects the result and forms another list.
    * Stops once either of the two lists came to an end.
    * <p>
@@ -353,7 +331,7 @@ public abstract class List<A> implements Iterable<A> {
   @SuppressWarnings("unchecked")
   @NotNull
   public final A[] toArray(@NotNull A[] target) {
-    int length = this.length();
+    int length = this.length;
     if (target.length < length) {
       // noinspection unchecked
       target = (A[]) Array.newInstance(target.getClass().getComponentType(), length);

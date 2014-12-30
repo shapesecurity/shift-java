@@ -88,7 +88,7 @@ public final class IndexedBranch implements Branch {
     if (parent instanceof ListNode) {
       ListNode<Node> list = (ListNode<Node>) parent;
       if (list.genType.elementType.isAssignableFrom(child.genType())) {
-        if (this.index <= list.list.length()) {
+        if (this.index <= list.list.length) {
           return new ListNode<>(
               list.list.patch(this.index, 1, List.list(child)),
               list.genType);
@@ -97,7 +97,7 @@ public final class IndexedBranch implements Branch {
     } else if (parent instanceof NonEmptyListNode) {
       NonEmptyListNode<Node> list = (NonEmptyListNode<Node>) parent;
       if (list.genType.elementType.isAssignableFrom(child.genType())) {
-        if (this.index <= list.list.length()) {
+        if (this.index <= list.list.length) {
           return new NonEmptyListNode<>(
               (NonEmptyList<Node>) list.list.patch(this.index, 1, List.list(child)),
               list.genType);

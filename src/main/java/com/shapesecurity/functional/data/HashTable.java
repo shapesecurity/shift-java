@@ -281,7 +281,7 @@ public abstract class HashTable<K, V> {
       } else if (tree instanceof Leaf) {
         final Leaf<K, V> leaf = (Leaf<K, V>) tree;
         if (leaf.baseHash == this.baseHash) {
-          final Pair<K, V>[] pairs = this.dataList.toArray(new Pair[this.dataList.length()]);
+          final Pair<K, V>[] pairs = this.dataList.toArray(new Pair[this.dataList.length]);
           List<Pair<K, V>> right = leaf.dataList.foldLeft(
               (@NotNull List<Pair<K, V>> result, @NotNull Pair<K, V> kvPair) -> {
                 for (int i = 0; i < pairs.length; i++) {
@@ -293,7 +293,7 @@ public abstract class HashTable<K, V> {
                 return result.cons(kvPair);
               }, List.<Pair<K, V>>nil());
           List<Pair<K, V>> newList = List.from(pairs).append(right);
-          return new Leaf<>(this.hasher, newList, this.baseHash, newList.length());
+          return new Leaf<>(this.hasher, newList, this.baseHash, newList.length);
         }
       }
       return toFork().merge(tree, merger);

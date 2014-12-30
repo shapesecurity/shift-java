@@ -31,12 +31,7 @@ public final class Nil<T> extends List<T> {
   }
 
   Nil() {
-    super();
-  }
-
-  @Override
-  protected int calcLength() {
-    return 0;
+    super(0);
   }
 
   @Override
@@ -78,11 +73,6 @@ public final class Nil<T> extends List<T> {
   @Override
   public Maybe<List<T>> maybeInit() {
     return Maybe.nothing();
-  }
-
-  @Override
-  public int length() {
-    return 0;
   }
 
   @NotNull

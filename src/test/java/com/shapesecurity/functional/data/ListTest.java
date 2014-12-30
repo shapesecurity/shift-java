@@ -24,7 +24,6 @@ import static org.junit.Assert.assertTrue;
 import com.shapesecurity.functional.Effect;
 import com.shapesecurity.functional.Pair;
 import com.shapesecurity.functional.TestBase;
-import com.shapesecurity.functional.Thunk;
 
 import org.junit.Test;
 
@@ -66,26 +65,10 @@ public class ListTest extends TestBase {
   public void testCons(@NotNull List<Integer> list) {
     int a = rand();
     NonEmptyList<Integer> listP = List.cons(a, list);
-    assertEquals(list.length() + 1, listP.length());
+    assertEquals(list.length + 1, listP.length);
     assertEquals(a, listP.head.intValue());
     assertEquals(list, listP.tail());
     assertEquals(listP, list.cons(a));
-  }
-
-  @Test
-  public void testLazyCons() {
-    testWithSpecialLists(this::testLazyCons);
-  }
-
-  public void testLazyCons(List<Integer> list) {
-    int a = rand();
-    int b = rand();
-    NonEmptyList<Integer> listP = List.cons(a, Thunk.constant((List<Integer>) List.cons(b, list)));
-    assertEquals(list.length() + 2, listP.length());
-    assertEquals(a, listP.head.intValue());
-    assertEquals(b, listP.tail().maybeHead().just().intValue());
-    assertEquals(list, listP.tail().maybeTail().just());
-    assertEquals(List.cons(a, List.cons(b, list)), listP);
   }
 
   @Test
@@ -94,7 +77,7 @@ public class ListTest extends TestBase {
   }
 
   private void testToArray(List<Integer> list) {
-    final Integer[] a = new Integer[list.length()];
+    final Integer[] a = new Integer[list.length];
     list.mapWithIndex((i, x) -> a[i] = x);
     Integer[] a2 = new Integer[0];
     a2 = list.toArray(a2);
@@ -121,7 +104,7 @@ public class ListTest extends TestBase {
   }
 
   private void testFromArray(List<Integer> list) {
-    final Integer[] array = new Integer[list.length()];
+    final Integer[] array = new Integer[list.length];
     list.mapWithIndex((i, x) -> array[i] = x);
     List<Integer> list1 = List.from(array);
     assertEquals(list, list1);
@@ -150,7 +133,7 @@ public class ListTest extends TestBase {
 
   private void testInit(List<Integer> list) {
     //if list is empty maybeInit returns nothing else returns just
-    Maybe<List<Integer>> taken = list.isEmpty() ? Maybe.nothing() : Maybe.just(list.take(list.length() - 1));
+    Maybe<List<Integer>> taken = list.isEmpty() ? Maybe.nothing() : Maybe.just(list.take(list.length - 1));
     assertEquals(list.maybeInit(), taken);
   }
 
@@ -160,7 +143,7 @@ public class ListTest extends TestBase {
   }
 
   private void testMaybeLast(List<Integer> list) {
-    Maybe<Integer> last = list.index(list.length() - 1);
+    Maybe<Integer> last = list.index(list.length - 1);
     assertEquals(last, list.maybeLast());
   }
 
@@ -170,7 +153,7 @@ public class ListTest extends TestBase {
   }
 
   private void testMap(List<Integer> list) {
-    Integer[] addArray = new Integer[list.length()];
+    Integer[] addArray = new Integer[list.length];
     for (int i = 0; i < addArray.length; i++) {
       addArray[i] = list.index(i).just() + 1;
     }
@@ -183,7 +166,7 @@ public class ListTest extends TestBase {
   }
 
   private void testFlatMap(List<Integer> list) {
-    Integer[] dups = new Integer[list.length() * 2];
+    Integer[] dups = new Integer[list.length * 2];
     for (int i = 0; i < dups.length / 2; i++) {
       dups[i * 2] = list.index(i).just();
       dups[i * 2 + 1] = list.index(i).just();
@@ -199,7 +182,7 @@ public class ListTest extends TestBase {
   }
 
   private void testLengthNonNegative(List<Integer> list) {
-    assertTrue(list.length() >= 0);
+    assertTrue(list.length >= 0);
   }
 
   @Test
@@ -208,7 +191,7 @@ public class ListTest extends TestBase {
   }
 
   private void testEmptyNonEmptyMutualExclusivity(List<Integer> list) {
-    if (list.length() == 0) {
+    if (list.length == 0) {
       assertTrue(list.isEmpty());
       assertFalse(list.isNotEmpty());
     } else {
@@ -223,13 +206,13 @@ public class ListTest extends TestBase {
   }
 
   private void testMaybeHeadMaybeTail(List<Integer> list) {
-    if (list.length() == 0) {
+    if (list.length == 0) {
       assertTrue(list.maybeHead().isNothing());
       assertTrue(list.maybeTail().isNothing());
     } else {
       assertTrue(list.maybeHead().isJust());
       assertTrue(list.maybeTail().isJust());
-      if (list.length() == 1) {
+      if (list.length == 1) {
         assertEquals(List.<Integer>nil(), list.maybeTail().just());
       } else {
         assertNotEquals(List.<Integer>nil(), list.maybeTail().just());
@@ -243,9 +226,7 @@ public class ListTest extends TestBase {
   }
 
   private void testEquals(List<Integer> list) {
-    int a = rand();
     assertEquals(list, list);
-    assertEquals(List.cons(a, list), List.cons(a, Thunk.constant(list)));
   }
 
   @Test
@@ -258,8 +239,8 @@ public class ListTest extends TestBase {
 
   private void testSpan(List<Integer> list, int lengthA, int lengthB) {
     Pair<List<Integer>, List<Integer>> s = list.span(i -> i < 10);
-    assertEquals(s.a.length(), lengthA);
-    assertEquals(s.b.length(), lengthB);
+    assertEquals(s.a.length, lengthA);
+    assertEquals(s.b.length, lengthB);
   }
 
   @Test
@@ -269,7 +250,7 @@ public class ListTest extends TestBase {
 
   private void testZipWith(List<Integer> list) {
     List<Integer> integers = list.zipWith((a, b) -> 0, List.<Integer>nil());
-    assertEquals(0, integers.length());
+    assertEquals(0, integers.length);
     integers = list.zipWith((a, b) -> a + b, list);
     list.foldLeft((l, integer) -> {
       assertEquals(integer * 2, (int) l.maybeHead().just());
@@ -278,23 +259,25 @@ public class ListTest extends TestBase {
     if (list instanceof NonEmptyList) {
       NonEmptyList<Integer> nel = (NonEmptyList<Integer>) list;
       List<Integer> a = nel.zipWith((x, y) -> x + y, nel.tail());
-      assertEquals(a.length(), list.length() - 1);
+      assertEquals(a.length, list.length - 1);
     }
   }
 
   @Test
   public void testFilter() {
-    assertEquals(84, range(100).filter(i -> i > 15).length());
+    List<Integer> integers = range(100).filter(i -> i > 15);
+    assertEquals(84, integers.length);
   }
 
   @Test
   public void testRemoveAll() {
-    assertEquals(84, range(100).removeAll(i -> i <= 15).length());
+    List<Integer> integers = range(100).removeAll(i -> i <= 15);
+    assertEquals(84, integers.length);
   }
 
   @Test
   public void testTakeDrop() {
-    assertEquals(85, range(100).drop(15).length());
-    assertEquals(15, range(100).take(15).length());
+    assertEquals(85, range(100).drop(15).length);
+    assertEquals(15, range(100).take(15).length);
   }
 }

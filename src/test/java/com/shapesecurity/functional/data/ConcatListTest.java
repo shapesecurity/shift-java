@@ -120,9 +120,9 @@ public class ConcatListTest {
 
   @Test
   public void toListTest() {
-    assertEquals(0, ConcatList.<Integer>empty().toList().length());
-    assertEquals(1, ConcatList.single(1).toList().length());
-    assertEquals(15, gen(15).toList().length());
+    assertEquals(0, ConcatList.<Integer>empty().toList().length);
+    assertEquals(1, ConcatList.single(1).toList().length);
+    assertEquals(15, gen(15).toList().length);
   }
 
   @Test
