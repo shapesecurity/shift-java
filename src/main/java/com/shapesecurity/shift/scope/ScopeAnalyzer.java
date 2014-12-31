@@ -53,7 +53,7 @@ import java.util.Map;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State, ScopeAnalyzer.StateMonoid> {
+public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
   private static final ScopeAnalyzer INSTANCE = new ScopeAnalyzer();
 
   private ScopeAnalyzer() {
