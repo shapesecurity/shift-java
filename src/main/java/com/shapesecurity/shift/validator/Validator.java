@@ -19,7 +19,6 @@ package com.shapesecurity.shift.validator;
 import com.shapesecurity.functional.data.Either;
 import com.shapesecurity.functional.data.List;
 import com.shapesecurity.functional.data.Maybe;
-import com.shapesecurity.functional.data.Monoid;
 import com.shapesecurity.shift.ast.CatchClause;
 import com.shapesecurity.shift.ast.FunctionBody;
 import com.shapesecurity.shift.ast.Identifier;
@@ -54,7 +53,7 @@ import java.util.HashSet;
 
 import org.jetbrains.annotations.NotNull;
 
-public class Validator extends MonoidalReducer<ValidationContext, Monoid<ValidationContext>> {
+public class Validator extends MonoidalReducer<ValidationContext> {
   public Validator() {
     super(ValidationContext.MONOID);
   }
