@@ -479,7 +479,7 @@ public class Tokenizer {
   }
 
   @NotNull
-  protected SourceLocation getLocation() {
+  SourceLocation getLocation() {
     if (this.lastCachedSourceLocation != this.index) {
       this.cachedSourceLocation = new SourceLocation(this.lastLine, this.lastIndex - this.lastLineStart, this.lastIndex);
       this.lastCachedSourceLocation = this.index;
@@ -493,7 +493,7 @@ public class Tokenizer {
   }
 
   @NotNull
-  protected SourceRange getSliceBeforeLookahead(int start) {
+  SourceRange getSliceBeforeLookahead(int start) {
     return new SourceRange(start, this.lastIndex, this.source);
   }
 
@@ -560,7 +560,7 @@ public class Tokenizer {
     throw this.createILLEGAL();
   }
 
-  void skipComment() throws JsError {
+  private void skipComment() throws JsError {
     boolean isLineStart = this.index == 0;
     int length = this.source.length();
 
@@ -768,6 +768,7 @@ public class Tokenizer {
     return new IdentifierToken(slice);
   }
 
+  @NotNull
   private TokenType scanPunctuatorHelper() {
     char ch1 = this.source.charAt(this.index);
 
@@ -1142,6 +1143,7 @@ public class Tokenizer {
     throw this.createILLEGAL();
   }
 
+  @NotNull
   protected Token rescanRegExp() throws JsError {
     // rollback to the beginning of the token.
     this.index = this.lastIndex;
@@ -1154,7 +1156,7 @@ public class Tokenizer {
   }
 
   @NotNull
-  Token scanRegExp() throws JsError {
+  private Token scanRegExp() throws JsError {
     int start = this.index;
 
     StringBuilder str = new StringBuilder();

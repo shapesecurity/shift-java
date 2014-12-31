@@ -42,7 +42,7 @@ public class ParserTest extends TestBase {
   private void testLibrary(String name) throws IOException, JsError {
     String source = readLibrary(name);
     name = name.substring(0, name.lastIndexOf('.'));
-    Script script = new Parser(source).parse();
+    Script script = Parser.parse(source);
     String jsonString = Serializer.serialize(script);
     String expected = jsonString;
     if (!Files.exists(getPath("parsing/library/" + name + ".json"))) {
@@ -56,8 +56,7 @@ public class ParserTest extends TestBase {
 
   @Test
   public void testSimple() throws JsError {
-    Parser parser = new Parser("this");
-    Script node = parser.parse();
+    Script node = Parser.parse("this");
     assertEquals(1, node.body.statements.length);
     Statement stmt = node.body.statements.maybeHead().just();
     assertTrue(stmt instanceof ExpressionStatement);
@@ -65,8 +64,7 @@ public class ParserTest extends TestBase {
   }
 
   private void testParser(String name, String source) throws JsError, IllegalAccessException, IOException {
-    Parser parser = new Parser(source);
-    Script node = parser.parse();
+    Script node = Parser.parse(source);
     String jsonString = Serializer.serialize(node);
     jsonString = jsonString.substring(0, jsonString.length() - 1);
     jsonString += ",\"source\":" + Utils.escapeStringLiteral(source) + "}";

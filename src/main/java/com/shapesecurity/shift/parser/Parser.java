@@ -139,7 +139,7 @@ public class Parser extends Tokenizer {
   private boolean inFunctionBody;
   private boolean allowIn = true;
 
-  public Parser(@NotNull String source) throws JsError {
+  private Parser(@NotNull String source) throws JsError {
     super(true, source);
   }
 
@@ -211,11 +211,11 @@ public class Parser extends Tokenizer {
     return this.lex();
   }
 
-  boolean match(@NotNull TokenType subType) {
+  private boolean match(@NotNull TokenType subType) {
     return this.lookahead.type == subType;
   }
 
-  void consumeSemicolon() throws JsError {
+  private void consumeSemicolon() throws JsError {
     // Catch the very common case first: immediately a semicolon (U+003B).
     if (this.hasLineTerminatorBeforeNext) {
       return;
@@ -273,7 +273,7 @@ public class Parser extends Tokenizer {
   }
 
   @NotNull
-  protected Script parse() throws JsError {
+  Script parse() throws JsError {
     SourceLocation startLocation = this.getLocation();
     this.strict = false;
 
@@ -412,7 +412,7 @@ public class Parser extends Tokenizer {
   }
 
   @NotNull
-  ParamsInfo parseParams(@Nullable SourceLocation firstRestricted) throws JsError {
+  private ParamsInfo parseParams(@Nullable SourceLocation firstRestricted) throws JsError {
     ParamsInfo info = new ParamsInfo();
     info.firstRestricted = firstRestricted;
     this.expect(TokenType.LPAREN);
@@ -574,7 +574,7 @@ public class Parser extends Tokenizer {
 
   // guaranteed to parse at least one declarator
   @NotNull
-  NonEmptyList<VariableDeclarator> parseVariableDeclaratorList(VariableDeclarationKind kind) throws JsError {
+  private NonEmptyList<VariableDeclarator> parseVariableDeclaratorList(VariableDeclarationKind kind) throws JsError {
     VariableDeclarator variableDeclarator = this.parseVariableDeclarator(kind);
     if (!this.match(TokenType.COMMA)) {
       return List.list(variableDeclarator);
@@ -1260,7 +1260,8 @@ public class Parser extends Tokenizer {
     }
 
     // Final reduce to clean-up the stack.
-    return stack.foldLeft((expr1, stackItem) -> this.markLocation(new BinaryExpression(stackItem.operator, stackItem.left,
+    return stack.foldLeft((expr1, stackItem) -> this.markLocation(new BinaryExpression(stackItem.operator,
+        stackItem.left,
         expr1), stackItem.startLocation), expr);
   }
 
@@ -1515,7 +1516,6 @@ public class Parser extends Tokenizer {
 
   @NotNull
   private FunctionExpression parseFunctionExpression() throws JsError {
-
     SourceLocation startLocation = this.getLocation();
 
     this.expect(TokenType.FUNCTION);
@@ -1683,7 +1683,7 @@ public class Parser extends Tokenizer {
   }
 
   @NotNull
-  private /* prop */ ObjectProperty parseObjectProperty() throws JsError {
+  private ObjectProperty parseObjectProperty() throws JsError {
     Token token = this.lookahead;
     SourceLocation startLocation = this.getLocation();
 
