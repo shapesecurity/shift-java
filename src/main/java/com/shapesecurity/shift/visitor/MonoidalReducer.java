@@ -80,12 +80,12 @@ import com.shapesecurity.shift.path.Branch;
 
 import org.jetbrains.annotations.NotNull;
 
-public class MonoidalReducer<State, Def extends Monoid<State>> implements Reducer<State> {
+public class MonoidalReducer<State> implements Reducer<State> {
   @NotNull
-  protected final Def monoidClass;
+  protected final Monoid<State> monoidClass;
   private final State identity;
 
-  protected MonoidalReducer(@NotNull Def monoidClass) {
+  protected MonoidalReducer(@NotNull Monoid<State> monoidClass) {
     this.monoidClass = monoidClass;
     this.identity = this.monoidClass.identity();
   }
