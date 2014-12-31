@@ -106,7 +106,6 @@ public enum TokenType {
   FUTURE_STRICT_RESERVED_WORD(TokenClass.Keyword, ""),
   CONST(TokenClass.Keyword, "const"),
   LET(TokenClass.Keyword, "let"),
-  YIELD(TokenClass.Keyword, "yield"),
   ILLEGAL(TokenClass.Illegal, "");
   public static final TokenType[] TOKEN_SUB_TYPES = values();
   @NotNull
