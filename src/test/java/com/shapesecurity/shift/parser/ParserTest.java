@@ -64,17 +64,35 @@ public class ParserTest extends TestBase {
   }
 
   private void testParser(String name, String source) throws JsError, IllegalAccessException, IOException {
-    Script node = Parser.parse(source);
-    String jsonString = Serializer.serialize(node);
-    jsonString = jsonString.substring(0, jsonString.length() - 1);
-    jsonString += ",\"source\":" + Utils.escapeStringLiteral(source) + "}";
-    if (!Files.exists(getPath("parsing/" + name + ".json"))) {
-      assert false;
-      Files.createDirectories(getPath("parsing/" + name + ".json").getParent());
-      Files.write(getPath("parsing/" + name + ".json"), jsonString.getBytes(StandardCharsets.UTF_8));
-    } else {
-      String expected = readFile("parsing/" + name + ".json");
-      assertEquals(expected, jsonString);
+    {
+      Script node = Parser.parse(source);
+      String jsonString = Serializer.serialize(node);
+      jsonString = jsonString.substring(0, jsonString.length() - 1);
+      jsonString += ",\"source\":" + Utils.escapeStringLiteral(source) + "}";
+      if (!Files.exists(getPath("parsing/" + name + ".json"))) {
+        //assert false;
+        Files.createDirectories(getPath("parsing/" + name + ".json").getParent());
+        Files.write(getPath("parsing/" + name + ".json"), jsonString.getBytes(StandardCharsets.UTF_8));
+      } else {
+        String expected = readFile("parsing/" + name + ".json");
+        assertEquals(expected, jsonString);
+      }
+    }
+    {
+      Script node = Parser.parseWithLocation(source);
+      String jsonString = Serializer.serialize(node);
+      jsonString = jsonString.substring(0, jsonString.length() - 1);
+      jsonString += ",\"source\":" + Utils.escapeStringLiteral(source) + "}";
+      if (!Files.exists(getPath("parsing_with_loc/" + name + ".json"))) {
+        //assert false;
+        Files.createDirectories(getPath("parsing_with_loc/" + name + ".json").getParent());
+        Files.write(getPath("parsing_with_loc/" + name + ".json"), jsonString.getBytes(StandardCharsets.UTF_8));
+      } else {
+        String expected = readFile("parsing_with_loc/" + name + ".json");
+        assertEquals(expected, jsonString);
+      }
+
+      node.reduce(new RangeCheckerReducer());
     }
   }
 
