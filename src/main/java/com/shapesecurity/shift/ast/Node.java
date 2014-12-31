@@ -22,6 +22,7 @@ import com.shapesecurity.functional.data.Maybe;
 import com.shapesecurity.functional.data.NonEmptyList;
 import com.shapesecurity.shift.ast.types.GenType;
 import com.shapesecurity.shift.ast.types.Type;
+import com.shapesecurity.shift.parser.Located;
 import com.shapesecurity.shift.path.Branch;
 
 import java.lang.reflect.Field;
@@ -29,8 +30,9 @@ import java.lang.reflect.Modifier;
 
 import org.jetbrains.annotations.NotNull;
 
-public abstract class Node {
+public abstract class Node extends Located {
   private final Thunk<Integer> hashCodeThunk = Thunk.from(this::calcHashCode);
+
 
   private int calcHashCode() {
     int start = 0;

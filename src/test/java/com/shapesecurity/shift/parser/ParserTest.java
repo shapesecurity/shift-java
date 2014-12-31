@@ -32,6 +32,8 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.Arrays;
 
+import org.jetbrains.annotations.NotNull;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class ParserTest extends TestBase {
@@ -76,16 +78,6 @@ public class ParserTest extends TestBase {
       String expected = readFile("parsing/" + name + ".json");
       assertEquals(expected, jsonString);
     }
-  }
-
-  private void testFailure(String source, String error) {
-    try {
-      Parser.parse(source);
-    } catch (JsError jsError) {
-      assertEquals(error, jsError.getDescription());
-      return;
-    }
-    fail("Parsing error not found");
   }
 
   @Test
@@ -590,308 +582,271 @@ public class ParserTest extends TestBase {
     setFatal(true); // Revert back to the default behavior
   }
 
+  private void testFailure(@NotNull String source, int line, int column, int index, @NotNull String error) {
+    try {
+      Parser.parse(source);
+    } catch (JsError jsError) {
+      assertEquals(error, jsError.getDescription());
+      assertEquals(line, jsError.getLine());
+      assertEquals(column, jsError.getColumn());
+      assertEquals(index, jsError.getIndex());
+      return;
+    }
+    fail("Parsing error not found");
+  }
+
   @Test
-  public void testFailure() {
-    testFailure("{", "Unexpected end of input");
-    testFailure("}", "Unexpected token }");
-    testFailure("3ea", "Unexpected token ILLEGAL");
-    testFailure("3in []", "Unexpected token ILLEGAL");
-    testFailure("3e", "Unexpected token ILLEGAL");
-    testFailure("3e+", "Unexpected token ILLEGAL");
-    testFailure("3e-", "Unexpected token ILLEGAL");
-    testFailure("3x", "Unexpected token ILLEGAL");
-    testFailure("3x0", "Unexpected token ILLEGAL");
-    testFailure("0x", "Unexpected token ILLEGAL");
-    testFailure("09", "Unexpected token ILLEGAL");
-    testFailure("018", "Unexpected token ILLEGAL");
-    testFailure("01a", "Unexpected token ILLEGAL");
-    testFailure("3in[]", "Unexpected token ILLEGAL");
-    testFailure("0x3in[]", "Unexpected token ILLEGAL");
-    testFailure("\"Hello\nWorld\"", "Unexpected token ILLEGAL");
-    testFailure("x\\", "Unexpected token ILLEGAL");
-    testFailure("x\\u005c", "Unexpected token ILLEGAL");
-    testFailure("x\\u002a", "Unexpected token ILLEGAL");
+  @Ignore
+  public void testRegexFailure() {
     // TODO: regex engine.
-    // testFailure("var x = /(s/g", "Invalid regular expression");
-    testFailure("a\\u", "Unexpected token ILLEGAL");
-    testFailure("\\ua", "Unexpected token ILLEGAL");
-    testFailure("/", "Invalid regular expression: missing /");
-    testFailure("/test", "Invalid regular expression: missing /");
-    testFailure("/test\n/", "Invalid regular expression: missing /");
-    // TODO: regex engine.
-    // testFailure("var x = /[a-z]/\\ux", "Unexpected token ILLEGAL");
-    // TODO: regex engine.
-    // testFailure("var x = /[a-z\n]/\\ux", "Invalid regular expression: missing /");
-    // TODO: regex engine.
-    // testFailure("var x = /[a-z]/\\\\ux", "Unexpected token ILLEGAL");
-    // TODO: regex engine.
-    // testFailure("var x = /[P QR]/\\\\u0067", "Unexpected token ILLEGAL");
+    testFailure("var x = /(s/g", 0, 0, 0, "Invalid regular expression");
+    testFailure("var x = /[a-z]/\\ux", 0, 0, 0, "Unexpected token ILLEGAL");
+    testFailure("var x = /[a-z\n]/\\ux", 0, 0, 0, "Invalid regular expression: missing /");
+    testFailure("var x = /[a-z]/\\\\ux", 0, 0, 0, "Unexpected token ILLEGAL");
+    testFailure("var x = /[P QR]/\\\\u0067", 0, 0, 0, "Unexpected token ILLEGAL");
+  }
 
-    // testFailure("3 = 4", "Invalid left-hand side in assignment");
-    // testFailure("func() = 4", "Invalid left-hand side in assignment");
-    // testFailure("(1 + 1) = 10", "Invalid left-hand side in assignment");
-
-    // testFailure("1++", "Invalid left-hand side in assignment");
-    // testFailure("1--", "Invalid left-hand side in assignment");
-    // testFailure("++1", "Invalid left-hand side in assignment");
-    // testFailure("--1", "Invalid left-hand side in assignment");
-
-    testFailure("for((1 + 1) in list) process(x);", "Invalid left-hand side in for-in");
-    testFailure("[", "Unexpected end of input");
-    testFailure("[,", "Unexpected end of input");
-    testFailure("1 + {", "Unexpected end of input");
-    testFailure("1 + { t:t ", "Unexpected end of input");
-    testFailure("1 + { t:t,", "Unexpected end of input");
-    testFailure("var x = /\n/", "Invalid regular expression: missing /");
-    testFailure("var x = \"\n", "Unexpected token ILLEGAL");
-    testFailure("var if = 42", "Unexpected token if");
-    testFailure("i #= 42", "Unexpected token ILLEGAL");
-
-    // testFailure("i + 2 = 42", "Invalid left-hand side in assignment");
-    // testFailure("+i = 42", "Invalid left-hand side in assignment");
-
-    testFailure("1 + (", "Unexpected end of input");
-    testFailure("\n\n\n{", "Unexpected end of input");
-    testFailure("\n/* Some multiline\ncomment */\n)", "Unexpected token )");
-    testFailure("{ set 1 }", "Unexpected number");
-    testFailure("{ get 2 }", "Unexpected number");
-    testFailure("({ set: s(if) { } })", "Unexpected token if");
-    testFailure("({ set s(.) { } })", "Unexpected token .");
-    testFailure("({ set s() { } })", "Unexpected token )");
-    testFailure("({ set: s() { } })", "Unexpected token {");
-    testFailure("({ set: s(a, b) { } })", "Unexpected token {");
-    testFailure("({ get: g(d) { } })", "Unexpected token {");
-    testFailure("({ get i() { }, i: 42 })",
-        "Object literal may not have data and accessor property with the same name");
-    testFailure("({ i: 42, get i() { } })",
-        "Object literal may not have data and accessor property with the same name");
-    testFailure("({ set i(x) { }, i: 42 })",
-        "Object literal may not have data and accessor property with the same name");
-    testFailure("({ i: 42, set i(x) { } })",
-        "Object literal may not have data and accessor property with the same name");
-    testFailure("({ get i() { }, get i() { } })",
-        "Object literal may not have multiple get/set accessors with the same name");
-    testFailure("({ set i(x) { }, set i(x) { } })",
-        "Object literal may not have multiple get/set accessors with the same name");
+  @Test
+  @Ignore
+  public void testES6Failure() {
     // TODO: ES6:
-    // testFailure("((a)) => 42", "Unexpected token =>");
-    // testFailure("(a, (b)) => 42", "Unexpected token =>");
-    // testFailure("\"use strict\"; (eval = 10) => 42", "Assignment to eval or arguments is not allowed in strict mode");
-    // strict mode, using eval when IsSimpleParameterList is true
-    // testFailure("\"use strict\"; eval => 42", "Parameter name eval or arguments is not allowed in strict mode");
-    // strict mode, using arguments when IsSimpleParameterList is true
-    // testFailure("\"use strict\"; arguments => 42", "Parameter name eval or arguments is not allowed in strict mode");
-    // strict mode, using eval when IsSimpleParameterList is true
-    // testFailure("\"use strict\"; (eval, a) => 42", "Parameter name eval or arguments is not allowed in strict mode");
-    // strict mode, using arguments when IsSimpleParameterList is true
-    // testFailure("\"use strict\"; (arguments, a) => 42", "Parameter name eval or arguments is not allowed in strict mode");
-    // testFailure("(a, a) => 42", "Strict mode function may not have duplicate parameter names");
-    // testFailure("\"use strict\"; (a, a) => 42", "Strict mode function may not have duplicate parameter names");
-    // testFailure("\"use strict\"; (a) => 00", "Octal literals are not allowed in strict mode.");
-    // testFailure("() <= 42", "Unexpected token <=");
-    // testFailure("() ? 42", "Unexpected token ?");
-    // testFailure("() + 42", "Unexpected token +");
-    // testFailure("(10) => 00", "Unexpected token =>");
-    // testFailure("(10, 20) => 00", "Unexpected token =>");
-    // testFailure("\"use strict\"; (eval) => 42", "Parameter name eval or arguments is not allowed in strict mode");
-    // testFailure("(eval) => { \"use strict\"; 42 }", "Parameter name eval or arguments is not allowed in strict mode");
-    testFailure("function t(if) { }", "Unexpected token if");
-    testFailure("function t(true) { }", "Unexpected token true");
-    testFailure("function t(false) { }", "Unexpected token false");
-    testFailure("function t(null) { }", "Unexpected token null");
-    testFailure("function null() { }", "Unexpected token null");
-    testFailure("function true() { }", "Unexpected token true");
-    testFailure("function false() { }", "Unexpected token false");
-    testFailure("function if() { }", "Unexpected token if");
-    testFailure("a b;", "Unexpected identifier");
-    testFailure("if.a;", "Unexpected token .");
-    testFailure("a if;", "Unexpected token if");
-    testFailure("a class;", "Unexpected reserved word");
-    testFailure("break\n", "Illegal break statement");
-    testFailure("break 1;", "Unexpected number");
-    testFailure("continue\n", "Illegal continue statement");
-    testFailure("continue 2;", "Unexpected number");
-    testFailure("throw", "Unexpected end of input");
-    testFailure("throw;", "Unexpected token ;");
-    testFailure("throw\n", "Illegal newline after throw");
-    testFailure("for (var i, i2 in {});", "Unexpected token in");
-    testFailure("for ((i in {}));", "Unexpected token )");
-    testFailure("for (i + 1 in {});", "Invalid left-hand side in for-in");
-    testFailure("for (+i in {});", "Invalid left-hand side in for-in");
-    testFailure("if(false)", "Unexpected end of input");
-    testFailure("if(false) doThis(); else", "Unexpected end of input");
-    testFailure("do", "Unexpected end of input");
-    testFailure("while(false)", "Unexpected end of input");
-    testFailure("for(;;)", "Unexpected end of input");
-    testFailure("with(x)", "Unexpected end of input");
-    testFailure("try { }", "Missing catch or finally after try");
-    testFailure("try {} catch (42) {} ", "Unexpected number");
-    testFailure("try {} catch (answer()) {} ", "Unexpected token (");
-    testFailure("try {} catch (-x) {} ", "Unexpected token -");
-    testFailure("\u203F = 10", "Unexpected token ILLEGAL");
-    testFailure("const x = 12, y;", "Unexpected token ;");
-    testFailure("const x, y = 12;", "Unexpected token ,");
-    testFailure("const x;", "Unexpected token ;");
-    testFailure("if(true) let a = 1;", "Unexpected token let");
-    testFailure("if(true) const a = 1;", "Unexpected token const");
-    testFailure("switch (c) { default: default: }", "More than one default clause in switch statement");
-    testFailure("new X().\"s\"", "Unexpected string");
-    testFailure("/*", "Unexpected token ILLEGAL");
-    testFailure("/*\n\n\n", "Unexpected token ILLEGAL");
-    testFailure("/**", "Unexpected token ILLEGAL");
-    testFailure("/*\n\n*", "Unexpected token ILLEGAL");
-    testFailure("/*hello", "Unexpected token ILLEGAL");
-    testFailure("/*hello  *", "Unexpected token ILLEGAL");
-    testFailure("\n]", "Unexpected token ]");
-    testFailure("\r]", "Unexpected token ]");
-    testFailure("\r\n]", "Unexpected token ]");
-    testFailure("\n\r]", "Unexpected token ]");
-    testFailure("//\r\n]", "Unexpected token ]");
-    testFailure("//\n\r]", "Unexpected token ]");
-    testFailure("/a\\\n/", "Invalid regular expression: missing /");
-    testFailure("//\r \n]", "Unexpected token ]");
-    testFailure("/*\r\n*/]", "Unexpected token ]");
-    testFailure("/*\n\r*/]", "Unexpected token ]");
-    testFailure("/*\r \n*/]", "Unexpected token ]");
-    testFailure("\\\\", "Unexpected token ILLEGAL");
-    testFailure("\\u005c", "Unexpected token ILLEGAL");
-    testFailure("\\x", "Unexpected token ILLEGAL");
-    testFailure("\\u0000", "Unexpected token ILLEGAL");
-    testFailure("\u200C = []", "Unexpected token ILLEGAL");
-    testFailure("\u200D = []", "Unexpected token ILLEGAL");
-    testFailure("\"\\", "Unexpected token ILLEGAL");
-    testFailure("\"\\u", "Unexpected token ILLEGAL");
-    testFailure("try { } catch() {}", "Unexpected token )");
-    testFailure("return", "Illegal return statement");
-    testFailure("break", "Illegal break statement");
-    testFailure("continue", "Illegal continue statement");
-    testFailure("switch (x) { default: continue; }", "Illegal continue statement");
-    testFailure("do { x } *", "Unexpected token *");
-    testFailure("while (true) { break x; }", "Undefined label \'x\'");
-    testFailure("while (true) { continue x; }", "Undefined label \'x\'");
-    testFailure("x: while (true) { (function () { break x; }); }", "Undefined label \'x\'");
-    testFailure("x: while (true) { (function () { continue x; }); }", "Undefined label \'x\'");
-    testFailure("x: while (true) { (function () { break; }); }", "Illegal break statement");
-    testFailure("x: while (true) { (function () { continue; }); }", "Illegal continue statement");
-    testFailure("x: while (true) { x: while (true) { } }", "Label \'x\' has already been declared");
-    testFailure("(function () { \'use strict\'; delete i; }())", "Delete of an unqualified identifier in strict mode.");
-    testFailure("(function () { \'use strict\'; with (i); }())", "Strict mode code may not include a with statement");
-    testFailure("function hello() {\'use strict\'; ({ i: 42, i: 42 }) }",
-        "Duplicate data property in object literal not allowed in strict mode");
-    testFailure("function hello() {\'use strict\'; ({ hasOwnProperty: 42, hasOwnProperty: 42 }) }",
-        "Duplicate data property in object literal not allowed in strict mode");
-    testFailure("function hello() {\'use strict\'; var eval = 10; }",
-        "Variable name may not be eval or arguments in strict mode");
-    testFailure("function hello() {\'use strict\'; var arguments = 10; }",
-        "Variable name may not be eval or arguments in strict mode");
-    testFailure("function hello() {\'use strict\'; try { } catch (eval) { } }",
-        "Catch variable may not be eval or arguments in strict mode");
-    testFailure("function hello() {\'use strict\'; try { } catch (arguments) { } }",
-        "Catch variable may not be eval or arguments in strict mode");
-    testFailure("function hello() {\'use strict\'; eval = 10; }",
+    testFailure("((a)) => 42", 0, 0, 0, "Unexpected token =>");
+    testFailure("(a, (b)) => 42", 0, 0, 0, "Unexpected token =>");
+    testFailure("\"use strict\"; (eval = 10) => 42", 0, 0, 0,
         "Assignment to eval or arguments is not allowed in strict mode");
-    testFailure("function hello() {\'use strict\'; arguments = 10; }",
-        "Assignment to eval or arguments is not allowed in strict mode");
-    testFailure("function hello() {\'use strict\'; ++eval; }",
-        "Prefix increment/decrement may not have eval or arguments operand in strict mode");
-    testFailure("function hello() {\'use strict\'; --eval; }",
-        "Prefix increment/decrement may not have eval or arguments operand in strict mode");
-    testFailure("function hello() {\'use strict\'; ++arguments; }",
-        "Prefix increment/decrement may not have eval or arguments operand in strict mode");
-    testFailure("function hello() {\'use strict\'; --arguments; }",
-        "Prefix increment/decrement may not have eval or arguments operand in strict mode");
-    testFailure("function hello() {\'use strict\'; eval++; }",
-        "Postfix increment/decrement may not have eval or arguments operand in strict mode");
-    testFailure("function hello() {\'use strict\'; eval--; }",
-        "Postfix increment/decrement may not have eval or arguments operand in strict mode");
-    testFailure("function hello() {\'use strict\'; arguments++; }",
-        "Postfix increment/decrement may not have eval or arguments operand in strict mode");
-    testFailure("function hello() {\'use strict\'; arguments--; }",
-        "Postfix increment/decrement may not have eval or arguments operand in strict mode");
-    testFailure("function hello() {\'use strict\'; function eval() { } }",
-        "Function name may not be eval or arguments in strict mode");
-    testFailure("function hello() {\'use strict\'; function arguments() { } }",
-        "Function name may not be eval or arguments in strict mode");
-    testFailure("function eval() {\'use strict\'; }", "Function name may not be eval or arguments in strict mode");
-    testFailure("function arguments() {\'use strict\'; }", "Function name may not be eval or arguments in strict mode");
-    testFailure("function hello() {\'use strict\'; (function eval() { }()) }",
-        "Function name may not be eval or arguments in strict mode");
-    testFailure("function hello() {\'use strict\'; (function arguments() { }()) }",
-        "Function name may not be eval or arguments in strict mode");
-    testFailure("(function eval() {\'use strict\'; })()", "Function name may not be eval or arguments in strict mode");
-    testFailure("(function arguments() {\'use strict\'; })()",
-        "Function name may not be eval or arguments in strict mode");
-    testFailure("function hello() {\'use strict\'; ({ s: function eval() { } }); }",
-        "Function name may not be eval or arguments in strict mode");
-    testFailure("(function package() {\'use strict\'; })()", "Use of future reserved word in strict mode");
-    testFailure("function hello() {\'use strict\'; ({ i: 10, set s(eval) { } }); }",
+    // strict mode, using eval when IsSimpleParameterList is true
+    testFailure("\"use strict\"; eval => 42", 0, 0, 0,
         "Parameter name eval or arguments is not allowed in strict mode");
-    testFailure("function hello() {\'use strict\'; ({ set s(eval) { } }); }",
+    // strict mode, using arguments when IsSimpleParameterList is true
+    testFailure("\"use strict\"; arguments => 42", 0, 0, 0,
         "Parameter name eval or arguments is not allowed in strict mode");
-    testFailure("function hello() {\'use strict\'; ({ s: function s(eval) { } }); }",
+    // strict mode, using eval when IsSimpleParameterList is true
+    testFailure("\"use strict\"; (eval, a) => 42", 0, 0, 0,
         "Parameter name eval or arguments is not allowed in strict mode");
-    testFailure("function hello(eval) {\'use strict\';}",
+    // strict mode, using arguments when IsSimpleParameterList is true
+    testFailure("\"use strict\"; (arguments, a) => 42", 0, 0, 0,
         "Parameter name eval or arguments is not allowed in strict mode");
-    testFailure("function hello(arguments) {\'use strict\';}",
+    testFailure("(a, a) => 42", 0, 0, 0, "Strict mode function may not have duplicate parameter names");
+    testFailure("\"use strict\"; (a, a) => 42", 0, 0, 0, "Strict mode function may not have duplicate parameter names");
+    testFailure("\"use strict\"; (a) => 00", 0, 0, 0, "Octal literals are not allowed in strict mode.");
+    testFailure("() <= 42", 0, 0, 0, "Unexpected token <=");
+    testFailure("() ? 42", 0, 0, 0, "Unexpected token ?");
+    testFailure("() + 42", 0, 0, 0, "Unexpected token +");
+    testFailure("(10) => 00", 0, 0, 0, "Unexpected token =>");
+    testFailure("(10, 20) => 00", 0, 0, 0, "Unexpected token =>");
+    testFailure("\"use strict\"; (eval) => 42", 0, 0, 0,
         "Parameter name eval or arguments is not allowed in strict mode");
-    testFailure("function hello() { \'use strict\'; function inner(eval) {} }",
+    testFailure("(eval) => { \"use strict\"; 42 }", 0, 0, 0,
         "Parameter name eval or arguments is not allowed in strict mode");
-    testFailure("function hello() { \'use strict\'; function inner(arguments) {} }",
-        "Parameter name eval or arguments is not allowed in strict mode");
-    testFailure(" \"\\1\"; \'use strict\';", "Octal literals are not allowed in strict mode.");
-    testFailure("function hello() { \'use strict\'; \"\\1\"; }", "Octal literals are not allowed in strict mode.");
-    testFailure("function hello() { \'use strict\'; 021; }", "Octal literals are not allowed in strict mode.");
-    testFailure("function hello() { \'use strict\'; ({ \"\\1\": 42 }); }",
-        "Octal literals are not allowed in strict mode.");
-    testFailure("function hello() { \'use strict\'; ({ 021: 42 }); }",
-        "Octal literals are not allowed in strict mode.");
-    testFailure("function hello() { \"octal directive\\1\"; \"use strict\"; }",
-        "Octal literals are not allowed in strict mode.");
-    testFailure("function hello() { \"octal directive\\1\"; \"octal directive\\2\"; \"use strict\"; }",
-        "Octal literals are not allowed in strict mode.");
-    testFailure("function hello() { \"use strict\"; function inner() { \"octal directive\\1\"; } }",
-        "Octal literals are not allowed in strict mode.");
-    testFailure("function hello() { \"use strict\"; var implements; }", "Use of future reserved word in strict mode");
-    testFailure("function hello() { \"use strict\"; var interface; }", "Use of future reserved word in strict mode");
-    testFailure("function hello() { \"use strict\"; var package; }", "Use of future reserved word in strict mode");
-    testFailure("function hello() { \"use strict\"; var private; }", "Use of future reserved word in strict mode");
-    testFailure("function hello() { \"use strict\"; var protected; }", "Use of future reserved word in strict mode");
-    testFailure("function hello() { \"use strict\"; var public; }", "Use of future reserved word in strict mode");
-    testFailure("function hello() { \"use strict\"; var static; }", "Use of future reserved word in strict mode");
-    testFailure("function hello() { \"use strict\"; var yield; }", "Use of future reserved word in strict mode");
-    testFailure("function hello() { \"use strict\"; var let; }", "Use of future reserved word in strict mode");
-    testFailure("function hello(static) { \"use strict\"; }", "Use of future reserved word in strict mode");
-    testFailure("function static() { \"use strict\"; }", "Use of future reserved word in strict mode");
-    testFailure("function eval(a) { \"use strict\"; }", "Function name may not be eval or arguments in strict mode");
-    testFailure("function arguments(a) { \"use strict\"; }",
-        "Function name may not be eval or arguments in strict mode");
-    testFailure("var yield", "Unexpected token yield");
-    testFailure("var let", "Unexpected token let");
-    testFailure("\"use strict\"; function static() { }", "Use of future reserved word in strict mode");
-    testFailure("function a(t, t) { \"use strict\"; }", "Strict mode function may not have duplicate parameter names");
-    testFailure("function a(eval) { \"use strict\"; }",
-        "Parameter name eval or arguments is not allowed in strict mode");
-    testFailure("function a(package) { \"use strict\"; }", "Use of future reserved word in strict mode");
-    testFailure("function a() { \"use strict\"; function b(t, t) { }; }",
-        "Strict mode function may not have duplicate parameter names");
-    testFailure("(function a(t, t) { \"use strict\"; })",
-        "Strict mode function may not have duplicate parameter names");
-    testFailure("function a() { \"use strict\"; (function b(t, t) { }); }",
-        "Strict mode function may not have duplicate parameter names");
-    testFailure("(function a(eval) { \"use strict\"; })",
-        "Parameter name eval or arguments is not allowed in strict mode");
-    testFailure("(function a(package) { \"use strict\"; })", "Use of future reserved word in strict mode");
-    testFailure("__proto__: __proto__: 42;", "Label \'__proto__\' has already been declared");
-    testFailure("\"use strict\"; function t(__proto__, __proto__) { }",
-        "Strict mode function may not have duplicate parameter names");
-    testFailure("\"use strict\"; x = { __proto__: 42, __proto__: 43 }",
-        "Duplicate data property in object literal not allowed in strict mode");
-    testFailure("\"use strict\"; x = { get __proto__() { }, __proto__: 43 }",
-        "Object literal may not have data and accessor property with the same name");
-    testFailure("var", "Unexpected end of input");
-    testFailure("let", "Unexpected end of input");
-    testFailure("const", "Unexpected end of input");
-    testFailure("{ ;  ;  ", "Unexpected end of input");
-    testFailure("function t() { ;  ;  ", "Unexpected end of input");
+  }
+
+  @Test
+  public void testES5Failure() {
+    testFailure("{", 1, 2, 1, "Unexpected end of input");
+    testFailure("}", 1, 2, 1, "Unexpected token }");
+    testFailure("3ea", 1, 3, 2, "Unexpected token ILLEGAL");
+    testFailure("3in []", 1, 2, 1, "Unexpected token ILLEGAL");
+    testFailure("3e", 1, 3, 2, "Unexpected token ILLEGAL");
+    testFailure("3e+", 1, 4, 3, "Unexpected token ILLEGAL");
+    testFailure("3e-", 1, 4, 3, "Unexpected token ILLEGAL");
+    testFailure("3x", 1, 2, 1, "Unexpected token ILLEGAL");
+    testFailure("3x0", 1, 2, 1, "Unexpected token ILLEGAL");
+    testFailure("0x", 1, 3, 2, "Unexpected token ILLEGAL");
+    testFailure("09", 1, 2, 1, "Unexpected token ILLEGAL");
+    testFailure("018", 1, 3, 2, "Unexpected token ILLEGAL");
+    testFailure("01a", 1, 3, 2, "Unexpected token ILLEGAL");
+    testFailure("3in[]", 1, 2, 1, "Unexpected token ILLEGAL");
+    testFailure("0x3in[]", 1, 3, 2, "Unexpected token ILLEGAL");
+    testFailure("\"Hello\nWorld\"", 1, 7, 6, "Unexpected token ILLEGAL");
+    testFailure("x\\", 1, 3, 2, "Unexpected token ILLEGAL");
+    testFailure("x\\u005c", 1, 8, 7, "Unexpected token ILLEGAL");
+    testFailure("x\\u002a", 1, 8, 7, "Unexpected token ILLEGAL");
+    testFailure("a\\u", 1, 4, 3, "Unexpected token ILLEGAL");
+    testFailure("\\ua", 1, 3, 2, "Unexpected token ILLEGAL");
+    testFailure("/", 1, 2, 1, "Invalid regular expression: missing /");
+    testFailure("/test", 1, 6, 5, "Invalid regular expression: missing /");
+    testFailure("/test\n/", 1, 6, 5, "Invalid regular expression: missing /");
+    testFailure("for((1 + 1) in list) process(x);", 1, 13, 12, "Invalid left-hand side in for-in");
+    testFailure("[", 1, 2, 1, "Unexpected end of input");
+    testFailure("[,", 1, 3, 2, "Unexpected end of input");
+    testFailure("1 + {", 1, 6, 5, "Unexpected end of input");
+    testFailure("1 + { t:t ", 1, 11, 10, "Unexpected end of input");
+    testFailure("1 + { t:t,", 1, 11, 10, "Unexpected end of input");
+    testFailure("var x = /\n/", 1, 10, 9, "Invalid regular expression: missing /");
+    testFailure("var x = \"\n", 1, 10, 9, "Unexpected token ILLEGAL");
+    testFailure("var if = 42", 1, 8, 7, "Unexpected token if");
+    testFailure("i #= 42", 1, 3, 2, "Unexpected token ILLEGAL");
+    testFailure("1 + (", 1, 6, 5, "Unexpected end of input");
+    testFailure("\n\n\n{", 4, 2, 4, "Unexpected end of input");
+    testFailure("\n/* Some multiline\ncomment */\n)", 4, 2, 31, "Unexpected token )");
+    testFailure("{ set 1 }", 1, 7, 6, "Unexpected number");
+    testFailure("{ get 2 }", 1, 7, 6, "Unexpected number");
+    testFailure("({ set: s(if) { } })", 1, 13, 12, "Unexpected token if");
+    testFailure("({ set s(.) { } })", 1, 10, 9, "Unexpected token .");
+    testFailure("({ set s() { } })", 1, 4, 3, "Unexpected token )");
+    testFailure("({ set: s() { } })", 1, 13, 12, "Unexpected token {");
+    testFailure("({ set: s(a, b) { } })", 1, 17, 16, "Unexpected token {");
+    testFailure("({ get: g(d) { } })", 1, 14, 13, "Unexpected token {");
+    testFailure("({ get i() { }, i: 42 })", 1, 23, 22, "Object literal may not have data and accessor property with the same name");
+    testFailure("({ i: 42, get i() { } })", 1, 23, 22, "Object literal may not have data and accessor property with the same name");
+    testFailure("({ set i(x) { }, i: 42 })", 1, 24, 23, "Object literal may not have data and accessor property with the same name");
+    testFailure("({ i: 42, set i(x) { } })", 1, 24, 23, "Object literal may not have data and accessor property with the same name");
+    testFailure("({ get i() { }, get i() { } })", 1, 29, 28, "Object literal may not have multiple get/set accessors with the same name");
+    testFailure("({ set i(x) { }, set i(x) { } })", 1, 31, 30, "Object literal may not have multiple get/set accessors with the same name");
+    testFailure("function t(if) { }", 1, 14, 13, "Unexpected token if");
+    testFailure("function t(true) { }", 1, 16, 15, "Unexpected token true");
+    testFailure("function t(false) { }", 1, 17, 16, "Unexpected token false");
+    testFailure("function t(null) { }", 1, 16, 15, "Unexpected token null");
+    testFailure("function null() { }", 1, 14, 13, "Unexpected token null");
+    testFailure("function true() { }", 1, 14, 13, "Unexpected token true");
+    testFailure("function false() { }", 1, 15, 14, "Unexpected token false");
+    testFailure("function if() { }", 1, 12, 11, "Unexpected token if");
+    testFailure("a b;", 1, 3, 2, "Unexpected identifier");
+    testFailure("if.a;", 1, 3, 2, "Unexpected token .");
+    testFailure("a if;", 1, 3, 2, "Unexpected token if");
+    testFailure("a class;", 1, 3, 2, "Unexpected reserved word");
+    testFailure("break\n", 1, 1, 0, "Illegal break statement");
+    testFailure("break 1;", 1, 7, 6, "Unexpected number");
+    testFailure("continue\n", 1, 1, 0, "Illegal continue statement");
+    testFailure("continue 2;", 1, 10, 9, "Unexpected number");
+    testFailure("throw", 1, 6, 5, "Unexpected end of input");
+    testFailure("throw;", 1, 7, 6, "Unexpected token ;");
+    testFailure("throw\n", 1, 1, 0, "Illegal newline after throw");
+    testFailure("for (var i, i2 in {});", 1, 16, 15, "Unexpected token in");
+    testFailure("for ((i in {}));", 1, 15, 14, "Unexpected token )");
+    testFailure("for (i + 1 in {});", 1, 12, 11, "Invalid left-hand side in for-in");
+    testFailure("for (+i in {});", 1, 9, 8, "Invalid left-hand side in for-in");
+    testFailure("if(false)", 1, 10, 9, "Unexpected end of input");
+    testFailure("if(false) doThis(); else", 1, 25, 24, "Unexpected end of input");
+    testFailure("do", 1, 3, 2, "Unexpected end of input");
+    testFailure("while(false)", 1, 13, 12, "Unexpected end of input");
+    testFailure("for(;;)", 1, 8, 7, "Unexpected end of input");
+    testFailure("with(x)", 1, 8, 7, "Unexpected end of input");
+    testFailure("try { }", 1, 8, 7, "Missing catch or finally after try");
+    testFailure("try {} catch (42) {} ", 1, 17, 16, "Unexpected number");
+    testFailure("try {} catch (answer()) {} ", 1, 21, 20, "Unexpected token (");
+    testFailure("try {} catch (-x) {} ", 1, 16, 15, "Unexpected token -");
+    testFailure("\u203f = 10", 1, 1, 0, "Unexpected token ILLEGAL");
+    testFailure("const x = 12, y;", 1, 16, 15, "Unexpected token ;");
+    testFailure("const x, y = 12;", 1, 8, 7, "Unexpected token ,");
+    testFailure("const x;", 1, 8, 7, "Unexpected token ;");
+    testFailure("if(true) let a = 1;", 1, 14, 13, "Unexpected token let");
+    testFailure("if(true) const a = 1;", 1, 16, 15, "Unexpected token const");
+    testFailure("switch (c) { default: default: }", 1, 23, 22, "More than one default clause in switch statement");
+    testFailure("new X().\"s\"", 1, 12, 11, "Unexpected string");
+    testFailure("/*", 1, 3, 2, "Unexpected token ILLEGAL");
+    testFailure("/*\n\n\n", 4, 1, 5, "Unexpected token ILLEGAL");
+    testFailure("/**", 1, 4, 3, "Unexpected token ILLEGAL");
+    testFailure("/*\n\n*", 3, 2, 5, "Unexpected token ILLEGAL");
+    testFailure("/*hello", 1, 8, 7, "Unexpected token ILLEGAL");
+    testFailure("/*hello  *", 1, 11, 10, "Unexpected token ILLEGAL");
+    testFailure("\n]", 2, 2, 2, "Unexpected token ]");
+    testFailure("\r]", 2, 2, 2, "Unexpected token ]");
+    testFailure("\r\n]", 2, 2, 3, "Unexpected token ]");
+    testFailure("\n\r]", 3, 2, 3, "Unexpected token ]");
+    testFailure("//\r\n]", 2, 2, 5, "Unexpected token ]");
+    testFailure("//\n\r]", 3, 2, 5, "Unexpected token ]");
+    testFailure("/a\\\n/", 1, 4, 3, "Invalid regular expression: missing /");
+    testFailure("//\r \n]", 3, 2, 6, "Unexpected token ]");
+    testFailure("/*\r\n*/]", 2, 4, 7, "Unexpected token ]");
+    testFailure("/*\n\r*/]", 3, 4, 7, "Unexpected token ]");
+    testFailure("/*\r \n*/]", 3, 4, 8, "Unexpected token ]");
+    testFailure("\\\\", 1, 2, 1, "Unexpected token ILLEGAL");
+    testFailure("\\u005c", 1, 7, 6, "Unexpected token ILLEGAL");
+    testFailure("\\x", 1, 2, 1, "Unexpected token ILLEGAL");
+    testFailure("\\u0000", 1, 7, 6, "Unexpected token ILLEGAL");
+    testFailure("\u200c = []", 1, 1, 0, "Unexpected token ILLEGAL");
+    testFailure("\u200d = []", 1, 1, 0, "Unexpected token ILLEGAL");
+    testFailure("\"\\", 1, 3, 2, "Unexpected token ILLEGAL");
+    testFailure("\"\\u", 1, 4, 3, "Unexpected token ILLEGAL");
+    testFailure("try { } catch() {}", 1, 15, 14, "Unexpected token )");
+    testFailure("return", 1, 7, 6, "Illegal return statement");
+    testFailure("break", 1, 1, 0, "Illegal break statement");
+    testFailure("continue", 1, 1, 0, "Illegal continue statement");
+    testFailure("switch (x) { default: continue; }", 1, 23, 22, "Illegal continue statement");
+    testFailure("do { x } *", 1, 10, 9, "Unexpected token *");
+    testFailure("while (true) { break x; }", 1, 23, 22, "Undefined label 'x'");
+    testFailure("while (true) { continue x; }", 1, 26, 25, "Undefined label 'x'");
+    testFailure("x: while (true) { (function () { break x; }); }", 1, 41, 40, "Undefined label 'x'");
+    testFailure("x: while (true) { (function () { continue x; }); }", 1, 44, 43, "Undefined label 'x'");
+    testFailure("x: while (true) { (function () { break; }); }", 1, 34, 33, "Illegal break statement");
+    testFailure("x: while (true) { (function () { continue; }); }", 1, 34, 33, "Illegal continue statement");
+    testFailure("x: while (true) { x: while (true) { } }", 1, 22, 21, "Label 'x' has already been declared");
+    testFailure("(function () { 'use strict'; delete i; }())", 1, 38, 37, "Delete of an unqualified identifier in strict mode.");
+    testFailure("(function () { 'use strict'; with (i); }())", 1, 30, 29, "Strict mode code may not include a with statement");
+    testFailure("function hello() {'use strict'; ({ i: 42, i: 42 }) }", 1, 49, 48, "Duplicate data property in object literal not allowed in strict mode");
+    testFailure("function hello() {'use strict'; ({ hasOwnProperty: 42, hasOwnProperty: 42 }) }", 1, 75, 74, "Duplicate data property in object literal not allowed in strict mode");
+    testFailure("function hello() {'use strict'; var eval = 10; }", 1, 42, 41, "Variable name may not be eval or arguments in strict mode");
+    testFailure("function hello() {'use strict'; var arguments = 10; }", 1, 47, 46, "Variable name may not be eval or arguments in strict mode");
+    testFailure("function hello() {'use strict'; try { } catch (eval) { } }", 1, 52, 51, "Catch variable may not be eval or arguments in strict mode");
+    testFailure("function hello() {'use strict'; try { } catch (arguments) { } }", 1, 57, 56, "Catch variable may not be eval or arguments in strict mode");
+    testFailure("function hello() {'use strict'; eval = 10; }", 1, 33, 32, "Assignment to eval or arguments is not allowed in strict mode");
+    testFailure("function hello() {'use strict'; arguments = 10; }", 1, 33, 32, "Assignment to eval or arguments is not allowed in strict mode");
+    testFailure("function hello() {'use strict'; ++eval; }", 1, 39, 38, "Prefix increment/decrement may not have eval or arguments operand in strict mode");
+    testFailure("function hello() {'use strict'; --eval; }", 1, 39, 38, "Prefix increment/decrement may not have eval or arguments operand in strict mode");
+    testFailure("function hello() {'use strict'; ++arguments; }", 1, 44, 43, "Prefix increment/decrement may not have eval or arguments operand in strict mode");
+    testFailure("function hello() {'use strict'; --arguments; }", 1, 44, 43, "Prefix increment/decrement may not have eval or arguments operand in strict mode");
+    testFailure("function hello() {'use strict'; eval++; }", 1, 39, 38, "Postfix increment/decrement may not have eval or arguments operand in strict mode");
+    testFailure("function hello() {'use strict'; eval--; }", 1, 39, 38, "Postfix increment/decrement may not have eval or arguments operand in strict mode");
+    testFailure("function hello() {'use strict'; arguments++; }", 1, 44, 43, "Postfix increment/decrement may not have eval or arguments operand in strict mode");
+    testFailure("function hello() {'use strict'; arguments--; }", 1, 44, 43, "Postfix increment/decrement may not have eval or arguments operand in strict mode");
+    testFailure("function hello() {'use strict'; function eval() { } }", 1, 33, 32, "Function name may not be eval or arguments in strict mode");
+    testFailure("function hello() {'use strict'; function arguments() { } }", 1, 33, 32, "Function name may not be eval or arguments in strict mode");
+    testFailure("function eval() {'use strict'; }", 1, 33, 32, "Function name may not be eval or arguments in strict mode");
+    testFailure("function arguments() {'use strict'; }", 1, 38, 37, "Function name may not be eval or arguments in strict mode");
+    testFailure("function hello() {'use strict'; (function eval() { }()) }", 1, 34, 33, "Function name may not be eval or arguments in strict mode");
+    testFailure("function hello() {'use strict'; (function arguments() { }()) }", 1, 34, 33, "Function name may not be eval or arguments in strict mode");
+    testFailure("(function eval() {'use strict'; })()", 1, 11, 10, "Function name may not be eval or arguments in strict mode");
+    testFailure("(function arguments() {'use strict'; })()", 1, 11, 10, "Function name may not be eval or arguments in strict mode");
+    testFailure("function hello() {'use strict'; ({ s: function eval() { } }); }", 1, 39, 38, "Function name may not be eval or arguments in strict mode");
+    testFailure("(function package() {'use strict'; })()", 1, 11, 10, "Use of future reserved word in strict mode");
+    testFailure("function hello() {'use strict'; ({ i: 10, set s(eval) { } }); }", 1, 59, 58, "Parameter name eval or arguments is not allowed in strict mode");
+    testFailure("function hello() {'use strict'; ({ set s(eval) { } }); }", 1, 52, 51, "Parameter name eval or arguments is not allowed in strict mode");
+    testFailure("function hello() {'use strict'; ({ s: function s(eval) { } }); }", 1, 50, 49, "Parameter name eval or arguments is not allowed in strict mode");
+    testFailure("function hello(eval) {'use strict';}", 1, 37, 36, "Parameter name eval or arguments is not allowed in strict mode");
+    testFailure("function hello(arguments) {'use strict';}", 1, 42, 41, "Parameter name eval or arguments is not allowed in strict mode");
+    testFailure("function hello() { 'use strict'; function inner(eval) {} }", 1, 58, 57, "Parameter name eval or arguments is not allowed in strict mode");
+    testFailure("function hello() { 'use strict'; function inner(arguments) {} }", 1, 63, 62, "Parameter name eval or arguments is not allowed in strict mode");
+    testFailure("\"\\1\"; 'use strict';", 1, 1, 0, "Octal literals are not allowed in strict mode.");
+    testFailure("function hello() { 'use strict'; \"\\1\"; }", 1, 34, 33, "Octal literals are not allowed in strict mode.");
+    testFailure("function hello() { 'use strict'; 021; }", 1, 34, 33, "Octal literals are not allowed in strict mode.");
+    testFailure("function hello() { 'use strict'; ({ \"\\1\": 42 }); }", 1, 37, 36, "Octal literals are not allowed in strict mode.");
+    testFailure("function hello() { 'use strict'; ({ 021: 42 }); }", 1, 37, 36, "Octal literals are not allowed in strict mode.");
+    testFailure("function hello() { \"octal directive\\1\"; \"use strict\"; }", 1, 20, 19, "Octal literals are not allowed in strict mode.");
+    testFailure("function hello() { \"octal directive\\1\"; \"octal directive\\2\"; \"use strict\"; }", 1, 20, 19, "Octal literals are not allowed in strict mode.");
+    testFailure("function hello() { \"use strict\"; function inner() { \"octal directive\\1\"; } }", 1, 53, 52, "Octal literals are not allowed in strict mode.");
+    testFailure("function hello() { \"use strict\"; var implements; }", 1, 48, 47, "Use of future reserved word in strict mode");
+    testFailure("function hello() { \"use strict\"; var interface; }", 1, 47, 46, "Use of future reserved word in strict mode");
+    testFailure("function hello() { \"use strict\"; var package; }", 1, 45, 44, "Use of future reserved word in strict mode");
+    testFailure("function hello() { \"use strict\"; var private; }", 1, 45, 44, "Use of future reserved word in strict mode");
+    testFailure("function hello() { \"use strict\"; var protected; }", 1, 47, 46, "Use of future reserved word in strict mode");
+    testFailure("function hello() { \"use strict\"; var public; }", 1, 44, 43, "Use of future reserved word in strict mode");
+    testFailure("function hello() { \"use strict\"; var static; }", 1, 44, 43, "Use of future reserved word in strict mode");
+    testFailure("function hello() { \"use strict\"; var yield; }", 1, 43, 42, "Use of future reserved word in strict mode");
+    testFailure("function hello() { \"use strict\"; var let; }", 1, 41, 40, "Use of future reserved word in strict mode");
+    testFailure("function hello(static) { \"use strict\"; }", 1, 41, 40, "Use of future reserved word in strict mode");
+    testFailure("function static() { \"use strict\"; }", 1, 36, 35, "Use of future reserved word in strict mode");
+    testFailure("function eval(a) { \"use strict\"; }", 1, 35, 34, "Function name may not be eval or arguments in strict mode");
+    testFailure("function arguments(a) { \"use strict\"; }", 1, 40, 39, "Function name may not be eval or arguments in strict mode");
+    testFailure("var yield", 1, 10, 9, "Unexpected token yield");
+    testFailure("var let", 1, 8, 7, "Unexpected token let");
+    testFailure("\"use strict\"; function static() { }", 1, 30, 29, "Use of future reserved word in strict mode");
+    testFailure("function a(t, t) { \"use strict\"; }", 1, 35, 34, "Strict mode function may not have duplicate parameter names");
+    testFailure("function a(eval) { \"use strict\"; }", 1, 35, 34, "Parameter name eval or arguments is not allowed in strict mode");
+    testFailure("function a(package) { \"use strict\"; }", 1, 38, 37, "Use of future reserved word in strict mode");
+    testFailure("function a() { \"use strict\"; function b(t, t) { }; }", 1, 50, 49, "Strict mode function may not have duplicate parameter names");
+    testFailure("(function a(t, t) { \"use strict\"; })", 1, 16, 15, "Strict mode function may not have duplicate parameter names");
+    testFailure("function a() { \"use strict\"; (function b(t, t) { }); }", 1, 45, 44, "Strict mode function may not have duplicate parameter names");
+    testFailure("(function a(eval) { \"use strict\"; })", 1, 13, 12, "Parameter name eval or arguments is not allowed in strict mode");
+    testFailure("(function a(package) { \"use strict\"; })", 1, 13, 12, "Use of future reserved word in strict mode");
+    testFailure("__proto__: __proto__: 42;", 1, 23, 22, "Label '__proto__' has already been declared");
+    testFailure("\"use strict\"; function t(__proto__, __proto__) { }", 1, 51, 50, "Strict mode function may not have duplicate parameter names");
+    testFailure("\"use strict\"; x = { __proto__: 42, __proto__: 43 }", 1, 50, 49, "Duplicate data property in object literal not allowed in strict mode");
+    testFailure("\"use strict\"; x = { get __proto__() { }, __proto__: 43 }", 1, 56, 55, "Object literal may not have data and accessor property with the same name");
+    testFailure("var", 1, 4, 3, "Unexpected end of input");
+    testFailure("let", 1, 4, 3, "Unexpected end of input");
+    testFailure("const", 1, 6, 5, "Unexpected end of input");
+    testFailure("{ ;  ;  ", 1, 9, 8, "Unexpected end of input");
+    testFailure("function t() { ;  ;  ", 1, 22, 21, "Unexpected end of input");
   }
 }

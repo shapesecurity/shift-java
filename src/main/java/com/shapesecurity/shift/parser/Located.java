@@ -16,32 +16,22 @@
 
 package com.shapesecurity.shift.parser;
 
+import com.shapesecurity.shift.ast.SourceLocation;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public abstract class Token {
-  @NotNull
-  public final TokenType type;
-  @NotNull
-  public final SourceRange slice;
-  public final boolean octal;
-  @Nullable
-  public SourceRange leadingWhitespace;
+public class Located {
 
-  protected Token(@NotNull TokenType type,
-                  @NotNull SourceRange slice,
-                  boolean octal) {
-    this.octal = octal;
-    this.type = type;
-    this.slice = slice;
+  @Nullable
+  private SourceLocation loc;
+
+  void setLoc(@NotNull SourceLocation loc) {
+    this.loc = loc;
   }
 
-  @NotNull
-  public abstract CharSequence getValueString();
-
-  @Override
-  @NotNull
-  public String toString() {
-    return String.valueOf(this.slice.getString());
+  @Nullable
+  public SourceLocation getLoc() {
+    return loc;
   }
 }
