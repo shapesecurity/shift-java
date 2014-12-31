@@ -63,6 +63,10 @@ public class ParserTest extends TestBase {
     assertTrue(((ExpressionStatement) stmt).expression instanceof ThisExpression);
   }
 
+  private void testParser(String source) throws JsError {
+    Parser.parse(source);
+  }
+
   private void testParser(String name, String source) throws JsError, IllegalAccessException, IOException {
     {
       Script node = Parser.parse(source);
@@ -70,7 +74,7 @@ public class ParserTest extends TestBase {
       jsonString = jsonString.substring(0, jsonString.length() - 1);
       jsonString += ",\"source\":" + Utils.escapeStringLiteral(source) + "}";
       if (!Files.exists(getPath("parsing/" + name + ".json"))) {
-        //assert false;
+        assert false;
         Files.createDirectories(getPath("parsing/" + name + ".json").getParent());
         Files.write(getPath("parsing/" + name + ".json"), jsonString.getBytes(StandardCharsets.UTF_8));
       } else {
@@ -84,7 +88,7 @@ public class ParserTest extends TestBase {
       jsonString = jsonString.substring(0, jsonString.length() - 1);
       jsonString += ",\"source\":" + Utils.escapeStringLiteral(source) + "}";
       if (!Files.exists(getPath("parsing_with_loc/" + name + ".json"))) {
-        //assert false;
+        assert false;
         Files.createDirectories(getPath("parsing_with_loc/" + name + ".json").getParent());
         Files.write(getPath("parsing_with_loc/" + name + ".json"), jsonString.getBytes(StandardCharsets.UTF_8));
       } else {
@@ -862,5 +866,28 @@ public class ParserTest extends TestBase {
     testFailure("const", 1, 6, 5, "Unexpected end of input");
     testFailure("{ ;  ;  ", 1, 9, 8, "Unexpected end of input");
     testFailure("function t() { ;  ;  ", 1, 22, 21, "Unexpected end of input");
+  }
+
+  @Test
+  public void testES5Incompatibility() throws JsError {
+    // ES5: assignment to computed member expression
+    // ES6: variable declaration statement
+    // We choose to fail here because we support ES5 with a minor addition: let/const with binding identifier.
+    // This is the same decision esprima has made.
+    testFailure("let[a] = b;", "Unexpected token [");
+    testFailure("const[a] = b;", "Unexpected token [");
+    testFailure("var let", "Unexpected token let");
+    testFailure("var const", "Unexpected token const");
+
+    // ES5: invalid program
+    // ES6: function declaration within a block
+    // We choose to parse this because of ubiquitous support among popular interpreters, despite disagreements about semantics.
+    testParser("{ function f(){} }");
+  }
+
+  @Test
+  public void testES6Incompatibility() throws JsError {
+    testParser("var yield = 0;");
+    testParser("try {} catch(e) { var e = 0; }");
   }
 }
