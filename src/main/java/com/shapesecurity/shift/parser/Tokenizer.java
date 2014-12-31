@@ -106,6 +106,7 @@ public class Tokenizer {
   boolean collectingToken;
   private int index, line, lineStart;
   private int lastIndex, lastLine, lastLineStart;
+  private int startIndex, startLine, startLineStart;
 
   @Nullable
   private SourceRange lastWhitespace;
@@ -468,7 +469,7 @@ public class Tokenizer {
     if (this.collectingToken) {
       return new JsError(this.index, this.line + 1, this.index - this.lineStart + 1, msg);
     } else {
-      return new JsError(this.lastIndex, this.lastLine + 1, this.lastIndex - this.lastLineStart + 1, msg);
+      return new JsError(this.startIndex, this.startLine + 1, this.startIndex - this.startLineStart + 1, msg);
     }
   }
 
@@ -481,7 +482,7 @@ public class Tokenizer {
   @NotNull
   SourceLocation getLocation() {
     if (this.lastCachedSourceLocation != this.index) {
-      this.cachedSourceLocation = new SourceLocation(this.lastLine, this.lastIndex - this.lastLineStart, this.lastIndex);
+      this.cachedSourceLocation = new SourceLocation(this.startLine, this.startIndex - this.startLineStart, this.startIndex);
       this.lastCachedSourceLocation = this.index;
     }
     return this.cachedSourceLocation;
@@ -1146,9 +1147,9 @@ public class Tokenizer {
   @NotNull
   protected Token rescanRegExp() throws JsError {
     // rollback to the beginning of the token.
-    this.index = this.lastIndex;
-    this.line = this.lastLine;
-    this.lineStart = this.lastLineStart;
+    this.index = this.startIndex;
+    this.line = this.startLine;
+    this.lineStart = this.startLineStart;
     this.collectingToken = true;
     this.lookahead = this.scanRegExp();
     this.collectingToken = false;
@@ -1397,11 +1398,16 @@ public class Tokenizer {
   private Token collectToken() throws JsError {
     this.collectingToken = true;
     int start = this.index;
-    this.skipComment();
 
     this.lastIndex = this.index;
     this.lastLine = this.line;
     this.lastLineStart = this.lineStart;
+
+    this.skipComment();
+
+    this.startIndex = this.index;
+    this.startLine = this.line;
+    this.startLineStart = this.lineStart;
 
     this.lastWhitespace = this.getSlice(start);
     if (this.index >= this.source.length()) {
@@ -1409,6 +1415,8 @@ public class Tokenizer {
     }
 
     Token token = this.advance();
+
+
     token.leadingWhitespace = this.lastWhitespace;
     this.collectingToken = false;
     return token;
