@@ -16,10 +16,6 @@
 
 package com.shapesecurity.shift.visitor;
 
-import java.io.IOException;
-
-import org.jetbrains.annotations.NotNull;
-
 import com.shapesecurity.functional.data.List;
 import com.shapesecurity.functional.data.Maybe;
 import com.shapesecurity.shift.TestBase;
@@ -31,11 +27,14 @@ import com.shapesecurity.shift.parser.JsError;
 import com.shapesecurity.shift.parser.Parser;
 import com.shapesecurity.shift.path.Branch;
 
+import java.io.IOException;
+
+import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 
 public class ReducerTest extends TestBase {
   private void count(String source, int expectedCount, Counter counter) throws JsError {
-    Script script = new Parser(source).parse();
+    Script script = Parser.parse(source);
     assertEquals(expectedCount, script.reduce(counter));
   }
 

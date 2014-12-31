@@ -14,34 +14,35 @@
  * limitations under the License.
  */
 
-package com.shapesecurity.shift.parser;
+package com.shapesecurity.shift.ast;
+
+import com.shapesecurity.shift.parser.SourceRange;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public abstract class Token {
-  @NotNull
-  public final TokenType type;
-  @NotNull
-  public final SourceRange slice;
-  public final boolean octal;
+public class SourceLocation {
   @Nullable
-  public SourceRange leadingWhitespace;
+  public final SourceRange source;
 
-  protected Token(@NotNull TokenType type,
-                  @NotNull SourceRange slice,
-                  boolean octal) {
-    this.octal = octal;
-    this.type = type;
-    this.slice = slice;
+  public final int line, column, offset;
+
+  public SourceLocation(int line, int column, int offset) {
+    this.line = line;
+    this.column = column;
+    this.offset = offset;
+    this.source = null;
+  }
+
+  private SourceLocation(@Nullable SourceRange source, int line, int column, int offset) {
+    this.line = line;
+    this.column = column;
+    this.offset = offset;
+    this.source = source;
   }
 
   @NotNull
-  public abstract CharSequence getValueString();
-
-  @Override
-  @NotNull
-  public String toString() {
-    return String.valueOf(this.slice.getString());
+  public SourceLocation withSourceRange(@NotNull SourceRange sourceRange) {
+    return new SourceLocation(sourceRange, this.line, this.column, this.offset);
   }
 }
