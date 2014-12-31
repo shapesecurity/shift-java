@@ -27,7 +27,7 @@ import org.jetbrains.annotations.NotNull;
  * This class is an example of using reducing. To make a counter of certain leaf type of
  * element, simply return 1 in the corresponding reduce method.
  */
-public class Counter extends MonoidalReducer<Integer, Monoid.IntegerAdditive> {
+public class Counter extends MonoidalReducer<Integer> {
   public Counter() {
     super(Monoid.INTEGER_ADDITIVE);
   }
