@@ -24,19 +24,10 @@ import org.jetbrains.annotations.NotNull;
 public class LiteralStringExpression extends LiteralExpression {
   @NotNull
   public final String value;
-  @NotNull
-  public final CharSequence raw;
-
-  public LiteralStringExpression(@NotNull String value, @NotNull CharSequence raw) {
-    super();
-    this.value = value;
-    this.raw = raw;
-  }
 
   public LiteralStringExpression(@NotNull String value) {
     super();
     this.value = value;
-    this.raw = value;
   }
 
   @NotNull

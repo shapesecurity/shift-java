@@ -126,7 +126,7 @@ public class CloneReducer
   @NotNull
   @Override
   public Expression reduceLiteralStringExpression(@NotNull LiteralStringExpression node, @NotNull List<Branch> path) {
-    return new LiteralStringExpression(node.value, node.raw);
+    return new LiteralStringExpression(node.value);
   }
 
   @NotNull
