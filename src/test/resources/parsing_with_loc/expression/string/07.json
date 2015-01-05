@@ -1,0 +1,1 @@
+{"type":"Script","body":{"type":"FunctionBody","directives":[{"type":"UnknownDirective","value":"Hello\\\nworld","range":[0,14]}],"statements":[],"range":[0,14]},"range":[0,14],"source":"\"Hello\\\nworld\""}
