@@ -251,7 +251,6 @@ public class Parser extends Tokenizer {
     if (stmt instanceof ExpressionStatement) {
       Expression expr = ((ExpressionStatement) stmt).expression;
       if (expr instanceof LiteralStringExpression) {
-        CharSequence value = ((LiteralStringExpression) expr).raw;
         String directive = token.slice.toString();
         if ("\"use strict\"".equals(directive) || "'use strict'".equals(directive)) {
           this.strict = true;
@@ -263,8 +262,10 @@ public class Parser extends Tokenizer {
           if (firstRestricted == null && token.octal) {
             firstRestricted = startLocation;
           }
-          CharSequence content = value.subSequence(1, value.length() - 1);
-          return List.cons(this.markLocation(startLocation, new UnknownDirective(content)), this.parseDirective(sourceElements, firstRestricted));
+          String value = directive.substring(1, directive.length() - 1);
+          return List.cons(
+              this.markLocation(startLocation, new UnknownDirective(value)),
+              this.parseDirective(sourceElements, firstRestricted));
         }
       }
     }
@@ -1444,8 +1445,7 @@ public class Parser extends Tokenizer {
       throw this.createError(STRICT_OCTAL_LITERAL);
     }
     Token token2 = this.lex();
-    return this.markLocation(startLocation, new LiteralStringExpression(String.valueOf(token2.getValueString()), token2.slice)
-    );
+    return this.markLocation(startLocation, new LiteralStringExpression(String.valueOf(token2.getValueString())));
   }
 
   @NotNull
