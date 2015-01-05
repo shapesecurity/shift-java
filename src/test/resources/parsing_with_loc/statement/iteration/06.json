@@ -1,0 +1,1 @@
+{"type":"Script","body":{"type":"FunctionBody","directives":[],"statements":[{"type":"ForStatement","init":null,"test":null,"update":null,"body":{"type":"EmptyStatement","range":[7,8]},"range":[0,8]}],"range":[0,8]},"range":[0,8],"source":"for(;;);"}
