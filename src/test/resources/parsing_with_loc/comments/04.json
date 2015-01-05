@@ -1,0 +1,1 @@
+{"type":"Script","body":{"type":"FunctionBody","directives":[],"statements":[{"type":"ExpressionStatement","expression":{"type":"LiteralNumericExpression","value":42.0,"range":[0,2]},"range":[0,2]}],"range":[0,2]},"range":[0,2],"source":"42 /*The*/ /*Answer*/"}

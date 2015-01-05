@@ -1,0 +1,1 @@
+{"type":"Script","body":{"type":"FunctionBody","directives":[],"statements":[{"type":"ExpressionStatement","expression":{"type":"LiteralNumericExpression","value":42.0,"range":[42,44]},"range":[42,44]}],"range":[42,44]},"range":[42,44],"source":"/* multiline\ncomment\nshould\nbe\nignored */ 42"}

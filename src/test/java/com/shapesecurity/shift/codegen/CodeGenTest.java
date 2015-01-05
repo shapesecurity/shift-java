@@ -16,11 +16,6 @@
 
 package com.shapesecurity.shift.codegen;
 
-import java.io.File;
-import java.io.IOException;
-
-import org.jetbrains.annotations.NotNull;
-
 import com.shapesecurity.functional.data.List;
 import com.shapesecurity.functional.data.Maybe;
 import com.shapesecurity.shift.TestBase;
@@ -44,6 +39,10 @@ import com.shapesecurity.shift.ast.statement.WithStatement;
 import com.shapesecurity.shift.parser.JsError;
 import com.shapesecurity.shift.parser.Parser;
 
+import java.io.File;
+import java.io.IOException;
+
+import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 
 public class CodeGenTest extends TestBase {
@@ -55,28 +54,28 @@ public class CodeGenTest extends TestBase {
 
   private void testLibrary(String fileName) throws JsError, IOException {
     String source = readLibrary(fileName);
-    Script script = new Parser(source).parse();
+    Script script = Parser.parse(source);
     String code = CodeGen.codeGen(script);
-    Script actual = new Parser(code).parse();
+    Script actual = Parser.parse(code);
     assertEquals(fileName, script, actual);
   }
 
   private void test(String expected, String source) throws JsError {
-    Script script = new Parser(source).parse();
+    Script script = Parser.parse(source);
     String code = CodeGen.codeGen(script);
     assertEquals(expected, code);
-    assertEquals(script, new Parser(code).parse());
+    assertEquals(script, Parser.parse(code));
   }
 
   private void test(String source) throws JsError {
-    Script script = new Parser(source).parse();
+    Script script = Parser.parse(source);
     String code = CodeGen.codeGen(script);
     assertEquals(source, code);
-    assertEquals(script, new Parser(code).parse());
+    assertEquals(script, Parser.parse(code));
   }
 
   private void testPretty(String source) throws JsError {
-    Script script = new Parser(source).parse();
+    Script script = Parser.parse(source);
     String code = CodeGen.codeGen(script, true);
     assertEquals(source, code);
     code = CodeGen.codeGen(script, FormattedCodeRepFactory.INSTANCE);
@@ -84,7 +83,7 @@ public class CodeGenTest extends TestBase {
   }
 
   private void testLoose(String expected, String source) throws JsError {
-    Script script = new Parser(source).parse();
+    Script script = Parser.parse(source);
     String code = CodeGen.codeGen(script);
     assertEquals(expected, code);
   }

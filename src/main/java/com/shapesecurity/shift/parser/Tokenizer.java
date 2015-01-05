@@ -24,6 +24,7 @@ import static com.shapesecurity.shift.parser.ErrorMessages.UNEXPECTED_RESERVED_W
 import static com.shapesecurity.shift.parser.ErrorMessages.UNEXPECTED_STRING;
 import static com.shapesecurity.shift.parser.ErrorMessages.UNEXPECTED_TOKEN;
 
+import com.shapesecurity.shift.ast.SourceLocation;
 import com.shapesecurity.shift.parser.token.EOFToken;
 import com.shapesecurity.shift.parser.token.FalseLiteralToken;
 import com.shapesecurity.shift.parser.token.IdentifierToken;
@@ -96,16 +97,17 @@ public class Tokenizer {
                     true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true,
                     true, true, true, true, false, false, false, false, false};
   @NotNull
-  public final ArrayList<Integer> lineStarts = new ArrayList<>();
-  @NotNull
   final String source;
   private final boolean directed;
   @NotNull
-  Token lookahead;
+  protected Token lookahead;
   boolean hasLineTerminatorBeforeNext;
   boolean strict;
-  int index;
-  int tokenIndex;
+  boolean collectingToken;
+  private int index, line, lineStart;
+  private int lastIndex, lastLine, lastLineStart;
+  private int startIndex, startLine, startLineStart;
+
   @Nullable
   private SourceRange lastWhitespace;
   @Nullable
@@ -117,6 +119,9 @@ public class Tokenizer {
   @Nullable
   private TokenType parenCheckToken;
 
+  private SourceLocation cachedSourceLocation;
+  private int lastCachedSourceLocation = -1;
+
   public Tokenizer(@NotNull String source) throws JsError {
     this(false, source);
   }
@@ -124,11 +129,7 @@ public class Tokenizer {
   Tokenizer(boolean directed, @NotNull String source) throws JsError {
     this.directed = directed;
     this.source = source;
-    this.lineStarts.add(0);
     this.lookahead = this.collectToken();
-    this.lineStarts.clear();
-    this.lineStarts.add(0);
-    this.index = 0;
     this.hasLineTerminatorBeforeNext = false;
   }
 
@@ -431,16 +432,6 @@ public class Tokenizer {
     return TokenType.ILLEGAL;
   }
 
-  // Only used in error reporting.
-  int trackBackLineNumber(int position) {
-    for (int line = this.lineStarts.size() - 1; line >= 0; line--) {
-      if ((position >= this.getLineStart(line))) {
-        return line;
-      }
-    }
-    return 0;
-  }
-
   @NotNull
   private JsError createILLEGAL() {
     return this.createError(ErrorMessages.UNEXPECTED_ILLEGAL_TOKEN);
@@ -475,21 +466,36 @@ public class Tokenizer {
   @NotNull
   JsError createError(@NotNull String message, @NotNull Object... args) {
     String msg = String.format(message, args);
-    int index = this.index;
-    int line = this.trackBackLineNumber(index);
-    return new JsError(index, line + 1, index - this.getLineStart(line) + 1, msg);
-  }
-
-  private int getLineStart(int line) {
-    return this.lineStarts.get(line);
+    if (this.collectingToken) {
+      return new JsError(this.index, this.line + 1, this.index - this.lineStart + 1, msg);
+    } else {
+      return new JsError(this.startIndex, this.startLine + 1, this.startIndex - this.startLineStart + 1, msg);
+    }
   }
 
   @NotNull
-  JsError createError(@NotNull Token token, @NotNull String message, @NotNull Object... args) {
+  JsError createErrorWithToken(@NotNull SourceLocation location, @NotNull String message, @NotNull Object... args) {
     String msg = String.format(message, args);
-    int index = token.slice.start;
-    int line = this.trackBackLineNumber(index);
-    return new JsError(index, line + 1, index - this.getLineStart(line) + 1, msg);
+    return new JsError(location.offset, location.line + 1, location.column + 1, msg);
+  }
+
+  @NotNull
+  SourceLocation getLocation() {
+    if (this.lastCachedSourceLocation != this.index) {
+      this.cachedSourceLocation = new SourceLocation(this.startLine, this.startIndex - this.startLineStart, this.startIndex);
+      this.lastCachedSourceLocation = this.index;
+    }
+    return this.cachedSourceLocation;
+  }
+
+  @NotNull
+  private SourceRange getSlice(int start) {
+    return new SourceRange(start, this.index, this.source);
+  }
+
+  @NotNull
+  SourceRange getSliceBeforeLookahead(int start) {
+    return new SourceRange(start, this.lastIndex, this.source);
   }
 
   private void skipSingleLineComment(int offset) {
@@ -502,7 +508,8 @@ public class Tokenizer {
         if (ch == '\r' && this.index < this.source.length() && this.source.charAt(this.index) == '\n') {
           this.index++;
         }
-        this.lineStarts.add(this.index);
+        this.lineStart = this.index;
+        this.line++;
         return;
       }
     }
@@ -527,7 +534,8 @@ public class Tokenizer {
         case '\n':
           this.hasLineTerminatorBeforeNext = true;
           i++;
-          this.lineStarts.add(i);
+          this.lineStart = i;
+          this.line++;
           break;
         case '\r':
           this.hasLineTerminatorBeforeNext = true;
@@ -535,14 +543,16 @@ public class Tokenizer {
             i++;
           }
           i++;
-          this.lineStarts.add(i);
+          this.lineStart = i;
+          this.line++;
           break;
         default:
           i++;
         }
       } else if (ch == 0x2028 || ch == 0x2029) {
         i++;
-        this.lineStarts.add(i);
+        this.lineStart = i;
+        this.line++;
       } else {
         i++;
       }
@@ -551,7 +561,7 @@ public class Tokenizer {
     throw this.createILLEGAL();
   }
 
-  void skipComment() throws JsError {
+  private void skipComment() throws JsError {
     boolean isLineStart = this.index == 0;
     int length = this.source.length();
 
@@ -565,7 +575,8 @@ public class Tokenizer {
         if (ch == '\r' && this.index < length && this.source.charAt(this.index) == '\n') {
           this.index++;
         }
-        this.lineStarts.add(this.index);
+        this.lineStart = this.index;
+        this.line++;
         isLineStart = true;
       } else if (ch == '/') {
         if (this.index + 1 >= length) {
@@ -719,7 +730,7 @@ public class Tokenizer {
       }
     }
     this.index = i;
-    return new SourceRange(start, this.index, this.source);
+    return this.getSlice(start);
   }
 
   @NotNull
@@ -732,6 +743,7 @@ public class Tokenizer {
     // There is no keyword or literal with only one character.
     // Thus, it must be an identifier.
     SourceRange slice = this.getSlice(start);
+
     if ((id.length() == 1)) {
       return new IdentifierToken(slice);
     }
@@ -758,10 +770,6 @@ public class Tokenizer {
   }
 
   @NotNull
-  private SourceRange getSlice(int start) {
-    return new SourceRange(start, this.index, this.source);
-  }
-
   private TokenType scanPunctuatorHelper() {
     char ch1 = this.source.charAt(this.index);
 
@@ -1122,7 +1130,8 @@ public class Tokenizer {
           if (ch == '\r' && this.source.charAt(this.index) == '\n') {
             this.index++;
           }
-          this.lineStarts.add(this.index);
+          this.lineStart = this.index;
+          this.line++;
         }
       } else if (Utils.isLineTerminator(ch)) {
         throw this.createILLEGAL();
@@ -1136,10 +1145,20 @@ public class Tokenizer {
   }
 
   @NotNull
-  Token scanRegExp() throws JsError {
+  protected Token rescanRegExp() throws JsError {
+    // rollback to the beginning of the token.
+    this.index = this.startIndex;
+    this.line = this.startLine;
+    this.lineStart = this.startLineStart;
+    this.collectingToken = true;
+    this.lookahead = this.scanRegExp();
+    this.collectingToken = false;
+    return this.lookahead;
+  }
 
+  @NotNull
+  private Token scanRegExp() throws JsError {
     int start = this.index;
-    // ch = this.source.charAt(this.index)
 
     StringBuilder str = new StringBuilder();
     str.append('/');
@@ -1318,14 +1337,6 @@ public class Tokenizer {
 
   @NotNull
   private Token advance() throws JsError {
-    int start = this.index;
-    this.skipComment();
-    this.lastWhitespace = this.getSlice(start);
-    start = this.index;
-    if (this.index >= this.source.length()) {
-      return new EOFToken(this.getSlice(start));
-    }
-
     char ch = this.source.charAt(this.index);
 
     if (ch < 0x80) {
@@ -1356,18 +1367,17 @@ public class Tokenizer {
       }
 
       // Slash (/) U+002F can also start a regex.
-      if (!this.directed && ch == '/') {
-        int index = this.index;
-        if (this.guessRegexp()) {
-          try {
-            return this.scanRegExp();
-          } catch (JsError ignored) {
-            this.index = index;
+      if (ch == '/') {
+        if (!this.directed) {
+          int index = this.index;
+          if (this.guessRegexp()) {
+            try {
+              return this.scanRegExp();
+            } catch (JsError ignored) {
+              this.index = index;
+            }
           }
         }
-        return this.scanPunctuator();
-      }
-      if (ch == '/') {
         return this.scanPunctuator();
       }
       throw this.createILLEGAL();
@@ -1386,8 +1396,29 @@ public class Tokenizer {
 
   @NotNull
   private Token collectToken() throws JsError {
+    this.collectingToken = true;
+    int start = this.index;
+
+    this.lastIndex = this.index;
+    this.lastLine = this.line;
+    this.lastLineStart = this.lineStart;
+
+    this.skipComment();
+
+    this.startIndex = this.index;
+    this.startLine = this.line;
+    this.startLineStart = this.lineStart;
+
+    this.lastWhitespace = this.getSlice(start);
+    if (this.index >= this.source.length()) {
+      return new EOFToken(this.getSlice(start));
+    }
+
     Token token = this.advance();
+
+
     token.leadingWhitespace = this.lastWhitespace;
+    this.collectingToken = false;
     return token;
   }
 
@@ -1396,12 +1427,12 @@ public class Tokenizer {
     if (this.prevToken != null && this.prevToken.type == TokenType.EOS) {
       return this.prevToken;
     }
+
     Token prevToken2 = this.prevToken;
     this.prevToken = this.lookahead;
-    this.index = this.prevToken.slice.end;
     this.hasLineTerminatorBeforeNext = false;
     this.lookahead = this.collectToken();
-    this.index = this.prevToken.slice.end;
+
     if (prevToken2 != null) {
       if (this.prevToken.type == TokenType.LPAREN) {
         this.parenCheckToken = prevToken2.type;
@@ -1411,7 +1442,6 @@ public class Tokenizer {
         this.curlyCheckToken = prevToken2.type;
       }
     }
-    this.tokenIndex++;
     return this.prevToken;
   }
 }
