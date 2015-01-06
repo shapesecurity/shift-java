@@ -305,7 +305,7 @@ public class Tokenizer {
         break;
       case 'y': // YIELD
         if (cse4(id, 'i', 'e', 'l', 'd')) {
-          return this.strict ? TokenType.FUTURE_STRICT_RESERVED_WORD : TokenType.YIELD;
+          return this.strict ? TokenType.FUTURE_STRICT_RESERVED_WORD : TokenType.ILLEGAL;
         }
         break;
       case 's': // SUPER

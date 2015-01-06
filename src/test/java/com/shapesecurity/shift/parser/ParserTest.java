@@ -63,6 +63,10 @@ public class ParserTest extends TestBase {
     assertTrue(((ExpressionStatement) stmt).expression instanceof ThisExpression);
   }
 
+  private void testParser(String source) throws JsError {
+    Parser.parse(source);
+  }
+
   private void testParser(String name, String source) throws JsError, IllegalAccessException, IOException {
     {
       Script node = Parser.parse(source);
@@ -70,7 +74,7 @@ public class ParserTest extends TestBase {
       jsonString = jsonString.substring(0, jsonString.length() - 1);
       jsonString += ",\"source\":" + Utils.escapeStringLiteral(source) + "}";
       if (!Files.exists(getPath("parsing/" + name + ".json"))) {
-        //assert false;
+        assert false;
         Files.createDirectories(getPath("parsing/" + name + ".json").getParent());
         Files.write(getPath("parsing/" + name + ".json"), jsonString.getBytes(StandardCharsets.UTF_8));
       } else {
@@ -84,7 +88,7 @@ public class ParserTest extends TestBase {
       jsonString = jsonString.substring(0, jsonString.length() - 1);
       jsonString += ",\"source\":" + Utils.escapeStringLiteral(source) + "}";
       if (!Files.exists(getPath("parsing_with_loc/" + name + ".json"))) {
-        //assert false;
+        assert false;
         Files.createDirectories(getPath("parsing_with_loc/" + name + ".json").getParent());
         Files.write(getPath("parsing_with_loc/" + name + ".json"), jsonString.getBytes(StandardCharsets.UTF_8));
       } else {
@@ -690,7 +694,7 @@ public class ParserTest extends TestBase {
     testFailure("1 + { t:t,", 1, 11, 10, "Unexpected end of input");
     testFailure("var x = /\n/", 1, 10, 9, "Invalid regular expression: missing /");
     testFailure("var x = \"\n", 1, 10, 9, "Unexpected token ILLEGAL");
-    testFailure("var if = 42", 1, 8, 7, "Unexpected token if");
+    testFailure("var if = 42", 1, 5, 4, "Unexpected token if");
     testFailure("i #= 42", 1, 3, 2, "Unexpected token ILLEGAL");
     testFailure("1 + (", 1, 6, 5, "Unexpected end of input");
     testFailure("\n\n\n{", 4, 2, 4, "Unexpected end of input");
@@ -709,14 +713,14 @@ public class ParserTest extends TestBase {
     testFailure("({ i: 42, set i(x) { } })", 1, 24, 23, "Object literal may not have data and accessor property with the same name");
     testFailure("({ get i() { }, get i() { } })", 1, 29, 28, "Object literal may not have multiple get/set accessors with the same name");
     testFailure("({ set i(x) { }, set i(x) { } })", 1, 31, 30, "Object literal may not have multiple get/set accessors with the same name");
-    testFailure("function t(if) { }", 1, 14, 13, "Unexpected token if");
-    testFailure("function t(true) { }", 1, 16, 15, "Unexpected token true");
-    testFailure("function t(false) { }", 1, 17, 16, "Unexpected token false");
-    testFailure("function t(null) { }", 1, 16, 15, "Unexpected token null");
-    testFailure("function null() { }", 1, 14, 13, "Unexpected token null");
-    testFailure("function true() { }", 1, 14, 13, "Unexpected token true");
-    testFailure("function false() { }", 1, 15, 14, "Unexpected token false");
-    testFailure("function if() { }", 1, 12, 11, "Unexpected token if");
+    testFailure("function t(if) { }", 1, 12, 11, "Unexpected token if");
+    testFailure("function t(true) { }", 1, 12, 11, "Unexpected token true");
+    testFailure("function t(false) { }", 1, 12, 11, "Unexpected token false");
+    testFailure("function t(null) { }", 1, 12, 11, "Unexpected token null");
+    testFailure("function null() { }", 1, 10, 9, "Unexpected token null");
+    testFailure("function true() { }", 1, 10, 9, "Unexpected token true");
+    testFailure("function false() { }", 1, 10, 9, "Unexpected token false");
+    testFailure("function if() { }", 1, 10, 9, "Unexpected token if");
     testFailure("a b;", 1, 3, 2, "Unexpected identifier");
     testFailure("if.a;", 1, 3, 2, "Unexpected token .");
     testFailure("a if;", 1, 3, 2, "Unexpected token if");
@@ -739,9 +743,9 @@ public class ParserTest extends TestBase {
     testFailure("for(;;)", 1, 8, 7, "Unexpected end of input");
     testFailure("with(x)", 1, 8, 7, "Unexpected end of input");
     testFailure("try { }", 1, 8, 7, "Missing catch or finally after try");
-    testFailure("try {} catch (42) {} ", 1, 17, 16, "Unexpected number");
+    testFailure("try {} catch (42) {} ", 1, 15, 14, "Unexpected number");
     testFailure("try {} catch (answer()) {} ", 1, 21, 20, "Unexpected token (");
-    testFailure("try {} catch (-x) {} ", 1, 16, 15, "Unexpected token -");
+    testFailure("try {} catch (-x) {} ", 1, 15, 14, "Unexpected token -");
     testFailure("\u203f = 10", 1, 1, 0, "Unexpected token ILLEGAL");
     // TODO: discussion.
     // testFailure("if(true) let a = 1;", 1, 14, 13, "Unexpected token let");
@@ -829,22 +833,21 @@ public class ParserTest extends TestBase {
     testFailure("function hello() { \"octal directive\\1\"; \"use strict\"; }", 1, 20, 19, "Octal literals are not allowed in strict mode.");
     testFailure("function hello() { \"octal directive\\1\"; \"octal directive\\2\"; \"use strict\"; }", 1, 20, 19, "Octal literals are not allowed in strict mode.");
     testFailure("function hello() { \"use strict\"; function inner() { \"octal directive\\1\"; } }", 1, 53, 52, "Octal literals are not allowed in strict mode.");
-    testFailure("function hello() { \"use strict\"; var implements; }", 1, 48, 47, "Use of future reserved word in strict mode");
-    testFailure("function hello() { \"use strict\"; var interface; }", 1, 47, 46, "Use of future reserved word in strict mode");
-    testFailure("function hello() { \"use strict\"; var package; }", 1, 45, 44, "Use of future reserved word in strict mode");
-    testFailure("function hello() { \"use strict\"; var private; }", 1, 45, 44, "Use of future reserved word in strict mode");
-    testFailure("function hello() { \"use strict\"; var protected; }", 1, 47, 46, "Use of future reserved word in strict mode");
-    testFailure("function hello() { \"use strict\"; var public; }", 1, 44, 43, "Use of future reserved word in strict mode");
-    testFailure("function hello() { \"use strict\"; var static; }", 1, 44, 43, "Use of future reserved word in strict mode");
-    testFailure("function hello() { \"use strict\"; var yield; }", 1, 43, 42, "Use of future reserved word in strict mode");
-    testFailure("function hello() { \"use strict\"; var let; }", 1, 41, 40, "Use of future reserved word in strict mode");
+    testFailure("function hello() { \"use strict\"; var implements; }", 1, 38, 37, "Use of future reserved word in strict mode");
+    testFailure("function hello() { \"use strict\"; var interface; }", 1, 38, 37, "Use of future reserved word in strict mode");
+    testFailure("function hello() { \"use strict\"; var package; }", 1, 38, 37, "Use of future reserved word in strict mode");
+    testFailure("function hello() { \"use strict\"; var private; }", 1, 38, 37, "Use of future reserved word in strict mode");
+    testFailure("function hello() { \"use strict\"; var protected; }", 1, 38, 37, "Use of future reserved word in strict mode");
+    testFailure("function hello() { \"use strict\"; var public; }", 1, 38, 37, "Use of future reserved word in strict mode");
+    testFailure("function hello() { \"use strict\"; var static; }", 1, 38, 37, "Use of future reserved word in strict mode");
+    testFailure("function hello() { \"use strict\"; var yield; }", 1, 38, 37, "Use of future reserved word in strict mode");
+    testFailure("function hello() { \"use strict\"; var let; }", 1, 38, 37, "Use of future reserved word in strict mode");
     testFailure("function hello(static) { \"use strict\"; }", 1, 41, 40, "Use of future reserved word in strict mode");
     testFailure("function static() { \"use strict\"; }", 1, 36, 35, "Use of future reserved word in strict mode");
     testFailure("function eval(a) { \"use strict\"; }", 1, 35, 34, "Function name may not be eval or arguments in strict mode");
     testFailure("function arguments(a) { \"use strict\"; }", 1, 40, 39, "Function name may not be eval or arguments in strict mode");
-    testFailure("var yield", 1, 10, 9, "Unexpected token yield");
-    testFailure("var let", 1, 8, 7, "Unexpected token let");
-    testFailure("\"use strict\"; function static() { }", 1, 30, 29, "Use of future reserved word in strict mode");
+    testFailure("var let", 1, 5, 4, "Unexpected token let");
+    testFailure("\"use strict\"; function static() { }", 1, 24, 23, "Use of future reserved word in strict mode");
     testFailure("function a(t, t) { \"use strict\"; }", 1, 35, 34, "Strict mode function may not have duplicate parameter names");
     testFailure("function a(eval) { \"use strict\"; }", 1, 35, 34, "Parameter name eval or arguments is not allowed in strict mode");
     testFailure("function a(package) { \"use strict\"; }", 1, 38, 37, "Use of future reserved word in strict mode");
@@ -862,5 +865,47 @@ public class ParserTest extends TestBase {
     testFailure("const", 1, 6, 5, "Unexpected end of input");
     testFailure("{ ;  ;  ", 1, 9, 8, "Unexpected end of input");
     testFailure("function t() { ;  ;  ", 1, 22, 21, "Unexpected end of input");
+  }
+
+  @Test
+  // programs that parse according to ES3 but either fail or parse differently accoding to ES5
+  public void testES5BackwardIncompatibilities() throws JsError {
+    // ES3: zero-width non-breaking space is allowed in an identifier
+    // ES5: zero-width non-breaking space is a whitespace character
+    testFailure("_\uFEFF_", 1, 3, 2, "Unexpected identifier");
+
+    // ES3: a slash in a regexp character class will terminate the regexp
+    // ES5: a slash is allowed within a regexp character class
+    testFailure("[/[/]", 1, 6, 5, "Invalid regular expression: missing /");
+  }
+
+  @Test
+  // programs where we choose to diverge from the ES5 specification
+  public void testES5Divergences() throws JsError {
+    // ES5: assignment to computed member expression
+    // ES6: variable declaration statement
+    // We choose to fail here because we support ES5 with a minor addition: let/const with binding identifier.
+    // This is the same decision esprima has made.
+    testFailure("let[a] = b;", 1, 4, 3, "Unexpected token [");
+    testFailure("const[a] = b;", 1, 6, 5, "Unexpected token [");
+    testFailure("var let", 1, 5, 4, "Unexpected token let");
+    testFailure("var const", 1, 5, 4, "Unexpected token const");
+
+    // ES5: invalid program
+    // ES6: function declaration within a block
+    // We choose to parse this because of ubiquitous support among popular interpreters, despite disagreements about semantics.
+    testParser("{ function f(){} }");
+  }
+
+  @Test
+  // programs that parse according to ES5 but either fail or parse differently accoding to ES6
+  public void testES6BackwardIncompatibilities() throws JsError {
+    // ES5: in sloppy mode, future reserved words (including yield) are regular identifiers
+    // ES6: yield has been moved from the future reserved words list to the keywords list
+    testParser("var yield = function yield(){};");
+
+    // ES5: this declares a function-scoped variable while at the same time assigning to the block-scoped variable
+    // ES6: this particular construction is explicitly disallowed
+    testParser("try {} catch(e) { var e = 0; }");
   }
 }
