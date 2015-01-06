@@ -32,6 +32,10 @@ import com.shapesecurity.shift.ast.expression.IdentifierExpression;
 import com.shapesecurity.shift.ast.expression.LiteralBooleanExpression;
 import com.shapesecurity.shift.ast.expression.LiteralNullExpression;
 import com.shapesecurity.shift.ast.expression.LiteralNumericExpression;
+import com.shapesecurity.shift.ast.expression.ObjectExpression;
+import com.shapesecurity.shift.ast.property.DataProperty;
+import com.shapesecurity.shift.ast.property.ObjectProperty;
+import com.shapesecurity.shift.ast.property.PropertyName;
 import com.shapesecurity.shift.ast.statement.BlockStatement;
 import com.shapesecurity.shift.ast.statement.EmptyStatement;
 import com.shapesecurity.shift.ast.statement.ExpressionStatement;
@@ -147,5 +151,21 @@ public class AstHelper extends TestBase {
     List<ValidationError> errs = Validator.validate(wrapProgram(exprStmt(e)));
     Assert.assertTrue(!errs.isEmpty());
     Assert.assertEquals(numExpectedErrs, errs.length);
+  }
+
+  protected static ObjectExpression obj(ObjectProperty... properties) {
+    return new ObjectExpression(List.from(properties));
+  }
+
+  protected static PropertyName pn(Identifier ident) {
+    return new PropertyName(ident);
+  }
+
+  protected static PropertyName pn(double value) {
+    return new PropertyName(value);
+  }
+
+  protected static DataProperty init(PropertyName propertyName, Expression value) {
+    return new DataProperty(propertyName, value);
   }
 }

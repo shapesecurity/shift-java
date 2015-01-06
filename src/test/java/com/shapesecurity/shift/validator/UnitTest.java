@@ -178,6 +178,24 @@ public class UnitTest extends AstHelper {
     invalidStmt(1, new ForInStatement(vars(VariableDeclarationKind.Var, "a", "b"), EXPR, STMT));
   }
 
+  @Test
+  public final void testPropertyNameOfKindIdentifierMustBeValidIdentifier() {
+    validExpr(obj(init(pn(ID), EXPR)));
+    validExpr(obj(init(pn(new Identifier("function")), EXPR)));
+    invalidExpr(1, obj(init(pn(new Identifier("x x")), EXPR)));
+    invalidExpr(1, obj(init(pn(new Identifier(" ")), EXPR)));
+  }
+
+  @Test
+  public final void testPropertyNameOfKindNumberMustBeValidNumber() {
+    validExpr(obj(init(pn(0), EXPR)));
+    validExpr(obj(init(pn(3), EXPR)));
+    invalidExpr(1, obj(init(pn(-1), EXPR)));
+    invalidExpr(1, obj(init(pn(Double.NaN), EXPR)));
+    invalidExpr(1, obj(init(pn(Double.POSITIVE_INFINITY), EXPR)));
+    invalidExpr(1, obj(init(pn(Double.NEGATIVE_INFINITY), EXPR)));
+  }
+
   private void testLibrary(String fileName) throws IOException, JsError {
     String source = readLibrary(fileName);
     Script script = Parser.parse(source);

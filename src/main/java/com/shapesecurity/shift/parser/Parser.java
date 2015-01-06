@@ -1655,17 +1655,19 @@ public class Parser extends Tokenizer {
     // Note: This function is called only from parseObjectProperty(), where;
     // Eof and Punctuator tokens are already filtered out.
 
+    PropertyName propertyName;
+    SourceLocation location = this.getLocation();
     if (token instanceof StringLiteralToken) {
-      return this.markLocation(this.getLocation(), new PropertyName(this.parseStringLiteral()));
-    }
-    if (token instanceof NumericLiteralToken) {
-      return this.markLocation(this.getLocation(), new PropertyName(this.parseNumericLiteral()));
-    }
-    if (token instanceof IdentifierLikeToken) {
-      return this.markLocation(this.getLocation(), new PropertyName(this.parseIdentifier()));
+      propertyName = new PropertyName(this.parseStringLiteral().value);
+    } else if (token instanceof NumericLiteralToken) {
+      propertyName = new PropertyName(this.parseNumericLiteral().value);
+    } else if (token instanceof IdentifierLikeToken) {
+      propertyName = new PropertyName(this.parseIdentifier());
+    } else {
+      throw this.createError(INVALID_PROPERTY_NAME);
     }
 
-    throw this.createError(INVALID_PROPERTY_NAME);
+    return this.markLocation(location, propertyName);
   }
 
   @NotNull

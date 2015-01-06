@@ -32,6 +32,7 @@ import com.shapesecurity.shift.ast.expression.ObjectExpression;
 import com.shapesecurity.shift.ast.expression.PrefixExpression;
 import com.shapesecurity.shift.ast.operators.PrefixOperator;
 import com.shapesecurity.shift.ast.property.ObjectProperty;
+import com.shapesecurity.shift.ast.property.PropertyName;
 import com.shapesecurity.shift.ast.property.Setter;
 import com.shapesecurity.shift.ast.statement.BreakStatement;
 import com.shapesecurity.shift.ast.statement.ContinueStatement;
@@ -274,7 +275,7 @@ public class Validator extends MonoidalReducer<ValidationContext> {
       @NotNull LiteralNumericExpression node,
       @NotNull List<Branch> path) {
     ValidationContext v = new ValidationContext();
-    if (node.value < 0 || node.value == 0 && 1 / node.value < 0) {
+    if (node.value < 0 || 1 / node.value < 0) {
       v = v.addError(new ValidationError(node, "Numeric Literal node must be non-negative"));
     } else if (Double.isNaN(node.value)) {
       v = v.addError(new ValidationError(node, "Numeric Literal node must not be NaN"));
@@ -486,5 +487,25 @@ public class Validator extends MonoidalReducer<ValidationContext> {
         new ValidationError(
             node,
             "WithStatement not allowed in strict mode"));
+  }
+
+  @NotNull
+  @Override
+  public ValidationContext reducePropertyName(@NotNull PropertyName node, @NotNull List<Branch> path) {
+    ValidationContext v = super.reducePropertyName(node, path);
+    switch (node.kind) {
+    case Identifier:
+      if (!Utils.isValidIdentifierName(node.value)) {
+        return v.addError(
+            new ValidationError(node, "PropertyName of kind 'identifier' must be valid identifier name."));
+      }
+      break;
+    case Number:
+      if (!Utils.isValidNumber(node.value)) {
+        return v.addError(new ValidationError(node, "PropertyName of kind 'number' must be a valid number literal."));
+      }
+      break;
+    }
+    return v;
   }
 }

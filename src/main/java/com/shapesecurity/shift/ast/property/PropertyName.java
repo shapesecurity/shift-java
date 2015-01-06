@@ -18,10 +18,10 @@ package com.shapesecurity.shift.ast.property;
 
 import com.shapesecurity.shift.ast.Identifier;
 import com.shapesecurity.shift.ast.Node;
-import com.shapesecurity.shift.ast.expression.LiteralNumericExpression;
-import com.shapesecurity.shift.ast.expression.LiteralStringExpression;
 import com.shapesecurity.shift.ast.types.Type;
+import com.shapesecurity.shift.parser.JsError;
 import com.shapesecurity.shift.utils.D2A;
+import com.shapesecurity.shift.utils.Utils;
 import com.shapesecurity.shift.visitor.TransformerP;
 
 import org.jetbrains.annotations.NotNull;
@@ -31,36 +31,26 @@ public final class PropertyName extends Node {
   public final String value;
   public final PropertyNameKind kind;
 
-  public PropertyName(@NotNull PropertyName node) {
+  private PropertyName(@NotNull String value, @NotNull PropertyNameKind kind) {
     super();
-    this.value = node.value;
-    this.kind = node.kind;
+    this.value = value;
+    this.kind = kind;
+  }
+
+  public PropertyName(@NotNull PropertyName node) {
+    this(node.value, node.kind);
   }
 
   public PropertyName(@NotNull Identifier ident) {
-    super();
-    this.value = ident.name;
-    this.kind = PropertyNameKind.Identifier;
-  }
-
-  public PropertyName(@NotNull LiteralStringExpression str) {
-    this(str.value);
-  }
-
-  public PropertyName(@NotNull LiteralNumericExpression num) {
-    this(num.value);
+    this(ident.name, PropertyNameKind.Identifier);
   }
 
   public PropertyName(@NotNull String str) {
-    super();
-    this.value = str;
-    this.kind = PropertyNameKind.String;
+    this(str, PropertyNameKind.String);
   }
 
   public PropertyName(double d) {
-    super();
-    this.value = D2A.d2a(d);
-    this.kind = PropertyNameKind.Number;
+    this(D2A.d2a(d), PropertyNameKind.Number);
   }
 
   @NotNull
