@@ -26,6 +26,7 @@ import com.shapesecurity.shift.ast.Statement;
 import com.shapesecurity.shift.ast.SwitchCase;
 import com.shapesecurity.shift.ast.SwitchDefault;
 import com.shapesecurity.shift.ast.VariableDeclaration.VariableDeclarationKind;
+import com.shapesecurity.shift.ast.expression.FunctionExpression;
 import com.shapesecurity.shift.ast.expression.IdentifierExpression;
 import com.shapesecurity.shift.ast.expression.LiteralNumericExpression;
 import com.shapesecurity.shift.ast.expression.ObjectExpression;
@@ -40,6 +41,7 @@ import com.shapesecurity.shift.ast.statement.ContinueStatement;
 import com.shapesecurity.shift.ast.statement.DoWhileStatement;
 import com.shapesecurity.shift.ast.statement.ForInStatement;
 import com.shapesecurity.shift.ast.statement.ForStatement;
+import com.shapesecurity.shift.ast.statement.FunctionDeclaration;
 import com.shapesecurity.shift.ast.statement.IfStatement;
 import com.shapesecurity.shift.ast.statement.LabeledStatement;
 import com.shapesecurity.shift.ast.statement.ReturnStatement;
@@ -79,13 +81,19 @@ public class UnitTest extends AstHelper {
     validExpr(new IdentifierExpression(new Identifier("$")));
     validExpr(new IdentifierExpression(new Identifier("_")));
     validExpr(new IdentifierExpression(new Identifier("_$0x")));
+    validExpr(new StaticMemberExpression(EXPR, ID));
+    validExpr(new StaticMemberExpression(EXPR, new Identifier("if")));
+    validExpr(new ObjectExpression(List.list(new DataProperty(new PropertyName(new Identifier("if")), EXPR))));
     invalidExpr(1, new IdentifierExpression(new Identifier("")));
     invalidExpr(1, new IdentifierExpression(new Identifier("a-b")));
     invalidExpr(1, new IdentifierExpression(new Identifier("0x0")));
+    invalidExpr(1, new StaticMemberExpression(EXPR, new Identifier("")));
+    invalidExpr(1, new StaticMemberExpression(EXPR, new Identifier("0")));
+    invalidExpr(1, new StaticMemberExpression(EXPR, new Identifier("a-b")));
   }
 
   @Test
-  public final void testIdentifierNameMemberMustNotBeAReservedWord() {
+  public final void testIdentifierExpressionMemberMustNotBeAReservedWord() {
     validExpr(new IdentifierExpression(new Identifier("varx")));
     validExpr(new IdentifierExpression(new Identifier("xvar")));
     validExpr(new IdentifierExpression(new Identifier("varif")));
@@ -94,6 +102,47 @@ public class UnitTest extends AstHelper {
     invalidExpr(1, new IdentifierExpression(new Identifier("if")));
     invalidExpr(1, new IdentifierExpression(new Identifier("var")));
     invalidExpr(1, new IdentifierExpression(new Identifier("function")));
+  }
+
+  @Test
+  public final void testFunctionExpressionNameMustNotBeAReservedWord() {
+    validExpr(new FunctionExpression(Maybe.<Identifier>nothing(), List.<Identifier>nil(), EMPTY_BODY));
+    validExpr(new FunctionExpression(Maybe.just(ID), List.<Identifier>nil(), EMPTY_BODY));
+    invalidExpr(1, new FunctionExpression(Maybe.just(BAD_ID), List.<Identifier>nil(), EMPTY_BODY));
+  }
+
+  @Test
+  public final void testFunctionDeclarationNameMustNotBeAReservedWord() {
+    validStmt(new FunctionDeclaration(ID, List.<Identifier>nil(), EMPTY_BODY));
+    invalidStmt(1, new FunctionDeclaration(BAD_ID, List.<Identifier>nil(), EMPTY_BODY));
+  }
+
+  @Test
+  public final void testFunctionExpressionParametersMustNotBeAReservedWord() {
+    validExpr(new FunctionExpression(Maybe.<Identifier>nothing(), List.<Identifier>nil(), EMPTY_BODY));
+    validExpr(new FunctionExpression(Maybe.<Identifier>nothing(), List.list(ID), EMPTY_BODY));
+    invalidExpr(1, new FunctionExpression(Maybe.<Identifier>nothing(), List.list(BAD_ID), EMPTY_BODY));
+    invalidExpr(1, new FunctionExpression(Maybe.<Identifier>nothing(), List.list(ID, BAD_ID), EMPTY_BODY));
+    invalidExpr(1, new FunctionExpression(Maybe.<Identifier>nothing(), List.list(ID, ID, BAD_ID), EMPTY_BODY));
+    invalidExpr(1, new FunctionExpression(Maybe.<Identifier>nothing(), List.list(BAD_ID, ID), EMPTY_BODY));
+    invalidExpr(1, new FunctionExpression(Maybe.<Identifier>nothing(), List.list(ID, BAD_ID, ID), EMPTY_BODY));
+  }
+
+  @Test
+  public final void testFunctionDeclarationParametersMustNotBeAReservedWord() {
+    validStmt(new FunctionDeclaration(ID, List.<Identifier>nil(), EMPTY_BODY));
+    validStmt(new FunctionDeclaration(ID, List.list(ID), EMPTY_BODY));
+    invalidStmt(1, new FunctionDeclaration(ID, List.list(BAD_ID), EMPTY_BODY));
+    invalidStmt(1, new FunctionDeclaration(ID, List.list(ID, BAD_ID), EMPTY_BODY));
+    invalidStmt(1, new FunctionDeclaration(ID, List.list(ID, ID, BAD_ID), EMPTY_BODY));
+    invalidStmt(1, new FunctionDeclaration(ID, List.list(BAD_ID, ID), EMPTY_BODY));
+    invalidStmt(1, new FunctionDeclaration(ID, List.list(ID, BAD_ID, ID), EMPTY_BODY));
+  }
+
+  @Test
+  public final void testSetterParameterMustNotBeAReservedWord() {
+    validExpr(new ObjectExpression(List.list(new Setter(new PropertyName(ID), ID, EMPTY_BODY))));
+    invalidExpr(1, new ObjectExpression(List.list(new Setter(new PropertyName(ID), BAD_ID, EMPTY_BODY))));
   }
 
   @Test
@@ -140,14 +189,6 @@ public class UnitTest extends AstHelper {
   public final void testNumericLiteralNodesMustBeFinite() {
     invalidExpr(1, new LiteralNumericExpression(Double.POSITIVE_INFINITY));
     invalidExpr(1, new LiteralNumericExpression(Double.NEGATIVE_INFINITY));
-  }
-
-  @Test
-  public final void testStaticMemberExpressionPropertyMemberMustHaveAValidIdentifierNameNameMember() {
-    invalidExpr(1, new StaticMemberExpression(EXPR, new Identifier("var")));
-    invalidExpr(1, new StaticMemberExpression(EXPR, new Identifier("")));
-    invalidExpr(1, new StaticMemberExpression(EXPR, new Identifier("0")));
-    invalidExpr(1, new StaticMemberExpression(EXPR, new Identifier("a-b")));
   }
 
   @Test
