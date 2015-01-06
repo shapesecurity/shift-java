@@ -575,10 +575,11 @@ public class Parser extends Tokenizer {
   private Identifier parseVariableIdentifier() throws JsError {
     SourceLocation startLocation = this.getLocation();
 
-    Token token = this.lex();
+    Token token = this.lookahead;
     if (!(token instanceof IdentifierToken)) {
       throw this.createUnexpected(token);
     }
+    this.lex();
 
     return this.markLocation(startLocation, new Identifier(String.valueOf(token.getValueString())));
   }
