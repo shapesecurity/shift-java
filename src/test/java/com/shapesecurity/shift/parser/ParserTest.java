@@ -846,7 +846,6 @@ public class ParserTest extends TestBase {
     testFailure("function static() { \"use strict\"; }", 1, 36, 35, "Use of future reserved word in strict mode");
     testFailure("function eval(a) { \"use strict\"; }", 1, 35, 34, "Function name may not be eval or arguments in strict mode");
     testFailure("function arguments(a) { \"use strict\"; }", 1, 40, 39, "Function name may not be eval or arguments in strict mode");
-    testFailure("var yield", 1, 10, 9, "Unexpected token yield");
     testFailure("var let", 1, 5, 4, "Unexpected token let");
     testFailure("\"use strict\"; function static() { }", 1, 24, 23, "Use of future reserved word in strict mode");
     testFailure("function a(t, t) { \"use strict\"; }", 1, 35, 34, "Strict mode function may not have duplicate parameter names");
@@ -869,15 +868,28 @@ public class ParserTest extends TestBase {
   }
 
   @Test
-  public void testES5Incompatibility() throws JsError {
+  // programs that parse according to ES3 but either fail or parse differently accoding to ES5
+  public void testES5BackwardIncompatibilities() throws JsError {
+    // ES3: zero-width non-breaking space is allowed in an identifier
+    // ES5: zero-width non-breaking space is a whitespace character
+    testFailure("_\uFEFF_", 1, 3, 2, "Unexpected identifier");
+
+    // ES3: a slash in a regexp character class will terminate the regexp
+    // ES5: a slash is allowed within a regexp character class
+    testFailure("[/[/]", 1, 6, 5, "Invalid regular expression: missing /");
+  }
+
+  @Test
+  // programs where we choose to diverge from the ES5 specification
+  public void testES5Divergences() throws JsError {
     // ES5: assignment to computed member expression
     // ES6: variable declaration statement
     // We choose to fail here because we support ES5 with a minor addition: let/const with binding identifier.
     // This is the same decision esprima has made.
-    testFailure("let[a] = b;", "Unexpected token [");
-    testFailure("const[a] = b;", "Unexpected token [");
-    testFailure("var let", "Unexpected token let");
-    testFailure("var const", "Unexpected token const");
+    testFailure("let[a] = b;", 1, 4, 3, "Unexpected token [");
+    testFailure("const[a] = b;", 1, 6, 5, "Unexpected token [");
+    testFailure("var let", 1, 5, 4, "Unexpected token let");
+    testFailure("var const", 1, 5, 4, "Unexpected token const");
 
     // ES5: invalid program
     // ES6: function declaration within a block
@@ -886,8 +898,14 @@ public class ParserTest extends TestBase {
   }
 
   @Test
-  public void testES6Incompatibility() throws JsError {
-    testParser("var yield = 0;");
+  // programs that parse according to ES5 but either fail or parse differently accoding to ES6
+  public void testES6BackwardIncompatibilities() throws JsError {
+    // ES5: in sloppy mode, future reserved words (including yield) are regular identifiers
+    // ES6: yield has been moved from the future reserved words list to the keywords list
+    testParser("var yield = function yield(){};");
+
+    // ES5: this declares a function-scoped variable while at the same time assigning to the block-scoped variable
+    // ES6: this particular construction is explicitly disallowed
     testParser("try {} catch(e) { var e = 0; }");
   }
 }
