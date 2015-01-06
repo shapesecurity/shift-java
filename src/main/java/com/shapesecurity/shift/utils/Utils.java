@@ -19,7 +19,6 @@ package com.shapesecurity.shift.utils;
 import com.shapesecurity.functional.data.List;
 import com.shapesecurity.shift.ast.Identifier;
 
-import java.util.Arrays;
 import java.util.HashSet;
 
 import org.jetbrains.annotations.NotNull;
@@ -52,12 +51,6 @@ public final class Utils {
       (1 << Character.DECIMAL_DIGIT_NUMBER) |
       (1 << Character.LETTER_NUMBER) |
       (1 << Character.CONNECTOR_PUNCTUATION));
-  @NotNull
-  private static final HashSet<String> STRICT_MODE_RESERVED_WORD_ES5 = new HashSet<>(Arrays.asList("implements",
-      "interface", "package", "private", "protected", "public", "static", "yield", "false", "null", "true", "let", "if",
-      "in", "do", "var", "for", "new", "try", "this", "else", "case", "void", "with", "enum", "while", "break", "catch",
-      "throw", "const", "class", "super", "return", "typeof", "delete", "switch", "export", "import", "default",
-      "finally", "extends", "function", "continue", "debugger", "instanceof"));
 
   // static only
   private Utils() {
@@ -65,10 +58,6 @@ public final class Utils {
 
   public static boolean isRestrictedWord(@NotNull String name) {
     return "eval".equals(name) || "arguments".equals(name);
-  }
-
-  public static boolean isStrictModeReservedWordES5(@NotNull String name) {
-    return STRICT_MODE_RESERVED_WORD_ES5.contains(name);
   }
 
   public static boolean isValidIdentifierName(@NotNull String name) {
@@ -186,7 +175,7 @@ public final class Utils {
     }
   }
 
-  public static boolean isStrictModeReservedWordES6(@NotNull String word) {
+  public static boolean isStrictModeReservedWordES5(@NotNull String word) {
     switch (word) {
     case "implements":
     case "interface":

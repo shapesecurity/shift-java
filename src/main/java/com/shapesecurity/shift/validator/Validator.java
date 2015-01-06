@@ -30,6 +30,7 @@ import com.shapesecurity.shift.ast.expression.IdentifierExpression;
 import com.shapesecurity.shift.ast.expression.LiteralNumericExpression;
 import com.shapesecurity.shift.ast.expression.ObjectExpression;
 import com.shapesecurity.shift.ast.expression.PrefixExpression;
+import com.shapesecurity.shift.ast.expression.StaticMemberExpression;
 import com.shapesecurity.shift.ast.operators.PrefixOperator;
 import com.shapesecurity.shift.ast.property.ObjectProperty;
 import com.shapesecurity.shift.ast.property.PropertyName;
@@ -85,9 +86,8 @@ public class Validator extends MonoidalReducer<ValidationContext> {
       @NotNull ValidationContext binding,
       @NotNull ValidationContext expression) {
     ValidationContext v = super.reduceAssignmentExpression(node, path, binding, expression);
-    if (node.binding instanceof IdentifierExpression && Utils.isRestrictedWord(
-        ((IdentifierExpression) node.binding).identifier.name)) {
-      v = v.addStrictError(new ValidationError(node, "IdentifierExpression must not be a restricted word"));
+    if (node.binding instanceof IdentifierExpression) {
+      v = v.checkRestricted(((IdentifierExpression) node.binding).identifier);
     }
     return v;
   }
@@ -100,10 +100,7 @@ public class Validator extends MonoidalReducer<ValidationContext> {
       @NotNull ValidationContext binding,
       @NotNull ValidationContext body) {
     ValidationContext v = super.reduceCatchClause(node, path, binding, body);
-    if (Utils.isRestrictedWord(node.binding.name)) {
-      v = v.addStrictError(new ValidationError(node, "CatchClause binding must not be restricted in strict mode"));
-    }
-    return v;
+    return v.checkRestricted(node.binding);
   }
 
   @NotNull
@@ -112,8 +109,7 @@ public class Validator extends MonoidalReducer<ValidationContext> {
       @NotNull ContinueStatement node,
       @NotNull List<Branch> path,
       @NotNull Maybe<ValidationContext> label) {
-    final ValidationContext v = super.reduceContinueStatement(node, path, label).addFreeContinueStatement(
-        new ValidationError(node, "Continue statement must be inside a recursive loop"));
+    final ValidationContext v = super.reduceContinueStatement(node, path, label).addFreeContinueStatement(node);
     return node.label.maybe(v, v::addFreeJumpTarget);
   }
 
@@ -141,23 +137,9 @@ public class Validator extends MonoidalReducer<ValidationContext> {
     if (!Utils.areUniqueNames(node.parameters)) {
       v = v.addStrictError(new ValidationError(node, "FunctionDeclaration must have unique parameter names"));
     }
-
-    v = node.parameters.foldLeft(
-        (v1, ident) -> {
-          if (Utils.isRestrictedWord(ident.name)) {
-            return v1.addStrictError(
-                new ValidationError(
-                    ident,
-                    "FunctionExpression parameter name must not be restricted word"));
-          }
-          return v1;
-        }, v);
-
-    if (Utils.isRestrictedWord(node.name.name)) {
-      v = v.addStrictError(
-          new ValidationError(
-              node,
-              "FunctionDeclaration `name` must not be `eval` or `arguments` in strict mode"));
+    v = node.parameters.foldLeft(ValidationContext::checkRestricted, v.checkRestricted(node.name));
+    if (node.body.isStrict()) {
+      v = v.invalidateStrictErrors();
     }
     return v;
   }
@@ -175,21 +157,9 @@ public class Validator extends MonoidalReducer<ValidationContext> {
     if (!Utils.areUniqueNames(node.parameters)) {
       v = v.addStrictError(new ValidationError(node, "FunctionExpression parameter names must be unique"));
     }
-
-    for (Identifier ident : node.parameters) {
-      if (Utils.isRestrictedWord(ident.name)) {
-        v = v.addStrictError(
-            new ValidationError(
-                ident,
-                "FunctionExpression parameter name must not be restricted word"));
-      }
-    }
-
-    if (node.name.maybe(false, ident -> Utils.isRestrictedWord(ident.name))) {
-      v = v.addStrictError(
-          new ValidationError(
-              node,
-              "FunctionExpression `name` must not be `eval` or `arguments` in strict mode"));
+    v = node.parameters.foldLeft(ValidationContext::checkRestricted, node.name.map(v::checkRestricted).orJust(v));
+    if (node.body.isStrict()) {
+      v = v.invalidateStrictErrors();
     }
     return v;
   }
@@ -201,9 +171,6 @@ public class Validator extends MonoidalReducer<ValidationContext> {
     if (!Utils.isValidIdentifierName(node.name)) {
       v = v.addError(new ValidationError(node, "Identifier `name` must be a valid IdentifierName"));
     }
-    if (Utils.isReservedWordES5(node.name)) {
-      v = v.addError(new ValidationError(node, "Identifier `name` must not be a reserved word"));
-    }
     return v;
   }
 
@@ -213,13 +180,7 @@ public class Validator extends MonoidalReducer<ValidationContext> {
       @NotNull IdentifierExpression node,
       @NotNull List<Branch> path,
       @NotNull ValidationContext identifier) {
-    ValidationContext v = super.reduceIdentifierExpression(node, path, identifier);
-    if (Utils.isReservedWordES5(node.identifier.name)) {
-      v = v.addStrictError(new ValidationError(node, "Reserved word used in IdentifierExpression"));
-    } else if (Utils.isStrictModeReservedWordES6(node.identifier.name)) {
-      v = v.addStrictError(new ValidationError(node, "Strict mode reserved word used in IdentifierExpression"));
-    }
-    return v;
+    return super.reduceIdentifierExpression(node, path, identifier).checkReserved(node.identifier);
   }
 
   @NotNull
@@ -257,16 +218,11 @@ public class Validator extends MonoidalReducer<ValidationContext> {
   @NotNull
   @Override
   public ValidationContext reduceLabeledStatement(
-      @NotNull LabeledStatement nodeP,
+      @NotNull LabeledStatement node,
       @NotNull List<Branch> path,
       @NotNull ValidationContext label,
       @NotNull ValidationContext body) {
-    final LabeledStatement node = nodeP;
-    ValidationContext v = super.reduceLabeledStatement(node, path, label, body);
-    if (v.usedLabelNames.exists(s -> s.equals(node.label.name))) {
-      v = v.addError(new ValidationError(node, "Duplicate label name."));
-    }
-    return v.observeLabelName(node.label);
+    return super.reduceLabeledStatement(node, path, label, body).observeLabelName(node.label);
   }
 
   @NotNull
@@ -378,7 +334,7 @@ public class Validator extends MonoidalReducer<ValidationContext> {
       @NotNull Script node,
       @NotNull List<Branch> path,
       @NotNull ValidationContext body) {
-    return super.reduceScript(node, path, body).addErrors(body.freeReturnStatements);
+    return super.reduceScript(node, path, body).invalidateFreeReturnErrors();
   }
 
   @NotNull
@@ -388,18 +344,11 @@ public class Validator extends MonoidalReducer<ValidationContext> {
       @NotNull List<Branch> path,
       @NotNull List<ValidationContext> directives,
       @NotNull List<ValidationContext> statements) {
-    ValidationContext v = super.reduceFunctionBody(node, path, directives, statements);
-    if (v.freeJumpTargets.isNotEmpty()) {
-      v = v.freeJumpTargets.foldLeft(
-          (v1, ident) -> v1.addError(
-              new ValidationError(
-                  ident,
-                  "Unbound break/continue label")), v);
-    }
+    ValidationContext v = super.reduceFunctionBody(node, path, directives, statements).checkFreeJumpTargets();
     if (node.isStrict()) {
-      v = v.addErrors(v.strictErrors);
+      v = v.invalidateStrictErrors();
     }
-    return v.addErrors(v.freeBreakStatements).addErrors(v.freeContinueStatements);
+    return v.invalidateFreeContinueAndBreakErrors();
   }
 
   @NotNull
@@ -408,10 +357,7 @@ public class Validator extends MonoidalReducer<ValidationContext> {
       @NotNull ReturnStatement node,
       @NotNull List<Branch> path,
       @NotNull Maybe<ValidationContext> expression) {
-    return super.reduceReturnStatement(node, path, expression).addFreeReturnStatement(
-        new ValidationError(
-            node,
-            "Return statement must be inside of a function"));
+    return super.reduceReturnStatement(node, path, expression).addFreeReturnStatement(node);
   }
 
   @NotNull
@@ -422,11 +368,7 @@ public class Validator extends MonoidalReducer<ValidationContext> {
       @NotNull ValidationContext name,
       @NotNull ValidationContext param,
       @NotNull ValidationContext body) {
-    ValidationContext v = super.reduceSetter(node, path, name, param, body);
-    if (Utils.isRestrictedWord(node.parameter.name)) {
-      v = v.addStrictError(new ValidationError(node, "SetterProperty parameter must not be a restricted name"));
-    }
-    return v;
+    return super.reduceSetter(node, path, name, param, body).checkRestricted(node.parameter);
   }
 
   @NotNull
@@ -448,7 +390,8 @@ public class Validator extends MonoidalReducer<ValidationContext> {
       @NotNull List<ValidationContext> preDefaultCases,
       @NotNull ValidationContext defaultCase,
       @NotNull List<ValidationContext> postDefaultCases) {
-    return super.reduceSwitchStatementWithDefault(node,
+    return super.reduceSwitchStatementWithDefault(
+        node,
         path,
         discriminant,
         preDefaultCases,
@@ -464,11 +407,7 @@ public class Validator extends MonoidalReducer<ValidationContext> {
       @NotNull List<Branch> path,
       @NotNull ValidationContext binding,
       @NotNull Maybe<ValidationContext> init) {
-    ValidationContext v = super.reduceVariableDeclarator(node, path, binding, init);
-    if (Utils.isRestrictedWord(node.binding.name)) {
-      v = v.addStrictError(new ValidationError(node, "VariableDeclarator must not be restricted name"));
-    }
-    return v;
+    return super.reduceVariableDeclarator(node, path, binding, init).checkRestricted(node.binding);
   }
 
   @NotNull
@@ -489,9 +428,17 @@ public class Validator extends MonoidalReducer<ValidationContext> {
       @NotNull ValidationContext object,
       @NotNull ValidationContext body) {
     return super.reduceWithStatement(node, path, object, body).addStrictError(
-        new ValidationError(
-            node,
-            "WithStatement not allowed in strict mode"));
+        new ValidationError(node, "WithStatement not allowed in strict mode"));
+  }
+
+  @NotNull
+  @Override
+  public ValidationContext reduceStaticMemberExpression(
+      @NotNull StaticMemberExpression node,
+      @NotNull List<Branch> path,
+      @NotNull ValidationContext object,
+      @NotNull ValidationContext property) {
+    return super.reduceStaticMemberExpression(node, path, object, property.clearIdentifierNameError());
   }
 
   @NotNull
