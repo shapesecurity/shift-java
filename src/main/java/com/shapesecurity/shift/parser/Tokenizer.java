@@ -467,16 +467,16 @@ public class Tokenizer {
   JsError createError(@NotNull String message, @NotNull Object... args) {
     String msg = String.format(message, args);
     if (this.collectingToken) {
-      return new JsError(this.index, this.line + 1, this.index - this.lineStart + 1, msg);
+      return new JsError(this.index, this.line + 1, this.index - this.lineStart, msg);
     } else {
-      return new JsError(this.startIndex, this.startLine + 1, this.startIndex - this.startLineStart + 1, msg);
+      return new JsError(this.startIndex, this.startLine + 1, this.startIndex - this.startLineStart, msg);
     }
   }
 
   @NotNull
   JsError createErrorWithToken(@NotNull SourceLocation location, @NotNull String message, @NotNull Object... args) {
     String msg = String.format(message, args);
-    return new JsError(location.offset, location.line + 1, location.column + 1, msg);
+    return new JsError(location.offset, location.line + 1, location.column, msg);
   }
 
   @NotNull
