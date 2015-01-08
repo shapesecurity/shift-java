@@ -32,8 +32,8 @@ public class RemoveEmptyTrailingDefault extends ReductionRule {
   @Override
   public DirtyState<Statement> transform(@NotNull final SwitchStatementWithDefault node) {
     if (node.defaultCase.consequent.isEmpty() && node.postDefaultCases.isEmpty()) {
-      return DirtyState.<Statement>dirty(new SwitchStatement(node.discriminant, node.preDefaultCases));
+      return DirtyState.dirty(new SwitchStatement(node.discriminant, node.preDefaultCases));
     }
-    return DirtyState.<Statement>clean(node);
+    return DirtyState.clean(node);
   }
 }

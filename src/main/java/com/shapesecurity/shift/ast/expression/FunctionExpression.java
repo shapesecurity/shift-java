@@ -45,7 +45,7 @@ public class FunctionExpression extends PrimaryExpression implements Function {
   }
 
   public FunctionExpression(@NotNull List<Identifier> parameters, @NotNull FunctionBody body) {
-    this(Maybe.<Identifier>nothing(), parameters, body);
+    this(Maybe.nothing(), parameters, body);
   }
 
   @NotNull

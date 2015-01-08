@@ -33,11 +33,13 @@ public class ReduceNestedIfStatements extends ReductionRule {
   @Override
   public DirtyState<Statement> transform(@NotNull IfStatement node) {
     if (node.alternate.isNothing() &&
-        node.consequent instanceof IfStatement &&
-        ((IfStatement) node.consequent).alternate.isNothing()) {
-      return DirtyState.<Statement>dirty(new IfStatement(new BinaryExpression(BinaryOperator.LogicalAnd, node.test,
-          ((IfStatement) node.consequent).test), ((IfStatement) node.consequent).consequent));
+        node.consequent instanceof IfStatement) {
+      IfStatement consequent = (IfStatement) node.consequent;
+      if (consequent.alternate.isNothing()) {
+        return DirtyState.dirty(new IfStatement(new BinaryExpression(BinaryOperator.LogicalAnd, node.test,
+            consequent.test), consequent.consequent));
+      }
     }
-    return DirtyState.<Statement>clean(node);
+    return DirtyState.clean(node);
   }
 }

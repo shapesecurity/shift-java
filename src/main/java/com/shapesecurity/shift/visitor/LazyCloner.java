@@ -104,7 +104,7 @@ public class LazyCloner
       DirtyState<T> s = node.just();
       return new DirtyState<>(Maybe.just(s.node), s.dirty);
     } else {
-      return clean(Maybe.<T>nothing());
+      return clean(Maybe.nothing());
     }
   }
 
@@ -281,7 +281,7 @@ public class LazyCloner
       @NotNull ArrayExpression node,
       @NotNull List<Branch> path,
       @NotNull List<Maybe<DirtyState<Expression>>> elements) {
-    return LazyCloner.<Expression>get(node, lo(elements).bindLast(ArrayExpression::new));
+    return LazyCloner.get(node, lo(elements).bindLast(ArrayExpression::new));
   }
 
   @NotNull

@@ -34,7 +34,7 @@ public class BreakStatement extends Statement {
   }
 
   public BreakStatement() {
-    this(Maybe.<Identifier>nothing());
+    this(Maybe.nothing());
   }
 
   @NotNull

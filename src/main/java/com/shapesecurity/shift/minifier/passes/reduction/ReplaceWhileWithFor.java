@@ -32,7 +32,7 @@ public class ReplaceWhileWithFor extends ReductionRule {
   @NotNull
   @Override
   public DirtyState<Statement> transform(@NotNull WhileStatement node) {
-    return DirtyState.<Statement>dirty(new ForStatement(Maybe.nothing(), Maybe.just(node.test), Maybe.nothing(),
+    return DirtyState.dirty(new ForStatement(Maybe.nothing(), Maybe.just(node.test), Maybe.nothing(),
         node.body));
   }
 }

@@ -44,7 +44,7 @@ public class IfStatement extends Statement {
   }
 
   public IfStatement(@NotNull Expression test, @NotNull Statement consequent) {
-    this(test, consequent, Maybe.<Statement>nothing());
+    this(test, consequent, Maybe.nothing());
   }
 
   @NotNull
