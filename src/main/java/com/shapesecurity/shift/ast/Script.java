@@ -68,6 +68,6 @@ public class Script extends Node {
       @NotNull ReducerP<ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState,
           ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState,
           SwitchCaseState, SwitchDefaultState, CatchClauseState> reducer) {
-    return new Director<>(reducer).reduceScript(this, List.<Branch>nil());
+    return new Director<>(reducer).reduceScript(this, List.nil());
   }
 }

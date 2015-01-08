@@ -145,8 +145,7 @@ public final class Nil<T> extends List<T> {
   @NotNull
   @Override
   public Pair<List<T>, List<T>> span(@NotNull F<T, Boolean> f) {
-    return new Pair<>(List.<T>nil(), List.<T>nil());
-    // return new P2<>(nil(), nil());
+    return new Pair<>(nil(), nil());
   }
 
   @NotNull
@@ -178,7 +177,7 @@ public final class Nil<T> extends List<T> {
   @NotNull
   @Override
   public <B, C> Pair<B, List<C>> mapAccumL(@NotNull F2<B, T, Pair<B, C>> f, @NotNull B acc) {
-    return new Pair<>(acc, List.<C>nil());
+    return new Pair<>(acc, List.nil());
   }
 
   @SuppressWarnings("unchecked")

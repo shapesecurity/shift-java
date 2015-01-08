@@ -35,7 +35,7 @@ public class VariableDeclarator extends Node {
   }
 
   public VariableDeclarator(@NotNull Identifier binding) {
-    this(binding, Maybe.<Expression>nothing());
+    this(binding, Maybe.nothing());
   }
 
   @NotNull

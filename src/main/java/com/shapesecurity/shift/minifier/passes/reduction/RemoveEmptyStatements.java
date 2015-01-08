@@ -84,8 +84,8 @@ public class RemoveEmptyStatements extends ReductionRule {
   @NotNull
   @Override
   public DirtyState<Statement> transform(@NotNull DoWhileStatement node) {
-    return node.body instanceof EmptyStatement ? DirtyState.<Statement>dirty(new WhileStatement(node.test, node.body)) :
-           DirtyState.<Statement>clean(node);
+    return node.body instanceof EmptyStatement ? DirtyState.dirty(new WhileStatement(node.test, node.body)) :
+        DirtyState.clean(node);
   }
 
   @NotNull
