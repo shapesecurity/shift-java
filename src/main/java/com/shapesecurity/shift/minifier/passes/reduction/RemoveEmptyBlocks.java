@@ -31,7 +31,6 @@ public class RemoveEmptyBlocks extends ReductionRule {
   @NotNull
   @Override
   public DirtyState<Statement> transform(@NotNull BlockStatement node) {
-    return node.block.statements.isEmpty() ? DirtyState.<Statement>dirty(new EmptyStatement()) :
-           DirtyState.<Statement>clean(node);
+    return node.block.statements.isEmpty() ? DirtyState.dirty(new EmptyStatement()) : DirtyState.clean(node);
   }
 }

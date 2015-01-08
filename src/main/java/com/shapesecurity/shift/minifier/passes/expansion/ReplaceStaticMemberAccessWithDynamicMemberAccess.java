@@ -39,16 +39,16 @@ public class ReplaceStaticMemberAccessWithDynamicMemberAccess extends ExpansionR
   public DirtyState<Expression> transform(@NotNull StaticMemberExpression node) {
     switch (node.property.name) {
     case "undefined":
-      return DirtyState.<Expression>dirty(new ComputedMemberExpression(node.object, new PrefixExpression(
+      return DirtyState.dirty(new ComputedMemberExpression(node.object, new PrefixExpression(
           PrefixOperator.Void, new LiteralNumericExpression(0))));
     case "true":
     case "false":
-      return DirtyState.<Expression>dirty(new ComputedMemberExpression(node.object, new PrefixExpression(
+      return DirtyState.dirty(new ComputedMemberExpression(node.object, new PrefixExpression(
           PrefixOperator.LogicalNot, new LiteralNumericExpression("true".equals(node.property.name) ? 0 : 1))));
     case "Infinity":
-      return DirtyState.<Expression>dirty(new ComputedMemberExpression(node.object, new BinaryExpression(
+      return DirtyState.dirty(new ComputedMemberExpression(node.object, new BinaryExpression(
           BinaryOperator.Div, new LiteralNumericExpression(1), new LiteralNumericExpression(0))));
     }
-    return DirtyState.<Expression>clean(node);
+    return DirtyState.clean(node);
   }
 }

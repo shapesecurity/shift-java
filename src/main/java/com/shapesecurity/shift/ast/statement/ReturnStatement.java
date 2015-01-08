@@ -34,7 +34,7 @@ public class ReturnStatement extends Statement {
   }
 
   public ReturnStatement() {
-    this(Maybe.<Expression>nothing());
+    this(Maybe.nothing());
   }
 
   @NotNull

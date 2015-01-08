@@ -34,7 +34,7 @@ public class ContinueStatement extends Statement {
   }
 
   public ContinueStatement() {
-    this(Maybe.<Identifier>nothing());
+    this(Maybe.nothing());
   }
 
   @NotNull

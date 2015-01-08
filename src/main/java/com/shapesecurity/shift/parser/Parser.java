@@ -624,7 +624,7 @@ public class Parser extends Tokenizer {
         throw this.createErrorWithToken(startLocation, ILLEGAL_BREAK);
       }
 
-      return this.markLocation(startLocation, new BreakStatement(Maybe.<Identifier>nothing()));
+      return this.markLocation(startLocation, new BreakStatement(Maybe.nothing()));
     }
 
     if (this.hasLineTerminatorBeforeNext) {
@@ -632,7 +632,7 @@ public class Parser extends Tokenizer {
         throw this.createErrorWithToken(startLocation, ILLEGAL_BREAK);
       }
 
-      return this.markLocation(startLocation, new BreakStatement(Maybe.<Identifier>nothing()));
+      return this.markLocation(startLocation, new BreakStatement(Maybe.nothing()));
     }
 
     Identifier label = null;
@@ -666,7 +666,7 @@ public class Parser extends Tokenizer {
         throw this.createErrorWithToken(startLocation, ILLEGAL_CONTINUE);
       }
 
-      return this.markLocation(startLocation, new ContinueStatement(Maybe.<Identifier>nothing()));
+      return this.markLocation(startLocation, new ContinueStatement(Maybe.nothing()));
     }
 
     if (this.hasLineTerminatorBeforeNext) {
@@ -674,7 +674,7 @@ public class Parser extends Tokenizer {
         throw this.createErrorWithToken(startLocation, ILLEGAL_CONTINUE);
       }
 
-      return this.markLocation(startLocation, new ContinueStatement(Maybe.<Identifier>nothing()));
+      return this.markLocation(startLocation, new ContinueStatement(Maybe.nothing()));
     }
 
     Identifier label = null;
@@ -839,7 +839,7 @@ public class Parser extends Tokenizer {
     }
 
     if (this.hasLineTerminatorBeforeNext) {
-      return this.markLocation(startLocation, new ReturnStatement(Maybe.<Expression>nothing()));
+      return this.markLocation(startLocation, new ReturnStatement(Maybe.nothing()));
     }
 
     if (!this.match(TokenType.SEMICOLON)) {
@@ -881,7 +881,7 @@ public class Parser extends Tokenizer {
 
     if (this.match(TokenType.RBRACE)) {
       this.lex();
-      return this.markLocation(startLocation, new SwitchStatement(discriminant, List.<SwitchCase>nil()));
+      return this.markLocation(startLocation, new SwitchStatement(discriminant, List.nil()));
     }
     boolean oldInSwitch = this.inSwitch;
     this.inSwitch = true;
@@ -948,7 +948,7 @@ public class Parser extends Tokenizer {
     if (this.match(TokenType.FINALLY)) {
       this.lex();
       Block finalizer = this.parseBlock();
-      return this.markLocation(startLocation, new TryFinallyStatement(block, Maybe.<CatchClause>nothing(), finalizer)
+      return this.markLocation(startLocation, new TryFinallyStatement(block, Maybe.nothing(), finalizer)
       );
     } else {
       throw this.createError(NO_CATCH_OR_FINALLY);
@@ -1377,8 +1377,9 @@ public class Parser extends Tokenizer {
     SourceLocation startLocation = this.getLocation();
     this.expect(TokenType.NEW);
     Expression callee = this.parseLeftHandSideExpression();
-    return this.markLocation(startLocation, new NewExpression(callee, this.match(TokenType.LPAREN) ? this.parseArgumentList() :
-        List.<Expression>nil()));
+    return this.markLocation(startLocation, new NewExpression(callee,
+        this.match(TokenType.LPAREN) ? this.parseArgumentList() :
+            List.nil()));
   }
 
   @NotNull

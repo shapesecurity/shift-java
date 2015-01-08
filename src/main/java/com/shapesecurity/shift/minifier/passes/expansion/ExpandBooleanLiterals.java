@@ -33,7 +33,7 @@ public class ExpandBooleanLiterals extends ExpansionRule {
   @NotNull
   @Override
   public DirtyState<Expression> transform(@NotNull LiteralBooleanExpression node) {
-    return DirtyState.<Expression>dirty(new PrefixExpression(PrefixOperator.LogicalNot, new LiteralNumericExpression(
+    return DirtyState.dirty(new PrefixExpression(PrefixOperator.LogicalNot, new LiteralNumericExpression(
         node.value ? 0 : 1)));
   }
 }

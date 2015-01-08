@@ -97,127 +97,127 @@ public class MinificationRule
   @NotNull
   @Override
   public DirtyState<Directive> transform(@NotNull UnknownDirective node) {
-    return DirtyState.<Directive>clean(node);
+    return DirtyState.clean(node);
   }
 
   @NotNull
   @Override
   public DirtyState<Directive> transform(@NotNull UseStrictDirective node) {
-    return DirtyState.<Directive>clean(node);
+    return DirtyState.clean(node);
   }
 
   @NotNull
   @Override
   public DirtyState<Expression> transform(@NotNull ArrayExpression node) {
-    return DirtyState.<Expression>clean(node);
+    return DirtyState.clean(node);
   }
 
   @NotNull
   @Override
   public DirtyState<Expression> transform(@NotNull BinaryExpression node) {
-    return DirtyState.<Expression>clean(node);
+    return DirtyState.clean(node);
   }
 
   @NotNull
   @Override
   public DirtyState<Expression> transform(@NotNull AssignmentExpression node) {
-    return DirtyState.<Expression>clean(node);
+    return DirtyState.clean(node);
   }
 
   @NotNull
   @Override
   public DirtyState<Expression> transform(@NotNull CallExpression node) {
-    return DirtyState.<Expression>clean(node);
+    return DirtyState.clean(node);
   }
 
   @NotNull
   @Override
   public DirtyState<Expression> transform(@NotNull ComputedMemberExpression node) {
-    return DirtyState.<Expression>clean(node);
+    return DirtyState.clean(node);
   }
 
   @NotNull
   @Override
   public DirtyState<Expression> transform(@NotNull ConditionalExpression node) {
-    return DirtyState.<Expression>clean(node);
+    return DirtyState.clean(node);
   }
 
   @NotNull
   @Override
   public DirtyState<Expression> transform(@NotNull FunctionExpression node) {
-    return DirtyState.<Expression>clean(node);
+    return DirtyState.clean(node);
   }
 
   @NotNull
   @Override
   public DirtyState<Expression> transform(@NotNull IdentifierExpression node) {
-    return DirtyState.<Expression>clean(node);
+    return DirtyState.clean(node);
   }
 
   @NotNull
   @Override
   public DirtyState<Expression> transform(@NotNull LiteralBooleanExpression node) {
-    return DirtyState.<Expression>clean(node);
+    return DirtyState.clean(node);
   }
 
   @NotNull
   @Override
   public DirtyState<Expression> transform(@NotNull LiteralNullExpression node) {
-    return DirtyState.<Expression>clean(node);
+    return DirtyState.clean(node);
   }
 
   @NotNull
   @Override
   public DirtyState<Expression> transform(@NotNull LiteralNumericExpression node) {
-    return DirtyState.<Expression>clean(node);
+    return DirtyState.clean(node);
   }
 
   @NotNull
   @Override
   public DirtyState<Expression> transform(@NotNull LiteralRegExpExpression node) {
-    return DirtyState.<Expression>clean(node);
+    return DirtyState.clean(node);
   }
 
   @NotNull
   @Override
   public DirtyState<Expression> transform(@NotNull LiteralStringExpression node) {
-    return DirtyState.<Expression>clean(node);
+    return DirtyState.clean(node);
   }
 
   @NotNull
   @Override
   public DirtyState<Expression> transform(@NotNull NewExpression node) {
-    return DirtyState.<Expression>clean(node);
+    return DirtyState.clean(node);
   }
 
   @NotNull
   @Override
   public DirtyState<Expression> transform(@NotNull ObjectExpression node) {
-    return DirtyState.<Expression>clean(node);
+    return DirtyState.clean(node);
   }
 
   @NotNull
   @Override
   public DirtyState<Expression> transform(@NotNull PostfixExpression node) {
-    return DirtyState.<Expression>clean(node);
+    return DirtyState.clean(node);
   }
 
   @NotNull
   @Override
   public DirtyState<Expression> transform(@NotNull PrefixExpression node) {
-    return DirtyState.<Expression>clean(node);
+    return DirtyState.clean(node);
   }
 
   @NotNull
   @Override
   public DirtyState<Expression> transform(@NotNull StaticMemberExpression node) {
-    return DirtyState.<Expression>clean(node);
+    return DirtyState.clean(node);
   }
 
   @NotNull
   @Override
   public DirtyState<Expression> transform(@NotNull ThisExpression node) {
-    return DirtyState.<Expression>clean(node);
+    return DirtyState.clean(node);
   }
 
   @NotNull
@@ -247,121 +247,121 @@ public class MinificationRule
   @NotNull
   @Override
   public DirtyState<ObjectProperty> transform(@NotNull Getter node) {
-    return DirtyState.<ObjectProperty>clean(node);
+    return DirtyState.clean(node);
   }
 
   @NotNull
   @Override
   public DirtyState<ObjectProperty> transform(@NotNull DataProperty node) {
-    return DirtyState.<ObjectProperty>clean(node);
+    return DirtyState.clean(node);
   }
 
   @NotNull
   @Override
   public DirtyState<ObjectProperty> transform(@NotNull Setter node) {
-    return DirtyState.<ObjectProperty>clean(node);
+    return DirtyState.clean(node);
   }
 
   @NotNull
   @Override
   public DirtyState<Statement> transform(@NotNull BlockStatement node) {
-    return DirtyState.<Statement>clean(node);
+    return DirtyState.clean(node);
   }
 
   @NotNull
   @Override
   public DirtyState<Statement> transform(@NotNull BreakStatement node) {
-    return DirtyState.<Statement>clean(node);
+    return DirtyState.clean(node);
   }
 
   @NotNull
   @Override
   public DirtyState<Statement> transform(@NotNull ContinueStatement node) {
-    return DirtyState.<Statement>clean(node);
+    return DirtyState.clean(node);
   }
 
   @NotNull
   @Override
   public DirtyState<Statement> transform(@NotNull DebuggerStatement node) {
-    return DirtyState.<Statement>clean(node);
+    return DirtyState.clean(node);
   }
 
   @NotNull
   @Override
   public DirtyState<Statement> transform(@NotNull DoWhileStatement node) {
-    return DirtyState.<Statement>clean(node);
+    return DirtyState.clean(node);
   }
 
   @NotNull
   @Override
   public DirtyState<Statement> transform(@NotNull EmptyStatement node) {
-    return DirtyState.<Statement>clean(node);
+    return DirtyState.clean(node);
   }
 
   @NotNull
   @Override
   public DirtyState<Statement> transform(@NotNull ExpressionStatement node) {
-    return DirtyState.<Statement>clean(node);
+    return DirtyState.clean(node);
   }
 
   @NotNull
   @Override
   public DirtyState<Statement> transform(@NotNull ForInStatement node) {
-    return DirtyState.<Statement>clean(node);
+    return DirtyState.clean(node);
   }
 
   @NotNull
   @Override
   public DirtyState<Statement> transform(@NotNull ForStatement node) {
-    return DirtyState.<Statement>clean(node);
+    return DirtyState.clean(node);
   }
 
   @NotNull
   @Override
   public DirtyState<Statement> transform(@NotNull FunctionDeclaration node) {
-    return DirtyState.<Statement>clean(node);
+    return DirtyState.clean(node);
   }
 
   @NotNull
   @Override
   public DirtyState<Statement> transform(@NotNull IfStatement node) {
-    return DirtyState.<Statement>clean(node);
+    return DirtyState.clean(node);
   }
 
   @NotNull
   @Override
   public DirtyState<Statement> transform(@NotNull LabeledStatement node) {
-    return DirtyState.<Statement>clean(node);
+    return DirtyState.clean(node);
   }
 
   @NotNull
   @Override
   public DirtyState<Statement> transform(@NotNull ReturnStatement node) {
-    return DirtyState.<Statement>clean(node);
+    return DirtyState.clean(node);
   }
 
   @NotNull
   @Override
   public DirtyState<Statement> transform(@NotNull SwitchStatement node) {
-    return DirtyState.<Statement>clean(node);
+    return DirtyState.clean(node);
   }
 
   @NotNull
   @Override
   public DirtyState<Statement> transform(@NotNull SwitchStatementWithDefault node) {
-    return DirtyState.<Statement>clean(node);
+    return DirtyState.clean(node);
   }
 
   @NotNull
   @Override
   public DirtyState<Statement> transform(@NotNull ThrowStatement node) {
-    return DirtyState.<Statement>clean(node);
+    return DirtyState.clean(node);
   }
 
   @NotNull
   @Override
   public DirtyState<Statement> transform(@NotNull TryCatchStatement node) {
-    return DirtyState.<Statement>clean(node);
+    return DirtyState.clean(node);
   }
 
   @NotNull
@@ -391,13 +391,13 @@ public class MinificationRule
   @NotNull
   @Override
   public DirtyState<Statement> transform(@NotNull WhileStatement node) {
-    return DirtyState.<Statement>clean(node);
+    return DirtyState.clean(node);
   }
 
   @NotNull
   @Override
   public DirtyState<Statement> transform(@NotNull WithStatement node) {
-    return DirtyState.<Statement>clean(node);
+    return DirtyState.clean(node);
   }
 
   @NotNull
