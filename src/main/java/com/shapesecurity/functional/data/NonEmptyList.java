@@ -95,7 +95,7 @@ public final class NonEmptyList<T> extends List<T> {
   @Override
   public Maybe<List<T>> maybeInit() {
     if (this.tail().isEmpty()) {
-      return Maybe.just(List.<T>nil());
+      return Maybe.just(nil());
     }
     return this.tail().maybeInit().map(t -> t.cons(this.head));
   }
@@ -209,10 +209,10 @@ public final class NonEmptyList<T> extends List<T> {
   @Override
   public Pair<List<T>, List<T>> span(@NotNull F<T, Boolean> f) {
     if (!f.apply(this.head)) {
-      return new Pair<>(List.<T>nil(), this);
+      return new Pair<>(nil(), this);
     }
     Pair<List<T>, List<T>> s = this.tail().span(f);
-    return new Pair<>(List.cons(this.head, s.a), s.b);
+    return new Pair<>(s.a.cons(this.head), s.b);
   }
 
   @NotNull
@@ -233,7 +233,7 @@ public final class NonEmptyList<T> extends List<T> {
   @NotNull
   @Override
   public NonEmptyList<T> reverse() {
-    return this.reverse(List.<T>nil());
+    return this.reverse(nil());
   }
 
   @NotNull

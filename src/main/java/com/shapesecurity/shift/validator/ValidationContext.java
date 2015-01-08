@@ -40,10 +40,13 @@ public class ValidationContext {
   public final ConcatList<ValidationError> freeReturnStatements;
 
   public ValidationContext() {
-    this(
-        ConcatList.<ValidationError>empty(), ConcatList.<ValidationError>empty(), List.<String>nil(),
-        List.<Identifier>nil(), ConcatList.<ValidationError>empty(), ConcatList.<ValidationError>empty(),
-        ConcatList.<ValidationError>empty());
+    this(ConcatList.empty(),
+        ConcatList.empty(),
+        List.nil(),
+        List.nil(),
+        ConcatList.empty(),
+        ConcatList.empty(),
+        ConcatList.empty());
   }
 
   private ValidationContext(@NotNull ConcatList<ValidationError> freeBreakStatements,
@@ -71,7 +74,7 @@ public class ValidationContext {
 
   public ValidationContext clearFreeBreakStatements() {
     return new ValidationContext(
-        ConcatList.<ValidationError>empty(), //empty freeBreakStatements
+        ConcatList.empty(), //empty freeBreakStatements
         this.freeContinueStatements, this.usedLabelNames, this.freeJumpTargets, this.freeReturnStatements, this.errors,
         this.strictErrors);
   }
@@ -86,7 +89,7 @@ public class ValidationContext {
 
   public ValidationContext clearFreeContinueStatements() {
     return new ValidationContext(
-        this.freeBreakStatements, ConcatList.<ValidationError>empty(), this.usedLabelNames,
+        this.freeBreakStatements, ConcatList.empty(), this.usedLabelNames,
         this.freeJumpTargets, this.freeReturnStatements, this.errors, this.strictErrors);
   }
 
@@ -97,7 +100,7 @@ public class ValidationContext {
   }
 
   public ValidationContext clearUsedLabelNames() {
-    return new ValidationContext(this.freeBreakStatements, this.freeContinueStatements, List.<String>nil(),
+    return new ValidationContext(this.freeBreakStatements, this.freeContinueStatements, List.nil(),
         this.freeJumpTargets, this.freeReturnStatements, this.errors, this.strictErrors);
   }
 
@@ -113,7 +116,7 @@ public class ValidationContext {
 
   public ValidationContext clearReturnStatements() {
     return new ValidationContext(this.freeBreakStatements, this.freeContinueStatements, this.usedLabelNames,
-        this.freeJumpTargets, ConcatList.<ValidationError>empty(), this.errors, this.strictErrors);
+        this.freeJumpTargets, ConcatList.empty(), this.errors, this.strictErrors);
   }
 
   public ValidationContext addError(@NotNull ValidationError error) {

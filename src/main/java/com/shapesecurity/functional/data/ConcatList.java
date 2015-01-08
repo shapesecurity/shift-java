@@ -48,7 +48,7 @@ public abstract class ConcatList<T> {
 
   @NotNull
   public final List<T> toList() {
-    return this.toList(List.<T>nil());
+    return this.toList(List.nil());
   }
 
   protected abstract List<T> toList(@NotNull List<T> acc);
@@ -211,7 +211,7 @@ public abstract class ConcatList<T> {
     @NotNull
     @Override
     public Maybe<ConcatList<T>> update(int index, @NotNull T element) {
-      return index == 0 ? Maybe.just(single(element)) : Maybe.<ConcatList<T>>nothing();
+      return index == 0 ? Maybe.just(single(element)) : Maybe.nothing();
     }
   }
 

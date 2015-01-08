@@ -55,12 +55,12 @@ public abstract class Maybe<A> {
 
   @NotNull
   public static <A> List<A> catMaybes(@NotNull List<Maybe<A>> l) {
-    return l.foldRight((a, b) -> a.maybe(b, c -> List.<A>cons(c, b)), List.<A>nil());
+    return l.foldRight((a, b) -> a.maybe(b, c -> List.cons(c, b)), List.nil());
   }
 
   @NotNull
   public static <A, B> List<B> mapMaybe(@NotNull final F<A, B> f, @NotNull List<Maybe<A>> l) {
-    return l.foldRight((a, b) -> a.maybe(b, v -> List.cons(f.apply(v), b)), List.<B>nil());
+    return l.foldRight((a, b) -> a.maybe(b, v -> List.cons(f.apply(v), b)), List.nil());
   }
 
   @SuppressWarnings("BooleanParameter")
@@ -169,8 +169,7 @@ public abstract class Maybe<A> {
     @NotNull
     @Override
     public List<A> toList() {
-      return List.cons(this.value, List.<A>nil());
-      // return List.cons(this.value, List.nil());
+      return List.cons(this.value, List.nil());
     }
 
     @NotNull

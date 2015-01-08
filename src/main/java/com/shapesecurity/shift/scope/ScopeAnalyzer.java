@@ -352,9 +352,9 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
         @NotNull List<Variable> variables) {
       ProjectionTree<Reference> arguments = freeIdentifiers.remove("arguments");
       if (arguments == null) {
-        arguments = ProjectionTree.<Reference>nil();
+        arguments = ProjectionTree.nil();
       }
-      variables = List.cons(new Variable("arguments", arguments, ProjectionTree.<Declaration>nil()), variables);
+      variables = List.cons(new Variable("arguments", arguments, ProjectionTree.nil()), variables);
       return variables;
     }
 
@@ -367,7 +367,7 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
         String name = entry.getKey();
         ProjectionTree<Declaration> declarations = entry.getValue();
         ProjectionTree<Reference> references = freeIdentifiers.containsKey(name) ? freeIdentifiers.get(name) :
-                                               ProjectionTree.<Reference>nil();
+                                               ProjectionTree.nil();
         variables = List.cons(new Variable(name, references, declarations), variables);
         freeIdentifiers.remove(name);
       }

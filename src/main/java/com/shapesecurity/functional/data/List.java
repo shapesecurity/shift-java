@@ -103,9 +103,9 @@ public abstract class List<A> implements Iterable<A> {
   @SafeVarargs
   public static <T> NonEmptyList<T> list(@NotNull T head, @NotNull T... el) {
     if (el.length == 0) {
-      return cons(head, List.<T>nil());
+      return cons(head, List.nil());
     }
-    NonEmptyList<T> l = cons(el[el.length - 1], List.<T>nil());
+    NonEmptyList<T> l = cons(el[el.length - 1], List.nil());
     for (int i = el.length - 2; i >= 0; i--) {
       l = cons(el[i], l);
     }
@@ -121,7 +121,7 @@ public abstract class List<A> implements Iterable<A> {
     if (el.length == 0) {
       return nil();
     }
-    NonEmptyList<A> l = cons(el[el.length - 1], List.<A>nil());
+    NonEmptyList<A> l = cons(el[el.length - 1], List.nil());
     for (int i = el.length - 2; i >= 0; i--) {
       l = cons(el[i], l);
     }

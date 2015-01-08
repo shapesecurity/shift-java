@@ -31,6 +31,6 @@ public class RemoveSingleStatementBlocks extends ReductionRule {
   @Override
   public DirtyState<Statement> transform(@NotNull BlockStatement node) {
     return node.block.statements.isNotEmpty() && node.block.statements.maybeTail().just().isEmpty() ? DirtyState.dirty(
-        node.block.statements.maybeHead().just()) : DirtyState.<Statement>clean(node);
+        node.block.statements.maybeHead().just()) : DirtyState.clean(node);
   }
 }

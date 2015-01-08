@@ -32,7 +32,7 @@ public class GlobalScope extends Scope {
       @NotNull Node astNode) {
     super(children, variables, through, Type.Global, true, astNode);
     for (Map.Entry<String, ProjectionTree<Reference>> var : through.entrySet()) {
-      this.variables.put(var.getKey(), new Variable(var.getKey(), var.getValue(), ProjectionTree.<Declaration>nil()));
+      this.variables.put(var.getKey(), new Variable(var.getKey(), var.getValue(), ProjectionTree.nil()));
     }
   }
 }

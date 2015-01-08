@@ -65,7 +65,7 @@ public abstract class HashTable<K, V> {
 
   @NotNull
   public static <K, V> HashTable<K, V> empty() {
-    return empty(HashTable.<K>defaultHasher());
+    return empty(HashTable.defaultHasher());
   }
 
   @NotNull
@@ -109,7 +109,7 @@ public abstract class HashTable<K, V> {
 
   @NotNull
   public List<Pair<K, V>> entries() {
-    return this.foldRight((kvPair, pairs) -> pairs.cons(kvPair), List.<Pair<K, V>>nil());
+    return this.foldRight((kvPair, pairs) -> pairs.cons(kvPair), List.nil());
   }
 
   public abstract void foreach(@NotNull Effect<Pair<K, V>> e);
@@ -238,18 +238,18 @@ public abstract class HashTable<K, V> {
       }
       Pair<Boolean, List<Pair<K, V>>> result = this.dataList.foldRight((i, p) -> {
         if (p.a) {
-          return new Pair<>(true, (List<Pair<K, V>>) p.b.cons(i));
+          return new Pair<>(true, p.b.cons(i));
         }
         if (Leaf.this.hasher.eq(i.a, key)) {
           return new Pair<>(true, p.b);
         }
-        return new Pair<>(false, (List<Pair<K, V>>) p.b.cons(i));
-      }, new Pair<>(false, List.<Pair<K, V>>nil()));
+        return new Pair<>(false, p.b.cons(i));
+      }, new Pair<>(false, List.nil()));
       if (result.a) {
         if (this.length == 1) {
-          return Maybe.just(HashTable.<K, V>empty());
+          return Maybe.just(HashTable.empty());
         }
-        return Maybe.just((HashTable<K, V>) new Leaf<>(this.hasher, result.b, this.baseHash, this.length - 1));
+        return Maybe.just(new Leaf<>(this.hasher, result.b, this.baseHash, this.length - 1));
       }
       return Maybe.nothing();
     }
@@ -291,7 +291,7 @@ public abstract class HashTable<K, V> {
                   }
                 }
                 return result.cons(kvPair);
-              }, List.<Pair<K, V>>nil());
+              }, List.nil());
           List<Pair<K, V>> newList = List.from(pairs).append(right);
           return new Leaf<>(this.hasher, newList, this.baseHash, newList.length);
         }
@@ -348,7 +348,7 @@ public abstract class HashTable<K, V> {
       int subHash = hash & 31;
       HashTable<K, V>[] cloned = Fork.this.children.clone();
       if (cloned[subHash] == null) {
-        cloned[subHash] = new Leaf<>(Fork.this.hasher, List.<Pair<K, V>>nil(), hash >>> 5, 0);
+        cloned[subHash] = new Leaf<>(Fork.this.hasher, List.nil(), hash >>> 5, 0);
       }
       int length1 = cloned[subHash].length;
       cloned[subHash] = cloned[subHash].put(key, value, hash >>> 5);
