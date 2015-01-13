@@ -17,6 +17,7 @@
 package com.shapesecurity.shift.scope;
 
 import com.shapesecurity.functional.data.List;
+import com.shapesecurity.shift.ast.Identifier;
 import com.shapesecurity.shift.ast.Node;
 
 import java.util.HashMap;
@@ -28,11 +29,33 @@ public class GlobalScope extends Scope {
   GlobalScope(
       @NotNull List<Scope> children,
       @NotNull List<Variable> variables,
+      @NotNull List<Variable> blockScopedTiedVar,
       @NotNull HashMap<String, ProjectionTree<Reference>> through,
       @NotNull Node astNode) {
-    super(children, variables, through, Type.Global, true, astNode);
+    super(children, variables, blockScopedTiedVar, through, Type.Global, true, astNode);
     for (Map.Entry<String, ProjectionTree<Reference>> var : through.entrySet()) {
       this.variables.put(var.getKey(), new Variable(var.getKey(), var.getValue(), ProjectionTree.nil()));
     }
+  }
+
+  @Override
+  @NotNull
+  public List<Variable> findVariables(@NotNull final Identifier identifier
+  ) {
+    return super.findVariables(identifier);
+  }
+
+  @Override
+  @NotNull
+  public List<Variable> findVariablesDeclaredBy(@NotNull final Identifier identifier
+  ) {
+    return super.findVariablesDeclaredBy(identifier);
+  }
+
+  @Override
+  @NotNull
+  public List<Variable> findVariablesReferencedBy(@NotNull final Identifier identifier
+  ) {
+    return super.findVariablesReferencedBy(identifier);
   }
 }
