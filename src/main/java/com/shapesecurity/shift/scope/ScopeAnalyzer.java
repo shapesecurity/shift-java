@@ -47,8 +47,10 @@ import com.shapesecurity.shift.scope.Declaration.Kind;
 import com.shapesecurity.shift.visitor.MonoidalReducer;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Set;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -68,7 +70,16 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
   @NotNull
   @Override
   public State reduceIdentifier(@NotNull Identifier node, @NotNull List<Branch> path) {
-    return new State(new HashMap<>(), new HashMap<>(), new HashMap<>(), List.nil(), false, path, node);
+    return new State(new HashMap<>(),
+        new HashMap<>(),
+        new HashMap<>(),
+        new HashSet<>(),
+        List.nil(),
+        List.nil(),
+        false,
+        path,
+        node,
+        false);
   }
 
   @NotNull
@@ -101,7 +112,8 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
       // TODO: Check if this is the actual intention.
       assert binding.lastIdentifier != null;
       assert binding.lastPath != null;
-      return expression.addReference(binding.lastPath, binding.lastIdentifier,
+      return expression.addReference(binding.lastPath,
+          binding.lastIdentifier,
           node.operator == Assignment.Assign ? Accessibility.Write : Accessibility.ReadWrite);
     }
     return super.reduceAssignmentExpression(node, path, binding, expression);
@@ -115,8 +127,8 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
       @NotNull State callee,
       @NotNull List<State> arguments) {
     State s = super.reduceCallExpression(node, path, callee, arguments);
-    if (node.callee instanceof IdentifierExpression && ((IdentifierExpression) node.callee).identifier.name.equals(
-        "eval")) {
+    if (node.callee instanceof IdentifierExpression &&
+        ((IdentifierExpression) node.callee).identifier.name.equals("eval")) {
       return s.taint();
     }
     return s;
@@ -149,15 +161,15 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
   public State reduceFunctionDeclaration(
       @NotNull FunctionDeclaration node,
       @NotNull List<Branch> path,
-      @NotNull State name,
+      @NotNull State id,
       @NotNull List<State> params,
       @NotNull State programBody) {
     params = params.map(s -> s.addDeclaration(Kind.Param));
-    List<Branch> lastPath = name.lastPath;
-    Identifier lastIdentifier = name.lastIdentifier;
+    List<Branch> lastPath = id.lastPath;
+    Identifier lastIdentifier = id.lastIdentifier;
     assert lastPath != null;
     assert lastIdentifier != null;
-    return super.reduceFunctionDeclaration(node, path, name, params, programBody).finish(node, Scope.Type.Function)
+    return super.reduceFunctionDeclaration(node, path, id, params, programBody).finish(node, Scope.Type.Function)
         .addDeclaration(lastPath, lastIdentifier, Kind.FunctionName);
   }
 
@@ -166,13 +178,14 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
   public State reduceFunctionExpression(
       @NotNull FunctionExpression node,
       @NotNull List<Branch> path,
-      @NotNull Maybe<State> name,
-      @NotNull List<State> parameters,
+      @NotNull Maybe<State> id,
+      @NotNull List<State> params,
       @NotNull State programBody) {
-    parameters = parameters.map(s -> s.addDeclaration(Kind.Param));
-    State s = super.reduceFunctionExpression(node, path, name, parameters, programBody).finish(node, Scope.Type.Function);
-    if (name.isJust()) {
-      s = s.target(name.just()).addDeclaration(Kind.FunctionName);
+    params = params.map(s -> s.addDeclaration(Kind.Param));
+    State s = super.reduceFunctionExpression(node, path, id, params, programBody)
+        .finish(node, Scope.Type.Function);
+    if (id.isJust()) {
+      s = s.target(id.just()).addDeclaration(Kind.FunctionName);
       s = s.finish(node, Scope.Type.FunctionName);
     }
     return s;
@@ -180,7 +193,7 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
 
   @NotNull
   @Override
-  public State reduceGetter(@NotNull Getter node, @NotNull List<Branch> path, @NotNull State name, @NotNull State body) {
+  public State reduceGetter(@NotNull Getter node, @NotNull List<Branch> path, @NotNull State key, @NotNull State body) {
     return body.finish(node, Scope.Type.Function);
   }
 
@@ -189,10 +202,10 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
   public State reduceSetter(
       @NotNull Setter node,
       @NotNull List<Branch> path,
-      @NotNull State name,
+      @NotNull State key,
       @NotNull State param,
       @NotNull State body) {
-    return super.reduceSetter(node, path, name, param.addDeclaration(Kind.Param), body).finish(node,
+    return super.reduceSetter(node, path, key, param.addDeclaration(Kind.Param), body).finish(node,
         Scope.Type.Function);
   }
 
@@ -211,9 +224,9 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
   public State reduceCatchClause(
       @NotNull CatchClause node,
       @NotNull List<Branch> path,
-      @NotNull State binding,
+      @NotNull State param,
       @NotNull State body) {
-    return super.reduceCatchClause(node, path, binding.addDeclaration(Kind.CatchParam), body).finish(node,
+    return super.reduceCatchClause(node, path, param.addDeclaration(Kind.CatchParam), body).finish(node,
         Scope.Type.Catch);
   }
 
@@ -245,8 +258,8 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
       @NotNull PrefixExpression node,
       @NotNull List<Branch> path,
       @NotNull State operand) {
-    if ((node.operator == PrefixOperator.Decrement || node.operator == PrefixOperator.Increment)
-        && node.operand instanceof IdentifierExpression) {
+    if ((node.operator == PrefixOperator.Decrement || node.operator == PrefixOperator.Increment) &&
+        node.operand instanceof IdentifierExpression) {
       operand = operand.addReference(Accessibility.ReadWrite);
     }
     return super.reducePrefixExpression(node, path, operand);
@@ -255,12 +268,17 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
   @NotNull
   @Override
   public State reduceVariableDeclaration(
-      @NotNull VariableDeclaration node,
-      @NotNull List<Branch> path,
-      @NotNull NonEmptyList<State> declarators) {
+      @NotNull VariableDeclaration node, @NotNull List<Branch> path, @NotNull NonEmptyList<State> declarators) {
     Kind kind = Kind.fromVariableDeclarationKind(node.kind);
-    return super.reduceVariableDeclaration(node, path, declarators.map(d -> d.addDeclaration(kind))).target(
-        declarators.head);
+    List<State> l = declarators;
+    while (!l.isEmpty()) {
+      l = l.maybeTail().just();
+    }
+    return super.reduceVariableDeclaration(
+        node,
+        path,
+        declarators.map(d -> d.addDeclaration(kind, d.lastDeclaratorWasInit)))
+        .target(declarators.head); // cached id of VariableDeclaration for ForVarInStatement where only one declarator is allowed
   }
 
   @NotNull
@@ -268,11 +286,12 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
   public State reduceVariableDeclarator(
       @NotNull VariableDeclarator node,
       @NotNull List<Branch> path,
-      @NotNull State binding,
+      @NotNull State id,
       @NotNull Maybe<State> init) {
-    return super.reduceVariableDeclarator(node, path, init.isJust() ? binding
-        .addReference(Accessibility.Write) : binding, init)
-        .target(binding);
+    if (init.isJust()) {
+      id = id.addReference(Accessibility.Write, true);
+    }
+    return super.reduceVariableDeclarator(node, path, id, init).target(id);
   }
 
   @SuppressWarnings("ProtectedInnerClass")
@@ -285,11 +304,17 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
     @NotNull
     public final HashMap<String, ProjectionTree<Declaration>> blockScopedDeclarations;
     @NotNull
+    public final Set<String> functionScopedInit; // function scoped variables with initializers
+    @NotNull
+    public final List<Variable> blockScopedTiedVar; // function scoped init vars captured by block scope
+    @NotNull
     public final List<Scope> children;
     @Nullable
     public final List<Branch> lastPath;
     @Nullable
     public final Identifier lastIdentifier;
+    public final boolean lastDeclaratorWasInit;
+    // cached status indicating that declarator below declaration was initialized
 
     /*
      * Fully saturated constructor
@@ -298,17 +323,24 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
         @NotNull HashMap<String, ProjectionTree<Reference>> freeIdentifiers,
         @NotNull HashMap<String, ProjectionTree<Declaration>> functionScopedDeclarations,
         @NotNull HashMap<String, ProjectionTree<Declaration>> blockScopedDeclarations,
+        @NotNull Set<String> functionScopedInit,
+        @NotNull List<Variable> blockScopedTiedVar,
         @NotNull List<Scope> children,
         boolean dynamic,
         @Nullable List<Branch> lastPath,
-        @Nullable Identifier lastIdentifier) {
+        @Nullable Identifier lastIdentifier,
+        boolean lastDeclaratorWasInit
+    ) {
       this.freeIdentifiers = freeIdentifiers;
       this.functionScopedDeclarations = functionScopedDeclarations;
       this.blockScopedDeclarations = blockScopedDeclarations;
+      this.functionScopedInit = functionScopedInit;
+      this.blockScopedTiedVar = blockScopedTiedVar;
       this.children = children;
       this.dynamic = dynamic;
       this.lastPath = lastPath;
       this.lastIdentifier = lastIdentifier;
+      this.lastDeclaratorWasInit = lastDeclaratorWasInit;
     }
 
     /*
@@ -318,10 +350,13 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
       this.freeIdentifiers = new LinkedHashMap<>();
       this.functionScopedDeclarations = new LinkedHashMap<>();
       this.blockScopedDeclarations = new LinkedHashMap<>();
+      this.functionScopedInit = new HashSet<>();
+      this.blockScopedTiedVar = List.nil();
       this.children = List.nil();
       this.dynamic = false;
       this.lastPath = null;
       this.lastIdentifier = null;
+      this.lastDeclaratorWasInit = false;
     }
 
     /*
@@ -333,23 +368,28 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
         this.freeIdentifiers = a.freeIdentifiers;
         this.functionScopedDeclarations = a.functionScopedDeclarations;
         this.blockScopedDeclarations = a.blockScopedDeclarations;
+        this.functionScopedInit = a.functionScopedInit;
+        this.blockScopedTiedVar = a.blockScopedTiedVar;
         this.children = a.children;
         this.dynamic = a.dynamic;
       } else {
         this.freeIdentifiers = merge(a.freeIdentifiers, b.freeIdentifiers);
         this.functionScopedDeclarations = merge(a.functionScopedDeclarations, b.functionScopedDeclarations);
         this.blockScopedDeclarations = merge(a.blockScopedDeclarations, b.blockScopedDeclarations);
+        this.functionScopedInit = mergeSet(a.functionScopedInit, b.functionScopedInit);
+        this.blockScopedTiedVar = a.blockScopedTiedVar.append(b.blockScopedTiedVar);
         this.children = a.children.append(b.children);
         this.dynamic = a.dynamic || b.dynamic;
       }
       this.lastPath = null;
       this.lastIdentifier = null;
+      this.lastDeclaratorWasInit = false;
     }
 
     @NotNull
     private static List<Variable> resolveArguments(
-        @NotNull HashMap<String, ProjectionTree<Reference>> freeIdentifiers,
-        @NotNull List<Variable> variables) {
+        @NotNull HashMap<String, ProjectionTree<Reference>> freeIdentifiers, @NotNull List<Variable> variables
+    ) {
       ProjectionTree<Reference> arguments = freeIdentifiers.remove("arguments");
       if (arguments == null) {
         arguments = ProjectionTree.nil();
@@ -366,8 +406,8 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
       for (Map.Entry<String, ProjectionTree<Declaration>> entry : decls.entrySet()) {
         String name = entry.getKey();
         ProjectionTree<Declaration> declarations = entry.getValue();
-        ProjectionTree<Reference> references = freeIdentifiers.containsKey(name) ? freeIdentifiers.get(name) :
-                                               ProjectionTree.nil();
+        ProjectionTree<Reference> references =
+            freeIdentifiers.containsKey(name) ? freeIdentifiers.get(name) : ProjectionTree.nil();
         variables = List.cons(new Variable(name, references, declarations), variables);
         freeIdentifiers.remove(name);
       }
@@ -401,6 +441,21 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
       return mapC;
     }
 
+    @NotNull
+    private static Set<String> mergeSet(@NotNull Set<String> setA, @NotNull Set<String> setB) {
+      if (setB.isEmpty()) {
+        return setA;
+      }
+      if (setA.isEmpty()) {
+        return setB;
+      }
+
+      Set<String> setC = new HashSet<>();
+      setC.addAll(setA);
+      setC.addAll(setB);
+      return setC;
+    }
+
     /*
      * Used when a scope boundary is encountered. It resolves the free identifiers
      * and declarations found into variable objects. Any free identifiers remaining
@@ -412,6 +467,8 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
       HashMap<String, ProjectionTree<Declaration>> functionScope = new LinkedHashMap<>();
       HashMap<String, ProjectionTree<Reference>> freeIdentifiers = new LinkedHashMap<>();
       freeIdentifiers.putAll(this.freeIdentifiers);
+      Set<String> functionScopedInit = new HashSet<>();
+      List<Variable> blockScopedTiedVar = List.nil();
 
       switch (scopeType) {
       case Block:
@@ -420,6 +477,17 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
         // resolve only block-scoped free declarations
         variables = resolveDeclarations(freeIdentifiers, this.blockScopedDeclarations, variables);
         functionScope.putAll(this.functionScopedDeclarations);
+        functionScopedInit.addAll(this.functionScopedInit);
+        List<Variable> vptr = variables;
+        blockScopedTiedVar = this.blockScopedTiedVar;
+        while (!vptr.isEmpty()) {
+          Variable v = vptr.maybeHead().just();
+          if (functionScopedInit.contains(v.name)) {
+            blockScopedTiedVar = blockScopedTiedVar.cons(v);
+            functionScopedInit.remove(v.name);
+          }
+          vptr = vptr.maybeTail().just();
+        }
         break;
       default:
         // resolve both block-scoped and function-scoped free declarations
@@ -431,11 +499,13 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
         break;
       }
 
-      Scope scope = scopeType == Scope.Type.Global ? new GlobalScope(this.children, variables, freeIdentifiers,
-          astNode) : new Scope(this.children, variables, freeIdentifiers, scopeType, this.dynamic, astNode);
+      Scope scope = scopeType == Scope.Type.Global ?
+          new GlobalScope(this.children, variables, blockScopedTiedVar, freeIdentifiers, astNode) :
+          new Scope(this.children, variables, blockScopedTiedVar, freeIdentifiers, scopeType, this.dynamic, astNode);
 
-      return new State(freeIdentifiers, functionScope, new LinkedHashMap<>(), List.list(scope), false, this.lastPath,
-          this.lastIdentifier);
+      return new State(
+          freeIdentifiers, functionScope, new LinkedHashMap<>(), functionScopedInit, blockScopedTiedVar,
+          List.list(scope), false, this.lastPath, this.lastIdentifier, this.lastDeclaratorWasInit);
     }
 
     /*
@@ -443,24 +513,51 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
      */
     @NotNull
     private State addDeclaration(@NotNull Kind kind) {
+      return addDeclaration(kind, false);
+    }
+
+    @NotNull
+    private State addDeclaration(@NotNull Kind kind, boolean hasInit) {
       List<Branch> path = this.lastPath;
       Identifier id = this.lastIdentifier;
+      hasInit = this.lastDeclaratorWasInit;
       assert path != null;
       assert id != null;
-      return addDeclaration(path, id, kind);
+      return addDeclaration(path, id, kind, hasInit);
     }
 
     @NotNull
     private State addDeclaration(@NotNull List<Branch> path, @NotNull Identifier id, @NotNull Kind kind) {
+      return addDeclaration(path, id, kind, false);
+    }
+
+    @NotNull
+    private State addDeclaration(@NotNull List<Branch> path, @NotNull Identifier id, @NotNull Kind kind,
+                                 boolean hasInit) {
       Declaration decl = new Declaration(id, path, kind);
       HashMap<String, ProjectionTree<Declaration>> declMap = new LinkedHashMap<>();
       declMap.putAll(kind.isBlockScoped ? this.blockScopedDeclarations : this.functionScopedDeclarations);
-      ProjectionTree<Declaration> tree = declMap.containsKey(id.name) ? declMap.get(id.name).add(decl, path) :
-                                         new ProjectionTree<>(decl, path);
+      ProjectionTree<Declaration> tree =
+          declMap.containsKey(id.name) ?
+              declMap.get(id.name).add(decl, path) :
+              new ProjectionTree<>(decl, path);
       declMap.put(id.name, tree);
-      return new State(this.freeIdentifiers, kind.isBlockScoped ? this.functionScopedDeclarations : declMap,
-          kind.isBlockScoped ? declMap : this.blockScopedDeclarations, this.children, this.dynamic, this.lastPath,
-          this.lastIdentifier);
+      Set<String> functionScopedInit = this.functionScopedInit;
+      if (hasInit && kind.isFunctionScoped) {
+        functionScopedInit = new HashSet<>();
+        functionScopedInit.addAll(this.functionScopedInit);
+        functionScopedInit.add(id.name);
+      }
+      return new State(
+          this.freeIdentifiers,
+          kind.isBlockScoped ? this.functionScopedDeclarations : declMap,
+          kind.isBlockScoped ? declMap : this.blockScopedDeclarations,
+          functionScopedInit, this.blockScopedTiedVar, this.children,
+          this.dynamic,
+          this.lastPath,
+          this.lastIdentifier,
+          false
+      );
     }
 
     /*
@@ -468,44 +565,76 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
      */
     @NotNull
     public State addReference(@NotNull Accessibility accessibility) {
+      return addReference(accessibility, false);
+    }
+
+    @NotNull
+    public State addReference(@NotNull Accessibility accessibility, boolean hasInit) {
       List<Branch> path = this.lastPath;
       Identifier id = this.lastIdentifier;
       assert path != null;
       assert id != null;
-      return addReference(path, id, accessibility);
+      return addReference(path, id, accessibility, hasInit);
     }
 
     @NotNull
-    private State addReference(
-        @NotNull List<Branch> path,
-        @NotNull Identifier id,
-        @NotNull Accessibility accessibility) {
+    private State addReference(@NotNull List<Branch> path, @NotNull Identifier id,
+                               @NotNull Accessibility accessibility) {
+      return addReference(path, id, accessibility, false);
+    }
+
+    @NotNull
+    private State addReference(@NotNull List<Branch> path, @NotNull Identifier id, @NotNull Accessibility accessibility,
+                               boolean hasInit) {
       Reference ref = new Reference(id, path, accessibility);
       HashMap<String, ProjectionTree<Reference>> free = new LinkedHashMap<>();
       free.putAll(this.freeIdentifiers);
-      ProjectionTree<Reference> tree = free.containsKey(ref.node.name) ? free.get(ref.node.name).add(ref, ref.path) :
-                                       new ProjectionTree<>(ref, ref.path);
+      ProjectionTree<Reference> tree =
+          free.containsKey(ref.node.name) ?
+              free.get(ref.node.name).add(ref, ref.path) :
+              new ProjectionTree<>(ref, ref.path);
       free.put(ref.node.name, tree);
-      return new State(free, this.functionScopedDeclarations, this.blockScopedDeclarations, this.children, this.dynamic,
-          this.lastPath, this.lastIdentifier);
+      return new State(
+          free,
+          this.functionScopedDeclarations,
+          this.blockScopedDeclarations,
+          this.functionScopedInit,
+          this.blockScopedTiedVar,
+          this.children,
+          this.dynamic,
+          this.lastPath,
+          this.lastIdentifier,
+          hasInit
+      );
     }
 
     @NotNull
     public State taint() {
-      return new State(this.freeIdentifiers, this.functionScopedDeclarations, this.blockScopedDeclarations,
-          this.children, true, this.lastPath, this.lastIdentifier);
+      return new State(
+          this.freeIdentifiers
+          , this.functionScopedDeclarations,
+          this.blockScopedDeclarations,
+          this.functionScopedInit,
+          this.blockScopedTiedVar,
+          this.children,
+          true,
+          this.lastPath,
+          this.lastIdentifier,
+          this.lastDeclaratorWasInit
+      );
     }
 
     @NotNull
     public State target(@Nullable State id) {
       assert id != null;
-      return new State(freeIdentifiers, functionScopedDeclarations, blockScopedDeclarations, children, dynamic,
-          id.lastPath, id.lastIdentifier);
+      return new State(freeIdentifiers, functionScopedDeclarations, blockScopedDeclarations,
+          functionScopedInit, blockScopedTiedVar, children, dynamic,
+          id.lastPath, id.lastIdentifier, id.lastDeclaratorWasInit);
     }
   }
 
   @SuppressWarnings("ProtectedInnerClass")
-  static final class StateMonoid implements Monoid<State> {
+  public static final class StateMonoid implements Monoid<State> {
     @Override
     @NotNull
     public State identity() {
