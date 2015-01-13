@@ -18,7 +18,6 @@ package com.shapesecurity.shift.ast;
 
 import com.shapesecurity.functional.data.List;
 import com.shapesecurity.shift.ast.types.Type;
-import com.shapesecurity.shift.path.Branch;
 import com.shapesecurity.shift.visitor.Director;
 import com.shapesecurity.shift.visitor.ReducerP;
 import com.shapesecurity.shift.visitor.TransformerP;
@@ -68,6 +67,6 @@ public class Script extends Node {
       @NotNull ReducerP<ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState,
           ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState,
           SwitchCaseState, SwitchDefaultState, CatchClauseState> reducer) {
-    return new Director<>(reducer).reduceScript(this, List.nil());
+    return Director.reduceScript(reducer, this, List.nil());
   }
 }
