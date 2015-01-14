@@ -35,22 +35,6 @@ public class ForStatement extends IterationStatement {
   public final Maybe<Expression> update;
 
   public ForStatement(
-      @NotNull Expression init,
-      @NotNull Maybe<Expression> test,
-      @NotNull Maybe<Expression> update,
-      @NotNull Statement body) {
-    this(Maybe.just(Either.right(init)), test, update, body);
-  }
-
-  public ForStatement(
-      @NotNull VariableDeclaration init,
-      @NotNull Maybe<Expression> test,
-      @NotNull Maybe<Expression> update,
-      @NotNull Statement body) {
-    this(Maybe.just(Either.left(init)), test, update, body);
-  }
-
-  public ForStatement(
       @NotNull Maybe<Either<VariableDeclaration, Expression>> init,
       @NotNull Maybe<Expression> test,
       @NotNull Maybe<Expression> update,

@@ -16,9 +16,11 @@
 
 package com.shapesecurity.shift.comparison;
 
-import java.io.IOException;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import com.shapesecurity.functional.F;
+import com.shapesecurity.functional.data.Either;
 import com.shapesecurity.functional.data.List;
 import com.shapesecurity.functional.data.Maybe;
 import com.shapesecurity.shift.AstHelper;
@@ -84,8 +86,7 @@ import com.shapesecurity.shift.parser.JsError;
 import com.shapesecurity.shift.parser.Parser;
 import com.shapesecurity.shift.visitor.CloneReducer;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import java.io.IOException;
 
 import org.junit.Test;
 
@@ -174,11 +175,11 @@ public class ComparisonTest extends AstHelper {
   @Test
   public void testFunctionExpressionEquality() {
     List<Identifier> params = List.list(new Identifier("a"), new Identifier("b"));
-    FunctionExpression fe = new FunctionExpression(params, body());
-    FunctionExpression fe1 = new FunctionExpression(params, body());
-    FunctionExpression fe2 = new FunctionExpression(params.maybeTail().just(), body());
-    FunctionExpression fe3 = new FunctionExpression(params, body(new BlockStatement(new Block(
-        List.list(new ContinueStatement(Maybe.<Identifier>nothing()))))));
+    FunctionExpression fe = new FunctionExpression(Maybe.nothing(), params, body());
+    FunctionExpression fe1 = new FunctionExpression(Maybe.nothing(), params, body());
+    FunctionExpression fe2 = new FunctionExpression(Maybe.nothing(), params.maybeTail().just(), body());
+    FunctionExpression fe3 = new FunctionExpression(Maybe.nothing(), params, body(new BlockStatement(new Block(
+        List.list(new ContinueStatement(Maybe.nothing()))))));
     FunctionExpression fe4 = new FunctionExpression(Maybe.just(new Identifier("a")), params, body());
 
     assertTrue(fe.equals(fe1));
@@ -439,11 +440,19 @@ public class ComparisonTest extends AstHelper {
   @Test
   public void testForInStatementEquality() {
     {
-      ForInStatement fis = new ForInStatement(identExpr("left"), identExpr("right"), new BreakStatement());
-      ForInStatement fis1 = new ForInStatement(identExpr("left"), identExpr("right"), new BreakStatement());
-      ForInStatement fis2 = new ForInStatement(identExpr("notLeft"), identExpr("right"), new BreakStatement());
-      ForInStatement fis3 = new ForInStatement(identExpr("left"), identExpr("notRight"), new BreakStatement());
-      ForInStatement fis4 = new ForInStatement(identExpr("left"), identExpr("right"), new ContinueStatement());
+      ForInStatement fis = new ForInStatement(Either.right(identExpr("left")), identExpr("right"), new BreakStatement());
+      ForInStatement fis1 = new ForInStatement(Either.right(identExpr("left")),
+          identExpr("right"),
+          new BreakStatement());
+      ForInStatement fis2 = new ForInStatement(Either.right(identExpr("notLeft")),
+          identExpr("right"),
+          new BreakStatement());
+      ForInStatement fis3 = new ForInStatement(Either.right(identExpr("left")),
+          identExpr("notRight"),
+          new BreakStatement());
+      ForInStatement fis4 = new ForInStatement(Either.right(identExpr("left")),
+          identExpr("right"),
+          new ContinueStatement());
 
       assertTrue(fis.equals(fis1));
       assertFalse(fis.equals(fis2));
@@ -452,24 +461,26 @@ public class ComparisonTest extends AstHelper {
     }
 
     {
-      ForInStatement fivs = new ForInStatement(new VariableDeclaration(VariableDeclarationKind.Var, List.list(
-          new VariableDeclarator(new Identifier("declarator")))), identExpr("right"), new BlockStatement(
-          new Block(List.nil())));
-      ForInStatement fivs1 = new ForInStatement(new VariableDeclaration(VariableDeclarationKind.Var, List.list(
-          new VariableDeclarator(new Identifier("declarator")))), identExpr("right"), new BlockStatement(
-          new Block(List.nil())));
-      ForInStatement fivs2 = new ForInStatement(new VariableDeclaration(VariableDeclarationKind.Var, List.list(
-          new VariableDeclarator(new Identifier("notDeclarator")))), identExpr("right"),
+      ForInStatement fivs = new ForInStatement(Either.left(new VariableDeclaration(VariableDeclarationKind.Var, List.list(
+          new VariableDeclarator(new Identifier("declarator"), Maybe.nothing())))), identExpr("right"), new BlockStatement(
+                    new Block(List.nil())));
+      ForInStatement fivs1 = new ForInStatement(Either.left(new VariableDeclaration(VariableDeclarationKind.Var, List.list(
+          new VariableDeclarator(new Identifier("declarator"), Maybe.nothing())))), identExpr("right"), new BlockStatement(
+                    new Block(List.nil())));
+      ForInStatement fivs2 = new ForInStatement(Either.left(new VariableDeclaration(VariableDeclarationKind.Var, List.list(
+          new VariableDeclarator(new Identifier("notDeclarator"), Maybe.nothing())))),
+          identExpr("right"),
           new BlockStatement(new Block(List.nil())));
-      ForInStatement fivs3 = new ForInStatement(new VariableDeclaration(VariableDeclarationKind.Let, List.list(
-          new VariableDeclarator(new Identifier("declarator")))), identExpr("right"), new BlockStatement(
-          new Block(List.nil())));
-      ForInStatement fivs4 = new ForInStatement(new VariableDeclaration(VariableDeclarationKind.Var, List.list(
-          new VariableDeclarator(new Identifier("declarator")))), identExpr("notRight"),
+      ForInStatement fivs3 = new ForInStatement(Either.left(new VariableDeclaration(VariableDeclarationKind.Let, List.list(
+          new VariableDeclarator(new Identifier("declarator"), Maybe.nothing())))), identExpr("right"), new BlockStatement(
+                    new Block(List.nil())));
+      ForInStatement fivs4 = new ForInStatement(Either.left(new VariableDeclaration(VariableDeclarationKind.Var, List.list(
+          new VariableDeclarator(new Identifier("declarator"), Maybe.nothing())))),
+          identExpr("notRight"),
           new BlockStatement(new Block(List.nil())));
-      ForInStatement fivs5 = new ForInStatement(new VariableDeclaration(VariableDeclarationKind.Var, List.list(
-          new VariableDeclarator(new Identifier("declarator")))), identExpr("right"), new BlockStatement(
-          new Block(List.list(new EmptyStatement()))));
+      ForInStatement fivs5 = new ForInStatement(Either.left(new VariableDeclaration(VariableDeclarationKind.Var, List.list(
+          new VariableDeclarator(new Identifier("declarator"), Maybe.nothing())))), identExpr("right"), new BlockStatement(
+                    new Block(List.list(new EmptyStatement()))));
 
       assertTrue(fivs.equals(fivs1));
       assertFalse(fivs.equals(fivs2));
@@ -481,17 +492,17 @@ public class ComparisonTest extends AstHelper {
 
   @Test
   public void testForStatementEquality() {
+    BlockStatement block = new BlockStatement(new Block(List.nil()));
+
     {
-      ForStatement fs = new ForStatement(Maybe.nothing(), Maybe.nothing(), Maybe.nothing(), new BlockStatement(
-          new Block(List.nil())));
-      ForStatement fs1 = new ForStatement(Maybe.nothing(), Maybe.nothing(), Maybe.nothing(), new BlockStatement(
-          new Block(List.nil())));
-      ForStatement fs2 = new ForStatement(identExpr("init"), Maybe.nothing(), Maybe.nothing(),
-          new BlockStatement(new Block(List.nil())));
+      ForStatement fs = new ForStatement(Maybe.nothing(), Maybe.nothing(), Maybe.nothing(), block);
+      ForStatement fs1 = new ForStatement(Maybe.nothing(), Maybe.nothing(), Maybe.nothing(), block);
+      ForStatement fs2 = new ForStatement(Maybe.just(Either.right(identExpr("init"))), Maybe.nothing(), Maybe.nothing(),
+          block);
       ForStatement fs3 = new ForStatement(Maybe.nothing(), Maybe.just(new LiteralBooleanExpression(true)),
-          Maybe.nothing(), new BlockStatement(new Block(List.nil())));
+          Maybe.nothing(), block);
       ForStatement fs4 = new ForStatement(Maybe.nothing(), Maybe.nothing(), Maybe.just(new PostfixExpression(
-          PostfixOperator.Increment, identExpr("operand"))), new BlockStatement(new Block(List.nil())));
+          PostfixOperator.Increment, identExpr("operand"))), block);
       ForStatement fs5 = new ForStatement(Maybe.nothing(), Maybe.nothing(), Maybe.nothing(), new BlockStatement(
           new Block(List.list(new EmptyStatement()))));
 
@@ -503,31 +514,34 @@ public class ComparisonTest extends AstHelper {
     }
 
     {
-      ForStatement fs = new ForStatement(new VariableDeclaration(VariableDeclarationKind.Var, List.list(
-          new VariableDeclarator(new Identifier("init")))), Maybe.<Expression>nothing(), Maybe.<Expression>nothing(),
-          new BlockStatement(new Block(List.nil())));
-      ForStatement fs1 = new ForStatement(new VariableDeclaration(VariableDeclarationKind.Var, List.list(
-          new VariableDeclarator(new Identifier("init")))), Maybe.<Expression>nothing(), Maybe.<Expression>nothing(),
-          new BlockStatement(new Block(List.nil())));
-      ForStatement fs2 = new ForStatement(new VariableDeclaration(VariableDeclarationKind.Var, List.list(
-          new VariableDeclarator(new Identifier("notInit")))), Maybe.<Expression>nothing(), Maybe.<Expression>nothing(),
-          new BlockStatement(new Block(List.nil())));
-      ForStatement fs3 = new ForStatement(new VariableDeclaration(VariableDeclarationKind.Var, List.list(
-          new VariableDeclarator(new Identifier("init")))), Maybe.<Expression>just(new LiteralBooleanExpression(true)),
-          Maybe.<Expression>nothing(), new BlockStatement(new Block(List.nil())));
-      ForStatement fs4 = new ForStatement(new VariableDeclaration(VariableDeclarationKind.Var, List.list(
-          new VariableDeclarator(new Identifier("init")))), Maybe.<Expression>nothing(), Maybe.<Expression>just(
-          new PostfixExpression(PostfixOperator.Increment, identExpr("operand"))), new BlockStatement(
-          new Block(List.nil())));
-      ForStatement fs5 = new ForStatement(new VariableDeclaration(VariableDeclarationKind.Var, List.list(
-          new VariableDeclarator(new Identifier("init")))), Maybe.<Expression>nothing(), Maybe.<Expression>nothing(),
+      VariableDeclarator notInit = new VariableDeclarator(new Identifier("notInit"), Maybe.nothing());
+      VariableDeclarator init = new VariableDeclarator(new Identifier("init"), Maybe.nothing());
+
+      Maybe<Either<VariableDeclaration, Expression>> declnotInit =
+          Maybe.just(Either.left(new VariableDeclaration(VariableDeclarationKind.Var, List.list(notInit))));
+      Maybe<Either<VariableDeclaration, Expression>> decl =
+          Maybe.just(Either.left(new VariableDeclaration(VariableDeclarationKind.Var, List.list(init))));
+
+
+      ForStatement fs0 = new ForStatement(decl, Maybe.nothing(), Maybe.nothing(), block);
+      ForStatement fs1 = new ForStatement(decl, Maybe.nothing(), Maybe.nothing(), block);
+      ForStatement fs2 = new ForStatement(declnotInit, Maybe.nothing(), Maybe.nothing(), block);
+      ForStatement fs3 = new ForStatement(decl,
+          Maybe.just(new LiteralBooleanExpression(true)),
+          Maybe.<Expression>nothing(),
+          block);
+      ForStatement fs4 = new ForStatement(decl,
+          Maybe.nothing(),
+          Maybe.just(new PostfixExpression(PostfixOperator.Increment, identExpr("operand"))),
+          block);
+      ForStatement fs5 = new ForStatement(decl, Maybe.nothing(), Maybe.nothing(),
           new BlockStatement(new Block(List.list(new EmptyStatement()))));
 
-      assertTrue(fs.equals(fs1));
-      assertFalse(fs.equals(fs2));
-      assertFalse(fs.equals(fs3));
-      assertFalse(fs.equals(fs4));
-      assertFalse(fs.equals(fs5));
+      assertTrue(fs0.equals(fs1));
+      assertFalse(fs0.equals(fs2));
+      assertFalse(fs0.equals(fs3));
+      assertFalse(fs0.equals(fs4));
+      assertFalse(fs0.equals(fs5));
     }
   }
 
@@ -656,13 +670,14 @@ public class ComparisonTest extends AstHelper {
   @Test
   public void testVariableDeclarationStatementEquality() {
     VariableDeclaration vds = new VariableDeclaration(VariableDeclaration.VariableDeclarationKind.Var, List.list(
-        new VariableDeclarator(new Identifier("name"))));
+        new VariableDeclarator(new Identifier("name"), Maybe.<Expression>nothing())));
     VariableDeclaration vds1 = new VariableDeclaration(VariableDeclaration.VariableDeclarationKind.Var, List.list(
-        new VariableDeclarator(new Identifier("name"))));
+        new VariableDeclarator(new Identifier("name"), Maybe.<Expression>nothing())));
     VariableDeclaration vds2 = new VariableDeclaration(VariableDeclaration.VariableDeclarationKind.Var, List.list(
-        new VariableDeclarator(new Identifier("name")), new VariableDeclarator(new Identifier("id1"))));
+        new VariableDeclarator(new Identifier("name"), Maybe.<Expression>nothing()),
+        new VariableDeclarator(new Identifier("id1"), Maybe.<Expression>nothing())));
     VariableDeclaration vds3 = new VariableDeclaration(VariableDeclaration.VariableDeclarationKind.Let, List.list(
-        new VariableDeclarator(new Identifier("name"))));
+        new VariableDeclarator(new Identifier("name"), Maybe.<Expression>nothing())));
 
     assertTrue(vds.equals(vds1));
     assertFalse(vds.equals(vds2));

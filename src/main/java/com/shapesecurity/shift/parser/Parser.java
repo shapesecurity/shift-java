@@ -257,7 +257,9 @@ public class Parser extends Tokenizer {
           if (firstRestricted != null) {
             throw this.createErrorWithToken(firstRestricted, STRICT_OCTAL_LITERAL);
           }
-          return List.cons(this.markLocation(startLocation, new UseStrictDirective()), this.parseDirective(sourceElements, null));
+          return List.cons(this.markLocation(startLocation, new UseStrictDirective()), this.parseDirective(
+              sourceElements,
+              null));
         } else {
           if (firstRestricted == null && token.octal) {
             firstRestricted = startLocation;
@@ -741,7 +743,9 @@ public class Parser extends Tokenizer {
       if (!this.match(TokenType.RPAREN)) {
         right = this.parseExpression();
       }
-      return this.markLocation(startLocation, new ForStatement(Maybe.nothing(), Maybe.fromNullable(test), Maybe.fromNullable(right),
+      return this.markLocation(startLocation, new ForStatement(Maybe.nothing(),
+          Maybe.fromNullable(test),
+          Maybe.fromNullable(right),
           this.getIteratorStatementEpilogue()));
     } else {
       if (this.match(TokenType.VAR) || this.match(TokenType.LET)) {
@@ -753,7 +757,9 @@ public class Parser extends Tokenizer {
         if (initDecl.declarators.tail().isEmpty() && this.match(TokenType.IN)) {
           this.lex();
           right = this.parseExpression();
-          return this.markLocation(startLocation, new ForInStatement(initDecl, right, this.getIteratorStatementEpilogue())
+          return this.markLocation(startLocation, new ForInStatement(Either.left(initDecl),
+              right,
+              this.getIteratorStatementEpilogue())
           );
         } else {
           this.expect(TokenType.SEMICOLON);
@@ -764,8 +770,13 @@ public class Parser extends Tokenizer {
           if (!this.match(TokenType.RPAREN)) {
             right = this.parseExpression();
           }
-          return this.markLocation(startLocation, new ForStatement(initDecl, Maybe.fromNullable(test), Maybe.fromNullable(right),
-              this.getIteratorStatementEpilogue()));
+          return this.markLocation(
+              startLocation,
+              new ForStatement(
+                  Maybe.just(Either.left(initDecl)),
+                  Maybe.fromNullable(test),
+                  Maybe.fromNullable(right),
+                  this.getIteratorStatementEpilogue()));
         }
       } else {
         boolean previousAllowIn = this.allowIn;
@@ -781,7 +792,9 @@ public class Parser extends Tokenizer {
 
           this.lex();
           right = this.parseExpression();
-          return this.markLocation(startLocation, new ForInStatement(init, right, this.getIteratorStatementEpilogue())
+          return this.markLocation(startLocation, new ForInStatement(Either.right(init),
+              right,
+              this.getIteratorStatementEpilogue())
           );
         } else {
           this.expect(TokenType.SEMICOLON);
@@ -792,8 +805,11 @@ public class Parser extends Tokenizer {
           if (!this.match(TokenType.RPAREN)) {
             right = this.parseExpression();
           }
-          return this.markLocation(startLocation, new ForStatement(Maybe.fromNullable(init).map(Either::right), Maybe.fromNullable(
-              test), Maybe.fromNullable(right), this.getIteratorStatementEpilogue()));
+          return this.markLocation(startLocation, new ForStatement(Maybe.fromNullable(init).map(Either::right),
+              Maybe.fromNullable(
+                  test),
+              Maybe.fromNullable(right),
+              this.getIteratorStatementEpilogue()));
         }
       }
     }
@@ -896,7 +912,10 @@ public class Parser extends Tokenizer {
       }
       this.inSwitch = oldInSwitch;
       this.expect(TokenType.RBRACE);
-      return this.markLocation(startLocation, new SwitchStatementWithDefault(discriminant, cases, switchDefault, postDefaultCases)
+      return this.markLocation(startLocation, new SwitchStatementWithDefault(discriminant,
+          cases,
+          switchDefault,
+          postDefaultCases)
       );
     } else {
       this.inSwitch = oldInSwitch;
@@ -960,7 +979,8 @@ public class Parser extends Tokenizer {
     SourceLocation startLocation = this.getLocation();
     this.expect(TokenType.WHILE);
     this.expect(TokenType.LPAREN);
-    return this.markLocation(startLocation, new WhileStatement(this.parseExpression(), this.getIteratorStatementEpilogue())
+    return this.markLocation(startLocation, new WhileStatement(this.parseExpression(),
+        this.getIteratorStatementEpilogue())
     );
   }
 
@@ -975,7 +995,9 @@ public class Parser extends Tokenizer {
           break;
         }
         this.lex();
-        expr = this.markLocation(startLocation, new BinaryExpression(BinaryOperator.Sequence, expr, this.parseAssignmentExpression())
+        expr = this.markLocation(startLocation, new BinaryExpression(BinaryOperator.Sequence,
+            expr,
+            this.parseAssignmentExpression())
         );
       }
     }

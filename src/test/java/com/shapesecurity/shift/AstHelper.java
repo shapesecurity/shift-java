@@ -79,7 +79,7 @@ public class AstHelper extends TestBase {
   }
 
   public static VariableDeclarator declarator(String d) {
-    return new VariableDeclarator(new Identifier(d));
+    return new VariableDeclarator(new Identifier(d), Maybe.<Expression>nothing());
   }
 
   public static VariableDeclarationStatement varss(

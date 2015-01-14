@@ -44,10 +44,6 @@ public class FunctionExpression extends PrimaryExpression implements Function {
     this.body = body;
   }
 
-  public FunctionExpression(@NotNull List<Identifier> parameters, @NotNull FunctionBody body) {
-    this(Maybe.nothing(), parameters, body);
-  }
-
   @NotNull
   @Override
   public <ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> ExpressionState transform(
