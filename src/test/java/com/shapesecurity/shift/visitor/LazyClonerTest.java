@@ -16,10 +16,7 @@
 
 package com.shapesecurity.shift.visitor;
 
-import java.io.File;
-import java.io.IOException;
-
-import org.jetbrains.annotations.NotNull;
+import static org.junit.Assert.assertTrue;
 
 import com.shapesecurity.functional.data.List;
 import com.shapesecurity.shift.TestBase;
@@ -31,8 +28,10 @@ import com.shapesecurity.shift.parser.JsError;
 import com.shapesecurity.shift.parser.Parser;
 import com.shapesecurity.shift.path.Branch;
 
-import static org.junit.Assert.assertTrue;
+import java.io.File;
+import java.io.IOException;
 
+import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 
 public class LazyClonerTest extends TestBase {

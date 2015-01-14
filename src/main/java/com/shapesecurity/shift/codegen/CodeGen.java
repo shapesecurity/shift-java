@@ -82,6 +82,7 @@ import com.shapesecurity.shift.ast.statement.WhileStatement;
 import com.shapesecurity.shift.ast.statement.WithStatement;
 import com.shapesecurity.shift.path.Branch;
 import com.shapesecurity.shift.utils.Utils;
+import com.shapesecurity.shift.visitor.Director;
 import com.shapesecurity.shift.visitor.Reducer;
 
 import java.util.ArrayList;
@@ -105,10 +106,19 @@ public final class CodeGen implements Reducer<CodeRep> {
   }
 
   @NotNull
-  public static String codeGen(@NotNull Script script, boolean pretty) {
+  public static String codeGenNode(@NotNull Node node) {
+    CodeRep codeRep = Director.reduce(COMPACT, node, List.<Branch>nil());
     StringBuilder sb = new StringBuilder();
     TokenStream ts = new TokenStream(sb);
-    script.reduce(pretty ? PRETTY : COMPACT).emit(ts, false);
+    codeRep.emit(ts, false);
+    return sb.toString();
+  }
+
+  @NotNull
+  public static String codeGen(@NotNull Node script, boolean pretty) {
+    StringBuilder sb = new StringBuilder();
+    TokenStream ts = new TokenStream(sb);
+    Director.reduce(pretty ? PRETTY : COMPACT, script, List.<Branch>nil()).emit(ts, false);
     return sb.toString();
   }
 
@@ -686,7 +696,8 @@ public final class CodeGen implements Reducer<CodeRep> {
   @Override
   @NotNull
   public CodeRep reduceVariableDeclarator(
-      @NotNull VariableDeclarator node, @NotNull List<Branch> path, @NotNull CodeRep binding, @NotNull Maybe<CodeRep> init) {
+      @NotNull VariableDeclarator node, @NotNull List<Branch> path, @NotNull CodeRep binding,
+      @NotNull Maybe<CodeRep> init) {
     CodeRep result = factory.init(
         binding, init.map(
             state -> state.containsGroup ? factory.paren(state) : factory.testIn(state)));

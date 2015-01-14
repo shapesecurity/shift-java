@@ -27,6 +27,7 @@ import com.shapesecurity.shift.ast.Directive;
 import com.shapesecurity.shift.ast.Expression;
 import com.shapesecurity.shift.ast.FunctionBody;
 import com.shapesecurity.shift.ast.Identifier;
+import com.shapesecurity.shift.ast.Node;
 import com.shapesecurity.shift.ast.Script;
 import com.shapesecurity.shift.ast.Statement;
 import com.shapesecurity.shift.ast.SwitchCase;
@@ -90,6 +91,41 @@ public final class Director {
 
   private Director() {
     // static only
+  }
+
+  @NotNull
+  public static <State> State reduce(@NotNull Reducer<State> reducer, @NotNull Node node, @NotNull List<Branch> path) {
+    if (node instanceof Script) {
+      return reduceScript(reducer, (Script) node, path);
+    } else if (node instanceof FunctionBody) {
+      return reduceFunctionBody(reducer, (FunctionBody) node, path);
+    } else if (node instanceof ObjectProperty) {
+      return reduceObjectProperty(reducer, (ObjectProperty) node, path);
+    } else if (node instanceof PropertyName) {
+      return reducePropertyName(reducer, (PropertyName) node, path);
+    } else if (node instanceof Identifier) {
+      return reduceIdentifier(reducer, (Identifier) node, path);
+    } else if (node instanceof Expression) {
+      return reduceExpression(reducer, (Expression) node, path);
+    } else if (node instanceof Directive) {
+      return reduceDirective(reducer, (Directive) node, path);
+    } else if (node instanceof Statement) {
+      return reduceStatement(reducer, (Statement) node, path);
+    } else if (node instanceof Block) {
+      return reduceBlock(reducer, (Block) node, path);
+    } else if (node instanceof VariableDeclarator) {
+      return reduceVariableDeclarator(reducer, (VariableDeclarator) node, path);
+    } else if (node instanceof VariableDeclaration) {
+      return reduceVariableDeclaration(reducer, (VariableDeclaration) node, path);
+    } else if (node instanceof SwitchCase) {
+      return reduceSwitchCase(reducer, (SwitchCase) node, path);
+    } else if (node instanceof SwitchDefault) {
+      return reduceSwitchDefault(reducer, (SwitchDefault) node, path);
+    } else if (node instanceof CatchClause) {
+      return reduceCatchClause(reducer, (CatchClause) node, path);
+    } else {
+      throw new RuntimeException("not reached");
+    }
   }
 
   @NotNull

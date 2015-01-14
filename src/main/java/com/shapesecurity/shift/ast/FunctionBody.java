@@ -66,21 +66,21 @@ public class FunctionBody extends Node {
 
   @NotNull
   public List<Directive> getDirectives() {
-    return directives;
+    return this.directives;
   }
 
   @NotNull
   public List<Statement> getStatements() {
-    return statements;
+    return this.statements;
   }
 
   @NotNull
   public FunctionBody setDirectives(@NotNull List<Directive> directives) {
-    return new FunctionBody(directives, statements);
+    return new FunctionBody(directives, this.statements);
   }
 
   @NotNull
   public FunctionBody setStatements(@NotNull List<Statement> statements) {
-    return new FunctionBody(directives, statements);
+    return new FunctionBody(this.directives, statements);
   }
 }

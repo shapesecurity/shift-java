@@ -33,10 +33,6 @@ public class ReturnStatement extends Statement {
     this.expression = expression;
   }
 
-  public ReturnStatement() {
-    this(Maybe.nothing());
-  }
-
   @NotNull
   @Override
   public <ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> StatementState transform(

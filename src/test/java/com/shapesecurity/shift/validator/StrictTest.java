@@ -49,25 +49,25 @@ import org.junit.Test;
 
 public class StrictTest extends AstHelper {
   private static FunctionExpression strictFE(Statement s) {
-    return new FunctionExpression(List.<Identifier>nil(), new FunctionBody(List.<Directive>list(
+    return new FunctionExpression(Maybe.nothing(), List.nil(), new FunctionBody(List.<Directive>list(
         new UseStrictDirective()), list(s)));
   }
 
   @Test
   public final void testBasicDirectiveSupport() {
-    validStmt(new FunctionDeclaration(ID, List.<Identifier>nil(), new FunctionBody(List.<Directive>list(
-        new UseStrictDirective()), List.<Statement>nil())));
-    validStmt(new FunctionDeclaration(ID, List.<Identifier>nil(), new FunctionBody(List.<Directive>list(
-        new UseStrictDirective(), new UnknownDirective("directive")), List.<Statement>nil())));
+    validStmt(new FunctionDeclaration(ID, List.nil(), new FunctionBody(List.<Directive>list(new UseStrictDirective()),
+        List.nil())));
+    validStmt(new FunctionDeclaration(ID, List.nil(), new FunctionBody(List.<Directive>list(new UseStrictDirective(),
+        new UnknownDirective("directive")), List.nil())));
 
-    validStmt(exprStmt(new FunctionExpression(List.<Identifier>nil(), new FunctionBody(List.<Directive>list(
-        new UseStrictDirective()), List.<Statement>nil()))));
-    validStmt(exprStmt(new FunctionExpression(List.<Identifier>nil(), new FunctionBody(List.<Directive>list(
-        new UseStrictDirective(), new UnknownDirective("directive")), List.<Statement>nil()))));
+    validStmt(exprStmt(new FunctionExpression(Maybe.nothing(), List.nil(), new FunctionBody(List.list(
+        new UseStrictDirective()), List.nil()))));
+    validStmt(exprStmt(new FunctionExpression(Maybe.nothing(), List.nil(), new FunctionBody(List.list(
+        new UseStrictDirective(), new UnknownDirective("directive")), List.nil()))));
     assertOk(Validator.validate(new Script(new FunctionBody(List.<Directive>list(new UseStrictDirective()),
-        List.<Statement>nil()))));
-    validExpr(new FunctionExpression(List.<Identifier>nil(), new FunctionBody(List.<Directive>list(
-        new UseStrictDirective()), List.<Statement>nil())));
+        List.nil()))));
+    validExpr(new FunctionExpression(Maybe.nothing(), List.nil(), new FunctionBody(List.<Directive>list(
+        new UseStrictDirective()), List.nil())));
   }
 
   @Test
@@ -82,29 +82,33 @@ public class StrictTest extends AstHelper {
 
   @Test
   public final void testFunctionNamesMustNotBeRestrictedInStrictMode() {
-    validExpr(new FunctionExpression(Maybe.just(new Identifier("eval")), List.<Identifier>nil(), BLOCK_WRAPPED));
-    validExpr(new FunctionExpression(Maybe.just(new Identifier("arguments")), List.<Identifier>nil(), BLOCK_WRAPPED));
-    validStmt(new FunctionDeclaration(new Identifier("eval"), List.<Identifier>nil(), BLOCK_WRAPPED));
-    validStmt(new FunctionDeclaration(new Identifier("arguments"), List.<Identifier>nil(), BLOCK_WRAPPED));
+    validExpr(new FunctionExpression(Maybe.just(new Identifier("eval")), List.nil(), BLOCK_WRAPPED));
+    validExpr(new FunctionExpression(Maybe.just(new Identifier("arguments")), List.nil(), BLOCK_WRAPPED));
+    validStmt(new FunctionDeclaration(new Identifier("eval"), List.nil(), BLOCK_WRAPPED));
+    validStmt(new FunctionDeclaration(new Identifier("arguments"), List.nil(), BLOCK_WRAPPED));
 
-    invalidExpr(1, strictFE(exprStmt(new FunctionExpression(Maybe.just(new Identifier("eval")), List.<Identifier>nil(),
+    invalidExpr(1, strictFE(exprStmt(new FunctionExpression(Maybe.just(new Identifier("eval")), List.nil(),
         BLOCK_WRAPPED))));
     invalidExpr(1, strictFE(exprStmt(new FunctionExpression(Maybe.just(new Identifier("arguments")),
-        List.<Identifier>nil(), BLOCK_WRAPPED))));
-    invalidExpr(1, strictFE(new FunctionDeclaration(new Identifier("eval"), List.<Identifier>nil(), BLOCK_WRAPPED)));
-    invalidExpr(1, strictFE(new FunctionDeclaration(new Identifier("arguments"), List.<Identifier>nil(),
+        List.nil(), BLOCK_WRAPPED))));
+    invalidExpr(1, strictFE(new FunctionDeclaration(new Identifier("eval"), List.nil(), BLOCK_WRAPPED)));
+    invalidExpr(1, strictFE(new FunctionDeclaration(new Identifier("arguments"), List.nil(),
         BLOCK_WRAPPED)));
   }
 
   @Test
   public final void testFunctionParametersNotBeRestrictedInStrictMode() {
-    validExpr(new FunctionExpression(list(new Identifier("eval")), BLOCK_WRAPPED));
-    validExpr(new FunctionExpression(list(new Identifier("arguments")), BLOCK_WRAPPED));
+    validExpr(new FunctionExpression(Maybe.nothing(), list(new Identifier("eval")), BLOCK_WRAPPED));
+    validExpr(new FunctionExpression(Maybe.nothing(), list(new Identifier("arguments")), BLOCK_WRAPPED));
     validStmt(new FunctionDeclaration(ID, list(new Identifier("eval")), BLOCK_WRAPPED));
     validStmt(new FunctionDeclaration(ID, list(new Identifier("arguments")), BLOCK_WRAPPED));
 
-    invalidExpr(1, strictFE(exprStmt(new FunctionExpression(list(new Identifier("eval")), BLOCK_WRAPPED))));
-    invalidExpr(1, strictFE(exprStmt(new FunctionExpression(list(new Identifier("arguments")), BLOCK_WRAPPED))));
+    invalidExpr(1, strictFE(exprStmt(new FunctionExpression(Maybe.nothing(),
+        list(new Identifier("eval")),
+        BLOCK_WRAPPED))));
+    invalidExpr(1, strictFE(exprStmt(new FunctionExpression(Maybe.nothing(),
+        list(new Identifier("arguments")),
+        BLOCK_WRAPPED))));
     invalidExpr(1, strictFE(new FunctionDeclaration(ID, list(new Identifier("eval")), BLOCK_WRAPPED)));
     invalidExpr(1, strictFE(new FunctionDeclaration(ID, list(new Identifier("arguments")), BLOCK_WRAPPED)));
   }

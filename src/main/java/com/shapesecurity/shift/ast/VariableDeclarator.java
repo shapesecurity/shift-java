@@ -34,10 +34,6 @@ public class VariableDeclarator extends Node {
     this.init = init;
   }
 
-  public VariableDeclarator(@NotNull Identifier binding) {
-    this(binding, Maybe.nothing());
-  }
-
   @NotNull
   public <ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> DeclaratorState transform(
       @NotNull TransformerP<ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState,
