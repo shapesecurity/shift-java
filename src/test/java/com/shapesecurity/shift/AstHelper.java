@@ -46,19 +46,19 @@ import org.junit.Assert;
 
 public class AstHelper extends TestBase {
   public static final EmptyStatement STMT = new EmptyStatement();
-  public static final Block BLOCK = new Block(List.<Statement>nil());
+  public static final Block BLOCK = new Block(List.nil());
   public static final BlockStatement BLOCK_STMT = new BlockStatement(BLOCK);
   public static final FunctionBody EMPTY_BODY =
-      new FunctionBody(List.<Directive>nil(), List.<Statement>nil());
+      new FunctionBody(List.nil(), List.nil());
   public static final FunctionBody BLOCK_WRAPPED =
-      new FunctionBody(List.<Directive>nil(), List.<Statement>list(BLOCK_STMT));
+      new FunctionBody(List.nil(), List.list(BLOCK_STMT));
   public static final LiteralNullExpression EXPR = new LiteralNullExpression();
   public static final LiteralNumericExpression NUM = new LiteralNumericExpression(0);
   public static final Identifier ID = new Identifier("a");
 
   // wrap a statement in a program
   public static Script wrapProgram(Statement s) {
-    return new Script(new FunctionBody(List.<Directive>nil(), List.list(s)));
+    return new Script(new FunctionBody(List.nil(), List.list(s)));
   }
 
   // wrap a statement in an iteration statement
@@ -79,7 +79,7 @@ public class AstHelper extends TestBase {
   }
 
   public static VariableDeclarator declarator(String d) {
-    return new VariableDeclarator(new Identifier(d));
+    return new VariableDeclarator(new Identifier(d), Maybe.nothing());
   }
 
   public static VariableDeclarationStatement varss(
@@ -95,13 +95,13 @@ public class AstHelper extends TestBase {
 
   // wrap zero or more statements in a function expression
   public static FunctionExpression FE(Statement s) {
-    return new FunctionExpression(Maybe.just(ID), List.<Identifier>nil(), new FunctionBody(List.<Directive>nil(),
+    return new FunctionExpression(Maybe.just(ID), List.nil(), new FunctionBody(List.nil(),
         List.list(s)));
   }
 
   // wrap zero or more statements in a function declaration
   public static FunctionDeclaration FD(Statement s) {
-    return new FunctionDeclaration(ID, List.<Identifier>nil(), new FunctionBody(List.<Directive>nil(), List.list(s)));
+    return new FunctionDeclaration(ID, List.nil(), new FunctionBody(List.nil(), List.list(s)));
   }
 
   // wrap a statement in a LabeledStatement

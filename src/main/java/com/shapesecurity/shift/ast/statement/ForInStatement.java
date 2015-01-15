@@ -31,18 +31,6 @@ public class ForInStatement extends IterationStatement {
   @NotNull
   public final Expression right;
 
-  public ForInStatement(@NotNull Expression left, @NotNull Expression right, @NotNull Statement body) {
-    super(body);
-    this.left = Either.right(left);
-    this.right = right;
-  }
-
-  public ForInStatement(@NotNull VariableDeclaration left, @NotNull Expression right, @NotNull Statement body) {
-    super(body);
-    this.left = Either.left(left);
-    this.right = right;
-  }
-
   public ForInStatement(
       @NotNull Either<VariableDeclaration, Expression> left,
       @NotNull Expression right,
