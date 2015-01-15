@@ -16,6 +16,7 @@
 
 package com.shapesecurity.shift.validator;
 
+import com.shapesecurity.functional.data.Either;
 import com.shapesecurity.functional.data.List;
 import com.shapesecurity.functional.data.Maybe;
 import com.shapesecurity.shift.AstHelper;
@@ -48,10 +49,10 @@ import com.shapesecurity.shift.ast.statement.WithStatement;
 import com.shapesecurity.shift.parser.JsError;
 import com.shapesecurity.shift.parser.Parser;
 
-import org.junit.Test;
-
 import java.io.File;
 import java.io.IOException;
+
+import org.junit.Test;
 
 public class UnitTest extends AstHelper {
   @Test
@@ -104,9 +105,12 @@ public class UnitTest extends AstHelper {
     validStmt(new IfStatement(EXPR, new LabeledStatement(ID, new IfStatement(EXPR, STMT)), STMT));
     validStmt(new IfStatement(EXPR, new WhileStatement(EXPR, new IfStatement(EXPR, STMT)), STMT));
     validStmt(new IfStatement(EXPR, new WithStatement(EXPR, new IfStatement(EXPR, STMT)), STMT));
-    validStmt(new IfStatement(EXPR, new ForStatement(EXPR, Maybe.just(EXPR), Maybe.just(EXPR), new IfStatement(
-        EXPR, STMT)), STMT));
-    validStmt(new IfStatement(EXPR, new ForInStatement(EXPR, EXPR, new IfStatement(EXPR, STMT)), STMT));
+    validStmt(new IfStatement(EXPR, new ForStatement(
+        Maybe.just(Either.right(EXPR)),
+        Maybe.just(EXPR),
+        Maybe.just(EXPR),
+        new IfStatement(EXPR, STMT)), STMT));
+    validStmt(new IfStatement(EXPR, new ForInStatement(Either.right(EXPR), EXPR, new IfStatement(EXPR, STMT)), STMT));
   }
 
   @Test
@@ -167,15 +171,15 @@ public class UnitTest extends AstHelper {
 
   @Test
   public final void testReturnStatementMustBeNestedWithinAFunctionExpressionOrFunctionDeclarationNode() {
-    validExpr(FE(new ReturnStatement()));
-    validStmt(FD(new ReturnStatement()));
-    invalidStmt(1, new ReturnStatement());
+    validExpr(FE(new ReturnStatement(Maybe.nothing())));
+    validStmt(FD(new ReturnStatement(Maybe.nothing())));
+    invalidStmt(1, new ReturnStatement(Maybe.nothing()));
   }
 
   @Test
   public final void testVariableDeclarationStatementInForInVarStatementCanOnlyHasOneVariableDeclarator() {
-    validStmt(new ForInStatement(vars(VariableDeclarationKind.Var, "a"), EXPR, STMT));
-    invalidStmt(1, new ForInStatement(vars(VariableDeclarationKind.Var, "a", "b"), EXPR, STMT));
+    validStmt(new ForInStatement(Either.left(vars(VariableDeclarationKind.Var, "a")), EXPR, STMT));
+    invalidStmt(1, new ForInStatement(Either.left(vars(VariableDeclarationKind.Var, "a", "b")), EXPR, STMT));
   }
 
   private void testLibrary(String fileName) throws IOException, JsError {

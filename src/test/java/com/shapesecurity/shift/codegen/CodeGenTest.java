@@ -16,6 +16,7 @@
 
 package com.shapesecurity.shift.codegen;
 
+import com.shapesecurity.functional.data.Either;
 import com.shapesecurity.functional.data.List;
 import com.shapesecurity.functional.data.Maybe;
 import com.shapesecurity.shift.TestBase;
@@ -435,8 +436,12 @@ public class CodeGenTest extends TestBase {
         Maybe.<Statement>just(EMPTY))));
     testAst("if(a){for(;;)if(a);}else;", statement(new IfStatement(IDENT, new ForStatement(Maybe.nothing(),
         Maybe.nothing(), Maybe.nothing(), MISSING_ELSE), Maybe.<Statement>just(EMPTY))));
-    testAst("if(a){for(a in a)if(a);}else;", statement(new IfStatement(IDENT, new ForInStatement(IDENT, IDENT,
-        MISSING_ELSE), Maybe.<Statement>just(EMPTY))));
+    testAst("if(a){for(a in a)if(a);}else;",
+        statement(
+            new IfStatement(
+                IDENT,
+                new ForInStatement(Either.right(IDENT), IDENT, MISSING_ELSE),
+                Maybe.<Statement>just(EMPTY))));
   }
 
   @Test
@@ -504,11 +509,11 @@ public class CodeGenTest extends TestBase {
     testAst("\"use strict\"", new Script(new FunctionBody(List.list(new UseStrictDirective()), List.nil())));
     testAst("(\"use strict\")", statement(new ExpressionStatement(new LiteralStringExpression("use strict"))));
     testAst("(\"use strict\");;", new Script(new FunctionBody(
-      List.nil(),
-      List.list(
-        new ExpressionStatement(new LiteralStringExpression("use strict")),
-        new EmptyStatement()
-      )
+        List.nil(),
+        List.list(
+            new ExpressionStatement(new LiteralStringExpression("use strict")),
+            new EmptyStatement()
+        )
     )));
     testAst("\"use strict\";;", new Script(new FunctionBody(
         List.list(new UseStrictDirective()),
