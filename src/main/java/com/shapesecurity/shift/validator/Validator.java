@@ -275,7 +275,7 @@ public class Validator extends MonoidalReducer<ValidationContext> {
       @NotNull LiteralNumericExpression node,
       @NotNull List<Branch> path) {
     ValidationContext v = new ValidationContext();
-    if (node.value < 0 || 1 / node.value < 0) {
+    if (node.value < 0 || node.value == 0 && 1 / node.value < 0) {
       v = v.addError(new ValidationError(node, "Numeric Literal node must be non-negative"));
     } else if (Double.isNaN(node.value)) {
       v = v.addError(new ValidationError(node, "Numeric Literal node must not be NaN"));
@@ -448,7 +448,12 @@ public class Validator extends MonoidalReducer<ValidationContext> {
       @NotNull List<ValidationContext> preDefaultCases,
       @NotNull ValidationContext defaultCase,
       @NotNull List<ValidationContext> postDefaultCases) {
-    return super.reduceSwitchStatementWithDefault(node, path, discriminant, preDefaultCases, defaultCase, postDefaultCases)
+    return super.reduceSwitchStatementWithDefault(node,
+        path,
+        discriminant,
+        preDefaultCases,
+        defaultCase,
+        postDefaultCases)
         .clearFreeBreakStatements();
   }
 

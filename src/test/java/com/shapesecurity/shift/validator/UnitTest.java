@@ -190,6 +190,8 @@ public class UnitTest extends AstHelper {
   public final void testPropertyNameOfKindNumberMustBeValidNumber() {
     validExpr(obj(init(pn(0), EXPR)));
     validExpr(obj(init(pn(3), EXPR)));
+    validExpr(obj(init(new PropertyName(""), EXPR)));
+    validExpr(obj(init(new PropertyName("not an ident"), EXPR)));
     invalidExpr(1, obj(init(pn(-1), EXPR)));
     invalidExpr(1, obj(init(pn(Double.NaN), EXPR)));
     invalidExpr(1, obj(init(pn(Double.POSITIVE_INFINITY), EXPR)));
