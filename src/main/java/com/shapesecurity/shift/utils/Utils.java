@@ -250,4 +250,102 @@ public final class Utils {
     }
     return -1;
   }
+
+  public static boolean isValidNumber(@NotNull String source) {
+    int index = 0;
+    int length = source.length();
+    char[] chs = source.toCharArray();
+
+    char ch = chs[index];
+    if (ch == '0') {
+      index++;
+      if (index < length) {
+        ch = chs[index];
+        if (ch == 'x' || ch == 'X') {
+          return isValidHexLiteral(chs);
+        } else if ('0' <= ch && ch <= '9') {
+          return isValidOctalLiteral(chs);
+        }
+      } else {
+        return true;
+      }
+    } else if ('1' <= ch && ch <= '9') {
+      ch = chs[index];
+      while ('0' <= ch && ch <= '9') {
+        index++;
+        if (index == length) {
+          return true;
+        }
+        ch = chs[index];
+      }
+    } else if (ch != '.') {
+      return false;
+    }
+
+    if (ch == '.') {
+      index++;
+      if (index == length) {
+        return true;
+      }
+
+      ch = chs[index];
+      while ('0' <= ch && ch <= '9') {
+        index++;
+        if (index == length) {
+          return true;
+        }
+        ch = chs[index];
+      }
+    }
+
+    // EOF not reached here
+    if (ch == 'e' || ch == 'E') {
+      index++;
+      if (index == length) {
+        return false;
+      }
+
+      ch = chs[index];
+      if (ch == '+' || ch == '-') {
+        index++;
+        if (index == length) {
+          return false;
+        }
+        ch = chs[index];
+      }
+
+      if ('0' <= ch && ch <= '9') {
+        while ('0' <= ch && ch <= '9') {
+          index++;
+          if (index == length) {
+            return true;
+          }
+          ch = chs[index];
+        }
+      } else {
+        return false;
+      }
+    }
+
+    return index != length;
+  }
+
+  private static boolean isValidOctalLiteral(char[] chs) {
+    for (int i = 1; i < chs.length; i++) {
+      if (chs[i] < '0' || chs[i] > '7') {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  private static boolean isValidHexLiteral(char[] chs) {
+    for (int i = 1; i < chs.length; i++) {
+      if (getHexValue(chs[i]) < 0) {
+        return false;
+      }
+    }
+    return true;
+  }
+
 }
