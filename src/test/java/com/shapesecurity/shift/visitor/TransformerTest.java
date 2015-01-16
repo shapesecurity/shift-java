@@ -87,7 +87,7 @@ public class TransformerTest extends TestBase {
     testClone("");
     testClone("a");
     testClone("a+b");
-    testClone("a+b=c");
+    testClone("(a+b)=c");
     testClone("var a,b=c");
     testClone("for(var a,b;;);");
     testClone("with(a);");
