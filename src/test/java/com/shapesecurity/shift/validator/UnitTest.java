@@ -20,6 +20,7 @@ import com.shapesecurity.functional.data.Either;
 import com.shapesecurity.functional.data.List;
 import com.shapesecurity.functional.data.Maybe;
 import com.shapesecurity.shift.AstHelper;
+import com.shapesecurity.shift.ast.FunctionBody;
 import com.shapesecurity.shift.ast.Identifier;
 import com.shapesecurity.shift.ast.Script;
 import com.shapesecurity.shift.ast.Statement;
@@ -167,7 +168,13 @@ public class UnitTest extends AstHelper {
     validStmt(label("a", label("b", STMT)));
     validStmt(label("a", exprStmt(FE(FD(label("a", STMT))))));
     invalidStmt(1, label("a", label("a", STMT)));
+
+    // These are not allowed according to the spec but browsers usually allow them.
     invalidStmt(1, label("a", exprStmt(FE(label("a", STMT)))));
+    invalidStmt(1, label("a", exprStmt(obj(
+        new Getter(new PropertyName("a"), new FunctionBody(List.nil(), List.list(label("a", STMT))))))));
+    invalidStmt(1, label("a", exprStmt(obj(
+        new Setter(new PropertyName("a"), ID, new FunctionBody(List.nil(), List.list(label("a", STMT))))))));
   }
 
   @Test
