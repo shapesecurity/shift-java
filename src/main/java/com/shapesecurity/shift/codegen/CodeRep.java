@@ -40,9 +40,9 @@ public abstract class CodeRep {
 
   public static final class Token extends CodeRep {
     @NotNull
-    private final CharSequence token;
+    private final String token;
 
-    public Token(@NotNull CharSequence token) {
+    public Token(@NotNull String token) {
       super();
       this.token = token;
     }

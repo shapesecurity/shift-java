@@ -300,6 +300,24 @@ public class CodeGenTest extends TestBase {
   }
 
   @Test
+  public void testLeftHandSideExpression() throws JsError {
+    test("(+this)++");
+    test("(+this)--");
+    test("this--");
+    test("this=0");
+    test("(+this)=0");
+    test("for((+this)in 0);");
+    test("for(this in 0);");
+  }
+
+  @Test
+  public void testXMLStyleComment() throws JsError {
+    test("1", "1<!--2");
+    test("1<! --2");
+    // lines start with "-->" cannot exist in our code gen.
+  }
+
+  @Test
   public void testPrimary() throws JsError {
     test("0");
     test("1");
@@ -315,6 +333,7 @@ public class CodeGenTest extends TestBase {
     test("/a\\r/ig");
     test("/a\\r/ instanceof 3");
     test("/a\\r/g instanceof 3");
+    test("3/ /a/g");
     test("true");
     test("false");
     test("null");
@@ -537,7 +556,7 @@ public class CodeGenTest extends TestBase {
 
   @Test
   public void testPrettyPrintBracket() throws JsError {
-    testPretty("function a(){\nreturn;\n}\n");
+    testPretty("function a(){\nreturn;\n}");
   }
 
   @Test
