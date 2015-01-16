@@ -268,14 +268,7 @@ public class Fuzzer {
 
   @NotNull
   private static <T> Gen<NonEmptyList<T>> many1(@NotNull Gen<T> gen) {
-    return (ctx, depth) -> {
-      int number = ctx.random.nextInt(MANY_BOUND);
-      NonEmptyList<T> result = List.list(gen.apply(ctx, depth - 1));
-      for (int i = 1; i < number; i++) {
-        result = result.cons(gen.apply(ctx, depth));
-      }
-      return result;
-    };
+    return (ctx, depth) -> many(MANY_BOUND - 1,gen).apply(ctx, depth).cons(gen.apply(ctx, depth));
   }
 
   @NotNull
