@@ -62,7 +62,12 @@ public abstract class ConcatList<T> {
   public abstract boolean isEmpty();
 
   @NotNull
-  public abstract ConcatList<T> append(@NotNull ConcatList<? extends T> defaultClause);
+  public abstract ConcatList<T> append(@NotNull ConcatList<? extends T> rhs);
+
+  @NotNull
+  public final ConcatList<T> append1(@NotNull T element) {
+    return this.append(ConcatList.single(element));
+  }
 
   public abstract boolean exists(@NotNull F<T, Boolean> f);
 
@@ -109,8 +114,8 @@ public abstract class ConcatList<T> {
     @SuppressWarnings("unchecked")
     @NotNull
     @Override
-    public ConcatList<T> append(@NotNull ConcatList<? extends T> defaultClause) {
-      return (ConcatList<T>) defaultClause;
+    public ConcatList<T> append(@NotNull ConcatList<? extends T> rhs) {
+      return (ConcatList<T>) rhs;
     }
 
     @Override
@@ -178,8 +183,8 @@ public abstract class ConcatList<T> {
     @SuppressWarnings("unchecked")
     @NotNull
     @Override
-    public ConcatList<T> append(@NotNull ConcatList<? extends T> defaultClause) {
-      return new Fork<>(this, (ConcatList<T>) defaultClause);
+    public ConcatList<T> append(@NotNull ConcatList<? extends T> rhs) {
+      return new Fork<>(this, (ConcatList<T>) rhs);
     }
 
     @Override
@@ -251,8 +256,8 @@ public abstract class ConcatList<T> {
     @SuppressWarnings("unchecked")
     @NotNull
     @Override
-    public ConcatList<T> append(@NotNull ConcatList<? extends T> defaultClause) {
-      return new Fork<>(this, (ConcatList<T>) defaultClause);
+    public ConcatList<T> append(@NotNull ConcatList<? extends T> rhs) {
+      return new Fork<>(this, (ConcatList<T>) rhs);
     }
 
     @Override

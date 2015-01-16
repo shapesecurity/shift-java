@@ -59,6 +59,7 @@ public class AstHelper extends TestBase {
   public static final LiteralNullExpression EXPR = new LiteralNullExpression();
   public static final LiteralNumericExpression NUM = new LiteralNumericExpression(0);
   public static final Identifier ID = new Identifier("a");
+  public static final Identifier BAD_ID = new Identifier("if");
 
   // wrap a statement in a program
   public static Script wrapProgram(Statement s) {
