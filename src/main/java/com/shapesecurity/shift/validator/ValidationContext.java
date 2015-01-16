@@ -20,24 +20,28 @@ import com.shapesecurity.functional.data.ConcatList;
 import com.shapesecurity.functional.data.List;
 import com.shapesecurity.functional.data.Monoid;
 import com.shapesecurity.shift.ast.Identifier;
+import com.shapesecurity.shift.ast.Node;
+import com.shapesecurity.shift.ast.statement.ContinueStatement;
+import com.shapesecurity.shift.utils.Utils;
 
 import org.jetbrains.annotations.NotNull;
 
 public class ValidationContext {
   public static final Monoid<ValidationContext> MONOID = new ValidationContextMonoid();
   @NotNull
-  public final ConcatList<ValidationError> freeBreakStatements;
+  private final ConcatList<ValidationError> freeBreakStatements;
   @NotNull
-  public final ConcatList<ValidationError> freeContinueStatements;
+  private final ConcatList<ValidationError> freeContinueStatements;
   @NotNull
-  public final List<String> usedLabelNames;
+  private final List<String> usedLabelNames;
   @NotNull
-  public final List<Identifier> freeJumpTargets;
+  private final List<Identifier> freeJumpTargets;
   @NotNull
   public final ConcatList<ValidationError> errors;
-  public final ConcatList<ValidationError> strictErrors;
   @NotNull
-  public final ConcatList<ValidationError> freeReturnStatements;
+  private final ConcatList<ValidationError> strictErrors;
+  @NotNull
+  private final ConcatList<ValidationError> freeReturnStatements;
 
   public ValidationContext() {
     this(ConcatList.empty(),
@@ -67,82 +71,229 @@ public class ValidationContext {
 
   public ValidationContext addFreeBreakStatement(@NotNull ValidationError statement) {
     return new ValidationContext(
-        this.freeBreakStatements.append(ConcatList.single(statement)),
-        this.freeContinueStatements, this.usedLabelNames, this.freeJumpTargets, this.freeReturnStatements, this.errors,
-        this.strictErrors);
+        this.freeBreakStatements.append1(statement),
+        this.freeContinueStatements,
+        this.usedLabelNames,
+        this.freeJumpTargets,
+        this.freeReturnStatements,
+        this.errors,
+        this.strictErrors
+    );
   }
 
   public ValidationContext clearFreeBreakStatements() {
     return new ValidationContext(
         ConcatList.empty(), //empty freeBreakStatements
-        this.freeContinueStatements, this.usedLabelNames, this.freeJumpTargets, this.freeReturnStatements, this.errors,
-        this.strictErrors);
+        this.freeContinueStatements,
+        this.usedLabelNames,
+        this.freeJumpTargets,
+        this.freeReturnStatements,
+        this.errors,
+        this.strictErrors
+    );
   }
 
-  public ValidationContext addFreeContinueStatement(@NotNull ValidationError statement) {
+  public ValidationContext addFreeContinueStatement(@NotNull ContinueStatement statement) {
     return new ValidationContext(
-        this.freeBreakStatements, this.freeContinueStatements.append(
-        ConcatList.single(
-            statement)), this.usedLabelNames, this.freeJumpTargets, this.freeReturnStatements, this.errors,
-        this.strictErrors);
+        this.freeBreakStatements,
+        this.freeContinueStatements.append1(new ValidationError(statement,
+            "Continue statement must be inside an iteration statement.")),
+        this.usedLabelNames,
+        this.freeJumpTargets,
+        this.freeReturnStatements,
+        this.errors,
+        this.strictErrors
+    );
   }
 
   public ValidationContext clearFreeContinueStatements() {
     return new ValidationContext(
-        this.freeBreakStatements, ConcatList.empty(), this.usedLabelNames,
-        this.freeJumpTargets, this.freeReturnStatements, this.errors, this.strictErrors);
+        this.freeBreakStatements,
+        ConcatList.empty(),
+        this.usedLabelNames,
+        this.freeJumpTargets,
+        this.freeReturnStatements,
+        this.errors,
+        this.strictErrors
+    );
   }
 
   public ValidationContext observeLabelName(@NotNull final Identifier labelName) {
-    return new ValidationContext(this.freeBreakStatements, this.freeContinueStatements, List.cons(labelName.name,
-        this.usedLabelNames), this.freeJumpTargets.filter(identifier -> !identifier.name.equals(labelName.name)),
-        this.freeReturnStatements, this.errors, this.strictErrors);
+    ConcatList<ValidationError> errors = this.errors;
+    if (this.usedLabelNames.exists(s -> s.equals(labelName.name))) {
+      errors = errors.append1(new ValidationError(labelName, "Duplicate label name."));
+    }
+    return new ValidationContext(
+        this.freeBreakStatements,
+        this.freeContinueStatements,
+        List.cons(labelName.name, this.usedLabelNames),
+        this.freeJumpTargets.filter(identifier -> !identifier.name.equals(labelName.name)),
+        this.freeReturnStatements,
+        errors,
+        this.strictErrors
+    );
   }
 
   public ValidationContext clearUsedLabelNames() {
-    return new ValidationContext(this.freeBreakStatements, this.freeContinueStatements, List.nil(),
-        this.freeJumpTargets, this.freeReturnStatements, this.errors, this.strictErrors);
+    return new ValidationContext(
+        this.freeBreakStatements,
+        this.freeContinueStatements,
+        List.nil(),
+        this.freeJumpTargets,
+        this.freeReturnStatements,
+        this.errors,
+        this.strictErrors
+    );
   }
 
   public ValidationContext addFreeJumpTarget(@NotNull Identifier labelName) {
-    return new ValidationContext(this.freeBreakStatements, this.freeContinueStatements, this.usedLabelNames, List.cons(
-        labelName, this.freeJumpTargets), this.freeReturnStatements, this.errors, this.strictErrors);
+    return new ValidationContext(
+        this.freeBreakStatements,
+        this.freeContinueStatements,
+        this.usedLabelNames,
+        List.cons(labelName, this.freeJumpTargets),
+        this.freeReturnStatements,
+        this.errors,
+        this.strictErrors
+    );
   }
 
-  public ValidationContext addFreeReturnStatement(@NotNull ValidationError r) {
-    return new ValidationContext(this.freeBreakStatements, this.freeContinueStatements, this.usedLabelNames,
-        this.freeJumpTargets, this.freeReturnStatements.append(ConcatList.single(r)), this.errors, this.strictErrors);
+  public ValidationContext addFreeReturnStatement(@NotNull Node node) {
+    return new ValidationContext(
+        this.freeBreakStatements,
+        this.freeContinueStatements,
+        this.usedLabelNames,
+        this.freeJumpTargets,
+        this.freeReturnStatements.append1(new ValidationError(node, "Return statement must be inside of a function")),
+        this.errors,
+        this.strictErrors
+    );
   }
 
   public ValidationContext clearReturnStatements() {
-    return new ValidationContext(this.freeBreakStatements, this.freeContinueStatements, this.usedLabelNames,
-        this.freeJumpTargets, ConcatList.empty(), this.errors, this.strictErrors);
+    return new ValidationContext(
+        this.freeBreakStatements,
+        this.freeContinueStatements,
+        this.usedLabelNames,
+        this.freeJumpTargets,
+        ConcatList.empty(),
+        this.errors,
+        this.strictErrors
+    );
   }
 
   public ValidationContext addError(@NotNull ValidationError error) {
-    return new ValidationContext(this.freeBreakStatements, this.freeContinueStatements, this.usedLabelNames,
-        this.freeJumpTargets, this.freeReturnStatements, this.errors.append(ConcatList.single(error)),
-        this.strictErrors);
+    return new ValidationContext(
+        this.freeBreakStatements,
+        this.freeContinueStatements,
+        this.usedLabelNames,
+        this.freeJumpTargets,
+        this.freeReturnStatements,
+        this.errors.append1(error),
+        this.strictErrors
+    );
   }
 
-  public ValidationContext addErrors(@NotNull ConcatList<ValidationError> errors) {
-    return new ValidationContext(this.freeBreakStatements, this.freeContinueStatements, this.usedLabelNames,
-        this.freeJumpTargets, this.freeReturnStatements, this.errors.append(errors), this.strictErrors);
+  public ValidationContext invalidateStrictErrors() {
+    return new ValidationContext(
+        this.freeBreakStatements,
+        this.freeContinueStatements,
+        this.usedLabelNames,
+        this.freeJumpTargets,
+        this.freeReturnStatements,
+        this.errors.append(this.strictErrors),
+        ConcatList.empty()
+    );
+  }
+
+  public ValidationContext invalidateFreeReturnErrors() {
+    return new ValidationContext(
+        this.freeBreakStatements,
+        this.freeContinueStatements,
+        this.usedLabelNames,
+        this.freeJumpTargets,
+        ConcatList.empty(),
+        this.errors.append(this.freeReturnStatements),
+        this.strictErrors
+    );
+  }
+
+  public ValidationContext invalidateFreeContinueAndBreakErrors() {
+    return new ValidationContext(
+        ConcatList.empty(),
+        ConcatList.empty(),
+        this.usedLabelNames,
+        this.freeJumpTargets,
+        this.freeReturnStatements,
+        this.errors.append(this.freeContinueStatements).append(this.freeBreakStatements),
+        this.strictErrors
+    );
   }
 
   public ValidationContext addStrictError(@NotNull ValidationError error) {
-    return new ValidationContext(this.freeBreakStatements, this.freeContinueStatements, this.usedLabelNames,
-        this.freeJumpTargets, this.freeReturnStatements, this.errors, this.strictErrors.append(
-        ConcatList.single(
-            error)));
+    return new ValidationContext(
+        this.freeBreakStatements,
+        this.freeContinueStatements,
+        this.usedLabelNames,
+        this.freeJumpTargets,
+        this.freeReturnStatements,
+        this.errors,
+        this.strictErrors.append1(error)
+    );
+  }
+
+  public ValidationContext clearIdentifierNameError() {
+    return new ValidationContext(
+        this.freeBreakStatements,
+        this.freeContinueStatements,
+        this.usedLabelNames,
+        this.freeJumpTargets,
+        this.freeReturnStatements,
+        this.errors,
+        this.strictErrors
+    );
+  }
+
+
+  public ValidationContext checkReserved(@NotNull Identifier identifier) {
+    if (Utils.isStrictModeReservedWordES5(identifier.name)) {
+      if (Utils.isReservedWordES5(identifier.name)) {
+        return this.addError(new ValidationError(identifier, "Identifier must not be reserved word in this position"));
+      }
+      return this.addStrictError(new ValidationError(identifier,
+          "Identifier must not be strict mode reserved word in this position"));
+    }
+    return this;
+  }
+
+  public ValidationContext checkRestricted(@NotNull Identifier identifier) {
+    ValidationContext v = this.checkReserved(identifier);
+    if (Utils.isRestrictedWord(identifier.name)) {
+      return v.addStrictError(new ValidationError(identifier,
+          "Identifier must not be restricted word in this position in strict mode"));
+    }
+    return v;
+  }
+
+  public ValidationContext checkFreeJumpTargets() {
+    if (this.freeJumpTargets.isEmpty()) {
+      return this;
+    }
+    return this.freeJumpTargets.map(ident -> new ValidationError(ident, "Unbound break/continue label")).foldLeft(
+        ValidationContext::addError,
+        this);
   }
 
   ValidationContext append(@NotNull ValidationContext context) {
-    return new ValidationContext(this.freeBreakStatements.append(context.freeBreakStatements),
-        this.freeContinueStatements.append(context.freeContinueStatements), this.usedLabelNames.append(
-        context.usedLabelNames), this.freeJumpTargets.append(context.freeJumpTargets), this.freeReturnStatements.append(
-        context.freeReturnStatements), this.errors.append(context.errors), this.strictErrors.append(
-        context.strictErrors));
+    return new ValidationContext(
+        this.freeBreakStatements.append(context.freeBreakStatements),
+        this.freeContinueStatements.append(context.freeContinueStatements),
+        this.usedLabelNames.append(context.usedLabelNames),
+        this.freeJumpTargets.append(context.freeJumpTargets),
+        this.freeReturnStatements.append(context.freeReturnStatements),
+        this.errors.append(context.errors),
+        this.strictErrors.append(context.strictErrors)
+    );
   }
 
   private static final class ValidationContextMonoid implements Monoid<ValidationContext> {
