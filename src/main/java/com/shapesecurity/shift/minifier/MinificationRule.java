@@ -39,6 +39,7 @@ import com.shapesecurity.shift.ast.expression.ConditionalExpression;
 import com.shapesecurity.shift.ast.expression.FunctionExpression;
 import com.shapesecurity.shift.ast.expression.IdentifierExpression;
 import com.shapesecurity.shift.ast.expression.LiteralBooleanExpression;
+import com.shapesecurity.shift.ast.expression.LiteralInfinityExpression;
 import com.shapesecurity.shift.ast.expression.LiteralNullExpression;
 import com.shapesecurity.shift.ast.expression.LiteralNumericExpression;
 import com.shapesecurity.shift.ast.expression.LiteralRegExpExpression;
@@ -163,6 +164,12 @@ public class MinificationRule
   @NotNull
   @Override
   public DirtyState<Expression> transform(@NotNull LiteralNullExpression node) {
+    return DirtyState.clean(node);
+  }
+
+  @NotNull
+  @Override
+  public DirtyState<Expression> transform(@NotNull LiteralInfinityExpression node) {
     return DirtyState.clean(node);
   }
 

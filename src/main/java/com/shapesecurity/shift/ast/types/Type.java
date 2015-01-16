@@ -37,6 +37,7 @@ public enum Type implements GenType {
   PropertyName,
   LiteralBooleanExpression,
   LiteralNullExpression,
+  LiteralInfinityExpression,
   LiteralNumericExpression,
   LiteralRegExpExpression,
   LiteralStringExpression,
@@ -98,6 +99,7 @@ public enum Type implements GenType {
       case ObjectExpression:
       case LiteralBooleanExpression:
       case LiteralNullExpression:
+      case LiteralInfinityExpression:
       case LiteralNumericExpression:
       case LiteralRegExpExpression:
       case LiteralStringExpression:

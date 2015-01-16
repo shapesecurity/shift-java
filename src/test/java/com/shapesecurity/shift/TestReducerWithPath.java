@@ -44,6 +44,7 @@ import com.shapesecurity.shift.ast.expression.ConditionalExpression;
 import com.shapesecurity.shift.ast.expression.FunctionExpression;
 import com.shapesecurity.shift.ast.expression.IdentifierExpression;
 import com.shapesecurity.shift.ast.expression.LiteralBooleanExpression;
+import com.shapesecurity.shift.ast.expression.LiteralInfinityExpression;
 import com.shapesecurity.shift.ast.expression.LiteralNullExpression;
 import com.shapesecurity.shift.ast.expression.LiteralNumericExpression;
 import com.shapesecurity.shift.ast.expression.LiteralRegExpExpression;
@@ -141,6 +142,13 @@ public abstract class TestReducerWithPath implements Reducer<Unit> {
   @NotNull
   @Override
   public final Unit reduceLiteralNumericExpression(@NotNull LiteralNumericExpression node, @NotNull List<Branch> path) {
+    accept(node, path);
+    return Unit.unit;
+  }
+
+  @NotNull
+  @Override
+  public final Unit reduceLiteralInfinityExpression(@NotNull LiteralInfinityExpression node, @NotNull List<Branch> path) {
     accept(node, path);
     return Unit.unit;
   }

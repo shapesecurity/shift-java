@@ -124,6 +124,7 @@ public class CodeGenTest extends TestBase {
     test("({set a(param){;}})");
     test("({get a(){;},set a(param){;},b:1})");
     test("({a:(a,b)})");
+    test("({2e308:0})", "({2e308:0})");
   }
 
   @Test
@@ -358,6 +359,8 @@ public class CodeGenTest extends TestBase {
     test("1e-7");
     test("1e-8");
     test("1e-9");
+    test("2e308", "1e1000");
+    test("-2e308", "-1e1000");
   }
 
   @Test

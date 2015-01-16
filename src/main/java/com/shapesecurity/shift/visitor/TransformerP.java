@@ -36,6 +36,7 @@ import com.shapesecurity.shift.ast.expression.ConditionalExpression;
 import com.shapesecurity.shift.ast.expression.FunctionExpression;
 import com.shapesecurity.shift.ast.expression.IdentifierExpression;
 import com.shapesecurity.shift.ast.expression.LiteralBooleanExpression;
+import com.shapesecurity.shift.ast.expression.LiteralInfinityExpression;
 import com.shapesecurity.shift.ast.expression.LiteralNullExpression;
 import com.shapesecurity.shift.ast.expression.LiteralNumericExpression;
 import com.shapesecurity.shift.ast.expression.LiteralRegExpExpression;
@@ -116,6 +117,9 @@ public interface TransformerP<ScriptState, ProgramBodyState, PropertyState, Prop
 
   @NotNull
   ExpressionState transform(@NotNull LiteralNullExpression node);
+
+  @NotNull
+  ExpressionState transform(@NotNull LiteralInfinityExpression node);
 
   @NotNull
   ExpressionState transform(@NotNull LiteralNumericExpression node);

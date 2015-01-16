@@ -40,6 +40,7 @@ import com.shapesecurity.shift.ast.expression.ConditionalExpression;
 import com.shapesecurity.shift.ast.expression.FunctionExpression;
 import com.shapesecurity.shift.ast.expression.IdentifierExpression;
 import com.shapesecurity.shift.ast.expression.LiteralBooleanExpression;
+import com.shapesecurity.shift.ast.expression.LiteralInfinityExpression;
 import com.shapesecurity.shift.ast.expression.LiteralNullExpression;
 import com.shapesecurity.shift.ast.expression.LiteralNumericExpression;
 import com.shapesecurity.shift.ast.expression.LiteralRegExpExpression;
@@ -106,6 +107,9 @@ public interface ReducerP<ScriptState, ProgramBodyState, PropertyState, Property
 
   @NotNull
   ExpressionState reduceLiteralNumericExpression(@NotNull LiteralNumericExpression node, @NotNull List<Branch> path);
+
+  @NotNull
+  ExpressionState reduceLiteralInfinityExpression(@NotNull LiteralInfinityExpression node, @NotNull List<Branch> path);
 
   @NotNull
   ExpressionState reduceLiteralNullExpression(@NotNull LiteralNullExpression node, @NotNull List<Branch> path);

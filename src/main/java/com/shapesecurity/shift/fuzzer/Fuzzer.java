@@ -44,6 +44,7 @@ import com.shapesecurity.shift.ast.expression.ConditionalExpression;
 import com.shapesecurity.shift.ast.expression.FunctionExpression;
 import com.shapesecurity.shift.ast.expression.IdentifierExpression;
 import com.shapesecurity.shift.ast.expression.LiteralBooleanExpression;
+import com.shapesecurity.shift.ast.expression.LiteralInfinityExpression;
 import com.shapesecurity.shift.ast.expression.LiteralNullExpression;
 import com.shapesecurity.shift.ast.expression.LiteralNumericExpression;
 import com.shapesecurity.shift.ast.expression.LiteralRegExpExpression;
@@ -350,6 +351,7 @@ public class Fuzzer {
       Fuzzer::randomIdentifierExpression,
       Fuzzer::randomLiteralBooleanExpression,
       Fuzzer::randomLiteralNullExpression,
+      Fuzzer::randomLiteralInfinityExpression,
       Fuzzer::randomLiteralNumericExpression,
       Fuzzer::randomLiteralRegExpExpression,
       Fuzzer::randomLiteralStringExpression,
@@ -665,6 +667,11 @@ public class Fuzzer {
   @NotNull
   private static LiteralNumericExpression randomLiteralNumericExpression(@NotNull GenCtx ctx, int depth) {
     return new LiteralNumericExpression(randomNumber(ctx, depth - 1));
+  }
+
+  @NotNull
+  private static LiteralInfinityExpression randomLiteralInfinityExpression(@NotNull GenCtx ctx, int depth) {
+    return new LiteralInfinityExpression();
   }
 
   @NotNull

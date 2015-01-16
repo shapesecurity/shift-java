@@ -44,6 +44,7 @@ import com.shapesecurity.shift.ast.expression.ConditionalExpression;
 import com.shapesecurity.shift.ast.expression.FunctionExpression;
 import com.shapesecurity.shift.ast.expression.IdentifierExpression;
 import com.shapesecurity.shift.ast.expression.LiteralBooleanExpression;
+import com.shapesecurity.shift.ast.expression.LiteralInfinityExpression;
 import com.shapesecurity.shift.ast.expression.LiteralNullExpression;
 import com.shapesecurity.shift.ast.expression.LiteralNumericExpression;
 import com.shapesecurity.shift.ast.expression.LiteralRegExpExpression;
@@ -190,6 +191,13 @@ public class LazyCloner
       @NotNull LiteralNumericExpression node,
       @NotNull List<Branch> path) {
     return clean((Expression) node);
+  }
+
+  @NotNull
+  @Override
+  public DirtyState<Expression> reduceLiteralInfinityExpression(@NotNull LiteralInfinityExpression node,
+                                                                @NotNull List<Branch> path) {
+    return clean(node);
   }
 
   @NotNull
