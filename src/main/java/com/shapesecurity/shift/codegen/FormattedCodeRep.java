@@ -36,7 +36,7 @@ public abstract class FormattedCodeRep extends CodeRep {
     public void emit(@NotNull TokenStream ts, boolean noIn) {
       ts.put("{\n");
       this.expr.emit(ts, false);
-      ts.put("}\n");
+      ts.put("}");
     }
   }
 
