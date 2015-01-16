@@ -32,6 +32,7 @@ import com.shapesecurity.shift.ast.expression.ObjectExpression;
 import com.shapesecurity.shift.ast.expression.PrefixExpression;
 import com.shapesecurity.shift.ast.expression.StaticMemberExpression;
 import com.shapesecurity.shift.ast.operators.PrefixOperator;
+import com.shapesecurity.shift.ast.property.Getter;
 import com.shapesecurity.shift.ast.property.ObjectProperty;
 import com.shapesecurity.shift.ast.property.PropertyName;
 import com.shapesecurity.shift.ast.property.Setter;
@@ -133,7 +134,7 @@ public class Validator extends MonoidalReducer<ValidationContext> {
       @NotNull List<ValidationContext> params,
       @NotNull ValidationContext programBody) {
     ValidationContext v = super.reduceFunctionDeclaration(node, path, name, params, programBody).clearUsedLabelNames()
-        .clearReturnStatements();
+        .clearReturnStatements().clearUsedLabelNames();
     if (!Utils.areUniqueNames(node.parameters)) {
       v = v.addStrictError(new ValidationError(node, "FunctionDeclaration must have unique parameter names"));
     }
@@ -368,7 +369,14 @@ public class Validator extends MonoidalReducer<ValidationContext> {
       @NotNull ValidationContext name,
       @NotNull ValidationContext param,
       @NotNull ValidationContext body) {
-    return super.reduceSetter(node, path, name, param, body).checkRestricted(node.parameter);
+    return super.reduceSetter(node, path, name, param, body).checkRestricted(node.parameter).clearReturnStatements();
+  }
+
+  @NotNull
+  @Override
+  public ValidationContext reduceGetter(@NotNull Getter node, @NotNull List<Branch> path,
+                                        @NotNull ValidationContext name, @NotNull ValidationContext body) {
+    return super.reduceGetter(node, path, name, body).clearReturnStatements();
   }
 
   @NotNull
