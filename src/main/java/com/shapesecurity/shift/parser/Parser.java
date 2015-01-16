@@ -79,7 +79,6 @@ import com.shapesecurity.shift.ast.expression.LiteralNullExpression;
 import com.shapesecurity.shift.ast.expression.LiteralNumericExpression;
 import com.shapesecurity.shift.ast.expression.LiteralRegExpExpression;
 import com.shapesecurity.shift.ast.expression.LiteralStringExpression;
-import com.shapesecurity.shift.ast.expression.MemberExpression;
 import com.shapesecurity.shift.ast.expression.NewExpression;
 import com.shapesecurity.shift.ast.expression.ObjectExpression;
 import com.shapesecurity.shift.ast.expression.PostfixExpression;
@@ -179,10 +178,6 @@ public class Parser extends Tokenizer {
     default:
       return null;
     }
-  }
-
-  private static boolean isLeftHandSide(@NotNull Expression expr) {
-    return expr instanceof MemberExpression || expr instanceof IdentifierExpression;
   }
 
   @NotNull
@@ -781,12 +776,13 @@ public class Parser extends Tokenizer {
       } else {
         boolean previousAllowIn = this.allowIn;
         this.allowIn = false;
+        boolean startWithGrouping = this.match(TokenType.LPAREN);
         Expression init = this.parseExpression();
         this.allowIn = previousAllowIn;
 
         if (this.match(TokenType.IN)) {
           // LeftHandSideExpression;
-          if (!(init instanceof LeftHandSideExpression)) {
+          if (!startWithGrouping && !(init instanceof LeftHandSideExpression)) {
             throw this.createError(INVALID_LHS_IN_FOR_IN);
           }
 
@@ -1092,6 +1088,7 @@ public class Parser extends Tokenizer {
   private Expression parseAssignmentExpression() throws JsError {
     SourceLocation startLocation = this.getLocation();
 
+    boolean startsWithGroup = this.match(TokenType.LPAREN);
     Expression node = this.parseConditionalExpression();
 
     Assignment operator = null;
@@ -1137,10 +1134,9 @@ public class Parser extends Tokenizer {
     }
 
     if (operator != null) {
-      // To be permissive.
-      // if (!isLeftHandSide(node)) {
-      //     throw this.createError(INVALID_LHS_IN_ASSIGNMENT);
-      // }
+      if (!startsWithGroup && !(node instanceof LeftHandSideExpression)) {
+        throw this.createError(INVALID_LHS_IN_ASSIGNMENT);
+      }
 
       // 11.13.1;
       if (node instanceof IdentifierExpression) {
@@ -1295,10 +1291,6 @@ public class Parser extends Tokenizer {
           throw this.createError(STRICT_LHS_PREFIX);
         }
       }
-
-      if (!isLeftHandSide(expr)) {
-        throw this.createError(INVALID_LHS_IN_ASSIGNMENT);
-      }
       break;
     case Delete:
       if (expr instanceof IdentifierExpression && this.strict) {
@@ -1316,6 +1308,7 @@ public class Parser extends Tokenizer {
   private Expression parsePostfixExpression() throws JsError {
     SourceLocation startLocation = this.getLocation();
 
+    boolean startsWithGroup = this.match(TokenType.LPAREN);
     Expression expr = this.parseLeftHandSideExpressionAllowCall();
 
     if (this.hasLineTerminatorBeforeNext) {
@@ -1334,7 +1327,7 @@ public class Parser extends Tokenizer {
         throw this.createError(STRICT_LHS_POSTFIX);
       }
     }
-    if (!isLeftHandSide(expr)) {
+    if (!startsWithGroup && !(expr instanceof LeftHandSideExpression)) {
       throw this.createError(INVALID_LHS_IN_ASSIGNMENT);
     }
     return this.markLocation(startLocation, new PostfixExpression(operator, expr));
