@@ -45,6 +45,7 @@ import com.shapesecurity.shift.ast.expression.ConditionalExpression;
 import com.shapesecurity.shift.ast.expression.FunctionExpression;
 import com.shapesecurity.shift.ast.expression.IdentifierExpression;
 import com.shapesecurity.shift.ast.expression.LiteralBooleanExpression;
+import com.shapesecurity.shift.ast.expression.LiteralInfinityExpression;
 import com.shapesecurity.shift.ast.expression.LiteralNullExpression;
 import com.shapesecurity.shift.ast.expression.LiteralNumericExpression;
 import com.shapesecurity.shift.ast.expression.LiteralRegExpExpression;
@@ -247,33 +248,33 @@ public final class Director {
       @NotNull List<Branch> path) {
     PropertyNameState nameState = reducePropertyName(reducer, node.name, path.cons(StaticBranch.NAME));
     switch (node.type()) {
-      case DataProperty: {
-        DataProperty tNode = (DataProperty) node;
-        return reducer.reduceDataProperty(
-            tNode,
-            path,
-            nameState,
-            reduceExpression(reducer, tNode.value, path.cons(StaticBranch.VALUE)));
-      }
-      case Getter: {
-        Getter tNode = (Getter) node;
-        return reducer.reduceGetter(
-            tNode,
-            path,
-            nameState,
-            reduceFunctionBody(reducer, tNode.body, path.cons(StaticBranch.BODY)));
-      }
-      case Setter: {
-        Setter tNode = (Setter) node;
-        return reducer.reduceSetter(
-            tNode,
-            path,
-            nameState,
-            reduceIdentifier(reducer, tNode.parameter, path.cons(StaticBranch.PARAMETER)),
-            reduceFunctionBody(reducer, tNode.body, path.cons(StaticBranch.BODY)));
-      }
-      default:
-        throw new RuntimeException("Not reached");
+    case DataProperty: {
+      DataProperty tNode = (DataProperty) node;
+      return reducer.reduceDataProperty(
+          tNode,
+          path,
+          nameState,
+          reduceExpression(reducer, tNode.value, path.cons(StaticBranch.VALUE)));
+    }
+    case Getter: {
+      Getter tNode = (Getter) node;
+      return reducer.reduceGetter(
+          tNode,
+          path,
+          nameState,
+          reduceFunctionBody(reducer, tNode.body, path.cons(StaticBranch.BODY)));
+    }
+    case Setter: {
+      Setter tNode = (Setter) node;
+      return reducer.reduceSetter(
+          tNode,
+          path,
+          nameState,
+          reduceIdentifier(reducer, tNode.parameter, path.cons(StaticBranch.PARAMETER)),
+          reduceFunctionBody(reducer, tNode.body, path.cons(StaticBranch.BODY)));
+    }
+    default:
+      throw new RuntimeException("Not reached");
     }
   }
 
@@ -302,147 +303,141 @@ public final class Director {
       @NotNull Expression node,
       @NotNull List<Branch> path) {
     switch (node.type()) {
-      case FunctionExpression: {
-        FunctionExpression tNode = (FunctionExpression) node;
-        return reducer.reduceFunctionExpression(
-            tNode,
-            path,
-            reducerMaybeIdentifier(reducer, tNode.name, path.cons(StaticBranch.NAME)),
-            reduceListIdentifier(reducer, tNode.parameters, path.cons(StaticBranch.PARAMETERS)),
-            reduceFunctionBody(reducer, tNode.body, path.cons(StaticBranch.BODY)));
-      }
-      case LiteralBooleanExpression: {
-        LiteralBooleanExpression tNode = (LiteralBooleanExpression) node;
-        return reducer.reduceLiteralBooleanExpression(
-            tNode,
-            path);
-      }
-      case LiteralNullExpression: {
-        LiteralNullExpression tNode = (LiteralNullExpression) node;
-        return reducer.reduceLiteralNullExpression(
-            tNode,
-            path);
-      }
-      case LiteralNumericExpression: {
-        LiteralNumericExpression tNode = (LiteralNumericExpression) node;
-        return reducer.reduceLiteralNumericExpression(
-            tNode,
-            path);
-      }
-      case LiteralRegExpExpression: {
-        LiteralRegExpExpression tNode = (LiteralRegExpExpression) node;
-        return reducer.reduceLiteralRegExpExpression(
-            tNode,
-            path);
-      }
-      case LiteralStringExpression: {
-        LiteralStringExpression tNode = (LiteralStringExpression) node;
-        return reducer.reduceLiteralStringExpression(
-            tNode,
-            path);
-      }
-      case ArrayExpression: {
-        ArrayExpression tNode = (ArrayExpression) node;
-        return reducer.reduceArrayExpression(
-            tNode,
-            path,
-            tNode.elements.mapWithIndex((i, el) ->
-                reduceOptionExpression(
-                    reducer,
-                    el,
-                    path.cons(StaticBranch.ELEMENTS).cons(IndexedBranch.from(i)))));
-      }
-      case AssignmentExpression: {
-        AssignmentExpression tNode = (AssignmentExpression) node;
-        return reducer.reduceAssignmentExpression(
-            tNode,
-            path,
-            reduceExpression(reducer, tNode.binding, path.cons(StaticBranch.BINDING)),
-            reduceExpression(reducer, tNode.expression, path.cons(StaticBranch.EXPRESSION)));
-      }
-      case BinaryExpression: {
-        BinaryExpression tNode = (BinaryExpression) node;
-        return reducer.reduceBinaryExpression(
-            tNode,
-            path,
-            reduceExpression(reducer, tNode.left, path.cons(StaticBranch.LEFT)),
-            reduceExpression(reducer, tNode.right, path.cons(StaticBranch.RIGHT)));
-      }
-      case CallExpression: {
-        CallExpression tNode = (CallExpression) node;
-        return reducer.reduceCallExpression(
-            tNode,
-            path,
-            reduceExpression(reducer, tNode.callee, path.cons(StaticBranch.CALLEE)),
-            reduceListExpression(reducer, tNode.arguments, path.cons(StaticBranch.ARGUMENTS)));
-      }
-      case ComputedMemberExpression: {
-        ComputedMemberExpression tNode = (ComputedMemberExpression) node;
-        return reducer.reduceComputedMemberExpression(
-            tNode,
-            path,
-            reduceExpression(reducer, tNode.object, path.cons(StaticBranch.OBJECT)),
-            reduceExpression(reducer, tNode.expression, path.cons(StaticBranch.EXPRESSION)));
-      }
-      case ConditionalExpression: {
-        ConditionalExpression tNode = (ConditionalExpression) node;
-        return reducer.reduceConditionalExpression(
-            tNode,
-            path,
-            reduceExpression(reducer, tNode.test, path.cons(StaticBranch.TEST)),
-            reduceExpression(reducer, tNode.consequent, path.cons(StaticBranch.CONSEQUENT)),
-            reduceExpression(reducer, tNode.alternate, path.cons(StaticBranch.ALTERNATE)));
-      }
-      case IdentifierExpression: {
-        IdentifierExpression tNode = (IdentifierExpression) node;
-        return reducer.reduceIdentifierExpression(
-            tNode,
-            path,
-            reduceIdentifier(reducer, tNode.identifier, path.cons(StaticBranch.IDENTIFIER)));
-      }
-      case NewExpression: {
-        NewExpression tNode = (NewExpression) node;
-        return reducer.reduceNewExpression(
-            tNode,
-            path,
-            reduceExpression(reducer, tNode.callee, path.cons(StaticBranch.CALLEE)),
-            reduceListExpression(reducer, tNode.arguments, path.cons(StaticBranch.ARGUMENTS)));
-      }
-      case PostfixExpression: {
-        PostfixExpression tNode = (PostfixExpression) node;
-        return reducer.reducePostfixExpression(
-            tNode,
-            path,
-            reduceExpression(reducer, tNode.operand, path.cons(StaticBranch.OPERAND)));
-      }
-      case ObjectExpression: {
-        ObjectExpression tNode = (ObjectExpression) node;
-        return reducer.reduceObjectExpression(
-            tNode,
-            path,
-            reducerListProperty(reducer, tNode.properties, path.cons(StaticBranch.PROPERTIES)));
-      }
-      case PrefixExpression: {
-        PrefixExpression tNode = (PrefixExpression) node;
-        return reducer.reducePrefixExpression(
-            tNode,
-            path,
-            reduceExpression(reducer, tNode.operand, path.cons(StaticBranch.OPERAND)));
-      }
-      case StaticMemberExpression: {
-        StaticMemberExpression tNode = (StaticMemberExpression) node;
-        return reducer.reduceStaticMemberExpression(
-            tNode,
-            path,
-            reduceExpression(reducer, tNode.object, path.cons(StaticBranch.OBJECT)),
-            reduceIdentifier(reducer, tNode.property, path.cons(StaticBranch.PROPERTY)));
-      }
-      case ThisExpression: {
-        ThisExpression tNode = (ThisExpression) node;
-        return reducer.reduceThisExpression(tNode, path);
-      }
-      default:
-        throw new RuntimeException("Not reached");
+    case FunctionExpression: {
+      FunctionExpression tNode = (FunctionExpression) node;
+      return reducer.reduceFunctionExpression(
+          tNode,
+          path,
+          reducerMaybeIdentifier(reducer, tNode.name, path.cons(StaticBranch.NAME)),
+          reduceListIdentifier(reducer, tNode.parameters, path.cons(StaticBranch.PARAMETERS)),
+          reduceFunctionBody(reducer, tNode.body, path.cons(StaticBranch.BODY)));
+    }
+    case LiteralBooleanExpression: {
+      LiteralBooleanExpression tNode = (LiteralBooleanExpression) node;
+      return reducer.reduceLiteralBooleanExpression(tNode, path);
+    }
+    case LiteralNullExpression: {
+      LiteralNullExpression tNode = (LiteralNullExpression) node;
+      return reducer.reduceLiteralNullExpression(tNode, path);
+    }
+    case LiteralInfinityExpression: {
+      LiteralInfinityExpression tNode = (LiteralInfinityExpression) node;
+      return reducer.reduceLiteralInfinityExpression(tNode, path);
+    }
+    case LiteralNumericExpression: {
+      LiteralNumericExpression tNode = (LiteralNumericExpression) node;
+      return reducer.reduceLiteralNumericExpression(tNode, path);
+    }
+    case LiteralRegExpExpression: {
+      LiteralRegExpExpression tNode = (LiteralRegExpExpression) node;
+      return reducer.reduceLiteralRegExpExpression(tNode, path);
+    }
+    case LiteralStringExpression: {
+      LiteralStringExpression tNode = (LiteralStringExpression) node;
+      return reducer.reduceLiteralStringExpression(tNode, path);
+    }
+    case ArrayExpression: {
+      ArrayExpression tNode = (ArrayExpression) node;
+      return reducer.reduceArrayExpression(
+          tNode,
+          path,
+          tNode.elements.mapWithIndex((i, el) ->
+              reduceOptionExpression(
+                  reducer,
+                  el,
+                  path.cons(StaticBranch.ELEMENTS).cons(IndexedBranch.from(i)))));
+    }
+    case AssignmentExpression: {
+      AssignmentExpression tNode = (AssignmentExpression) node;
+      return reducer.reduceAssignmentExpression(
+          tNode,
+          path,
+          reduceExpression(reducer, tNode.binding, path.cons(StaticBranch.BINDING)),
+          reduceExpression(reducer, tNode.expression, path.cons(StaticBranch.EXPRESSION)));
+    }
+    case BinaryExpression: {
+      BinaryExpression tNode = (BinaryExpression) node;
+      return reducer.reduceBinaryExpression(
+          tNode,
+          path,
+          reduceExpression(reducer, tNode.left, path.cons(StaticBranch.LEFT)),
+          reduceExpression(reducer, tNode.right, path.cons(StaticBranch.RIGHT)));
+    }
+    case CallExpression: {
+      CallExpression tNode = (CallExpression) node;
+      return reducer.reduceCallExpression(
+          tNode,
+          path,
+          reduceExpression(reducer, tNode.callee, path.cons(StaticBranch.CALLEE)),
+          reduceListExpression(reducer, tNode.arguments, path.cons(StaticBranch.ARGUMENTS)));
+    }
+    case ComputedMemberExpression: {
+      ComputedMemberExpression tNode = (ComputedMemberExpression) node;
+      return reducer.reduceComputedMemberExpression(
+          tNode,
+          path,
+          reduceExpression(reducer, tNode.object, path.cons(StaticBranch.OBJECT)),
+          reduceExpression(reducer, tNode.expression, path.cons(StaticBranch.EXPRESSION)));
+    }
+    case ConditionalExpression: {
+      ConditionalExpression tNode = (ConditionalExpression) node;
+      return reducer.reduceConditionalExpression(
+          tNode,
+          path,
+          reduceExpression(reducer, tNode.test, path.cons(StaticBranch.TEST)),
+          reduceExpression(reducer, tNode.consequent, path.cons(StaticBranch.CONSEQUENT)),
+          reduceExpression(reducer, tNode.alternate, path.cons(StaticBranch.ALTERNATE)));
+    }
+    case IdentifierExpression: {
+      IdentifierExpression tNode = (IdentifierExpression) node;
+      return reducer.reduceIdentifierExpression(
+          tNode,
+          path,
+          reduceIdentifier(reducer, tNode.identifier, path.cons(StaticBranch.IDENTIFIER)));
+    }
+    case NewExpression: {
+      NewExpression tNode = (NewExpression) node;
+      return reducer.reduceNewExpression(
+          tNode,
+          path,
+          reduceExpression(reducer, tNode.callee, path.cons(StaticBranch.CALLEE)),
+          reduceListExpression(reducer, tNode.arguments, path.cons(StaticBranch.ARGUMENTS)));
+    }
+    case PostfixExpression: {
+      PostfixExpression tNode = (PostfixExpression) node;
+      return reducer.reducePostfixExpression(
+          tNode,
+          path,
+          reduceExpression(reducer, tNode.operand, path.cons(StaticBranch.OPERAND)));
+    }
+    case ObjectExpression: {
+      ObjectExpression tNode = (ObjectExpression) node;
+      return reducer.reduceObjectExpression(
+          tNode,
+          path,
+          reducerListProperty(reducer, tNode.properties, path.cons(StaticBranch.PROPERTIES)));
+    }
+    case PrefixExpression: {
+      PrefixExpression tNode = (PrefixExpression) node;
+      return reducer.reducePrefixExpression(
+          tNode,
+          path,
+          reduceExpression(reducer, tNode.operand, path.cons(StaticBranch.OPERAND)));
+    }
+    case StaticMemberExpression: {
+      StaticMemberExpression tNode = (StaticMemberExpression) node;
+      return reducer.reduceStaticMemberExpression(
+          tNode,
+          path,
+          reduceExpression(reducer, tNode.object, path.cons(StaticBranch.OBJECT)),
+          reduceIdentifier(reducer, tNode.property, path.cons(StaticBranch.PROPERTY)));
+    }
+    case ThisExpression: {
+      ThisExpression tNode = (ThisExpression) node;
+      return reducer.reduceThisExpression(tNode, path);
+    }
+    default:
+      throw new RuntimeException("Not reached");
     }
   }
 
@@ -466,176 +461,176 @@ public final class Director {
       @NotNull Statement node,
       @NotNull List<Branch> path) {
     switch (node.type()) {
-      case FunctionDeclaration: {
-        FunctionDeclaration tNode = (FunctionDeclaration) node;
-        return reducer.reduceFunctionDeclaration(
-            tNode,
-            path,
-            reduceIdentifier(reducer, tNode.name, path.cons(StaticBranch.NAME)),
-            reduceListIdentifier(reducer, tNode.parameters, path.cons(StaticBranch.PARAMETERS)),
-            reduceFunctionBody(reducer, tNode.body, path.cons(StaticBranch.BODY)));
-      }
-      case BlockStatement: {
-        BlockStatement tNode = (BlockStatement) node;
-        return reducer.reduceBlockStatement(
-            tNode,
-            path,
-            reduceBlock(reducer, tNode.block, path.cons(StaticBranch.BLOCK)));
-      }
-      case BreakStatement: {
-        BreakStatement tNode = (BreakStatement) node;
-        return reducer.reduceBreakStatement(
-            tNode,
-            path,
-            tNode.label.map(n -> reduceIdentifier(reducer, n, path.cons(StaticBranch.LABEL).cons(StaticBranch.JUST))));
-      }
-      case ContinueStatement: {
-        ContinueStatement tNode = (ContinueStatement) node;
-        return reducer.reduceContinueStatement(
-            tNode,
-            path,
-            tNode.label.map(n -> reduceIdentifier(reducer, n, path.cons(StaticBranch.LABEL).cons(StaticBranch.JUST))));
-      }
-      case DebuggerStatement: {
-        DebuggerStatement tNode = (DebuggerStatement) node;
-        return reducer.reduceDebuggerStatement(tNode, path);
-      }
-      case DoWhileStatement: {
-        DoWhileStatement tNode = (DoWhileStatement) node;
-        return reducer.reduceDoWhileStatement(
-            tNode,
-            path,
-            reduceStatement(reducer, tNode.body, path.cons(StaticBranch.BODY)),
-            reduceExpression(reducer, tNode.test, path.cons(StaticBranch.TEST)));
-      }
-      case EmptyStatement: {
-        EmptyStatement tNode = (EmptyStatement) node;
-        return reducer.reduceEmptyStatement(tNode, path);
-      }
-      case ExpressionStatement: {
-        ExpressionStatement tNode = (ExpressionStatement) node;
-        return reducer.reduceExpressionStatement(
-            tNode,
-            path,
-            reduceExpression(reducer, tNode.expression, path.cons(StaticBranch.EXPRESSION)));
-      }
-      case ForInStatement: {
-        ForInStatement tNode = (ForInStatement) node;
-        NonEmptyList<Branch> inner_path = path.cons(StaticBranch.LEFT);
-        Either<VariableDeclaration, Expression> left_node = tNode.left;
-        return reducer.reduceForInStatement(
-            tNode,
-            path,
-            reduceEitherVariableDeclarationExpression(reducer, left_node, inner_path),
-            reduceExpression(reducer, tNode.right, path.cons(StaticBranch.RIGHT)),
-            reduceStatement(reducer, tNode.body, path.cons(StaticBranch.BODY)));
-      }
-      case ForStatement: {
-        ForStatement tNode = (ForStatement) node;
-        NonEmptyList<Branch> inner_path = path.cons(StaticBranch.INIT).cons(StaticBranch.JUST);
-        return reducer.reduceForStatement(
-            tNode,
-            path,
-            tNode.init.map(init -> reduceEitherVariableDeclarationExpression(reducer, init, inner_path)),
-            reduceOptionExpression(reducer, tNode.test, path.cons(StaticBranch.TEST)),
-            reduceOptionExpression(reducer, tNode.update, path.cons(StaticBranch.UPDATE)),
-            reduceStatement(reducer, tNode.body, path.cons(StaticBranch.BODY)));
-      }
-      case IfStatement: {
-        IfStatement tNode = (IfStatement) node;
-        return reducer.reduceIfStatement(
-            tNode,
-            path,
-            reduceExpression(reducer, tNode.test, path.cons(StaticBranch.TEST)),
-            reduceStatement(reducer, tNode.consequent, path.cons(StaticBranch.CONSEQUENT)),
-            reduceOptionStatement(reducer, tNode.alternate, path.cons(StaticBranch.ALTERNATE)));
-      }
-      case LabeledStatement: {
-        LabeledStatement tNode = (LabeledStatement) node;
-        return reducer.reduceLabeledStatement(
-            tNode,
-            path,
-            reduceIdentifier(reducer, tNode.label, path.cons(StaticBranch.LABEL)),
-            reduceStatement(reducer, tNode.body, path.cons(StaticBranch.BODY)));
-      }
-      case ReturnStatement: {
-        ReturnStatement tNode = (ReturnStatement) node;
-        return reducer.reduceReturnStatement(
-            tNode,
-            path,
-            reduceOptionExpression(reducer, tNode.expression, path.cons(StaticBranch.EXPRESSION)));
-      }
-      case SwitchStatement: {
-        SwitchStatement tNode = (SwitchStatement) node;
-        return reducer.reduceSwitchStatement(
-            tNode,
-            path,
-            reduceExpression(reducer, tNode.discriminant, path.cons(StaticBranch.DISCRIMINANT)),
-            reduceListSwitchCase(reducer, tNode.cases, path.cons(StaticBranch.CASES)));
-      }
-      case SwitchStatementWithDefault: {
-        SwitchStatementWithDefault tNode = (SwitchStatementWithDefault) node;
-        return reducer.reduceSwitchStatementWithDefault(
-            tNode,
-            path,
-            reduceExpression(reducer, tNode.discriminant, path.cons(StaticBranch.DISCRIMINANT)),
-            reduceListSwitchCase(reducer, tNode.preDefaultCases, path.cons(StaticBranch.PREDEFAULTCASES)),
-            reduceSwitchDefault(reducer, tNode.defaultCase, path.cons(StaticBranch.DEFAULTCASE)),
-            reduceListSwitchCase(reducer, tNode.postDefaultCases, path.cons(StaticBranch.POSTDEFAULTCASES)));
-      }
-      case ThrowStatement: {
-        ThrowStatement tNode = (ThrowStatement) node;
-        return reducer.reduceThrowStatement(
-            tNode,
-            path,
-            reduceExpression(reducer, tNode.expression, path.cons(StaticBranch.EXPRESSION)));
-      }
-      case TryCatchStatement: {
-        TryCatchStatement tNode = (TryCatchStatement) node;
-        return reducer.reduceTryCatchStatement(
-            tNode,
-            path,
-            reduceBlock(reducer, tNode.body, path.cons(StaticBranch.BODY)),
-            reduceCatchClause(reducer, tNode.catchClause, path.cons(StaticBranch.CATCHCLAUSE)));
-      }
-      case TryFinallyStatement: {
-        TryFinallyStatement tNode = (TryFinallyStatement) node;
-        return reducer.reduceTryFinallyStatement(
-            tNode,
-            path,
-            reduceBlock(reducer, tNode.body, path.cons(StaticBranch.BODY)),
-            tNode.catchClause.map(n ->
-                reduceCatchClause(
-                    reducer,
-                    n,
-                    path.cons(StaticBranch.CATCHCLAUSE).cons(StaticBranch.JUST))),
-            reduceBlock(reducer, tNode.finalizer, path.cons(StaticBranch.FINALIZER)));
-      }
-      case VariableDeclarationStatement: {
-        VariableDeclarationStatement tNode = (VariableDeclarationStatement) node;
-        return reducer.reduceVariableDeclarationStatement(
-            tNode,
-            path,
-            reduceVariableDeclaration(reducer, tNode.declaration, path.cons(StaticBranch.DECLARATION)));
-      }
-      case WhileStatement: {
-        WhileStatement tNode = (WhileStatement) node;
-        return reducer.reduceWhileStatement(
-            tNode,
-            path,
-            reduceExpression(reducer, tNode.test, path.cons(StaticBranch.TEST)),
-            reduceStatement(reducer, tNode.body, path.cons(StaticBranch.BODY)));
-      }
-      case WithStatement: {
-        WithStatement tNode = (WithStatement) node;
-        return reducer.reduceWithStatement(
-            tNode,
-            path,
-            reduceExpression(reducer, tNode.object, path.cons(StaticBranch.OBJECT)),
-            reduceStatement(reducer, tNode.body, path.cons(StaticBranch.BODY)));
-      }
-      default:
-        throw new RuntimeException("Not reached");
+    case FunctionDeclaration: {
+      FunctionDeclaration tNode = (FunctionDeclaration) node;
+      return reducer.reduceFunctionDeclaration(
+          tNode,
+          path,
+          reduceIdentifier(reducer, tNode.name, path.cons(StaticBranch.NAME)),
+          reduceListIdentifier(reducer, tNode.parameters, path.cons(StaticBranch.PARAMETERS)),
+          reduceFunctionBody(reducer, tNode.body, path.cons(StaticBranch.BODY)));
+    }
+    case BlockStatement: {
+      BlockStatement tNode = (BlockStatement) node;
+      return reducer.reduceBlockStatement(
+          tNode,
+          path,
+          reduceBlock(reducer, tNode.block, path.cons(StaticBranch.BLOCK)));
+    }
+    case BreakStatement: {
+      BreakStatement tNode = (BreakStatement) node;
+      return reducer.reduceBreakStatement(
+          tNode,
+          path,
+          tNode.label.map(n -> reduceIdentifier(reducer, n, path.cons(StaticBranch.LABEL).cons(StaticBranch.JUST))));
+    }
+    case ContinueStatement: {
+      ContinueStatement tNode = (ContinueStatement) node;
+      return reducer.reduceContinueStatement(
+          tNode,
+          path,
+          tNode.label.map(n -> reduceIdentifier(reducer, n, path.cons(StaticBranch.LABEL).cons(StaticBranch.JUST))));
+    }
+    case DebuggerStatement: {
+      DebuggerStatement tNode = (DebuggerStatement) node;
+      return reducer.reduceDebuggerStatement(tNode, path);
+    }
+    case DoWhileStatement: {
+      DoWhileStatement tNode = (DoWhileStatement) node;
+      return reducer.reduceDoWhileStatement(
+          tNode,
+          path,
+          reduceStatement(reducer, tNode.body, path.cons(StaticBranch.BODY)),
+          reduceExpression(reducer, tNode.test, path.cons(StaticBranch.TEST)));
+    }
+    case EmptyStatement: {
+      EmptyStatement tNode = (EmptyStatement) node;
+      return reducer.reduceEmptyStatement(tNode, path);
+    }
+    case ExpressionStatement: {
+      ExpressionStatement tNode = (ExpressionStatement) node;
+      return reducer.reduceExpressionStatement(
+          tNode,
+          path,
+          reduceExpression(reducer, tNode.expression, path.cons(StaticBranch.EXPRESSION)));
+    }
+    case ForInStatement: {
+      ForInStatement tNode = (ForInStatement) node;
+      NonEmptyList<Branch> inner_path = path.cons(StaticBranch.LEFT);
+      Either<VariableDeclaration, Expression> left_node = tNode.left;
+      return reducer.reduceForInStatement(
+          tNode,
+          path,
+          reduceEitherVariableDeclarationExpression(reducer, left_node, inner_path),
+          reduceExpression(reducer, tNode.right, path.cons(StaticBranch.RIGHT)),
+          reduceStatement(reducer, tNode.body, path.cons(StaticBranch.BODY)));
+    }
+    case ForStatement: {
+      ForStatement tNode = (ForStatement) node;
+      NonEmptyList<Branch> inner_path = path.cons(StaticBranch.INIT).cons(StaticBranch.JUST);
+      return reducer.reduceForStatement(
+          tNode,
+          path,
+          tNode.init.map(init -> reduceEitherVariableDeclarationExpression(reducer, init, inner_path)),
+          reduceOptionExpression(reducer, tNode.test, path.cons(StaticBranch.TEST)),
+          reduceOptionExpression(reducer, tNode.update, path.cons(StaticBranch.UPDATE)),
+          reduceStatement(reducer, tNode.body, path.cons(StaticBranch.BODY)));
+    }
+    case IfStatement: {
+      IfStatement tNode = (IfStatement) node;
+      return reducer.reduceIfStatement(
+          tNode,
+          path,
+          reduceExpression(reducer, tNode.test, path.cons(StaticBranch.TEST)),
+          reduceStatement(reducer, tNode.consequent, path.cons(StaticBranch.CONSEQUENT)),
+          reduceOptionStatement(reducer, tNode.alternate, path.cons(StaticBranch.ALTERNATE)));
+    }
+    case LabeledStatement: {
+      LabeledStatement tNode = (LabeledStatement) node;
+      return reducer.reduceLabeledStatement(
+          tNode,
+          path,
+          reduceIdentifier(reducer, tNode.label, path.cons(StaticBranch.LABEL)),
+          reduceStatement(reducer, tNode.body, path.cons(StaticBranch.BODY)));
+    }
+    case ReturnStatement: {
+      ReturnStatement tNode = (ReturnStatement) node;
+      return reducer.reduceReturnStatement(
+          tNode,
+          path,
+          reduceOptionExpression(reducer, tNode.expression, path.cons(StaticBranch.EXPRESSION)));
+    }
+    case SwitchStatement: {
+      SwitchStatement tNode = (SwitchStatement) node;
+      return reducer.reduceSwitchStatement(
+          tNode,
+          path,
+          reduceExpression(reducer, tNode.discriminant, path.cons(StaticBranch.DISCRIMINANT)),
+          reduceListSwitchCase(reducer, tNode.cases, path.cons(StaticBranch.CASES)));
+    }
+    case SwitchStatementWithDefault: {
+      SwitchStatementWithDefault tNode = (SwitchStatementWithDefault) node;
+      return reducer.reduceSwitchStatementWithDefault(
+          tNode,
+          path,
+          reduceExpression(reducer, tNode.discriminant, path.cons(StaticBranch.DISCRIMINANT)),
+          reduceListSwitchCase(reducer, tNode.preDefaultCases, path.cons(StaticBranch.PREDEFAULTCASES)),
+          reduceSwitchDefault(reducer, tNode.defaultCase, path.cons(StaticBranch.DEFAULTCASE)),
+          reduceListSwitchCase(reducer, tNode.postDefaultCases, path.cons(StaticBranch.POSTDEFAULTCASES)));
+    }
+    case ThrowStatement: {
+      ThrowStatement tNode = (ThrowStatement) node;
+      return reducer.reduceThrowStatement(
+          tNode,
+          path,
+          reduceExpression(reducer, tNode.expression, path.cons(StaticBranch.EXPRESSION)));
+    }
+    case TryCatchStatement: {
+      TryCatchStatement tNode = (TryCatchStatement) node;
+      return reducer.reduceTryCatchStatement(
+          tNode,
+          path,
+          reduceBlock(reducer, tNode.body, path.cons(StaticBranch.BODY)),
+          reduceCatchClause(reducer, tNode.catchClause, path.cons(StaticBranch.CATCHCLAUSE)));
+    }
+    case TryFinallyStatement: {
+      TryFinallyStatement tNode = (TryFinallyStatement) node;
+      return reducer.reduceTryFinallyStatement(
+          tNode,
+          path,
+          reduceBlock(reducer, tNode.body, path.cons(StaticBranch.BODY)),
+          tNode.catchClause.map(n ->
+              reduceCatchClause(
+                  reducer,
+                  n,
+                  path.cons(StaticBranch.CATCHCLAUSE).cons(StaticBranch.JUST))),
+          reduceBlock(reducer, tNode.finalizer, path.cons(StaticBranch.FINALIZER)));
+    }
+    case VariableDeclarationStatement: {
+      VariableDeclarationStatement tNode = (VariableDeclarationStatement) node;
+      return reducer.reduceVariableDeclarationStatement(
+          tNode,
+          path,
+          reduceVariableDeclaration(reducer, tNode.declaration, path.cons(StaticBranch.DECLARATION)));
+    }
+    case WhileStatement: {
+      WhileStatement tNode = (WhileStatement) node;
+      return reducer.reduceWhileStatement(
+          tNode,
+          path,
+          reduceExpression(reducer, tNode.test, path.cons(StaticBranch.TEST)),
+          reduceStatement(reducer, tNode.body, path.cons(StaticBranch.BODY)));
+    }
+    case WithStatement: {
+      WithStatement tNode = (WithStatement) node;
+      return reducer.reduceWithStatement(
+          tNode,
+          path,
+          reduceExpression(reducer, tNode.object, path.cons(StaticBranch.OBJECT)),
+          reduceStatement(reducer, tNode.body, path.cons(StaticBranch.BODY)));
+    }
+    default:
+      throw new RuntimeException("Not reached");
     }
   }
 

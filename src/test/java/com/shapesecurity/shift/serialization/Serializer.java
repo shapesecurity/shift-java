@@ -42,6 +42,7 @@ import com.shapesecurity.shift.ast.expression.ConditionalExpression;
 import com.shapesecurity.shift.ast.expression.FunctionExpression;
 import com.shapesecurity.shift.ast.expression.IdentifierExpression;
 import com.shapesecurity.shift.ast.expression.LiteralBooleanExpression;
+import com.shapesecurity.shift.ast.expression.LiteralInfinityExpression;
 import com.shapesecurity.shift.ast.expression.LiteralNullExpression;
 import com.shapesecurity.shift.ast.expression.LiteralNumericExpression;
 import com.shapesecurity.shift.ast.expression.LiteralRegExpExpression;
@@ -253,6 +254,13 @@ public class Serializer implements Reducer<StringBuilder> {
       @NotNull LiteralNumericExpression node,
       @NotNull List<Branch> path) {
     return b("LiteralNumericExpression").add("value", node.value).done(node);
+  }
+
+  @NotNull
+  @Override
+  public StringBuilder reduceLiteralInfinityExpression(@NotNull LiteralInfinityExpression node,
+                                                       @NotNull List<Branch> path) {
+    return b("LiteralInfinityExpression").done(node);
   }
 
   @NotNull

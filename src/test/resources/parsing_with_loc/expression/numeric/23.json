@@ -1,0 +1,1 @@
+{"type":"Script","body":{"type":"FunctionBody","directives":[],"statements":[{"type":"ExpressionStatement","expression":{"type":"PrefixExpression","operator":"-","operand":{"type":"LiteralInfinityExpression","range":[1,6]},"range":[0,6]},"range":[0,6]}],"range":[0,6]},"range":[0,6],"source":"-1e309"}
