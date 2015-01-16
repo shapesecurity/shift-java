@@ -696,7 +696,6 @@ public class ParserTest extends TestBase {
     testFailure("/", 1, "Invalid regular expression: missing /");
     testFailure("/test", 5, "Invalid regular expression: missing /");
     testFailure("/test\n/", 5, "Invalid regular expression: missing /");
-    testFailure("for((1 + 1) in list) process(x);", 12, "Invalid left-hand side in for-in");
     testFailure("[", 1, "Unexpected end of input");
     testFailure("[,", 2, "Unexpected end of input");
     testFailure("1 + {", 5, "Unexpected end of input");
@@ -851,7 +850,7 @@ public class ParserTest extends TestBase {
     testFailure("function hello() { \"use strict\"; var public; }", 37, "Use of future reserved word in strict mode");
     testFailure("function hello() { \"use strict\"; var static; }", 37, "Use of future reserved word in strict mode");
     testFailure("function hello() { \"use strict\"; var yield; }", 37, "Use of future reserved word in strict mode");
-    testFailure("function hello() { \"use strict\"; var let; }", 37, "Use of future reserved word in strict mode");
+    testFailure("function hello() { \"use strict\"; var let; }", 37, "Unexpected token let");
     testFailure("function hello(static) { \"use strict\"; }", 40, "Use of future reserved word in strict mode");
     testFailure("function static() { \"use strict\"; }", 35, "Use of future reserved word in strict mode");
     testFailure("function eval(a) { \"use strict\"; }", 34, "Function name may not be eval or arguments in strict mode");
@@ -878,7 +877,7 @@ public class ParserTest extends TestBase {
   }
 
   @Test
-  // programs that parse according to ES3 but either fail or parse differently accoding to ES5
+  // programs that parse according to ES3 but either fail or parse differently according to ES5
   public void testES5BackwardIncompatibilities() throws JsError {
     // ES3: zero-width non-breaking space is allowed in an identifier
     // ES5: zero-width non-breaking space is a whitespace character
@@ -901,6 +900,27 @@ public class ParserTest extends TestBase {
     testFailure("var let", 4, "Unexpected token let");
     testFailure("var const", 4, "Unexpected token const");
 
+    // ES5: group expression is a left hand side expression
+    // ES6: failed to parse rather than generating a TypeError.
+    // No browsers parse this. But we are trying to be permissive.
+    testParser("(1++) = 3");
+    testParser("(1++)++");
+    testParser("for((++this) in'');");
+
+    testFailure("1++ = 3", 4, "Invalid left-hand side in assignment");
+    testFailure("1++ ++", 4, "Unexpected token ++");
+    testFailure("for(++this in'');", 11, "Invalid left-hand side in for-in");
+
+    // ES5: let is a strict mode reserved word.
+    // ES6: parses fine.
+    // Due to the same reason as above, this is allowed.
+    testParser("function f(){'use strict'; let a = 0;}");
+
+    // ES5/6: does not recognize XML-style comments ("<!--" and "-->")
+    // We chose to recognize XML-style comment because all browsers and node.js supports it.
+    testParser("a <!--b#ERROR");
+    testParser("\n    -->b#ERROR");
+
     // ES5: invalid program
     // ES6: function declaration within a block
     // We choose to parse this because of ubiquitous support among popular interpreters, despite disagreements about semantics.
@@ -908,7 +928,7 @@ public class ParserTest extends TestBase {
   }
 
   @Test
-  // programs that parse according to ES5 but either fail or parse differently accoding to ES6
+  // programs that parse according to ES5 but either fail or parse differently according to ES6
   public void testES6BackwardIncompatibilities() throws JsError {
     // ES5: in sloppy mode, future reserved words (including yield) are regular identifiers
     // ES6: yield has been moved from the future reserved words list to the keywords list
@@ -917,5 +937,9 @@ public class ParserTest extends TestBase {
     // ES5: this declares a function-scoped variable while at the same time assigning to the block-scoped variable
     // ES6: this particular construction is explicitly disallowed
     testParser("try {} catch(e) { var e = 0; }");
+
+    // ES5: group expression not considered LeftHandSideExpression
+    // ES6: does not parse
+    testParser("for((1 + 1) in list) process(x);");
   }
 }

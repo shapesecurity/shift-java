@@ -237,7 +237,7 @@ public class Tokenizer {
         break;
       case 'l':
         if (cse2(id, 'e', 't')) {
-          return this.strict ? TokenType.FUTURE_STRICT_RESERVED_WORD : TokenType.LET;
+          return TokenType.LET;
         }
         break;
       default:
