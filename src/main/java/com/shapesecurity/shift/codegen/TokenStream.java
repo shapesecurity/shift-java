@@ -53,10 +53,10 @@ class TokenStream {
   }
 
   @SuppressWarnings("LiteralAsArgToStringEquals")
-  public void put(@NotNull CharSequence tokenStr) {
+  public void put(@NotNull String tokenStr) {
     if (this.optionalSemi) {
       this.optionalSemi = false;
-      if (!tokenStr.toString().equals("}")) {
+      if (!tokenStr.equals("}")) {
         this.put(";");
       }
     }
@@ -74,7 +74,10 @@ class TokenStream {
     this.lastChar = tokenStr.charAt(tokenStr.length() - 1);
     if ((lastChar == '+' || lastChar == '-') && lastChar == rightChar ||
         Utils.isIdentifierPart(lastChar) && Utils.isIdentifierPart(rightChar) ||
-        lastChar == '/' && rightChar == 'i') {
+        lastChar == '/' && (rightChar == 'i' || rightChar == '/')) {
+      this.writer.append(' ');
+    }
+    if (this.writer.length() >= 2 && tokenStr.equals("--") && this.writer.substring(this.writer.length()-2, this.writer.length()).equals("<!")) {
       this.writer.append(' ');
     }
 

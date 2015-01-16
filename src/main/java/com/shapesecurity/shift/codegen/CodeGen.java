@@ -54,6 +54,7 @@ import com.shapesecurity.shift.ast.expression.StaticMemberExpression;
 import com.shapesecurity.shift.ast.expression.ThisExpression;
 import com.shapesecurity.shift.ast.operators.BinaryOperator;
 import com.shapesecurity.shift.ast.operators.Precedence;
+import com.shapesecurity.shift.ast.operators.PrefixOperator;
 import com.shapesecurity.shift.ast.property.DataProperty;
 import com.shapesecurity.shift.ast.property.Getter;
 import com.shapesecurity.shift.ast.property.PropertyName;
@@ -290,7 +291,10 @@ public final class CodeGen implements Reducer<CodeRep> {
       rightCode = factory.paren(rightCode);
       rightContainsIn = false;
     }
-    CodeRep result = seqVA(binding, factory.token(node.operator.getName()), rightCode);
+    CodeRep result = seqVA(
+        factory.expr(node.binding, Precedence.NEW, binding),
+        factory.token(node.operator.getName()),
+        rightCode);
     result.containsIn = rightContainsIn;
     result.startsWithFunctionOrCurly = binding.startsWithFunctionOrCurly;
     return result;
@@ -347,7 +351,8 @@ public final class CodeGen implements Reducer<CodeRep> {
   public CodeRep reducePostfixExpression(
       @NotNull PostfixExpression node, @NotNull List<Branch> path, @NotNull CodeRep operand) {
     CodeRep result = seqVA(
-        factory.expr(node.operand, node.getPrecedence(), operand), factory.token(node.operator.getName()));
+        factory.expr(node.operand, Precedence.NEW, operand),
+        factory.token(node.operator.getName()));
     result.startsWithFunctionOrCurly = operand.startsWithFunctionOrCurly;
     return result;
   }
@@ -357,8 +362,8 @@ public final class CodeGen implements Reducer<CodeRep> {
   public CodeRep reducePrefixExpression(
       @NotNull PrefixExpression node, @NotNull List<Branch> path, @NotNull CodeRep operand) {
     return seqVA(
-        factory.token(node.operator.getName()), factory.expr(
-            node.operand, node.getPrecedence(), operand));
+        factory.token(node.operator.getName()),
+        factory.expr(node.operand, node.getPrecedence(), operand));
   }
 
   @Override
@@ -469,9 +474,13 @@ public final class CodeGen implements Reducer<CodeRep> {
       @NotNull CodeRep right,
       @NotNull CodeRep body) {
     CodeRep result = seqVA(
-        factory.token("for"), factory.paren(
-            seqVA(
-                factory.noIn(factory.testIn(Either.extract(left))), factory.token("in"), right)), body);
+        factory.token("for"),
+        factory.paren(seqVA(factory.noIn(
+                factory.testIn(Either.extract(left.mapRight((expr) -> factory.expr(node.left.right().just(),
+                    Precedence.NEW,
+                    expr))))),
+            factory.token("in"), right)),
+        body);
     result.endsWithMissingElse = body.endsWithMissingElse;
     return result;
   }
@@ -486,14 +495,14 @@ public final class CodeGen implements Reducer<CodeRep> {
       @NotNull Maybe<CodeRep> update,
       @NotNull CodeRep body) {
     CodeRep result = seqVA(
-        factory.token("for"), factory.paren(
-            seqVA(
-                init.maybe(factory.empty(), x -> factory.noIn(factory.testIn(Either.extract(x)))),
-                factory.semi(),
-                test.orJust(
-                    factory.empty()),
-                factory.semi(),
-                update.orJust(factory.empty()))), body);
+        factory.token("for"),
+        factory.paren(seqVA(
+            init.maybe(factory.empty(), x -> factory.noIn(factory.testIn(Either.extract(x)))),
+            factory.token(";"),
+            test.orJust(factory.empty()),
+            factory.token(";"),
+            update.orJust(factory.empty()))),
+        body);
     result.endsWithMissingElse = body.endsWithMissingElse;
     return result;
   }
