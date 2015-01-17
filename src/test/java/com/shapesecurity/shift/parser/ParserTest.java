@@ -204,6 +204,8 @@ public class ParserTest extends TestBase {
     testParser("expression/object/26", "x = { __proto__: 2 }");
     testParser("expression/object/27", "x = {\"__proto__\": 2 }");
     testParser("expression/object/28", "x = { get width() { return m_width }, set width(width) { m_width = width; } }");
+    testParser("expression/object/29", "x = { 2e308: 0 }");
+    testParser("expression/object/30", "x = { get 2e308(){}, set 2e308(x){} }");
 
     // Numeric Literals
     testParser("expression/numeric/00", "0");
@@ -227,6 +229,9 @@ public class ParserTest extends TestBase {
     testParser("expression/numeric/18", "02");
     testParser("expression/numeric/19", "012");
     testParser("expression/numeric/20", "0012");
+    testParser("expression/numeric/21", "1e308");
+    testParser("expression/numeric/22", "1e309");
+    testParser("expression/numeric/23", "-1e309");
 
     // String Literals
     testParser("expression/string/00", "\"Hello\"");

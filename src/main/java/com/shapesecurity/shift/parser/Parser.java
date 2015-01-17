@@ -75,6 +75,7 @@ import com.shapesecurity.shift.ast.expression.FunctionExpression;
 import com.shapesecurity.shift.ast.expression.IdentifierExpression;
 import com.shapesecurity.shift.ast.expression.LeftHandSideExpression;
 import com.shapesecurity.shift.ast.expression.LiteralBooleanExpression;
+import com.shapesecurity.shift.ast.expression.LiteralInfinityExpression;
 import com.shapesecurity.shift.ast.expression.LiteralNullExpression;
 import com.shapesecurity.shift.ast.expression.LiteralNumericExpression;
 import com.shapesecurity.shift.ast.expression.LiteralRegExpExpression;
@@ -1446,13 +1447,17 @@ public class Parser extends Tokenizer {
   }
 
   @NotNull
-  private LiteralNumericExpression parseNumericLiteral() throws JsError {
+  private Expression parseNumericLiteral() throws JsError {
     SourceLocation startLocation = this.getLocation();
     if (this.strict && this.lookahead.octal) {
       throw this.createError(STRICT_OCTAL_LITERAL);
     }
     Token token2 = this.lex();
-    return this.markLocation(startLocation, new LiteralNumericExpression(((NumericLiteralToken) token2).value));
+    double value = ((NumericLiteralToken) token2).value;
+    return this.markLocation(startLocation,
+        value == Double.POSITIVE_INFINITY ?
+            new LiteralInfinityExpression() :
+            new LiteralNumericExpression(value));
   }
 
   @NotNull
@@ -1676,7 +1681,12 @@ public class Parser extends Tokenizer {
     if (token instanceof StringLiteralToken) {
       propertyName = new PropertyName(this.parseStringLiteral().value);
     } else if (token instanceof NumericLiteralToken) {
-      propertyName = new PropertyName(this.parseNumericLiteral().value);
+      Expression expression = this.parseNumericLiteral();
+      if (expression instanceof LiteralInfinityExpression) {
+        propertyName = new PropertyName(Double.POSITIVE_INFINITY);
+      } else {
+        propertyName = new PropertyName(((LiteralNumericExpression) expression).value);
+      }
     } else if (token instanceof IdentifierLikeToken) {
       propertyName = new PropertyName(this.parseIdentifier());
     } else {
