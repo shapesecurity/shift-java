@@ -16,9 +16,6 @@
 
 package com.shapesecurity.shift.codegen;
 
-import com.shapesecurity.functional.data.List;
-import com.shapesecurity.functional.data.NonEmptyList;
-
 import org.jetbrains.annotations.NotNull;
 
 public abstract class CodeRep {
@@ -156,9 +153,9 @@ public abstract class CodeRep {
 
   public static final class Seq extends CodeRep {
     @NotNull
-    public final List<CodeRep> children;
+    public final CodeRep[] children;
 
-    public Seq(@NotNull List<CodeRep> children) {
+    public Seq(@NotNull CodeRep[] children) {
       super();
       this.children = children;
     }
@@ -166,10 +163,9 @@ public abstract class CodeRep {
     @Override
     public void emit(@NotNull TokenStream ts, final boolean noIn) {
       // Using fold instead of foreach to pass ts in the closure.
-      this.children.foldLeft((ts1, codeRep) -> {
-        codeRep.emit(ts1, noIn);
-        return ts1;
-      }, ts);
+      for (CodeRep child : this.children) {
+        child.emit(ts, noIn);
+      }
     }
   }
 
@@ -195,25 +191,24 @@ public abstract class CodeRep {
 
   public static final class CommaSep extends CodeRep {
     @NotNull
-    private final List<CodeRep> children;
+    private final CodeRep[] children;
 
-    public CommaSep(@NotNull List<CodeRep> children) {
+    public CommaSep(@NotNull CodeRep[] children) {
       super();
       this.children = children;
     }
 
     @Override
     public void emit(@NotNull final TokenStream ts, final boolean noIn) {
-      if (this.children.isEmpty()) {
+      if (this.children.length == 0) {
         return;
       }
-      NonEmptyList<CodeRep> nel = (NonEmptyList<CodeRep>) this.children;
-      nel.head.emit(ts, noIn);
-      nel.tail().foldLeft((ts1, codeRep) -> {
-        ts1.put(",");
-        codeRep.emit(ts1, noIn);
-        return ts1;
-      }, ts);
+
+      this.children[0].emit(ts, noIn);
+      for (int i = 1; i < this.children.length; i++) {
+        ts.put(",");
+        this.children[i].emit(ts, noIn);
+      }
     }
   }
 

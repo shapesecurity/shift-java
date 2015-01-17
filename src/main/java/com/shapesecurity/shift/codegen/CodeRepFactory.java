@@ -8,6 +8,8 @@ import com.shapesecurity.shift.ast.operators.Precedence;
 import org.jetbrains.annotations.NotNull;
 
 public class CodeRepFactory {
+  protected static final CodeRep[] EMPTY = new CodeRep[0];
+
   public CodeRepFactory() { }// CodeRep factory methods
 
   @NotNull
@@ -51,7 +53,7 @@ public class CodeRepFactory {
   }
 
   @NotNull
-  public CodeRep seq(@NotNull List<CodeRep> reps) {
+  public CodeRep seq(@NotNull CodeRep[] reps) {
     return new CodeRep.Seq(reps);
   }
 
@@ -66,7 +68,7 @@ public class CodeRepFactory {
   }
 
   @NotNull
-  public CodeRep commaSep(@NotNull List<CodeRep> pieces) {
+  public CodeRep commaSep(@NotNull CodeRep[] pieces) {
     return new CodeRep.CommaSep(pieces);
   }
 
@@ -78,5 +80,15 @@ public class CodeRepFactory {
   @NotNull
   public CodeRep semiOp() {
     return new CodeRep.SemiOp();
+  }
+
+  @NotNull
+  public final CodeRep commaSep(@NotNull List<CodeRep> reps) {
+    return commaSep(reps.toArray(EMPTY));
+  }
+
+  @NotNull
+  public final CodeRep seq(@NotNull List<CodeRep> reps) {
+    return seq(reps.toArray(EMPTY));
   }
 }

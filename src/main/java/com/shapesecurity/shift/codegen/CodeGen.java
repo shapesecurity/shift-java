@@ -86,11 +86,9 @@ import com.shapesecurity.shift.utils.Utils;
 import com.shapesecurity.shift.visitor.Director;
 import com.shapesecurity.shift.visitor.Reducer;
 
-import java.util.ArrayList;
-import java.util.Collections;
-
 import org.jetbrains.annotations.NotNull;
 
+@SuppressWarnings("UnqualifiedFieldAccess")
 public final class CodeGen implements Reducer<CodeRep> {
   public static final CodeGen COMPACT = new CodeGen(new CodeRepFactory());
   public static final CodeGen PRETTY = new CodeGen(new FormattedCodeRepFactory());
@@ -133,16 +131,14 @@ public final class CodeGen implements Reducer<CodeRep> {
 
   @NotNull
   private CodeRep seqVA(@NotNull CodeRep... reps) {
-    ArrayList<CodeRep> arrayList = new ArrayList<>();
-    Collections.addAll(arrayList, reps);
-    return factory.seq(List.from(arrayList));
+    return factory.seq(reps);
   }
 
   @NotNull
   private CodeRep parenToAvoidBeingDirective(@NotNull Node element, @NotNull CodeRep original) {
     if (element instanceof ExpressionStatement &&
         ((ExpressionStatement) element).expression instanceof LiteralStringExpression) {
-      return seqVA(factory.paren(((CodeRep.Seq) original).children.maybeHead().just()), factory.semiOp());
+      return seqVA(factory.paren(((CodeRep.Seq) original).children[0]), factory.semiOp());
     }
     return original;
   }
@@ -314,11 +310,22 @@ public final class CodeGen implements Reducer<CodeRep> {
       return factory.bracket(factory.empty());
     }
 
-    CodeRep content = factory.commaSep(
-        elements.map(
-            states -> states.map(s -> s.containsGroup ? factory.paren(s) : s).orJust(
-                factory.empty())));
-    if (elements.maybeLast().just().isNothing()) {
+    CodeRep empty = factory.empty();
+    CodeRep[] reps = new CodeRep[elements.length];
+    for (int i = 0; i < reps.length; i++) {
+      NonEmptyList<Maybe<CodeRep>> nel = (NonEmptyList<Maybe<CodeRep>>) elements;
+      CodeRep el = empty;
+      if (nel.head.isJust()) {
+        el = nel.head.just();
+        if (el.containsGroup) {
+          el = factory.paren(el);
+        }
+      }
+      reps[i] = el;
+      elements = nel.tail;
+    }
+    CodeRep content = factory.commaSep(reps);
+    if (reps[reps.length - 1] == empty) {
       content = seqVA(content, factory.token(","));
     }
     return factory.bracket(content);
@@ -588,8 +595,8 @@ public final class CodeGen implements Reducer<CodeRep> {
     return seqVA(
         factory.token("switch"), factory.paren(discriminant), factory.brace(
             seqVA(
-                factory.seq(preDefaultCases), defaultCase, factory.seq(
-                    postDefaultCases))));
+                factory.seq(preDefaultCases), defaultCase, factory.seq(postDefaultCases
+                ))));
   }
 
   @Override

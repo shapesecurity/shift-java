@@ -63,6 +63,26 @@ public class BenchmarkTest extends TestBase {
   }
 
   @Test
+  public void benchmarkCodeGen() throws IOException, JsError {
+    String source = readLibrary("angular-1.2.5.js");
+    Script tree = Parser.parse(source);
+    System.out.println("Parser warm-up started.");
+    for (int i = 0; i < WARMUP_TIMES; i++) {
+      CodeGen.codeGen(tree);
+    }
+    System.out.println("Parser warm-up finished.");
+    final int N = TIMING_TIMES;
+    long start = System.nanoTime();
+    startProfiling();
+    for (int i = 0; i < N; i++) {
+      CodeGen.codeGen(tree);
+    }
+    double elapsed = (System.nanoTime() - start) * 1e-6 / N;
+    stopProfiling();
+    System.out.printf("Parser time: %.3fms\n", elapsed);
+  }
+
+  @Test
   public void benchmarkClone() throws IOException, JsError {
     String source = readLibrary("angular-1.2.5.js");
     Script program = Parser.parse(source);
