@@ -19,7 +19,7 @@ package com.shapesecurity.functional;
 import org.jetbrains.annotations.NotNull;
 
 @FunctionalInterface
-public interface F<A, B> {
+public interface F<A, R> {
   @NotNull
   public static <A> F<A, A> id() {
     return o -> o;
@@ -41,10 +41,10 @@ public interface F<A, B> {
   }
 
   @NotNull
-  public abstract B apply(@NotNull A a);
+  public abstract R apply(@NotNull A a);
 
   @NotNull
-  public default <C> F<C, B> compose(@NotNull final F<C, A> f) {
+  public default <C> F<C, R> compose(@NotNull final F<C, A> f) {
     return c -> this.apply(f.apply(c));
   }
 }
