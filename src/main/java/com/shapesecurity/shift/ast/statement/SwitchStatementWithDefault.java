@@ -22,7 +22,6 @@ import com.shapesecurity.shift.ast.Statement;
 import com.shapesecurity.shift.ast.SwitchCase;
 import com.shapesecurity.shift.ast.SwitchDefault;
 import com.shapesecurity.shift.ast.types.Type;
-import com.shapesecurity.shift.visitor.TransformerP;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -50,15 +49,6 @@ public class SwitchStatementWithDefault extends Statement {
 
   @NotNull
   @Override
-  public <ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> StatementState transform(
-      @NotNull TransformerP<ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState,
-          ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState,
-          SwitchCaseState, SwitchDefaultState, CatchClauseState> transformer) {
-    return transformer.transform(this);
-  }
-
-  @NotNull
-  @Override
   public Type type() {
     return Type.SwitchStatementWithDefault;
   }
@@ -74,41 +64,41 @@ public class SwitchStatementWithDefault extends Statement {
 
   @NotNull
   public Expression getDiscriminant() {
-    return discriminant;
+    return this.discriminant;
   }
 
   @NotNull
   public List<SwitchCase> getPreDefaultCases() {
-    return preDefaultCases;
+    return this.preDefaultCases;
   }
 
   @NotNull
   public SwitchDefault getDefaultCase() {
-    return defaultCase;
+    return this.defaultCase;
   }
 
   @NotNull
   public List<SwitchCase> getPostDefaultCases() {
-    return postDefaultCases;
+    return this.postDefaultCases;
   }
 
   @NotNull
   public SwitchStatementWithDefault setDiscriminant(@NotNull Expression discriminant) {
-    return new SwitchStatementWithDefault(discriminant, preDefaultCases, defaultCase, postDefaultCases);
+    return new SwitchStatementWithDefault(discriminant, this.preDefaultCases, this.defaultCase, this.postDefaultCases);
   }
 
   @NotNull
   public SwitchStatementWithDefault setPreDefaultCases(@NotNull List<SwitchCase> preDefaultCases) {
-    return new SwitchStatementWithDefault(discriminant, preDefaultCases, defaultCase, postDefaultCases);
+    return new SwitchStatementWithDefault(this.discriminant, preDefaultCases, this.defaultCase, this.postDefaultCases);
   }
 
   @NotNull
   public SwitchStatementWithDefault setDefaultCase(@NotNull SwitchDefault defaultCase) {
-    return new SwitchStatementWithDefault(discriminant, preDefaultCases, defaultCase, postDefaultCases);
+    return new SwitchStatementWithDefault(this.discriminant, this.preDefaultCases, defaultCase, this.postDefaultCases);
   }
 
   @NotNull
   public SwitchStatementWithDefault setPostDefaultCases(@NotNull List<SwitchCase> postDefaultCases) {
-    return new SwitchStatementWithDefault(discriminant, preDefaultCases, defaultCase, postDefaultCases);
+    return new SwitchStatementWithDefault(this.discriminant, this.preDefaultCases, this.defaultCase, postDefaultCases);
   }
 }

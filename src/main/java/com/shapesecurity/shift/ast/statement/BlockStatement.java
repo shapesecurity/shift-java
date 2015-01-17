@@ -19,7 +19,6 @@ package com.shapesecurity.shift.ast.statement;
 import com.shapesecurity.shift.ast.Block;
 import com.shapesecurity.shift.ast.Statement;
 import com.shapesecurity.shift.ast.types.Type;
-import com.shapesecurity.shift.visitor.TransformerP;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -30,15 +29,6 @@ public class BlockStatement extends Statement {
   public BlockStatement(@NotNull Block block) {
     super();
     this.block = block;
-  }
-
-  @NotNull
-  @Override
-  public <ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> StatementState transform(
-      @NotNull TransformerP<ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState,
-          ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState,
-          SwitchCaseState, SwitchDefaultState, CatchClauseState> transformer) {
-    return transformer.transform(this);
   }
 
   @NotNull
@@ -54,7 +44,7 @@ public class BlockStatement extends Statement {
 
   @NotNull
   public Block getBlock() {
-    return block;
+    return this.block;
   }
 
   public BlockStatement setBlock(@NotNull Block block) {

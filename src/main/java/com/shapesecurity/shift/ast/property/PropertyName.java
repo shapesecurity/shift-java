@@ -19,9 +19,7 @@ package com.shapesecurity.shift.ast.property;
 import com.shapesecurity.shift.ast.Identifier;
 import com.shapesecurity.shift.ast.Node;
 import com.shapesecurity.shift.ast.types.Type;
-import com.shapesecurity.shift.parser.JsError;
 import com.shapesecurity.shift.utils.D2A;
-import com.shapesecurity.shift.utils.Utils;
 import com.shapesecurity.shift.visitor.TransformerP;
 
 import org.jetbrains.annotations.NotNull;
@@ -53,13 +51,6 @@ public final class PropertyName extends Node {
     this(D2A.d2a(d), PropertyNameKind.Number);
   }
 
-  @NotNull
-  public <ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> PropertyNameState transform(
-      @NotNull TransformerP<ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState,
-          ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState,
-          SwitchCaseState, SwitchDefaultState, CatchClauseState> transformer) {
-    return transformer.transform(this);
-  }
 
   @NotNull
   @Override

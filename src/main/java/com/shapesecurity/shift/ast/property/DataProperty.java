@@ -18,7 +18,6 @@ package com.shapesecurity.shift.ast.property;
 
 import com.shapesecurity.shift.ast.Expression;
 import com.shapesecurity.shift.ast.types.Type;
-import com.shapesecurity.shift.visitor.TransformerP;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -39,15 +38,6 @@ public class DataProperty extends ObjectProperty {
 
   @NotNull
   @Override
-  public <ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> PropertyState transform(
-      @NotNull TransformerP<ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState,
-          ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState,
-          SwitchCaseState, SwitchDefaultState, CatchClauseState> transformer) {
-    return transformer.transform(this);
-  }
-
-  @NotNull
-  @Override
   public Type type() {
     return Type.DataProperty;
   }
@@ -60,16 +50,16 @@ public class DataProperty extends ObjectProperty {
 
   @NotNull
   public Expression getValue() {
-    return value;
+    return this.value;
   }
 
   @NotNull
   public DataProperty setName(@NotNull PropertyName name) {
-    return new DataProperty(name, value);
+    return new DataProperty(name, this.value);
   }
 
   @NotNull
   public DataProperty setValue(@NotNull Expression value) {
-    return new DataProperty(name, value);
+    return new DataProperty(this.name, value);
   }
 }

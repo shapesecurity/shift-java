@@ -17,7 +17,6 @@
 package com.shapesecurity.shift.ast.property;
 
 import com.shapesecurity.shift.ast.Node;
-import com.shapesecurity.shift.visitor.TransformerP;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -31,12 +30,6 @@ public abstract class ObjectProperty extends Node {
   }
 
   @NotNull
-  public abstract <ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> PropertyState transform(
-      @NotNull TransformerP<ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState,
-          ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState,
-          SwitchCaseState, SwitchDefaultState, CatchClauseState> transformer);
-
-  @NotNull
   public abstract ObjectPropertyKind getKind();
 
   public static enum ObjectPropertyKind {
@@ -47,6 +40,6 @@ public abstract class ObjectProperty extends Node {
 
   @NotNull
   public PropertyName getName() {
-    return name;
+    return this.name;
   }
 }

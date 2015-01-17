@@ -31,6 +31,6 @@ public abstract class AccessorProperty extends ObjectProperty {
 
   @NotNull
   public FunctionBody getBody() {
-    return body;
+    return this.body;
   }
 }

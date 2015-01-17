@@ -37,14 +37,6 @@ public class VariableDeclaration extends Node {
   }
 
   @NotNull
-  public <ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> DeclarationState transform(
-      @NotNull TransformerP<ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState,
-          ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState,
-          SwitchCaseState, SwitchDefaultState, CatchClauseState> transformer) {
-    return transformer.transform(this);
-  }
-
-  @NotNull
   @Override
   public Type type() {
     return Type.VariableDeclaration;
@@ -75,21 +67,21 @@ public class VariableDeclaration extends Node {
 
   @NotNull
   public VariableDeclarationKind getKind() {
-    return kind;
+    return this.kind;
   }
 
   @NotNull
   public NonEmptyList<VariableDeclarator> getDeclarators() {
-    return declarators;
+    return this.declarators;
   }
 
   @NotNull
   public VariableDeclaration setKind(@NotNull VariableDeclarationKind kind) {
-    return new VariableDeclaration(kind, declarators);
+    return new VariableDeclaration(kind, this.declarators);
   }
 
   @NotNull
   public VariableDeclaration setDeclarators(@NotNull NonEmptyList<VariableDeclarator> declarators) {
-    return new VariableDeclaration(kind, declarators);
+    return new VariableDeclaration(this.kind, declarators);
   }
 }

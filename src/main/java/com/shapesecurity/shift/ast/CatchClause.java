@@ -17,7 +17,6 @@
 package com.shapesecurity.shift.ast;
 
 import com.shapesecurity.shift.ast.types.Type;
-import com.shapesecurity.shift.visitor.TransformerP;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -34,14 +33,6 @@ public class CatchClause extends Node {
   }
 
   @NotNull
-  public <ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> CatchClauseState transform(
-      @NotNull TransformerP<ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState,
-          ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState,
-          SwitchCaseState, SwitchDefaultState, CatchClauseState> transformer) {
-    return transformer.transform(this);
-  }
-
-  @NotNull
   @Override
   public Type type() {
     return Type.CatchClause;
@@ -55,21 +46,21 @@ public class CatchClause extends Node {
 
   @NotNull
   public Identifier getBinding() {
-    return binding;
+    return this.binding;
   }
 
   @NotNull
   public Block getBody() {
-    return body;
+    return this.body;
   }
 
   @NotNull
   public CatchClause setBinding(@NotNull Identifier binding) {
-    return new CatchClause(binding, body);
+    return new CatchClause(binding, this.body);
   }
 
   @NotNull
   public CatchClause setBody(@NotNull Block body) {
-    return new CatchClause(binding, body);
+    return new CatchClause(this.binding, body);
   }
 }

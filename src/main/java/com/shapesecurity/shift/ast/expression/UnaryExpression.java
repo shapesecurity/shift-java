@@ -41,6 +41,6 @@ public abstract class UnaryExpression extends Expression {
 
   @NotNull
   public Expression getOperand() {
-    return operand;
+    return this.operand;
   }
 }
