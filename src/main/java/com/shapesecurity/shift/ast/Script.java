@@ -34,14 +34,6 @@ public class Script extends Node {
   }
 
   @NotNull
-  public <ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> ScriptState transform(
-      @NotNull TransformerP<ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState,
-          ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState,
-          SwitchCaseState, SwitchDefaultState, CatchClauseState> transformer) {
-    return transformer.transform(this);
-  }
-
-  @NotNull
   @Override
   public Type type() {
     return Type.Script;
@@ -54,7 +46,7 @@ public class Script extends Node {
 
   @NotNull
   public FunctionBody getBody() {
-    return body;
+    return this.body;
   }
 
   @NotNull

@@ -19,7 +19,6 @@ package com.shapesecurity.shift.ast.expression;
 import com.shapesecurity.shift.ast.Expression;
 import com.shapesecurity.shift.ast.Identifier;
 import com.shapesecurity.shift.ast.types.Type;
-import com.shapesecurity.shift.visitor.TransformerP;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -30,15 +29,6 @@ public class StaticMemberExpression extends MemberExpression {
   public StaticMemberExpression(@NotNull Expression object, @NotNull Identifier property) {
     super(object);
     this.property = property;
-  }
-
-  @NotNull
-  @Override
-  public <ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> ExpressionState transform(
-      @NotNull TransformerP<ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState,
-          ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState,
-          SwitchCaseState, SwitchDefaultState, CatchClauseState> transformer) {
-    return transformer.transform(this);
   }
 
   @NotNull
@@ -56,16 +46,16 @@ public class StaticMemberExpression extends MemberExpression {
 
   @NotNull
   public Identifier getProperty() {
-    return property;
+    return this.property;
   }
 
   @NotNull
   public StaticMemberExpression setObject(@NotNull Expression object) {
-    return new StaticMemberExpression(object, property);
+    return new StaticMemberExpression(object, this.property);
   }
 
   @NotNull
   public StaticMemberExpression setProperty(@NotNull Identifier property) {
-    return new StaticMemberExpression(object, property);
+    return new StaticMemberExpression(this.object, property);
   }
 }

@@ -35,14 +35,6 @@ public class VariableDeclarator extends Node {
   }
 
   @NotNull
-  public <ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> DeclaratorState transform(
-      @NotNull TransformerP<ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState,
-          ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState,
-          SwitchCaseState, SwitchDefaultState, CatchClauseState> transformer) {
-    return transformer.transform(this);
-  }
-
-  @NotNull
   @Override
   public Type type() {
     return Type.VariableDeclarator;
@@ -56,19 +48,19 @@ public class VariableDeclarator extends Node {
 
   @NotNull
   public Identifier getBinding() {
-    return binding;
+    return this.binding;
   }
 
   @NotNull
   public Maybe<Expression> getInit() {
-    return init;
+    return this.init;
   }
 
   public VariableDeclarator setBinding(@NotNull Identifier binding) {
-    return new VariableDeclarator(binding, init);
+    return new VariableDeclarator(binding, this.init);
   }
 
   public VariableDeclarator setInit(@NotNull Maybe<Expression> init) {
-    return new VariableDeclarator(binding, init);
+    return new VariableDeclarator(this.binding, init);
   }
 }

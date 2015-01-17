@@ -20,7 +20,6 @@ import com.shapesecurity.functional.data.Maybe;
 import com.shapesecurity.shift.ast.Identifier;
 import com.shapesecurity.shift.ast.Statement;
 import com.shapesecurity.shift.ast.types.Type;
-import com.shapesecurity.shift.visitor.TransformerP;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -39,15 +38,6 @@ public class ContinueStatement extends Statement {
 
   @NotNull
   @Override
-  public <ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> StatementState transform(
-      @NotNull TransformerP<ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState,
-          ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState,
-          SwitchCaseState, SwitchDefaultState, CatchClauseState> transformer) {
-    return transformer.transform(this);
-  }
-
-  @NotNull
-  @Override
   public Type type() {
     return Type.ContinueStatement;
   }
@@ -59,7 +49,7 @@ public class ContinueStatement extends Statement {
 
   @NotNull
   public Maybe<Identifier> getLabel() {
-    return label;
+    return this.label;
   }
 
   @NotNull

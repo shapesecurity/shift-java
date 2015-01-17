@@ -18,7 +18,6 @@ package com.shapesecurity.shift.ast.expression;
 
 import com.shapesecurity.shift.ast.Expression;
 import com.shapesecurity.shift.ast.types.Type;
-import com.shapesecurity.shift.visitor.TransformerP;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -29,15 +28,6 @@ public class ComputedMemberExpression extends MemberExpression {
   public ComputedMemberExpression(@NotNull Expression object, @NotNull Expression expression) {
     super(object);
     this.expression = expression;
-  }
-
-  @NotNull
-  @Override
-  public <ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> ExpressionState transform(
-      @NotNull TransformerP<ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState,
-          ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState,
-          SwitchCaseState, SwitchDefaultState, CatchClauseState> transformer) {
-    return transformer.transform(this);
   }
 
   @NotNull
@@ -55,16 +45,16 @@ public class ComputedMemberExpression extends MemberExpression {
 
   @NotNull
   public Expression getExpression() {
-    return expression;
+    return this.expression;
   }
 
   @NotNull
   public ComputedMemberExpression setObject(@NotNull Expression object) {
-    return new ComputedMemberExpression(object, expression);
+    return new ComputedMemberExpression(object, this.expression);
   }
 
   @NotNull
   public ComputedMemberExpression setExpression(@NotNull Expression expression) {
-    return new ComputedMemberExpression(object, expression);
+    return new ComputedMemberExpression(this.object, expression);
   }
 }

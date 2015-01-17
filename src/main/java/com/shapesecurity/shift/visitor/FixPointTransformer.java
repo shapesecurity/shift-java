@@ -99,51 +99,51 @@ public class FixPointTransformer extends LazyCloner {
   }
 
   private F<Expression, DirtyState<Expression>> bindExp(@NotNull final List<Branch> path) {
-    return node -> node.transform(this.t).onDirty(node1 -> Director.reduceExpression(this, node1, path).setDirty());
+    return node -> this.t.transform(node).onDirty(node1 -> Director.reduceExpression(this, node1, path).setDirty());
   }
 
   private F<Identifier, DirtyState<Identifier>> bindIdent(@NotNull final List<Branch> path) {
-    return node -> node.transform(this.t).onDirty(node1 -> Director.reduceIdentifier(this, node1, path).setDirty());
+    return node -> this.t.transform(node).onDirty(node1 -> Director.reduceIdentifier(this, node1, path).setDirty());
   }
 
   private F<Statement, DirtyState<Statement>> bindStmt(@NotNull final List<Branch> path) {
-    return node -> node.transform(this.t).onDirty(node1 -> Director.reduceStatement(this, node1, path).setDirty());
+    return node -> this.t.transform(node).onDirty(node1 -> Director.reduceStatement(this, node1, path).setDirty());
   }
 
   private F<Block, DirtyState<Block>> bindBlock(@NotNull final List<Branch> path) {
-    return node -> node.transform(this.t).onDirty(node1 -> Director.reduceBlock(this, node1, path).setDirty());
+    return node -> this.t.transform(node).onDirty(node1 -> Director.reduceBlock(this, node1, path).setDirty());
   }
 
   private F<VariableDeclaration, DirtyState<VariableDeclaration>> bindVarDeclStmt(@NotNull final List<Branch> path) {
-    return node -> node.transform(this.t).onDirty(node1 -> Director.reduceVariableDeclaration(this, node1, path).setDirty());
+    return node -> this.t.transform(node).onDirty(node1 -> Director.reduceVariableDeclaration(this, node1, path).setDirty());
   }
 
   private F<SwitchCase, DirtyState<SwitchCase>> bindCase(@NotNull final List<Branch> path) {
-    return node -> node.transform(this.t).onDirty(node1 -> Director.reduceSwitchCase(this, node1, path).setDirty());
+    return node -> this.t.transform(node).onDirty(node1 -> Director.reduceSwitchCase(this, node1, path).setDirty());
   }
 
   private F<SwitchDefault, DirtyState<SwitchDefault>> bindDefault(@NotNull final List<Branch> path) {
-    return node -> node.transform(this.t).onDirty(node1 -> Director.reduceSwitchDefault(this, node1, path).setDirty());
+    return node -> this.t.transform(node).onDirty(node1 -> Director.reduceSwitchDefault(this, node1, path).setDirty());
   }
 
   private F<Directive, DirtyState<Directive>> bindDirective(@NotNull final List<Branch> path) {
-    return node -> node.transform(this.t).onDirty(node1 -> Director.reduceDirective(this, node1, path).setDirty());
+    return node -> this.t.transform(node).onDirty(node1 -> Director.reduceDirective(this, node1, path).setDirty());
   }
 
   private F<PropertyName, DirtyState<PropertyName>> bindPropName(@NotNull final List<Branch> path) {
-    return node -> node.transform(this.t).onDirty(node1 -> Director.reducePropertyName(this, node1, path).setDirty());
+    return node -> this.t.transform(node).onDirty(node1 -> Director.reducePropertyName(this, node1, path).setDirty());
   }
 
   private F<ObjectProperty, DirtyState<ObjectProperty>> bindProp(@NotNull final List<Branch> path) {
-    return node -> node.transform(this.t).onDirty(node1 -> Director.reduceObjectProperty(this, node1, path).setDirty());
+    return node -> this.t.transform(node).onDirty(node1 -> Director.reduceObjectProperty(this, node1, path).setDirty());
   }
 
   private F<Script, DirtyState<Script>> bindProgram(@NotNull final List<Branch> path) {
-    return node -> node.transform(this.t).onDirty(node1 -> Director.reduceScript(this, node1, path).setDirty());
+    return node -> this.t.transform(node).onDirty(node1 -> Director.reduceScript(this, node1, path).setDirty());
   }
 
   private F<FunctionBody, DirtyState<FunctionBody>> bindProgramBody(@NotNull final List<Branch> path) {
-    return node -> node.transform(this.t).onDirty(node1 -> Director.reduceFunctionBody(this, node1, path).setDirty());
+    return node -> this.t.transform(node).onDirty(node1 -> Director.reduceFunctionBody(this, node1, path).setDirty());
   }
 
   @NotNull
@@ -378,7 +378,7 @@ public class FixPointTransformer extends LazyCloner {
       @NotNull DirtyState<Identifier> binding,
       @NotNull DirtyState<Block> body) {
     return super.reduceCatchClause(node, path, binding, body).bind(
-        node1 -> node1.transform(this.t).onDirty(
+        node1 -> this.t.transform(node1).onDirty(
             node2 -> Director.reduceCatchClause(this, node2, path).setDirty()));
   }
 
@@ -649,7 +649,7 @@ public class FixPointTransformer extends LazyCloner {
       @NotNull DirtyState<Identifier> binding,
       @NotNull Maybe<DirtyState<Expression>> init) {
     return super.reduceVariableDeclarator(node, path, binding, init).bind(
-        node1 -> node1.transform(this.t).onDirty(
+        node1 -> this.t.transform(node1).onDirty(
             variableDeclarator -> Director.reduceVariableDeclarator(this, variableDeclarator, path).setDirty()));
   }
 }

@@ -22,7 +22,6 @@ import com.shapesecurity.shift.ast.FunctionBody;
 import com.shapesecurity.shift.ast.Identifier;
 import com.shapesecurity.shift.ast.Statement;
 import com.shapesecurity.shift.ast.types.Type;
-import com.shapesecurity.shift.visitor.TransformerP;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -42,15 +41,6 @@ public class FunctionDeclaration extends Statement implements Function {
     this.name = name;
     this.parameters = parameters;
     this.body = body;
-  }
-
-  @NotNull
-  @Override
-  public <ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> StatementState transform(
-      @NotNull TransformerP<ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState,
-          ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState,
-          SwitchCaseState, SwitchDefaultState, CatchClauseState> transformer) {
-    return transformer.transform(this);
   }
 
   @NotNull
@@ -75,31 +65,31 @@ public class FunctionDeclaration extends Statement implements Function {
 
   @NotNull
   public Identifier getName() {
-    return name;
+    return this.name;
   }
 
   @NotNull
   public List<Identifier> getParameters() {
-    return parameters;
+    return this.parameters;
   }
 
   @NotNull
   public FunctionBody getBody() {
-    return body;
+    return this.body;
   }
 
   @NotNull
   public FunctionDeclaration setName(@NotNull Identifier name) {
-    return new FunctionDeclaration(name, parameters, body);
+    return new FunctionDeclaration(name, this.parameters, this.body);
   }
 
   @NotNull
   public FunctionDeclaration setParameters(@NotNull List<Identifier> parameters) {
-    return new FunctionDeclaration(name, parameters, body);
+    return new FunctionDeclaration(this.name, parameters, this.body);
   }
 
   @NotNull
   public FunctionDeclaration setBody(@NotNull FunctionBody body) {
-    return new FunctionDeclaration(name, parameters, body);
+    return new FunctionDeclaration(this.name, this.parameters, body);
   }
 }

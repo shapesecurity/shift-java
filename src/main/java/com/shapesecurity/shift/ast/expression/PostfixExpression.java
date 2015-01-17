@@ -20,7 +20,6 @@ import com.shapesecurity.shift.ast.Expression;
 import com.shapesecurity.shift.ast.operators.PostfixOperator;
 import com.shapesecurity.shift.ast.operators.Precedence;
 import com.shapesecurity.shift.ast.types.Type;
-import com.shapesecurity.shift.visitor.TransformerP;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -40,15 +39,6 @@ public class PostfixExpression extends UnaryExpression {
 
   @NotNull
   @Override
-  public <ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> ExpressionState transform(
-      @NotNull TransformerP<ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState,
-          ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState,
-          SwitchCaseState, SwitchDefaultState, CatchClauseState> transformer) {
-    return transformer.transform(this);
-  }
-
-  @NotNull
-  @Override
   public Type type() {
     return Type.PostfixExpression;
   }
@@ -61,16 +51,16 @@ public class PostfixExpression extends UnaryExpression {
 
   @NotNull
   public PostfixOperator getOperator() {
-    return operator;
+    return this.operator;
   }
 
   @NotNull
   public PostfixExpression setOperator(@NotNull PostfixOperator operator) {
-    return new PostfixExpression(operator, operand);
+    return new PostfixExpression(operator, this.operand);
   }
 
   @NotNull
   public PostfixExpression setOperand(@NotNull Expression operand) {
-    return new PostfixExpression(operator, operand);
+    return new PostfixExpression(this.operator, operand);
   }
 }

@@ -22,7 +22,6 @@ import com.shapesecurity.shift.ast.Expression;
 import com.shapesecurity.shift.ast.Statement;
 import com.shapesecurity.shift.ast.VariableDeclaration;
 import com.shapesecurity.shift.ast.types.Type;
-import com.shapesecurity.shift.visitor.TransformerP;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -47,15 +46,6 @@ public class ForStatement extends IterationStatement {
 
   @NotNull
   @Override
-  public <ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> StatementState transform(
-      @NotNull TransformerP<ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState,
-          ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState,
-          SwitchCaseState, SwitchDefaultState, CatchClauseState> transformer) {
-    return transformer.transform(this);
-  }
-
-  @NotNull
-  @Override
   public Type type() {
     return Type.ForStatement;
   }
@@ -71,36 +61,36 @@ public class ForStatement extends IterationStatement {
 
   @NotNull
   public Maybe<Either<VariableDeclaration, Expression>> getInit() {
-    return init;
+    return this.init;
   }
 
   @NotNull
   public Maybe<Expression> getTest() {
-    return test;
+    return this.test;
   }
 
   @NotNull
   public Maybe<Expression> getUpdate() {
-    return update;
+    return this.update;
   }
 
   @NotNull
   public ForStatement setInit(@NotNull Maybe<Either<VariableDeclaration, Expression>> init) {
-    return new ForStatement(init, test, update, body);
+    return new ForStatement(init, this.test, this.update, this.body);
   }
 
   @NotNull
   public ForStatement setTest(@NotNull Maybe<Expression> test) {
-    return new ForStatement(init, test, update, body);
+    return new ForStatement(this.init, test, this.update, this.body);
   }
 
   @NotNull
   public ForStatement setUpdate(@NotNull Maybe<Expression> update) {
-    return new ForStatement(init, test, update, body);
+    return new ForStatement(this.init, this.test, update, this.body);
   }
 
   @NotNull
   public ForStatement setBody(@NotNull Statement body) {
-    return new ForStatement(init, test, update, body);
+    return new ForStatement(this.init, this.test, this.update, body);
   }
 }

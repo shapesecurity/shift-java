@@ -19,7 +19,6 @@ package com.shapesecurity.shift.ast.statement;
 import com.shapesecurity.shift.ast.Expression;
 import com.shapesecurity.shift.ast.Statement;
 import com.shapesecurity.shift.ast.types.Type;
-import com.shapesecurity.shift.visitor.TransformerP;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -30,15 +29,6 @@ public class ExpressionStatement extends Statement {
   public ExpressionStatement(@NotNull Expression expression) {
     super();
     this.expression = expression;
-  }
-
-  @NotNull
-  @Override
-  public <ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> StatementState transform(
-      @NotNull TransformerP<ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState,
-          ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState,
-          SwitchCaseState, SwitchDefaultState, CatchClauseState> transformer) {
-    return transformer.transform(this);
   }
 
   @NotNull
@@ -54,7 +44,7 @@ public class ExpressionStatement extends Statement {
 
   @NotNull
   public Expression getExpression() {
-    return expression;
+    return this.expression;
   }
 
   @NotNull

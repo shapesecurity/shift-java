@@ -43,6 +43,6 @@ public abstract class MemberExpression extends LeftHandSideExpression {
 
   @NotNull
   public Expression getObject() {
-    return object;
+    return this.object;
   }
 }

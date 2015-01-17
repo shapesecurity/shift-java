@@ -35,14 +35,6 @@ public class SwitchCase extends Node {
   }
 
   @NotNull
-  public <ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> SwitchCaseState transform(
-      @NotNull TransformerP<ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState,
-          ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState,
-          SwitchCaseState, SwitchDefaultState, CatchClauseState> transformer) {
-    return transformer.transform(this);
-  }
-
-  @NotNull
   @Override
   public Type type() {
     return Type.SwitchCase;
@@ -56,21 +48,21 @@ public class SwitchCase extends Node {
 
   @NotNull
   public Expression getTest() {
-    return test;
+    return this.test;
   }
 
   @NotNull
   public List<Statement> getConsequent() {
-    return consequent;
+    return this.consequent;
   }
 
   @NotNull
   public SwitchCase setTest(@NotNull Expression test) {
-    return new SwitchCase(test, consequent);
+    return new SwitchCase(test, this.consequent);
   }
 
   @NotNull
   public SwitchCase setConsequent(@NotNull List<Statement> consequent) {
-    return new SwitchCase(test, consequent);
+    return new SwitchCase(this.test, consequent);
   }
 }

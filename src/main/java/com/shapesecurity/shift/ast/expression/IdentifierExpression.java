@@ -18,7 +18,6 @@ package com.shapesecurity.shift.ast.expression;
 
 import com.shapesecurity.shift.ast.Identifier;
 import com.shapesecurity.shift.ast.types.Type;
-import com.shapesecurity.shift.visitor.TransformerP;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -29,15 +28,6 @@ public class IdentifierExpression extends PrimaryExpression {
   public IdentifierExpression(@NotNull Identifier identifier) {
     super();
     this.identifier = identifier;
-  }
-
-  @NotNull
-  @Override
-  public <ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> ExpressionState transform(
-      @NotNull TransformerP<ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState,
-          ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState,
-          SwitchCaseState, SwitchDefaultState, CatchClauseState> transformer) {
-    return transformer.transform(this);
   }
 
   @NotNull
@@ -53,7 +43,7 @@ public class IdentifierExpression extends PrimaryExpression {
 
   @NotNull
   public Identifier getIdentifier() {
-    return identifier;
+    return this.identifier;
   }
 
   @NotNull

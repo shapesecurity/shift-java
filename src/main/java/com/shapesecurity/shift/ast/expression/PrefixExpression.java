@@ -20,7 +20,6 @@ import com.shapesecurity.shift.ast.Expression;
 import com.shapesecurity.shift.ast.operators.Precedence;
 import com.shapesecurity.shift.ast.operators.PrefixOperator;
 import com.shapesecurity.shift.ast.types.Type;
-import com.shapesecurity.shift.visitor.TransformerP;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -40,15 +39,6 @@ public class PrefixExpression extends UnaryExpression {
 
   @NotNull
   @Override
-  public <ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> ExpressionState transform(
-      @NotNull TransformerP<ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState,
-          ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState,
-          SwitchCaseState, SwitchDefaultState, CatchClauseState> transformer) {
-    return transformer.transform(this);
-  }
-
-  @NotNull
-  @Override
   public Type type() {
     return Type.PrefixExpression;
   }
@@ -61,11 +51,11 @@ public class PrefixExpression extends UnaryExpression {
 
   @NotNull
   public PrefixExpression setOperator(@NotNull PrefixOperator operator) {
-    return new PrefixExpression(operator, operand);
+    return new PrefixExpression(operator, this.operand);
   }
 
   @NotNull
   public PrefixExpression setOperand(@NotNull Expression operand) {
-    return new PrefixExpression(operator, operand);
+    return new PrefixExpression(this.operator, operand);
   }
 }

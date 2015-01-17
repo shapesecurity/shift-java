@@ -19,7 +19,6 @@ package com.shapesecurity.shift.ast.statement;
 import com.shapesecurity.shift.ast.Expression;
 import com.shapesecurity.shift.ast.Statement;
 import com.shapesecurity.shift.ast.types.Type;
-import com.shapesecurity.shift.visitor.TransformerP;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -30,15 +29,6 @@ public class DoWhileStatement extends IterationStatement {
   public DoWhileStatement(@NotNull Statement body, @NotNull Expression test) {
     super(body);
     this.test = test;
-  }
-
-  @NotNull
-  @Override
-  public <ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> StatementState transform(
-      @NotNull TransformerP<ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState,
-          ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState,
-          SwitchCaseState, SwitchDefaultState, CatchClauseState> transformer) {
-    return transformer.transform(this);
   }
 
   @NotNull
@@ -55,16 +45,16 @@ public class DoWhileStatement extends IterationStatement {
 
   @NotNull
   public Expression getTest() {
-    return test;
+    return this.test;
   }
 
   @NotNull
   public DoWhileStatement setBody(@NotNull Statement body) {
-    return new DoWhileStatement(body, test);
+    return new DoWhileStatement(body, this.test);
   }
 
   @NotNull
   public DoWhileStatement setTest(@NotNull Expression test) {
-    return new DoWhileStatement(body, test);
+    return new DoWhileStatement(this.body, test);
   }
 }

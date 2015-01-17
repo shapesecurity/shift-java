@@ -21,7 +21,6 @@ import com.shapesecurity.shift.ast.Expression;
 import com.shapesecurity.shift.ast.Statement;
 import com.shapesecurity.shift.ast.VariableDeclaration;
 import com.shapesecurity.shift.ast.types.Type;
-import com.shapesecurity.shift.visitor.TransformerP;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -42,15 +41,6 @@ public class ForInStatement extends IterationStatement {
 
   @NotNull
   @Override
-  public <ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> StatementState transform(
-      @NotNull TransformerP<ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState,
-          ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState,
-          SwitchCaseState, SwitchDefaultState, CatchClauseState> transformer) {
-    return transformer.transform(this);
-  }
-
-  @NotNull
-  @Override
   public Type type() {
     return Type.ForInStatement;
   }
@@ -65,26 +55,26 @@ public class ForInStatement extends IterationStatement {
 
   @NotNull
   public Either<VariableDeclaration, Expression> getLeft() {
-    return left;
+    return this.left;
   }
 
   @NotNull
   public Expression getRight() {
-    return right;
+    return this.right;
   }
 
   @NotNull
   public ForInStatement setLeft(@NotNull Either<VariableDeclaration, Expression> left) {
-    return new ForInStatement(left, right, body);
+    return new ForInStatement(left, this.right, this.body);
   }
 
   @NotNull
   public ForInStatement setRight(@NotNull Expression right) {
-    return new ForInStatement(left, right, body);
+    return new ForInStatement(this.left, right, this.body);
   }
 
   @NotNull
   public ForInStatement setBody(@NotNull Statement body) {
-    return new ForInStatement(left, right, body);
+    return new ForInStatement(this.left, this.right, body);
   }
 }

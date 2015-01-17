@@ -20,7 +20,6 @@ import com.shapesecurity.functional.data.List;
 import com.shapesecurity.shift.ast.Expression;
 import com.shapesecurity.shift.ast.operators.Precedence;
 import com.shapesecurity.shift.ast.types.Type;
-import com.shapesecurity.shift.visitor.TransformerP;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -43,15 +42,6 @@ public class NewExpression extends LeftHandSideExpression {
 
   @NotNull
   @Override
-  public <ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> ExpressionState transform(
-      @NotNull TransformerP<ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState,
-          ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState,
-          SwitchCaseState, SwitchDefaultState, CatchClauseState> transformer) {
-    return transformer.transform(this);
-  }
-
-  @NotNull
-  @Override
   public Type type() {
     return Type.NewExpression;
   }
@@ -64,21 +54,21 @@ public class NewExpression extends LeftHandSideExpression {
 
   @NotNull
   public Expression getCallee() {
-    return callee;
+    return this.callee;
   }
 
   @NotNull
   public List<Expression> getArguments() {
-    return arguments;
+    return this.arguments;
   }
 
   @NotNull
   public NewExpression setCallee(@NotNull Expression callee) {
-    return new NewExpression(callee, arguments);
+    return new NewExpression(callee, this.arguments);
   }
 
   @NotNull
   public NewExpression setArguments(@NotNull List<Expression> arguments) {
-    return new NewExpression(callee, arguments);
+    return new NewExpression(this.callee, arguments);
   }
 }

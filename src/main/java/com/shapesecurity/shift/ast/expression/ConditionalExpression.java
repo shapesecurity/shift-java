@@ -19,7 +19,6 @@ package com.shapesecurity.shift.ast.expression;
 import com.shapesecurity.shift.ast.Expression;
 import com.shapesecurity.shift.ast.operators.Precedence;
 import com.shapesecurity.shift.ast.types.Type;
-import com.shapesecurity.shift.visitor.TransformerP;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -47,15 +46,6 @@ public class ConditionalExpression extends Expression {
 
   @NotNull
   @Override
-  public <ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> ExpressionState transform(
-      @NotNull TransformerP<ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState,
-          ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState,
-          SwitchCaseState, SwitchDefaultState, CatchClauseState> transformer) {
-    return transformer.transform(this);
-  }
-
-  @NotNull
-  @Override
   public Type type() {
     return Type.ConditionalExpression;
   }
@@ -70,31 +60,31 @@ public class ConditionalExpression extends Expression {
 
   @NotNull
   public Expression getTest() {
-    return test;
+    return this.test;
   }
 
   @NotNull
   public Expression getConsequent() {
-    return consequent;
+    return this.consequent;
   }
 
   @NotNull
   public Expression getAlternate() {
-    return alternate;
+    return this.alternate;
   }
 
   @NotNull
   public ConditionalExpression setTest(@NotNull Expression test) {
-    return new ConditionalExpression(test, consequent, alternate);
+    return new ConditionalExpression(test, this.consequent, this.alternate);
   }
 
   @NotNull
   public ConditionalExpression setConsequent(@NotNull Expression consequent) {
-    return new ConditionalExpression(test, consequent, alternate);
+    return new ConditionalExpression(this.test, consequent, this.alternate);
   }
 
   @NotNull
   public ConditionalExpression setAlternate(@NotNull Expression alternate) {
-    return new ConditionalExpression(test, consequent, alternate);
+    return new ConditionalExpression(this.test, this.consequent, alternate);
   }
 }
