@@ -16,6 +16,7 @@
 
 package com.shapesecurity.functional.data;
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -87,24 +88,28 @@ public class ConcatListTest {
 
   @Test
   public void foldTest() {
-    ConcatList.<Integer>empty().foldLeft((x, y) -> {
-      fail("not reached");
-      return 0;
-    }, 0);
-    ConcatList.<Integer>empty().foldRight((x, y) -> {
-      fail("not reached");
-      return 0;
-    }, 0);
+    ConcatList.<Integer>empty().foldLeft(
+        (x, y) -> {
+          fail("not reached");
+          return 0;
+        }, 0);
+    ConcatList.<Integer>empty().foldRight(
+        (x, y) -> {
+          fail("not reached");
+          return 0;
+        }, 0);
     int N = (1 << 15) - 1;
     ConcatList<Integer> list = gen(N);
-    list.foldLeft((result, el) -> {
-      assertEquals(result, el);
-      return result + 1;
-    }, 0);
-    list.foldRight((result, el) -> {
-      assertEquals(result, el);
-      return result - 1;
-    }, N - 1);
+    list.foldLeft(
+        (result, el) -> {
+          assertEquals(result, el);
+          return result + 1;
+        }, 0);
+    list.foldRight(
+        (result, el) -> {
+          assertEquals(result, el);
+          return result - 1;
+        }, N - 1);
   }
 
   @Test
@@ -112,10 +117,11 @@ public class ConcatListTest {
     assertEquals(0, ConcatList.<Integer>empty().reverse().length);
     int N = (1 << 15) - 1;
     ConcatList<Integer> list = gen(N).reverse();
-    list.foldRight((result, el) -> {
-      assertEquals(result, el);
-      return result + 1;
-    }, 0);
+    list.foldRight(
+        (result, el) -> {
+          assertEquals(result, el);
+          return result + 1;
+        }, 0);
   }
 
   @Test
@@ -123,6 +129,13 @@ public class ConcatListTest {
     assertEquals(0, ConcatList.<Integer>empty().toList().length);
     assertEquals(1, ConcatList.single(1).toList().length);
     assertEquals(15, gen(15).toList().length);
+  }
+
+  @Test
+  public void toArrayTest() {
+    assertArrayEquals(new Integer[]{}, ConcatList.<Integer>empty().toArray(Integer[]::new));
+    assertArrayEquals(new Integer[]{1}, ConcatList.single(1).toArray(Integer[]::new));
+    assertArrayEquals(new Integer[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14}, gen(15).toArray(Integer[]::new));
   }
 
   @Test
