@@ -37,14 +37,6 @@ public class SwitchDefault extends Node {
     return Type.SwitchDefault;
   }
 
-  @NotNull
-  public <ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> SwitchDefaultState transform(
-      @NotNull TransformerP<ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState,
-          ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState,
-          SwitchCaseState, SwitchDefaultState, CatchClauseState> transformer) {
-    return transformer.transform(this);
-  }
-
   @Override
   public boolean equals(Object object) {
     return object instanceof SwitchDefault && this.consequent.equals(((SwitchDefault) object).consequent);
@@ -52,7 +44,7 @@ public class SwitchDefault extends Node {
 
   @NotNull
   public List<Statement> getConsequent() {
-    return consequent;
+    return this.consequent;
   }
 
   @NotNull

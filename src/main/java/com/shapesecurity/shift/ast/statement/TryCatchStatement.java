@@ -20,7 +20,6 @@ import com.shapesecurity.shift.ast.Block;
 import com.shapesecurity.shift.ast.CatchClause;
 import com.shapesecurity.shift.ast.Statement;
 import com.shapesecurity.shift.ast.types.Type;
-import com.shapesecurity.shift.visitor.TransformerP;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -38,15 +37,6 @@ public class TryCatchStatement extends Statement {
 
   @NotNull
   @Override
-  public <ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> StatementState transform(
-      @NotNull TransformerP<ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState,
-          ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState,
-          SwitchCaseState, SwitchDefaultState, CatchClauseState> transformer) {
-    return transformer.transform(this);
-  }
-
-  @NotNull
-  @Override
   public Type type() {
     return Type.TryCatchStatement;
   }
@@ -60,21 +50,21 @@ public class TryCatchStatement extends Statement {
 
   @NotNull
   public Block getBody() {
-    return body;
+    return this.body;
   }
 
   @NotNull
   public CatchClause getCatchClause() {
-    return catchClause;
+    return this.catchClause;
   }
 
   @NotNull
   public TryCatchStatement setBody(@NotNull Block body) {
-    return new TryCatchStatement(body, catchClause);
+    return new TryCatchStatement(body, this.catchClause);
   }
 
   @NotNull
   public TryCatchStatement setCatchClause(@NotNull CatchClause catchClause) {
-    return new TryCatchStatement(body, catchClause);
+    return new TryCatchStatement(this.body, catchClause);
   }
 }

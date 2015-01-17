@@ -18,7 +18,6 @@ package com.shapesecurity.shift.ast.property;
 
 import com.shapesecurity.shift.ast.FunctionBody;
 import com.shapesecurity.shift.ast.types.Type;
-import com.shapesecurity.shift.visitor.TransformerP;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -35,15 +34,6 @@ public class Getter extends AccessorProperty {
 
   @NotNull
   @Override
-  public <ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> PropertyState transform(
-      @NotNull TransformerP<ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState,
-          ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState,
-          SwitchCaseState, SwitchDefaultState, CatchClauseState> transformer) {
-    return transformer.transform(this);
-  }
-
-  @NotNull
-  @Override
   public Type type() {
     return Type.Getter;
   }
@@ -56,11 +46,11 @@ public class Getter extends AccessorProperty {
 
   @NotNull
   public Getter setName(@NotNull PropertyName name) {
-    return new Getter(name, body);
+    return new Getter(name, this.body);
   }
 
   @NotNull
   public Getter setBody(@NotNull FunctionBody body) {
-    return new Getter(name, body);
+    return new Getter(this.name, body);
   }
 }

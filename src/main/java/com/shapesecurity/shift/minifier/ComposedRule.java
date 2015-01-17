@@ -91,7 +91,7 @@ public class ComposedRule<T extends MinificationRule> extends MinificationRule {
   private DirtyState<Statement> t(@NotNull Statement node) {
     boolean dirty = false;
     for (T rule : this.rules) {
-      DirtyState<Statement> transform = node.transform(rule);
+      DirtyState<Statement> transform = rule.transform(node);
       dirty = dirty || transform.dirty;
       node = transform.node;
     }
@@ -102,7 +102,7 @@ public class ComposedRule<T extends MinificationRule> extends MinificationRule {
   private DirtyState<Directive> t(@NotNull Directive node) {
     boolean dirty = false;
     for (T rule : this.rules) {
-      DirtyState<Directive> transform = node.transform(rule);
+      DirtyState<Directive> transform = rule.transform(node);
       dirty = dirty || transform.dirty;
       node = transform.node;
     }
@@ -113,7 +113,7 @@ public class ComposedRule<T extends MinificationRule> extends MinificationRule {
   private DirtyState<Expression> t(@NotNull Expression node) {
     boolean dirty = false;
     for (T rule : this.rules) {
-      DirtyState<Expression> transform = node.transform(rule);
+      DirtyState<Expression> transform = rule.transform(node);
       dirty = dirty || transform.dirty;
       node = transform.node;
     }
@@ -124,7 +124,7 @@ public class ComposedRule<T extends MinificationRule> extends MinificationRule {
   private DirtyState<PropertyName> t(@NotNull PropertyName node) {
     boolean dirty = false;
     for (T rule : this.rules) {
-      DirtyState<PropertyName> transform = node.transform(rule);
+      DirtyState<PropertyName> transform = rule.transform(node);
       dirty = dirty || transform.dirty;
       node = transform.node;
     }
@@ -135,7 +135,7 @@ public class ComposedRule<T extends MinificationRule> extends MinificationRule {
   private DirtyState<ObjectProperty> t(@NotNull ObjectProperty node) {
     boolean dirty = false;
     for (T rule : this.rules) {
-      DirtyState<ObjectProperty> transform = node.transform(rule);
+      DirtyState<ObjectProperty> transform = rule.transform(node);
       dirty = dirty || transform.dirty;
       node = transform.node;
     }
@@ -146,7 +146,7 @@ public class ComposedRule<T extends MinificationRule> extends MinificationRule {
   private DirtyState<SwitchCase> t(@NotNull SwitchCase node) {
     boolean dirty = false;
     for (T rule : this.rules) {
-      DirtyState<SwitchCase> transform = node.transform(rule);
+      DirtyState<SwitchCase> transform = rule.transform(node);
       dirty = dirty || transform.dirty;
       node = transform.node;
     }
@@ -157,7 +157,7 @@ public class ComposedRule<T extends MinificationRule> extends MinificationRule {
   private DirtyState<SwitchDefault> t(@NotNull SwitchDefault node) {
     boolean dirty = false;
     for (T rule : this.rules) {
-      DirtyState<SwitchDefault> transform = node.transform(rule);
+      DirtyState<SwitchDefault> transform = rule.transform(node);
       dirty = dirty || transform.dirty;
       node = transform.node;
     }
@@ -169,7 +169,7 @@ public class ComposedRule<T extends MinificationRule> extends MinificationRule {
   public DirtyState<CatchClause> transform(@NotNull CatchClause node) {
     boolean dirty = false;
     for (T rule : this.rules) {
-      DirtyState<CatchClause> transform = node.transform(rule);
+      DirtyState<CatchClause> transform = rule.transform(node);
       dirty = dirty || transform.dirty;
       node = transform.node;
     }
@@ -181,7 +181,7 @@ public class ComposedRule<T extends MinificationRule> extends MinificationRule {
   public DirtyState<Block> transform(@NotNull Block node) {
     boolean dirty = false;
     for (T rule : this.rules) {
-      DirtyState<Block> transform = node.transform(rule);
+      DirtyState<Block> transform = rule.transform(node);
       dirty = dirty || transform.dirty;
       node = transform.node;
     }
@@ -193,7 +193,7 @@ public class ComposedRule<T extends MinificationRule> extends MinificationRule {
   public DirtyState<VariableDeclarator> transform(@NotNull VariableDeclarator node) {
     boolean dirty = false;
     for (T rule : this.rules) {
-      DirtyState<VariableDeclarator> transform = node.transform(rule);
+      DirtyState<VariableDeclarator> transform = rule.transform(node);
       dirty = dirty || transform.dirty;
       node = transform.node;
     }
@@ -325,7 +325,7 @@ public class ComposedRule<T extends MinificationRule> extends MinificationRule {
   public DirtyState<Identifier> transform(@NotNull Identifier node) {
     boolean dirty = false;
     for (T rule : this.rules) {
-      DirtyState<Identifier> transform = node.transform(rule);
+      DirtyState<Identifier> transform = rule.transform(node);
       dirty = dirty || transform.dirty;
       node = transform.node;
     }
@@ -337,7 +337,7 @@ public class ComposedRule<T extends MinificationRule> extends MinificationRule {
   public DirtyState<FunctionBody> transform(@NotNull FunctionBody node) {
     boolean dirty = false;
     for (T rule : this.rules) {
-      DirtyState<FunctionBody> transform = node.transform(rule);
+      DirtyState<FunctionBody> transform = rule.transform(node);
       dirty = dirty || transform.dirty;
       node = transform.node;
     }
@@ -349,7 +349,7 @@ public class ComposedRule<T extends MinificationRule> extends MinificationRule {
   public DirtyState<Script> transform(@NotNull Script node) {
     boolean dirty = false;
     for (T rule : this.rules) {
-      DirtyState<Script> transform = node.transform(rule);
+      DirtyState<Script> transform = rule.transform(node);
       dirty = dirty || transform.dirty;
       node = transform.node;
     }
@@ -523,7 +523,7 @@ public class ComposedRule<T extends MinificationRule> extends MinificationRule {
   public DirtyState<VariableDeclaration> transform(@NotNull VariableDeclaration node) {
     boolean dirty = false;
     for (T rule : this.rules) {
-      DirtyState<VariableDeclaration> transform = node.transform(rule);
+      DirtyState<VariableDeclaration> transform = rule.transform(node);
       dirty = dirty || transform.dirty;
       node = transform.node;
     }

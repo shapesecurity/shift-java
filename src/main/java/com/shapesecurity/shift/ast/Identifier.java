@@ -16,11 +16,7 @@
 
 package com.shapesecurity.shift.ast;
 
-import com.shapesecurity.functional.data.List;
 import com.shapesecurity.shift.ast.types.Type;
-import com.shapesecurity.shift.path.Branch;
-import com.shapesecurity.shift.visitor.ReducerP;
-import com.shapesecurity.shift.visitor.TransformerP;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -37,14 +33,6 @@ public final class Identifier extends Node {
   public Identifier(@NotNull String name) {
     super();
     this.name = name;
-  }
-
-  @NotNull
-  public <ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> IdentifierState transform(
-      @NotNull TransformerP<ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState,
-          ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState,
-          SwitchCaseState, SwitchDefaultState, CatchClauseState> transformer) {
-    return transformer.transform(this);
   }
 
   @NotNull

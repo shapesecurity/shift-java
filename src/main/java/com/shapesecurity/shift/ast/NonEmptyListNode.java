@@ -42,6 +42,6 @@ public class NonEmptyListNode<T> extends Node {
   @NotNull
   @Override
   public GenType genType() {
-    return genType;
+    return this.genType;
   }
 }

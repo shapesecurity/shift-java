@@ -20,7 +20,6 @@ import com.shapesecurity.shift.ast.Expression;
 import com.shapesecurity.shift.ast.operators.BinaryOperator;
 import com.shapesecurity.shift.ast.operators.Precedence;
 import com.shapesecurity.shift.ast.types.Type;
-import com.shapesecurity.shift.visitor.TransformerP;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -47,15 +46,6 @@ public class BinaryExpression extends Expression {
 
   @NotNull
   @Override
-  public <ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> ExpressionState transform(
-      @NotNull TransformerP<ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState,
-          ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState,
-          SwitchCaseState, SwitchDefaultState, CatchClauseState> transformer) {
-    return transformer.transform(this);
-  }
-
-  @NotNull
-  @Override
   public Type type() {
     return Type.BinaryExpression;
   }
@@ -69,31 +59,31 @@ public class BinaryExpression extends Expression {
 
   @NotNull
   public BinaryOperator getOperator() {
-    return operator;
+    return this.operator;
   }
 
   @NotNull
   public Expression getLeft() {
-    return left;
+    return this.left;
   }
 
   @NotNull
   public Expression getRight() {
-    return right;
+    return this.right;
   }
 
   @NotNull
   public BinaryExpression setOperator(@NotNull BinaryOperator operator) {
-    return new BinaryExpression(operator, left, right);
+    return new BinaryExpression(operator, this.left, this.right);
   }
 
   @NotNull
   public BinaryExpression setLeft(@NotNull Expression left) {
-    return new BinaryExpression(operator, left, right);
+    return new BinaryExpression(this.operator, left, this.right);
   }
 
   @NotNull
   public BinaryExpression setRight(@NotNull Expression right) {
-    return new BinaryExpression(operator, left, right);
+    return new BinaryExpression(this.operator, this.left, right);
   }
 }

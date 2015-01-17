@@ -19,7 +19,6 @@ package com.shapesecurity.shift.ast.statement;
 import com.shapesecurity.shift.ast.Expression;
 import com.shapesecurity.shift.ast.Statement;
 import com.shapesecurity.shift.ast.types.Type;
-import com.shapesecurity.shift.visitor.TransformerP;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -37,15 +36,6 @@ public class WithStatement extends Statement {
 
   @NotNull
   @Override
-  public <ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> StatementState transform(
-      @NotNull TransformerP<ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState,
-          ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState,
-          SwitchCaseState, SwitchDefaultState, CatchClauseState> transformer) {
-    return transformer.transform(this);
-  }
-
-  @NotNull
-  @Override
   public Type type() {
     return Type.WithStatement;
   }
@@ -58,19 +48,19 @@ public class WithStatement extends Statement {
 
   @NotNull
   public Expression getObject() {
-    return object;
+    return this.object;
   }
 
   @NotNull
   public Statement getBody() {
-    return body;
+    return this.body;
   }
 
   public WithStatement setObject(@NotNull Expression object) {
-    return new WithStatement(object, body);
+    return new WithStatement(object, this.body);
   }
 
   public WithStatement setBody(@NotNull Statement body) {
-    return new WithStatement(object, body);
+    return new WithStatement(this.object, body);
   }
 }

@@ -18,7 +18,6 @@ package com.shapesecurity.shift.ast.directive;
 
 import com.shapesecurity.shift.ast.Directive;
 import com.shapesecurity.shift.ast.types.Type;
-import com.shapesecurity.shift.visitor.TransformerP;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -35,15 +34,6 @@ public class UnknownDirective extends Directive {
   @Override
   public CharSequence getContents() {
     return this.value;
-  }
-
-  @NotNull
-  @Override
-  public <ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> DirectiveState transform(
-      @NotNull TransformerP<ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState,
-          ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState,
-          SwitchCaseState, SwitchDefaultState, CatchClauseState> transformer) {
-    return transformer.transform(this);
   }
 
   @NotNull
