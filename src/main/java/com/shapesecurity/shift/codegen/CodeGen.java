@@ -42,6 +42,7 @@ import com.shapesecurity.shift.ast.expression.ConditionalExpression;
 import com.shapesecurity.shift.ast.expression.FunctionExpression;
 import com.shapesecurity.shift.ast.expression.IdentifierExpression;
 import com.shapesecurity.shift.ast.expression.LiteralBooleanExpression;
+import com.shapesecurity.shift.ast.expression.LiteralInfinityExpression;
 import com.shapesecurity.shift.ast.expression.LiteralNullExpression;
 import com.shapesecurity.shift.ast.expression.LiteralNumericExpression;
 import com.shapesecurity.shift.ast.expression.LiteralRegExpExpression;
@@ -54,7 +55,6 @@ import com.shapesecurity.shift.ast.expression.StaticMemberExpression;
 import com.shapesecurity.shift.ast.expression.ThisExpression;
 import com.shapesecurity.shift.ast.operators.BinaryOperator;
 import com.shapesecurity.shift.ast.operators.Precedence;
-import com.shapesecurity.shift.ast.operators.PrefixOperator;
 import com.shapesecurity.shift.ast.property.DataProperty;
 import com.shapesecurity.shift.ast.property.Getter;
 import com.shapesecurity.shift.ast.property.PropertyName;
@@ -194,6 +194,12 @@ public final class CodeGen implements Reducer<CodeRep> {
   @NotNull
   public CodeRep reduceLiteralNumericExpression(@NotNull LiteralNumericExpression node, @NotNull List<Branch> path) {
     return factory.num(node.value);
+  }
+
+  @NotNull
+  @Override
+  public CodeRep reduceLiteralInfinityExpression(@NotNull LiteralInfinityExpression node, @NotNull List<Branch> path) {
+    return factory.token("2e308");
   }
 
   @Override
@@ -678,8 +684,14 @@ public final class CodeGen implements Reducer<CodeRep> {
   @NotNull
   @Override
   public CodeRep reducePropertyName(@NotNull PropertyName node, @NotNull List<Branch> path) {
-    if (node.kind == PropertyNameKind.Number || node.kind == PropertyNameKind.Identifier) {
-      return (factory.token(node.value));
+    if (node.kind == PropertyNameKind.Number) {
+      if (node.value.equals("Infinity")) {
+        return factory.token("2e308");
+      } else {
+        return factory.token(node.value);
+      }
+    } else if (node.kind == PropertyNameKind.Identifier) {
+      return factory.token(node.value);
     }
     return factory.token(Utils.escapeStringLiteral(node.value));
   }
