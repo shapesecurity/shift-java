@@ -77,7 +77,8 @@ class TokenStream {
         lastChar == '/' && (rightChar == 'i' || rightChar == '/')) {
       this.writer.append(' ');
     }
-    if (this.writer.length() >= 2 && tokenStr.equals("--") && this.writer.substring(this.writer.length()-2, this.writer.length()).equals("<!")) {
+    if (this.writer.length() >= 2 && tokenStr.equals("--") && this.writer.substring(this.writer.length() - 2,
+        this.writer.length()).equals("<!")) {
       this.writer.append(' ');
     }
 
