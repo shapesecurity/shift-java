@@ -32,12 +32,12 @@ public class EitherNode<A, B> extends Node {
 
   public EitherNode(@NotNull Either<A, B> either, @NotNull EitherType eType) {
     this.either = either;
-    genType = eType;
+    this.genType = eType;
   }
 
   public EitherNode(@NotNull Either<A, B> either, @NotNull GenType aType, @NotNull GenType bType) {
     this.either = either;
-    genType = EitherType.from(aType, bType);
+    this.genType = EitherType.from(aType, bType);
   }
 
   @NotNull

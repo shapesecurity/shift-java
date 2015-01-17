@@ -16,17 +16,9 @@
 
 package com.shapesecurity.shift.ast;
 
-import com.shapesecurity.shift.visitor.TransformerP;
-
 import org.jetbrains.annotations.NotNull;
 
 public abstract class Directive extends Node {
   @NotNull
   public abstract CharSequence getContents();
-
-  @NotNull
-  public abstract <ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> DirectiveState transform(
-      @NotNull TransformerP<ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState,
-          ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState,
-          SwitchCaseState, SwitchDefaultState, CatchClauseState> transformer);
 }

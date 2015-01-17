@@ -20,7 +20,6 @@ import com.shapesecurity.functional.data.Maybe;
 import com.shapesecurity.shift.ast.Expression;
 import com.shapesecurity.shift.ast.Statement;
 import com.shapesecurity.shift.ast.types.Type;
-import com.shapesecurity.shift.visitor.TransformerP;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -31,15 +30,6 @@ public class ReturnStatement extends Statement {
   public ReturnStatement(@NotNull Maybe<Expression> expression) {
     super();
     this.expression = expression;
-  }
-
-  @NotNull
-  @Override
-  public <ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> StatementState transform(
-      @NotNull TransformerP<ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState,
-          ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState,
-          SwitchCaseState, SwitchDefaultState, CatchClauseState> transformer) {
-    return transformer.transform(this);
   }
 
   @NotNull
@@ -55,7 +45,7 @@ public class ReturnStatement extends Statement {
 
   @NotNull
   public Maybe<Expression> getExpression() {
-    return expression;
+    return this.expression;
   }
 
   @NotNull

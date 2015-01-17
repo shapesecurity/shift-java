@@ -31,6 +31,6 @@ public abstract class IterationStatement extends Statement {
 
   @NotNull
   public Statement getBody() {
-    return body;
+    return this.body;
   }
 }

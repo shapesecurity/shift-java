@@ -19,7 +19,6 @@ package com.shapesecurity.shift.ast.property;
 import com.shapesecurity.shift.ast.FunctionBody;
 import com.shapesecurity.shift.ast.Identifier;
 import com.shapesecurity.shift.ast.types.Type;
-import com.shapesecurity.shift.visitor.TransformerP;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -40,15 +39,6 @@ public class Setter extends AccessorProperty {
 
   @NotNull
   @Override
-  public <ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> PropertyState transform(
-      @NotNull TransformerP<ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState,
-          ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState,
-          SwitchCaseState, SwitchDefaultState, CatchClauseState> transformer) {
-    return transformer.transform(this);
-  }
-
-  @NotNull
-  @Override
   public Type type() {
     return Type.Setter;
   }
@@ -63,21 +53,21 @@ public class Setter extends AccessorProperty {
 
   @NotNull
   public Identifier getParameter() {
-    return parameter;
+    return this.parameter;
   }
 
   @NotNull
   public Setter setName(@NotNull PropertyName name) {
-    return new Setter(name, parameter, body);
+    return new Setter(name, this.parameter, this.body);
   }
 
   @NotNull
   public Setter setParameter(@NotNull Identifier parameter) {
-    return new Setter(name, parameter, body);
+    return new Setter(this.name, parameter, this.body);
   }
 
   @NotNull
   public Setter setBody(@NotNull FunctionBody body) {
-    return new Setter(name, parameter, body);
+    return new Setter(this.name, this.parameter, body);
   }
 }

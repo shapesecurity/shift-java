@@ -21,7 +21,6 @@ import com.shapesecurity.shift.ast.Expression;
 import com.shapesecurity.shift.ast.Statement;
 import com.shapesecurity.shift.ast.SwitchCase;
 import com.shapesecurity.shift.ast.types.Type;
-import com.shapesecurity.shift.visitor.TransformerP;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -39,16 +38,6 @@ public class SwitchStatement extends Statement {
 
   @NotNull
   @Override
-  public <ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> StatementState
-  transform(
-      @NotNull TransformerP<ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState,
-          ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState,
-          SwitchCaseState, SwitchDefaultState, CatchClauseState> transformer) {
-    return transformer.transform(this);
-  }
-
-  @NotNull
-  @Override
   public Type type() {
     return Type.SwitchStatement;
   }
@@ -61,21 +50,21 @@ public class SwitchStatement extends Statement {
 
   @NotNull
   public Expression getDiscriminant() {
-    return discriminant;
+    return this.discriminant;
   }
 
   @NotNull
   public List<SwitchCase> getCases() {
-    return cases;
+    return this.cases;
   }
 
   @NotNull
   public SwitchStatement setDiscriminant(@NotNull Expression discriminant) {
-    return new SwitchStatement(discriminant, cases);
+    return new SwitchStatement(discriminant, this.cases);
   }
 
   @NotNull
   public SwitchStatement setCases(@NotNull List<SwitchCase> cases) {
-    return new SwitchStatement(discriminant, cases);
+    return new SwitchStatement(this.discriminant, cases);
   }
 }

@@ -20,7 +20,6 @@ import com.shapesecurity.functional.data.Maybe;
 import com.shapesecurity.shift.ast.Expression;
 import com.shapesecurity.shift.ast.Statement;
 import com.shapesecurity.shift.ast.types.Type;
-import com.shapesecurity.shift.visitor.TransformerP;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -49,15 +48,6 @@ public class IfStatement extends Statement {
 
   @NotNull
   @Override
-  public <ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> StatementState transform(
-      @NotNull TransformerP<ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState,
-          ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState,
-          SwitchCaseState, SwitchDefaultState, CatchClauseState> transformer) {
-    return transformer.transform(this);
-  }
-
-  @NotNull
-  @Override
   public Type type() {
     return Type.IfStatement;
   }
@@ -72,32 +62,32 @@ public class IfStatement extends Statement {
 
   @NotNull
   public Expression getTest() {
-    return test;
+    return this.test;
   }
 
   @NotNull
   public Statement getConsequent() {
-    return consequent;
+    return this.consequent;
   }
 
   @NotNull
   public Maybe<Statement> getAlternate() {
-    return alternate;
+    return this.alternate;
   }
 
   @NotNull
   public IfStatement setTest(@NotNull Expression test) {
-    return new IfStatement(test, consequent, alternate);
+    return new IfStatement(test, this.consequent, this.alternate);
   }
 
   @NotNull
   public IfStatement setConsequent(@NotNull Statement consequent) {
-    return new IfStatement(test, consequent, alternate);
+    return new IfStatement(this.test, consequent, this.alternate);
   }
 
   @NotNull
   public IfStatement setAlternate(@NotNull Maybe<Statement> alternate) {
-    return new IfStatement(test, consequent, alternate);
+    return new IfStatement(this.test, this.consequent, alternate);
   }
 
 

@@ -22,7 +22,6 @@ import com.shapesecurity.shift.ast.Function;
 import com.shapesecurity.shift.ast.FunctionBody;
 import com.shapesecurity.shift.ast.Identifier;
 import com.shapesecurity.shift.ast.types.Type;
-import com.shapesecurity.shift.visitor.TransformerP;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -46,15 +45,6 @@ public class FunctionExpression extends PrimaryExpression implements Function {
 
   @NotNull
   @Override
-  public <ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> ExpressionState transform(
-      @NotNull TransformerP<ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState,
-          ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState,
-          SwitchCaseState, SwitchDefaultState, CatchClauseState> transformer) {
-    return transformer.transform(this);
-  }
-
-  @NotNull
-  @Override
   public Type type() {
     return Type.FunctionExpression;
   }
@@ -69,36 +59,36 @@ public class FunctionExpression extends PrimaryExpression implements Function {
   @NotNull
   @Override
   public List<Identifier> parameters() {
-    return parameters;
+    return this.parameters;
   }
 
   @NotNull
   public Maybe<Identifier> getName() {
-    return name;
+    return this.name;
   }
 
   @NotNull
   public List<Identifier> getParameters() {
-    return parameters;
+    return this.parameters;
   }
 
   @NotNull
   public FunctionBody getBody() {
-    return body;
+    return this.body;
   }
 
   @NotNull
   public FunctionExpression setName(@NotNull Maybe<Identifier> name) {
-    return new FunctionExpression(name, parameters, body);
+    return new FunctionExpression(name, this.parameters, this.body);
   }
 
   @NotNull
   public FunctionExpression setParameters(@NotNull List<Identifier> parameters) {
-    return new FunctionExpression(name, parameters, body);
+    return new FunctionExpression(this.name, parameters, this.body);
   }
 
   @NotNull
   public FunctionExpression setBody(@NotNull FunctionBody body) {
-    return new FunctionExpression(name, parameters, body);
+    return new FunctionExpression(this.name, this.parameters, body);
   }
 }

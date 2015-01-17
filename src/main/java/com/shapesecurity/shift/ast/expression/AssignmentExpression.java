@@ -20,7 +20,6 @@ import com.shapesecurity.shift.ast.Expression;
 import com.shapesecurity.shift.ast.operators.Assignment;
 import com.shapesecurity.shift.ast.operators.Precedence;
 import com.shapesecurity.shift.ast.types.Type;
-import com.shapesecurity.shift.visitor.TransformerP;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -50,15 +49,6 @@ public class AssignmentExpression extends Expression {
 
   @NotNull
   @Override
-  public <ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> ExpressionState transform(
-      @NotNull TransformerP<ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState,
-          ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState,
-          SwitchCaseState, SwitchDefaultState, CatchClauseState> transformer) {
-    return transformer.transform(this);
-  }
-
-  @NotNull
-  @Override
   public Type type() {
     return Type.AssignmentExpression;
   }
@@ -72,31 +62,31 @@ public class AssignmentExpression extends Expression {
 
   @NotNull
   public Assignment getOperator() {
-    return operator;
+    return this.operator;
   }
 
   @NotNull
   public Expression getBinding() {
-    return binding;
+    return this.binding;
   }
 
   @NotNull
   public Expression getExpression() {
-    return expression;
+    return this.expression;
   }
 
   @NotNull
   public AssignmentExpression setOperator(@NotNull Assignment operator) {
-    return new AssignmentExpression(operator, binding, expression);
+    return new AssignmentExpression(operator, this.binding, this.expression);
   }
 
   @NotNull
   public AssignmentExpression setBinding(@NotNull Expression binding) {
-    return new AssignmentExpression(operator, binding, expression);
+    return new AssignmentExpression(this.operator, binding, this.expression);
   }
 
   @NotNull
   public AssignmentExpression setExpression(@NotNull Expression expression) {
-    return new AssignmentExpression(operator, binding, expression);
+    return new AssignmentExpression(this.operator, this.binding, expression);
   }
 }

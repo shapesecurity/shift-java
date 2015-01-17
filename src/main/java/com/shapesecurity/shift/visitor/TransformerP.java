@@ -18,9 +18,12 @@ package com.shapesecurity.shift.visitor;
 
 import com.shapesecurity.shift.ast.Block;
 import com.shapesecurity.shift.ast.CatchClause;
+import com.shapesecurity.shift.ast.Directive;
+import com.shapesecurity.shift.ast.Expression;
 import com.shapesecurity.shift.ast.FunctionBody;
 import com.shapesecurity.shift.ast.Identifier;
 import com.shapesecurity.shift.ast.Script;
+import com.shapesecurity.shift.ast.Statement;
 import com.shapesecurity.shift.ast.SwitchCase;
 import com.shapesecurity.shift.ast.SwitchDefault;
 import com.shapesecurity.shift.ast.VariableDeclaration;
@@ -49,6 +52,7 @@ import com.shapesecurity.shift.ast.expression.StaticMemberExpression;
 import com.shapesecurity.shift.ast.expression.ThisExpression;
 import com.shapesecurity.shift.ast.property.DataProperty;
 import com.shapesecurity.shift.ast.property.Getter;
+import com.shapesecurity.shift.ast.property.ObjectProperty;
 import com.shapesecurity.shift.ast.property.PropertyName;
 import com.shapesecurity.shift.ast.property.Setter;
 import com.shapesecurity.shift.ast.statement.BlockStatement;
@@ -76,6 +80,123 @@ import com.shapesecurity.shift.ast.statement.WithStatement;
 import org.jetbrains.annotations.NotNull;
 
 public interface TransformerP<ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> {
+  @NotNull
+  default StatementState transform(@NotNull Statement node) {
+    switch (node.type()) {
+    case BlockStatement:
+      return this.transform((BlockStatement) node);
+    case BreakStatement:
+      return this.transform((BreakStatement) node);
+    case ContinueStatement:
+      return this.transform((ContinueStatement) node);
+    case DebuggerStatement:
+      return this.transform((DebuggerStatement) node);
+    case DoWhileStatement:
+      return this.transform((DoWhileStatement) node);
+    case EmptyStatement:
+      return this.transform((EmptyStatement) node);
+    case ExpressionStatement:
+      return this.transform((ExpressionStatement) node);
+    case ForInStatement:
+      return this.transform((ForInStatement) node);
+    case ForStatement:
+      return this.transform((ForStatement) node);
+    case IfStatement:
+      return this.transform((IfStatement) node);
+    case LabeledStatement:
+      return this.transform((LabeledStatement) node);
+    case ReturnStatement:
+      return this.transform((ReturnStatement) node);
+    case SwitchStatement:
+      return this.transform((SwitchStatement) node);
+    case SwitchStatementWithDefault:
+      return this.transform((SwitchStatementWithDefault) node);
+    case ThrowStatement:
+      return this.transform((ThrowStatement) node);
+    case TryCatchStatement:
+      return this.transform((TryCatchStatement) node);
+    case TryFinallyStatement:
+      return this.transform((TryFinallyStatement) node);
+    case VariableDeclarationStatement:
+      return this.transform((VariableDeclarationStatement) node);
+    case WhileStatement:
+      return this.transform((WhileStatement) node);
+    case WithStatement:
+      return this.transform((WithStatement) node);
+    case FunctionDeclaration:
+      return this.transform((FunctionDeclaration) node);
+    default:
+      throw new RuntimeException("not reached");
+    }
+  }
+
+  @NotNull
+  default ExpressionState transform(@NotNull Expression node) {
+    switch (node.type()) {
+    case LiteralBooleanExpression:
+      return this.transform((LiteralBooleanExpression) node);
+    case LiteralNullExpression:
+      return this.transform((LiteralNullExpression) node);
+    case LiteralInfinityExpression:
+      return this.transform((LiteralInfinityExpression) node);
+    case LiteralNumericExpression:
+      return this.transform((LiteralNumericExpression) node);
+    case LiteralRegExpExpression:
+      return this.transform((LiteralRegExpExpression) node);
+    case LiteralStringExpression:
+      return this.transform((LiteralStringExpression) node);
+    case ArrayExpression:
+      return this.transform((ArrayExpression) node);
+    case ObjectExpression:
+      return this.transform((ObjectExpression) node);
+    case AssignmentExpression:
+      return this.transform((AssignmentExpression) node);
+    case BinaryExpression:
+      return this.transform((BinaryExpression) node);
+    case CallExpression:
+      return this.transform((CallExpression) node);
+    case ComputedMemberExpression:
+      return this.transform((ComputedMemberExpression) node);
+    case ConditionalExpression:
+      return this.transform((ConditionalExpression) node);
+    case IdentifierExpression:
+      return this.transform((IdentifierExpression) node);
+    case NewExpression:
+      return this.transform((NewExpression) node);
+    case PostfixExpression:
+      return this.transform((PostfixExpression) node);
+    case PrefixExpression:
+      return this.transform((PrefixExpression) node);
+    case StaticMemberExpression:
+      return this.transform((StaticMemberExpression) node);
+    case ThisExpression:
+      return this.transform((ThisExpression) node);
+    case FunctionExpression:
+      return this.transform((FunctionExpression) node);
+    default:
+      throw new RuntimeException("not reached");
+    }
+  }
+
+  @NotNull
+  default PropertyState transform(@NotNull ObjectProperty node) {
+    if (node instanceof DataProperty) {
+      return this.transform((DataProperty) node);
+    } else if (node instanceof Getter) {
+      return this.transform((Getter) node);
+    } else {
+      return this.transform((Setter) node);
+    }
+  }
+
+  @NotNull
+  default DirectiveState transform(@NotNull Directive node) {
+    if (node instanceof UnknownDirective) {
+      return this.transform((UnknownDirective) node);
+    }
+    return this.transform((UseStrictDirective) node);
+  }
+
   @NotNull
   CatchClauseState transform(@NotNull CatchClause node);
 

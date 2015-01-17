@@ -19,7 +19,6 @@ package com.shapesecurity.shift.ast.statement;
 import com.shapesecurity.shift.ast.Expression;
 import com.shapesecurity.shift.ast.Statement;
 import com.shapesecurity.shift.ast.types.Type;
-import com.shapesecurity.shift.visitor.TransformerP;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -30,15 +29,6 @@ public class WhileStatement extends IterationStatement {
   public WhileStatement(@NotNull Expression test, @NotNull Statement body) {
     super(body);
     this.test = test;
-  }
-
-  @NotNull
-  @Override
-  public <ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> StatementState transform(
-      @NotNull TransformerP<ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState,
-          ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState,
-          SwitchCaseState, SwitchDefaultState, CatchClauseState> transformer) {
-    return transformer.transform(this);
   }
 
   @NotNull
@@ -55,16 +45,16 @@ public class WhileStatement extends IterationStatement {
 
   @NotNull
   public Expression getTest() {
-    return test;
+    return this.test;
   }
 
   @NotNull
   public WhileStatement setTest(@NotNull Expression test) {
-    return new WhileStatement(test, body);
+    return new WhileStatement(test, this.body);
   }
 
   @NotNull
   public WhileStatement setBody(@NotNull Statement body) {
-    return new WhileStatement(test, body);
+    return new WhileStatement(this.test, body);
   }
 }

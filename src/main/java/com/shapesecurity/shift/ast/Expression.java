@@ -17,16 +17,8 @@
 package com.shapesecurity.shift.ast;
 
 import com.shapesecurity.shift.ast.operators.Precedence;
-import com.shapesecurity.shift.visitor.TransformerP;
-
-import org.jetbrains.annotations.NotNull;
 
 public abstract class Expression extends Node {
-  @NotNull
-  public abstract <ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> ExpressionState transform(
-      @NotNull TransformerP<ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState,
-          ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState,
-          SwitchCaseState, SwitchDefaultState, CatchClauseState> transformer);
 
   public abstract Precedence getPrecedence();
 }
