@@ -19,27 +19,22 @@ package com.shapesecurity.functional;
 import org.jetbrains.annotations.NotNull;
 
 @FunctionalInterface
-public interface F2<A, B, R> {
+public interface F3<A, B, C, R> {
   @NotNull
-  public abstract R apply(@NotNull A a, @NotNull B b);
+  public abstract R apply(@NotNull A a, @NotNull B b, @NotNull C c);
 
   @NotNull
-  public default R applyTuple(@NotNull Pair<A, B> args) {
-    return apply(args.a, args.b);
+  public default R applyTuple(@NotNull Tuple3<A, B, C> args) {
+    return apply(args.a, args.b, args.c);
   }
 
   @NotNull
-  public default F<B, R> curry(@NotNull final A a) {
-    return b -> apply(a, b);
+  public default F2<B, C, R> curry(@NotNull final A a) {
+    return (b, c) -> apply(a, b, c);
   }
 
   @NotNull
-  public default F<A, F<B, R>> curry() {
-    return a -> b -> apply(a, b);
-  }
-
-  @NotNull
-  public default F2<B, A, R> flip() {
-    return (b, a) -> apply(a, b);
+  public default F<A, F<B, F<C, R>>> curry() {
+    return a -> b -> c -> apply(a, b, c);
   }
 }
