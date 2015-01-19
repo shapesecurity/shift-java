@@ -16,6 +16,7 @@
 
 package com.shapesecurity.shift.scope;
 
+import com.shapesecurity.functional.data.HashTable;
 import com.shapesecurity.functional.data.List;
 import com.shapesecurity.functional.data.Maybe;
 import com.shapesecurity.shift.ast.Identifier;
@@ -34,7 +35,7 @@ public class Scope {
   public final Node astNode;
   @NotNull
   // TODO: immutable data structure.
-  public final HashMap<String, ProjectionTree<Reference>> through;
+  public final HashTable<String, ProjectionTree<Reference>> through;
   @NotNull
   public final List<Scope> children;
   @NotNull
@@ -45,8 +46,12 @@ public class Scope {
   public final List<Variable> blockScopedTiedVar;
 
   Scope(
-      @NotNull List<Scope> children, @NotNull List<Variable> variables, @NotNull List<Variable> blockScopedTiedVar,
-      @NotNull HashMap<String, ProjectionTree<Reference>> through, @NotNull Type type, boolean isDynamic,
+      @NotNull List<Scope> children,
+      @NotNull List<Variable> variables,
+      @NotNull List<Variable> blockScopedTiedVar,
+      @NotNull HashTable<String, ProjectionTree<Reference>> through,
+      @NotNull Type type,
+      boolean isDynamic,
       @NotNull Node astNode) {
     this.children = children;
     this.through = through;

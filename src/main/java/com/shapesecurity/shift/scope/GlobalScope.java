@@ -16,12 +16,11 @@
 
 package com.shapesecurity.shift.scope;
 
+import com.shapesecurity.functional.Pair;
+import com.shapesecurity.functional.data.HashTable;
 import com.shapesecurity.functional.data.List;
 import com.shapesecurity.shift.ast.Identifier;
 import com.shapesecurity.shift.ast.Node;
-
-import java.util.HashMap;
-import java.util.Map;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -30,11 +29,11 @@ public class GlobalScope extends Scope {
       @NotNull List<Scope> children,
       @NotNull List<Variable> variables,
       @NotNull List<Variable> blockScopedTiedVar,
-      @NotNull HashMap<String, ProjectionTree<Reference>> through,
+      @NotNull HashTable<String, ProjectionTree<Reference>> through,
       @NotNull Node astNode) {
     super(children, variables, blockScopedTiedVar, through, Type.Global, true, astNode);
-    for (Map.Entry<String, ProjectionTree<Reference>> var : through.entrySet()) {
-      this.variables.put(var.getKey(), new Variable(var.getKey(), var.getValue(), ProjectionTree.nil()));
+    for (Pair<String, ProjectionTree<Reference>> var : through.entries()) {
+      this.variables.put(var.a, new Variable(var.a, var.b, ProjectionTree.nil()));
     }
   }
 
