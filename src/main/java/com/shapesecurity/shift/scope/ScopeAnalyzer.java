@@ -627,8 +627,8 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
     @NotNull
     public State target(@Nullable State id) {
       assert id != null;
-      return new State(freeIdentifiers, functionScopedDeclarations, blockScopedDeclarations,
-          functionScopedInit, blockScopedTiedVar, children, dynamic,
+      return new State(this.freeIdentifiers, this.functionScopedDeclarations, this.blockScopedDeclarations,
+          this.functionScopedInit, this.blockScopedTiedVar, this.children, this.dynamic,
           id.lastPath, id.lastIdentifier, id.lastDeclaratorWasInit);
     }
   }
