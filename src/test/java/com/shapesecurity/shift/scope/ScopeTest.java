@@ -39,11 +39,6 @@ import static com.shapesecurity.shift.path.StaticBranch.STATEMENTS;
 import static com.shapesecurity.shift.path.StaticBranch.TEST;
 import static org.junit.Assert.assertTrue;
 
-import org.jetbrains.annotations.NotNull;
-
-import java.util.HashMap;
-import java.util.Map;
-
 import com.shapesecurity.functional.Pair;
 import com.shapesecurity.functional.data.List;
 import com.shapesecurity.functional.data.Maybe;
@@ -56,6 +51,10 @@ import com.shapesecurity.shift.parser.Parser;
 import com.shapesecurity.shift.path.Branch;
 import com.shapesecurity.shift.path.IndexedBranch;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import org.jetbrains.annotations.NotNull;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -1202,7 +1201,7 @@ public class ScopeTest extends TestBase {
         .d(BODY)
         .d(STATEMENTS, 0)
         .d(
-        EXPRESSION).d(CALLEE).d(IDENTIFIER).done();
+            EXPRESSION).d(CALLEE).d(IDENTIFIER).done();
     final IdentifierP errNode2 = new Getter(script).d(BODY).d(STATEMENTS, 0).d(CATCHCLAUSE).d(BODY).d(STATEMENTS, 0).d(
         EXPRESSION).d(ARGUMENTS, 0).d(IDENTIFIER).done();
     { // global scope
@@ -1406,9 +1405,9 @@ public class ScopeTest extends TestBase {
     Assert.assertEquals(scope.children.length, children.length);
     children.foreach(child -> assertTrue(scope.children.exists(scope1 -> scope1 == child)));
 
-    Assert.assertEquals(scope.through.size(), through.length);
+    Assert.assertEquals(scope.through.length, through.length);
     through.foreach(name -> {
-      ProjectionTree<Reference> references = scope.through.get(name);
+      ProjectionTree<Reference> references = scope.through.get(name).just();
       Assert.assertNotNull(references);
       assertTrue(references.exists(reference -> reference.node.name.equals(name)));
     });
