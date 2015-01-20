@@ -55,7 +55,7 @@ import com.shapesecurity.shift.ast.expression.PostfixExpression;
 import com.shapesecurity.shift.ast.expression.PrefixExpression;
 import com.shapesecurity.shift.ast.expression.StaticMemberExpression;
 import com.shapesecurity.shift.ast.expression.ThisExpression;
-import com.shapesecurity.shift.ast.operators.Assignment;
+import com.shapesecurity.shift.ast.operators.AssignmentOperator;
 import com.shapesecurity.shift.ast.operators.BinaryOperator;
 import com.shapesecurity.shift.ast.operators.PostfixOperator;
 import com.shapesecurity.shift.ast.operators.PrefixOperator;
@@ -583,7 +583,7 @@ public class Fuzzer {
     } while (ctx.inStrictMode && lhs instanceof IdentifierExpression &&
         Utils.isRestrictedWord(((IdentifierExpression) lhs).identifier.name));
     return new AssignmentExpression(
-        choice(Assignment.values()).apply(ctx, depth - 1),
+        choice(AssignmentOperator.values()).apply(ctx, depth - 1),
         lhs,
         randomExpression(ctx, depth - 1));
   }

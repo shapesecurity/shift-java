@@ -17,7 +17,7 @@
 package com.shapesecurity.shift.ast.expression;
 
 import com.shapesecurity.shift.ast.Expression;
-import com.shapesecurity.shift.ast.operators.Assignment;
+import com.shapesecurity.shift.ast.operators.AssignmentOperator;
 import com.shapesecurity.shift.ast.operators.Precedence;
 import com.shapesecurity.shift.ast.types.Type;
 
@@ -25,14 +25,14 @@ import org.jetbrains.annotations.NotNull;
 
 public class AssignmentExpression extends Expression {
   @NotNull
-  public final Assignment operator;
+  public final AssignmentOperator operator;
   @NotNull
   public final Expression binding;
   @NotNull
   public final Expression expression;
 
   public AssignmentExpression(
-      @NotNull Assignment operator,
+      @NotNull AssignmentOperator operator,
       @NotNull Expression binding,
       @NotNull Expression expression) {
     super();
@@ -44,7 +44,7 @@ public class AssignmentExpression extends Expression {
 
   @NotNull
   public Precedence getPrecedence() {
-    return Assignment.getPrecedence();
+    return AssignmentOperator.getPrecedence();
   }
 
   @NotNull
@@ -61,7 +61,7 @@ public class AssignmentExpression extends Expression {
   }
 
   @NotNull
-  public Assignment getOperator() {
+  public AssignmentOperator getOperator() {
     return this.operator;
   }
 
@@ -76,7 +76,7 @@ public class AssignmentExpression extends Expression {
   }
 
   @NotNull
-  public AssignmentExpression setOperator(@NotNull Assignment operator) {
+  public AssignmentExpression setOperator(@NotNull AssignmentOperator operator) {
     return new AssignmentExpression(operator, this.binding, this.expression);
   }
 
