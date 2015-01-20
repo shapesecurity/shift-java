@@ -86,7 +86,7 @@ import com.shapesecurity.shift.ast.expression.PostfixExpression;
 import com.shapesecurity.shift.ast.expression.PrefixExpression;
 import com.shapesecurity.shift.ast.expression.StaticMemberExpression;
 import com.shapesecurity.shift.ast.expression.ThisExpression;
-import com.shapesecurity.shift.ast.operators.Assignment;
+import com.shapesecurity.shift.ast.operators.AssignmentOperator;
 import com.shapesecurity.shift.ast.operators.BinaryOperator;
 import com.shapesecurity.shift.ast.operators.PostfixOperator;
 import com.shapesecurity.shift.ast.operators.Precedence;
@@ -1092,43 +1092,43 @@ public class Parser extends Tokenizer {
     boolean startsWithGroup = this.match(TokenType.LPAREN);
     Expression node = this.parseConditionalExpression();
 
-    Assignment operator = null;
+    AssignmentOperator operator = null;
     switch (this.lookahead.type) {
     case ASSIGN:
-      operator = Assignment.Assign;
+      operator = AssignmentOperator.Assign;
       break;
     case ASSIGN_BIT_OR:
-      operator = Assignment.AssignBitOr;
+      operator = AssignmentOperator.AssignBitOr;
       break;
     case ASSIGN_BIT_XOR:
-      operator = Assignment.AssignBitXor;
+      operator = AssignmentOperator.AssignBitXor;
       break;
     case ASSIGN_BIT_AND:
-      operator = Assignment.AssignBitAnd;
+      operator = AssignmentOperator.AssignBitAnd;
       break;
     case ASSIGN_SHL:
-      operator = Assignment.AssignLeftShift;
+      operator = AssignmentOperator.AssignLeftShift;
       break;
     case ASSIGN_SHR:
-      operator = Assignment.AssignRightShift;
+      operator = AssignmentOperator.AssignRightShift;
       break;
     case ASSIGN_SHR_UNSIGNED:
-      operator = Assignment.AssignUnsignedRightShift;
+      operator = AssignmentOperator.AssignUnsignedRightShift;
       break;
     case ASSIGN_ADD:
-      operator = Assignment.AssignPlus;
+      operator = AssignmentOperator.AssignPlus;
       break;
     case ASSIGN_SUB:
-      operator = Assignment.AssignMinus;
+      operator = AssignmentOperator.AssignMinus;
       break;
     case ASSIGN_MUL:
-      operator = Assignment.AssignMul;
+      operator = AssignmentOperator.AssignMul;
       break;
     case ASSIGN_DIV:
-      operator = Assignment.AssignDiv;
+      operator = AssignmentOperator.AssignDiv;
       break;
     case ASSIGN_MOD:
-      operator = Assignment.AssignRem;
+      operator = AssignmentOperator.AssignRem;
       break;
     default:
       break;
