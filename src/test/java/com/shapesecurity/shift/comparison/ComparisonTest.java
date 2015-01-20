@@ -101,13 +101,27 @@ public class ComparisonTest extends AstHelper {
 
   @Test
   public void testArrayExpressionEquality() {
-    List<LiteralStringExpression> a = List.list(new LiteralStringExpression("a"), new LiteralStringExpression("r"),
-        new LiteralStringExpression("r"), new LiteralStringExpression("a"), new LiteralStringExpression("y"));
-    List<LiteralStringExpression> a1 = List.list(new LiteralStringExpression("a"), new LiteralStringExpression("r"),
-        new LiteralStringExpression("r"), new LiteralStringExpression("a"), new LiteralStringExpression("y"));
-    List<LiteralStringExpression> a2 = List.list(new LiteralStringExpression("n"), new LiteralStringExpression("o"),
-        new LiteralStringExpression("t"), new LiteralStringExpression("" + ' '), new LiteralStringExpression("a"),
-        new LiteralStringExpression("r"), new LiteralStringExpression("r"), new LiteralStringExpression("a"),
+    List<LiteralStringExpression> a = List.list(
+        new LiteralStringExpression("a"),
+        new LiteralStringExpression("r"),
+        new LiteralStringExpression("r"),
+        new LiteralStringExpression("a"),
+        new LiteralStringExpression("y"));
+    List<LiteralStringExpression> a1 = List.list(
+        new LiteralStringExpression("a"),
+        new LiteralStringExpression("r"),
+        new LiteralStringExpression("r"),
+        new LiteralStringExpression("a"),
+        new LiteralStringExpression("y"));
+    List<LiteralStringExpression> a2 = List.list(
+        new LiteralStringExpression("n"),
+        new LiteralStringExpression("o"),
+        new LiteralStringExpression("t"),
+        new LiteralStringExpression("" + ' '),
+        new LiteralStringExpression("a"),
+        new LiteralStringExpression("r"),
+        new LiteralStringExpression("r"),
+        new LiteralStringExpression("a"),
         new LiteralStringExpression("y"));
     assertTrue(a.equals(a1));
     assertFalse(a.equals(a2));
@@ -144,10 +158,10 @@ public class ComparisonTest extends AstHelper {
   public void testComputedMemberEquality() {
     ComputedMemberExpression cm = new ComputedMemberExpression(new ObjectExpression(List.nil()), identExpr("a"));
     ComputedMemberExpression cm1 = new ComputedMemberExpression(new ObjectExpression(List.nil()), identExpr("a"));
-    ComputedMemberExpression cm2 = new ComputedMemberExpression(new ObjectExpression(List.list(new Getter(
-        new PropertyName("prop"), new FunctionBody(List.nil(), List.nil())))), identExpr("a"));
+    ComputedMemberExpression cm2 = new ComputedMemberExpression(
+        new ObjectExpression(
+            List.list(new Getter(new PropertyName("prop"), new FunctionBody(List.nil(), List.nil())))), identExpr("a"));
     ComputedMemberExpression cm3 = new ComputedMemberExpression(new ObjectExpression(List.nil()), identExpr("b"));
-
     assertTrue(cm.equals(cm1));
     assertFalse(cm.equals(cm2));
     assertFalse(cm.equals(cm3));
@@ -155,17 +169,26 @@ public class ComparisonTest extends AstHelper {
 
   @Test
   public void testConditionalExpressionEquality() {
-    ConditionalExpression ce = new ConditionalExpression(new LiteralBooleanExpression(true),
-        new LiteralNullExpression(), new LiteralNullExpression());
-    ConditionalExpression ce1 = new ConditionalExpression(new LiteralBooleanExpression(true),
-        new LiteralNullExpression(), new LiteralNullExpression());
-    ConditionalExpression ce2 = new ConditionalExpression(new LiteralBooleanExpression(false),
-        new LiteralNullExpression(), new LiteralNullExpression());
-    ConditionalExpression ce3 = new ConditionalExpression(new LiteralBooleanExpression(true),
-        new LiteralStringExpression("a"), new LiteralNullExpression());
-    ConditionalExpression ce4 = new ConditionalExpression(new LiteralBooleanExpression(true),
-        new LiteralNullExpression(), new LiteralStringExpression("a"));
-
+    ConditionalExpression ce = new ConditionalExpression(
+        new LiteralBooleanExpression(true),
+        new LiteralNullExpression(),
+        new LiteralNullExpression());
+    ConditionalExpression ce1 = new ConditionalExpression(
+        new LiteralBooleanExpression(true),
+        new LiteralNullExpression(),
+        new LiteralNullExpression());
+    ConditionalExpression ce2 = new ConditionalExpression(
+        new LiteralBooleanExpression(false),
+        new LiteralNullExpression(),
+        new LiteralNullExpression());
+    ConditionalExpression ce3 = new ConditionalExpression(
+        new LiteralBooleanExpression(true),
+        new LiteralStringExpression("a"),
+        new LiteralNullExpression());
+    ConditionalExpression ce4 = new ConditionalExpression(
+        new LiteralBooleanExpression(true),
+        new LiteralNullExpression(),
+        new LiteralStringExpression("a"));
     assertTrue(ce.equals(ce1));
     assertFalse(ce.equals(ce2));
     assertFalse(ce.equals(ce3));

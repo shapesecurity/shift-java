@@ -18,7 +18,6 @@ package com.shapesecurity.shift.ast;
 
 import com.shapesecurity.functional.data.List;
 import com.shapesecurity.shift.ast.types.Type;
-import com.shapesecurity.shift.visitor.TransformerP;
 
 import org.jetbrains.annotations.NotNull;
 
