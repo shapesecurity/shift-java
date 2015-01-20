@@ -45,7 +45,7 @@ public class Declaration {
 
   @NotNull
   public final List<Branch> getPath() {
-    return path;
+    return this.path;
   }
 
   public static enum Kind {
