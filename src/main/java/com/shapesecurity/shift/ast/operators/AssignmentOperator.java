@@ -18,7 +18,7 @@ package com.shapesecurity.shift.ast.operators;
 
 import org.jetbrains.annotations.NotNull;
 
-public enum Assignment implements Operator {
+public enum AssignmentOperator implements Operator {
   Assign("="),
   AssignPlus("+="),
   AssignMinus("-="),
@@ -35,7 +35,7 @@ public enum Assignment implements Operator {
   @NotNull
   private final String name;
 
-  private Assignment(@NotNull String name) {
+  private AssignmentOperator(@NotNull String name) {
     this.name = name;
   }
 
