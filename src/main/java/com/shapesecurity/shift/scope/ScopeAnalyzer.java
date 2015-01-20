@@ -37,7 +37,7 @@ import com.shapesecurity.shift.ast.expression.FunctionExpression;
 import com.shapesecurity.shift.ast.expression.IdentifierExpression;
 import com.shapesecurity.shift.ast.expression.PostfixExpression;
 import com.shapesecurity.shift.ast.expression.PrefixExpression;
-import com.shapesecurity.shift.ast.operators.Assignment;
+import com.shapesecurity.shift.ast.operators.AssignmentOperator;
 import com.shapesecurity.shift.ast.operators.PrefixOperator;
 import com.shapesecurity.shift.ast.property.Getter;
 import com.shapesecurity.shift.ast.property.Setter;
@@ -113,7 +113,7 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
       assert binding.lastPath != null;
       return expression.addReference(binding.lastPath,
           binding.lastIdentifier,
-          node.operator == Assignment.Assign ? Accessibility.Write : Accessibility.ReadWrite);
+          node.operator == AssignmentOperator.Assign ? Accessibility.Write : Accessibility.ReadWrite);
     }
     return super.reduceAssignmentExpression(node, path, binding, expression);
   }

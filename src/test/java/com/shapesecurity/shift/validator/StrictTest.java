@@ -35,7 +35,7 @@ import com.shapesecurity.shift.ast.expression.FunctionExpression;
 import com.shapesecurity.shift.ast.expression.IdentifierExpression;
 import com.shapesecurity.shift.ast.expression.ObjectExpression;
 import com.shapesecurity.shift.ast.expression.PrefixExpression;
-import com.shapesecurity.shift.ast.operators.Assignment;
+import com.shapesecurity.shift.ast.operators.AssignmentOperator;
 import com.shapesecurity.shift.ast.operators.PrefixOperator;
 import com.shapesecurity.shift.ast.property.DataProperty;
 import com.shapesecurity.shift.ast.property.ObjectProperty;
@@ -128,12 +128,14 @@ public class StrictTest extends AstHelper {
 
   @Test
   public final void testAssignmentExpressionNotBeRestrictedInStrictMode() {
-    validExpr(new AssignmentExpression(Assignment.Assign, new IdentifierExpression(new Identifier("eval")), EXPR));
-    validExpr(new AssignmentExpression(Assignment.Assign, new IdentifierExpression(new Identifier("arguments")), EXPR));
+    validExpr(new AssignmentExpression(AssignmentOperator.Assign, new IdentifierExpression(new Identifier("eval")), EXPR));
+    validExpr(new AssignmentExpression(AssignmentOperator.Assign, new IdentifierExpression(new Identifier("arguments")), EXPR));
 
-    invalidExpr(1, strictFE(exprStmt(new AssignmentExpression(Assignment.Assign, new IdentifierExpression(
+    invalidExpr(1, strictFE(exprStmt(new AssignmentExpression(
+                    AssignmentOperator.Assign, new IdentifierExpression(
         new Identifier("eval")), EXPR))));
-    invalidExpr(1, strictFE(exprStmt(new AssignmentExpression(Assignment.Assign, new IdentifierExpression(
+    invalidExpr(1, strictFE(exprStmt(new AssignmentExpression(
+                    AssignmentOperator.Assign, new IdentifierExpression(
         new Identifier("arguments")), EXPR))));
   }
 
