@@ -84,11 +84,9 @@ import org.jetbrains.annotations.NotNull;
 public class MonoidalReducer<State> implements Reducer<State> {
   @NotNull
   protected final Monoid<State> monoidClass;
-  private final State identity;
 
   protected MonoidalReducer(@NotNull Monoid<State> monoidClass) {
     this.monoidClass = monoidClass;
-    this.identity = this.monoidClass.identity();
   }
 
   @NotNull
@@ -100,7 +98,7 @@ public class MonoidalReducer<State> implements Reducer<State> {
   @NotNull
   @Override
   public State reduceIdentifier(@NotNull Identifier node, @NotNull List<Branch> path) {
-    return this.identity;
+    return this.monoidClass.identity();
   }
 
   @NotNull
@@ -115,43 +113,43 @@ public class MonoidalReducer<State> implements Reducer<State> {
   @NotNull
   @Override
   public State reduceThisExpression(@NotNull ThisExpression node, @NotNull List<Branch> path) {
-    return this.identity;
+    return this.monoidClass.identity();
   }
 
   @NotNull
   @Override
   public State reduceLiteralBooleanExpression(@NotNull LiteralBooleanExpression node, @NotNull List<Branch> path) {
-    return this.identity;
+    return this.monoidClass.identity();
   }
 
   @NotNull
   @Override
   public State reduceLiteralStringExpression(@NotNull LiteralStringExpression node, @NotNull List<Branch> path) {
-    return this.identity;
+    return this.monoidClass.identity();
   }
 
   @NotNull
   @Override
   public State reduceLiteralRegExpExpression(@NotNull LiteralRegExpExpression node, @NotNull List<Branch> path) {
-    return this.identity;
+    return this.monoidClass.identity();
   }
 
   @NotNull
   @Override
   public State reduceLiteralNumericExpression(@NotNull LiteralNumericExpression node, @NotNull List<Branch> path) {
-    return this.identity;
+    return this.monoidClass.identity();
   }
 
   @NotNull
   @Override
   public State reduceLiteralInfinityExpression(@NotNull LiteralInfinityExpression node, @NotNull List<Branch> path) {
-    return this.identity;
+    return this.monoidClass.identity();
   }
 
   @NotNull
   @Override
   public State reduceLiteralNullExpression(@NotNull LiteralNullExpression node, @NotNull List<Branch> path) {
-    return this.identity;
+    return this.monoidClass.identity();
   }
 
   @NotNull
@@ -175,7 +173,7 @@ public class MonoidalReducer<State> implements Reducer<State> {
 
   @NotNull
   private State o(@NotNull Maybe<State> s) {
-    return s.orJust(this.identity);
+    return s.orJust(this.monoidClass.identity());
   }
 
   @NotNull
@@ -208,7 +206,7 @@ public class MonoidalReducer<State> implements Reducer<State> {
   }
 
   private State fold(List<State> as) {
-    return as.foldLeft(this::append, this.identity);
+    return as.foldLeft(this::append, this.monoidClass.identity());
   }
 
   @NotNull
@@ -307,13 +305,13 @@ public class MonoidalReducer<State> implements Reducer<State> {
   @NotNull
   @Override
   public State reduceUseStrictDirective(@NotNull UseStrictDirective node, @NotNull List<Branch> path) {
-    return this.identity;
+    return this.monoidClass.identity();
   }
 
   @NotNull
   @Override
   public State reduceUnknownDirective(@NotNull UnknownDirective node, @NotNull List<Branch> path) {
-    return this.identity;
+    return this.monoidClass.identity();
   }
 
   @NotNull
@@ -353,7 +351,7 @@ public class MonoidalReducer<State> implements Reducer<State> {
   @NotNull
   @Override
   public State reduceDebuggerStatement(@NotNull DebuggerStatement node, @NotNull List<Branch> path) {
-    return this.identity;
+    return this.monoidClass.identity();
   }
 
   @NotNull
@@ -369,7 +367,7 @@ public class MonoidalReducer<State> implements Reducer<State> {
   @NotNull
   @Override
   public State reduceEmptyStatement(@NotNull EmptyStatement node, @NotNull List<Branch> path) {
-    return this.identity;
+    return this.monoidClass.identity();
   }
 
   @NotNull
@@ -574,7 +572,7 @@ public class MonoidalReducer<State> implements Reducer<State> {
   @NotNull
   @Override
   public State reducePropertyName(@NotNull PropertyName node, @NotNull List<Branch> path) {
-    return this.identity;
+    return this.monoidClass.identity();
   }
 
   @NotNull
