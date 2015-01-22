@@ -749,6 +749,7 @@ public class ParserTest extends TestBase {
     testFailure("for (var i, i2 in {});", 15, "Unexpected token in");
     testFailure("for ((i in {}));", 14, "Unexpected token )");
     testFailure("for (i + 1 in {});", 11, "Invalid left-hand side in for-in");
+    testFailure("for ((i) + (1) in {});", 15, "Invalid left-hand side in for-in");
     testFailure("for (+i in {});", 8, "Invalid left-hand side in for-in");
     testFailure("if(false)", 9, "Unexpected end of input");
     testFailure("if(false) doThis(); else", 24, "Unexpected end of input");
@@ -915,6 +916,7 @@ public class ParserTest extends TestBase {
     testFailure("1++ = 3", 4, "Invalid left-hand side in assignment");
     testFailure("1++ ++", 4, "Unexpected token ++");
     testFailure("for(++this in'');", 11, "Invalid left-hand side in for-in");
+    testFailure("for((1) + (2) in'');", 14, "Invalid left-hand side in for-in");
 
     // ES5: let is a strict mode reserved word.
     // ES6: parses fine.
