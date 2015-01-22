@@ -73,7 +73,6 @@ import com.shapesecurity.shift.ast.expression.ComputedMemberExpression;
 import com.shapesecurity.shift.ast.expression.ConditionalExpression;
 import com.shapesecurity.shift.ast.expression.FunctionExpression;
 import com.shapesecurity.shift.ast.expression.IdentifierExpression;
-import com.shapesecurity.shift.ast.expression.LeftHandSideExpression;
 import com.shapesecurity.shift.ast.expression.LiteralBooleanExpression;
 import com.shapesecurity.shift.ast.expression.LiteralInfinityExpression;
 import com.shapesecurity.shift.ast.expression.LiteralNullExpression;
@@ -253,9 +252,10 @@ public class Parser extends Tokenizer {
           if (firstRestricted != null) {
             throw this.createErrorWithToken(firstRestricted, STRICT_OCTAL_LITERAL);
           }
-          return List.cons(this.markLocation(startLocation, new UseStrictDirective()), this.parseDirective(
-              sourceElements,
-              null));
+          return List.cons(
+              this.markLocation(startLocation, new UseStrictDirective()), this.parseDirective(
+                  sourceElements,
+                  null));
         } else {
           if (firstRestricted == null && token.octal) {
             firstRestricted = startLocation;
@@ -506,7 +506,7 @@ public class Parser extends Tokenizer {
       return this.parseWithStatement();
     default:
       SourceLocation startLocation = this.getLocation();
-      Expression expr = this.parseExpression();
+      Expression expr = this.parseExpression().expression;
 
       // 12.12 Labelled Statements;
       if (expr instanceof IdentifierExpression && this.match(TokenType.COLON)) {
@@ -604,7 +604,7 @@ public class Parser extends Tokenizer {
   @NotNull
   private ExpressionStatement parseExpressionStatement() throws JsError {
     SourceLocation startLocation = this.getLocation();
-    Expression expr = this.parseExpression();
+    Expression expr = this.parseExpression().expression;
     this.consumeSemicolon();
     return this.markLocation(startLocation, new ExpressionStatement(expr));
   }
@@ -713,7 +713,7 @@ public class Parser extends Tokenizer {
 
     this.expect(TokenType.WHILE);
     this.expect(TokenType.LPAREN);
-    Expression test = this.parseExpression();
+    Expression test = this.parseExpression().expression;
     this.expect(TokenType.RPAREN);
     if (this.match(TokenType.SEMICOLON)) {
       this.lex();
@@ -733,16 +733,18 @@ public class Parser extends Tokenizer {
     if (this.match(TokenType.SEMICOLON)) {
       this.lex();
       if (!this.match(TokenType.SEMICOLON)) {
-        test = this.parseExpression();
+        test = this.parseExpression().expression;
       }
       this.expect(TokenType.SEMICOLON);
       if (!this.match(TokenType.RPAREN)) {
-        right = this.parseExpression();
+        right = this.parseExpression().expression;
       }
-      return this.markLocation(startLocation, new ForStatement(Maybe.nothing(),
-          Maybe.fromNullable(test),
-          Maybe.fromNullable(right),
-          this.getIteratorStatementEpilogue()));
+      return this.markLocation(
+          startLocation, new ForStatement(
+              Maybe.nothing(),
+              Maybe.fromNullable(test),
+              Maybe.fromNullable(right),
+              this.getIteratorStatementEpilogue()));
     } else {
       if (this.match(TokenType.VAR) || this.match(TokenType.LET)) {
         boolean previousAllowIn = this.allowIn;
@@ -752,19 +754,21 @@ public class Parser extends Tokenizer {
 
         if (initDecl.declarators.tail().isEmpty() && this.match(TokenType.IN)) {
           this.lex();
-          right = this.parseExpression();
-          return this.markLocation(startLocation, new ForInStatement(Either.left(initDecl),
-              right,
-              this.getIteratorStatementEpilogue())
+          right = this.parseExpression().expression;
+          return this.markLocation(
+              startLocation, new ForInStatement(
+                  Either.left(initDecl),
+                  right,
+                  this.getIteratorStatementEpilogue())
           );
         } else {
           this.expect(TokenType.SEMICOLON);
           if (!this.match(TokenType.SEMICOLON)) {
-            test = this.parseExpression();
+            test = this.parseExpression().expression;
           }
           this.expect(TokenType.SEMICOLON);
           if (!this.match(TokenType.RPAREN)) {
-            right = this.parseExpression();
+            right = this.parseExpression().expression;
           }
           return this.markLocation(
               startLocation,
@@ -777,36 +781,37 @@ public class Parser extends Tokenizer {
       } else {
         boolean previousAllowIn = this.allowIn;
         this.allowIn = false;
-        boolean startWithGrouping = this.match(TokenType.LPAREN);
-        Expression init = this.parseExpression();
+        ExpressionPlaceholder init = this.parseExpression();
         this.allowIn = previousAllowIn;
 
         if (this.match(TokenType.IN)) {
-          // LeftHandSideExpression;
-          if (!startWithGrouping && !(init instanceof LeftHandSideExpression)) {
+          if (!init.isLeftHandSide) {
             throw this.createError(INVALID_LHS_IN_FOR_IN);
           }
 
           this.lex();
-          right = this.parseExpression();
-          return this.markLocation(startLocation, new ForInStatement(Either.right(init),
-              right,
-              this.getIteratorStatementEpilogue())
+          right = this.parseExpression().expression;
+          return this.markLocation(
+              startLocation, new ForInStatement(
+                  Either.right(init.expression),
+                  right,
+                  this.getIteratorStatementEpilogue())
           );
         } else {
           this.expect(TokenType.SEMICOLON);
           if (!this.match(TokenType.SEMICOLON)) {
-            test = this.parseExpression();
+            test = this.parseExpression().expression;
           }
           this.expect(TokenType.SEMICOLON);
           if (!this.match(TokenType.RPAREN)) {
-            right = this.parseExpression();
+            right = this.parseExpression().expression;
           }
-          return this.markLocation(startLocation, new ForStatement(Maybe.fromNullable(init).map(Either::right),
-              Maybe.fromNullable(
-                  test),
-              Maybe.fromNullable(right),
-              this.getIteratorStatementEpilogue()));
+          return this.markLocation(
+              startLocation, new ForStatement(
+                  Maybe.fromNullable(init).map(x -> Either.right(x.expression)),
+                  Maybe.fromNullable(test),
+                  Maybe.fromNullable(right),
+                  this.getIteratorStatementEpilogue()));
         }
       }
     }
@@ -826,7 +831,7 @@ public class Parser extends Tokenizer {
     SourceLocation startLocation = this.getLocation();
     this.expect(TokenType.IF);
     this.expect(TokenType.LPAREN);
-    Expression test = this.parseExpression();
+    Expression test = this.parseExpression().expression;
 
     this.expect(TokenType.RPAREN);
     Statement consequent = this.parseStatement();
@@ -857,7 +862,7 @@ public class Parser extends Tokenizer {
 
     if (!this.match(TokenType.SEMICOLON)) {
       if (!this.match(TokenType.RBRACE) && !this.eof()) {
-        argument = Maybe.fromNullable(this.parseExpression());
+        argument = Maybe.just(this.parseExpression().expression);
       }
     }
 
@@ -874,7 +879,7 @@ public class Parser extends Tokenizer {
 
     this.expect(TokenType.WITH);
     this.expect(TokenType.LPAREN);
-    Expression object = this.parseExpression();
+    Expression object = this.parseExpression().expression;
     this.expect(TokenType.RPAREN);
     Statement body = this.parseStatement();
 
@@ -888,7 +893,7 @@ public class Parser extends Tokenizer {
     this.expect(TokenType.SWITCH);
     this.expect(TokenType.LPAREN);
 
-    Expression discriminant = this.parseExpression();
+    Expression discriminant = this.parseExpression().expression;
     this.expect(TokenType.RPAREN);
     this.expect(TokenType.LBRACE);
 
@@ -909,10 +914,12 @@ public class Parser extends Tokenizer {
       }
       this.inSwitch = oldInSwitch;
       this.expect(TokenType.RBRACE);
-      return this.markLocation(startLocation, new SwitchStatementWithDefault(discriminant,
-          cases,
-          switchDefault,
-          postDefaultCases)
+      return this.markLocation(
+          startLocation, new SwitchStatementWithDefault(
+              discriminant,
+              cases,
+              switchDefault,
+              postDefaultCases)
       );
     } else {
       this.inSwitch = oldInSwitch;
@@ -938,7 +945,7 @@ public class Parser extends Tokenizer {
       throw this.createErrorWithToken(startLocation, NEWLINE_AFTER_THROW);
     }
 
-    Expression argument = this.parseExpression();
+    Expression argument = this.parseExpression().expression;
 
     this.consumeSemicolon();
 
@@ -964,7 +971,8 @@ public class Parser extends Tokenizer {
     if (this.match(TokenType.FINALLY)) {
       this.lex();
       Block finalizer = this.parseBlock();
-      return this.markLocation(startLocation, new TryFinallyStatement(block, Maybe.nothing(), finalizer)
+      return this.markLocation(
+          startLocation, new TryFinallyStatement(block, Maybe.nothing(), finalizer)
       );
     } else {
       throw this.createError(NO_CATCH_OR_FINALLY);
@@ -976,15 +984,17 @@ public class Parser extends Tokenizer {
     SourceLocation startLocation = this.getLocation();
     this.expect(TokenType.WHILE);
     this.expect(TokenType.LPAREN);
-    return this.markLocation(startLocation, new WhileStatement(this.parseExpression(),
-        this.getIteratorStatementEpilogue())
+    return this.markLocation(
+        startLocation, new WhileStatement(
+            this.parseExpression().expression,
+            this.getIteratorStatementEpilogue())
     );
   }
 
-  private Expression parseExpression() throws JsError {
+  private ExpressionPlaceholder parseExpression() throws JsError {
     SourceLocation startLocation = this.getLocation();
 
-    Expression expr = this.parseAssignmentExpression();
+    ExpressionPlaceholder expr = this.parseAssignmentExpression();
 
     if (this.match(TokenType.COMMA)) {
       while (!this.eof()) {
@@ -992,10 +1002,15 @@ public class Parser extends Tokenizer {
           break;
         }
         this.lex();
-        expr = this.markLocation(startLocation, new BinaryExpression(BinaryOperator.Sequence,
-            expr,
-            this.parseAssignmentExpression())
-        );
+        expr = new ExpressionPlaceholder(
+            false,
+            this.markLocation(
+                startLocation,
+                new BinaryExpression(
+                    BinaryOperator.Sequence,
+                    expr.expression,
+                    this.parseAssignmentExpression().expression)
+            ));
       }
     }
 
@@ -1016,7 +1031,7 @@ public class Parser extends Tokenizer {
     Maybe<Expression> init = Maybe.nothing();
     if (this.match(TokenType.ASSIGN)) {
       this.lex();
-      init = Maybe.just(this.parseAssignmentExpression());
+      init = Maybe.just(this.parseAssignmentExpression().expression);
     }
     return this.markLocation(startLocation, new VariableDeclarator(id, init));
   }
@@ -1039,7 +1054,9 @@ public class Parser extends Tokenizer {
   private SwitchCase parseSwitchCase() throws JsError {
     SourceLocation startLocation = this.getLocation();
     this.expect(TokenType.CASE);
-    return this.markLocation(startLocation, new SwitchCase(this.parseExpression(), this.parseSwitchCaseBody()));
+    return this.markLocation(
+        startLocation,
+        new SwitchCase(this.parseExpression().expression, this.parseSwitchCaseBody()));
   }
 
   @NotNull
@@ -1086,11 +1103,10 @@ public class Parser extends Tokenizer {
   }
 
   @NotNull
-  private Expression parseAssignmentExpression() throws JsError {
+  private ExpressionPlaceholder parseAssignmentExpression() throws JsError {
     SourceLocation startLocation = this.getLocation();
 
-    boolean startsWithGroup = this.match(TokenType.LPAREN);
-    Expression node = this.parseConditionalExpression();
+    ExpressionPlaceholder node = this.parseConditionalExpression();
 
     AssignmentOperator operator = null;
     switch (this.lookahead.type) {
@@ -1135,38 +1151,44 @@ public class Parser extends Tokenizer {
     }
 
     if (operator != null) {
-      if (!startsWithGroup && !(node instanceof LeftHandSideExpression)) {
+      if (!node.isLeftHandSide) {
         throw this.createError(INVALID_LHS_IN_ASSIGNMENT);
       }
 
       // 11.13.1;
-      if (node instanceof IdentifierExpression) {
-        IdentifierExpression ident = (IdentifierExpression) node;
+      if (node.expression instanceof IdentifierExpression) {
+        IdentifierExpression ident = (IdentifierExpression) node.expression;
         if (this.strict && Utils.isRestrictedWord(ident.identifier.name)) {
           throw this.createErrorWithToken(startLocation, STRICT_LHS_ASSIGNMENT);
         }
       }
 
       this.lex();
-      Expression right = this.parseAssignmentExpression();
-      return this.markLocation(startLocation, new AssignmentExpression(operator, node, right));
+      Expression right = this.parseAssignmentExpression().expression;
+      return new ExpressionPlaceholder(
+          false,
+          this.markLocation(startLocation, new AssignmentExpression(operator, node.expression, right)));
     }
     return node;
   }
 
   @NotNull
-  private Expression parseConditionalExpression() throws JsError {
+  private ExpressionPlaceholder parseConditionalExpression() throws JsError {
     SourceLocation startLocation = this.getLocation();
-    Expression expr = this.parseBinaryExpression();
+    ExpressionPlaceholder expr = this.parseBinaryExpression();
     if (this.match(TokenType.CONDITIONAL)) {
       this.lex();
       boolean previousAllowIn = this.allowIn;
       this.allowIn = true;
-      Expression consequent = this.parseAssignmentExpression();
+      Expression consequent = this.parseAssignmentExpression().expression;
       this.allowIn = previousAllowIn;
       this.expect(TokenType.COLON);
-      Expression alternate = this.parseAssignmentExpression();
-      return this.markLocation(startLocation, new ConditionalExpression(expr, consequent, alternate));
+      Expression alternate = this.parseAssignmentExpression().expression;
+      return new ExpressionPlaceholder(
+          false,
+          this.markLocation(
+              startLocation,
+              new ConditionalExpression(expr.expression, consequent, alternate)));
     }
 
     return expr;
@@ -1227,21 +1249,21 @@ public class Parser extends Tokenizer {
   }
 
   @NotNull
-  private Expression parseBinaryExpression() throws JsError {
+  private ExpressionPlaceholder parseBinaryExpression() throws JsError {
     SourceLocation location = this.getLocation();
-    Expression left = this.parseUnaryExpression();
+    ExpressionPlaceholder leftPlaceholder = this.parseUnaryExpression();
     Token token = this.lookahead;
     BinaryOperator operator = this.lookupBinaryOperator(token.type);
     if (operator == null) {
-      return left;
+      return leftPlaceholder;
     }
 
     this.lex();
-
+    Expression left = leftPlaceholder.expression;
     List<ExprStackItem> stack = List.nil();
     stack = stack.cons(new ExprStackItem(location, left, operator));
     location = this.getLocation();
-    Expression expr = this.parseUnaryExpression();
+    Expression expr = this.parseUnaryExpression().expression;
 
     operator = this.lookupBinaryOperator(this.lookahead.type);
     while (operator != null) {
@@ -1260,18 +1282,21 @@ public class Parser extends Tokenizer {
       this.lex();
       stack = stack.cons(new ExprStackItem(location, expr, operator));
       location = this.getLocation();
-      expr = this.parseUnaryExpression();
+      expr = this.parseUnaryExpression().expression;
 
       operator = this.lookupBinaryOperator(this.lookahead.type);
     }
 
     // Final reduce to clean-up the stack.
-    return stack.foldLeft((expr1, stackItem) -> this.markLocation(
-        stackItem.startLocation, new BinaryExpression(stackItem.operator, stackItem.left, expr1)), expr);
+    return new ExpressionPlaceholder(
+        false,
+        stack.foldLeft(
+            (expr1, stackItem) -> this.markLocation(
+                stackItem.startLocation, new BinaryExpression(stackItem.operator, stackItem.left, expr1)), expr));
   }
 
   @NotNull
-  private Expression parseUnaryExpression() throws JsError {
+  private ExpressionPlaceholder parseUnaryExpression() throws JsError {
     if (this.lookahead.type.klass != TokenClass.Punctuator && this.lookahead.type.klass != TokenClass.Keyword) {
       return this.parsePostfixExpression();
     }
@@ -1281,7 +1306,7 @@ public class Parser extends Tokenizer {
       return this.parsePostfixExpression();
     }
     this.lex();
-    Expression expr = this.parseUnaryExpression();
+    Expression expr = this.parseUnaryExpression().expression;
     switch (operator) {
     case Increment:
     case Decrement:
@@ -1302,23 +1327,22 @@ public class Parser extends Tokenizer {
       break;
     }
 
-    return this.markLocation(startLocation, new PrefixExpression(operator, expr));
+    return new ExpressionPlaceholder(false, this.markLocation(startLocation, new PrefixExpression(operator, expr)));
   }
 
   @NotNull
-  private Expression parsePostfixExpression() throws JsError {
+  private ExpressionPlaceholder parsePostfixExpression() throws JsError {
     SourceLocation startLocation = this.getLocation();
 
-    boolean startsWithGroup = this.match(TokenType.LPAREN);
     Expression expr = this.parseLeftHandSideExpressionAllowCall();
 
     if (this.hasLineTerminatorBeforeNext) {
-      return expr;
+      return new ExpressionPlaceholder(true, expr);
     }
 
     PostfixOperator operator = lookupPostfixOperator(this.lookahead.type);
     if (operator == null) {
-      return expr;
+      return new ExpressionPlaceholder(true, expr);
     }
     this.lex();
     // 11.3.1, 11.3.2;
@@ -1328,10 +1352,7 @@ public class Parser extends Tokenizer {
         throw this.createError(STRICT_LHS_POSTFIX);
       }
     }
-    if (!startsWithGroup && !(expr instanceof LeftHandSideExpression)) {
-      throw this.createError(INVALID_LHS_IN_ASSIGNMENT);
-    }
-    return this.markLocation(startLocation, new PostfixExpression(operator, expr));
+    return new ExpressionPlaceholder(false, this.markLocation(startLocation, new PostfixExpression(operator, expr)));
   }
 
   @NotNull
@@ -1367,9 +1388,13 @@ public class Parser extends Tokenizer {
     Expression expr = this.match(TokenType.NEW) ? this.parseNewExpression() : this.parsePrimaryExpression();
 
     while (this.match(TokenType.PERIOD) || this.match(TokenType.LBRACK)) {
-      expr = this.match(TokenType.LBRACK) ? this.markLocation(startLocation, new ComputedMemberExpression(expr,
-          this.parseComputedMember())) : this.markLocation(startLocation, new StaticMemberExpression(expr,
-          this.parseNonComputedMember()));
+      expr = this.match(TokenType.LBRACK) ? this.markLocation(
+          startLocation, new ComputedMemberExpression(
+              expr,
+              this.parseComputedMember())) : this.markLocation(
+          startLocation, new StaticMemberExpression(
+              expr,
+              this.parseNonComputedMember()));
     }
 
     return expr;
@@ -1383,7 +1408,7 @@ public class Parser extends Tokenizer {
 
   private Expression parseComputedMember() throws JsError {
     this.expect(TokenType.LBRACK);
-    Expression expr = this.parseExpression();
+    Expression expr = this.parseExpression().expression;
     this.expect(TokenType.RBRACK);
     return expr;
   }
@@ -1393,9 +1418,11 @@ public class Parser extends Tokenizer {
     SourceLocation startLocation = this.getLocation();
     this.expect(TokenType.NEW);
     Expression callee = this.parseLeftHandSideExpression();
-    return this.markLocation(startLocation, new NewExpression(callee,
-        this.match(TokenType.LPAREN) ? this.parseArgumentList() :
-            List.nil()));
+    return this.markLocation(
+        startLocation, new NewExpression(
+            callee,
+            this.match(TokenType.LPAREN) ? this.parseArgumentList() :
+                List.nil()));
   }
 
   @NotNull
@@ -1454,7 +1481,8 @@ public class Parser extends Tokenizer {
     }
     Token token2 = this.lex();
     double value = ((NumericLiteralToken) token2).value;
-    return this.markLocation(startLocation,
+    return this.markLocation(
+        startLocation,
         value == Double.POSITIVE_INFINITY ?
             new LiteralInfinityExpression() :
             new LiteralNumericExpression(value));
@@ -1489,7 +1517,7 @@ public class Parser extends Tokenizer {
     if (this.match(TokenType.RPAREN) || this.eof()) {
       return List.nil();
     }
-    Expression arg = this.parseAssignmentExpression();
+    Expression arg = this.parseAssignmentExpression().expression;
     if (this.match(TokenType.COMMA)) {
       this.expect(TokenType.COMMA);
       return List.cons(arg, this.parseArguments());
@@ -1515,7 +1543,7 @@ public class Parser extends Tokenizer {
   @NotNull
   private Expression parseGroupExpression() throws JsError {
     this.expect(TokenType.LPAREN);
-    Expression expr = this.parseExpression();
+    Expression expr = this.parseExpression().expression;
     this.expect(TokenType.RPAREN);
     return expr;
   }
@@ -1566,7 +1594,8 @@ public class Parser extends Tokenizer {
       }
     }
     this.strict = previousStrict;
-    return this.markLocation(startLocation, new FunctionExpression(Maybe.fromNullable(id), List.from(info.params), body)
+    return this.markLocation(
+        startLocation, new FunctionExpression(Maybe.fromNullable(id), List.from(info.params), body)
     );
   }
 
@@ -1595,7 +1624,7 @@ public class Parser extends Tokenizer {
       this.lex();
       el = Maybe.nothing();
     } else {
-      el = Maybe.just(this.parseAssignmentExpression());
+      el = Maybe.just(this.parseAssignmentExpression().expression);
       if (!this.match(TokenType.RBRACK)) {
         this.expect(TokenType.COMMA);
       }
@@ -1732,7 +1761,7 @@ public class Parser extends Tokenizer {
       }
 
       this.expect(TokenType.COLON);
-      Expression value = this.parseAssignmentExpression();
+      Expression value = this.parseAssignmentExpression().expression;
       return this.markLocation(startLocation, new DataProperty(key, value));
     }
     if (this.eof() || token.type.klass == TokenClass.Punctuator) {
@@ -1740,8 +1769,19 @@ public class Parser extends Tokenizer {
     } else {
       PropertyName key = this.parseObjectPropertyKey();
       this.expect(TokenType.COLON);
-      Expression value = this.parseAssignmentExpression();
+      Expression value = this.parseAssignmentExpression().expression;
       return this.markLocation(startLocation, new DataProperty(key, value));
+    }
+  }
+
+  private static class ExpressionPlaceholder {
+    public final boolean isLeftHandSide;
+    @NotNull
+    public final Expression expression;
+
+    private ExpressionPlaceholder(boolean isLeftHandSide, @NotNull Expression expression) {
+      this.isLeftHandSide = isLeftHandSide;
+      this.expression = expression;
     }
   }
 
