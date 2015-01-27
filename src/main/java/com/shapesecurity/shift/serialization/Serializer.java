@@ -98,7 +98,9 @@ public class Serializer implements Reducer<StringBuilder> {
 
   @NotNull
   private static StringBuilder list(@NotNull List<StringBuilder> values) {
-    if (values.isEmpty()) return new StringBuilder("[]");
+    if (values.isEmpty()) {
+      return new StringBuilder("[]");
+    }
     StringBuilder sb = new StringBuilder("[");
     NonEmptyList<StringBuilder> nel = (NonEmptyList<StringBuilder>) values;
     sb.append(nel.head);
@@ -109,7 +111,9 @@ public class Serializer implements Reducer<StringBuilder> {
 
   @NotNull
   private static StringBuilder olist(@NotNull List<Maybe<StringBuilder>> values) {
-    if (values.isEmpty()) return new StringBuilder("[]");
+    if (values.isEmpty()) {
+      return new StringBuilder("[]");
+    }
     StringBuilder sb = new StringBuilder("[");
     NonEmptyList<Maybe<StringBuilder>> nel = (NonEmptyList<Maybe<StringBuilder>>) values;
     sb.append(o(nel.head));
@@ -133,10 +137,10 @@ public class Serializer implements Reducer<StringBuilder> {
     final StringBuilder text = new StringBuilder("{");
 
     private void optionalComma() {
-      if (first) {
-        first = false;
+      if (this.first) {
+        this.first = false;
       } else {
-        text.append(",");
+        this.text.append(",");
       }
     }
 
@@ -182,9 +186,10 @@ public class Serializer implements Reducer<StringBuilder> {
       return this;
     }
 
+    @NotNull
     StringBuilder done(@NotNull Node node) {
       SourceLocation loc = node.getLoc();
-      if (loc != null) {
+      if (loc != null && loc.source != null) {
         this.add("range",
             list(List.list(new StringBuilder(Integer.toString(loc.offset)), new StringBuilder(
                 Integer.toString(loc.offset + loc.source.length())))));
