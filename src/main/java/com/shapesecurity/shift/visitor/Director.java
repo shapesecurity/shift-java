@@ -338,6 +338,7 @@ public final class Director {
     }
     case ArrayExpression: {
       ArrayExpression tNode = (ArrayExpression) node;
+      NonEmptyList<Branch> elementsPath = path.cons(StaticBranch.ELEMENTS);
       return reducer.reduceArrayExpression(
           tNode,
           path,
@@ -345,7 +346,7 @@ public final class Director {
               reduceOptionExpression(
                   reducer,
                   el,
-                  path.cons(StaticBranch.ELEMENTS).cons(IndexedBranch.from(i)))));
+                  elementsPath.cons(IndexedBranch.from(i)))));
     }
     case AssignmentExpression: {
       AssignmentExpression tNode = (AssignmentExpression) node;
@@ -665,6 +666,7 @@ public final class Director {
       @NotNull ReducerP<ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> reducer,
       @NotNull VariableDeclaration node,
       @NotNull List<Branch> path) {
+    NonEmptyList<Branch> declsPath = path.cons(StaticBranch.DECLARATORS);
     return reducer.reduceVariableDeclaration(
         node,
         path,
@@ -673,7 +675,7 @@ public final class Director {
                 reduceVariableDeclarator(
                     reducer,
                     el,
-                    path.cons(StaticBranch.DECLARATORS).cons(IndexedBranch.from(i)))));
+                    declsPath.cons(IndexedBranch.from(i)))));
   }
 
   @NotNull
