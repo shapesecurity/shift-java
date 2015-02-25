@@ -1229,7 +1229,7 @@ public class Tokenizer {
     }
   }
 
-  boolean eof() {
+  protected boolean eof() {
     return this.lookahead.type == TokenType.EOS;
   }
 
@@ -1259,7 +1259,7 @@ public class Tokenizer {
   }
 
   @NotNull
-  Token lex() throws JsError {
+  protected Token lex() throws JsError {
     if (this.lookahead.type == TokenType.EOS) {
       return this.lookahead;
     }
