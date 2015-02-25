@@ -16,7 +16,7 @@
 
 package com.shapesecurity.shift.ast.expression;
 
-import com.shapesecurity.functional.data.List;
+import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.functional.data.Maybe;
 import com.shapesecurity.shift.ast.Expression;
 import com.shapesecurity.shift.ast.types.Type;
@@ -25,9 +25,9 @@ import org.jetbrains.annotations.NotNull;
 
 public class ArrayExpression extends PrimaryExpression {
   @NotNull
-  public final List<Maybe<Expression>> elements;
+  public final ImmutableList<Maybe<Expression>> elements;
 
-  public ArrayExpression(@NotNull List<Maybe<Expression>> elements) {
+  public ArrayExpression(@NotNull ImmutableList<Maybe<Expression>> elements) {
     super();
     this.elements = elements;
   }
@@ -44,12 +44,12 @@ public class ArrayExpression extends PrimaryExpression {
   }
 
   @NotNull
-  public List<Maybe<Expression>> getElements() {
+  public ImmutableList<Maybe<Expression>> getElements() {
     return this.elements;
   }
 
   @NotNull
-  public ArrayExpression setElements(@NotNull List<Maybe<Expression>> elements) {
+  public ArrayExpression setElements(@NotNull ImmutableList<Maybe<Expression>> elements) {
     return new ArrayExpression(elements);
   }
 }

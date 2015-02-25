@@ -31,30 +31,30 @@ import java.util.ArrayList;
 
 import org.jetbrains.annotations.NotNull;
 
-public class ListTest extends TestBase {
-  protected void testWithSpecialLists(@NotNull Effect<List<Integer>> f) {
+public class ImmutableListTest extends TestBase {
+  protected void testWithSpecialLists(@NotNull Effect<ImmutableList<Integer>> f) {
     f.apply(Nil.nil());
-    f.apply(List.<Integer>nil());
-    f.apply(List.list(0));
-    f.apply(List.list(0, 1, 2));
-    f.apply(List.list(3, 2, 1));
+    f.apply(ImmutableList.<Integer>nil());
+    f.apply(ImmutableList.list(0));
+    f.apply(ImmutableList.list(0, 1, 2));
+    f.apply(ImmutableList.list(3, 2, 1));
     f.apply(LONG_LIST);
   }
 
   @Test
   public void testNil() {
-    List<Integer> list = List.nil();
+    ImmutableList<Integer> list = ImmutableList.nil();
     assertTrue(list.maybeHead().isNothing());
     assertTrue(list.maybeTail().isNothing());
     assertEquals(list, list);
-    assertEquals(list, List.<Integer>nil());
-    assertNotEquals(list, List.cons(0, list));
+    assertEquals(list, ImmutableList.<Integer>nil());
+    assertNotEquals(list, ImmutableList.cons(0, list));
   }
 
   @Test
   public void testList() {
-    List<Integer> list = List.list();
-    assertEquals(list, List.<Integer>nil());
+    ImmutableList<Integer> list = ImmutableList.list();
+    assertEquals(list, ImmutableList.<Integer>nil());
   }
 
   @Test
@@ -62,9 +62,9 @@ public class ListTest extends TestBase {
     testWithSpecialLists(this::testCons);
   }
 
-  public void testCons(@NotNull List<Integer> list) {
+  public void testCons(@NotNull ImmutableList<Integer> list) {
     int a = rand();
-    NonEmptyList<Integer> listP = List.cons(a, list);
+    NonEmptyImmutableList<Integer> listP = ImmutableList.cons(a, list);
     assertEquals(list.length + 1, listP.length);
     assertEquals(a, listP.head.intValue());
     assertEquals(list, listP.tail());
@@ -76,7 +76,7 @@ public class ListTest extends TestBase {
     testWithSpecialLists(this::testToArray);
   }
 
-  private void testToArray(List<Integer> list) {
+  private void testToArray(ImmutableList<Integer> list) {
     final Integer[] a = new Integer[list.length];
     list.mapWithIndex((i, x) -> a[i] = x);
     Integer[] a2 = new Integer[0];
@@ -89,12 +89,12 @@ public class ListTest extends TestBase {
 
   @Test
   public void testIndex() {
-    List<Integer> l = List.list(0, 1, 2, 3, 4);
+    ImmutableList<Integer> l = ImmutableList.list(0, 1, 2, 3, 4);
     assertTrue(l.index(0).just() == 0);
     assertFalse(l.index(2).just() == 0);
     assertEquals(Maybe.<Integer>nothing(), l.index(5)); //index out of range returns nothing
     assertEquals(Maybe.<Integer>nothing(), l.index(-1));
-    assertEquals(Maybe.<Integer>nothing(), List.<Integer>nil().index(1));
+    assertEquals(Maybe.<Integer>nothing(), ImmutableList.<Integer>nil().index(1));
   }
 
   @Test
@@ -103,26 +103,26 @@ public class ListTest extends TestBase {
     testWithSpecialLists(this::testFromArray);
   }
 
-  private void testFromArray(List<Integer> list) {
+  private void testFromArray(ImmutableList<Integer> list) {
     final Integer[] array = new Integer[list.length];
     list.mapWithIndex((i, x) -> array[i] = x);
-    List<Integer> list1 = List.from(array);
+    ImmutableList<Integer> list1 = ImmutableList.from(array);
     assertEquals(list, list1);
   }
 
-  private void testFrom(List<Integer> list) {
+  private void testFrom(ImmutableList<Integer> list) {
     final ArrayList<Integer> arrList = new ArrayList<>();
     list.foreach(arrList::add);
-    List<Integer> listP = List.from(arrList);
+    ImmutableList<Integer> listP = ImmutableList.from(arrList);
     assertEquals(list, listP);
   }
 
   @Test
   public void testFindMap() {
-    List<Integer> list = List.list(0, 1, 2, 3, 4);
+    ImmutableList<Integer> list = ImmutableList.list(0, 1, 2, 3, 4);
     assertTrue(list.findMap(x -> x == 2 ? Maybe.just(x - 1) : Maybe.<Integer>nothing()).just() == 1);
     assertEquals(Maybe.<Integer>nothing(), list.findMap(x -> x == 5 ? Maybe.just(x - 1) : Maybe.<Integer>nothing()));
-    assertEquals(Maybe.<Integer>nothing(), List.<Integer>nil().findMap(x -> x == 5 ? Maybe.just(x - 1) :
+    assertEquals(Maybe.<Integer>nothing(), ImmutableList.<Integer>nil().findMap(x -> x == 5 ? Maybe.just(x - 1) :
                                                                             Maybe.<Integer>nothing()));
   }
 
@@ -131,9 +131,9 @@ public class ListTest extends TestBase {
     testWithSpecialLists(this::testInit);
   }
 
-  private void testInit(List<Integer> list) {
+  private void testInit(ImmutableList<Integer> list) {
     //if list is empty maybeInit returns nothing else returns just
-    Maybe<List<Integer>> taken = list.isEmpty() ? Maybe.nothing() : Maybe.just(list.take(list.length - 1));
+    Maybe<ImmutableList<Integer>> taken = list.isEmpty() ? Maybe.nothing() : Maybe.just(list.take(list.length - 1));
     assertEquals(list.maybeInit(), taken);
   }
 
@@ -142,7 +142,7 @@ public class ListTest extends TestBase {
     testWithSpecialLists(this::testMaybeLast);
   }
 
-  private void testMaybeLast(List<Integer> list) {
+  private void testMaybeLast(ImmutableList<Integer> list) {
     Maybe<Integer> last = list.index(list.length - 1);
     assertEquals(last, list.maybeLast());
   }
@@ -152,12 +152,12 @@ public class ListTest extends TestBase {
     testWithSpecialLists(this::testMap);
   }
 
-  private void testMap(List<Integer> list) {
+  private void testMap(ImmutableList<Integer> list) {
     Integer[] addArray = new Integer[list.length];
     for (int i = 0; i < addArray.length; i++) {
       addArray[i] = list.index(i).just() + 1;
     }
-    assertEquals(list.map(x -> x + 1), List.from(addArray));
+    assertEquals(list.map(x -> x + 1), ImmutableList.from(addArray));
   }
 
   @Test
@@ -165,13 +165,13 @@ public class ListTest extends TestBase {
     testWithSpecialLists(this::testFlatMap);
   }
 
-  private void testFlatMap(List<Integer> list) {
+  private void testFlatMap(ImmutableList<Integer> list) {
     Integer[] dups = new Integer[list.length * 2];
     for (int i = 0; i < dups.length / 2; i++) {
       dups[i * 2] = list.index(i).just();
       dups[i * 2 + 1] = list.index(i).just();
     }
-    assertEquals(List.from(dups), list.flatMap(x -> List.list(x, x)));
+    assertEquals(ImmutableList.from(dups), list.flatMap(x -> ImmutableList.list(x, x)));
   }
 
   // non-static
@@ -181,16 +181,16 @@ public class ListTest extends TestBase {
     testWithSpecialLists(this::testLengthNonNegative);
   }
 
-  private void testLengthNonNegative(List<Integer> list) {
+  private void testLengthNonNegative(ImmutableList<Integer> list) {
     assertTrue(list.length >= 0);
   }
 
   @Test
   public void testEmptyNonEmptyMutualExclusivity() {
-    testWithSpecialLists(ListTest.this::testEmptyNonEmptyMutualExclusivity);
+    testWithSpecialLists(ImmutableListTest.this::testEmptyNonEmptyMutualExclusivity);
   }
 
-  private void testEmptyNonEmptyMutualExclusivity(List<Integer> list) {
+  private void testEmptyNonEmptyMutualExclusivity(ImmutableList<Integer> list) {
     if (list.length == 0) {
       assertTrue(list.isEmpty());
       assertFalse(list.isNotEmpty());
@@ -202,10 +202,10 @@ public class ListTest extends TestBase {
 
   @Test
   public void testMaybeHeadMaybeTail() {
-    testWithSpecialLists(ListTest.this::testMaybeHeadMaybeTail);
+    testWithSpecialLists(ImmutableListTest.this::testMaybeHeadMaybeTail);
   }
 
-  private void testMaybeHeadMaybeTail(List<Integer> list) {
+  private void testMaybeHeadMaybeTail(ImmutableList<Integer> list) {
     if (list.length == 0) {
       assertTrue(list.maybeHead().isNothing());
       assertTrue(list.maybeTail().isNothing());
@@ -213,9 +213,9 @@ public class ListTest extends TestBase {
       assertTrue(list.maybeHead().isJust());
       assertTrue(list.maybeTail().isJust());
       if (list.length == 1) {
-        assertEquals(List.<Integer>nil(), list.maybeTail().just());
+        assertEquals(ImmutableList.<Integer>nil(), list.maybeTail().just());
       } else {
-        assertNotEquals(List.<Integer>nil(), list.maybeTail().just());
+        assertNotEquals(ImmutableList.<Integer>nil(), list.maybeTail().just());
       }
     }
   }
@@ -225,20 +225,20 @@ public class ListTest extends TestBase {
     testWithSpecialLists(this::testEquals);
   }
 
-  private void testEquals(List<Integer> list) {
+  private void testEquals(ImmutableList<Integer> list) {
     assertEquals(list, list);
   }
 
   @Test
   public void testSpan() {
-    testSpan(List.<Integer>nil(), 0, 0);
-    testSpan(List.list(1, 2, 3), 3, 0);
-    testSpan(List.list(10, 20, 30), 0, 3);
-    testSpan(List.list(5, 10, 15), 1, 2);
+    testSpan(ImmutableList.<Integer>nil(), 0, 0);
+    testSpan(ImmutableList.list(1, 2, 3), 3, 0);
+    testSpan(ImmutableList.list(10, 20, 30), 0, 3);
+    testSpan(ImmutableList.list(5, 10, 15), 1, 2);
   }
 
-  private void testSpan(List<Integer> list, int lengthA, int lengthB) {
-    Pair<List<Integer>, List<Integer>> s = list.span(i -> i < 10);
+  private void testSpan(ImmutableList<Integer> list, int lengthA, int lengthB) {
+    Pair<ImmutableList<Integer>, ImmutableList<Integer>> s = list.span(i -> i < 10);
     assertEquals(s.a.length, lengthA);
     assertEquals(s.b.length, lengthB);
   }
@@ -248,30 +248,30 @@ public class ListTest extends TestBase {
     testWithSpecialLists(this::testZipWith);
   }
 
-  private void testZipWith(List<Integer> list) {
-    List<Integer> integers = list.zipWith((a, b) -> 0, List.<Integer>nil());
+  private void testZipWith(ImmutableList<Integer> list) {
+    ImmutableList<Integer> integers = list.zipWith((a, b) -> 0, ImmutableList.<Integer>nil());
     assertEquals(0, integers.length);
     integers = list.zipWith((a, b) -> a + b, list);
     list.foldLeft((l, integer) -> {
       assertEquals(integer * 2, (int) l.maybeHead().just());
       return l.maybeTail().just();
     }, integers);
-    if (list instanceof NonEmptyList) {
-      NonEmptyList<Integer> nel = (NonEmptyList<Integer>) list;
-      List<Integer> a = nel.zipWith((x, y) -> x + y, nel.tail());
+    if (list instanceof NonEmptyImmutableList) {
+      NonEmptyImmutableList<Integer> nel = (NonEmptyImmutableList<Integer>) list;
+      ImmutableList<Integer> a = nel.zipWith((x, y) -> x + y, nel.tail());
       assertEquals(a.length, list.length - 1);
     }
   }
 
   @Test
   public void testFilter() {
-    List<Integer> integers = range(100).filter(i -> i > 15);
+    ImmutableList<Integer> integers = range(100).filter(i -> i > 15);
     assertEquals(84, integers.length);
   }
 
   @Test
   public void testRemoveAll() {
-    List<Integer> integers = range(100).removeAll(i -> i <= 15);
+    ImmutableList<Integer> integers = range(100).removeAll(i -> i <= 15);
     assertEquals(84, integers.length);
   }
 

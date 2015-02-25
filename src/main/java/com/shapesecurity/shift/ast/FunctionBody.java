@@ -16,7 +16,7 @@
 
 package com.shapesecurity.shift.ast;
 
-import com.shapesecurity.functional.data.List;
+import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.shift.ast.directive.UseStrictDirective;
 import com.shapesecurity.shift.ast.types.Type;
 
@@ -24,13 +24,13 @@ import org.jetbrains.annotations.NotNull;
 
 public class FunctionBody extends Node {
   @NotNull
-  public final List<Directive> directives;
+  public final ImmutableList<Directive> directives;
   @NotNull
-  public final List<Statement> statements;
+  public final ImmutableList<Statement> statements;
 
   private final boolean isStrict;
 
-  public FunctionBody(@NotNull List<Directive> directives, @NotNull List<Statement> statements) {
+  public FunctionBody(@NotNull ImmutableList<Directive> directives, @NotNull ImmutableList<Statement> statements) {
     super();
     this.directives = directives;
     this.statements = statements;
@@ -56,22 +56,22 @@ public class FunctionBody extends Node {
   }
 
   @NotNull
-  public List<Directive> getDirectives() {
+  public ImmutableList<Directive> getDirectives() {
     return this.directives;
   }
 
   @NotNull
-  public List<Statement> getStatements() {
+  public ImmutableList<Statement> getStatements() {
     return this.statements;
   }
 
   @NotNull
-  public FunctionBody setDirectives(@NotNull List<Directive> directives) {
+  public FunctionBody setDirectives(@NotNull ImmutableList<Directive> directives) {
     return new FunctionBody(directives, this.statements);
   }
 
   @NotNull
-  public FunctionBody setStatements(@NotNull List<Statement> statements) {
+  public FunctionBody setStatements(@NotNull ImmutableList<Statement> statements) {
     return new FunctionBody(this.directives, statements);
   }
 }

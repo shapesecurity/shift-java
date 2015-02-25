@@ -21,7 +21,7 @@ import java.io.IOException;
 
 import org.jetbrains.annotations.NotNull;
 
-import com.shapesecurity.functional.data.List;
+import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.shift.TestBase;
 import com.shapesecurity.shift.ast.Expression;
 import com.shapesecurity.shift.ast.Script;
@@ -66,7 +66,7 @@ public class TransformerTest extends TestBase {
           @Override
           public Expression reduceLiteralNumericExpression(
               @NotNull LiteralNumericExpression node,
-              @NotNull List<Branch> path) {
+              @NotNull ImmutableList<Branch> path) {
             return new LiteralNumericExpression(node.value + 1);
           }
         });
@@ -76,7 +76,7 @@ public class TransformerTest extends TestBase {
           @Override
           public Expression reduceLiteralNumericExpression(
               @NotNull LiteralNumericExpression node,
-              @NotNull List<Branch> path) {
+              @NotNull ImmutableList<Branch> path) {
             return new LiteralNumericExpression(node.value + 1);
           }
         });
@@ -97,7 +97,7 @@ public class TransformerTest extends TestBase {
 
   @Test
   public void testCloneLibrary() throws IOException, JsError {
-    List<String> jsFiles = List.nil();
+    ImmutableList<String> jsFiles = ImmutableList.nil();
     setFatal(false); // Collect the failures in an ErrorCollector
 
     // Get a list of the js files within the resources directory to process
@@ -108,7 +108,7 @@ public class TransformerTest extends TestBase {
     }
     for (File file : files) {
       if (file.isFile() && file.getName().endsWith(".js")) {
-        jsFiles = List.cons(file.getName(), jsFiles);
+        jsFiles = ImmutableList.cons(file.getName(), jsFiles);
       }
     }
 

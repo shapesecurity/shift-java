@@ -108,8 +108,8 @@ public abstract class HashTable<K, V> {
   public abstract <A> A foldRight(@NotNull F2<Pair<K, V>, A, A> f, @NotNull A init);
 
   @NotNull
-  public List<Pair<K, V>> entries() {
-    return this.foldRight((kvPair, pairs) -> pairs.cons(kvPair), List.nil());
+  public ImmutableList<Pair<K, V>> entries() {
+    return this.foldRight((kvPair, pairs) -> pairs.cons(kvPair), ImmutableList.nil());
   }
 
   public abstract void foreach(@NotNull Effect<Pair<K, V>> e);
@@ -136,7 +136,7 @@ public abstract class HashTable<K, V> {
     @NotNull
     @Override
     protected HashTable<K, V> put(@NotNull K key, @NotNull V value, int hash) {
-      return new Leaf<>(this.hasher, List.list(new Pair<>(key, value)), hash, 1);
+      return new Leaf<>(this.hasher, ImmutableList.list(new Pair<>(key, value)), hash, 1);
     }
 
     @NotNull
@@ -200,10 +200,10 @@ public abstract class HashTable<K, V> {
    */
   private final static class Leaf<K, V> extends HashTable<K, V> {
     @NotNull
-    private final List<Pair<K, V>> dataList;
+    private final ImmutableList<Pair<K, V>> dataList;
     public int baseHash;
 
-    protected Leaf(@NotNull Hasher<K> hasher, @NotNull List<Pair<K, V>> dataList, int baseHash, int length) {
+    protected Leaf(@NotNull Hasher<K> hasher, @NotNull ImmutableList<Pair<K, V>> dataList, int baseHash, int length) {
       super(hasher, length);
       this.dataList = dataList;
       this.baseHash = baseHash;
@@ -213,7 +213,7 @@ public abstract class HashTable<K, V> {
     @Override
     protected HashTable<K, V> put(@NotNull final K key, @NotNull final V value, final int hash) {
       if (hash == this.baseHash) {
-        Pair<Boolean, List<Pair<K, V>>> result = this.dataList.mapAccumL((found, kvPair) -> {
+        Pair<Boolean, ImmutableList<Pair<K, V>>> result = this.dataList.mapAccumL((found, kvPair) -> {
           if (found) {
             return new Pair<>(true, kvPair);
           }
@@ -236,7 +236,7 @@ public abstract class HashTable<K, V> {
       if (this.baseHash != hash) {
         return Maybe.nothing();
       }
-      Pair<Boolean, List<Pair<K, V>>> result = this.dataList.foldRight((i, p) -> {
+      Pair<Boolean, ImmutableList<Pair<K, V>>> result = this.dataList.foldRight((i, p) -> {
         if (p.a) {
           return new Pair<>(true, p.b.cons(i));
         }
@@ -244,7 +244,7 @@ public abstract class HashTable<K, V> {
           return new Pair<>(true, p.b);
         }
         return new Pair<>(false, p.b.cons(i));
-      }, new Pair<>(false, List.nil()));
+      }, new Pair<>(false, ImmutableList.nil()));
       if (result.a) {
         if (this.length == 1) {
           return Maybe.just(HashTable.empty());
@@ -282,8 +282,8 @@ public abstract class HashTable<K, V> {
         final Leaf<K, V> leaf = (Leaf<K, V>) tree;
         if (leaf.baseHash == this.baseHash) {
           final Pair<K, V>[] pairs = this.dataList.toArray(new Pair[this.dataList.length]);
-          List<Pair<K, V>> right = leaf.dataList.foldLeft(
-              (@NotNull List<Pair<K, V>> result, @NotNull Pair<K, V> kvPair) -> {
+          ImmutableList<Pair<K, V>> right = leaf.dataList.foldLeft(
+              (@NotNull ImmutableList<Pair<K, V>> result, @NotNull Pair<K, V> kvPair) -> {
                 for (int i = 0; i < pairs.length; i++) {
                   if (Leaf.this.hasher.eq(pairs[i].a, kvPair.a)) {
                     pairs[i] = new Pair<>(pairs[i].a, merger.apply(pairs[i].b, kvPair.b));
@@ -291,8 +291,8 @@ public abstract class HashTable<K, V> {
                   }
                 }
                 return result.cons(kvPair);
-              }, List.nil());
-          List<Pair<K, V>> newList = List.from(pairs).append(right);
+              }, ImmutableList.nil());
+          ImmutableList<Pair<K, V>> newList = ImmutableList.from(pairs).append(right);
           return new Leaf<>(this.hasher, newList, this.baseHash, newList.length);
         }
       }
@@ -348,7 +348,7 @@ public abstract class HashTable<K, V> {
       int subHash = hash & 31;
       HashTable<K, V>[] cloned = Fork.this.children.clone();
       if (cloned[subHash] == null) {
-        cloned[subHash] = new Leaf<>(Fork.this.hasher, List.nil(), hash >>> 5, 0);
+        cloned[subHash] = new Leaf<>(Fork.this.hasher, ImmutableList.nil(), hash >>> 5, 0);
       }
       int length1 = cloned[subHash].length;
       cloned[subHash] = cloned[subHash].put(key, value, hash >>> 5);

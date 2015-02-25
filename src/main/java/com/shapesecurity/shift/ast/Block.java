@@ -16,7 +16,7 @@
 
 package com.shapesecurity.shift.ast;
 
-import com.shapesecurity.functional.data.List;
+import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.shift.ast.types.Type;
 
 import org.jetbrains.annotations.NotNull;
@@ -25,9 +25,9 @@ public class Block extends Node {
   // ECMAScript 5 does not allow FunctionDeclarations in block statements, but no
   // implementations comply to this restriction.
   @NotNull
-  public final List<Statement> statements;
+  public final ImmutableList<Statement> statements;
 
-  public Block(@NotNull List<Statement> statements) {
+  public Block(@NotNull ImmutableList<Statement> statements) {
     super();
     this.statements = statements;
   }
@@ -44,12 +44,12 @@ public class Block extends Node {
   }
 
   @NotNull
-  public List<Statement> getStatements() {
+  public ImmutableList<Statement> getStatements() {
     return this.statements;
   }
 
   @NotNull
-  public Block setStatements(@NotNull List<Statement> statements) {
+  public Block setStatements(@NotNull ImmutableList<Statement> statements) {
     return new Block(statements);
   }
 }

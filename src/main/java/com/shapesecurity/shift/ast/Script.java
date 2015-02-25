@@ -16,11 +16,10 @@
 
 package com.shapesecurity.shift.ast;
 
-import com.shapesecurity.functional.data.List;
+import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.shift.ast.types.Type;
 import com.shapesecurity.shift.visitor.Director;
 import com.shapesecurity.shift.visitor.ReducerP;
-import com.shapesecurity.shift.visitor.TransformerP;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -59,6 +58,6 @@ public class Script extends Node {
       @NotNull ReducerP<ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState,
           ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState,
           SwitchCaseState, SwitchDefaultState, CatchClauseState> reducer) {
-    return Director.reduceScript(reducer, this, List.nil());
+    return Director.reduceScript(reducer, this, ImmutableList.nil());
   }
 }

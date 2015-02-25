@@ -1,6 +1,6 @@
 package com.shapesecurity.shift.codegen;
 
-import com.shapesecurity.functional.data.List;
+import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.functional.data.Maybe;
 import com.shapesecurity.shift.ast.Expression;
 import com.shapesecurity.shift.ast.operators.Precedence;
@@ -83,12 +83,12 @@ public class CodeRepFactory {
   }
 
   @NotNull
-  public final CodeRep commaSep(@NotNull List<CodeRep> reps) {
+  public final CodeRep commaSep(@NotNull ImmutableList<CodeRep> reps) {
     return commaSep(reps.toArray(EMPTY));
   }
 
   @NotNull
-  public final CodeRep seq(@NotNull List<CodeRep> reps) {
+  public final CodeRep seq(@NotNull ImmutableList<CodeRep> reps) {
     return seq(reps.toArray(EMPTY));
   }
 }

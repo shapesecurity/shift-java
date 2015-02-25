@@ -16,17 +16,16 @@
 
 package com.shapesecurity.shift.ast;
 
-import com.shapesecurity.functional.data.List;
+import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.shift.ast.types.Type;
-import com.shapesecurity.shift.visitor.TransformerP;
 
 import org.jetbrains.annotations.NotNull;
 
 public class SwitchDefault extends Node {
   @NotNull
-  public final List<Statement> consequent;
+  public final ImmutableList<Statement> consequent;
 
-  public SwitchDefault(@NotNull List<Statement> consequent) {
+  public SwitchDefault(@NotNull ImmutableList<Statement> consequent) {
     super();
     this.consequent = consequent;
   }
@@ -43,12 +42,12 @@ public class SwitchDefault extends Node {
   }
 
   @NotNull
-  public List<Statement> getConsequent() {
+  public ImmutableList<Statement> getConsequent() {
     return this.consequent;
   }
 
   @NotNull
-  public SwitchDefault setConsequent(@NotNull List<Statement> consequent) {
+  public SwitchDefault setConsequent(@NotNull ImmutableList<Statement> consequent) {
     return new SwitchDefault(consequent);
   }
 }

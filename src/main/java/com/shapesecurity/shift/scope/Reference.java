@@ -16,7 +16,7 @@
 
 package com.shapesecurity.shift.scope;
 
-import com.shapesecurity.functional.data.List;
+import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.shift.ast.Identifier;
 import com.shapesecurity.shift.path.Branch;
 
@@ -26,11 +26,11 @@ public final class Reference {
   @NotNull
   public final Identifier node;
   @NotNull
-  public final List<Branch> path;
+  public final ImmutableList<Branch> path;
   @NotNull
   public final Accessibility accessibility;
 
-  public Reference(@NotNull Identifier node, @NotNull List<Branch> path, @NotNull Accessibility accessibility) {
+  public Reference(@NotNull Identifier node, @NotNull ImmutableList<Branch> path, @NotNull Accessibility accessibility) {
     this.node = node;
     this.path = path;
     this.accessibility = accessibility;

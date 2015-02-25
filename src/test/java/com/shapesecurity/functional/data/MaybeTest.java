@@ -54,19 +54,19 @@ public class MaybeTest extends TestBase {
 
   @Test
   public void testCatMaybes() {
-    new ListTest().testWithSpecialLists(this::testCatMaybes);
+    new ImmutableListTest().testWithSpecialLists(this::testCatMaybes);
   }
 
-  private void testCatMaybes(List<Integer> list) {
+  private void testCatMaybes(ImmutableList<Integer> list) {
     assertEquals(list, Maybe.catMaybes(list.map(Maybe::just)));
   }
 
   @Test
   public void testMapMaybe() {
-    new ListTest().testWithSpecialLists(this::testMapMaybe);
+    new ImmutableListTest().testWithSpecialLists(this::testMapMaybe);
   }
 
-  private void testMapMaybe(List<Integer> list) {
+  private void testMapMaybe(ImmutableList<Integer> list) {
     assertEquals(list.map(x -> x + 1), Maybe.mapMaybe(x -> x + 1, list.<Maybe<Integer>>map(Maybe::just)));
   }
 
@@ -93,8 +93,8 @@ public class MaybeTest extends TestBase {
 
   @Test
   public void testToList() {
-    assertEquals(List.<Integer>nil(), Maybe.<Integer>nothing().toList());
-    assertEquals(List.list(notNull), Maybe.just(notNull).toList());
+    assertEquals(ImmutableList.<Integer>nil(), Maybe.<Integer>nothing().toList());
+    assertEquals(ImmutableList.list(notNull), Maybe.just(notNull).toList());
   }
 
   @Test

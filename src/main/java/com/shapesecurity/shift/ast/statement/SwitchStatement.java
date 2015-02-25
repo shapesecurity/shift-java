@@ -16,7 +16,7 @@
 
 package com.shapesecurity.shift.ast.statement;
 
-import com.shapesecurity.functional.data.List;
+import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.shift.ast.Expression;
 import com.shapesecurity.shift.ast.Statement;
 import com.shapesecurity.shift.ast.SwitchCase;
@@ -28,9 +28,9 @@ public class SwitchStatement extends Statement {
   @NotNull
   public final Expression discriminant;
   @NotNull
-  public final List<SwitchCase> cases;
+  public final ImmutableList<SwitchCase> cases;
 
-  public SwitchStatement(@NotNull Expression discriminant, @NotNull List<SwitchCase> cases) {
+  public SwitchStatement(@NotNull Expression discriminant, @NotNull ImmutableList<SwitchCase> cases) {
     super();
     this.discriminant = discriminant;
     this.cases = cases;
@@ -54,7 +54,7 @@ public class SwitchStatement extends Statement {
   }
 
   @NotNull
-  public List<SwitchCase> getCases() {
+  public ImmutableList<SwitchCase> getCases() {
     return this.cases;
   }
 
@@ -64,7 +64,7 @@ public class SwitchStatement extends Statement {
   }
 
   @NotNull
-  public SwitchStatement setCases(@NotNull List<SwitchCase> cases) {
+  public SwitchStatement setCases(@NotNull ImmutableList<SwitchCase> cases) {
     return new SwitchStatement(this.discriminant, cases);
   }
 }

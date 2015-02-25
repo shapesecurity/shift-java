@@ -19,10 +19,10 @@ package com.shapesecurity.shift.scope;
 import com.shapesecurity.functional.Pair;
 import com.shapesecurity.functional.data.Either;
 import com.shapesecurity.functional.data.HashTable;
-import com.shapesecurity.functional.data.List;
+import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.functional.data.Maybe;
 import com.shapesecurity.functional.data.Monoid;
-import com.shapesecurity.functional.data.NonEmptyList;
+import com.shapesecurity.functional.data.NonEmptyImmutableList;
 import com.shapesecurity.shift.ast.Block;
 import com.shapesecurity.shift.ast.CatchClause;
 import com.shapesecurity.shift.ast.Identifier;
@@ -68,13 +68,13 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
 
   @NotNull
   @Override
-  public State reduceIdentifier(@NotNull Identifier node, @NotNull List<Branch> path) {
+  public State reduceIdentifier(@NotNull Identifier node, @NotNull ImmutableList<Branch> path) {
     return new State(HashTable.empty(),
         HashTable.empty(),
         HashTable.empty(),
         new HashSet<>(),
-        List.nil(),
-        List.nil(),
+        ImmutableList.nil(),
+        ImmutableList.nil(),
         false,
         path,
         node,
@@ -85,7 +85,7 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
   @Override
   public State reduceIdentifierExpression(
       @NotNull IdentifierExpression node,
-      @NotNull List<Branch> path,
+      @NotNull ImmutableList<Branch> path,
       @NotNull State identifier) {
     return identifier.addReference(Accessibility.Read);
   }
@@ -94,7 +94,7 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
   @Override
   public State reduceBinaryExpression(
       @NotNull BinaryExpression node,
-      @NotNull List<Branch> path,
+      @NotNull ImmutableList<Branch> path,
       @NotNull State left,
       @NotNull State right) {
     return super.reduceBinaryExpression(node, path, left, right);
@@ -104,7 +104,7 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
   @Override
   public State reduceAssignmentExpression(
       @NotNull AssignmentExpression node,
-      @NotNull List<Branch> path,
+      @NotNull ImmutableList<Branch> path,
       @NotNull State binding,
       @NotNull State expression) {
     if (node.binding instanceof IdentifierExpression) {
@@ -122,9 +122,9 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
   @Override
   public State reduceCallExpression(
       @NotNull CallExpression node,
-      @NotNull List<Branch> path,
+      @NotNull ImmutableList<Branch> path,
       @NotNull State callee,
-      @NotNull List<State> arguments) {
+      @NotNull ImmutableList<State> arguments) {
     State s = super.reduceCallExpression(node, path, callee, arguments);
     if (node.callee instanceof IdentifierExpression &&
         ((IdentifierExpression) node.callee).identifier.name.equals("eval")) {
@@ -137,7 +137,7 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
   @Override
   public State reduceForInStatement(
       @NotNull ForInStatement node,
-      @NotNull List<Branch> path,
+      @NotNull ImmutableList<Branch> path,
       @NotNull Either<State, State> left,
       @NotNull State right,
       @NotNull State body) {
@@ -151,7 +151,7 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
 
   @NotNull
   @Override
-  public State reduceScript(@NotNull Script node, @NotNull List<Branch> path, @NotNull State body) {
+  public State reduceScript(@NotNull Script node, @NotNull ImmutableList<Branch> path, @NotNull State body) {
     return super.reduceScript(node, path, body).finish(node, Scope.Type.Global);
   }
 
@@ -159,12 +159,12 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
   @Override
   public State reduceFunctionDeclaration(
       @NotNull FunctionDeclaration node,
-      @NotNull List<Branch> path,
+      @NotNull ImmutableList<Branch> path,
       @NotNull State id,
-      @NotNull List<State> params,
+      @NotNull ImmutableList<State> params,
       @NotNull State programBody) {
     params = params.map(s -> s.addDeclaration(Kind.Param));
-    List<Branch> lastPath = id.lastPath;
+    ImmutableList<Branch> lastPath = id.lastPath;
     Identifier lastIdentifier = id.lastIdentifier;
     assert lastPath != null;
     assert lastIdentifier != null;
@@ -176,9 +176,9 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
   @Override
   public State reduceFunctionExpression(
       @NotNull FunctionExpression node,
-      @NotNull List<Branch> path,
+      @NotNull ImmutableList<Branch> path,
       @NotNull Maybe<State> id,
-      @NotNull List<State> params,
+      @NotNull ImmutableList<State> params,
       @NotNull State programBody) {
     params = params.map(s -> s.addDeclaration(Kind.Param));
     State s = super.reduceFunctionExpression(node, path, id, params, programBody)
@@ -192,7 +192,7 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
 
   @NotNull
   @Override
-  public State reduceGetter(@NotNull Getter node, @NotNull List<Branch> path, @NotNull State key, @NotNull State body) {
+  public State reduceGetter(@NotNull Getter node, @NotNull ImmutableList<Branch> path, @NotNull State key, @NotNull State body) {
     return body.finish(node, Scope.Type.Function);
   }
 
@@ -200,7 +200,7 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
   @Override
   public State reduceSetter(
       @NotNull Setter node,
-      @NotNull List<Branch> path,
+      @NotNull ImmutableList<Branch> path,
       @NotNull State key,
       @NotNull State param,
       @NotNull State body) {
@@ -212,7 +212,7 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
   @Override
   public State reduceWithStatement(
       @NotNull WithStatement node,
-      @NotNull List<Branch> path,
+      @NotNull ImmutableList<Branch> path,
       @NotNull State object,
       @NotNull State body) {
     return super.reduceWithStatement(node, path, object, body.finish(node, Scope.Type.With));
@@ -222,7 +222,7 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
   @Override
   public State reduceCatchClause(
       @NotNull CatchClause node,
-      @NotNull List<Branch> path,
+      @NotNull ImmutableList<Branch> path,
       @NotNull State param,
       @NotNull State body) {
     return super.reduceCatchClause(node, path, param.addDeclaration(Kind.CatchParam), body).finish(node,
@@ -231,7 +231,7 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
 
   @NotNull
   @Override
-  public State reduceBlock(@NotNull Block node, @NotNull List<Branch> path, @NotNull List<State> statements) {
+  public State reduceBlock(@NotNull Block node, @NotNull ImmutableList<Branch> path, @NotNull ImmutableList<State> statements) {
     State s = super.reduceBlock(node, path, statements);
     if (s.blockScopedDeclarations.length > 0) {
       s = s.finish(node, Scope.Type.Block);
@@ -243,7 +243,7 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
   @Override
   public State reducePostfixExpression(
       @NotNull PostfixExpression node,
-      @NotNull List<Branch> path,
+      @NotNull ImmutableList<Branch> path,
       @NotNull State operand) {
     if (node.operand instanceof IdentifierExpression) {
       operand = operand.addReference(Accessibility.ReadWrite);
@@ -255,7 +255,7 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
   @Override
   public State reducePrefixExpression(
       @NotNull PrefixExpression node,
-      @NotNull List<Branch> path,
+      @NotNull ImmutableList<Branch> path,
       @NotNull State operand) {
     if ((node.operator == PrefixOperator.Decrement || node.operator == PrefixOperator.Increment) &&
         node.operand instanceof IdentifierExpression) {
@@ -267,9 +267,9 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
   @NotNull
   @Override
   public State reduceVariableDeclaration(
-      @NotNull VariableDeclaration node, @NotNull List<Branch> path, @NotNull NonEmptyList<State> declarators) {
+      @NotNull VariableDeclaration node, @NotNull ImmutableList<Branch> path, @NotNull NonEmptyImmutableList<State> declarators) {
     Kind kind = Kind.fromVariableDeclarationKind(node.kind);
-    List<State> l = declarators;
+    ImmutableList<State> l = declarators;
     while (!l.isEmpty()) {
       l = l.maybeTail().just();
     }
@@ -284,7 +284,7 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
   @Override
   public State reduceVariableDeclarator(
       @NotNull VariableDeclarator node,
-      @NotNull List<Branch> path,
+      @NotNull ImmutableList<Branch> path,
       @NotNull State id,
       @NotNull Maybe<State> init) {
     if (init.isJust()) {
@@ -297,19 +297,19 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
   public static final class State {
     public final boolean dynamic;
     @NotNull
-    public final HashTable<String, HashTable<List<Branch>, Reference>> freeIdentifiers;
+    public final HashTable<String, HashTable<ImmutableList<Branch>, Reference>> freeIdentifiers;
     @NotNull
-    public final HashTable<String, HashTable<List<Branch>, Declaration>> functionScopedDeclarations;
+    public final HashTable<String, HashTable<ImmutableList<Branch>, Declaration>> functionScopedDeclarations;
     @NotNull
-    public final HashTable<String, HashTable<List<Branch>, Declaration>> blockScopedDeclarations;
+    public final HashTable<String, HashTable<ImmutableList<Branch>, Declaration>> blockScopedDeclarations;
     @NotNull
     public final Set<String> functionScopedInit; // function scoped variables with initializers
     @NotNull
-    public final List<Variable> blockScopedTiedVar; // function scoped init vars captured by block scope
+    public final ImmutableList<Variable> blockScopedTiedVar; // function scoped init vars captured by block scope
     @NotNull
-    public final List<Scope> children;
+    public final ImmutableList<Scope> children;
     @Nullable
-    public final List<Branch> lastPath;
+    public final ImmutableList<Branch> lastPath;
     @Nullable
     public final Identifier lastIdentifier;
     public final boolean lastDeclaratorWasInit;
@@ -319,14 +319,14 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
      * Fully saturated constructor
      */
     private State(
-        @NotNull HashTable<String, HashTable<List<Branch>, Reference>> freeIdentifiers,
-        @NotNull HashTable<String, HashTable<List<Branch>, Declaration>> functionScopedDeclarations,
-        @NotNull HashTable<String, HashTable<List<Branch>, Declaration>> blockScopedDeclarations,
+        @NotNull HashTable<String, HashTable<ImmutableList<Branch>, Reference>> freeIdentifiers,
+        @NotNull HashTable<String, HashTable<ImmutableList<Branch>, Declaration>> functionScopedDeclarations,
+        @NotNull HashTable<String, HashTable<ImmutableList<Branch>, Declaration>> blockScopedDeclarations,
         @NotNull Set<String> functionScopedInit,
-        @NotNull List<Variable> blockScopedTiedVar,
-        @NotNull List<Scope> children,
+        @NotNull ImmutableList<Variable> blockScopedTiedVar,
+        @NotNull ImmutableList<Scope> children,
         boolean dynamic,
-        @Nullable List<Branch> lastPath,
+        @Nullable ImmutableList<Branch> lastPath,
         @Nullable Identifier lastIdentifier,
         boolean lastDeclaratorWasInit
     ) {
@@ -350,8 +350,8 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
       this.functionScopedDeclarations = HashTable.empty();
       this.blockScopedDeclarations = HashTable.empty();
       this.functionScopedInit = new HashSet<>();
-      this.blockScopedTiedVar = List.nil();
-      this.children = List.nil();
+      this.blockScopedTiedVar = ImmutableList.nil();
+      this.children = ImmutableList.nil();
       this.dynamic = false;
       this.lastPath = null;
       this.lastIdentifier = null;
@@ -379,9 +379,9 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
      * Utility method to merge MultiMaps
      */
     @NotNull
-    private static <T> HashTable<String, HashTable<List<Branch>, T>> merge(
-        @NotNull HashTable<String, HashTable<List<Branch>, T>> mapA,
-        @NotNull HashTable<String, HashTable<List<Branch>, T>> mapB) {
+    private static <T> HashTable<String, HashTable<ImmutableList<Branch>, T>> merge(
+        @NotNull HashTable<String, HashTable<ImmutableList<Branch>, T>> mapA,
+        @NotNull HashTable<String, HashTable<ImmutableList<Branch>, T>> mapB) {
       return mapA.merge(mapB, HashTable::merge);
     }
 
@@ -406,30 +406,30 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
      * are carried forward into the new state object.
      */
     private State finish(@NotNull Node astNode, @NotNull Scope.Type scopeType) {
-      List<Variable> variables = List.nil();
+      ImmutableList<Variable> variables = ImmutableList.nil();
 
-      HashTable<String, HashTable<List<Branch>, Declaration>> functionScope = HashTable.empty();
-      HashTable<String, HashTable<List<Branch>, Reference>> freeIdentifiers = this.freeIdentifiers;
+      HashTable<String, HashTable<ImmutableList<Branch>, Declaration>> functionScope = HashTable.empty();
+      HashTable<String, HashTable<ImmutableList<Branch>, Reference>> freeIdentifiers = this.freeIdentifiers;
       Set<String> functionScopedInit = new HashSet<>();
-      List<Variable> blockScopedTiedVar = List.nil();
+      ImmutableList<Variable> blockScopedTiedVar = ImmutableList.nil();
 
       switch (scopeType) {
       case Block:
       case Catch:
       case With:
         // resolve only block-scoped free declarations
-        List<Variable> variables3 = variables;
-        for (Pair<String, HashTable<List<Branch>, Declaration>> entry2 : this.blockScopedDeclarations.entries()) {
+        ImmutableList<Variable> variables3 = variables;
+        for (Pair<String, HashTable<ImmutableList<Branch>, Declaration>> entry2 : this.blockScopedDeclarations.entries()) {
           String name2 = entry2.a;
-          HashTable<List<Branch>, Declaration> declarations2 = entry2.b;
-          HashTable<List<Branch>, Reference> references2 = freeIdentifiers.get(name2).orJust(HashTable.empty());
-          variables3 = List.cons(new Variable(name2, references2, declarations2), variables3);
+          HashTable<ImmutableList<Branch>, Declaration> declarations2 = entry2.b;
+          HashTable<ImmutableList<Branch>, Reference> references2 = freeIdentifiers.get(name2).orJust(HashTable.empty());
+          variables3 = ImmutableList.cons(new Variable(name2, references2, declarations2), variables3);
           freeIdentifiers = freeIdentifiers.remove(name2);
         }
         variables = variables3;
         functionScope = this.functionScopedDeclarations;
         functionScopedInit.addAll(this.functionScopedInit);
-        List<Variable> vptr = variables;
+        ImmutableList<Variable> vptr = variables;
         blockScopedTiedVar = this.blockScopedTiedVar;
         while (!vptr.isEmpty()) {
           Variable v = vptr.maybeHead().just();
@@ -443,28 +443,28 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
       default:
         // resolve both block-scoped and function-scoped free declarations
         if (scopeType == Scope.Type.Function) {
-          List<Variable> variables1 = variables;
-          HashTable<List<Branch>, Reference> arguments = freeIdentifiers.get("arguments").orJust(HashTable.empty());
+          ImmutableList<Variable> variables1 = variables;
+          HashTable<ImmutableList<Branch>, Reference> arguments = freeIdentifiers.get("arguments").orJust(HashTable.empty());
           freeIdentifiers = freeIdentifiers.remove("arguments");
-          variables1 = List.cons(new Variable("arguments", arguments, HashTable.empty()), variables1);
+          variables1 = ImmutableList.cons(new Variable("arguments", arguments, HashTable.empty()), variables1);
           variables = variables1;
         }
-        List<Variable> variables2 = variables;
-        for (Pair<String, HashTable<List<Branch>, Declaration>> entry1 : this.blockScopedDeclarations.entries()) {
+        ImmutableList<Variable> variables2 = variables;
+        for (Pair<String, HashTable<ImmutableList<Branch>, Declaration>> entry1 : this.blockScopedDeclarations.entries()) {
           String name1 = entry1.a;
-          HashTable<List<Branch>, Declaration> declarations1 = entry1.b;
-          HashTable<List<Branch>, Reference> references1 = freeIdentifiers.get(name1).orJust(HashTable.empty());
-          variables2 = List.cons(new Variable(name1, references1, declarations1), variables2);
+          HashTable<ImmutableList<Branch>, Declaration> declarations1 = entry1.b;
+          HashTable<ImmutableList<Branch>, Reference> references1 = freeIdentifiers.get(name1).orJust(HashTable.empty());
+          variables2 = ImmutableList.cons(new Variable(name1, references1, declarations1), variables2);
           freeIdentifiers = freeIdentifiers.remove(name1);
         }
         variables = variables2;
-        List<Variable> variables1 = variables;
-        for (Pair<String, HashTable<List<Branch>, Declaration>> entry : this.functionScopedDeclarations.entries()) {
+        ImmutableList<Variable> variables1 = variables;
+        for (Pair<String, HashTable<ImmutableList<Branch>, Declaration>> entry : this.functionScopedDeclarations.entries()) {
           String name = entry.a;
-          HashTable<List<Branch>, Declaration> declarations = entry.b;
-          HashTable<List<Branch>, Reference> references =
+          HashTable<ImmutableList<Branch>, Declaration> declarations = entry.b;
+          HashTable<ImmutableList<Branch>, Reference> references =
               freeIdentifiers.get(name).orJust(HashTable.empty());
-          variables1 = List.cons(new Variable(name, references, declarations), variables1);
+          variables1 = ImmutableList.cons(new Variable(name, references, declarations), variables1);
           freeIdentifiers = freeIdentifiers.remove(name);
         }
         variables = variables1;
@@ -477,7 +477,7 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
 
       return new State(
           freeIdentifiers, functionScope, HashTable.empty(), functionScopedInit, blockScopedTiedVar,
-          List.list(scope), false, this.lastPath, this.lastIdentifier, this.lastDeclaratorWasInit);
+          ImmutableList.list(scope), false, this.lastPath, this.lastIdentifier, this.lastDeclaratorWasInit);
     }
 
     /*
@@ -496,17 +496,17 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
     }
 
     @NotNull
-    private State addDeclaration(@NotNull List<Branch> path, @NotNull Identifier id, @NotNull Kind kind) {
+    private State addDeclaration(@NotNull ImmutableList<Branch> path, @NotNull Identifier id, @NotNull Kind kind) {
       return addDeclaration(path, id, kind, false);
     }
 
     @NotNull
-    private State addDeclaration(@NotNull List<Branch> path, @NotNull Identifier id, @NotNull Kind kind,
+    private State addDeclaration(@NotNull ImmutableList<Branch> path, @NotNull Identifier id, @NotNull Kind kind,
                                  boolean hasInit) {
       Declaration decl = new Declaration(id, path, kind);
-      HashTable<String, HashTable<List<Branch>, Declaration>> declMap =
+      HashTable<String, HashTable<ImmutableList<Branch>, Declaration>> declMap =
           kind.isBlockScoped ? this.blockScopedDeclarations : this.functionScopedDeclarations;
-      HashTable<List<Branch>, Declaration> tree = declMap.get(id.name).orJust(HashTable.empty()).put(decl.path, decl);
+      HashTable<ImmutableList<Branch>, Declaration> tree = declMap.get(id.name).orJust(HashTable.empty()).put(decl.path, decl);
       declMap = declMap.put(id.name, tree);
       Set<String> functionScopedInit = this.functionScopedInit;
       if (hasInit && kind.isFunctionScoped) {
@@ -536,7 +536,7 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
 
     @NotNull
     public State addReference(@NotNull Accessibility accessibility, boolean hasInit) {
-      List<Branch> path = this.lastPath;
+      ImmutableList<Branch> path = this.lastPath;
       Identifier id = this.lastIdentifier;
       assert path != null;
       assert id != null;
@@ -544,17 +544,17 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
     }
 
     @NotNull
-    private State addReference(@NotNull List<Branch> path, @NotNull Identifier id,
+    private State addReference(@NotNull ImmutableList<Branch> path, @NotNull Identifier id,
                                @NotNull Accessibility accessibility) {
       return addReference(path, id, accessibility, false);
     }
 
     @NotNull
-    private State addReference(@NotNull List<Branch> path, @NotNull Identifier id, @NotNull Accessibility accessibility,
+    private State addReference(@NotNull ImmutableList<Branch> path, @NotNull Identifier id, @NotNull Accessibility accessibility,
                                boolean hasInit) {
       Reference ref = new Reference(id, path, accessibility);
-      HashTable<String, HashTable<List<Branch>, Reference>> free = this.freeIdentifiers;
-      HashTable<List<Branch>, Reference> tree = free.get(ref.node.name).orJust(HashTable.empty()).put(ref.path, ref);
+      HashTable<String, HashTable<ImmutableList<Branch>, Reference>> free = this.freeIdentifiers;
+      HashTable<ImmutableList<Branch>, Reference> tree = free.get(ref.node.name).orJust(HashTable.empty()).put(ref.path, ref);
       free = free.put(ref.node.name, tree);
       return new State(
           free,
