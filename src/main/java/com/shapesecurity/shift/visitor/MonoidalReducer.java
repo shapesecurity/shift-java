@@ -17,10 +17,10 @@
 package com.shapesecurity.shift.visitor;
 
 import com.shapesecurity.functional.data.Either;
-import com.shapesecurity.functional.data.List;
+import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.functional.data.Maybe;
 import com.shapesecurity.functional.data.Monoid;
-import com.shapesecurity.functional.data.NonEmptyList;
+import com.shapesecurity.functional.data.NonEmptyImmutableList;
 import com.shapesecurity.shift.ast.Block;
 import com.shapesecurity.shift.ast.CatchClause;
 import com.shapesecurity.shift.ast.FunctionBody;
@@ -93,13 +93,13 @@ public class MonoidalReducer<State> implements Reducer<State> {
 
   @NotNull
   @Override
-  public State reduceScript(@NotNull Script node, @NotNull List<Branch> path, @NotNull State body) {
+  public State reduceScript(@NotNull Script node, @NotNull ImmutableList<Branch> path, @NotNull State body) {
     return body;
   }
 
   @NotNull
   @Override
-  public State reduceIdentifier(@NotNull Identifier node, @NotNull List<Branch> path) {
+  public State reduceIdentifier(@NotNull Identifier node, @NotNull ImmutableList<Branch> path) {
     return this.identity;
   }
 
@@ -107,50 +107,50 @@ public class MonoidalReducer<State> implements Reducer<State> {
   @Override
   public State reduceIdentifierExpression(
       @NotNull IdentifierExpression node,
-      @NotNull List<Branch> path,
+      @NotNull ImmutableList<Branch> path,
       @NotNull State identifier) {
     return identifier;
   }
 
   @NotNull
   @Override
-  public State reduceThisExpression(@NotNull ThisExpression node, @NotNull List<Branch> path) {
+  public State reduceThisExpression(@NotNull ThisExpression node, @NotNull ImmutableList<Branch> path) {
     return this.identity;
   }
 
   @NotNull
   @Override
-  public State reduceLiteralBooleanExpression(@NotNull LiteralBooleanExpression node, @NotNull List<Branch> path) {
+  public State reduceLiteralBooleanExpression(@NotNull LiteralBooleanExpression node, @NotNull ImmutableList<Branch> path) {
     return this.identity;
   }
 
   @NotNull
   @Override
-  public State reduceLiteralStringExpression(@NotNull LiteralStringExpression node, @NotNull List<Branch> path) {
+  public State reduceLiteralStringExpression(@NotNull LiteralStringExpression node, @NotNull ImmutableList<Branch> path) {
     return this.identity;
   }
 
   @NotNull
   @Override
-  public State reduceLiteralRegExpExpression(@NotNull LiteralRegExpExpression node, @NotNull List<Branch> path) {
+  public State reduceLiteralRegExpExpression(@NotNull LiteralRegExpExpression node, @NotNull ImmutableList<Branch> path) {
     return this.identity;
   }
 
   @NotNull
   @Override
-  public State reduceLiteralNumericExpression(@NotNull LiteralNumericExpression node, @NotNull List<Branch> path) {
+  public State reduceLiteralNumericExpression(@NotNull LiteralNumericExpression node, @NotNull ImmutableList<Branch> path) {
     return this.identity;
   }
 
   @NotNull
   @Override
-  public State reduceLiteralInfinityExpression(@NotNull LiteralInfinityExpression node, @NotNull List<Branch> path) {
+  public State reduceLiteralInfinityExpression(@NotNull LiteralInfinityExpression node, @NotNull ImmutableList<Branch> path) {
     return this.identity;
   }
 
   @NotNull
   @Override
-  public State reduceLiteralNullExpression(@NotNull LiteralNullExpression node, @NotNull List<Branch> path) {
+  public State reduceLiteralNullExpression(@NotNull LiteralNullExpression node, @NotNull ImmutableList<Branch> path) {
     return this.identity;
   }
 
@@ -158,9 +158,9 @@ public class MonoidalReducer<State> implements Reducer<State> {
   @Override
   public State reduceFunctionExpression(
       @NotNull FunctionExpression node,
-      @NotNull List<Branch> path,
+      @NotNull ImmutableList<Branch> path,
       @NotNull Maybe<State> name,
-      @NotNull List<State> parameters,
+      @NotNull ImmutableList<State> parameters,
       @NotNull State body) {
     return append(fold1(parameters, o(name)), body);
   }
@@ -169,7 +169,7 @@ public class MonoidalReducer<State> implements Reducer<State> {
     return this.monoidClass.append(a, b);
   }
 
-  private State fold1(List<State> as, State a) {
+  private State fold1(ImmutableList<State> as, State a) {
     return as.foldLeft(this::append, a);
   }
 
@@ -182,7 +182,7 @@ public class MonoidalReducer<State> implements Reducer<State> {
   @Override
   public State reduceStaticMemberExpression(
       @NotNull StaticMemberExpression node,
-      @NotNull List<Branch> path,
+      @NotNull ImmutableList<Branch> path,
       @NotNull State object,
       @NotNull State property) {
     return append(object, property);
@@ -192,7 +192,7 @@ public class MonoidalReducer<State> implements Reducer<State> {
   @Override
   public State reduceComputedMemberExpression(
       @NotNull ComputedMemberExpression node,
-      @NotNull List<Branch> path,
+      @NotNull ImmutableList<Branch> path,
       @NotNull State object,
       @NotNull State expression) {
     return append(object, expression);
@@ -202,12 +202,12 @@ public class MonoidalReducer<State> implements Reducer<State> {
   @Override
   public State reduceObjectExpression(
       @NotNull ObjectExpression node,
-      @NotNull List<Branch> path,
-      @NotNull List<State> properties) {
+      @NotNull ImmutableList<Branch> path,
+      @NotNull ImmutableList<State> properties) {
     return fold(properties);
   }
 
-  private State fold(List<State> as) {
+  private State fold(ImmutableList<State> as) {
     return as.foldLeft(this::append, this.identity);
   }
 
@@ -215,7 +215,7 @@ public class MonoidalReducer<State> implements Reducer<State> {
   @Override
   public State reduceBinaryExpression(
       @NotNull BinaryExpression node,
-      @NotNull List<Branch> path,
+      @NotNull ImmutableList<Branch> path,
       @NotNull State left,
       @NotNull State right) {
     return append(left, right);
@@ -225,7 +225,7 @@ public class MonoidalReducer<State> implements Reducer<State> {
   @Override
   public State reduceAssignmentExpression(
       @NotNull AssignmentExpression node,
-      @NotNull List<Branch> path,
+      @NotNull ImmutableList<Branch> path,
       @NotNull State binding,
       @NotNull State expression) {
     return append(binding, expression);
@@ -235,8 +235,8 @@ public class MonoidalReducer<State> implements Reducer<State> {
   @Override
   public State reduceArrayExpression(
       @NotNull ArrayExpression node,
-      @NotNull List<Branch> path,
-      @NotNull List<Maybe<State>> elements) {
+      @NotNull ImmutableList<Branch> path,
+      @NotNull ImmutableList<Maybe<State>> elements) {
     return fold(Maybe.catMaybes(elements));
   }
 
@@ -244,9 +244,9 @@ public class MonoidalReducer<State> implements Reducer<State> {
   @Override
   public State reduceNewExpression(
       @NotNull NewExpression node,
-      @NotNull List<Branch> path,
+      @NotNull ImmutableList<Branch> path,
       @NotNull State callee,
-      @NotNull List<State> arguments) {
+      @NotNull ImmutableList<State> arguments) {
     return fold1(arguments, callee);
   }
 
@@ -254,9 +254,9 @@ public class MonoidalReducer<State> implements Reducer<State> {
   @Override
   public State reduceCallExpression(
       @NotNull CallExpression node,
-      @NotNull List<Branch> path,
+      @NotNull ImmutableList<Branch> path,
       @NotNull State callee,
-      @NotNull List<State> arguments) {
+      @NotNull ImmutableList<State> arguments) {
     return fold1(arguments, callee);
   }
 
@@ -264,7 +264,7 @@ public class MonoidalReducer<State> implements Reducer<State> {
   @Override
   public State reducePostfixExpression(
       @NotNull PostfixExpression node,
-      @NotNull List<Branch> path,
+      @NotNull ImmutableList<Branch> path,
       @NotNull State operand) {
     return operand;
   }
@@ -273,7 +273,7 @@ public class MonoidalReducer<State> implements Reducer<State> {
   @Override
   public State reducePrefixExpression(
       @NotNull PrefixExpression node,
-      @NotNull List<Branch> path,
+      @NotNull ImmutableList<Branch> path,
       @NotNull State operand) {
     return operand;
   }
@@ -282,7 +282,7 @@ public class MonoidalReducer<State> implements Reducer<State> {
   @Override
   public State reduceConditionalExpression(
       @NotNull ConditionalExpression node,
-      @NotNull List<Branch> path,
+      @NotNull ImmutableList<Branch> path,
       @NotNull State test,
       @NotNull State consequent,
       @NotNull State alternate) {
@@ -297,28 +297,28 @@ public class MonoidalReducer<State> implements Reducer<State> {
   @Override
   public State reduceFunctionDeclaration(
       @NotNull FunctionDeclaration node,
-      @NotNull List<Branch> path,
+      @NotNull ImmutableList<Branch> path,
       @NotNull State name,
-      @NotNull List<State> params,
+      @NotNull ImmutableList<State> params,
       @NotNull State body) {
     return append(fold1(params, name), body);
   }
 
   @NotNull
   @Override
-  public State reduceUseStrictDirective(@NotNull UseStrictDirective node, @NotNull List<Branch> path) {
+  public State reduceUseStrictDirective(@NotNull UseStrictDirective node, @NotNull ImmutableList<Branch> path) {
     return this.identity;
   }
 
   @NotNull
   @Override
-  public State reduceUnknownDirective(@NotNull UnknownDirective node, @NotNull List<Branch> path) {
+  public State reduceUnknownDirective(@NotNull UnknownDirective node, @NotNull ImmutableList<Branch> path) {
     return this.identity;
   }
 
   @NotNull
   @Override
-  public State reduceBlockStatement(@NotNull BlockStatement node, @NotNull List<Branch> path, @NotNull State block) {
+  public State reduceBlockStatement(@NotNull BlockStatement node, @NotNull ImmutableList<Branch> path, @NotNull State block) {
     return block;
   }
 
@@ -326,7 +326,7 @@ public class MonoidalReducer<State> implements Reducer<State> {
   @Override
   public State reduceBreakStatement(
       @NotNull BreakStatement node,
-      @NotNull List<Branch> path,
+      @NotNull ImmutableList<Branch> path,
       @NotNull Maybe<State> label) {
     return o(label);
   }
@@ -335,7 +335,7 @@ public class MonoidalReducer<State> implements Reducer<State> {
   @Override
   public State reduceCatchClause(
       @NotNull CatchClause node,
-      @NotNull List<Branch> path,
+      @NotNull ImmutableList<Branch> path,
       @NotNull State binding,
       @NotNull State body) {
     return append(binding, body);
@@ -345,14 +345,14 @@ public class MonoidalReducer<State> implements Reducer<State> {
   @Override
   public State reduceContinueStatement(
       @NotNull ContinueStatement node,
-      @NotNull List<Branch> path,
+      @NotNull ImmutableList<Branch> path,
       @NotNull Maybe<State> label) {
     return o(label);
   }
 
   @NotNull
   @Override
-  public State reduceDebuggerStatement(@NotNull DebuggerStatement node, @NotNull List<Branch> path) {
+  public State reduceDebuggerStatement(@NotNull DebuggerStatement node, @NotNull ImmutableList<Branch> path) {
     return this.identity;
   }
 
@@ -360,7 +360,7 @@ public class MonoidalReducer<State> implements Reducer<State> {
   @Override
   public State reduceDoWhileStatement(
       @NotNull DoWhileStatement node,
-      @NotNull List<Branch> path,
+      @NotNull ImmutableList<Branch> path,
       @NotNull State body,
       @NotNull State test) {
     return append(body, test);
@@ -368,7 +368,7 @@ public class MonoidalReducer<State> implements Reducer<State> {
 
   @NotNull
   @Override
-  public State reduceEmptyStatement(@NotNull EmptyStatement node, @NotNull List<Branch> path) {
+  public State reduceEmptyStatement(@NotNull EmptyStatement node, @NotNull ImmutableList<Branch> path) {
     return this.identity;
   }
 
@@ -376,7 +376,7 @@ public class MonoidalReducer<State> implements Reducer<State> {
   @Override
   public State reduceExpressionStatement(
       @NotNull ExpressionStatement node,
-      @NotNull List<Branch> path,
+      @NotNull ImmutableList<Branch> path,
       @NotNull State expression) {
     return expression;
   }
@@ -385,7 +385,7 @@ public class MonoidalReducer<State> implements Reducer<State> {
   @Override
   public State reduceForInStatement(
       @NotNull ForInStatement node,
-      @NotNull List<Branch> path,
+      @NotNull ImmutableList<Branch> path,
       @NotNull Either<State, State> left,
       @NotNull State right,
       @NotNull State body) {
@@ -396,7 +396,7 @@ public class MonoidalReducer<State> implements Reducer<State> {
   @Override
   public State reduceForStatement(
       @NotNull ForStatement node,
-      @NotNull List<Branch> path,
+      @NotNull ImmutableList<Branch> path,
       @NotNull Maybe<Either<State, State>> init,
       @NotNull Maybe<State> test,
       @NotNull Maybe<State> update,
@@ -412,7 +412,7 @@ public class MonoidalReducer<State> implements Reducer<State> {
   @Override
   public State reduceIfStatement(
       @NotNull IfStatement node,
-      @NotNull List<Branch> path,
+      @NotNull ImmutableList<Branch> path,
       @NotNull State test,
       @NotNull State consequent,
       @NotNull Maybe<State> alternate) {
@@ -423,7 +423,7 @@ public class MonoidalReducer<State> implements Reducer<State> {
   @Override
   public State reduceLabeledStatement(
       @NotNull LabeledStatement node,
-      @NotNull List<Branch> path,
+      @NotNull ImmutableList<Branch> path,
       @NotNull State label,
       @NotNull State body) {
     return append(label, body);
@@ -433,7 +433,7 @@ public class MonoidalReducer<State> implements Reducer<State> {
   @Override
   public State reduceReturnStatement(
       @NotNull ReturnStatement node,
-      @NotNull List<Branch> path,
+      @NotNull ImmutableList<Branch> path,
       @NotNull Maybe<State> expression) {
     return o(expression);
   }
@@ -442,9 +442,9 @@ public class MonoidalReducer<State> implements Reducer<State> {
   @Override
   public State reduceSwitchCase(
       @NotNull SwitchCase node,
-      @NotNull List<Branch> path,
+      @NotNull ImmutableList<Branch> path,
       @NotNull State test,
-      @NotNull List<State> consequent) {
+      @NotNull ImmutableList<State> consequent) {
     return fold1(consequent, test);
   }
 
@@ -452,8 +452,8 @@ public class MonoidalReducer<State> implements Reducer<State> {
   @Override
   public State reduceSwitchDefault(
       @NotNull SwitchDefault node,
-      @NotNull List<Branch> path,
-      @NotNull List<State> consequent) {
+      @NotNull ImmutableList<Branch> path,
+      @NotNull ImmutableList<State> consequent) {
     return fold(consequent);
   }
 
@@ -461,9 +461,9 @@ public class MonoidalReducer<State> implements Reducer<State> {
   @Override
   public State reduceSwitchStatement(
       @NotNull SwitchStatement node,
-      @NotNull List<Branch> path,
+      @NotNull ImmutableList<Branch> path,
       @NotNull State discriminant,
-      @NotNull List<State> cases) {
+      @NotNull ImmutableList<State> cases) {
     return fold1(cases, discriminant);
   }
 
@@ -471,17 +471,17 @@ public class MonoidalReducer<State> implements Reducer<State> {
   @Override
   public State reduceSwitchStatementWithDefault(
       @NotNull SwitchStatementWithDefault node,
-      @NotNull List<Branch> path,
+      @NotNull ImmutableList<Branch> path,
       @NotNull State discriminant,
-      @NotNull List<State> preDefaultCases,
+      @NotNull ImmutableList<State> preDefaultCases,
       @NotNull State defaultCase,
-      @NotNull List<State> postDefaultCases) {
+      @NotNull ImmutableList<State> postDefaultCases) {
     return append(discriminant, fold(preDefaultCases), defaultCase, fold(postDefaultCases));
   }
 
   @NotNull
   @Override
-  public State reduceThrowStatement(@NotNull ThrowStatement node, @NotNull List<Branch> path, @NotNull State expression) {
+  public State reduceThrowStatement(@NotNull ThrowStatement node, @NotNull ImmutableList<Branch> path, @NotNull State expression) {
     return expression;
   }
 
@@ -489,7 +489,7 @@ public class MonoidalReducer<State> implements Reducer<State> {
   @Override
   public State reduceTryCatchStatement(
       @NotNull TryCatchStatement node,
-      @NotNull List<Branch> path,
+      @NotNull ImmutableList<Branch> path,
       @NotNull State block,
       @NotNull State catchClause) {
     return append(block, catchClause);
@@ -499,7 +499,7 @@ public class MonoidalReducer<State> implements Reducer<State> {
   @Override
   public State reduceTryFinallyStatement(
       @NotNull TryFinallyStatement node,
-      @NotNull List<Branch> path,
+      @NotNull ImmutableList<Branch> path,
       @NotNull State block,
       @NotNull Maybe<State> catchClause,
       @NotNull State finalizer) {
@@ -510,7 +510,7 @@ public class MonoidalReducer<State> implements Reducer<State> {
   @Override
   public State reduceVariableDeclarationStatement(
       @NotNull VariableDeclarationStatement node,
-      @NotNull List<Branch> path,
+      @NotNull ImmutableList<Branch> path,
       @NotNull State declaration) {
     return declaration;
   }
@@ -519,8 +519,8 @@ public class MonoidalReducer<State> implements Reducer<State> {
   @Override
   public State reduceVariableDeclaration(
       @NotNull VariableDeclaration node,
-      @NotNull List<Branch> path,
-      @NotNull NonEmptyList<State> declarators) {
+      @NotNull ImmutableList<Branch> path,
+      @NotNull NonEmptyImmutableList<State> declarators) {
     return fold(declarators);
   }
 
@@ -528,7 +528,7 @@ public class MonoidalReducer<State> implements Reducer<State> {
   @Override
   public State reduceWhileStatement(
       @NotNull WhileStatement node,
-      @NotNull List<Branch> path,
+      @NotNull ImmutableList<Branch> path,
       @NotNull State test,
       @NotNull State body) {
     return append(test, body);
@@ -538,7 +538,7 @@ public class MonoidalReducer<State> implements Reducer<State> {
   @Override
   public State reduceWithStatement(
       @NotNull WithStatement node,
-      @NotNull List<Branch> path,
+      @NotNull ImmutableList<Branch> path,
       @NotNull State object,
       @NotNull State body) {
     return append(object, body);
@@ -548,7 +548,7 @@ public class MonoidalReducer<State> implements Reducer<State> {
   @Override
   public State reduceDataProperty(
       @NotNull DataProperty node,
-      @NotNull List<Branch> path,
+      @NotNull ImmutableList<Branch> path,
       @NotNull State name,
       @NotNull State value) {
     return append(name, value);
@@ -556,7 +556,7 @@ public class MonoidalReducer<State> implements Reducer<State> {
 
   @NotNull
   @Override
-  public State reduceGetter(@NotNull Getter node, @NotNull List<Branch> path, @NotNull State name, @NotNull State body) {
+  public State reduceGetter(@NotNull Getter node, @NotNull ImmutableList<Branch> path, @NotNull State name, @NotNull State body) {
     return append(name, body);
   }
 
@@ -564,7 +564,7 @@ public class MonoidalReducer<State> implements Reducer<State> {
   @Override
   public State reduceSetter(
       @NotNull Setter node,
-      @NotNull List<Branch> path,
+      @NotNull ImmutableList<Branch> path,
       @NotNull State name,
       @NotNull State parameter,
       @NotNull State body) {
@@ -573,7 +573,7 @@ public class MonoidalReducer<State> implements Reducer<State> {
 
   @NotNull
   @Override
-  public State reducePropertyName(@NotNull PropertyName node, @NotNull List<Branch> path) {
+  public State reducePropertyName(@NotNull PropertyName node, @NotNull ImmutableList<Branch> path) {
     return this.identity;
   }
 
@@ -581,9 +581,9 @@ public class MonoidalReducer<State> implements Reducer<State> {
   @Override
   public State reduceFunctionBody(
       @NotNull FunctionBody node,
-      @NotNull List<Branch> path,
-      @NotNull List<State> directives,
-      @NotNull List<State> statements) {
+      @NotNull ImmutableList<Branch> path,
+      @NotNull ImmutableList<State> directives,
+      @NotNull ImmutableList<State> statements) {
     return append(fold(directives), fold(statements));
   }
 
@@ -591,7 +591,7 @@ public class MonoidalReducer<State> implements Reducer<State> {
   @Override
   public State reduceVariableDeclarator(
       @NotNull VariableDeclarator node,
-      @NotNull List<Branch> path,
+      @NotNull ImmutableList<Branch> path,
       @NotNull State binding,
       @NotNull Maybe<State> init) {
     return append(binding, o(init));
@@ -599,7 +599,7 @@ public class MonoidalReducer<State> implements Reducer<State> {
 
   @NotNull
   @Override
-  public State reduceBlock(@NotNull Block node, @NotNull List<Branch> path, @NotNull List<State> statements) {
+  public State reduceBlock(@NotNull Block node, @NotNull ImmutableList<Branch> path, @NotNull ImmutableList<State> statements) {
     return fold(statements);
   }
 }

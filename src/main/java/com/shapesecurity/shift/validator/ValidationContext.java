@@ -17,7 +17,7 @@
 package com.shapesecurity.shift.validator;
 
 import com.shapesecurity.functional.data.ConcatList;
-import com.shapesecurity.functional.data.List;
+import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.functional.data.Monoid;
 import com.shapesecurity.shift.ast.Identifier;
 import com.shapesecurity.shift.ast.Node;
@@ -33,9 +33,9 @@ public class ValidationContext {
   @NotNull
   private final ConcatList<ValidationError> freeContinueStatements;
   @NotNull
-  private final List<String> usedLabelNames;
+  private final ImmutableList<String> usedLabelNames;
   @NotNull
-  private final List<Identifier> freeJumpTargets;
+  private final ImmutableList<Identifier> freeJumpTargets;
   @NotNull
   public final ConcatList<ValidationError> errors;
   @NotNull
@@ -46,8 +46,8 @@ public class ValidationContext {
   public ValidationContext() {
     this(ConcatList.empty(),
         ConcatList.empty(),
-        List.nil(),
-        List.nil(),
+        ImmutableList.nil(),
+        ImmutableList.nil(),
         ConcatList.empty(),
         ConcatList.empty(),
         ConcatList.empty());
@@ -55,8 +55,8 @@ public class ValidationContext {
 
   private ValidationContext(@NotNull ConcatList<ValidationError> freeBreakStatements,
                             @NotNull ConcatList<ValidationError> freeContinueStatements,
-                            @NotNull List<String> usedLabelNames,
-                            @NotNull List<Identifier> freeJumpTargets,
+                            @NotNull ImmutableList<String> usedLabelNames,
+                            @NotNull ImmutableList<Identifier> freeJumpTargets,
                             @NotNull ConcatList<ValidationError> freeReturnStatements,
                             @NotNull ConcatList<ValidationError> errors,
                             @NotNull ConcatList<ValidationError> strictErrors) {
@@ -126,7 +126,7 @@ public class ValidationContext {
     return new ValidationContext(
         this.freeBreakStatements,
         this.freeContinueStatements,
-        List.cons(labelName.name, this.usedLabelNames),
+        ImmutableList.cons(labelName.name, this.usedLabelNames),
         this.freeJumpTargets.filter(identifier -> !identifier.name.equals(labelName.name)),
         this.freeReturnStatements,
         errors,
@@ -138,7 +138,7 @@ public class ValidationContext {
     return new ValidationContext(
         this.freeBreakStatements,
         this.freeContinueStatements,
-        List.nil(),
+        ImmutableList.nil(),
         this.freeJumpTargets,
         this.freeReturnStatements,
         this.errors,
@@ -151,7 +151,7 @@ public class ValidationContext {
         this.freeBreakStatements,
         this.freeContinueStatements,
         this.usedLabelNames,
-        List.cons(labelName, this.freeJumpTargets),
+        ImmutableList.cons(labelName, this.freeJumpTargets),
         this.freeReturnStatements,
         this.errors,
         this.strictErrors

@@ -21,7 +21,7 @@ import static org.junit.Assert.assertTrue;
 
 import com.shapesecurity.functional.F;
 import com.shapesecurity.functional.data.Either;
-import com.shapesecurity.functional.data.List;
+import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.functional.data.Maybe;
 import com.shapesecurity.shift.AstHelper;
 import com.shapesecurity.shift.ast.Block;
@@ -101,19 +101,19 @@ public class ComparisonTest extends AstHelper {
 
   @Test
   public void testArrayExpressionEquality() {
-    List<LiteralStringExpression> a = List.list(
+    ImmutableList<LiteralStringExpression> a = ImmutableList.list(
         new LiteralStringExpression("a"),
         new LiteralStringExpression("r"),
         new LiteralStringExpression("r"),
         new LiteralStringExpression("a"),
         new LiteralStringExpression("y"));
-    List<LiteralStringExpression> a1 = List.list(
+    ImmutableList<LiteralStringExpression> a1 = ImmutableList.list(
         new LiteralStringExpression("a"),
         new LiteralStringExpression("r"),
         new LiteralStringExpression("r"),
         new LiteralStringExpression("a"),
         new LiteralStringExpression("y"));
-    List<LiteralStringExpression> a2 = List.list(
+    ImmutableList<LiteralStringExpression> a2 = ImmutableList.list(
         new LiteralStringExpression("n"),
         new LiteralStringExpression("o"),
         new LiteralStringExpression("t"),
@@ -145,7 +145,7 @@ public class ComparisonTest extends AstHelper {
   public void testCallExpressionEquality() {
     @SuppressWarnings("MagicNumber")
     Double[] dubs = {1.0, 2.0, 3.0};
-    List<Expression> args = List.from(dubs).map((F<Double, Expression>) LiteralNumericExpression::new);
+    ImmutableList<Expression> args = ImmutableList.from(dubs).map((F<Double, Expression>) LiteralNumericExpression::new);
     CallExpression c = new CallExpression(identExpr("callee"), args);
     CallExpression dupC = new CallExpression(identExpr("callee"), args);
 
@@ -156,12 +156,16 @@ public class ComparisonTest extends AstHelper {
 
   @Test
   public void testComputedMemberEquality() {
-    ComputedMemberExpression cm = new ComputedMemberExpression(new ObjectExpression(List.nil()), identExpr("a"));
-    ComputedMemberExpression cm1 = new ComputedMemberExpression(new ObjectExpression(List.nil()), identExpr("a"));
+    ComputedMemberExpression cm = new ComputedMemberExpression(new ObjectExpression(ImmutableList.nil()), identExpr("a"));
+    ComputedMemberExpression cm1 = new ComputedMemberExpression(new ObjectExpression(ImmutableList.nil()), identExpr("a"));
     ComputedMemberExpression cm2 = new ComputedMemberExpression(
         new ObjectExpression(
-            List.list(new Getter(new PropertyName("prop"), new FunctionBody(List.nil(), List.nil())))), identExpr("a"));
-    ComputedMemberExpression cm3 = new ComputedMemberExpression(new ObjectExpression(List.nil()), identExpr("b"));
+            ImmutableList.list(
+                new Getter(
+                    new PropertyName("prop"), new FunctionBody(
+                    ImmutableList.nil(),
+                    ImmutableList.nil())))), identExpr("a"));
+    ComputedMemberExpression cm3 = new ComputedMemberExpression(new ObjectExpression(ImmutableList.nil()), identExpr("b"));
     assertTrue(cm.equals(cm1));
     assertFalse(cm.equals(cm2));
     assertFalse(cm.equals(cm3));
@@ -197,12 +201,12 @@ public class ComparisonTest extends AstHelper {
 
   @Test
   public void testFunctionExpressionEquality() {
-    List<Identifier> params = List.list(new Identifier("a"), new Identifier("b"));
+    ImmutableList<Identifier> params = ImmutableList.list(new Identifier("a"), new Identifier("b"));
     FunctionExpression fe = new FunctionExpression(Maybe.nothing(), params, body());
     FunctionExpression fe1 = new FunctionExpression(Maybe.nothing(), params, body());
     FunctionExpression fe2 = new FunctionExpression(Maybe.nothing(), params.maybeTail().just(), body());
     FunctionExpression fe3 = new FunctionExpression(Maybe.nothing(), params, body(new BlockStatement(new Block(
-        List.list(new ContinueStatement(Maybe.nothing()))))));
+        ImmutableList.list(new ContinueStatement(Maybe.nothing()))))));
     FunctionExpression fe4 = new FunctionExpression(Maybe.just(new Identifier("a")), params, body());
 
     assertTrue(fe.equals(fe1));
@@ -269,11 +273,12 @@ public class ComparisonTest extends AstHelper {
 
   @Test
   public void testNewExpressionEquality() {
-    NewExpression ne = new NewExpression(identExpr("callee"), List.nil());
-    NewExpression ne1 = new NewExpression(identExpr("callee"), List.nil());
-    NewExpression ne2 = new NewExpression(identExpr("notCallee"), List.nil());
-    NewExpression ne3 = new NewExpression(identExpr("callee"), List.list(identExpr(
-        "arg")));
+    NewExpression ne = new NewExpression(identExpr("callee"), ImmutableList.nil());
+    NewExpression ne1 = new NewExpression(identExpr("callee"), ImmutableList.nil());
+    NewExpression ne2 = new NewExpression(identExpr("notCallee"), ImmutableList.nil());
+    NewExpression ne3 = new NewExpression(identExpr("callee"), ImmutableList.list(
+        identExpr(
+            "arg")));
 
     assertTrue(ne.equals(ne1));
     assertFalse(ne.equals(ne2));
@@ -282,9 +287,9 @@ public class ComparisonTest extends AstHelper {
 
   @Test
   public void testObjectExpressionEquality() {
-    ObjectExpression obj = new ObjectExpression(List.nil());
-    ObjectExpression obj1 = new ObjectExpression(List.nil());
-    ObjectExpression obj2 = new ObjectExpression(List.list(new Getter(new PropertyName("prop"), body())));
+    ObjectExpression obj = new ObjectExpression(ImmutableList.nil());
+    ObjectExpression obj1 = new ObjectExpression(ImmutableList.nil());
+    ObjectExpression obj2 = new ObjectExpression(ImmutableList.list(new Getter(new PropertyName("prop"), body())));
 
     assertTrue(obj.equals(obj1));
     assertFalse(obj.equals(obj2));
@@ -316,11 +321,14 @@ public class ComparisonTest extends AstHelper {
 
   @Test
   public void testStaticMemberExpressionEquality() {
-    StaticMemberExpression sme = new StaticMemberExpression(new ObjectExpression(List.nil()), new Identifier("prop"));
-    StaticMemberExpression sme1 = new StaticMemberExpression(new ObjectExpression(List.nil()), new Identifier("prop"));
-    StaticMemberExpression sme2 = new StaticMemberExpression(new ObjectExpression(List.list(new Getter(new PropertyName(
-        "get"), body()))), new Identifier("prop"));
-    StaticMemberExpression sme3 = new StaticMemberExpression(new ObjectExpression(List.nil()), new Identifier(
+    StaticMemberExpression sme = new StaticMemberExpression(new ObjectExpression(ImmutableList.nil()), new Identifier("prop"));
+    StaticMemberExpression sme1 = new StaticMemberExpression(new ObjectExpression(ImmutableList.nil()), new Identifier("prop"));
+    StaticMemberExpression sme2 = new StaticMemberExpression(new ObjectExpression(
+        ImmutableList.list(
+            new Getter(
+                new PropertyName(
+                    "get"), body()))), new Identifier("prop"));
+    StaticMemberExpression sme3 = new StaticMemberExpression(new ObjectExpression(ImmutableList.nil()), new Identifier(
         "notProp"));
 
     assertTrue(sme.equals(sme1));
@@ -386,9 +394,9 @@ public class ComparisonTest extends AstHelper {
 
   @Test
   public void testBlockStatementEquality() {
-    BlockStatement bs = new BlockStatement(new Block(List.nil()));
-    BlockStatement bs1 = new BlockStatement(new Block(List.nil()));
-    BlockStatement bs2 = new BlockStatement(new Block(List.list(new EmptyStatement())));
+    BlockStatement bs = new BlockStatement(new Block(ImmutableList.nil()));
+    BlockStatement bs1 = new BlockStatement(new Block(ImmutableList.nil()));
+    BlockStatement bs2 = new BlockStatement(new Block(ImmutableList.list(new EmptyStatement())));
 
     assertTrue(bs.equals(bs1));
     assertFalse(bs.equals(bs2));
@@ -484,26 +492,32 @@ public class ComparisonTest extends AstHelper {
     }
 
     {
-      ForInStatement fivs = new ForInStatement(Either.left(new VariableDeclaration(VariableDeclarationKind.Var, List.list(
-          new VariableDeclarator(new Identifier("declarator"), Maybe.nothing())))), identExpr("right"), new BlockStatement(
-                    new Block(List.nil())));
-      ForInStatement fivs1 = new ForInStatement(Either.left(new VariableDeclaration(VariableDeclarationKind.Var, List.list(
-          new VariableDeclarator(new Identifier("declarator"), Maybe.nothing())))), identExpr("right"), new BlockStatement(
-                    new Block(List.nil())));
-      ForInStatement fivs2 = new ForInStatement(Either.left(new VariableDeclaration(VariableDeclarationKind.Var, List.list(
-          new VariableDeclarator(new Identifier("notDeclarator"), Maybe.nothing())))),
+      ForInStatement fivs = new ForInStatement(Either.left(new VariableDeclaration(VariableDeclarationKind.Var, ImmutableList
+              .list(
+                  new VariableDeclarator(new Identifier("declarator"), Maybe.nothing())))), identExpr("right"), new BlockStatement(
+                    new Block(ImmutableList.nil())));
+      ForInStatement fivs1 = new ForInStatement(Either.left(new VariableDeclaration(VariableDeclarationKind.Var, ImmutableList
+              .list(
+                  new VariableDeclarator(new Identifier("declarator"), Maybe.nothing())))), identExpr("right"), new BlockStatement(
+                    new Block(ImmutableList.nil())));
+      ForInStatement fivs2 = new ForInStatement(Either.left(new VariableDeclaration(VariableDeclarationKind.Var, ImmutableList
+              .list(
+                  new VariableDeclarator(new Identifier("notDeclarator"), Maybe.nothing())))),
           identExpr("right"),
-          new BlockStatement(new Block(List.nil())));
-      ForInStatement fivs3 = new ForInStatement(Either.left(new VariableDeclaration(VariableDeclarationKind.Let, List.list(
-          new VariableDeclarator(new Identifier("declarator"), Maybe.nothing())))), identExpr("right"), new BlockStatement(
-                    new Block(List.nil())));
-      ForInStatement fivs4 = new ForInStatement(Either.left(new VariableDeclaration(VariableDeclarationKind.Var, List.list(
-          new VariableDeclarator(new Identifier("declarator"), Maybe.nothing())))),
+          new BlockStatement(new Block(ImmutableList.nil())));
+      ForInStatement fivs3 = new ForInStatement(Either.left(new VariableDeclaration(VariableDeclarationKind.Let, ImmutableList
+              .list(
+                  new VariableDeclarator(new Identifier("declarator"), Maybe.nothing())))), identExpr("right"), new BlockStatement(
+                    new Block(ImmutableList.nil())));
+      ForInStatement fivs4 = new ForInStatement(Either.left(new VariableDeclaration(VariableDeclarationKind.Var, ImmutableList
+              .list(
+                  new VariableDeclarator(new Identifier("declarator"), Maybe.nothing())))),
           identExpr("notRight"),
-          new BlockStatement(new Block(List.nil())));
-      ForInStatement fivs5 = new ForInStatement(Either.left(new VariableDeclaration(VariableDeclarationKind.Var, List.list(
-          new VariableDeclarator(new Identifier("declarator"), Maybe.nothing())))), identExpr("right"), new BlockStatement(
-                    new Block(List.list(new EmptyStatement()))));
+          new BlockStatement(new Block(ImmutableList.nil())));
+      ForInStatement fivs5 = new ForInStatement(Either.left(new VariableDeclaration(VariableDeclarationKind.Var, ImmutableList
+              .list(
+                  new VariableDeclarator(new Identifier("declarator"), Maybe.nothing())))), identExpr("right"), new BlockStatement(
+                    new Block(ImmutableList.list(new EmptyStatement()))));
 
       assertTrue(fivs.equals(fivs1));
       assertFalse(fivs.equals(fivs2));
@@ -515,7 +529,7 @@ public class ComparisonTest extends AstHelper {
 
   @Test
   public void testForStatementEquality() {
-    BlockStatement block = new BlockStatement(new Block(List.nil()));
+    BlockStatement block = new BlockStatement(new Block(ImmutableList.nil()));
 
     {
       ForStatement fs = new ForStatement(Maybe.nothing(), Maybe.nothing(), Maybe.nothing(), block);
@@ -527,7 +541,7 @@ public class ComparisonTest extends AstHelper {
       ForStatement fs4 = new ForStatement(Maybe.nothing(), Maybe.nothing(), Maybe.just(new PostfixExpression(
           PostfixOperator.Increment, identExpr("operand"))), block);
       ForStatement fs5 = new ForStatement(Maybe.nothing(), Maybe.nothing(), Maybe.nothing(), new BlockStatement(
-          new Block(List.list(new EmptyStatement()))));
+          new Block(ImmutableList.list(new EmptyStatement()))));
 
       assertTrue(fs.equals(fs1));
       assertFalse(fs.equals(fs2));
@@ -541,9 +555,9 @@ public class ComparisonTest extends AstHelper {
       VariableDeclarator init = new VariableDeclarator(new Identifier("init"), Maybe.nothing());
 
       Maybe<Either<VariableDeclaration, Expression>> declnotInit =
-          Maybe.just(Either.left(new VariableDeclaration(VariableDeclarationKind.Var, List.list(notInit))));
+          Maybe.just(Either.left(new VariableDeclaration(VariableDeclarationKind.Var, ImmutableList.list(notInit))));
       Maybe<Either<VariableDeclaration, Expression>> decl =
-          Maybe.just(Either.left(new VariableDeclaration(VariableDeclarationKind.Var, List.list(init))));
+          Maybe.just(Either.left(new VariableDeclaration(VariableDeclarationKind.Var, ImmutableList.list(init))));
 
 
       ForStatement fs0 = new ForStatement(decl, Maybe.nothing(), Maybe.nothing(), block);
@@ -558,7 +572,7 @@ public class ComparisonTest extends AstHelper {
           Maybe.just(new PostfixExpression(PostfixOperator.Increment, identExpr("operand"))),
           block);
       ForStatement fs5 = new ForStatement(decl, Maybe.nothing(), Maybe.nothing(),
-          new BlockStatement(new Block(List.list(new EmptyStatement()))));
+          new BlockStatement(new Block(ImmutableList.list(new EmptyStatement()))));
 
       assertTrue(fs0.equals(fs1));
       assertFalse(fs0.equals(fs2));
@@ -570,11 +584,11 @@ public class ComparisonTest extends AstHelper {
 
   @Test
   public void testFunctionDeclarationEquality() {
-    FunctionDeclaration fd = new FunctionDeclaration(new Identifier("name"), List.nil(), body());
-    FunctionDeclaration fd1 = new FunctionDeclaration(new Identifier("name"), List.nil(), body());
-    FunctionDeclaration fd2 = new FunctionDeclaration(new Identifier("notId"), List.nil(), body());
-    FunctionDeclaration fd3 = new FunctionDeclaration(new Identifier("name"), List.list(ident("notParams")), body());
-    FunctionDeclaration fd4 = new FunctionDeclaration(new Identifier("name"), List.nil(), body(new EmptyStatement()));
+    FunctionDeclaration fd = new FunctionDeclaration(new Identifier("name"), ImmutableList.nil(), body());
+    FunctionDeclaration fd1 = new FunctionDeclaration(new Identifier("name"), ImmutableList.nil(), body());
+    FunctionDeclaration fd2 = new FunctionDeclaration(new Identifier("notId"), ImmutableList.nil(), body());
+    FunctionDeclaration fd3 = new FunctionDeclaration(new Identifier("name"), ImmutableList.list(ident("notParams")), body());
+    FunctionDeclaration fd4 = new FunctionDeclaration(new Identifier("name"), ImmutableList.nil(), body(new EmptyStatement()));
 
     assertTrue(fd.equals(fd1));
     assertFalse(fd.equals(fd2));
@@ -584,15 +598,20 @@ public class ComparisonTest extends AstHelper {
 
   @Test
   public void testIfStatementEquality() {
-    IfStatement is = new IfStatement(new LiteralBooleanExpression(true), new BlockStatement(new Block(List.nil())),
+    IfStatement is = new IfStatement(new LiteralBooleanExpression(true), new BlockStatement(new Block(
+        ImmutableList.nil())),
         Maybe.<Statement>nothing());
-    IfStatement is1 = new IfStatement(new LiteralBooleanExpression(true), new BlockStatement(new Block(List.nil())),
+    IfStatement is1 = new IfStatement(new LiteralBooleanExpression(true), new BlockStatement(new Block(
+        ImmutableList.nil())),
         Maybe.<Statement>nothing());
-    IfStatement is2 = new IfStatement(new LiteralBooleanExpression(false), new BlockStatement(new Block(List.nil())),
+    IfStatement is2 = new IfStatement(new LiteralBooleanExpression(false), new BlockStatement(new Block(
+        ImmutableList.nil())),
         Maybe.<Statement>nothing());
-    IfStatement is3 = new IfStatement(new LiteralBooleanExpression(true), new BlockStatement(new Block(List.list(
-        new EmptyStatement()))), Maybe.<Statement>nothing());
-    IfStatement is4 = new IfStatement(new LiteralBooleanExpression(true), new BlockStatement(new Block(List.nil())),
+    IfStatement is3 = new IfStatement(new LiteralBooleanExpression(true), new BlockStatement(new Block(
+        ImmutableList.list(
+            new EmptyStatement()))), Maybe.<Statement>nothing());
+    IfStatement is4 = new IfStatement(new LiteralBooleanExpression(true), new BlockStatement(new Block(
+        ImmutableList.nil())),
         Maybe.<Statement>just(new EmptyStatement()));
 
     assertTrue(is.equals(is1));
@@ -603,11 +622,14 @@ public class ComparisonTest extends AstHelper {
 
   @Test
   public void testLabeledStatementEquality() {
-    LabeledStatement ls = new LabeledStatement(new Identifier("label"), new BlockStatement(new Block(List.nil())));
-    LabeledStatement ls1 = new LabeledStatement(new Identifier("label"), new BlockStatement(new Block(List.nil())));
-    LabeledStatement ls2 = new LabeledStatement(new Identifier("notLabel"), new BlockStatement(new Block(List.nil())));
-    LabeledStatement ls3 = new LabeledStatement(new Identifier("label"), new BlockStatement(new Block(List.list(
-        new EmptyStatement()))));
+    LabeledStatement ls = new LabeledStatement(new Identifier("label"), new BlockStatement(new Block(ImmutableList.nil())));
+    LabeledStatement ls1 = new LabeledStatement(new Identifier("label"), new BlockStatement(new Block(
+        ImmutableList.nil())));
+    LabeledStatement ls2 = new LabeledStatement(new Identifier("notLabel"), new BlockStatement(new Block(
+        ImmutableList.nil())));
+    LabeledStatement ls3 = new LabeledStatement(new Identifier("label"), new BlockStatement(new Block(
+        ImmutableList.list(
+            new EmptyStatement()))));
 
     assertTrue(ls.equals(ls1));
     assertFalse(ls.equals(ls2));
@@ -626,11 +648,12 @@ public class ComparisonTest extends AstHelper {
 
   @Test
   public void testSwitchStatementEquality() {
-    SwitchStatement ss = new SwitchStatement(new LiteralStringExpression("discriminant"), List.nil());
-    SwitchStatement ss1 = new SwitchStatement(new LiteralStringExpression("discriminant"), List.nil());
-    SwitchStatement ss2 = new SwitchStatement(new LiteralStringExpression("notDiscriminant"), List.nil());
-    SwitchStatement ss3 = new SwitchStatement(new LiteralStringExpression("discriminant"), List.list(new SwitchCase(
-        new LiteralStringExpression("value"), List.list(new BreakStatement()))));
+    SwitchStatement ss = new SwitchStatement(new LiteralStringExpression("discriminant"), ImmutableList.nil());
+    SwitchStatement ss1 = new SwitchStatement(new LiteralStringExpression("discriminant"), ImmutableList.nil());
+    SwitchStatement ss2 = new SwitchStatement(new LiteralStringExpression("notDiscriminant"), ImmutableList.nil());
+    SwitchStatement ss3 = new SwitchStatement(new LiteralStringExpression("discriminant"), ImmutableList.list(
+        new SwitchCase(
+            new LiteralStringExpression("value"), ImmutableList.list(new BreakStatement()))));
 
     assertTrue(ss.equals(ss1));
     assertFalse(ss.equals(ss2));
@@ -640,19 +663,23 @@ public class ComparisonTest extends AstHelper {
   @Test
   public void testSwitchStatementWithDefaultEquality() {
     SwitchStatementWithDefault sswd = new SwitchStatementWithDefault(new LiteralStringExpression("discriminant"),
-        List.nil(), new SwitchDefault(List.list(new EmptyStatement())), List.nil());
+        ImmutableList.nil(), new SwitchDefault(ImmutableList.list(new EmptyStatement())), ImmutableList.nil());
     SwitchStatementWithDefault sswd1 = new SwitchStatementWithDefault(new LiteralStringExpression("discriminant"),
-        List.nil(), new SwitchDefault(List.list(new EmptyStatement())), List.nil());
+        ImmutableList.nil(), new SwitchDefault(ImmutableList.list(new EmptyStatement())), ImmutableList.nil());
     SwitchStatementWithDefault sswd2 = new SwitchStatementWithDefault(new LiteralStringExpression("notDiscriminant"),
-        List.nil(), new SwitchDefault(List.list(new EmptyStatement())), List.nil());
+        ImmutableList.nil(), new SwitchDefault(ImmutableList.list(new EmptyStatement())), ImmutableList.nil());
     SwitchStatementWithDefault sswd3 = new SwitchStatementWithDefault(new LiteralStringExpression("discriminant"),
-        List.list(new SwitchCase(new LiteralStringExpression("test"), List.list(new EmptyStatement()))),
-        new SwitchDefault(List.list(new EmptyStatement())), List.nil());
+        ImmutableList.list(
+            new SwitchCase(
+                new LiteralStringExpression("test"),
+                ImmutableList.list(new EmptyStatement()))),
+        new SwitchDefault(ImmutableList.list(new EmptyStatement())), ImmutableList.nil());
     SwitchStatementWithDefault sswd4 = new SwitchStatementWithDefault(new LiteralStringExpression("discriminant"),
-        List.nil(), new SwitchDefault(List.list(new BreakStatement())), List.nil());
+        ImmutableList.nil(), new SwitchDefault(ImmutableList.list(new BreakStatement())), ImmutableList.nil());
     SwitchStatementWithDefault sswd5 = new SwitchStatementWithDefault(new LiteralStringExpression("discriminant"),
-        List.nil(), new SwitchDefault(List.list(new EmptyStatement())), List.list(new SwitchCase(
-        new LiteralStringExpression("test"), List.list(new EmptyStatement()))));
+        ImmutableList.nil(), new SwitchDefault(ImmutableList.list(new EmptyStatement())), ImmutableList.list(
+        new SwitchCase(
+            new LiteralStringExpression("test"), ImmutableList.list(new EmptyStatement()))));
 
     assertTrue(sswd.equals(sswd1));
     assertFalse(sswd.equals(sswd2));
@@ -673,16 +700,16 @@ public class ComparisonTest extends AstHelper {
 
   @Test
   public void testTryStatementEquality() {
-    TryFinallyStatement ts = new TryFinallyStatement(new Block(List.nil()), Maybe.just(new CatchClause(new Identifier(
-        "param"), new Block(List.nil()))), new Block(List.nil()));
-    TryFinallyStatement ts1 = new TryFinallyStatement(new Block(List.nil()), Maybe.just(new CatchClause(new Identifier(
-        "param"), new Block(List.nil()))), new Block(List.nil()));
-    TryFinallyStatement ts2 = new TryFinallyStatement(new Block(List.list(new EmptyStatement())), Maybe.just(
-        new CatchClause(new Identifier("param"), new Block(List.nil()))), new Block(List.nil()));
-    TryFinallyStatement ts3 = new TryFinallyStatement(new Block(List.nil()), Maybe.just(new CatchClause(new Identifier(
-        "notParam"), new Block(List.nil()))), new Block(List.nil()));
-    TryFinallyStatement ts4 = new TryFinallyStatement(new Block(List.nil()), Maybe.just(new CatchClause(new Identifier(
-        "param"), new Block(List.nil()))), new Block(List.list(new EmptyStatement())));
+    TryFinallyStatement ts = new TryFinallyStatement(new Block(ImmutableList.nil()), Maybe.just(new CatchClause(new Identifier(
+        "param"), new Block(ImmutableList.nil()))), new Block(ImmutableList.nil()));
+    TryFinallyStatement ts1 = new TryFinallyStatement(new Block(ImmutableList.nil()), Maybe.just(new CatchClause(new Identifier(
+        "param"), new Block(ImmutableList.nil()))), new Block(ImmutableList.nil()));
+    TryFinallyStatement ts2 = new TryFinallyStatement(new Block(ImmutableList.list(new EmptyStatement())), Maybe.just(
+        new CatchClause(new Identifier("param"), new Block(ImmutableList.nil()))), new Block(ImmutableList.nil()));
+    TryFinallyStatement ts3 = new TryFinallyStatement(new Block(ImmutableList.nil()), Maybe.just(new CatchClause(new Identifier(
+        "notParam"), new Block(ImmutableList.nil()))), new Block(ImmutableList.nil()));
+    TryFinallyStatement ts4 = new TryFinallyStatement(new Block(ImmutableList.nil()), Maybe.just(new CatchClause(new Identifier(
+        "param"), new Block(ImmutableList.nil()))), new Block(ImmutableList.list(new EmptyStatement())));
 
     assertTrue(ts.equals(ts1));
     assertFalse(ts.equals(ts2));
@@ -692,15 +719,19 @@ public class ComparisonTest extends AstHelper {
 
   @Test
   public void testVariableDeclarationStatementEquality() {
-    VariableDeclaration vds = new VariableDeclaration(VariableDeclaration.VariableDeclarationKind.Var, List.list(
-        new VariableDeclarator(new Identifier("name"), Maybe.<Expression>nothing())));
-    VariableDeclaration vds1 = new VariableDeclaration(VariableDeclaration.VariableDeclarationKind.Var, List.list(
-        new VariableDeclarator(new Identifier("name"), Maybe.<Expression>nothing())));
-    VariableDeclaration vds2 = new VariableDeclaration(VariableDeclaration.VariableDeclarationKind.Var, List.list(
-        new VariableDeclarator(new Identifier("name"), Maybe.<Expression>nothing()),
-        new VariableDeclarator(new Identifier("id1"), Maybe.<Expression>nothing())));
-    VariableDeclaration vds3 = new VariableDeclaration(VariableDeclaration.VariableDeclarationKind.Let, List.list(
-        new VariableDeclarator(new Identifier("name"), Maybe.<Expression>nothing())));
+    VariableDeclaration vds = new VariableDeclaration(VariableDeclaration.VariableDeclarationKind.Var, ImmutableList
+        .list(
+            new VariableDeclarator(new Identifier("name"), Maybe.<Expression>nothing())));
+    VariableDeclaration vds1 = new VariableDeclaration(VariableDeclaration.VariableDeclarationKind.Var, ImmutableList
+        .list(
+            new VariableDeclarator(new Identifier("name"), Maybe.<Expression>nothing())));
+    VariableDeclaration vds2 = new VariableDeclaration(VariableDeclaration.VariableDeclarationKind.Var, ImmutableList
+        .list(
+            new VariableDeclarator(new Identifier("name"), Maybe.<Expression>nothing()),
+            new VariableDeclarator(new Identifier("id1"), Maybe.<Expression>nothing())));
+    VariableDeclaration vds3 = new VariableDeclaration(VariableDeclaration.VariableDeclarationKind.Let, ImmutableList
+        .list(
+            new VariableDeclarator(new Identifier("name"), Maybe.<Expression>nothing())));
 
     assertTrue(vds.equals(vds1));
     assertFalse(vds.equals(vds2));
@@ -721,11 +752,15 @@ public class ComparisonTest extends AstHelper {
 
   @Test
   public void testWithStatementEquality() {
-    WithStatement ws = new WithStatement(new ObjectExpression(List.nil()), new EmptyStatement());
-    WithStatement ws1 = new WithStatement(new ObjectExpression(List.nil()), new EmptyStatement());
-    WithStatement ws2 = new WithStatement(new ObjectExpression(List.list(new Getter(new PropertyName("prop"),
-        body()))), new EmptyStatement());
-    WithStatement ws3 = new WithStatement(new ObjectExpression(List.nil()), new BlockStatement(new Block(List.nil())));
+    WithStatement ws = new WithStatement(new ObjectExpression(ImmutableList.nil()), new EmptyStatement());
+    WithStatement ws1 = new WithStatement(new ObjectExpression(ImmutableList.nil()), new EmptyStatement());
+    WithStatement ws2 = new WithStatement(new ObjectExpression(
+        ImmutableList.list(
+            new Getter(
+                new PropertyName("prop"),
+                body()))), new EmptyStatement());
+    WithStatement ws3 = new WithStatement(new ObjectExpression(ImmutableList.nil()), new BlockStatement(new Block(
+        ImmutableList.nil())));
 
     assertTrue(ws.equals(ws1));
     assertFalse(ws.equals(ws2));
@@ -734,10 +769,10 @@ public class ComparisonTest extends AstHelper {
 
   @Test
   public void testCatchClauseEquality() {
-    CatchClause cc = new CatchClause(new Identifier("binding"), new Block(List.nil()));
-    CatchClause cc1 = new CatchClause(new Identifier("binding"), new Block(List.nil()));
-    CatchClause cc2 = new CatchClause(new Identifier("notParam"), new Block(List.nil()));
-    CatchClause cc3 = new CatchClause(new Identifier("binding"), new Block(List.list(new EmptyStatement())));
+    CatchClause cc = new CatchClause(new Identifier("binding"), new Block(ImmutableList.nil()));
+    CatchClause cc1 = new CatchClause(new Identifier("binding"), new Block(ImmutableList.nil()));
+    CatchClause cc2 = new CatchClause(new Identifier("notParam"), new Block(ImmutableList.nil()));
+    CatchClause cc3 = new CatchClause(new Identifier("binding"), new Block(ImmutableList.list(new EmptyStatement())));
 
     assertTrue(cc.equals(cc1));
     assertFalse(cc.equals(cc2));
@@ -769,7 +804,8 @@ public class ComparisonTest extends AstHelper {
     FunctionBody pb = body(new EmptyStatement());
     FunctionBody pb1 = body(new EmptyStatement());
     FunctionBody pb2 = body(new EmptyStatement(), new EmptyStatement());
-    FunctionBody pb3 = new FunctionBody(List.list(new UnknownDirective("directive")), List.list(new EmptyStatement()));
+    FunctionBody pb3 = new FunctionBody(
+        ImmutableList.list(new UnknownDirective("directive")), ImmutableList.list(new EmptyStatement()));
 
     assertTrue(pb.equals(pb1));
     assertFalse(pb.equals(pb2));
@@ -778,10 +814,11 @@ public class ComparisonTest extends AstHelper {
 
   @Test
   public void testSwitchCaseEquality() {
-    SwitchCase sc = new SwitchCase(new LiteralStringExpression("test"), List.list(new EmptyStatement()));
-    SwitchCase sc1 = new SwitchCase(new LiteralStringExpression("test"), List.list(new EmptyStatement()));
-    SwitchCase sc2 = new SwitchCase(new LiteralStringExpression("notTest"), List.list(new EmptyStatement()));
-    SwitchCase sc3 = new SwitchCase(new LiteralStringExpression("test"), List.list(new EmptyStatement(),
+    SwitchCase sc = new SwitchCase(new LiteralStringExpression("test"), ImmutableList.list(new EmptyStatement()));
+    SwitchCase sc1 = new SwitchCase(new LiteralStringExpression("test"), ImmutableList.list(new EmptyStatement()));
+    SwitchCase sc2 = new SwitchCase(new LiteralStringExpression("notTest"), ImmutableList.list(new EmptyStatement()));
+    SwitchCase sc3 = new SwitchCase(new LiteralStringExpression("test"), ImmutableList.list(
+        new EmptyStatement(),
         new EmptyStatement()));
 
     assertTrue(sc.equals(sc1));
@@ -791,9 +828,9 @@ public class ComparisonTest extends AstHelper {
 
   @Test
   public void testSwitchDefaultEquality() {
-    SwitchDefault sd = new SwitchDefault(List.list(new EmptyStatement()));
-    SwitchDefault sd1 = new SwitchDefault(List.list(new EmptyStatement()));
-    SwitchDefault sd2 = new SwitchDefault(List.list(new EmptyStatement(), new EmptyStatement()));
+    SwitchDefault sd = new SwitchDefault(ImmutableList.list(new EmptyStatement()));
+    SwitchDefault sd1 = new SwitchDefault(ImmutableList.list(new EmptyStatement()));
+    SwitchDefault sd2 = new SwitchDefault(ImmutableList.list(new EmptyStatement(), new EmptyStatement()));
 
     assertTrue(sd.equals(sd1));
     assertFalse(sd.equals(sd2));

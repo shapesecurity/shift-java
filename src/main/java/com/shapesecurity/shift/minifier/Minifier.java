@@ -16,7 +16,7 @@
 
 package com.shapesecurity.shift.minifier;
 
-import com.shapesecurity.functional.data.List;
+import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.shift.ast.Script;
 import com.shapesecurity.shift.minifier.passes.expansion.ExpandBooleanLiterals;
 import com.shapesecurity.shift.minifier.passes.expansion.ReplaceStaticMemberAccessWithDynamicMemberAccess;
@@ -28,7 +28,6 @@ import com.shapesecurity.shift.minifier.passes.reduction.RemoveEmptyStatements;
 import com.shapesecurity.shift.minifier.passes.reduction.RemoveEmptyTrailingDefault;
 import com.shapesecurity.shift.minifier.passes.reduction.RemoveSingleStatementBlocks;
 import com.shapesecurity.shift.minifier.passes.reduction.ReplaceWhileWithFor;
-import com.shapesecurity.shift.path.Branch;
 import com.shapesecurity.shift.visitor.FixPointTransformer;
 
 import org.jetbrains.annotations.NotNull;
@@ -44,7 +43,7 @@ public class Minifier {
 
   @NotNull
   public static Script minify(@NotNull Script script) {
-    return EXPANSION.transform(REDUCTION.transform(script, List.nil()), List.nil());
+    return EXPANSION.transform(REDUCTION.transform(script, ImmutableList.nil()), ImmutableList.nil());
   }
 
   public static Script minify(
@@ -53,17 +52,17 @@ public class Minifier {
       @NotNull ExpansionRule[] expansionRules) {
     FixPointTransformer reduction = new FixPointTransformer(new ComposedRule<>(reductionRules));
     FixPointTransformer expansion = new FixPointTransformer(new ComposedRule<>(expansionRules));
-    return expansion.transform(reduction.transform(script, List.nil()), List.nil());
+    return expansion.transform(reduction.transform(script, ImmutableList.nil()), ImmutableList.nil());
   }
 
   public static Script minify(
       @NotNull Script script,
-      @NotNull List<ReductionRule> reductionRules,
-      @NotNull List<ExpansionRule> expansionRules) {
+      @NotNull ImmutableList<ReductionRule> reductionRules,
+      @NotNull ImmutableList<ExpansionRule> expansionRules) {
     ReductionRule[] reductionRulesArray = reductionRules.toArray(new ReductionRule[reductionRules.length]);
     ExpansionRule[] expansionRulesArray = expansionRules.toArray(new ExpansionRule[expansionRules.length]);
     FixPointTransformer reduction = new FixPointTransformer(new ComposedRule<>(reductionRulesArray));
     FixPointTransformer expansion = new FixPointTransformer(new ComposedRule<>(expansionRulesArray));
-    return expansion.transform(reduction.transform(script, List.nil()), List.nil());
+    return expansion.transform(reduction.transform(script, ImmutableList.nil()), ImmutableList.nil());
   }
 }

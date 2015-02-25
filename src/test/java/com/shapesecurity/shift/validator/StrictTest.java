@@ -16,9 +16,9 @@
 
 package com.shapesecurity.shift.validator;
 
-import static com.shapesecurity.functional.data.List.list;
+import static com.shapesecurity.functional.data.ImmutableList.list;
 
-import com.shapesecurity.functional.data.List;
+import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.functional.data.Maybe;
 import com.shapesecurity.shift.AstHelper;
 import com.shapesecurity.shift.ast.CatchClause;
@@ -49,25 +49,33 @@ import org.junit.Test;
 
 public class StrictTest extends AstHelper {
   private static FunctionExpression strictFE(Statement s) {
-    return new FunctionExpression(Maybe.nothing(), List.nil(), new FunctionBody(List.<Directive>list(
-        new UseStrictDirective()), list(s)));
+    return new FunctionExpression(Maybe.nothing(), ImmutableList.nil(), new FunctionBody(
+        ImmutableList.<Directive>list(
+            new UseStrictDirective()), list(s)));
   }
 
   @Test
   public final void testBasicDirectiveSupport() {
-    validStmt(new FunctionDeclaration(ID, List.nil(), new FunctionBody(List.<Directive>list(new UseStrictDirective()),
-        List.nil())));
-    validStmt(new FunctionDeclaration(ID, List.nil(), new FunctionBody(List.<Directive>list(new UseStrictDirective(),
-        new UnknownDirective("directive")), List.nil())));
+    validStmt(new FunctionDeclaration(ID, ImmutableList.nil(), new FunctionBody(
+            ImmutableList.<Directive>list(new UseStrictDirective()),
+        ImmutableList.nil())));
+    validStmt(new FunctionDeclaration(ID, ImmutableList.nil(), new FunctionBody(
+            ImmutableList.<Directive>list(
+                new UseStrictDirective(),
+                new UnknownDirective("directive")), ImmutableList.nil())));
 
-    validStmt(exprStmt(new FunctionExpression(Maybe.nothing(), List.nil(), new FunctionBody(List.list(
-        new UseStrictDirective()), List.nil()))));
-    validStmt(exprStmt(new FunctionExpression(Maybe.nothing(), List.nil(), new FunctionBody(List.list(
-        new UseStrictDirective(), new UnknownDirective("directive")), List.nil()))));
-    assertOk(Validator.validate(new Script(new FunctionBody(List.<Directive>list(new UseStrictDirective()),
-        List.nil()))));
-    validExpr(new FunctionExpression(Maybe.nothing(), List.nil(), new FunctionBody(List.<Directive>list(
-        new UseStrictDirective()), List.nil())));
+    validStmt(exprStmt(new FunctionExpression(Maybe.nothing(), ImmutableList.nil(), new FunctionBody(
+                ImmutableList.list(
+                    new UseStrictDirective()), ImmutableList.nil()))));
+    validStmt(exprStmt(new FunctionExpression(Maybe.nothing(), ImmutableList.nil(), new FunctionBody(
+                ImmutableList.list(
+                    new UseStrictDirective(), new UnknownDirective("directive")), ImmutableList.nil()))));
+    assertOk(Validator.validate(new Script(new FunctionBody(
+                ImmutableList.<Directive>list(new UseStrictDirective()),
+        ImmutableList.nil()))));
+    validExpr(new FunctionExpression(Maybe.nothing(), ImmutableList.nil(), new FunctionBody(
+            ImmutableList.<Directive>list(
+                new UseStrictDirective()), ImmutableList.nil())));
   }
 
   @Test
@@ -82,17 +90,17 @@ public class StrictTest extends AstHelper {
 
   @Test
   public final void testFunctionNamesMustNotBeRestrictedInStrictMode() {
-    validExpr(new FunctionExpression(Maybe.just(new Identifier("eval")), List.nil(), BLOCK_WRAPPED));
-    validExpr(new FunctionExpression(Maybe.just(new Identifier("arguments")), List.nil(), BLOCK_WRAPPED));
-    validStmt(new FunctionDeclaration(new Identifier("eval"), List.nil(), BLOCK_WRAPPED));
-    validStmt(new FunctionDeclaration(new Identifier("arguments"), List.nil(), BLOCK_WRAPPED));
+    validExpr(new FunctionExpression(Maybe.just(new Identifier("eval")), ImmutableList.nil(), BLOCK_WRAPPED));
+    validExpr(new FunctionExpression(Maybe.just(new Identifier("arguments")), ImmutableList.nil(), BLOCK_WRAPPED));
+    validStmt(new FunctionDeclaration(new Identifier("eval"), ImmutableList.nil(), BLOCK_WRAPPED));
+    validStmt(new FunctionDeclaration(new Identifier("arguments"), ImmutableList.nil(), BLOCK_WRAPPED));
 
-    invalidExpr(1, strictFE(exprStmt(new FunctionExpression(Maybe.just(new Identifier("eval")), List.nil(),
+    invalidExpr(1, strictFE(exprStmt(new FunctionExpression(Maybe.just(new Identifier("eval")), ImmutableList.nil(),
         BLOCK_WRAPPED))));
     invalidExpr(1, strictFE(exprStmt(new FunctionExpression(Maybe.just(new Identifier("arguments")),
-        List.nil(), BLOCK_WRAPPED))));
-    invalidExpr(1, strictFE(new FunctionDeclaration(new Identifier("eval"), List.nil(), BLOCK_WRAPPED)));
-    invalidExpr(1, strictFE(new FunctionDeclaration(new Identifier("arguments"), List.nil(),
+        ImmutableList.nil(), BLOCK_WRAPPED))));
+    invalidExpr(1, strictFE(new FunctionDeclaration(new Identifier("eval"), ImmutableList.nil(), BLOCK_WRAPPED)));
+    invalidExpr(1, strictFE(new FunctionDeclaration(new Identifier("arguments"), ImmutableList.nil(),
         BLOCK_WRAPPED)));
   }
 
@@ -115,15 +123,27 @@ public class StrictTest extends AstHelper {
 
   @Test
   public final void testSetterParametersNotBeRestrictedInStrictMode() {
-    validExpr(new ObjectExpression(List.<ObjectProperty>list(new Setter(new PropertyName(ID), new Identifier("eval"),
-        BLOCK_WRAPPED))));
-    validExpr(new ObjectExpression(List.<ObjectProperty>list(new Setter(new PropertyName(ID), new Identifier(
-        "arguments"), BLOCK_WRAPPED))));
+    validExpr(new ObjectExpression(
+            ImmutableList.<ObjectProperty>list(
+                new Setter(
+                    new PropertyName(ID), new Identifier("eval"),
+                    BLOCK_WRAPPED))));
+    validExpr(new ObjectExpression(
+            ImmutableList.<ObjectProperty>list(
+                new Setter(
+                    new PropertyName(ID), new Identifier(
+                    "arguments"), BLOCK_WRAPPED))));
 
-    invalidExpr(1, strictFE(exprStmt(new ObjectExpression(List.<ObjectProperty>list(new Setter(new PropertyName(ID),
-        new Identifier("eval"), BLOCK_WRAPPED))))));
-    invalidExpr(1, strictFE(exprStmt(new ObjectExpression(List.<ObjectProperty>list(new Setter(new PropertyName(ID),
-        new Identifier("arguments"), BLOCK_WRAPPED))))));
+    invalidExpr(1, strictFE(exprStmt(new ObjectExpression(
+                    ImmutableList.<ObjectProperty>list(
+                        new Setter(
+                            new PropertyName(ID),
+                            new Identifier("eval"), BLOCK_WRAPPED))))));
+    invalidExpr(1, strictFE(exprStmt(new ObjectExpression(
+                    ImmutableList.<ObjectProperty>list(
+                        new Setter(
+                            new PropertyName(ID),
+                            new Identifier("arguments"), BLOCK_WRAPPED))))));
   }
 
   @Test
@@ -182,17 +202,30 @@ public class StrictTest extends AstHelper {
 
   @Test
   public final void testObjectExpressionDuplicateKeys() {
-    validExpr(new ObjectExpression(List.<ObjectProperty>list(new DataProperty(new PropertyName("a"), EXPR),
-        new DataProperty(new PropertyName("a"), EXPR))));
-    validExpr(new ObjectExpression(List.<ObjectProperty>list(new DataProperty(new PropertyName("__proto__"), EXPR),
-        new DataProperty(new PropertyName("a"), EXPR))));
+    validExpr(new ObjectExpression(
+            ImmutableList.<ObjectProperty>list(
+                new DataProperty(new PropertyName("a"), EXPR),
+                new DataProperty(new PropertyName("a"), EXPR))));
+    validExpr(new ObjectExpression(
+            ImmutableList.<ObjectProperty>list(
+                new DataProperty(new PropertyName("__proto__"), EXPR),
+                new DataProperty(new PropertyName("a"), EXPR))));
 
-    validExpr(strictFE(exprStmt(new ObjectExpression(List.<ObjectProperty>list(new DataProperty(new PropertyName(
-        "hasOwnProperty"), EXPR), new DataProperty(new PropertyName("a"), EXPR))))));
-    invalidExpr(1, strictFE(exprStmt(new ObjectExpression(List.<ObjectProperty>list(new DataProperty(new PropertyName(
-        "a"), EXPR), new DataProperty(new PropertyName("a"), EXPR))))));
-    invalidExpr(1, strictFE(exprStmt(new ObjectExpression(List.<ObjectProperty>list(new DataProperty(new PropertyName(
-        0), EXPR), new DataProperty(new PropertyName(0), EXPR))))));
+    validExpr(strictFE(exprStmt(new ObjectExpression(
+                    ImmutableList.<ObjectProperty>list(
+                        new DataProperty(
+                            new PropertyName(
+                                "hasOwnProperty"), EXPR), new DataProperty(new PropertyName("a"), EXPR))))));
+    invalidExpr(1, strictFE(exprStmt(new ObjectExpression(
+                    ImmutableList.<ObjectProperty>list(
+                        new DataProperty(
+                            new PropertyName(
+                                "a"), EXPR), new DataProperty(new PropertyName("a"), EXPR))))));
+    invalidExpr(1, strictFE(exprStmt(new ObjectExpression(
+                    ImmutableList.<ObjectProperty>list(
+                        new DataProperty(
+                            new PropertyName(
+                                0), EXPR), new DataProperty(new PropertyName(0), EXPR))))));
   }
 
   @Test

@@ -17,7 +17,7 @@
 
 package com.shapesecurity.shift.fuzzer;
 
-import com.shapesecurity.functional.data.List;
+import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.shift.ast.Identifier;
 
 import java.util.Random;
@@ -28,13 +28,13 @@ class GenCtx {
   @NotNull
   final Random random;
   @NotNull
-  final List<Identifier> labels;
+  final ImmutableList<Identifier> labels;
   @NotNull
-  final List<Identifier> iterationLabels;
+  final ImmutableList<Identifier> iterationLabels;
   @NotNull
-  final List<Identifier> labelsInFunctionBoundary;
+  final ImmutableList<Identifier> labelsInFunctionBoundary;
   @NotNull
-  final List<Identifier> iterationLabelsInFunctionBoundary;
+  final ImmutableList<Identifier> iterationLabelsInFunctionBoundary;
 
   final boolean inIteration;
   final boolean inSwitch;
@@ -43,14 +43,14 @@ class GenCtx {
   final boolean allowMissingElse;
 
   GenCtx(@NotNull Random random) {
-    this(random, List.nil(), List.nil(), List.nil(), List.nil(), false, false, false, false, true);
+    this(random, ImmutableList.nil(), ImmutableList.nil(), ImmutableList.nil(), ImmutableList.nil(), false, false, false, false, true);
   }
 
   private GenCtx(@NotNull Random random,
-                 @NotNull List<Identifier> labels,
-                 @NotNull List<Identifier> iterationLabels,
-                 @NotNull List<Identifier> labelsInFunctionBoundary,
-                 @NotNull List<Identifier> iterationLabelsInFunctionBoundary,
+                 @NotNull ImmutableList<Identifier> labels,
+                 @NotNull ImmutableList<Identifier> iterationLabels,
+                 @NotNull ImmutableList<Identifier> labelsInFunctionBoundary,
+                 @NotNull ImmutableList<Identifier> iterationLabelsInFunctionBoundary,
                  boolean inIteration, boolean inSwitch, boolean inStrictMode,
                  boolean inFunctional,
                  boolean allowMissingElse) {
@@ -139,8 +139,8 @@ class GenCtx {
         this.random,
         this.labels,
         this.iterationLabels,
-        List.nil(),
-        List.nil(),
+        ImmutableList.nil(),
+        ImmutableList.nil(),
         false,
         false,
         this.inStrictMode,
@@ -152,10 +152,10 @@ class GenCtx {
   GenCtx clearLabels() {
     return new GenCtx(
         this.random,
-        List.nil(),
-        List.nil(),
-        List.nil(),
-        List.nil(),
+        ImmutableList.nil(),
+        ImmutableList.nil(),
+        ImmutableList.nil(),
+        ImmutableList.nil(),
         this.inIteration,
         this.inSwitch,
         this.inStrictMode,

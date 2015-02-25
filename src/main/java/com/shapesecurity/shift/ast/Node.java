@@ -18,7 +18,7 @@ package com.shapesecurity.shift.ast;
 
 import com.shapesecurity.functional.Thunk;
 import com.shapesecurity.functional.data.HashCodeBuilder;
-import com.shapesecurity.functional.data.List;
+import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.functional.data.Maybe;
 import com.shapesecurity.shift.ast.types.GenType;
 import com.shapesecurity.shift.ast.types.Type;
@@ -70,7 +70,7 @@ public abstract class Node extends Located {
   }
 
   @NotNull
-  public Node set(@NotNull List<ReplacementChild> list) {
+  public Node set(@NotNull ImmutableList<ReplacementChild> list) {
     return list.foldLeft((me, rep) -> rep.branch.set(me, rep.child), this);
   }
 }

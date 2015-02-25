@@ -16,7 +16,7 @@
 
 package com.shapesecurity.shift.ast.expression;
 
-import com.shapesecurity.functional.data.List;
+import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.shift.ast.property.ObjectProperty;
 import com.shapesecurity.shift.ast.types.Type;
 
@@ -24,9 +24,9 @@ import org.jetbrains.annotations.NotNull;
 
 public class ObjectExpression extends PrimaryExpression {
   @NotNull
-  public final List<ObjectProperty> properties;
+  public final ImmutableList<ObjectProperty> properties;
 
-  public ObjectExpression(@NotNull List<ObjectProperty> properties) {
+  public ObjectExpression(@NotNull ImmutableList<ObjectProperty> properties) {
     super();
     this.properties = properties;
   }
@@ -43,12 +43,12 @@ public class ObjectExpression extends PrimaryExpression {
   }
 
   @NotNull
-  public List<ObjectProperty> getProperties() {
+  public ImmutableList<ObjectProperty> getProperties() {
     return this.properties;
   }
 
   @NotNull
-  public ObjectExpression setProperties(@NotNull List<ObjectProperty> properties) {
+  public ObjectExpression setProperties(@NotNull ImmutableList<ObjectProperty> properties) {
     return new ObjectExpression(properties);
   }
 }

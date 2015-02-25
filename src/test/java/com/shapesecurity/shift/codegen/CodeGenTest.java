@@ -17,7 +17,7 @@
 package com.shapesecurity.shift.codegen;
 
 import com.shapesecurity.functional.data.Either;
-import com.shapesecurity.functional.data.List;
+import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.functional.data.Maybe;
 import com.shapesecurity.shift.TestBase;
 import com.shapesecurity.shift.ast.Directive;
@@ -50,7 +50,7 @@ public class CodeGenTest extends TestBase {
 
   @NotNull
   private static Script statement(@NotNull Statement stmt) {
-    return new Script(new FunctionBody(List.<Directive>nil(), List.list(stmt)));
+    return new Script(new FunctionBody(ImmutableList.<Directive>nil(), ImmutableList.list(stmt)));
   }
 
   private void testLibrary(String fileName) throws JsError, IOException {
@@ -97,8 +97,10 @@ public class CodeGenTest extends TestBase {
   public void testCodeGenDirectives() throws JsError {
     test("\"use strict\"");
     test("\"use\\u0020strict\"");
-    testAst("\"use\\u0020strict\"", new Script(new FunctionBody(List.<Directive>list(new UnknownDirective(
-        "use strict")), List.<Statement>nil())));
+    testAst("\"use\\u0020strict\"", new Script(new FunctionBody(
+            ImmutableList.<Directive>list(
+                new UnknownDirective(
+                    "use strict")), ImmutableList.<Statement>nil())));
   }
 
   @Test
@@ -528,26 +530,27 @@ public class CodeGenTest extends TestBase {
     test("");
     test("\"use strict\"");
     test(";\"use strict\"");
-    testAst("\"use strict\"", new Script(new FunctionBody(List.list(new UseStrictDirective()), List.nil())));
+    testAst("\"use strict\"", new Script(new FunctionBody(
+        ImmutableList.list(new UseStrictDirective()), ImmutableList.nil())));
     testAst("(\"use strict\")", statement(new ExpressionStatement(new LiteralStringExpression("use strict"))));
     testAst("(\"use strict\");;", new Script(new FunctionBody(
-        List.nil(),
-        List.list(
+        ImmutableList.nil(),
+        ImmutableList.list(
             new ExpressionStatement(new LiteralStringExpression("use strict")),
             new EmptyStatement()
         )
     )));
     testAst("\"use strict\";;", new Script(new FunctionBody(
-        List.list(new UseStrictDirective()),
-        List.list(new EmptyStatement())
+        ImmutableList.list(new UseStrictDirective()),
+        ImmutableList.list(new EmptyStatement())
     )));
     testAst("\"use strict\";(\"use strict\")", new Script(new FunctionBody(
-        List.list(new UseStrictDirective()),
-        List.list(new ExpressionStatement(new LiteralStringExpression("use strict")))
+        ImmutableList.list(new UseStrictDirective()),
+        ImmutableList.list(new ExpressionStatement(new LiteralStringExpression("use strict")))
     )));
     testAst("\"use strict\";;\"use strict\"", new Script(new FunctionBody(
-        List.list(new UseStrictDirective()),
-        List.list(new EmptyStatement(), new ExpressionStatement(new LiteralStringExpression("use strict")))
+        ImmutableList.list(new UseStrictDirective()),
+        ImmutableList.list(new EmptyStatement(), new ExpressionStatement(new LiteralStringExpression("use strict")))
     )));
   }
 
@@ -564,7 +567,7 @@ public class CodeGenTest extends TestBase {
 
   @Test
   public void testLibrary() throws IOException, JsError {
-    List<String> jsFiles = List.nil();
+    ImmutableList<String> jsFiles = ImmutableList.nil();
     setFatal(false); // Collect the failures in an ErrorCollector
 
     // Get a list of the js files within the resources directory to process
@@ -575,7 +578,7 @@ public class CodeGenTest extends TestBase {
     }
     for (File file : files) {
       if (file.isFile() && file.getName().endsWith(".js")) {
-        jsFiles = List.cons(file.getName(), jsFiles);
+        jsFiles = ImmutableList.cons(file.getName(), jsFiles);
       }
     }
 
