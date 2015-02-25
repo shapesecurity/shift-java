@@ -16,7 +16,7 @@
 
 package com.shapesecurity.shift.visitor;
 
-import com.shapesecurity.functional.data.List;
+import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.functional.data.Maybe;
 import com.shapesecurity.shift.TestBase;
 import com.shapesecurity.shift.ast.Identifier;
@@ -51,8 +51,8 @@ public class ReducerTest extends TestBase {
       @Override
       public Integer reduceObjectExpression(
           @NotNull ObjectExpression node,
-          @NotNull List<Branch> path,
-          @NotNull List<Integer> properties) {
+          @NotNull ImmutableList<Branch> path,
+          @NotNull ImmutableList<Integer> properties) {
         return 1;
       }
     });
@@ -61,8 +61,8 @@ public class ReducerTest extends TestBase {
       @Override
       public Integer reduceObjectExpression(
           @NotNull ObjectExpression node,
-          @NotNull List<Branch> path,
-          @NotNull List<Integer> properties) {
+          @NotNull ImmutableList<Branch> path,
+          @NotNull ImmutableList<Integer> properties) {
         return 1;
       }
     });
@@ -71,8 +71,8 @@ public class ReducerTest extends TestBase {
       @Override
       public Integer reduceObjectExpression(
           @NotNull ObjectExpression node,
-          @NotNull List<Branch> path,
-          @NotNull List<Integer> properties) {
+          @NotNull ImmutableList<Branch> path,
+          @NotNull ImmutableList<Integer> properties) {
         return 1;
       }
     });
@@ -81,15 +81,15 @@ public class ReducerTest extends TestBase {
       @Override
       public Integer reduceObjectExpression(
           @NotNull ObjectExpression node,
-          @NotNull List<Branch> path,
-          @NotNull List<Integer> properties) {
+          @NotNull ImmutableList<Branch> path,
+          @NotNull ImmutableList<Integer> properties) {
         return 1;
       }
     });
     count("+{get a() { return 0; }, set a(v) { return v; } }", 2, new Counter() {
       @NotNull
       @Override
-      public Integer reduceIdentifier(@NotNull Identifier node, @NotNull List<Branch> path) {
+      public Integer reduceIdentifier(@NotNull Identifier node, @NotNull ImmutableList<Branch> path) {
         return 1;
       }
     });
@@ -98,7 +98,7 @@ public class ReducerTest extends TestBase {
       @Override
       public Integer reduceReturnStatement(
           @NotNull ReturnStatement node,
-          @NotNull List<Branch> path,
+          @NotNull ImmutableList<Branch> path,
           @NotNull Maybe<Integer> expression) {
         return expression.orJust(0) + 1;
       }
@@ -113,7 +113,7 @@ public class ReducerTest extends TestBase {
       @Override
       public Integer reduceReturnStatement(
           @NotNull ReturnStatement node,
-          @NotNull List<Branch> path,
+          @NotNull ImmutableList<Branch> path,
           @NotNull Maybe<Integer> expression) {
         return expression.orJust(0) + 1;
       }

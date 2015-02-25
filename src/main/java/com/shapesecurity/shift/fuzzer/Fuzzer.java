@@ -18,9 +18,9 @@
 package com.shapesecurity.shift.fuzzer;
 
 import com.shapesecurity.functional.data.Either;
-import com.shapesecurity.functional.data.List;
+import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.functional.data.Maybe;
-import com.shapesecurity.functional.data.NonEmptyList;
+import com.shapesecurity.functional.data.NonEmptyImmutableList;
 import com.shapesecurity.shift.ast.Block;
 import com.shapesecurity.shift.ast.CatchClause;
 import com.shapesecurity.shift.ast.Directive;
@@ -248,13 +248,13 @@ public class Fuzzer {
   }
 
   @NotNull
-  private static <T> Gen<List<T>> many(final int bound, @NotNull Gen<T> gen) {
+  private static <T> Gen<ImmutableList<T>> many(final int bound, @NotNull Gen<T> gen) {
     return (ctx, depth) -> {
       if (depth <= 0) {
-        return List.nil();
+        return ImmutableList.nil();
       }
       int number = ctx.random.nextInt(bound);
-      List<T> result = List.nil();
+      ImmutableList<T> result = ImmutableList.nil();
       for (int i = 0; i < number; i++) {
         result = result.cons(gen.apply(ctx, depth));
       }
@@ -263,12 +263,12 @@ public class Fuzzer {
   }
 
   @NotNull
-  private static <T> Gen<List<T>> many(@NotNull Gen<T> gen) {
+  private static <T> Gen<ImmutableList<T>> many(@NotNull Gen<T> gen) {
     return many(MANY_BOUND, gen);
   }
 
   @NotNull
-  private static <T> Gen<NonEmptyList<T>> many1(@NotNull Gen<T> gen) {
+  private static <T> Gen<NonEmptyImmutableList<T>> many1(@NotNull Gen<T> gen) {
     return (ctx, depth) -> many(MANY_BOUND - 1,gen).apply(ctx, depth).cons(gen.apply(ctx, depth));
   }
 
@@ -302,7 +302,7 @@ public class Fuzzer {
 
   @NotNull
   private static FunctionBody randomFunctionBody(@NotNull GenCtx ctx, int depth) {
-    List<Directive> directives = many(Fuzzer::randomDirective).apply(ctx, depth - 1);
+    ImmutableList<Directive> directives = many(Fuzzer::randomDirective).apply(ctx, depth - 1);
     if (!ctx.inStrictMode && directives.exists(dir -> dir instanceof UseStrictDirective)) {
       ctx = ctx.enterStrictMode();
     }
@@ -514,7 +514,7 @@ public class Fuzzer {
   @NotNull
   private static Block randomBlock(@NotNull GenCtx ctx, int depth) {
     if (depth < 1) {
-      return new Block(List.nil());
+      return new Block(ImmutableList.nil());
     }
     return new Block(many(Fuzzer::randomStatement).apply(ctx.allowMissingElse(), depth - 1));
   }
@@ -533,7 +533,7 @@ public class Fuzzer {
             choice(new VariableDeclaration.VariableDeclarationKind[]{
                 VariableDeclaration.VariableDeclarationKind.Var,
                 VariableDeclaration.VariableDeclarationKind.Let}).apply(ctx, depth - 1),
-        List.list(randomVariableDeclarator(ctx, depth - 1)));
+        ImmutableList.list(randomVariableDeclarator(ctx, depth - 1)));
   }
 
   @NotNull
@@ -615,12 +615,12 @@ public class Fuzzer {
   }
 
   @NotNull
-  private static List<Identifier> randomParameterList(@NotNull GenCtx ctx, int depth) {
+  private static ImmutableList<Identifier> randomParameterList(@NotNull GenCtx ctx, int depth) {
     Gen<Identifier> gen = (c, d) -> randomIdentifier(c, d, false, false);
     if (ctx.inStrictMode) {
       int length = ctx.random.nextInt(MANY_BOUND);
       HashSet<String> names = new HashSet<>();
-      List<Identifier> result = List.nil();
+      ImmutableList<Identifier> result = ImmutableList.nil();
       for (int i = 0; i < length; i++) {
         Identifier identifier = gen.apply(ctx, depth);
         while (names.contains(identifier.name)) {
@@ -730,7 +730,7 @@ public class Fuzzer {
       }
       names.add(name);
     }
-    List<ObjectProperty> properties = List.nil();
+    ImmutableList<ObjectProperty> properties = ImmutableList.nil();
     for (String name : names) {
       // data, get, set, get/set, non-strict data/data
       switch (ctx.random.nextInt(ctx.inStrictMode ? 4 : 5)) {

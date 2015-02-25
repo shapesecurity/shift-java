@@ -16,11 +16,11 @@
 
 package com.shapesecurity.shift.ast;
 
-import com.shapesecurity.functional.data.List;
+import com.shapesecurity.functional.data.ImmutableList;
 
 import org.jetbrains.annotations.NotNull;
 
 public interface Function {
   @NotNull
-  public List<Identifier> parameters();
+  public ImmutableList<Identifier> parameters();
 }

@@ -17,7 +17,7 @@
 package com.shapesecurity.shift.scope;
 
 import com.shapesecurity.functional.data.HashTable;
-import com.shapesecurity.functional.data.List;
+import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.functional.data.Maybe;
 import com.shapesecurity.shift.ast.Identifier;
 import com.shapesecurity.shift.ast.Node;
@@ -34,21 +34,21 @@ public class Scope {
   @NotNull
   public final Node astNode;
   @NotNull
-  public final HashTable<String, HashTable<List<Branch>, Reference>> through;
+  public final HashTable<String, HashTable<ImmutableList<Branch>, Reference>> through;
   @NotNull
-  public final List<Scope> children;
+  public final ImmutableList<Scope> children;
   @NotNull
   public final Type type;
   public final boolean dynamic;
   protected final Map<String, Variable> variables = new LinkedHashMap<>();
   @NotNull
-  public final List<Variable> blockScopedTiedVar;
+  public final ImmutableList<Variable> blockScopedTiedVar;
 
   Scope(
-      @NotNull List<Scope> children,
-      @NotNull List<Variable> variables,
-      @NotNull List<Variable> blockScopedTiedVar,
-      @NotNull HashTable<String, HashTable<List<Branch>, Reference>> through,
+      @NotNull ImmutableList<Scope> children,
+      @NotNull ImmutableList<Variable> variables,
+      @NotNull ImmutableList<Variable> blockScopedTiedVar,
+      @NotNull HashTable<String, HashTable<ImmutableList<Branch>, Reference>> through,
       @NotNull Type type,
       boolean isDynamic,
       @NotNull Node astNode) {
@@ -80,8 +80,8 @@ public class Scope {
   }
 
   @NotNull
-  protected List<Variable> findVariables(@NotNull final Identifier identifier) {
-    List<Variable> result = findVariablesHelper(identifier, true, true);
+  protected ImmutableList<Variable> findVariables(@NotNull final Identifier identifier) {
+    ImmutableList<Variable> result = findVariablesHelper(identifier, true, true);
     if (result.isEmpty()) {
       return this.children.bind(scope -> scope.findVariables(identifier));
     }
@@ -89,8 +89,8 @@ public class Scope {
   }
 
   @NotNull
-  protected List<Variable> findVariablesDeclaredBy(@NotNull final Identifier identifier) {
-    List<Variable> result = findVariablesHelper(identifier, false, true);
+  protected ImmutableList<Variable> findVariablesDeclaredBy(@NotNull final Identifier identifier) {
+    ImmutableList<Variable> result = findVariablesHelper(identifier, false, true);
     if (result.isEmpty()) {
       return this.children.bind(scope -> scope.findVariablesDeclaredBy(identifier));
     }
@@ -98,8 +98,8 @@ public class Scope {
   }
 
   @NotNull
-  protected List<Variable> findVariablesReferencedBy(@NotNull final Identifier identifier) {
-    List<Variable> result = findVariablesHelper(identifier, true, false);
+  protected ImmutableList<Variable> findVariablesReferencedBy(@NotNull final Identifier identifier) {
+    ImmutableList<Variable> result = findVariablesHelper(identifier, true, false);
     if (result.isEmpty()) {
       return this.children.bind(scope -> scope.findVariablesReferencedBy(identifier));
     }
@@ -107,23 +107,23 @@ public class Scope {
   }
 
   @NotNull
-  private List<Variable> findVariablesHelper(
+  private ImmutableList<Variable> findVariablesHelper(
       @NotNull final Identifier identifier,
       boolean lookInReferences,
       boolean lookInDeclarations) {
     for (Variable v : this.variables.values()) {
       if (lookInReferences) {
         if (v.references.find(p -> p.b.node == identifier).isJust()) {
-          return List.list(v);
+          return ImmutableList.list(v);
         }
       }
       if (lookInDeclarations) {
         if (v.declarations.find(p -> p.b.node == identifier).isJust()) {
-          return List.list(v);
+          return ImmutableList.list(v);
         }
       }
     }
-    return List.nil();
+    return ImmutableList.nil();
   }
 
   public static enum Type {

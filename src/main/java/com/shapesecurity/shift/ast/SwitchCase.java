@@ -16,7 +16,7 @@
 
 package com.shapesecurity.shift.ast;
 
-import com.shapesecurity.functional.data.List;
+import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.shift.ast.types.Type;
 
 import org.jetbrains.annotations.NotNull;
@@ -25,9 +25,9 @@ public class SwitchCase extends Node {
   @NotNull
   public final Expression test;
   @NotNull
-  public final List<Statement> consequent;
+  public final ImmutableList<Statement> consequent;
 
-  public SwitchCase(@NotNull Expression test, @NotNull List<Statement> consequent) {
+  public SwitchCase(@NotNull Expression test, @NotNull ImmutableList<Statement> consequent) {
     super();
     this.test = test;
     this.consequent = consequent;
@@ -51,7 +51,7 @@ public class SwitchCase extends Node {
   }
 
   @NotNull
-  public List<Statement> getConsequent() {
+  public ImmutableList<Statement> getConsequent() {
     return this.consequent;
   }
 
@@ -61,7 +61,7 @@ public class SwitchCase extends Node {
   }
 
   @NotNull
-  public SwitchCase setConsequent(@NotNull List<Statement> consequent) {
+  public SwitchCase setConsequent(@NotNull ImmutableList<Statement> consequent) {
     return new SwitchCase(this.test, consequent);
   }
 }

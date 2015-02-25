@@ -17,7 +17,7 @@
 package com.shapesecurity.shift.validator;
 
 import com.shapesecurity.functional.data.Either;
-import com.shapesecurity.functional.data.List;
+import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.functional.data.Maybe;
 import com.shapesecurity.shift.AstHelper;
 import com.shapesecurity.shift.ast.FunctionBody;
@@ -63,10 +63,12 @@ public class UnitTest extends AstHelper {
     validStmt(label(ID.name, wrapIter(new BreakStatement(Maybe.just(ID)))));
     invalidStmt(1, wrapIter(new BreakStatement(Maybe.just(ID))));
     invalidStmt(1, label("aa", wrapIter(new BreakStatement(Maybe.just(ID)))));
-    validStmt(new SwitchStatementWithDefault(EXPR, List.<SwitchCase>nil(), new SwitchDefault(List.<Statement>list(
-        new BreakStatement(Maybe.<Identifier>nothing()))), List.<SwitchCase>nil()));
-    invalidStmt(1, new SwitchStatementWithDefault(EXPR, List.<SwitchCase>nil(), new SwitchDefault(List.<Statement>list(
-        new BreakStatement(Maybe.just(ID)))), List.<SwitchCase>nil()));
+    validStmt(new SwitchStatementWithDefault(EXPR, ImmutableList.<SwitchCase>nil(), new SwitchDefault(
+            ImmutableList.<Statement>list(
+                new BreakStatement(Maybe.<Identifier>nothing()))), ImmutableList.<SwitchCase>nil()));
+    invalidStmt(1, new SwitchStatementWithDefault(EXPR, ImmutableList.<SwitchCase>nil(), new SwitchDefault(
+            ImmutableList.<Statement>list(
+                new BreakStatement(Maybe.just(ID)))), ImmutableList.<SwitchCase>nil()));
   }
 
   @Test
@@ -84,7 +86,7 @@ public class UnitTest extends AstHelper {
     validExpr(new IdentifierExpression(new Identifier("_$0x")));
     validExpr(new StaticMemberExpression(EXPR, ID));
     validExpr(new StaticMemberExpression(EXPR, new Identifier("if")));
-    validExpr(new ObjectExpression(List.list(new DataProperty(new PropertyName(new Identifier("if")), EXPR))));
+    validExpr(new ObjectExpression(ImmutableList.list(new DataProperty(new PropertyName(new Identifier("if")), EXPR))));
     invalidExpr(1, new IdentifierExpression(new Identifier("")));
     invalidExpr(1, new IdentifierExpression(new Identifier("a-b")));
     invalidExpr(1, new IdentifierExpression(new Identifier("0x0")));
@@ -107,43 +109,43 @@ public class UnitTest extends AstHelper {
 
   @Test
   public final void testFunctionExpressionNameMustNotBeAReservedWord() {
-    validExpr(new FunctionExpression(Maybe.<Identifier>nothing(), List.<Identifier>nil(), EMPTY_BODY));
-    validExpr(new FunctionExpression(Maybe.just(ID), List.<Identifier>nil(), EMPTY_BODY));
-    invalidExpr(1, new FunctionExpression(Maybe.just(BAD_ID), List.<Identifier>nil(), EMPTY_BODY));
+    validExpr(new FunctionExpression(Maybe.<Identifier>nothing(), ImmutableList.<Identifier>nil(), EMPTY_BODY));
+    validExpr(new FunctionExpression(Maybe.just(ID), ImmutableList.<Identifier>nil(), EMPTY_BODY));
+    invalidExpr(1, new FunctionExpression(Maybe.just(BAD_ID), ImmutableList.<Identifier>nil(), EMPTY_BODY));
   }
 
   @Test
   public final void testFunctionDeclarationNameMustNotBeAReservedWord() {
-    validStmt(new FunctionDeclaration(ID, List.<Identifier>nil(), EMPTY_BODY));
-    invalidStmt(1, new FunctionDeclaration(BAD_ID, List.<Identifier>nil(), EMPTY_BODY));
+    validStmt(new FunctionDeclaration(ID, ImmutableList.<Identifier>nil(), EMPTY_BODY));
+    invalidStmt(1, new FunctionDeclaration(BAD_ID, ImmutableList.<Identifier>nil(), EMPTY_BODY));
   }
 
   @Test
   public final void testFunctionExpressionParametersMustNotBeAReservedWord() {
-    validExpr(new FunctionExpression(Maybe.<Identifier>nothing(), List.<Identifier>nil(), EMPTY_BODY));
-    validExpr(new FunctionExpression(Maybe.<Identifier>nothing(), List.list(ID), EMPTY_BODY));
-    invalidExpr(1, new FunctionExpression(Maybe.<Identifier>nothing(), List.list(BAD_ID), EMPTY_BODY));
-    invalidExpr(1, new FunctionExpression(Maybe.<Identifier>nothing(), List.list(ID, BAD_ID), EMPTY_BODY));
-    invalidExpr(1, new FunctionExpression(Maybe.<Identifier>nothing(), List.list(ID, ID, BAD_ID), EMPTY_BODY));
-    invalidExpr(1, new FunctionExpression(Maybe.<Identifier>nothing(), List.list(BAD_ID, ID), EMPTY_BODY));
-    invalidExpr(1, new FunctionExpression(Maybe.<Identifier>nothing(), List.list(ID, BAD_ID, ID), EMPTY_BODY));
+    validExpr(new FunctionExpression(Maybe.<Identifier>nothing(), ImmutableList.<Identifier>nil(), EMPTY_BODY));
+    validExpr(new FunctionExpression(Maybe.<Identifier>nothing(), ImmutableList.list(ID), EMPTY_BODY));
+    invalidExpr(1, new FunctionExpression(Maybe.<Identifier>nothing(), ImmutableList.list(BAD_ID), EMPTY_BODY));
+    invalidExpr(1, new FunctionExpression(Maybe.<Identifier>nothing(), ImmutableList.list(ID, BAD_ID), EMPTY_BODY));
+    invalidExpr(1, new FunctionExpression(Maybe.<Identifier>nothing(), ImmutableList.list(ID, ID, BAD_ID), EMPTY_BODY));
+    invalidExpr(1, new FunctionExpression(Maybe.<Identifier>nothing(), ImmutableList.list(BAD_ID, ID), EMPTY_BODY));
+    invalidExpr(1, new FunctionExpression(Maybe.<Identifier>nothing(), ImmutableList.list(ID, BAD_ID, ID), EMPTY_BODY));
   }
 
   @Test
   public final void testFunctionDeclarationParametersMustNotBeAReservedWord() {
-    validStmt(new FunctionDeclaration(ID, List.<Identifier>nil(), EMPTY_BODY));
-    validStmt(new FunctionDeclaration(ID, List.list(ID), EMPTY_BODY));
-    invalidStmt(1, new FunctionDeclaration(ID, List.list(BAD_ID), EMPTY_BODY));
-    invalidStmt(1, new FunctionDeclaration(ID, List.list(ID, BAD_ID), EMPTY_BODY));
-    invalidStmt(1, new FunctionDeclaration(ID, List.list(ID, ID, BAD_ID), EMPTY_BODY));
-    invalidStmt(1, new FunctionDeclaration(ID, List.list(BAD_ID, ID), EMPTY_BODY));
-    invalidStmt(1, new FunctionDeclaration(ID, List.list(ID, BAD_ID, ID), EMPTY_BODY));
+    validStmt(new FunctionDeclaration(ID, ImmutableList.<Identifier>nil(), EMPTY_BODY));
+    validStmt(new FunctionDeclaration(ID, ImmutableList.list(ID), EMPTY_BODY));
+    invalidStmt(1, new FunctionDeclaration(ID, ImmutableList.list(BAD_ID), EMPTY_BODY));
+    invalidStmt(1, new FunctionDeclaration(ID, ImmutableList.list(ID, BAD_ID), EMPTY_BODY));
+    invalidStmt(1, new FunctionDeclaration(ID, ImmutableList.list(ID, ID, BAD_ID), EMPTY_BODY));
+    invalidStmt(1, new FunctionDeclaration(ID, ImmutableList.list(BAD_ID, ID), EMPTY_BODY));
+    invalidStmt(1, new FunctionDeclaration(ID, ImmutableList.list(ID, BAD_ID, ID), EMPTY_BODY));
   }
 
   @Test
   public final void testSetterParameterMustNotBeAReservedWord() {
-    validExpr(new ObjectExpression(List.list(new Setter(new PropertyName(ID), ID, EMPTY_BODY))));
-    invalidExpr(1, new ObjectExpression(List.list(new Setter(new PropertyName(ID), BAD_ID, EMPTY_BODY))));
+    validExpr(new ObjectExpression(ImmutableList.list(new Setter(new PropertyName(ID), ID, EMPTY_BODY))));
+    invalidExpr(1, new ObjectExpression(ImmutableList.list(new Setter(new PropertyName(ID), BAD_ID, EMPTY_BODY))));
   }
 
   @Test
@@ -172,9 +174,9 @@ public class UnitTest extends AstHelper {
     // These are not allowed according to the spec but browsers usually allow them.
     invalidStmt(1, label("a", exprStmt(FE(label("a", STMT)))));
     invalidStmt(1, label("a", exprStmt(obj(
-        new Getter(new PropertyName("a"), new FunctionBody(List.nil(), List.list(label("a", STMT))))))));
+        new Getter(new PropertyName("a"), new FunctionBody(ImmutableList.nil(), ImmutableList.list(label("a", STMT))))))));
     invalidStmt(1, label("a", exprStmt(obj(
-        new Setter(new PropertyName("a"), ID, new FunctionBody(List.nil(), List.list(label("a", STMT))))))));
+        new Setter(new PropertyName("a"), ID, new FunctionBody(ImmutableList.nil(), ImmutableList.list(label("a", STMT))))))));
   }
 
   @Test
@@ -204,17 +206,17 @@ public class UnitTest extends AstHelper {
     ObjectProperty getter = new Getter(new PropertyName(ID), EMPTY_BODY);
     ObjectProperty setter = new Setter(new PropertyName(ID), ID, EMPTY_BODY);
 
-    validExpr(new ObjectExpression(List.list(init, init)));
-    invalidExpr(1, new ObjectExpression(List.list(init, getter)));
-    invalidExpr(1, new ObjectExpression(List.list(init, setter)));
+    validExpr(new ObjectExpression(ImmutableList.list(init, init)));
+    invalidExpr(1, new ObjectExpression(ImmutableList.list(init, getter)));
+    invalidExpr(1, new ObjectExpression(ImmutableList.list(init, setter)));
 
-    validExpr(new ObjectExpression(List.list(getter, setter)));
-    invalidExpr(1, new ObjectExpression(List.list(getter, init)));
-    invalidExpr(1, new ObjectExpression(List.list(getter, getter)));
+    validExpr(new ObjectExpression(ImmutableList.list(getter, setter)));
+    invalidExpr(1, new ObjectExpression(ImmutableList.list(getter, init)));
+    invalidExpr(1, new ObjectExpression(ImmutableList.list(getter, getter)));
 
-    validExpr(new ObjectExpression(List.list(setter, getter)));
-    invalidExpr(1, new ObjectExpression(List.list(setter, init)));
-    invalidExpr(1, new ObjectExpression(List.list(setter, setter)));
+    validExpr(new ObjectExpression(ImmutableList.list(setter, getter)));
+    invalidExpr(1, new ObjectExpression(ImmutableList.list(setter, init)));
+    invalidExpr(1, new ObjectExpression(ImmutableList.list(setter, setter)));
   }
 
   @Test
@@ -258,7 +260,7 @@ public class UnitTest extends AstHelper {
 
   @Test
   public final void testLibraries() throws IOException, JsError {
-    List<String> jsFiles = List.nil();
+    ImmutableList<String> jsFiles = ImmutableList.nil();
     setFatal(false); // Collect the failures in an ErrorCollector
 
     // Get a list of the js files within the resources directory to process
@@ -269,7 +271,7 @@ public class UnitTest extends AstHelper {
     }
     for (File file : files) {
       if (file.isFile() && file.getName().endsWith(".js")) {
-        jsFiles = List.cons(file.getName(), jsFiles);
+        jsFiles = ImmutableList.cons(file.getName(), jsFiles);
       }
     }
 

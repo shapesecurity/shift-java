@@ -16,7 +16,7 @@
 
 package com.shapesecurity.shift.ast.statement;
 
-import com.shapesecurity.functional.data.List;
+import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.shift.ast.Expression;
 import com.shapesecurity.shift.ast.Statement;
 import com.shapesecurity.shift.ast.SwitchCase;
@@ -29,17 +29,17 @@ public class SwitchStatementWithDefault extends Statement {
   @NotNull
   public final Expression discriminant;
   @NotNull
-  public final List<SwitchCase> preDefaultCases;
+  public final ImmutableList<SwitchCase> preDefaultCases;
   @NotNull
   public final SwitchDefault defaultCase;
   @NotNull
-  public final List<SwitchCase> postDefaultCases;
+  public final ImmutableList<SwitchCase> postDefaultCases;
 
   public SwitchStatementWithDefault(
       @NotNull Expression discriminant,
-      @NotNull List<SwitchCase> preDefaultCases,
+      @NotNull ImmutableList<SwitchCase> preDefaultCases,
       @NotNull SwitchDefault defaultCase,
-      @NotNull List<SwitchCase> postDefaultCases) {
+      @NotNull ImmutableList<SwitchCase> postDefaultCases) {
     super();
     this.discriminant = discriminant;
     this.preDefaultCases = preDefaultCases;
@@ -68,7 +68,7 @@ public class SwitchStatementWithDefault extends Statement {
   }
 
   @NotNull
-  public List<SwitchCase> getPreDefaultCases() {
+  public ImmutableList<SwitchCase> getPreDefaultCases() {
     return this.preDefaultCases;
   }
 
@@ -78,7 +78,7 @@ public class SwitchStatementWithDefault extends Statement {
   }
 
   @NotNull
-  public List<SwitchCase> getPostDefaultCases() {
+  public ImmutableList<SwitchCase> getPostDefaultCases() {
     return this.postDefaultCases;
   }
 
@@ -88,7 +88,7 @@ public class SwitchStatementWithDefault extends Statement {
   }
 
   @NotNull
-  public SwitchStatementWithDefault setPreDefaultCases(@NotNull List<SwitchCase> preDefaultCases) {
+  public SwitchStatementWithDefault setPreDefaultCases(@NotNull ImmutableList<SwitchCase> preDefaultCases) {
     return new SwitchStatementWithDefault(this.discriminant, preDefaultCases, this.defaultCase, this.postDefaultCases);
   }
 
@@ -98,7 +98,7 @@ public class SwitchStatementWithDefault extends Statement {
   }
 
   @NotNull
-  public SwitchStatementWithDefault setPostDefaultCases(@NotNull List<SwitchCase> postDefaultCases) {
+  public SwitchStatementWithDefault setPostDefaultCases(@NotNull ImmutableList<SwitchCase> postDefaultCases) {
     return new SwitchStatementWithDefault(this.discriminant, this.preDefaultCases, this.defaultCase, postDefaultCases);
   }
 }

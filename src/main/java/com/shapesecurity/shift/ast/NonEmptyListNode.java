@@ -17,7 +17,7 @@
 
 package com.shapesecurity.shift.ast;
 
-import com.shapesecurity.functional.data.NonEmptyList;
+import com.shapesecurity.functional.data.NonEmptyImmutableList;
 import com.shapesecurity.shift.ast.types.GenType;
 import com.shapesecurity.shift.ast.types.NonEmptyListType;
 import com.shapesecurity.shift.ast.types.Type;
@@ -25,10 +25,10 @@ import com.shapesecurity.shift.ast.types.Type;
 import org.jetbrains.annotations.NotNull;
 
 public class NonEmptyListNode<T> extends Node {
-  public final NonEmptyList<T> list;
+  public final NonEmptyImmutableList<T> list;
   public final NonEmptyListType genType;
 
-  public NonEmptyListNode(@NotNull NonEmptyList<T> list, @NotNull NonEmptyListType genType) {
+  public NonEmptyListNode(@NotNull NonEmptyImmutableList<T> list, @NotNull NonEmptyListType genType) {
     this.list = list;
     this.genType = genType;
   }

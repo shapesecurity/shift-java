@@ -16,7 +16,7 @@
 
 package com.shapesecurity.shift.ast.expression;
 
-import com.shapesecurity.functional.data.List;
+import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.functional.data.Maybe;
 import com.shapesecurity.shift.ast.Function;
 import com.shapesecurity.shift.ast.FunctionBody;
@@ -29,13 +29,13 @@ public class FunctionExpression extends PrimaryExpression implements Function {
   @NotNull
   public final Maybe<Identifier> name;
   @NotNull
-  public final List<Identifier> parameters;
+  public final ImmutableList<Identifier> parameters;
   @NotNull
   public final FunctionBody body;
 
   public FunctionExpression(
       @NotNull Maybe<Identifier> name,
-      @NotNull List<Identifier> parameters,
+      @NotNull ImmutableList<Identifier> parameters,
       @NotNull FunctionBody body) {
     super();
     this.name = name;
@@ -58,7 +58,7 @@ public class FunctionExpression extends PrimaryExpression implements Function {
 
   @NotNull
   @Override
-  public List<Identifier> parameters() {
+  public ImmutableList<Identifier> parameters() {
     return this.parameters;
   }
 
@@ -68,7 +68,7 @@ public class FunctionExpression extends PrimaryExpression implements Function {
   }
 
   @NotNull
-  public List<Identifier> getParameters() {
+  public ImmutableList<Identifier> getParameters() {
     return this.parameters;
   }
 
@@ -83,7 +83,7 @@ public class FunctionExpression extends PrimaryExpression implements Function {
   }
 
   @NotNull
-  public FunctionExpression setParameters(@NotNull List<Identifier> parameters) {
+  public FunctionExpression setParameters(@NotNull ImmutableList<Identifier> parameters) {
     return new FunctionExpression(this.name, parameters, this.body);
   }
 

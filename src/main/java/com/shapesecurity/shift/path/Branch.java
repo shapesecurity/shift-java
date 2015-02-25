@@ -17,7 +17,7 @@
 package com.shapesecurity.shift.path;
 
 import com.shapesecurity.functional.data.Either;
-import com.shapesecurity.functional.data.List;
+import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.functional.data.Maybe;
 import com.shapesecurity.shift.ast.EitherNode;
 import com.shapesecurity.shift.ast.ListNode;
@@ -43,8 +43,8 @@ public interface Branch {
   static Node wrap(@NotNull Object obj, @NotNull GenType suggestedType) {
     if (obj instanceof Either) {
       return new EitherNode((Either) obj, (EitherType) suggestedType);
-    } else if (obj instanceof List) {
-      return new ListNode((List) obj, (ListType) suggestedType);
+    } else if (obj instanceof ImmutableList) {
+      return new ListNode((ImmutableList) obj, (ListType) suggestedType);
     } else if (obj instanceof Maybe) {
       return new MaybeNode<>((Maybe) obj, (MaybeType) suggestedType);
     } else {

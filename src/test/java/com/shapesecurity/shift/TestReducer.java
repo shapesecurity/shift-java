@@ -18,7 +18,7 @@ package com.shapesecurity.shift;
 
 import org.jetbrains.annotations.NotNull;
 
-import com.shapesecurity.functional.data.List;
+import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.shift.ast.Node;
 import com.shapesecurity.shift.path.Branch;
 
@@ -27,7 +27,7 @@ public abstract class TestReducer extends TestReducerWithPath {
   protected abstract void accept(@NotNull Node node);
 
   @Override
-  protected void accept(@NotNull Node node, @NotNull List<Branch> path) {
+  protected void accept(@NotNull Node node, @NotNull ImmutableList<Branch> path) {
     accept(node);
   }
 }

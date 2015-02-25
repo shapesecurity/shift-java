@@ -17,9 +17,9 @@
 package com.shapesecurity.shift.visitor;
 
 import com.shapesecurity.functional.data.Either;
-import com.shapesecurity.functional.data.List;
+import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.functional.data.Maybe;
-import com.shapesecurity.functional.data.NonEmptyList;
+import com.shapesecurity.functional.data.NonEmptyImmutableList;
 import com.shapesecurity.shift.ast.Block;
 import com.shapesecurity.shift.ast.CatchClause;
 import com.shapesecurity.shift.ast.FunctionBody;
@@ -82,116 +82,116 @@ import org.jetbrains.annotations.NotNull;
 
 public interface ReducerP<ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> {
   @NotNull
-  ScriptState reduceScript(@NotNull Script node, @NotNull List<Branch> path, @NotNull ProgramBodyState body);
+  ScriptState reduceScript(@NotNull Script node, @NotNull ImmutableList<Branch> path, @NotNull ProgramBodyState body);
 
   @NotNull
-  IdentifierState reduceIdentifier(@NotNull Identifier node, @NotNull List<Branch> path);
+  IdentifierState reduceIdentifier(@NotNull Identifier node, @NotNull ImmutableList<Branch> path);
 
   @NotNull
   ExpressionState reduceIdentifierExpression(
       @NotNull IdentifierExpression node,
-      @NotNull List<Branch> path,
+      @NotNull ImmutableList<Branch> path,
       @NotNull IdentifierState identifier);
 
   @NotNull
-  ExpressionState reduceThisExpression(@NotNull ThisExpression node, @NotNull List<Branch> path);
+  ExpressionState reduceThisExpression(@NotNull ThisExpression node, @NotNull ImmutableList<Branch> path);
 
   @NotNull
-  ExpressionState reduceLiteralBooleanExpression(@NotNull LiteralBooleanExpression node, @NotNull List<Branch> path);
+  ExpressionState reduceLiteralBooleanExpression(@NotNull LiteralBooleanExpression node, @NotNull ImmutableList<Branch> path);
 
   @NotNull
-  ExpressionState reduceLiteralStringExpression(@NotNull LiteralStringExpression node, @NotNull List<Branch> path);
+  ExpressionState reduceLiteralStringExpression(@NotNull LiteralStringExpression node, @NotNull ImmutableList<Branch> path);
 
   @NotNull
-  ExpressionState reduceLiteralRegExpExpression(@NotNull LiteralRegExpExpression node, @NotNull List<Branch> path);
+  ExpressionState reduceLiteralRegExpExpression(@NotNull LiteralRegExpExpression node, @NotNull ImmutableList<Branch> path);
 
   @NotNull
-  ExpressionState reduceLiteralNumericExpression(@NotNull LiteralNumericExpression node, @NotNull List<Branch> path);
+  ExpressionState reduceLiteralNumericExpression(@NotNull LiteralNumericExpression node, @NotNull ImmutableList<Branch> path);
 
   @NotNull
-  ExpressionState reduceLiteralInfinityExpression(@NotNull LiteralInfinityExpression node, @NotNull List<Branch> path);
+  ExpressionState reduceLiteralInfinityExpression(@NotNull LiteralInfinityExpression node, @NotNull ImmutableList<Branch> path);
 
   @NotNull
-  ExpressionState reduceLiteralNullExpression(@NotNull LiteralNullExpression node, @NotNull List<Branch> path);
+  ExpressionState reduceLiteralNullExpression(@NotNull LiteralNullExpression node, @NotNull ImmutableList<Branch> path);
 
   @NotNull
   ExpressionState reduceFunctionExpression(
       @NotNull FunctionExpression node,
-      @NotNull List<Branch> path,
+      @NotNull ImmutableList<Branch> path,
       @NotNull Maybe<IdentifierState> name,
-      @NotNull List<IdentifierState> parameters,
+      @NotNull ImmutableList<IdentifierState> parameters,
       @NotNull ProgramBodyState body);
 
   @NotNull
   ExpressionState reduceStaticMemberExpression(
       @NotNull StaticMemberExpression node,
-      @NotNull List<Branch> path,
+      @NotNull ImmutableList<Branch> path,
       @NotNull ExpressionState object,
       @NotNull IdentifierState property);
 
   @NotNull
   ExpressionState reduceComputedMemberExpression(
       @NotNull ComputedMemberExpression node,
-      @NotNull List<Branch> path,
+      @NotNull ImmutableList<Branch> path,
       @NotNull ExpressionState object,
       @NotNull ExpressionState expression);
 
   @NotNull
   ExpressionState reduceObjectExpression(
       @NotNull ObjectExpression node,
-      @NotNull List<Branch> path,
-      @NotNull List<PropertyState> properties);
+      @NotNull ImmutableList<Branch> path,
+      @NotNull ImmutableList<PropertyState> properties);
 
   @NotNull
   ExpressionState reduceBinaryExpression(
       @NotNull BinaryExpression node,
-      @NotNull List<Branch> path,
+      @NotNull ImmutableList<Branch> path,
       @NotNull ExpressionState left,
       @NotNull ExpressionState right);
 
   @NotNull
   ExpressionState reduceAssignmentExpression(
       @NotNull AssignmentExpression node,
-      @NotNull List<Branch> path,
+      @NotNull ImmutableList<Branch> path,
       @NotNull ExpressionState binding,
       @NotNull ExpressionState expression);
 
   @NotNull
   ExpressionState reduceArrayExpression(
       @NotNull ArrayExpression node,
-      @NotNull List<Branch> path,
-      @NotNull List<Maybe<ExpressionState>> elements);
+      @NotNull ImmutableList<Branch> path,
+      @NotNull ImmutableList<Maybe<ExpressionState>> elements);
 
   @NotNull
   ExpressionState reduceNewExpression(
       @NotNull NewExpression node,
-      @NotNull List<Branch> path,
+      @NotNull ImmutableList<Branch> path,
       @NotNull ExpressionState callee,
-      @NotNull List<ExpressionState> arguments);
+      @NotNull ImmutableList<ExpressionState> arguments);
 
   @NotNull
   ExpressionState reduceCallExpression(
       @NotNull CallExpression node,
-      @NotNull List<Branch> path,
+      @NotNull ImmutableList<Branch> path,
       @NotNull ExpressionState callee,
-      @NotNull List<ExpressionState> arguments);
+      @NotNull ImmutableList<ExpressionState> arguments);
 
   @NotNull
   ExpressionState reducePostfixExpression(
       @NotNull PostfixExpression node,
-      @NotNull List<Branch> path,
+      @NotNull ImmutableList<Branch> path,
       @NotNull ExpressionState operand);
 
   @NotNull
   ExpressionState reducePrefixExpression(
       @NotNull PrefixExpression node,
-      @NotNull List<Branch> path,
+      @NotNull ImmutableList<Branch> path,
       @NotNull ExpressionState operand);
 
   @NotNull
   ExpressionState reduceConditionalExpression(
       @NotNull ConditionalExpression node,
-      @NotNull List<Branch> path,
+      @NotNull ImmutableList<Branch> path,
       @NotNull ExpressionState test,
       @NotNull ExpressionState consequent,
       @NotNull ExpressionState alternate);
@@ -199,65 +199,65 @@ public interface ReducerP<ScriptState, ProgramBodyState, PropertyState, Property
   @NotNull
   StatementState reduceFunctionDeclaration(
       @NotNull FunctionDeclaration node,
-      @NotNull List<Branch> path,
+      @NotNull ImmutableList<Branch> path,
       @NotNull IdentifierState name,
-      @NotNull List<IdentifierState> params,
+      @NotNull ImmutableList<IdentifierState> params,
       @NotNull ProgramBodyState body);
 
   @NotNull
-  DirectiveState reduceUseStrictDirective(@NotNull UseStrictDirective node, @NotNull List<Branch> path);
+  DirectiveState reduceUseStrictDirective(@NotNull UseStrictDirective node, @NotNull ImmutableList<Branch> path);
 
   @NotNull
-  DirectiveState reduceUnknownDirective(@NotNull UnknownDirective node, @NotNull List<Branch> path);
+  DirectiveState reduceUnknownDirective(@NotNull UnknownDirective node, @NotNull ImmutableList<Branch> path);
 
   @NotNull
   StatementState reduceBlockStatement(
       @NotNull BlockStatement node,
-      @NotNull List<Branch> path,
+      @NotNull ImmutableList<Branch> path,
       @NotNull BlockState block);
 
   @NotNull
   StatementState reduceBreakStatement(
       @NotNull BreakStatement node,
-      @NotNull List<Branch> path,
+      @NotNull ImmutableList<Branch> path,
       @NotNull Maybe<IdentifierState> label);
 
   @NotNull
   CatchClauseState reduceCatchClause(
       @NotNull CatchClause node,
-      @NotNull List<Branch> path,
+      @NotNull ImmutableList<Branch> path,
       @NotNull IdentifierState binding,
       @NotNull BlockState body);
 
   @NotNull
   StatementState reduceContinueStatement(
       @NotNull ContinueStatement node,
-      @NotNull List<Branch> path,
+      @NotNull ImmutableList<Branch> path,
       @NotNull Maybe<IdentifierState> label);
 
   @NotNull
-  StatementState reduceDebuggerStatement(@NotNull DebuggerStatement node, @NotNull List<Branch> path);
+  StatementState reduceDebuggerStatement(@NotNull DebuggerStatement node, @NotNull ImmutableList<Branch> path);
 
   @NotNull
   StatementState reduceDoWhileStatement(
       @NotNull DoWhileStatement node,
-      @NotNull List<Branch> path,
+      @NotNull ImmutableList<Branch> path,
       @NotNull StatementState body,
       @NotNull ExpressionState test);
 
   @NotNull
-  StatementState reduceEmptyStatement(@NotNull EmptyStatement node, @NotNull List<Branch> path);
+  StatementState reduceEmptyStatement(@NotNull EmptyStatement node, @NotNull ImmutableList<Branch> path);
 
   @NotNull
   StatementState reduceExpressionStatement(
       @NotNull ExpressionStatement node,
-      @NotNull List<Branch> path,
+      @NotNull ImmutableList<Branch> path,
       @NotNull ExpressionState expression);
 
   @NotNull
   StatementState reduceForInStatement(
       @NotNull ForInStatement node,
-      @NotNull List<Branch> path,
+      @NotNull ImmutableList<Branch> path,
       @NotNull Either<DeclarationState, ExpressionState> left,
       @NotNull ExpressionState right,
       @NotNull StatementState body);
@@ -265,7 +265,7 @@ public interface ReducerP<ScriptState, ProgramBodyState, PropertyState, Property
   @NotNull
   StatementState reduceForStatement(
       @NotNull ForStatement node,
-      @NotNull List<Branch> path,
+      @NotNull ImmutableList<Branch> path,
       @NotNull Maybe<Either<DeclarationState, ExpressionState>> init,
       @NotNull Maybe<ExpressionState> test,
       @NotNull Maybe<ExpressionState> update,
@@ -274,7 +274,7 @@ public interface ReducerP<ScriptState, ProgramBodyState, PropertyState, Property
   @NotNull
   StatementState reduceIfStatement(
       @NotNull IfStatement node,
-      @NotNull List<Branch> path,
+      @NotNull ImmutableList<Branch> path,
       @NotNull ExpressionState test,
       @NotNull StatementState consequent,
       @NotNull Maybe<StatementState> alternate);
@@ -282,62 +282,62 @@ public interface ReducerP<ScriptState, ProgramBodyState, PropertyState, Property
   @NotNull
   StatementState reduceLabeledStatement(
       @NotNull LabeledStatement node,
-      @NotNull List<Branch> path,
+      @NotNull ImmutableList<Branch> path,
       @NotNull IdentifierState label,
       @NotNull StatementState body);
 
   @NotNull
   StatementState reduceReturnStatement(
       @NotNull ReturnStatement node,
-      @NotNull List<Branch> path,
+      @NotNull ImmutableList<Branch> path,
       @NotNull Maybe<ExpressionState> expression);
 
   @NotNull
   SwitchCaseState reduceSwitchCase(
       @NotNull SwitchCase node,
-      @NotNull List<Branch> path,
+      @NotNull ImmutableList<Branch> path,
       @NotNull ExpressionState test,
-      @NotNull List<StatementState> consequent);
+      @NotNull ImmutableList<StatementState> consequent);
 
   @NotNull
   SwitchDefaultState reduceSwitchDefault(
       @NotNull SwitchDefault node,
-      @NotNull List<Branch> path,
-      @NotNull List<StatementState> consequent);
+      @NotNull ImmutableList<Branch> path,
+      @NotNull ImmutableList<StatementState> consequent);
 
   @NotNull
   StatementState reduceSwitchStatement(
       @NotNull SwitchStatement node,
-      @NotNull List<Branch> path,
+      @NotNull ImmutableList<Branch> path,
       @NotNull ExpressionState discriminant,
-      @NotNull List<SwitchCaseState> cases);
+      @NotNull ImmutableList<SwitchCaseState> cases);
 
   @NotNull
   StatementState reduceSwitchStatementWithDefault(
       @NotNull SwitchStatementWithDefault node,
-      @NotNull List<Branch> path,
+      @NotNull ImmutableList<Branch> path,
       @NotNull ExpressionState discriminant,
-      @NotNull List<SwitchCaseState> preDefaultCases,
+      @NotNull ImmutableList<SwitchCaseState> preDefaultCases,
       @NotNull SwitchDefaultState defaultCase,
-      @NotNull List<SwitchCaseState> postDefaultCases);
+      @NotNull ImmutableList<SwitchCaseState> postDefaultCases);
 
   @NotNull
   StatementState reduceThrowStatement(
       @NotNull ThrowStatement node,
-      @NotNull List<Branch> path,
+      @NotNull ImmutableList<Branch> path,
       @NotNull ExpressionState expression);
 
   @NotNull
   StatementState reduceTryCatchStatement(
       @NotNull TryCatchStatement node,
-      @NotNull List<Branch> path,
+      @NotNull ImmutableList<Branch> path,
       @NotNull BlockState block,
       @NotNull CatchClauseState catchClause);
 
   @NotNull
   StatementState reduceTryFinallyStatement(
       @NotNull TryFinallyStatement node,
-      @NotNull List<Branch> path,
+      @NotNull ImmutableList<Branch> path,
       @NotNull BlockState block,
       @NotNull Maybe<CatchClauseState> catchClause,
       @NotNull BlockState finalizer);
@@ -345,68 +345,68 @@ public interface ReducerP<ScriptState, ProgramBodyState, PropertyState, Property
   @NotNull
   StatementState reduceVariableDeclarationStatement(
       @NotNull VariableDeclarationStatement node,
-      @NotNull List<Branch> path,
+      @NotNull ImmutableList<Branch> path,
       @NotNull DeclarationState declaration);
 
   @NotNull
   DeclarationState reduceVariableDeclaration(
       @NotNull VariableDeclaration node,
-      @NotNull List<Branch> path,
-      @NotNull NonEmptyList<DeclaratorState> declarators);
+      @NotNull ImmutableList<Branch> path,
+      @NotNull NonEmptyImmutableList<DeclaratorState> declarators);
 
   @NotNull
   StatementState reduceWhileStatement(
       @NotNull WhileStatement node,
-      @NotNull List<Branch> path,
+      @NotNull ImmutableList<Branch> path,
       @NotNull ExpressionState test,
       @NotNull StatementState body);
 
   @NotNull
   StatementState reduceWithStatement(
       @NotNull WithStatement node,
-      @NotNull List<Branch> path,
+      @NotNull ImmutableList<Branch> path,
       @NotNull ExpressionState object,
       @NotNull StatementState body);
 
   @NotNull
   PropertyState reduceDataProperty(
       @NotNull DataProperty node,
-      @NotNull List<Branch> path,
+      @NotNull ImmutableList<Branch> path,
       @NotNull PropertyNameState name,
       @NotNull ExpressionState value);
 
   @NotNull
   PropertyState reduceGetter(
       @NotNull Getter node,
-      @NotNull List<Branch> path,
+      @NotNull ImmutableList<Branch> path,
       @NotNull PropertyNameState name,
       @NotNull ProgramBodyState body);
 
   @NotNull
   PropertyState reduceSetter(
       @NotNull Setter node,
-      @NotNull List<Branch> path,
+      @NotNull ImmutableList<Branch> path,
       @NotNull PropertyNameState name,
       @NotNull IdentifierState parameter,
       @NotNull ProgramBodyState body);
 
   @NotNull
-  PropertyNameState reducePropertyName(@NotNull PropertyName node, @NotNull List<Branch> path);
+  PropertyNameState reducePropertyName(@NotNull PropertyName node, @NotNull ImmutableList<Branch> path);
 
   @NotNull
   ProgramBodyState reduceFunctionBody(
       @NotNull FunctionBody node,
-      @NotNull List<Branch> path,
-      @NotNull List<DirectiveState> directives,
-      @NotNull List<StatementState> statements);
+      @NotNull ImmutableList<Branch> path,
+      @NotNull ImmutableList<DirectiveState> directives,
+      @NotNull ImmutableList<StatementState> statements);
 
   @NotNull
   DeclaratorState reduceVariableDeclarator(
       @NotNull VariableDeclarator node,
-      @NotNull List<Branch> path,
+      @NotNull ImmutableList<Branch> path,
       @NotNull IdentifierState binding,
       @NotNull Maybe<ExpressionState> init);
 
   @NotNull
-  BlockState reduceBlock(@NotNull Block node, @NotNull List<Branch> path, @NotNull List<StatementState> statements);
+  BlockState reduceBlock(@NotNull Block node, @NotNull ImmutableList<Branch> path, @NotNull ImmutableList<StatementState> statements);
 }

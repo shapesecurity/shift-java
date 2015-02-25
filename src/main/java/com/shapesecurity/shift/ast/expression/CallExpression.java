@@ -16,7 +16,7 @@
 
 package com.shapesecurity.shift.ast.expression;
 
-import com.shapesecurity.functional.data.List;
+import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.shift.ast.Expression;
 import com.shapesecurity.shift.ast.operators.Precedence;
 import com.shapesecurity.shift.ast.types.Type;
@@ -27,9 +27,9 @@ public class CallExpression extends LeftHandSideExpression {
   @NotNull
   public final Expression callee;
   @NotNull
-  public final List<Expression> arguments;
+  public final ImmutableList<Expression> arguments;
 
-  public CallExpression(@NotNull Expression callee, @NotNull List<Expression> arguments) {
+  public CallExpression(@NotNull Expression callee, @NotNull ImmutableList<Expression> arguments) {
     super();
     this.callee = callee;
     this.arguments = arguments;
@@ -59,7 +59,7 @@ public class CallExpression extends LeftHandSideExpression {
   }
 
   @NotNull
-  public List<Expression> getArguments() {
+  public ImmutableList<Expression> getArguments() {
     return this.arguments;
   }
 
@@ -69,7 +69,7 @@ public class CallExpression extends LeftHandSideExpression {
   }
 
   @NotNull
-  public CallExpression setArguments(@NotNull List<Expression> arguments) {
+  public CallExpression setArguments(@NotNull ImmutableList<Expression> arguments) {
     return new CallExpression(this.callee, arguments);
   }
 
