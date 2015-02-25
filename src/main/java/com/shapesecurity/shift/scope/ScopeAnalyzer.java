@@ -297,11 +297,11 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
   public static final class State {
     public final boolean dynamic;
     @NotNull
-    public final HashTable<String, ProjectionTree<Reference>> freeIdentifiers;
+    public final HashTable<String, HashTable<List<Branch>, Reference>> freeIdentifiers;
     @NotNull
-    public final HashTable<String, ProjectionTree<Declaration>> functionScopedDeclarations;
+    public final HashTable<String, HashTable<List<Branch>, Declaration>> functionScopedDeclarations;
     @NotNull
-    public final HashTable<String, ProjectionTree<Declaration>> blockScopedDeclarations;
+    public final HashTable<String, HashTable<List<Branch>, Declaration>> blockScopedDeclarations;
     @NotNull
     public final Set<String> functionScopedInit; // function scoped variables with initializers
     @NotNull
@@ -319,9 +319,9 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
      * Fully saturated constructor
      */
     private State(
-        @NotNull HashTable<String, ProjectionTree<Reference>> freeIdentifiers,
-        @NotNull HashTable<String, ProjectionTree<Declaration>> functionScopedDeclarations,
-        @NotNull HashTable<String, ProjectionTree<Declaration>> blockScopedDeclarations,
+        @NotNull HashTable<String, HashTable<List<Branch>, Reference>> freeIdentifiers,
+        @NotNull HashTable<String, HashTable<List<Branch>, Declaration>> functionScopedDeclarations,
+        @NotNull HashTable<String, HashTable<List<Branch>, Declaration>> blockScopedDeclarations,
         @NotNull Set<String> functionScopedInit,
         @NotNull List<Variable> blockScopedTiedVar,
         @NotNull List<Scope> children,
@@ -379,10 +379,10 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
      * Utility method to merge MultiMaps
      */
     @NotNull
-    private static <T> HashTable<String, ProjectionTree<T>> merge(
-        @NotNull HashTable<String, ProjectionTree<T>> mapA,
-        @NotNull HashTable<String, ProjectionTree<T>> mapB) {
-      return mapA.merge(mapB, ProjectionTree::append);
+    private static <T> HashTable<String, HashTable<List<Branch>, T>> merge(
+        @NotNull HashTable<String, HashTable<List<Branch>, T>> mapA,
+        @NotNull HashTable<String, HashTable<List<Branch>, T>> mapB) {
+      return mapA.merge(mapB, HashTable::merge);
     }
 
     @NotNull
@@ -408,8 +408,8 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
     private State finish(@NotNull Node astNode, @NotNull Scope.Type scopeType) {
       List<Variable> variables = List.nil();
 
-      HashTable<String, ProjectionTree<Declaration>> functionScope = HashTable.empty();
-      HashTable<String, ProjectionTree<Reference>> freeIdentifiers = this.freeIdentifiers;
+      HashTable<String, HashTable<List<Branch>, Declaration>> functionScope = HashTable.empty();
+      HashTable<String, HashTable<List<Branch>, Reference>> freeIdentifiers = this.freeIdentifiers;
       Set<String> functionScopedInit = new HashSet<>();
       List<Variable> blockScopedTiedVar = List.nil();
 
@@ -419,10 +419,10 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
       case With:
         // resolve only block-scoped free declarations
         List<Variable> variables3 = variables;
-        for (Pair<String, ProjectionTree<Declaration>> entry2 : this.blockScopedDeclarations.entries()) {
+        for (Pair<String, HashTable<List<Branch>, Declaration>> entry2 : this.blockScopedDeclarations.entries()) {
           String name2 = entry2.a;
-          ProjectionTree<Declaration> declarations2 = entry2.b;
-          ProjectionTree<Reference> references2 = freeIdentifiers.get(name2).orJust(ProjectionTree.nil());
+          HashTable<List<Branch>, Declaration> declarations2 = entry2.b;
+          HashTable<List<Branch>, Reference> references2 = freeIdentifiers.get(name2).orJust(HashTable.empty());
           variables3 = List.cons(new Variable(name2, references2, declarations2), variables3);
           freeIdentifiers = freeIdentifiers.remove(name2);
         }
@@ -444,26 +444,26 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
         // resolve both block-scoped and function-scoped free declarations
         if (scopeType == Scope.Type.Function) {
           List<Variable> variables1 = variables;
-          ProjectionTree<Reference> arguments = freeIdentifiers.get("arguments").orJust(ProjectionTree.nil());
+          HashTable<List<Branch>, Reference> arguments = freeIdentifiers.get("arguments").orJust(HashTable.empty());
           freeIdentifiers = freeIdentifiers.remove("arguments");
-          variables1 = List.cons(new Variable("arguments", arguments, ProjectionTree.nil()), variables1);
+          variables1 = List.cons(new Variable("arguments", arguments, HashTable.empty()), variables1);
           variables = variables1;
         }
         List<Variable> variables2 = variables;
-        for (Pair<String, ProjectionTree<Declaration>> entry1 : this.blockScopedDeclarations.entries()) {
+        for (Pair<String, HashTable<List<Branch>, Declaration>> entry1 : this.blockScopedDeclarations.entries()) {
           String name1 = entry1.a;
-          ProjectionTree<Declaration> declarations1 = entry1.b;
-          ProjectionTree<Reference> references1 = freeIdentifiers.get(name1).orJust(ProjectionTree.nil());
+          HashTable<List<Branch>, Declaration> declarations1 = entry1.b;
+          HashTable<List<Branch>, Reference> references1 = freeIdentifiers.get(name1).orJust(HashTable.empty());
           variables2 = List.cons(new Variable(name1, references1, declarations1), variables2);
           freeIdentifiers = freeIdentifiers.remove(name1);
         }
         variables = variables2;
         List<Variable> variables1 = variables;
-        for (Pair<String, ProjectionTree<Declaration>> entry : this.functionScopedDeclarations.entries()) {
+        for (Pair<String, HashTable<List<Branch>, Declaration>> entry : this.functionScopedDeclarations.entries()) {
           String name = entry.a;
-          ProjectionTree<Declaration> declarations = entry.b;
-          ProjectionTree<Reference> references =
-              freeIdentifiers.get(name).orJust(ProjectionTree.nil());
+          HashTable<List<Branch>, Declaration> declarations = entry.b;
+          HashTable<List<Branch>, Reference> references =
+              freeIdentifiers.get(name).orJust(HashTable.empty());
           variables1 = List.cons(new Variable(name, references, declarations), variables1);
           freeIdentifiers = freeIdentifiers.remove(name);
         }
@@ -504,9 +504,9 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
     private State addDeclaration(@NotNull List<Branch> path, @NotNull Identifier id, @NotNull Kind kind,
                                  boolean hasInit) {
       Declaration decl = new Declaration(id, path, kind);
-      HashTable<String, ProjectionTree<Declaration>> declMap =
+      HashTable<String, HashTable<List<Branch>, Declaration>> declMap =
           kind.isBlockScoped ? this.blockScopedDeclarations : this.functionScopedDeclarations;
-      ProjectionTree<Declaration> tree = declMap.get(id.name).orJust(ProjectionTree.nil()).add(decl, decl.path);
+      HashTable<List<Branch>, Declaration> tree = declMap.get(id.name).orJust(HashTable.empty()).put(decl.path, decl);
       declMap = declMap.put(id.name, tree);
       Set<String> functionScopedInit = this.functionScopedInit;
       if (hasInit && kind.isFunctionScoped) {
@@ -553,8 +553,8 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
     private State addReference(@NotNull List<Branch> path, @NotNull Identifier id, @NotNull Accessibility accessibility,
                                boolean hasInit) {
       Reference ref = new Reference(id, path, accessibility);
-      HashTable<String, ProjectionTree<Reference>> free = this.freeIdentifiers;
-      ProjectionTree<Reference> tree = free.get(ref.node.name).orJust(ProjectionTree.nil()).add(ref, ref.path);
+      HashTable<String, HashTable<List<Branch>, Reference>> free = this.freeIdentifiers;
+      HashTable<List<Branch>, Reference> tree = free.get(ref.node.name).orJust(HashTable.empty()).put(ref.path, ref);
       free = free.put(ref.node.name, tree);
       return new State(
           free,

@@ -40,6 +40,7 @@ import static com.shapesecurity.shift.path.StaticBranch.TEST;
 import static org.junit.Assert.assertTrue;
 
 import com.shapesecurity.functional.Pair;
+import com.shapesecurity.functional.data.HashTable;
 import com.shapesecurity.functional.data.List;
 import com.shapesecurity.functional.data.Maybe;
 import com.shapesecurity.shift.TestBase;
@@ -1407,9 +1408,9 @@ public class ScopeTest extends TestBase {
 
     Assert.assertEquals(scope.through.length, through.length);
     through.foreach(name -> {
-      ProjectionTree<Reference> references = scope.through.get(name).just();
+      HashTable<List<Branch>, Reference> references = scope.through.get(name).just();
       Assert.assertNotNull(references);
-      assertTrue(references.exists(reference -> reference.node.name.equals(name)));
+      assertTrue(references.find(pair -> pair.b.node.name.equals(name)).isJust());
     });
 
     Assert.assertEquals(scope.variables().size(), variables.size());
@@ -1419,17 +1420,18 @@ public class ScopeTest extends TestBase {
       Variable variable = maybeVariable.just();
 
       List<IdentifierP> declarations = variableEntry.getValue().a;
-      Assert.assertEquals(variable.declarations.length(), declarations.length);
+      Assert.assertEquals(variable.declarations.length, declarations.length);
       for (final IdentifierP node : declarations) {
-        assertTrue(variable.declarations.exists(declaration -> declaration.path.equals(node.from) && declaration.node
-            .equals(node.node)));
+        assertTrue(variable.declarations.find(pair -> pair.b.path.equals(node.from) && pair.b.node
+            .equals(node.node)).isJust());
       }
 
       List<IdentifierP> refs = variableEntry.getValue().b;
-      Assert.assertEquals(variable.references.length(), refs.length);
+      Assert.assertEquals(variable.references.length, refs.length);
       for (final IdentifierP node : refs) {
-        Maybe<Reference> maybeRef = variable.references.find(reference -> reference.path.equals(node.from)
-            && reference.node.equals(node.node));
+        Maybe<Reference> maybeRef = variable.references.find(
+            pair -> pair.b.path.equals(node.from)
+                && pair.b.node.equals(node.node)).map(pair -> pair.b);
         assertTrue(maybeRef.isJust());
         Reference ref = maybeRef.just();
         Assert.assertEquals(ref.node, node.node);
