@@ -17,9 +17,9 @@
 package com.shapesecurity.shift.serialization;
 
 import com.shapesecurity.functional.data.Either;
-import com.shapesecurity.functional.data.List;
+import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.functional.data.Maybe;
-import com.shapesecurity.functional.data.NonEmptyList;
+import com.shapesecurity.functional.data.NonEmptyImmutableList;
 import com.shapesecurity.shift.ast.Block;
 import com.shapesecurity.shift.ast.CatchClause;
 import com.shapesecurity.shift.ast.FunctionBody;
@@ -97,12 +97,12 @@ public class Serializer implements Reducer<StringBuilder> {
   }
 
   @NotNull
-  private static StringBuilder list(@NotNull List<StringBuilder> values) {
+  private static StringBuilder list(@NotNull ImmutableList<StringBuilder> values) {
     if (values.isEmpty()) {
       return new StringBuilder("[]");
     }
     StringBuilder sb = new StringBuilder("[");
-    NonEmptyList<StringBuilder> nel = (NonEmptyList<StringBuilder>) values;
+    NonEmptyImmutableList<StringBuilder> nel = (NonEmptyImmutableList<StringBuilder>) values;
     sb.append(nel.head);
     nel.tail().foreach(s -> sb.append(",").append(s));
     sb.append("]");
@@ -110,12 +110,12 @@ public class Serializer implements Reducer<StringBuilder> {
   }
 
   @NotNull
-  private static StringBuilder olist(@NotNull List<Maybe<StringBuilder>> values) {
+  private static StringBuilder olist(@NotNull ImmutableList<Maybe<StringBuilder>> values) {
     if (values.isEmpty()) {
       return new StringBuilder("[]");
     }
     StringBuilder sb = new StringBuilder("[");
-    NonEmptyList<Maybe<StringBuilder>> nel = (NonEmptyList<Maybe<StringBuilder>>) values;
+    NonEmptyImmutableList<Maybe<StringBuilder>> nel = (NonEmptyImmutableList<Maybe<StringBuilder>>) values;
     sb.append(o(nel.head));
     nel.tail().foreach(s -> sb.append(",").append(o(s)));
     sb.append("]");
@@ -129,7 +129,7 @@ public class Serializer implements Reducer<StringBuilder> {
 
   @NotNull
   private static CharSequence e(@NotNull Either<StringBuilder, StringBuilder> el) {
-    return olist(List.list(el.left(), el.right()));
+    return olist(ImmutableList.list(el.left(), el.right()));
   }
 
   private static class JsonObjectBuilder {
@@ -191,8 +191,10 @@ public class Serializer implements Reducer<StringBuilder> {
       SourceLocation loc = node.getLoc();
       if (loc != null && loc.source != null) {
         this.add("range",
-            list(List.list(new StringBuilder(Integer.toString(loc.offset)), new StringBuilder(
-                Integer.toString(loc.offset + loc.source.length())))));
+            list(
+                ImmutableList.list(
+                    new StringBuilder(Integer.toString(loc.offset)), new StringBuilder(
+                        Integer.toString(loc.offset + loc.source.length())))));
       }
       this.text.append("}");
       return this.text;
@@ -206,13 +208,13 @@ public class Serializer implements Reducer<StringBuilder> {
 
   @NotNull
   @Override
-  public StringBuilder reduceScript(@NotNull Script node, @NotNull List<Branch> path, @NotNull StringBuilder body) {
+  public StringBuilder reduceScript(@NotNull Script node, @NotNull ImmutableList<Branch> path, @NotNull StringBuilder body) {
     return b("Script").add("body", body).done(node);
   }
 
   @NotNull
   @Override
-  public StringBuilder reduceIdentifier(@NotNull Identifier node, @NotNull List<Branch> path) {
+  public StringBuilder reduceIdentifier(@NotNull Identifier node, @NotNull ImmutableList<Branch> path) {
     return b("Identifier").add("name", node.name).done(node);
   }
 
@@ -220,14 +222,14 @@ public class Serializer implements Reducer<StringBuilder> {
   @Override
   public StringBuilder reduceIdentifierExpression(
       @NotNull IdentifierExpression node,
-      @NotNull List<Branch> path,
+      @NotNull ImmutableList<Branch> path,
       @NotNull StringBuilder identifier) {
     return b("IdentifierExpression").add("identifier", identifier).done(node);
   }
 
   @NotNull
   @Override
-  public StringBuilder reduceThisExpression(@NotNull ThisExpression node, @NotNull List<Branch> path) {
+  public StringBuilder reduceThisExpression(@NotNull ThisExpression node, @NotNull ImmutableList<Branch> path) {
     return b("ThisExpression").done(node);
   }
 
@@ -235,21 +237,21 @@ public class Serializer implements Reducer<StringBuilder> {
   @Override
   public StringBuilder reduceLiteralBooleanExpression(
       @NotNull LiteralBooleanExpression node,
-      @NotNull List<Branch> path) {
+      @NotNull ImmutableList<Branch> path) {
     return b("LiteralBooleanExpression").add("value", node.value).done(node);
   }
 
   @NotNull
   @Override
   public StringBuilder reduceLiteralStringExpression(
-      @NotNull LiteralStringExpression node, @NotNull List<Branch> path) {
+      @NotNull LiteralStringExpression node, @NotNull ImmutableList<Branch> path) {
     return b("LiteralStringExpression").add("value", node.value).done(node);
   }
 
   @NotNull
   @Override
   public StringBuilder reduceLiteralRegExpExpression(
-      @NotNull LiteralRegExpExpression node, @NotNull List<Branch> path) {
+      @NotNull LiteralRegExpExpression node, @NotNull ImmutableList<Branch> path) {
     return b("LiteralRegexExpression").add("value", node.value).done(node);
   }
 
@@ -257,20 +259,20 @@ public class Serializer implements Reducer<StringBuilder> {
   @Override
   public StringBuilder reduceLiteralNumericExpression(
       @NotNull LiteralNumericExpression node,
-      @NotNull List<Branch> path) {
+      @NotNull ImmutableList<Branch> path) {
     return b("LiteralNumericExpression").add("value", node.value).done(node);
   }
 
   @NotNull
   @Override
   public StringBuilder reduceLiteralInfinityExpression(@NotNull LiteralInfinityExpression node,
-                                                       @NotNull List<Branch> path) {
+                                                       @NotNull ImmutableList<Branch> path) {
     return b("LiteralInfinityExpression").done(node);
   }
 
   @NotNull
   @Override
-  public StringBuilder reduceLiteralNullExpression(@NotNull LiteralNullExpression node, @NotNull List<Branch> path) {
+  public StringBuilder reduceLiteralNullExpression(@NotNull LiteralNullExpression node, @NotNull ImmutableList<Branch> path) {
     return b("LiteralNullExpression").done(node);
   }
 
@@ -278,9 +280,9 @@ public class Serializer implements Reducer<StringBuilder> {
   @Override
   public StringBuilder reduceFunctionExpression(
       @NotNull FunctionExpression node,
-      @NotNull List<Branch> path,
+      @NotNull ImmutableList<Branch> path,
       @NotNull Maybe<StringBuilder> name,
-      @NotNull List<StringBuilder> parameters,
+      @NotNull ImmutableList<StringBuilder> parameters,
       @NotNull StringBuilder body) {
     return b("FunctionExpression").add("name", name).add("parameters", list(parameters)).add("body", body).done(node);
   }
@@ -289,7 +291,7 @@ public class Serializer implements Reducer<StringBuilder> {
   @Override
   public StringBuilder reduceStaticMemberExpression(
       @NotNull StaticMemberExpression node,
-      @NotNull List<Branch> path,
+      @NotNull ImmutableList<Branch> path,
       @NotNull StringBuilder object,
       @NotNull StringBuilder property) {
     return b("StaticMemberExpression").add("object", object).add("property", property).done(node);
@@ -299,7 +301,7 @@ public class Serializer implements Reducer<StringBuilder> {
   @Override
   public StringBuilder reduceComputedMemberExpression(
       @NotNull ComputedMemberExpression node,
-      @NotNull List<Branch> path,
+      @NotNull ImmutableList<Branch> path,
       @NotNull StringBuilder object,
       @NotNull StringBuilder expression) {
     return b("ComputedMemberExpression").add("object", object).add("expression", expression).done(node);
@@ -309,8 +311,8 @@ public class Serializer implements Reducer<StringBuilder> {
   @Override
   public StringBuilder reduceObjectExpression(
       @NotNull ObjectExpression node,
-      @NotNull List<Branch> path,
-      @NotNull List<StringBuilder> properties) {
+      @NotNull ImmutableList<Branch> path,
+      @NotNull ImmutableList<StringBuilder> properties) {
     return b("ObjectExpression").add("properties", list(properties)).done(node);
   }
 
@@ -318,7 +320,7 @@ public class Serializer implements Reducer<StringBuilder> {
   @Override
   public StringBuilder reduceBinaryExpression(
       @NotNull BinaryExpression node,
-      @NotNull List<Branch> path,
+      @NotNull ImmutableList<Branch> path,
       @NotNull StringBuilder left,
       @NotNull StringBuilder right) {
     return b("BinaryExpression").add("operator", node.operator.getName()).add("left", left).add("right", right).done(
@@ -329,7 +331,7 @@ public class Serializer implements Reducer<StringBuilder> {
   @Override
   public StringBuilder reduceAssignmentExpression(
       @NotNull AssignmentExpression node,
-      @NotNull List<Branch> path,
+      @NotNull ImmutableList<Branch> path,
       @NotNull StringBuilder binding,
       @NotNull StringBuilder expression) {
     return b("AssignmentExpression").add("operator", node.operator.getName()).add("binding", binding).add("expression",
@@ -340,8 +342,8 @@ public class Serializer implements Reducer<StringBuilder> {
   @Override
   public StringBuilder reduceArrayExpression(
       @NotNull ArrayExpression node,
-      @NotNull List<Branch> path,
-      @NotNull List<Maybe<StringBuilder>> elements) {
+      @NotNull ImmutableList<Branch> path,
+      @NotNull ImmutableList<Maybe<StringBuilder>> elements) {
     return b("ArrayExpression").add("elements", olist(elements)).done(node);
   }
 
@@ -349,9 +351,9 @@ public class Serializer implements Reducer<StringBuilder> {
   @Override
   public StringBuilder reduceNewExpression(
       @NotNull NewExpression node,
-      @NotNull List<Branch> path,
+      @NotNull ImmutableList<Branch> path,
       @NotNull StringBuilder callee,
-      @NotNull List<StringBuilder> arguments) {
+      @NotNull ImmutableList<StringBuilder> arguments) {
     return b("NewExpression").add("callee", callee).add("arguments", list(arguments)).done(node);
   }
 
@@ -359,9 +361,9 @@ public class Serializer implements Reducer<StringBuilder> {
   @Override
   public StringBuilder reduceCallExpression(
       @NotNull CallExpression node,
-      @NotNull List<Branch> path,
+      @NotNull ImmutableList<Branch> path,
       @NotNull StringBuilder callee,
-      @NotNull List<StringBuilder> arguments) {
+      @NotNull ImmutableList<StringBuilder> arguments) {
     return b("CallExpression").add("callee", callee).add("arguments", list(arguments)).done(node);
   }
 
@@ -369,7 +371,7 @@ public class Serializer implements Reducer<StringBuilder> {
   @Override
   public StringBuilder reducePostfixExpression(
       @NotNull PostfixExpression node,
-      @NotNull List<Branch> path,
+      @NotNull ImmutableList<Branch> path,
       @NotNull StringBuilder operand) {
     return b("PostfixExpression").add("operator", node.operator.getName()).add("operand", operand).done(node);
   }
@@ -378,7 +380,7 @@ public class Serializer implements Reducer<StringBuilder> {
   @Override
   public StringBuilder reducePrefixExpression(
       @NotNull PrefixExpression node,
-      @NotNull List<Branch> path,
+      @NotNull ImmutableList<Branch> path,
       @NotNull StringBuilder operand) {
     return b("PrefixExpression").add("operator", node.operator.getName()).add("operand", operand).done(node);
   }
@@ -387,7 +389,7 @@ public class Serializer implements Reducer<StringBuilder> {
   @Override
   public StringBuilder reduceConditionalExpression(
       @NotNull ConditionalExpression node,
-      @NotNull List<Branch> path,
+      @NotNull ImmutableList<Branch> path,
       @NotNull StringBuilder test,
       @NotNull StringBuilder consequent,
       @NotNull StringBuilder alternate) {
@@ -399,22 +401,22 @@ public class Serializer implements Reducer<StringBuilder> {
   @Override
   public StringBuilder reduceFunctionDeclaration(
       @NotNull FunctionDeclaration node,
-      @NotNull List<Branch> path,
+      @NotNull ImmutableList<Branch> path,
       @NotNull StringBuilder name,
-      @NotNull List<StringBuilder> params,
+      @NotNull ImmutableList<StringBuilder> params,
       @NotNull StringBuilder body) {
     return b("FunctionDeclaration").add("name", name).add("parameters", list(params)).add("body", body).done(node);
   }
 
   @NotNull
   @Override
-  public StringBuilder reduceUseStrictDirective(@NotNull UseStrictDirective node, @NotNull List<Branch> path) {
+  public StringBuilder reduceUseStrictDirective(@NotNull UseStrictDirective node, @NotNull ImmutableList<Branch> path) {
     return b("UseStrictDirective").done(node);
   }
 
   @NotNull
   @Override
-  public StringBuilder reduceUnknownDirective(@NotNull UnknownDirective node, @NotNull List<Branch> path) {
+  public StringBuilder reduceUnknownDirective(@NotNull UnknownDirective node, @NotNull ImmutableList<Branch> path) {
     return b("UnknownDirective").add("value", node.value).done(node);
   }
 
@@ -422,7 +424,7 @@ public class Serializer implements Reducer<StringBuilder> {
   @Override
   public StringBuilder reduceBlockStatement(
       @NotNull BlockStatement node,
-      @NotNull List<Branch> path,
+      @NotNull ImmutableList<Branch> path,
       @NotNull StringBuilder block) {
     return b("BlockStatement").add("block", block).done(node);
   }
@@ -431,7 +433,7 @@ public class Serializer implements Reducer<StringBuilder> {
   @Override
   public StringBuilder reduceBreakStatement(
       @NotNull BreakStatement node,
-      @NotNull List<Branch> path,
+      @NotNull ImmutableList<Branch> path,
       @NotNull Maybe<StringBuilder> label) {
     return b("BreakStatement").add("label", label).done(node);
   }
@@ -440,7 +442,7 @@ public class Serializer implements Reducer<StringBuilder> {
   @Override
   public StringBuilder reduceCatchClause(
       @NotNull CatchClause node,
-      @NotNull List<Branch> path,
+      @NotNull ImmutableList<Branch> path,
       @NotNull StringBuilder binding,
       @NotNull StringBuilder body) {
     return b("CatchClause").add("binding", binding).add("body", body).done(node);
@@ -450,14 +452,14 @@ public class Serializer implements Reducer<StringBuilder> {
   @Override
   public StringBuilder reduceContinueStatement(
       @NotNull ContinueStatement node,
-      @NotNull List<Branch> path,
+      @NotNull ImmutableList<Branch> path,
       @NotNull Maybe<StringBuilder> label) {
     return b("ContinueStatement").add("label", label).done(node);
   }
 
   @NotNull
   @Override
-  public StringBuilder reduceDebuggerStatement(@NotNull DebuggerStatement node, @NotNull List<Branch> path) {
+  public StringBuilder reduceDebuggerStatement(@NotNull DebuggerStatement node, @NotNull ImmutableList<Branch> path) {
     return b("DebuggerStatement").done(node);
   }
 
@@ -465,7 +467,7 @@ public class Serializer implements Reducer<StringBuilder> {
   @Override
   public StringBuilder reduceDoWhileStatement(
       @NotNull DoWhileStatement node,
-      @NotNull List<Branch> path,
+      @NotNull ImmutableList<Branch> path,
       @NotNull StringBuilder body,
       @NotNull StringBuilder test) {
     return b("DoWhileStatement").add("body", body).add("test", test).done(node);
@@ -473,7 +475,7 @@ public class Serializer implements Reducer<StringBuilder> {
 
   @NotNull
   @Override
-  public StringBuilder reduceEmptyStatement(@NotNull EmptyStatement node, @NotNull List<Branch> path) {
+  public StringBuilder reduceEmptyStatement(@NotNull EmptyStatement node, @NotNull ImmutableList<Branch> path) {
     return b("EmptyStatement").done(node);
   }
 
@@ -481,7 +483,7 @@ public class Serializer implements Reducer<StringBuilder> {
   @Override
   public StringBuilder reduceExpressionStatement(
       @NotNull ExpressionStatement node,
-      @NotNull List<Branch> path,
+      @NotNull ImmutableList<Branch> path,
       @NotNull StringBuilder expression) {
     return b("ExpressionStatement").add("expression", expression).done(node);
   }
@@ -490,7 +492,7 @@ public class Serializer implements Reducer<StringBuilder> {
   @Override
   public StringBuilder reduceForInStatement(
       @NotNull ForInStatement node,
-      @NotNull List<Branch> path,
+      @NotNull ImmutableList<Branch> path,
       @NotNull Either<StringBuilder, StringBuilder> left,
       @NotNull StringBuilder right,
       @NotNull StringBuilder body) {
@@ -501,7 +503,7 @@ public class Serializer implements Reducer<StringBuilder> {
   @Override
   public StringBuilder reduceForStatement(
       @NotNull ForStatement node,
-      @NotNull List<Branch> path,
+      @NotNull ImmutableList<Branch> path,
       @NotNull Maybe<Either<StringBuilder, StringBuilder>> init,
       @NotNull Maybe<StringBuilder> test,
       @NotNull Maybe<StringBuilder> update,
@@ -514,7 +516,7 @@ public class Serializer implements Reducer<StringBuilder> {
   @Override
   public StringBuilder reduceIfStatement(
       @NotNull IfStatement node,
-      @NotNull List<Branch> path,
+      @NotNull ImmutableList<Branch> path,
       @NotNull StringBuilder test,
       @NotNull StringBuilder consequent,
       @NotNull Maybe<StringBuilder> alternate) {
@@ -525,7 +527,7 @@ public class Serializer implements Reducer<StringBuilder> {
   @Override
   public StringBuilder reduceLabeledStatement(
       @NotNull LabeledStatement node,
-      @NotNull List<Branch> path,
+      @NotNull ImmutableList<Branch> path,
       @NotNull StringBuilder label,
       @NotNull StringBuilder body) {
     return b("LabeledStatement").add("label", label).add("body", body).done(node);
@@ -535,7 +537,7 @@ public class Serializer implements Reducer<StringBuilder> {
   @Override
   public StringBuilder reduceReturnStatement(
       @NotNull ReturnStatement node,
-      @NotNull List<Branch> path,
+      @NotNull ImmutableList<Branch> path,
       @NotNull Maybe<StringBuilder> expression) {
     return b("ReturnStatement").add("expression", expression).done(node);
   }
@@ -544,9 +546,9 @@ public class Serializer implements Reducer<StringBuilder> {
   @Override
   public StringBuilder reduceSwitchCase(
       @NotNull SwitchCase node,
-      @NotNull List<Branch> path,
+      @NotNull ImmutableList<Branch> path,
       @NotNull StringBuilder test,
-      @NotNull List<StringBuilder> consequent) {
+      @NotNull ImmutableList<StringBuilder> consequent) {
     return b("SwitchCase").add("test", test).add("consequent", list(consequent)).done(node);
   }
 
@@ -554,8 +556,8 @@ public class Serializer implements Reducer<StringBuilder> {
   @Override
   public StringBuilder reduceSwitchDefault(
       @NotNull SwitchDefault node,
-      @NotNull List<Branch> path,
-      @NotNull List<StringBuilder> consequent) {
+      @NotNull ImmutableList<Branch> path,
+      @NotNull ImmutableList<StringBuilder> consequent) {
     return b("SwitchDefault").add("consequent", list(consequent)).done(node);
   }
 
@@ -563,9 +565,9 @@ public class Serializer implements Reducer<StringBuilder> {
   @Override
   public StringBuilder reduceSwitchStatement(
       @NotNull SwitchStatement node,
-      @NotNull List<Branch> path,
+      @NotNull ImmutableList<Branch> path,
       @NotNull StringBuilder discriminant,
-      @NotNull List<StringBuilder> cases) {
+      @NotNull ImmutableList<StringBuilder> cases) {
     return b("SwitchStatement").add("discriminant", discriminant).add("cases", list(cases)).done(node);
   }
 
@@ -573,11 +575,11 @@ public class Serializer implements Reducer<StringBuilder> {
   @Override
   public StringBuilder reduceSwitchStatementWithDefault(
       @NotNull SwitchStatementWithDefault node,
-      @NotNull List<Branch> path,
+      @NotNull ImmutableList<Branch> path,
       @NotNull StringBuilder discriminant,
-      @NotNull List<StringBuilder> preDefaultCases,
+      @NotNull ImmutableList<StringBuilder> preDefaultCases,
       @NotNull StringBuilder defaultCase,
-      @NotNull List<StringBuilder> postDefaultCases) {
+      @NotNull ImmutableList<StringBuilder> postDefaultCases) {
     return b("SwitchStatementWithDefault").add("discriminant", discriminant).add("preDefaultCases", list(
             preDefaultCases)).add(
         "defaultCase", defaultCase).add("postDefaultCases", list(postDefaultCases)).done(node);
@@ -587,7 +589,7 @@ public class Serializer implements Reducer<StringBuilder> {
   @Override
   public StringBuilder reduceThrowStatement(
       @NotNull ThrowStatement node,
-      @NotNull List<Branch> path,
+      @NotNull ImmutableList<Branch> path,
       @NotNull StringBuilder expression) {
     return b("ThrowStatement").add("expression", expression).done(node);
   }
@@ -596,7 +598,7 @@ public class Serializer implements Reducer<StringBuilder> {
   @Override
   public StringBuilder reduceTryCatchStatement(
       @NotNull TryCatchStatement node,
-      @NotNull List<Branch> path,
+      @NotNull ImmutableList<Branch> path,
       @NotNull StringBuilder body,
       @NotNull StringBuilder handler) {
     return b("TryStatement").add("body", body).add("handler", handler).add("finalizer", Maybe.nothing()).done(node);
@@ -606,7 +608,7 @@ public class Serializer implements Reducer<StringBuilder> {
   @Override
   public StringBuilder reduceTryFinallyStatement(
       @NotNull TryFinallyStatement node,
-      @NotNull List<Branch> path,
+      @NotNull ImmutableList<Branch> path,
       @NotNull StringBuilder body,
       @NotNull Maybe<StringBuilder> handler,
       @NotNull StringBuilder finalizer) {
@@ -617,7 +619,7 @@ public class Serializer implements Reducer<StringBuilder> {
   @Override
   public StringBuilder reduceVariableDeclarationStatement(
       @NotNull VariableDeclarationStatement node,
-      @NotNull List<Branch> path,
+      @NotNull ImmutableList<Branch> path,
       @NotNull StringBuilder declaration) {
     return b("VariableDeclarationStatement").add("declaration", declaration).done(node);
   }
@@ -626,8 +628,8 @@ public class Serializer implements Reducer<StringBuilder> {
   @Override
   public StringBuilder reduceVariableDeclaration(
       @NotNull VariableDeclaration node,
-      @NotNull List<Branch> path,
-      @NotNull NonEmptyList<StringBuilder> declarators) {
+      @NotNull ImmutableList<Branch> path,
+      @NotNull NonEmptyImmutableList<StringBuilder> declarators) {
     return b("VariableDeclaration").add("kind", node.kind.name).add("declarators", list(declarators)).done(node);
   }
 
@@ -635,7 +637,7 @@ public class Serializer implements Reducer<StringBuilder> {
   @Override
   public StringBuilder reduceWhileStatement(
       @NotNull WhileStatement node,
-      @NotNull List<Branch> path,
+      @NotNull ImmutableList<Branch> path,
       @NotNull StringBuilder test,
       @NotNull StringBuilder body) {
     return b("WhileStatement").add("test", test).add("body", body).done(node);
@@ -645,7 +647,7 @@ public class Serializer implements Reducer<StringBuilder> {
   @Override
   public StringBuilder reduceWithStatement(
       @NotNull WithStatement node,
-      @NotNull List<Branch> path,
+      @NotNull ImmutableList<Branch> path,
       @NotNull StringBuilder object,
       @NotNull StringBuilder body) {
     return b("WithStatement").add("object", object).add("body", body).done(node);
@@ -655,7 +657,7 @@ public class Serializer implements Reducer<StringBuilder> {
   @Override
   public StringBuilder reduceDataProperty(
       @NotNull DataProperty node,
-      @NotNull List<Branch> path,
+      @NotNull ImmutableList<Branch> path,
       @NotNull StringBuilder name,
       @NotNull StringBuilder value) {
     return b("DataProperty").add("name", name).add("value", value).done(node);
@@ -665,7 +667,7 @@ public class Serializer implements Reducer<StringBuilder> {
   @Override
   public StringBuilder reduceGetter(
       @NotNull Getter node,
-      @NotNull List<Branch> path,
+      @NotNull ImmutableList<Branch> path,
       @NotNull StringBuilder name,
       @NotNull StringBuilder body) {
     return b("Getter").add("name", name).add("body", body).done(node);
@@ -675,7 +677,7 @@ public class Serializer implements Reducer<StringBuilder> {
   @Override
   public StringBuilder reduceSetter(
       @NotNull Setter node,
-      @NotNull List<Branch> path,
+      @NotNull ImmutableList<Branch> path,
       @NotNull StringBuilder name,
       @NotNull StringBuilder parameter,
       @NotNull StringBuilder body) {
@@ -684,7 +686,7 @@ public class Serializer implements Reducer<StringBuilder> {
 
   @NotNull
   @Override
-  public StringBuilder reducePropertyName(@NotNull PropertyName node, @NotNull List<Branch> path) {
+  public StringBuilder reducePropertyName(@NotNull PropertyName node, @NotNull ImmutableList<Branch> path) {
     return b("PropertyName").add("value", node.value).add("kind", node.kind.name).done(node);
   }
 
@@ -692,9 +694,9 @@ public class Serializer implements Reducer<StringBuilder> {
   @Override
   public StringBuilder reduceFunctionBody(
       @NotNull FunctionBody node,
-      @NotNull List<Branch> path,
-      @NotNull List<StringBuilder> directives,
-      @NotNull List<StringBuilder> statements) {
+      @NotNull ImmutableList<Branch> path,
+      @NotNull ImmutableList<StringBuilder> directives,
+      @NotNull ImmutableList<StringBuilder> statements) {
     return b("FunctionBody").add("directives", list(directives)).add("statements", list(statements)).done(node);
   }
 
@@ -702,7 +704,7 @@ public class Serializer implements Reducer<StringBuilder> {
   @Override
   public StringBuilder reduceVariableDeclarator(
       @NotNull VariableDeclarator node,
-      @NotNull List<Branch> path,
+      @NotNull ImmutableList<Branch> path,
       @NotNull StringBuilder binding,
       @NotNull Maybe<StringBuilder> init) {
     return b("VariableDeclarator").add("binding", binding).add("init", init).done(node);
@@ -712,8 +714,8 @@ public class Serializer implements Reducer<StringBuilder> {
   @Override
   public StringBuilder reduceBlock(
       @NotNull Block node,
-      @NotNull List<Branch> path,
-      @NotNull List<StringBuilder> statements) {
+      @NotNull ImmutableList<Branch> path,
+      @NotNull ImmutableList<StringBuilder> statements) {
     return b("Block").add("statements", list(statements)).done(node);
   }
 }

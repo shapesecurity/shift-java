@@ -21,21 +21,21 @@ import com.shapesecurity.functional.F2;
 import com.shapesecurity.functional.Pair;
 import org.jetbrains.annotations.NotNull;
 
-public final class NonEmptyList<T> extends List<T> {
+public final class NonEmptyImmutableList<T> extends ImmutableList<T> {
   @NotNull
   public final T head;
 
   @NotNull
-  public final List<T> tail;
+  public final ImmutableList<T> tail;
 
-  protected NonEmptyList(@NotNull T head, @NotNull final List<T> tail) {
+  protected NonEmptyImmutableList(@NotNull T head, @NotNull final ImmutableList<T> tail) {
     super(tail.length + 1);
     this.head = head;
     this.tail = tail;
   }
 
   @NotNull
-  public List<T> tail() {
+  public ImmutableList<T> tail() {
     return tail;
   }
 
@@ -45,21 +45,21 @@ public final class NonEmptyList<T> extends List<T> {
     if (this == o) {
       return true;
     }
-    if (!(o instanceof NonEmptyList)) {
+    if (!(o instanceof NonEmptyImmutableList)) {
       return false;
     }
 
-    NonEmptyList<T> list = (NonEmptyList<T>) o;
+    NonEmptyImmutableList<T> list = (NonEmptyImmutableList<T>) o;
     return this.head.equals(list.head) && this.tail().equals(list.tail());
   }
 
   @NotNull
   @Override
   public <A> A foldLeft(@NotNull F2<A, ? super T, A> f, @NotNull A init) {
-    List<T> list = this;
-    while (list instanceof NonEmptyList) {
-      init = f.apply(init, ((NonEmptyList<T>) list).head);
-      list = ((NonEmptyList<T>) list).tail();
+    ImmutableList<T> list = this;
+    while (list instanceof NonEmptyImmutableList) {
+      init = f.apply(init, ((NonEmptyImmutableList<T>) list).head);
+      list = ((NonEmptyImmutableList<T>) list).tail();
     }
     return init;
   }
@@ -87,13 +87,13 @@ public final class NonEmptyList<T> extends List<T> {
 
   @NotNull
   @Override
-  public Maybe<List<T>> maybeTail() {
+  public Maybe<ImmutableList<T>> maybeTail() {
     return Maybe.just(this.tail());
   }
 
   @NotNull
   @Override
-  public Maybe<List<T>> maybeInit() {
+  public Maybe<ImmutableList<T>> maybeInit() {
     if (this.tail().isEmpty()) {
       return Maybe.just(nil());
     }
@@ -102,56 +102,56 @@ public final class NonEmptyList<T> extends List<T> {
 
   @NotNull
   public final T last() {
-    NonEmptyList<T> nel = this;
+    NonEmptyImmutableList<T> nel = this;
     while (true) {
       if (nel.tail().isEmpty()) {
         return nel.head;
       }
-      nel = (NonEmptyList<T>) nel.tail();
+      nel = (NonEmptyImmutableList<T>) nel.tail();
     }
   }
 
   @NotNull
-  public final List<T> init() {
+  public final ImmutableList<T> init() {
     if (this.tail().isEmpty()) {
       return nil();
     }
-    return cons(this.head, ((NonEmptyList<T>) this.tail()).init());
+    return cons(this.head, ((NonEmptyImmutableList<T>) this.tail()).init());
   }
 
   @NotNull
   @Override
-  public List<T> filter(@NotNull F<T, Boolean> f) {
+  public ImmutableList<T> filter(@NotNull F<T, Boolean> f) {
     return f.apply(this.head) ? cons(this.head, this.tail().filter(f)) : this.tail().filter(f);
   }
 
   @NotNull
   @Override
-  public <B> NonEmptyList<B> map(@NotNull F<T, B> f) {
-    return List.cons(f.apply(this.head), this.tail().map(f));
+  public <B> NonEmptyImmutableList<B> map(@NotNull F<T, B> f) {
+    return ImmutableList.cons(f.apply(this.head), this.tail().map(f));
   }
 
   @Override
   @NotNull
-  public final <B> NonEmptyList<B> mapWithIndex(@NotNull F2<Integer, T, B> f) {
+  public final <B> NonEmptyImmutableList<B> mapWithIndex(@NotNull F2<Integer, T, B> f) {
     int length = this.length;
     @SuppressWarnings("unchecked")
     B[] result = (B[]) new Object[length];
-    List<T> list = this;
+    ImmutableList<T> list = this;
     for (int i = 0; i < length; i++) {
-      result[i] = f.apply(i, ((NonEmptyList<T>) list).head);
-      list = ((NonEmptyList<T>) list).tail();
+      result[i] = f.apply(i, ((NonEmptyImmutableList<T>) list).head);
+      list = ((NonEmptyImmutableList<T>) list).tail();
     }
-    List<B> nList = nil();
+    ImmutableList<B> nList = nil();
     for (int i = length - 1; i >= 0; i--) {
       nList = nList.cons(result[i]);
     }
-    return (NonEmptyList<B>) nList;
+    return (NonEmptyImmutableList<B>) nList;
   }
 
   @NotNull
   @Override
-  public List<T> take(int n) {
+  public ImmutableList<T> take(int n) {
     if (n <= 0) {
       return nil();
     }
@@ -160,7 +160,7 @@ public final class NonEmptyList<T> extends List<T> {
 
   @NotNull
   @Override
-  public List<T> drop(int n) {
+  public ImmutableList<T> drop(int n) {
     if (n <= 0) {
       return this;
     }
@@ -169,22 +169,22 @@ public final class NonEmptyList<T> extends List<T> {
 
   @NotNull
   @Override
-  public Maybe<NonEmptyList<T>> toNonEmptyList() {
+  public Maybe<NonEmptyImmutableList<T>> toNonEmptyList() {
     return Maybe.just(this);
   }
 
   @NotNull
   @Override
-  public <B> Maybe<B> decons(@NotNull F2<T, List<T>, B> f) {
+  public <B> Maybe<B> decons(@NotNull F2<T, ImmutableList<T>, B> f) {
     return Maybe.just(f.apply(this.head, this.tail()));
   }
 
   @NotNull
   @Override
-  public <B, C> List<C> zipWith(@NotNull F2<T, B, C> f, @NotNull List<B> list) {
-    if (list instanceof NonEmptyList) {
-      NonEmptyList<B> nonEmptyList = (NonEmptyList<B>) list;
-      return List.cons(f.apply(this.head, nonEmptyList.head), this.tail().zipWith(f, nonEmptyList.tail()));
+  public <B, C> ImmutableList<C> zipWith(@NotNull F2<T, B, C> f, @NotNull ImmutableList<B> list) {
+    if (list instanceof NonEmptyImmutableList) {
+      NonEmptyImmutableList<B> nonEmptyList = (NonEmptyImmutableList<B>) list;
+      return ImmutableList.cons(f.apply(this.head, nonEmptyList.head), this.tail().zipWith(f, nonEmptyList.tail()));
     }
     return nil();
   }
@@ -196,7 +196,7 @@ public final class NonEmptyList<T> extends List<T> {
 
   @NotNull
   @Override
-  public <B extends T> List<T> append(@NotNull List<B> defaultClause) {
+  public <B extends T> ImmutableList<T> append(@NotNull ImmutableList<B> defaultClause) {
     return cons(this.head, this.tail().append(defaultClause));
   }
 
@@ -207,23 +207,23 @@ public final class NonEmptyList<T> extends List<T> {
 
   @NotNull
   @Override
-  public Pair<List<T>, List<T>> span(@NotNull F<T, Boolean> f) {
+  public Pair<ImmutableList<T>, ImmutableList<T>> span(@NotNull F<T, Boolean> f) {
     if (!f.apply(this.head)) {
       return new Pair<>(nil(), this);
     }
-    Pair<List<T>, List<T>> s = this.tail().span(f);
+    Pair<ImmutableList<T>, ImmutableList<T>> s = this.tail().span(f);
     return new Pair<>(s.a.cons(this.head), s.b);
   }
 
   @NotNull
   @Override
-  public <B> List<B> flatMap(@NotNull F<T, List<B>> f) {
+  public <B> ImmutableList<B> flatMap(@NotNull F<T, ImmutableList<B>> f) {
     return f.apply(this.head).append(this.tail().flatMap(f));
   }
 
   @NotNull
   @Override
-  public List<T> removeAll(@NotNull F<T, Boolean> f) {
+  public ImmutableList<T> removeAll(@NotNull F<T, Boolean> f) {
     if (f.apply(this.head)) {
       return this.tail().removeAll(f);
     }
@@ -232,24 +232,24 @@ public final class NonEmptyList<T> extends List<T> {
 
   @NotNull
   @Override
-  public NonEmptyList<T> reverse() {
+  public NonEmptyImmutableList<T> reverse() {
     return this.reverse(nil());
   }
 
   @NotNull
   @Override
-  public <B, C> Pair<B, List<C>> mapAccumL(@NotNull F2<B, T, Pair<B, C>> f, @NotNull B acc) {
+  public <B, C> Pair<B, ImmutableList<C>> mapAccumL(@NotNull F2<B, T, Pair<B, C>> f, @NotNull B acc) {
     Pair<B, C> pair = f.apply(acc, this.head);
-    Pair<B, List<C>> bListPair = this.tail().mapAccumL(f, pair.a);
-    return new Pair<>(bListPair.a, List.cons(pair.b, bListPair.b));
+    Pair<B, ImmutableList<C>> bListPair = this.tail().mapAccumL(f, pair.a);
+    return new Pair<>(bListPair.a, ImmutableList.cons(pair.b, bListPair.b));
   }
 
   @NotNull
-  private NonEmptyList<T> reverse(@NotNull List<T> acc) {
+  private NonEmptyImmutableList<T> reverse(@NotNull ImmutableList<T> acc) {
     if (this.tail().isEmpty()) {
       return acc.cons(this.head);
     }
-    return ((NonEmptyList<T>) this.tail()).reverse(cons(this.head, acc));
+    return ((NonEmptyImmutableList<T>) this.tail()).reverse(cons(this.head, acc));
   }
 
   @Override

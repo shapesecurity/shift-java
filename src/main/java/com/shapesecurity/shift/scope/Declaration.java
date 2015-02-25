@@ -16,7 +16,7 @@
 
 package com.shapesecurity.shift.scope;
 
-import com.shapesecurity.functional.data.List;
+import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.shift.ast.Identifier;
 import com.shapesecurity.shift.ast.VariableDeclaration;
 import com.shapesecurity.shift.path.Branch;
@@ -30,21 +30,21 @@ public class Declaration {
   @NotNull
   public final Identifier node;
   @NotNull
-  public final List<Branch> path;
+  public final ImmutableList<Branch> path;
   /**
    * Declared Variable kind
    */
   @NotNull
   public final Kind kind;
 
-  public Declaration(@NotNull Identifier node, @NotNull List<Branch> path, @NotNull Kind kind) {
+  public Declaration(@NotNull Identifier node, @NotNull ImmutableList<Branch> path, @NotNull Kind kind) {
     this.node = node;
     this.path = path;
     this.kind = kind;
   }
 
   @NotNull
-  public final List<Branch> getPath() {
+  public final ImmutableList<Branch> getPath() {
     return this.path;
   }
 

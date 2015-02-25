@@ -16,7 +16,7 @@
 
 package com.shapesecurity.shift.utils;
 
-import com.shapesecurity.functional.data.List;
+import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.shift.ast.Identifier;
 
 import java.util.HashSet;
@@ -61,7 +61,7 @@ public final class Utils {
     return true;
   }
 
-  public static boolean areUniqueNames(@NotNull List<Identifier> list) {
+  public static boolean areUniqueNames(@NotNull ImmutableList<Identifier> list) {
     HashSet<String> paramSet = new HashSet<>();
     for (Identifier item : list) {
       if (paramSet.contains(item.name)) {

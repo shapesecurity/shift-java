@@ -16,10 +16,9 @@
 
 package com.shapesecurity.shift;
 
-import com.shapesecurity.functional.data.List;
+import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.functional.data.Maybe;
 import com.shapesecurity.shift.ast.Block;
-import com.shapesecurity.shift.ast.Directive;
 import com.shapesecurity.shift.ast.Expression;
 import com.shapesecurity.shift.ast.FunctionBody;
 import com.shapesecurity.shift.ast.Identifier;
@@ -50,12 +49,12 @@ import org.junit.Assert;
 
 public class AstHelper extends TestBase {
   public static final EmptyStatement STMT = new EmptyStatement();
-  public static final Block BLOCK = new Block(List.nil());
+  public static final Block BLOCK = new Block(ImmutableList.nil());
   public static final BlockStatement BLOCK_STMT = new BlockStatement(BLOCK);
   public static final FunctionBody EMPTY_BODY =
-      new FunctionBody(List.nil(), List.nil());
+      new FunctionBody(ImmutableList.nil(), ImmutableList.nil());
   public static final FunctionBody BLOCK_WRAPPED =
-      new FunctionBody(List.nil(), List.list(BLOCK_STMT));
+      new FunctionBody(ImmutableList.nil(), ImmutableList.list(BLOCK_STMT));
   public static final LiteralNullExpression EXPR = new LiteralNullExpression();
   public static final LiteralNumericExpression NUM = new LiteralNumericExpression(0);
   public static final Identifier ID = new Identifier("a");
@@ -63,7 +62,7 @@ public class AstHelper extends TestBase {
 
   // wrap a statement in a program
   public static Script wrapProgram(Statement s) {
-    return new Script(new FunctionBody(List.nil(), List.list(s)));
+    return new Script(new FunctionBody(ImmutableList.nil(), ImmutableList.list(s)));
   }
 
   // wrap a statement in an iteration statement
@@ -72,7 +71,7 @@ public class AstHelper extends TestBase {
   }
 
   protected FunctionBody body(Statement... statements) {
-    return new FunctionBody(List.nil(), List.from(statements));
+    return new FunctionBody(ImmutableList.nil(), ImmutableList.from(statements));
   }
 
   protected IdentifierExpression identExpr(String name) {
@@ -95,18 +94,19 @@ public class AstHelper extends TestBase {
   }
 
   public static VariableDeclaration vars(VariableDeclaration.VariableDeclarationKind kind, String d0, String... d) {
-    return new VariableDeclaration(kind, List.list(d0, d).map(AstHelper::declarator));
+    return new VariableDeclaration(kind, ImmutableList.list(d0, d).map(AstHelper::declarator));
   }
 
   // wrap zero or more statements in a function expression
   public static FunctionExpression FE(Statement s) {
-    return new FunctionExpression(Maybe.just(ID), List.nil(), new FunctionBody(List.nil(),
-        List.list(s)));
+    return new FunctionExpression(Maybe.just(ID), ImmutableList.nil(), new FunctionBody(
+        ImmutableList.nil(),
+        ImmutableList.list(s)));
   }
 
   // wrap zero or more statements in a function declaration
   public static FunctionDeclaration FD(Statement s) {
-    return new FunctionDeclaration(ID, List.nil(), new FunctionBody(List.nil(), List.list(s)));
+    return new FunctionDeclaration(ID, ImmutableList.nil(), new FunctionBody(ImmutableList.nil(), ImmutableList.list(s)));
   }
 
   // wrap a statement in a LabeledStatement
@@ -119,7 +119,7 @@ public class AstHelper extends TestBase {
     return new ExpressionStatement(e);
   }
 
-  public static void printErrs(List<ValidationError> errs) {
+  public static void printErrs(ImmutableList<ValidationError> errs) {
     if (!errs.isEmpty()) {
       for (ValidationError validationError : errs) {
         System.out.println("ERROR>>>  " + validationError.message);
@@ -127,7 +127,7 @@ public class AstHelper extends TestBase {
     }
   }
 
-  public static void assertOk(List<ValidationError> errs) {
+  public static void assertOk(ImmutableList<ValidationError> errs) {
     if (!errs.isEmpty()) {
       printErrs(errs);
     }
@@ -139,7 +139,7 @@ public class AstHelper extends TestBase {
   }
 
   public static void invalidStmt(int numExpectedErrs, Statement s) {
-    List<ValidationError> errs = Validator.validate(wrapProgram(s));
+    ImmutableList<ValidationError> errs = Validator.validate(wrapProgram(s));
     Assert.assertTrue(!errs.isEmpty());
     Assert.assertEquals(errs.length, numExpectedErrs);
   }
@@ -149,13 +149,13 @@ public class AstHelper extends TestBase {
   }
 
   public static void invalidExpr(int numExpectedErrs, Expression e) {
-    List<ValidationError> errs = Validator.validate(wrapProgram(exprStmt(e)));
+    ImmutableList<ValidationError> errs = Validator.validate(wrapProgram(exprStmt(e)));
     Assert.assertTrue(!errs.isEmpty());
     Assert.assertEquals(numExpectedErrs, errs.length);
   }
 
   protected static ObjectExpression obj(ObjectProperty... properties) {
-    return new ObjectExpression(List.from(properties));
+    return new ObjectExpression(ImmutableList.from(properties));
   }
 
   protected static PropertyName pn(Identifier ident) {

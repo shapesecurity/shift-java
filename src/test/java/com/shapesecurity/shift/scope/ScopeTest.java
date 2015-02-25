@@ -41,7 +41,7 @@ import static org.junit.Assert.assertTrue;
 
 import com.shapesecurity.functional.Pair;
 import com.shapesecurity.functional.data.HashTable;
-import com.shapesecurity.functional.data.List;
+import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.functional.data.Maybe;
 import com.shapesecurity.shift.TestBase;
 import com.shapesecurity.shift.ast.Identifier;
@@ -62,10 +62,10 @@ import org.junit.Test;
 public class ScopeTest extends TestBase {
 
   private static class IdentifierP {
-    final List<Branch> from;
+    final ImmutableList<Branch> from;
     final Identifier node;
 
-    public IdentifierP(List<Branch> from, Identifier node) {
+    public IdentifierP(ImmutableList<Branch> from, Identifier node) {
       this.from = from;
       this.node = node;
     }
@@ -82,22 +82,22 @@ public class ScopeTest extends TestBase {
     }
   }
 
-  private static final List<IdentifierP> NO_REFERENCES = List.nil();
-  private static final List<IdentifierP> NO_DECLARATIONS = NO_REFERENCES;
+  private static final ImmutableList<IdentifierP> NO_REFERENCES = ImmutableList.nil();
+  private static final ImmutableList<IdentifierP> NO_DECLARATIONS = NO_REFERENCES;
 
   private static class Getter {
     @NotNull
     public final Node node;
     @NotNull
-    public final List<Branch> from;
+    public final ImmutableList<Branch> from;
 
-    private Getter(@NotNull Node node, @NotNull List<Branch> from) {
+    private Getter(@NotNull Node node, @NotNull ImmutableList<Branch> from) {
       this.node = node;
       this.from = from;
     }
 
     public Getter(@NotNull Node node) {
-      this(node, List.nil());
+      this(node, ImmutableList.nil());
     }
 
     @NotNull
@@ -133,14 +133,14 @@ public class ScopeTest extends TestBase {
 
     { // global scope
 
-      List<Scope> children = List.nil();
+      ImmutableList<Scope> children = ImmutableList.nil();
 
-      List<String> through = List.nil();
+      ImmutableList<String> through = ImmutableList.nil();
 
       // mapping of variable names from this scope object to the list of their declarations and their references
-      Map<String, Pair<List<IdentifierP>, List<IdentifierP>>> variables = new HashMap<>();
-      variables.put("v1", new Pair<>(List.list(v1Node1), NO_REFERENCES));
-      variables.put("v2", new Pair<>(List.list(v2Node1), List.list(v2Node1)));
+      Map<String, Pair<ImmutableList<IdentifierP>, ImmutableList<IdentifierP>>> variables = new HashMap<>();
+      variables.put("v1", new Pair<>(ImmutableList.list(v1Node1), NO_REFERENCES));
+      variables.put("v2", new Pair<>(ImmutableList.list(v2Node1), ImmutableList.list(v2Node1)));
 
       Map<IdentifierP, Accessibility> referenceTypes = new HashMap<>();
       referenceTypes.put(v2Node1, Accessibility.Write);
@@ -160,14 +160,14 @@ public class ScopeTest extends TestBase {
         .done();
     { // global scope
 
-      List<Scope> children = List.nil();
+      ImmutableList<Scope> children = ImmutableList.nil();
 
-      List<String> through = List.nil();
+      ImmutableList<String> through = ImmutableList.nil();
 
       // mapping of variable names from this scope object to the list of their declarations and their references
-      Map<String, Pair<List<IdentifierP>, List<IdentifierP>>> variables = new HashMap<>();
-      variables.put("v1", new Pair<>(List.list(v1Node1), NO_REFERENCES));
-      variables.put("v2", new Pair<>(List.list(v2Node1), List.list(v2Node1)));
+      Map<String, Pair<ImmutableList<IdentifierP>, ImmutableList<IdentifierP>>> variables = new HashMap<>();
+      variables.put("v1", new Pair<>(ImmutableList.list(v1Node1), NO_REFERENCES));
+      variables.put("v2", new Pair<>(ImmutableList.list(v2Node1), ImmutableList.list(v2Node1)));
 
       Map<IdentifierP, Accessibility> referenceTypes = new HashMap<>();
       referenceTypes.put(v2Node1, Accessibility.Write);
@@ -189,14 +189,14 @@ public class ScopeTest extends TestBase {
         .done();
     { // global scope
 
-      List<Scope> children = List.nil();
+      ImmutableList<Scope> children = ImmutableList.nil();
 
-      List<String> through = List.list("v1");
+      ImmutableList<String> through = ImmutableList.list("v1");
 
       // mapping of variable names from this scope object to the list of their declarations and their references
-      Map<String, Pair<List<IdentifierP>, List<IdentifierP>>> variables = new HashMap<>();
-      variables.put("v1", new Pair<>(NO_DECLARATIONS, List.list(v1Node1, v1Node2)));
-      variables.put("v2", new Pair<>(List.list(v2Node1), List.list(v2Node1)));
+      Map<String, Pair<ImmutableList<IdentifierP>, ImmutableList<IdentifierP>>> variables = new HashMap<>();
+      variables.put("v1", new Pair<>(NO_DECLARATIONS, ImmutableList.list(v1Node1, v1Node2)));
+      variables.put("v2", new Pair<>(ImmutableList.list(v2Node1), ImmutableList.list(v2Node1)));
 
       Map<IdentifierP, Accessibility> referenceTypes = new HashMap<>();
       referenceTypes.put(v1Node1, Accessibility.Write);
@@ -220,14 +220,14 @@ public class ScopeTest extends TestBase {
         .done();
     { // global scope
 
-      List<Scope> children = List.nil();
+      ImmutableList<Scope> children = ImmutableList.nil();
 
-      List<String> through = List.nil();
+      ImmutableList<String> through = ImmutableList.nil();
 
       // mapping of variable names from this scope object to the list of their declarations and their references
-      Map<String, Pair<List<IdentifierP>, List<IdentifierP>>> variables = new HashMap<>();
-      variables.put("v1", new Pair<>(List.list(v1Node2), List.list(v1Node1, v1Node2)));
-      variables.put("v2", new Pair<>(List.list(v2Node1), List.list(v2Node1)));
+      Map<String, Pair<ImmutableList<IdentifierP>, ImmutableList<IdentifierP>>> variables = new HashMap<>();
+      variables.put("v1", new Pair<>(ImmutableList.list(v1Node2), ImmutableList.list(v1Node1, v1Node2)));
+      variables.put("v2", new Pair<>(ImmutableList.list(v2Node1), ImmutableList.list(v2Node1)));
 
       Map<IdentifierP, Accessibility> referenceTypes = new HashMap<>();
       referenceTypes.put(v1Node1, Accessibility.Read);
@@ -253,14 +253,14 @@ public class ScopeTest extends TestBase {
         .done();
     { // global scope
 
-      List<Scope> children = List.nil();
+      ImmutableList<Scope> children = ImmutableList.nil();
 
-      List<String> through = List.nil();
+      ImmutableList<String> through = ImmutableList.nil();
 
       // mapping of variable names from this scope object to the list of their declarations and their references
-      Map<String, Pair<List<IdentifierP>, List<IdentifierP>>> variables = new HashMap<>();
-      variables.put("v1", new Pair<>(List.list(v1Node1, v1Node2), List.list(v1Node2, v1Node3)));
-      variables.put("v2", new Pair<>(List.list(v2Node1), List.list(v2Node1)));
+      Map<String, Pair<ImmutableList<IdentifierP>, ImmutableList<IdentifierP>>> variables = new HashMap<>();
+      variables.put("v1", new Pair<>(ImmutableList.list(v1Node1, v1Node2), ImmutableList.list(v1Node2, v1Node3)));
+      variables.put("v2", new Pair<>(ImmutableList.list(v2Node1), ImmutableList.list(v2Node1)));
 
       Map<IdentifierP, Accessibility> referenceTypes = new HashMap<>();
       referenceTypes.put(v1Node2, Accessibility.Write);
@@ -315,14 +315,14 @@ public class ScopeTest extends TestBase {
 
     { // global scope
 
-      List<Scope> children = List.list(f1Scope);
+      ImmutableList<Scope> children = ImmutableList.list(f1Scope);
 
-      List<String> through = List.nil();
+      ImmutableList<String> through = ImmutableList.nil();
 
       // mapping of variable names from this scope object to the list of their declarations and their references
-      Map<String, Pair<List<IdentifierP>, List<IdentifierP>>> variables = new HashMap<>();
-      variables.put("f1", new Pair<>(List.list(f1Node1), List.list(f1Node2)));
-      variables.put("r", new Pair<>(List.list(rNode1), List.list(rNode1)));
+      Map<String, Pair<ImmutableList<IdentifierP>, ImmutableList<IdentifierP>>> variables = new HashMap<>();
+      variables.put("f1", new Pair<>(ImmutableList.list(f1Node1), ImmutableList.list(f1Node2)));
+      variables.put("r", new Pair<>(ImmutableList.list(rNode1), ImmutableList.list(rNode1)));
 
       Map<IdentifierP, Accessibility> referenceTypes = new HashMap<>();
       referenceTypes.put(f1Node2, Accessibility.Read);
@@ -333,16 +333,16 @@ public class ScopeTest extends TestBase {
 
     { // f1 scope
 
-      List<Scope> children = List.list(f2Scope);
+      ImmutableList<Scope> children = ImmutableList.list(f2Scope);
 
-      List<String> through = List.nil();
+      ImmutableList<String> through = ImmutableList.nil();
 
       // mapping of variable names from this scope object to the list of their declarations and their references
-      Map<String, Pair<List<IdentifierP>, List<IdentifierP>>> variables = new HashMap<>();
-      variables.put("v1", new Pair<>(List.list(v1Node1), List.list(v1Node1, v1Node2)));
-      variables.put("p1", new Pair<>(List.list(p1Node1), NO_REFERENCES));
-      variables.put("p2", new Pair<>(List.list(p2Node1), List.list(p2Node2)));
-      variables.put("f2", new Pair<>(List.list(f2Node1), List.list(f2Node2)));
+      Map<String, Pair<ImmutableList<IdentifierP>, ImmutableList<IdentifierP>>> variables = new HashMap<>();
+      variables.put("v1", new Pair<>(ImmutableList.list(v1Node1), ImmutableList.list(v1Node1, v1Node2)));
+      variables.put("p1", new Pair<>(ImmutableList.list(p1Node1), NO_REFERENCES));
+      variables.put("p2", new Pair<>(ImmutableList.list(p2Node1), ImmutableList.list(p2Node2)));
+      variables.put("f2", new Pair<>(ImmutableList.list(f2Node1), ImmutableList.list(f2Node2)));
       variables.put("arguments", new Pair<>(NO_DECLARATIONS, NO_REFERENCES));
 
       Map<IdentifierP, Accessibility> referenceTypes = new HashMap<>();
@@ -356,14 +356,14 @@ public class ScopeTest extends TestBase {
 
     { // f2 scope
 
-      List<Scope> children = List.nil();
+      ImmutableList<Scope> children = ImmutableList.nil();
 
-      List<String> through = List.list("v1", "p2");
+      ImmutableList<String> through = ImmutableList.list("v1", "p2");
 
       // mapping of variable names from this scope object to the list of their declarations and their references
-      Map<String, Pair<List<IdentifierP>, List<IdentifierP>>> variables = new HashMap<>();
-      variables.put("p1", new Pair<>(List.list(p1Node2), List.list(p1Node3)));
-      variables.put("v2", new Pair<>(List.list(v2Node1), List.list(v2Node1, v2Node2)));
+      Map<String, Pair<ImmutableList<IdentifierP>, ImmutableList<IdentifierP>>> variables = new HashMap<>();
+      variables.put("p1", new Pair<>(ImmutableList.list(p1Node2), ImmutableList.list(p1Node3)));
+      variables.put("v2", new Pair<>(ImmutableList.list(v2Node1), ImmutableList.list(v2Node1, v2Node2)));
       variables.put("arguments", new Pair<>(NO_DECLARATIONS, NO_REFERENCES));
 
       Map<IdentifierP, Accessibility> referenceTypes = new HashMap<>();
@@ -389,13 +389,13 @@ public class ScopeTest extends TestBase {
     final IdentifierP fNode3 = new Getter(script).d(BODY).d(STATEMENTS, 1).d(EXPRESSION).d(CALLEE).d(IDENTIFIER).done();
     { // global scope
 
-      List<Scope> children = List.list(fScope);
+      ImmutableList<Scope> children = ImmutableList.list(fScope);
 
-      List<String> through = List.nil();
+      ImmutableList<String> through = ImmutableList.nil();
 
       // mapping of variable names from this scope object to the list of their declarations and their references
-      Map<String, Pair<List<IdentifierP>, List<IdentifierP>>> variables = new HashMap<>();
-      variables.put("f", new Pair<>(List.list(fNode1), List.list(fNode2, fNode3)));
+      Map<String, Pair<ImmutableList<IdentifierP>, ImmutableList<IdentifierP>>> variables = new HashMap<>();
+      variables.put("f", new Pair<>(ImmutableList.list(fNode1), ImmutableList.list(fNode2, fNode3)));
 
       Map<IdentifierP, Accessibility> referenceTypes = new HashMap<>();
       referenceTypes.put(fNode2, Accessibility.Write);
@@ -405,12 +405,12 @@ public class ScopeTest extends TestBase {
     }
     { // f scope
 
-      List<Scope> children = List.nil();
+      ImmutableList<Scope> children = ImmutableList.nil();
 
-      List<String> through = List.list("f");
+      ImmutableList<String> through = ImmutableList.list("f");
 
       // mapping of variable names from this scope object to the list of their declarations and their references
-      Map<String, Pair<List<IdentifierP>, List<IdentifierP>>> variables = new HashMap<>();
+      Map<String, Pair<ImmutableList<IdentifierP>, ImmutableList<IdentifierP>>> variables = new HashMap<>();
       variables.put("arguments", new Pair<>(NO_DECLARATIONS, NO_REFERENCES));
 
       Map<IdentifierP, Accessibility> referenceTypes = new HashMap<>();
@@ -433,13 +433,13 @@ public class ScopeTest extends TestBase {
     final IdentifierP fNode3 = new Getter(script).d(BODY).d(STATEMENTS, 1).d(EXPRESSION).d(CALLEE).d(IDENTIFIER).done();
     { // global scope
 
-      List<Scope> children = List.list(fScope);
+      ImmutableList<Scope> children = ImmutableList.list(fScope);
 
-      List<String> through = List.nil();
+      ImmutableList<String> through = ImmutableList.nil();
 
       // mapping of variable names from this scope object to the list of their declarations and their references
-      Map<String, Pair<List<IdentifierP>, List<IdentifierP>>> variables = new HashMap<>();
-      variables.put("f", new Pair<>(List.list(fNode1), List.list(fNode1, fNode2, fNode3)));
+      Map<String, Pair<ImmutableList<IdentifierP>, ImmutableList<IdentifierP>>> variables = new HashMap<>();
+      variables.put("f", new Pair<>(ImmutableList.list(fNode1), ImmutableList.list(fNode1, fNode2, fNode3)));
 
       Map<IdentifierP, Accessibility> referenceTypes = new HashMap<>();
       referenceTypes.put(fNode1, Accessibility.Write);
@@ -450,12 +450,12 @@ public class ScopeTest extends TestBase {
     }
     { // f scope
 
-      List<Scope> children = List.nil();
+      ImmutableList<Scope> children = ImmutableList.nil();
 
-      List<String> through = List.list("f");
+      ImmutableList<String> through = ImmutableList.list("f");
 
       // mapping of variable names from this scope object to the list of their declarations and their references
-      Map<String, Pair<List<IdentifierP>, List<IdentifierP>>> variables = new HashMap<>();
+      Map<String, Pair<ImmutableList<IdentifierP>, ImmutableList<IdentifierP>>> variables = new HashMap<>();
       variables.put("arguments", new Pair<>(NO_DECLARATIONS, NO_REFERENCES));
 
       Map<IdentifierP, Accessibility> referenceTypes = new HashMap<>();
@@ -483,14 +483,14 @@ public class ScopeTest extends TestBase {
         .done();
     { // global scope
 
-      List<Scope> children = List.list(functionNameScope);
+      ImmutableList<Scope> children = ImmutableList.list(functionNameScope);
 
-      List<String> through = List.list("f1");
+      ImmutableList<String> through = ImmutableList.list("f1");
 
       // mapping of variable names from this scope object to the list of their declarations and their references
-      Map<String, Pair<List<IdentifierP>, List<IdentifierP>>> variables = new HashMap<>();
-      variables.put("f2", new Pair<>(List.list(f2Node1), List.list(f2Node1, f2Node2)));
-      variables.put("f1", new Pair<>(NO_DECLARATIONS, List.list(f1Node3)));
+      Map<String, Pair<ImmutableList<IdentifierP>, ImmutableList<IdentifierP>>> variables = new HashMap<>();
+      variables.put("f2", new Pair<>(ImmutableList.list(f2Node1), ImmutableList.list(f2Node1, f2Node2)));
+      variables.put("f1", new Pair<>(NO_DECLARATIONS, ImmutableList.list(f1Node3)));
 
       Map<IdentifierP, Accessibility> referenceTypes = new HashMap<>();
       referenceTypes.put(f2Node1, Accessibility.Write);
@@ -501,13 +501,13 @@ public class ScopeTest extends TestBase {
     }
     { // function name scope
 
-      List<Scope> children = List.list(functionScope);
+      ImmutableList<Scope> children = ImmutableList.list(functionScope);
 
-      List<String> through = List.nil();
+      ImmutableList<String> through = ImmutableList.nil();
 
       // mapping of variable names from this scope object to the list of their declarations and their references
-      Map<String, Pair<List<IdentifierP>, List<IdentifierP>>> variables = new HashMap<>();
-      variables.put("f1", new Pair<>(List.list(f1Node1), List.list(f1Node2)));
+      Map<String, Pair<ImmutableList<IdentifierP>, ImmutableList<IdentifierP>>> variables = new HashMap<>();
+      variables.put("f1", new Pair<>(ImmutableList.list(f1Node1), ImmutableList.list(f1Node2)));
 
       Map<IdentifierP, Accessibility> referenceTypes = new HashMap<>();
       referenceTypes.put(f1Node2, Accessibility.Write);
@@ -516,12 +516,12 @@ public class ScopeTest extends TestBase {
     }
     { // function scope
 
-      List<Scope> children = List.nil();
+      ImmutableList<Scope> children = ImmutableList.nil();
 
-      List<String> through = List.list("f1");
+      ImmutableList<String> through = ImmutableList.list("f1");
 
       // mapping of variable names from this scope object to the list of their declarations and their references
-      Map<String, Pair<List<IdentifierP>, List<IdentifierP>>> variables = new HashMap<>();
+      Map<String, Pair<ImmutableList<IdentifierP>, ImmutableList<IdentifierP>>> variables = new HashMap<>();
       variables.put("arguments", new Pair<>(NO_DECLARATIONS, NO_REFERENCES));
 
       Map<IdentifierP, Accessibility> referenceTypes = new HashMap<>();
@@ -555,15 +555,15 @@ public class ScopeTest extends TestBase {
         CALLEE).d(IDENTIFIER).done();
     { // global scope
 
-      List<Scope> children = List.list(functionScope);
+      ImmutableList<Scope> children = ImmutableList.list(functionScope);
 
-      List<String> through = List.list("alert");
+      ImmutableList<String> through = ImmutableList.list("alert");
 
       // mapping of variable names from this scope object to the list of their declarations and their references
-      Map<String, Pair<List<IdentifierP>, List<IdentifierP>>> variables = new HashMap<>();
-      variables.put("foo", new Pair<>(List.list(fooNode1), List.list(fooNode1)));
-      variables.put("bar", new Pair<>(List.list(barNode1), NO_REFERENCES));
-      variables.put("alert", new Pair<>(NO_DECLARATIONS, List.list(alertNode1)));
+      Map<String, Pair<ImmutableList<IdentifierP>, ImmutableList<IdentifierP>>> variables = new HashMap<>();
+      variables.put("foo", new Pair<>(ImmutableList.list(fooNode1), ImmutableList.list(fooNode1)));
+      variables.put("bar", new Pair<>(ImmutableList.list(barNode1), NO_REFERENCES));
+      variables.put("alert", new Pair<>(NO_DECLARATIONS, ImmutableList.list(alertNode1)));
 
       Map<IdentifierP, Accessibility> referenceTypes = new HashMap<>();
       referenceTypes.put(fooNode1, Accessibility.Write);
@@ -573,13 +573,13 @@ public class ScopeTest extends TestBase {
     }
     { // function scope
 
-      List<Scope> children = List.nil();
+      ImmutableList<Scope> children = ImmutableList.nil();
 
-      List<String> through = List.list("alert");
+      ImmutableList<String> through = ImmutableList.list("alert");
 
       // mapping of variable names from this scope object to the list of their declarations and their references
-      Map<String, Pair<List<IdentifierP>, List<IdentifierP>>> variables = new HashMap<>();
-      variables.put("foo", new Pair<>(List.list(fooNode3), List.list(fooNode2, fooNode3, fooNode4)));
+      Map<String, Pair<ImmutableList<IdentifierP>, ImmutableList<IdentifierP>>> variables = new HashMap<>();
+      variables.put("foo", new Pair<>(ImmutableList.list(fooNode3), ImmutableList.list(fooNode2, fooNode3, fooNode4)));
       variables.put("arguments", new Pair<>(NO_DECLARATIONS, NO_REFERENCES));
 
       Map<IdentifierP, Accessibility> referenceTypes = new HashMap<>();
@@ -618,15 +618,15 @@ public class ScopeTest extends TestBase {
         .done();
     { // global scope
 
-      List<Scope> children = List.list(bScope);
+      ImmutableList<Scope> children = ImmutableList.list(bScope);
 
-      List<String> through = List.list("alert");
+      ImmutableList<String> through = ImmutableList.list("alert");
 
       // mapping of variable names from this scope object to the list of their declarations and their references
-      Map<String, Pair<List<IdentifierP>, List<IdentifierP>>> variables = new HashMap<>();
-      variables.put("a", new Pair<>(List.list(aNode1), List.list(aNode1, aNode4)));
-      variables.put("b", new Pair<>(List.list(bNode1), List.list(bNode2)));
-      variables.put("alert", new Pair<>(NO_DECLARATIONS, List.list(alertNode1)));
+      Map<String, Pair<ImmutableList<IdentifierP>, ImmutableList<IdentifierP>>> variables = new HashMap<>();
+      variables.put("a", new Pair<>(ImmutableList.list(aNode1), ImmutableList.list(aNode1, aNode4)));
+      variables.put("b", new Pair<>(ImmutableList.list(bNode1), ImmutableList.list(bNode2)));
+      variables.put("alert", new Pair<>(NO_DECLARATIONS, ImmutableList.list(alertNode1)));
 
       Map<IdentifierP, Accessibility> referenceTypes = new HashMap<>();
       referenceTypes.put(aNode1, Accessibility.Write);
@@ -638,13 +638,13 @@ public class ScopeTest extends TestBase {
     }
     { // b scope
 
-      List<Scope> children = List.list(aScope);
+      ImmutableList<Scope> children = ImmutableList.list(aScope);
 
-      List<String> through = List.nil();
+      ImmutableList<String> through = ImmutableList.nil();
 
       // mapping of variable names from this scope object to the list of their declarations and their references
-      Map<String, Pair<List<IdentifierP>, List<IdentifierP>>> variables = new HashMap<>();
-      variables.put("a", new Pair<>(List.list(aNode3), List.list(aNode2)));
+      Map<String, Pair<ImmutableList<IdentifierP>, ImmutableList<IdentifierP>>> variables = new HashMap<>();
+      variables.put("a", new Pair<>(ImmutableList.list(aNode3), ImmutableList.list(aNode2)));
       variables.put("arguments", new Pair<>(NO_DECLARATIONS, NO_REFERENCES));
 
       Map<IdentifierP, Accessibility> referenceTypes = new HashMap<>();
@@ -654,12 +654,12 @@ public class ScopeTest extends TestBase {
     }
     { // a scope
 
-      List<Scope> children = List.nil();
+      ImmutableList<Scope> children = ImmutableList.nil();
 
-      List<String> through = List.nil();
+      ImmutableList<String> through = ImmutableList.nil();
 
       // mapping of variable names from this scope object to the list of their declarations and their references
-      Map<String, Pair<List<IdentifierP>, List<IdentifierP>>> variables = new HashMap<>();
+      Map<String, Pair<ImmutableList<IdentifierP>, ImmutableList<IdentifierP>>> variables = new HashMap<>();
       variables.put("arguments", new Pair<>(NO_DECLARATIONS, NO_REFERENCES));
 
       Map<IdentifierP, Accessibility> referenceTypes = new HashMap<>();
@@ -692,13 +692,13 @@ public class ScopeTest extends TestBase {
     final IdentifierP barNode3 = new Getter(script).d(BODY).d(STATEMENTS, 0).d(BODY).d(STATEMENTS, 2).d(NAME).done();
     { // global scope
 
-      List<Scope> children = List.list(fooScope);
+      ImmutableList<Scope> children = ImmutableList.list(fooScope);
 
-      List<String> through = List.nil();
+      ImmutableList<String> through = ImmutableList.nil();
 
       // mapping of variable names from this scope object to the list of their declarations and their references
-      Map<String, Pair<List<IdentifierP>, List<IdentifierP>>> variables = new HashMap<>();
-      variables.put("foo", new Pair<>(List.list(fooNode1), NO_REFERENCES));
+      Map<String, Pair<ImmutableList<IdentifierP>, ImmutableList<IdentifierP>>> variables = new HashMap<>();
+      variables.put("foo", new Pair<>(ImmutableList.list(fooNode1), NO_REFERENCES));
 
       Map<IdentifierP, Accessibility> referenceTypes = new HashMap<>();
 
@@ -706,13 +706,13 @@ public class ScopeTest extends TestBase {
     }
     { // foo scope
 
-      List<Scope> children = List.list(barScope1, barScope2);
+      ImmutableList<Scope> children = ImmutableList.list(barScope1, barScope2);
 
-      List<String> through = List.nil();
+      ImmutableList<String> through = ImmutableList.nil();
 
       // mapping of variable names from this scope object to the list of their declarations and their references
-      Map<String, Pair<List<IdentifierP>, List<IdentifierP>>> variables = new HashMap<>();
-      variables.put("bar", new Pair<>(List.list(barNode1, barNode3), List.list(barNode2)));
+      Map<String, Pair<ImmutableList<IdentifierP>, ImmutableList<IdentifierP>>> variables = new HashMap<>();
+      variables.put("bar", new Pair<>(ImmutableList.list(barNode1, barNode3), ImmutableList.list(barNode2)));
       variables.put("arguments", new Pair<>(NO_DECLARATIONS, NO_REFERENCES));
 
       Map<IdentifierP, Accessibility> referenceTypes = new HashMap<>();
@@ -722,12 +722,12 @@ public class ScopeTest extends TestBase {
     }
     { // bar1 scope
 
-      List<Scope> children = List.nil();
+      ImmutableList<Scope> children = ImmutableList.nil();
 
-      List<String> through = List.nil();
+      ImmutableList<String> through = ImmutableList.nil();
 
       // mapping of variable names from this scope object to the list of their declarations and their references
-      Map<String, Pair<List<IdentifierP>, List<IdentifierP>>> variables = new HashMap<>();
+      Map<String, Pair<ImmutableList<IdentifierP>, ImmutableList<IdentifierP>>> variables = new HashMap<>();
       variables.put("arguments", new Pair<>(NO_DECLARATIONS, NO_REFERENCES));
 
       Map<IdentifierP, Accessibility> referenceTypes = new HashMap<>();
@@ -736,12 +736,12 @@ public class ScopeTest extends TestBase {
     }
     { // bar2 scope
 
-      List<Scope> children = List.nil();
+      ImmutableList<Scope> children = ImmutableList.nil();
 
-      List<String> through = List.nil();
+      ImmutableList<String> through = ImmutableList.nil();
 
       // mapping of variable names from this scope object to the list of their declarations and their references
-      Map<String, Pair<List<IdentifierP>, List<IdentifierP>>> variables = new HashMap<>();
+      Map<String, Pair<ImmutableList<IdentifierP>, ImmutableList<IdentifierP>>> variables = new HashMap<>();
       variables.put("arguments", new Pair<>(NO_DECLARATIONS, NO_REFERENCES));
 
       Map<IdentifierP, Accessibility> referenceTypes = new HashMap<>();
@@ -761,13 +761,13 @@ public class ScopeTest extends TestBase {
     final IdentifierP fooNode2 = new Getter(script).d(BODY).d(STATEMENTS, 1).d(NAME).done();
     { // global scope
 
-      List<Scope> children = List.list(fooScope);
+      ImmutableList<Scope> children = ImmutableList.list(fooScope);
 
-      List<String> through = List.nil();
+      ImmutableList<String> through = ImmutableList.nil();
 
       // mapping of variable names from this scope object to the list of their declarations and their references
-      Map<String, Pair<List<IdentifierP>, List<IdentifierP>>> variables = new HashMap<>();
-      variables.put("foo", new Pair<>(List.list(fooNode2), List.list(fooNode1)));
+      Map<String, Pair<ImmutableList<IdentifierP>, ImmutableList<IdentifierP>>> variables = new HashMap<>();
+      variables.put("foo", new Pair<>(ImmutableList.list(fooNode2), ImmutableList.list(fooNode1)));
 
       Map<IdentifierP, Accessibility> referenceTypes = new HashMap<>();
       referenceTypes.put(fooNode1, Accessibility.Read);
@@ -776,12 +776,12 @@ public class ScopeTest extends TestBase {
     }
     { // foo scope
 
-      List<Scope> children = List.nil();
+      ImmutableList<Scope> children = ImmutableList.nil();
 
-      List<String> through = List.nil();
+      ImmutableList<String> through = ImmutableList.nil();
 
       // mapping of variable names from this scope object to the list of their declarations and their references
-      Map<String, Pair<List<IdentifierP>, List<IdentifierP>>> variables = new HashMap<>();
+      Map<String, Pair<ImmutableList<IdentifierP>, ImmutableList<IdentifierP>>> variables = new HashMap<>();
       variables.put("arguments", new Pair<>(NO_DECLARATIONS, NO_REFERENCES));
 
       Map<IdentifierP, Accessibility> referenceTypes = new HashMap<>();
@@ -815,13 +815,13 @@ public class ScopeTest extends TestBase {
         DECLARATORS, 0).d(BINDING).done();
     { // global scope
 
-      List<Scope> children = List.list(fooScope);
+      ImmutableList<Scope> children = ImmutableList.list(fooScope);
 
-      List<String> through = List.nil();
+      ImmutableList<String> through = ImmutableList.nil();
 
       // mapping of variable names from this scope object to the list of their declarations and their references
-      Map<String, Pair<List<IdentifierP>, List<IdentifierP>>> variables = new HashMap<>();
-      variables.put("foo", new Pair<>(List.list(fooNode1), NO_REFERENCES));
+      Map<String, Pair<ImmutableList<IdentifierP>, ImmutableList<IdentifierP>>> variables = new HashMap<>();
+      variables.put("foo", new Pair<>(ImmutableList.list(fooNode1), NO_REFERENCES));
 
       Map<IdentifierP, Accessibility> referenceTypes = new HashMap<>();
 
@@ -829,13 +829,17 @@ public class ScopeTest extends TestBase {
     }
     { // foo scope
 
-      List<Scope> children = List.list(barScope1, barScope2);
+      ImmutableList<Scope> children = ImmutableList.list(barScope1, barScope2);
 
-      List<String> through = List.nil();
+      ImmutableList<String> through = ImmutableList.nil();
 
       // mapping of variable names from this scope object to the list of their declarations and their references
-      Map<String, Pair<List<IdentifierP>, List<IdentifierP>>> variables = new HashMap<>();
-      variables.put("bar", new Pair<>(List.list(barNode2, barNode3), List.list(barNode1, barNode2, barNode3)));
+      Map<String, Pair<ImmutableList<IdentifierP>, ImmutableList<IdentifierP>>> variables = new HashMap<>();
+      variables.put("bar", new Pair<>(
+          ImmutableList.list(barNode2, barNode3), ImmutableList.list(
+          barNode1,
+          barNode2,
+          barNode3)));
       variables.put("arguments", new Pair<>(NO_DECLARATIONS, NO_REFERENCES));
 
       Map<IdentifierP, Accessibility> referenceTypes = new HashMap<>();
@@ -847,12 +851,12 @@ public class ScopeTest extends TestBase {
     }
     { // bar scope 1
 
-      List<Scope> children = List.nil();
+      ImmutableList<Scope> children = ImmutableList.nil();
 
-      List<String> through = List.nil();
+      ImmutableList<String> through = ImmutableList.nil();
 
       // mapping of variable names from this scope object to the list of their declarations and their references
-      Map<String, Pair<List<IdentifierP>, List<IdentifierP>>> variables = new HashMap<>();
+      Map<String, Pair<ImmutableList<IdentifierP>, ImmutableList<IdentifierP>>> variables = new HashMap<>();
       variables.put("arguments", new Pair<>(NO_DECLARATIONS, NO_REFERENCES));
 
       Map<IdentifierP, Accessibility> referenceTypes = new HashMap<>();
@@ -861,12 +865,12 @@ public class ScopeTest extends TestBase {
     }
     { // bar scope 2
 
-      List<Scope> children = List.nil();
+      ImmutableList<Scope> children = ImmutableList.nil();
 
-      List<String> through = List.nil();
+      ImmutableList<String> through = ImmutableList.nil();
 
       // mapping of variable names from this scope object to the list of their declarations and their references
-      Map<String, Pair<List<IdentifierP>, List<IdentifierP>>> variables = new HashMap<>();
+      Map<String, Pair<ImmutableList<IdentifierP>, ImmutableList<IdentifierP>>> variables = new HashMap<>();
       variables.put("arguments", new Pair<>(NO_DECLARATIONS, NO_REFERENCES));
 
       Map<IdentifierP, Accessibility> referenceTypes = new HashMap<>();
@@ -889,14 +893,14 @@ public class ScopeTest extends TestBase {
         STATEMENTS, 1).d(EXPRESSION).d(ARGUMENTS, 0).d(IDENTIFIER).done();
     { // global scope
 
-      List<Scope> children = List.list(functionScope);
+      ImmutableList<Scope> children = ImmutableList.list(functionScope);
 
-      List<String> through = List.list("f1", "alert");
+      ImmutableList<String> through = ImmutableList.list("f1", "alert");
 
       // mapping of variable names from this scope object to the list of their declarations and their references
-      Map<String, Pair<List<IdentifierP>, List<IdentifierP>>> variables = new HashMap<>();
-      variables.put("f1", new Pair<>(NO_DECLARATIONS, List.list(f1Node1, f1Node2)));
-      variables.put("alert", new Pair<>(NO_DECLARATIONS, List.list(alertNode1)));
+      Map<String, Pair<ImmutableList<IdentifierP>, ImmutableList<IdentifierP>>> variables = new HashMap<>();
+      variables.put("f1", new Pair<>(NO_DECLARATIONS, ImmutableList.list(f1Node1, f1Node2)));
+      variables.put("alert", new Pair<>(NO_DECLARATIONS, ImmutableList.list(alertNode1)));
 
       Map<IdentifierP, Accessibility> referenceTypes = new HashMap<>();
       referenceTypes.put(f1Node1, Accessibility.Write);
@@ -907,12 +911,12 @@ public class ScopeTest extends TestBase {
     }
     { // function scope
 
-      List<Scope> children = List.nil();
+      ImmutableList<Scope> children = ImmutableList.nil();
 
-      List<String> through = List.list("f1", "alert");
+      ImmutableList<String> through = ImmutableList.list("f1", "alert");
 
       // mapping of variable names from this scope object to the list of their declarations and their references
-      Map<String, Pair<List<IdentifierP>, List<IdentifierP>>> variables = new HashMap<>();
+      Map<String, Pair<ImmutableList<IdentifierP>, ImmutableList<IdentifierP>>> variables = new HashMap<>();
       variables.put("arguments", new Pair<>(NO_DECLARATIONS, NO_REFERENCES));
 
       Map<IdentifierP, Accessibility> referenceTypes = new HashMap<>();
@@ -935,13 +939,13 @@ public class ScopeTest extends TestBase {
         STATEMENTS, 1).d(EXPRESSION).d(ARGUMENTS, 0).d(IDENTIFIER).done();
     { // global scope
 
-      List<Scope> children = List.list(functionScope);
+      ImmutableList<Scope> children = ImmutableList.list(functionScope);
 
-      List<String> through = List.list("alert");
+      ImmutableList<String> through = ImmutableList.list("alert");
 
       // mapping of variable names from this scope object to the list of their declarations and their references
-      Map<String, Pair<List<IdentifierP>, List<IdentifierP>>> variables = new HashMap<>();
-      variables.put("alert", new Pair<>(NO_DECLARATIONS, List.list(alertNode1)));
+      Map<String, Pair<ImmutableList<IdentifierP>, ImmutableList<IdentifierP>>> variables = new HashMap<>();
+      variables.put("alert", new Pair<>(NO_DECLARATIONS, ImmutableList.list(alertNode1)));
 
       Map<IdentifierP, Accessibility> referenceTypes = new HashMap<>();
       referenceTypes.put(alertNode1, Accessibility.Read);
@@ -950,13 +954,13 @@ public class ScopeTest extends TestBase {
     }
     { // function scope
 
-      List<Scope> children = List.nil();
+      ImmutableList<Scope> children = ImmutableList.nil();
 
-      List<String> through = List.list("alert");
+      ImmutableList<String> through = ImmutableList.list("alert");
 
       // mapping of variable names from this scope object to the list of their declarations and their references
-      Map<String, Pair<List<IdentifierP>, List<IdentifierP>>> variables = new HashMap<>();
-      variables.put("f1", new Pair<>(List.list(f1Node1), List.list(f1Node1, f1Node2)));
+      Map<String, Pair<ImmutableList<IdentifierP>, ImmutableList<IdentifierP>>> variables = new HashMap<>();
+      variables.put("f1", new Pair<>(ImmutableList.list(f1Node1), ImmutableList.list(f1Node1, f1Node2)));
       variables.put("arguments", new Pair<>(NO_DECLARATIONS, NO_REFERENCES));
 
       Map<IdentifierP, Accessibility> referenceTypes = new HashMap<>();
@@ -985,13 +989,13 @@ public class ScopeTest extends TestBase {
 
     { // global scope
 
-      List<Scope> children = List.list(fScope);
+      ImmutableList<Scope> children = ImmutableList.list(fScope);
 
-      List<String> through = List.nil();
+      ImmutableList<String> through = ImmutableList.nil();
 
       // mapping of variable names from this scope object to the list of their declarations and their references
-      Map<String, Pair<List<IdentifierP>, List<IdentifierP>>> variables = new HashMap<>();
-      variables.put("f", new Pair<>(List.list(fNode1), NO_REFERENCES));
+      Map<String, Pair<ImmutableList<IdentifierP>, ImmutableList<IdentifierP>>> variables = new HashMap<>();
+      variables.put("f", new Pair<>(ImmutableList.list(fNode1), NO_REFERENCES));
 
       Map<IdentifierP, Accessibility> referenceTypes = new HashMap<>();
 
@@ -999,15 +1003,15 @@ public class ScopeTest extends TestBase {
     }
     { // function scope
 
-      List<Scope> children = List.nil();
+      ImmutableList<Scope> children = ImmutableList.nil();
 
-      List<String> through = List.nil();
+      ImmutableList<String> through = ImmutableList.nil();
 
       // mapping of variable names from this scope object to the list of their declarations and their references
-      Map<String, Pair<List<IdentifierP>, List<IdentifierP>>> variables = new HashMap<>();
-      variables.put("arg1", new Pair<>(List.list(arg1Node1), List.list(arg1Node2)));
-      variables.put("arg2", new Pair<>(List.list(arg2Node1), List.list(arg2Node2)));
-      variables.put("v1", new Pair<>(List.list(v1Node1), List.list(v1Node1)));
+      Map<String, Pair<ImmutableList<IdentifierP>, ImmutableList<IdentifierP>>> variables = new HashMap<>();
+      variables.put("arg1", new Pair<>(ImmutableList.list(arg1Node1), ImmutableList.list(arg1Node2)));
+      variables.put("arg2", new Pair<>(ImmutableList.list(arg2Node1), ImmutableList.list(arg2Node2)));
+      variables.put("v1", new Pair<>(ImmutableList.list(v1Node1), ImmutableList.list(v1Node1)));
       variables.put("arguments", new Pair<>(NO_DECLARATIONS, NO_REFERENCES));
 
       Map<IdentifierP, Accessibility> referenceTypes = new HashMap<>();
@@ -1032,13 +1036,13 @@ public class ScopeTest extends TestBase {
         DECLARATION).d(DECLARATORS, 0).d(INIT).d(JUST).d(LEFT).d(OBJECT).d(IDENTIFIER).done();
     { // global scope
 
-      List<Scope> children = List.list(fScope);
+      ImmutableList<Scope> children = ImmutableList.list(fScope);
 
-      List<String> through = List.nil();
+      ImmutableList<String> through = ImmutableList.nil();
 
       // mapping of variable names from this scope object to the list of their declarations and their references
-      Map<String, Pair<List<IdentifierP>, List<IdentifierP>>> variables = new HashMap<>();
-      variables.put("f", new Pair<>(List.list(fNode1), NO_REFERENCES));
+      Map<String, Pair<ImmutableList<IdentifierP>, ImmutableList<IdentifierP>>> variables = new HashMap<>();
+      variables.put("f", new Pair<>(ImmutableList.list(fNode1), NO_REFERENCES));
 
       Map<IdentifierP, Accessibility> referenceTypes = new HashMap<>();
 
@@ -1046,14 +1050,14 @@ public class ScopeTest extends TestBase {
     }
     { // function scope
 
-      List<Scope> children = List.nil();
+      ImmutableList<Scope> children = ImmutableList.nil();
 
-      List<String> through = List.nil();
+      ImmutableList<String> through = ImmutableList.nil();
 
       // mapping of variable names from this scope object to the list of their declarations and their references
-      Map<String, Pair<List<IdentifierP>, List<IdentifierP>>> variables = new HashMap<>();
-      variables.put("v1", new Pair<>(List.list(v1Node1), List.list(v1Node1)));
-      variables.put("arguments", new Pair<>(NO_DECLARATIONS, List.list(argumentsNode1)));
+      Map<String, Pair<ImmutableList<IdentifierP>, ImmutableList<IdentifierP>>> variables = new HashMap<>();
+      variables.put("v1", new Pair<>(ImmutableList.list(v1Node1), ImmutableList.list(v1Node1)));
+      variables.put("arguments", new Pair<>(NO_DECLARATIONS, ImmutableList.list(argumentsNode1)));
 
       Map<IdentifierP, Accessibility> referenceTypes = new HashMap<>();
       referenceTypes.put(v1Node1, Accessibility.Write);
@@ -1083,17 +1087,17 @@ public class ScopeTest extends TestBase {
 
     { // global scope
 
-      List<Scope> children = List.list(withScope);
+      ImmutableList<Scope> children = ImmutableList.list(withScope);
 
-      List<String> through = List.list("Math", "cos", "PI", "alert");
+      ImmutableList<String> through = ImmutableList.list("Math", "cos", "PI", "alert");
 
       // mapping of variable names from this scope object to the list of their declarations and their references
-      Map<String, Pair<List<IdentifierP>, List<IdentifierP>>> variables = new HashMap<>();
-      variables.put("Math", new Pair<>(NO_DECLARATIONS, List.list(mathNode1)));
-      variables.put("cos", new Pair<>(NO_DECLARATIONS, List.list(cosNode1)));
-      variables.put("PI", new Pair<>(NO_DECLARATIONS, List.list(piNode1)));
-      variables.put("alert", new Pair<>(NO_DECLARATIONS, List.list(alertNode1)));
-      variables.put("x", new Pair<>(List.list(xNode1), List.list(xNode1, xNode2)));
+      Map<String, Pair<ImmutableList<IdentifierP>, ImmutableList<IdentifierP>>> variables = new HashMap<>();
+      variables.put("Math", new Pair<>(NO_DECLARATIONS, ImmutableList.list(mathNode1)));
+      variables.put("cos", new Pair<>(NO_DECLARATIONS, ImmutableList.list(cosNode1)));
+      variables.put("PI", new Pair<>(NO_DECLARATIONS, ImmutableList.list(piNode1)));
+      variables.put("alert", new Pair<>(NO_DECLARATIONS, ImmutableList.list(alertNode1)));
+      variables.put("x", new Pair<>(ImmutableList.list(xNode1), ImmutableList.list(xNode1, xNode2)));
 
       Map<IdentifierP, Accessibility> referenceTypes = new HashMap<>();
       referenceTypes.put(mathNode1, Accessibility.Read);
@@ -1107,12 +1111,12 @@ public class ScopeTest extends TestBase {
     }
     { // with scope
 
-      List<Scope> children = List.nil();
+      ImmutableList<Scope> children = ImmutableList.nil();
 
-      List<String> through = List.list("x", "cos", "PI", "alert");
+      ImmutableList<String> through = ImmutableList.list("x", "cos", "PI", "alert");
 
       // mapping of variable names from this scope object to the list of their declarations and their references
-      Map<String, Pair<List<IdentifierP>, List<IdentifierP>>> variables = new HashMap<>();
+      Map<String, Pair<ImmutableList<IdentifierP>, ImmutableList<IdentifierP>>> variables = new HashMap<>();
 
       Map<IdentifierP, Accessibility> referenceTypes = new HashMap<>();
 
@@ -1151,16 +1155,16 @@ public class ScopeTest extends TestBase {
         EXPRESSION).d(ARGUMENTS, 0).d(IDENTIFIER).done();
     { // global scope
 
-      List<Scope> children = List.list(withScope);
+      ImmutableList<Scope> children = ImmutableList.list(withScope);
 
-      List<String> through = List.list("alert", "fld1", "fld2");
+      ImmutableList<String> through = ImmutableList.list("alert", "fld1", "fld2");
 
       // mapping of variable names from this scope object to the list of their declarations and their references
-      Map<String, Pair<List<IdentifierP>, List<IdentifierP>>> variables = new HashMap<>();
-      variables.put("alert", new Pair<>(NO_DECLARATIONS, List.list(alertNode1, alertNode2)));
-      variables.put("fld1", new Pair<>(NO_DECLARATIONS, List.list(fld1Node1)));
-      variables.put("fld2", new Pair<>(NO_DECLARATIONS, List.list(fld2Node1)));
-      variables.put("o", new Pair<>(List.list(oNode1), List.list(oNode1, oNode2)));
+      Map<String, Pair<ImmutableList<IdentifierP>, ImmutableList<IdentifierP>>> variables = new HashMap<>();
+      variables.put("alert", new Pair<>(NO_DECLARATIONS, ImmutableList.list(alertNode1, alertNode2)));
+      variables.put("fld1", new Pair<>(NO_DECLARATIONS, ImmutableList.list(fld1Node1)));
+      variables.put("fld2", new Pair<>(NO_DECLARATIONS, ImmutableList.list(fld2Node1)));
+      variables.put("o", new Pair<>(ImmutableList.list(oNode1), ImmutableList.list(oNode1, oNode2)));
 
       Map<IdentifierP, Accessibility> referenceTypes = new HashMap<>();
       referenceTypes.put(alertNode1, Accessibility.Read);
@@ -1174,12 +1178,12 @@ public class ScopeTest extends TestBase {
     }
     { // with scope
 
-      List<Scope> children = List.nil();
+      ImmutableList<Scope> children = ImmutableList.nil();
 
-      List<String> through = List.list("alert", "fld1", "fld2");
+      ImmutableList<String> through = ImmutableList.list("alert", "fld1", "fld2");
 
       // mapping of variable names from this scope object to the list of their declarations and their references
-      Map<String, Pair<List<IdentifierP>, List<IdentifierP>>> variables = new HashMap<>();
+      Map<String, Pair<ImmutableList<IdentifierP>, ImmutableList<IdentifierP>>> variables = new HashMap<>();
 
       Map<IdentifierP, Accessibility> referenceTypes = new HashMap<>();
 
@@ -1207,13 +1211,13 @@ public class ScopeTest extends TestBase {
         EXPRESSION).d(ARGUMENTS, 0).d(IDENTIFIER).done();
     { // global scope
 
-      List<Scope> children = List.list(catchScope);
+      ImmutableList<Scope> children = ImmutableList.list(catchScope);
 
-      List<String> through = List.list("alert");
+      ImmutableList<String> through = ImmutableList.list("alert");
 
       // mapping of variable names from this scope object to the list of their declarations and their references
-      Map<String, Pair<List<IdentifierP>, List<IdentifierP>>> variables = new HashMap<>();
-      variables.put("alert", new Pair<>(NO_DECLARATIONS, List.list(alertNode1, alertNode2)));
+      Map<String, Pair<ImmutableList<IdentifierP>, ImmutableList<IdentifierP>>> variables = new HashMap<>();
+      variables.put("alert", new Pair<>(NO_DECLARATIONS, ImmutableList.list(alertNode1, alertNode2)));
 
       Map<IdentifierP, Accessibility> referenceTypes = new HashMap<>();
       referenceTypes.put(alertNode1, Accessibility.Read);
@@ -1223,13 +1227,13 @@ public class ScopeTest extends TestBase {
     }
     { // catch scope
 
-      List<Scope> children = List.nil();
+      ImmutableList<Scope> children = ImmutableList.nil();
 
-      List<String> through = List.list("alert");
+      ImmutableList<String> through = ImmutableList.list("alert");
 
       // mapping of variable names from this scope object to the list of their declarations and their references
-      Map<String, Pair<List<IdentifierP>, List<IdentifierP>>> variables = new HashMap<>();
-      variables.put("err", new Pair<>(List.list(errNode1), List.list(errNode2)));
+      Map<String, Pair<ImmutableList<IdentifierP>, ImmutableList<IdentifierP>>> variables = new HashMap<>();
+      variables.put("err", new Pair<>(ImmutableList.list(errNode1), ImmutableList.list(errNode2)));
 
       Map<IdentifierP, Accessibility> referenceTypes = new HashMap<>();
       referenceTypes.put(errNode2, Accessibility.Read);
@@ -1297,13 +1301,13 @@ public class ScopeTest extends TestBase {
         .d(BODY).d(STATEMENTS, 1).d(EXPRESSION).d(ARGUMENTS, 0).d(IDENTIFIER).done();
     { // global scope
 
-      List<Scope> children = List.list(catchScope1);
+      ImmutableList<Scope> children = ImmutableList.list(catchScope1);
 
-      List<String> through = List.list("alert");
+      ImmutableList<String> through = ImmutableList.list("alert");
 
       // mapping of variable names from this scope object to the list of their declarations and their references
-      Map<String, Pair<List<IdentifierP>, List<IdentifierP>>> variables = new HashMap<>();
-      variables.put("alert", new Pair<>(NO_DECLARATIONS, List.list(alertNode1, alertNode2, alertNode3)));
+      Map<String, Pair<ImmutableList<IdentifierP>, ImmutableList<IdentifierP>>> variables = new HashMap<>();
+      variables.put("alert", new Pair<>(NO_DECLARATIONS, ImmutableList.list(alertNode1, alertNode2, alertNode3)));
 
       Map<IdentifierP, Accessibility> referenceTypes = new HashMap<>();
       referenceTypes.put(alertNode1, Accessibility.Read);
@@ -1314,13 +1318,13 @@ public class ScopeTest extends TestBase {
     }
     { // catch scope 1
 
-      List<Scope> children = List.list(catchScope2);
+      ImmutableList<Scope> children = ImmutableList.list(catchScope2);
 
-      List<String> through = List.list("alert");
+      ImmutableList<String> through = ImmutableList.list("alert");
 
       // mapping of variable names from this scope object to the list of their declarations and their references
-      Map<String, Pair<List<IdentifierP>, List<IdentifierP>>> variables = new HashMap<>();
-      variables.put("err1", new Pair<>(List.list(err1Node1), List.list(err1Node2, err1Node3)));
+      Map<String, Pair<ImmutableList<IdentifierP>, ImmutableList<IdentifierP>>> variables = new HashMap<>();
+      variables.put("err1", new Pair<>(ImmutableList.list(err1Node1), ImmutableList.list(err1Node2, err1Node3)));
 
       Map<IdentifierP, Accessibility> referenceTypes = new HashMap<>();
       referenceTypes.put(err1Node2, Accessibility.Read);
@@ -1330,13 +1334,13 @@ public class ScopeTest extends TestBase {
     }
     { // catch scope 2
 
-      List<Scope> children = List.nil();
+      ImmutableList<Scope> children = ImmutableList.nil();
 
-      List<String> through = List.list("alert", "err1");
+      ImmutableList<String> through = ImmutableList.list("alert", "err1");
 
       // mapping of variable names from this scope object to the list of their declarations and their references
-      Map<String, Pair<List<IdentifierP>, List<IdentifierP>>> variables = new HashMap<>();
-      variables.put("err2", new Pair<>(List.list(err2Node1), List.list(err2Node2)));
+      Map<String, Pair<ImmutableList<IdentifierP>, ImmutableList<IdentifierP>>> variables = new HashMap<>();
+      variables.put("err2", new Pair<>(ImmutableList.list(err2Node1), ImmutableList.list(err2Node2)));
 
       Map<IdentifierP, Accessibility> referenceTypes = new HashMap<>();
       referenceTypes.put(err2Node2, Accessibility.Read);
@@ -1358,14 +1362,14 @@ public class ScopeTest extends TestBase {
         DECLARATION).d(DECLARATORS, 0).d(BINDING).done();
     { // global scope
 
-      List<Scope> children = List.list(catchScope);
+      ImmutableList<Scope> children = ImmutableList.list(catchScope);
 
-      List<String> through = List.list("alert");
+      ImmutableList<String> through = ImmutableList.list("alert");
 
       // mapping of variable names from this scope object to the list of their declarations and their references
-      Map<String, Pair<List<IdentifierP>, List<IdentifierP>>> variables = new HashMap<>();
-      variables.put("err", new Pair<>(List.list(errNode2), NO_REFERENCES));
-      variables.put("alert", new Pair<>(NO_DECLARATIONS, List.list(alertNode1)));
+      Map<String, Pair<ImmutableList<IdentifierP>, ImmutableList<IdentifierP>>> variables = new HashMap<>();
+      variables.put("err", new Pair<>(ImmutableList.list(errNode2), NO_REFERENCES));
+      variables.put("alert", new Pair<>(NO_DECLARATIONS, ImmutableList.list(alertNode1)));
 
       Map<IdentifierP, Accessibility> referenceTypes = new HashMap<>();
       referenceTypes.put(alertNode1, Accessibility.Read);
@@ -1374,13 +1378,13 @@ public class ScopeTest extends TestBase {
     }
     { // catch scope
 
-      List<Scope> children = List.nil();
+      ImmutableList<Scope> children = ImmutableList.nil();
 
-      List<String> through = List.nil();
+      ImmutableList<String> through = ImmutableList.nil();
 
       // mapping of variable names from this scope object to the list of their declarations and their references
-      Map<String, Pair<List<IdentifierP>, List<IdentifierP>>> variables = new HashMap<>();
-      variables.put("err", new Pair<>(List.list(errNode1), List.list(errNode2)));
+      Map<String, Pair<ImmutableList<IdentifierP>, ImmutableList<IdentifierP>>> variables = new HashMap<>();
+      variables.put("err", new Pair<>(ImmutableList.list(errNode1), ImmutableList.list(errNode2)));
 
       Map<IdentifierP, Accessibility> referenceTypes = new HashMap<>();
       referenceTypes.put(errNode2, Accessibility.Write);
@@ -1396,9 +1400,9 @@ public class ScopeTest extends TestBase {
       @NotNull final Scope scope,
       @NotNull final Scope.Type scopeType,
       final boolean isDynamic,
-      @NotNull final List<Scope> children,
-      @NotNull final List<String> through,
-      @NotNull final Map<String, Pair<List<IdentifierP>, List<IdentifierP>>> variables,
+      @NotNull final ImmutableList<Scope> children,
+      @NotNull final ImmutableList<String> through,
+      @NotNull final Map<String, Pair<ImmutableList<IdentifierP>, ImmutableList<IdentifierP>>> variables,
       @NotNull final Map<IdentifierP, Accessibility> referenceTypes) {
     Assert.assertEquals(scope.type, scopeType);
     Assert.assertEquals(scope.dynamic, isDynamic);
@@ -1408,25 +1412,25 @@ public class ScopeTest extends TestBase {
 
     Assert.assertEquals(scope.through.length, through.length);
     through.foreach(name -> {
-      HashTable<List<Branch>, Reference> references = scope.through.get(name).just();
+      HashTable<ImmutableList<Branch>, Reference> references = scope.through.get(name).just();
       Assert.assertNotNull(references);
       assertTrue(references.find(pair -> pair.b.node.name.equals(name)).isJust());
     });
 
     Assert.assertEquals(scope.variables().size(), variables.size());
-    for (Map.Entry<String, Pair<List<IdentifierP>, List<IdentifierP>>> variableEntry : variables.entrySet()) {
+    for (Map.Entry<String, Pair<ImmutableList<IdentifierP>, ImmutableList<IdentifierP>>> variableEntry : variables.entrySet()) {
       Maybe<Variable> maybeVariable = scope.lookupVariable(variableEntry.getKey());
       assertTrue(maybeVariable.isJust());
       Variable variable = maybeVariable.just();
 
-      List<IdentifierP> declarations = variableEntry.getValue().a;
+      ImmutableList<IdentifierP> declarations = variableEntry.getValue().a;
       Assert.assertEquals(variable.declarations.length, declarations.length);
       for (final IdentifierP node : declarations) {
         assertTrue(variable.declarations.find(pair -> pair.b.path.equals(node.from) && pair.b.node
             .equals(node.node)).isJust());
       }
 
-      List<IdentifierP> refs = variableEntry.getValue().b;
+      ImmutableList<IdentifierP> refs = variableEntry.getValue().b;
       Assert.assertEquals(variable.references.length, refs.length);
       for (final IdentifierP node : refs) {
         Maybe<Reference> maybeRef = variable.references.find(

@@ -17,7 +17,7 @@
 package com.shapesecurity.shift.validator;
 
 import com.shapesecurity.functional.data.Either;
-import com.shapesecurity.functional.data.List;
+import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.functional.data.Maybe;
 import com.shapesecurity.shift.ast.CatchClause;
 import com.shapesecurity.shift.ast.FunctionBody;
@@ -61,7 +61,7 @@ public class Validator extends MonoidalReducer<ValidationContext> {
     super(ValidationContext.MONOID);
   }
 
-  public static List<ValidationError> validate(Script node) {
+  public static ImmutableList<ValidationError> validate(Script node) {
     return node.reduce(new Validator()).errors.toList();
   }
 
@@ -69,7 +69,7 @@ public class Validator extends MonoidalReducer<ValidationContext> {
   @Override
   public ValidationContext reduceBreakStatement(
       @NotNull BreakStatement node,
-      @NotNull List<Branch> path,
+      @NotNull ImmutableList<Branch> path,
       @NotNull Maybe<ValidationContext> label) {
     ValidationContext v = super.reduceBreakStatement(node, path, label);
     return node.label.maybe(
@@ -83,7 +83,7 @@ public class Validator extends MonoidalReducer<ValidationContext> {
   @Override
   public ValidationContext reduceAssignmentExpression(
       @NotNull AssignmentExpression node,
-      @NotNull List<Branch> path,
+      @NotNull ImmutableList<Branch> path,
       @NotNull ValidationContext binding,
       @NotNull ValidationContext expression) {
     ValidationContext v = super.reduceAssignmentExpression(node, path, binding, expression);
@@ -97,7 +97,7 @@ public class Validator extends MonoidalReducer<ValidationContext> {
   @Override
   public ValidationContext reduceCatchClause(
       @NotNull CatchClause node,
-      @NotNull List<Branch> path,
+      @NotNull ImmutableList<Branch> path,
       @NotNull ValidationContext binding,
       @NotNull ValidationContext body) {
     ValidationContext v = super.reduceCatchClause(node, path, binding, body);
@@ -108,7 +108,7 @@ public class Validator extends MonoidalReducer<ValidationContext> {
   @Override
   public ValidationContext reduceContinueStatement(
       @NotNull ContinueStatement node,
-      @NotNull List<Branch> path,
+      @NotNull ImmutableList<Branch> path,
       @NotNull Maybe<ValidationContext> label) {
     final ValidationContext v = super.reduceContinueStatement(node, path, label).addFreeContinueStatement(node);
     return node.label.maybe(v, v::addFreeJumpTarget);
@@ -118,7 +118,7 @@ public class Validator extends MonoidalReducer<ValidationContext> {
   @Override
   public ValidationContext reduceDoWhileStatement(
       @NotNull DoWhileStatement node,
-      @NotNull List<Branch> path,
+      @NotNull ImmutableList<Branch> path,
       @NotNull ValidationContext body,
       @NotNull ValidationContext test) {
     return super.reduceDoWhileStatement(node, path, body, test).clearFreeContinueStatements()
@@ -129,9 +129,9 @@ public class Validator extends MonoidalReducer<ValidationContext> {
   @Override
   public ValidationContext reduceFunctionDeclaration(
       @NotNull FunctionDeclaration node,
-      @NotNull List<Branch> path,
+      @NotNull ImmutableList<Branch> path,
       @NotNull ValidationContext name,
-      @NotNull List<ValidationContext> params,
+      @NotNull ImmutableList<ValidationContext> params,
       @NotNull ValidationContext programBody) {
     ValidationContext v = super.reduceFunctionDeclaration(node, path, name, params, programBody).clearUsedLabelNames()
         .clearReturnStatements().clearUsedLabelNames();
@@ -149,9 +149,9 @@ public class Validator extends MonoidalReducer<ValidationContext> {
   @Override
   public ValidationContext reduceFunctionExpression(
       @NotNull FunctionExpression node,
-      @NotNull List<Branch> path,
+      @NotNull ImmutableList<Branch> path,
       @NotNull Maybe<ValidationContext> name,
-      @NotNull List<ValidationContext> parameters,
+      @NotNull ImmutableList<ValidationContext> parameters,
       @NotNull ValidationContext programBody) {
     ValidationContext v = super.reduceFunctionExpression(node, path, name, parameters, programBody)
         .clearReturnStatements();
@@ -167,7 +167,7 @@ public class Validator extends MonoidalReducer<ValidationContext> {
 
   @NotNull
   @Override
-  public ValidationContext reduceIdentifier(@NotNull Identifier node, @NotNull List<Branch> path) {
+  public ValidationContext reduceIdentifier(@NotNull Identifier node, @NotNull ImmutableList<Branch> path) {
     ValidationContext v = new ValidationContext();
     if (!Utils.isValidIdentifierName(node.name)) {
       v = v.addError(new ValidationError(node, "Identifier `name` must be a valid IdentifierName"));
@@ -179,7 +179,7 @@ public class Validator extends MonoidalReducer<ValidationContext> {
   @Override
   public ValidationContext reduceIdentifierExpression(
       @NotNull IdentifierExpression node,
-      @NotNull List<Branch> path,
+      @NotNull ImmutableList<Branch> path,
       @NotNull ValidationContext identifier) {
     return super.reduceIdentifierExpression(node, path, identifier).checkReserved(node.identifier);
   }
@@ -188,7 +188,7 @@ public class Validator extends MonoidalReducer<ValidationContext> {
   @Override
   public ValidationContext reduceForInStatement(
       @NotNull ForInStatement node,
-      @NotNull List<Branch> path,
+      @NotNull ImmutableList<Branch> path,
       @NotNull Either<ValidationContext, ValidationContext> left,
       @NotNull ValidationContext right,
       @NotNull ValidationContext body) {
@@ -207,7 +207,7 @@ public class Validator extends MonoidalReducer<ValidationContext> {
   @Override
   public ValidationContext reduceForStatement(
       @NotNull ForStatement node,
-      @NotNull List<Branch> path,
+      @NotNull ImmutableList<Branch> path,
       @NotNull Maybe<Either<ValidationContext, ValidationContext>> init,
       @NotNull Maybe<ValidationContext> test,
       @NotNull Maybe<ValidationContext> update,
@@ -220,7 +220,7 @@ public class Validator extends MonoidalReducer<ValidationContext> {
   @Override
   public ValidationContext reduceLabeledStatement(
       @NotNull LabeledStatement node,
-      @NotNull List<Branch> path,
+      @NotNull ImmutableList<Branch> path,
       @NotNull ValidationContext label,
       @NotNull ValidationContext body) {
     return super.reduceLabeledStatement(node, path, label, body).observeLabelName(node.label);
@@ -230,7 +230,7 @@ public class Validator extends MonoidalReducer<ValidationContext> {
   @Override
   public ValidationContext reduceLiteralNumericExpression(
       @NotNull LiteralNumericExpression node,
-      @NotNull List<Branch> path) {
+      @NotNull ImmutableList<Branch> path) {
     ValidationContext v = new ValidationContext();
     if (node.value < 0 || node.value == 0 && 1 / node.value < 0) {
       v = v.addError(new ValidationError(node, "Numeric Literal node must be non-negative"));
@@ -246,8 +246,8 @@ public class Validator extends MonoidalReducer<ValidationContext> {
   @Override
   public ValidationContext reduceObjectExpression(
       @NotNull final ObjectExpression node,
-      @NotNull List<Branch> path,
-      @NotNull List<ValidationContext> properties) {
+      @NotNull ImmutableList<Branch> path,
+      @NotNull ImmutableList<ValidationContext> properties) {
     ValidationContext v = super.reduceObjectExpression(node, path, properties);
     final HashSet<String> setKeys = new HashSet<>();
     final HashSet<String> getKeys = new HashSet<>();
@@ -317,7 +317,7 @@ public class Validator extends MonoidalReducer<ValidationContext> {
   @Override
   public ValidationContext reducePrefixExpression(
       @NotNull PrefixExpression node,
-      @NotNull List<Branch> path,
+      @NotNull ImmutableList<Branch> path,
       @NotNull ValidationContext operand) {
     ValidationContext v = super.reducePrefixExpression(node, path, operand);
     if (node.operator == PrefixOperator.Delete && node.operand instanceof IdentifierExpression) {
@@ -333,7 +333,7 @@ public class Validator extends MonoidalReducer<ValidationContext> {
   @Override
   public ValidationContext reduceScript(
       @NotNull Script node,
-      @NotNull List<Branch> path,
+      @NotNull ImmutableList<Branch> path,
       @NotNull ValidationContext body) {
     return super.reduceScript(node, path, body).invalidateFreeReturnErrors();
   }
@@ -342,9 +342,9 @@ public class Validator extends MonoidalReducer<ValidationContext> {
   @Override
   public ValidationContext reduceFunctionBody(
       @NotNull FunctionBody node,
-      @NotNull List<Branch> path,
-      @NotNull List<ValidationContext> directives,
-      @NotNull List<ValidationContext> statements) {
+      @NotNull ImmutableList<Branch> path,
+      @NotNull ImmutableList<ValidationContext> directives,
+      @NotNull ImmutableList<ValidationContext> statements) {
     ValidationContext v = super.reduceFunctionBody(node, path, directives, statements).checkFreeJumpTargets();
     if (node.isStrict()) {
       v = v.invalidateStrictErrors();
@@ -356,7 +356,7 @@ public class Validator extends MonoidalReducer<ValidationContext> {
   @Override
   public ValidationContext reduceReturnStatement(
       @NotNull ReturnStatement node,
-      @NotNull List<Branch> path,
+      @NotNull ImmutableList<Branch> path,
       @NotNull Maybe<ValidationContext> expression) {
     return super.reduceReturnStatement(node, path, expression).addFreeReturnStatement(node);
   }
@@ -365,7 +365,7 @@ public class Validator extends MonoidalReducer<ValidationContext> {
   @Override
   public ValidationContext reduceSetter(
       @NotNull Setter node,
-      @NotNull List<Branch> path,
+      @NotNull ImmutableList<Branch> path,
       @NotNull ValidationContext name,
       @NotNull ValidationContext param,
       @NotNull ValidationContext body) {
@@ -374,7 +374,7 @@ public class Validator extends MonoidalReducer<ValidationContext> {
 
   @NotNull
   @Override
-  public ValidationContext reduceGetter(@NotNull Getter node, @NotNull List<Branch> path,
+  public ValidationContext reduceGetter(@NotNull Getter node, @NotNull ImmutableList<Branch> path,
                                         @NotNull ValidationContext name, @NotNull ValidationContext body) {
     return super.reduceGetter(node, path, name, body).clearReturnStatements();
   }
@@ -383,9 +383,9 @@ public class Validator extends MonoidalReducer<ValidationContext> {
   @Override
   public ValidationContext reduceSwitchStatement(
       @NotNull SwitchStatement node,
-      @NotNull List<Branch> path,
+      @NotNull ImmutableList<Branch> path,
       @NotNull ValidationContext discriminant,
-      @NotNull List<ValidationContext> cases) {
+      @NotNull ImmutableList<ValidationContext> cases) {
     return super.reduceSwitchStatement(node, path, discriminant, cases).clearFreeBreakStatements();
   }
 
@@ -393,11 +393,11 @@ public class Validator extends MonoidalReducer<ValidationContext> {
   @Override
   public ValidationContext reduceSwitchStatementWithDefault(
       @NotNull SwitchStatementWithDefault node,
-      @NotNull List<Branch> path,
+      @NotNull ImmutableList<Branch> path,
       @NotNull ValidationContext discriminant,
-      @NotNull List<ValidationContext> preDefaultCases,
+      @NotNull ImmutableList<ValidationContext> preDefaultCases,
       @NotNull ValidationContext defaultCase,
-      @NotNull List<ValidationContext> postDefaultCases) {
+      @NotNull ImmutableList<ValidationContext> postDefaultCases) {
     return super.reduceSwitchStatementWithDefault(
         node,
         path,
@@ -412,7 +412,7 @@ public class Validator extends MonoidalReducer<ValidationContext> {
   @Override
   public ValidationContext reduceVariableDeclarator(
       @NotNull VariableDeclarator node,
-      @NotNull List<Branch> path,
+      @NotNull ImmutableList<Branch> path,
       @NotNull ValidationContext binding,
       @NotNull Maybe<ValidationContext> init) {
     return super.reduceVariableDeclarator(node, path, binding, init).checkRestricted(node.binding);
@@ -422,7 +422,7 @@ public class Validator extends MonoidalReducer<ValidationContext> {
   @Override
   public ValidationContext reduceWhileStatement(
       @NotNull WhileStatement node,
-      @NotNull List<Branch> path,
+      @NotNull ImmutableList<Branch> path,
       @NotNull ValidationContext test,
       @NotNull ValidationContext body) {
     return super.reduceWhileStatement(node, path, test, body).clearFreeBreakStatements().clearFreeContinueStatements();
@@ -432,7 +432,7 @@ public class Validator extends MonoidalReducer<ValidationContext> {
   @Override
   public ValidationContext reduceWithStatement(
       @NotNull WithStatement node,
-      @NotNull List<Branch> path,
+      @NotNull ImmutableList<Branch> path,
       @NotNull ValidationContext object,
       @NotNull ValidationContext body) {
     return super.reduceWithStatement(node, path, object, body).addStrictError(
@@ -443,7 +443,7 @@ public class Validator extends MonoidalReducer<ValidationContext> {
   @Override
   public ValidationContext reduceStaticMemberExpression(
       @NotNull StaticMemberExpression node,
-      @NotNull List<Branch> path,
+      @NotNull ImmutableList<Branch> path,
       @NotNull ValidationContext object,
       @NotNull ValidationContext property) {
     return super.reduceStaticMemberExpression(node, path, object, property.clearIdentifierNameError());
@@ -451,7 +451,7 @@ public class Validator extends MonoidalReducer<ValidationContext> {
 
   @NotNull
   @Override
-  public ValidationContext reducePropertyName(@NotNull PropertyName node, @NotNull List<Branch> path) {
+  public ValidationContext reducePropertyName(@NotNull PropertyName node, @NotNull ImmutableList<Branch> path) {
     ValidationContext v = super.reducePropertyName(node, path);
     switch (node.kind) {
     case Identifier:

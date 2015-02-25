@@ -21,7 +21,7 @@ import java.util.function.Consumer;
 
 import org.jetbrains.annotations.NotNull;
 
-import com.shapesecurity.functional.data.List;
+import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.functional.data.Maybe;
 import com.shapesecurity.shift.AstHelper;
 import com.shapesecurity.shift.TestReducer;
@@ -68,14 +68,14 @@ public class AstTest extends AstHelper {
       assertEquals(node.getClass().getSimpleName(), node.type().name());
       Maybe<? extends Node> maybe = node.get(branch);
       if (maybe.isJust()) {
-        Node replicate = node.set(List.list(new ReplacementChild(branch, maybe.just())));
+        Node replicate = node.set(ImmutableList.list(new ReplacementChild(branch, maybe.just())));
         assertTrue(replicate != node);
         assertEquals(node, replicate);
       }
     }));
   }
 
-  private Node track(List<Branch> path) {
+  private Node track(ImmutableList<Branch> path) {
     Node node = script;
     for (Branch branch : path.reverse()) {
       node = node.get(branch).just();
@@ -87,7 +87,7 @@ public class AstTest extends AstHelper {
   public void testPath() throws IOException {
     script.reduce(new TestReducerWithPath() {
       @Override
-      protected void accept(@NotNull Node node, @NotNull List<Branch> path) {
+      protected void accept(@NotNull Node node, @NotNull ImmutableList<Branch> path) {
         assertTrue(node == track(path));
       }
     });

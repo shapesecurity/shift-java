@@ -45,9 +45,9 @@ import static com.shapesecurity.shift.parser.ErrorMessages.UNEXPECTED_TOKEN;
 import static com.shapesecurity.shift.parser.ErrorMessages.UNKNOWN_LABEL;
 
 import com.shapesecurity.functional.data.Either;
-import com.shapesecurity.functional.data.List;
+import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.functional.data.Maybe;
-import com.shapesecurity.functional.data.NonEmptyList;
+import com.shapesecurity.functional.data.NonEmptyImmutableList;
 import com.shapesecurity.shift.ast.Block;
 import com.shapesecurity.shift.ast.CatchClause;
 import com.shapesecurity.shift.ast.Directive;
@@ -232,12 +232,12 @@ public class Parser extends Tokenizer {
   }
 
   @NotNull
-  private List<Directive> parseDirective(
+  private ImmutableList<Directive> parseDirective(
       @NotNull Statement[] sourceElements,
       @Nullable SourceLocation firstRestricted) throws JsError {
 
     if (this.lookahead.type != TokenType.STRING) {
-      return List.nil();
+      return ImmutableList.nil();
     }
 
     Token token = this.lookahead;
@@ -252,7 +252,7 @@ public class Parser extends Tokenizer {
           if (firstRestricted != null) {
             throw this.createErrorWithToken(firstRestricted, STRICT_OCTAL_LITERAL);
           }
-          return List.cons(
+          return ImmutableList.cons(
               this.markLocation(startLocation, new UseStrictDirective()), this.parseDirective(
                   sourceElements,
                   null));
@@ -261,14 +261,14 @@ public class Parser extends Tokenizer {
             firstRestricted = startLocation;
           }
           String value = directive.substring(1, directive.length() - 1);
-          return List.cons(
+          return ImmutableList.cons(
               this.markLocation(startLocation, new UnknownDirective(value)),
               this.parseDirective(sourceElements, firstRestricted));
         }
       }
     }
     sourceElements[0] = stmt;
-    return List.nil();
+    return ImmutableList.nil();
   }
 
   @NotNull
@@ -286,11 +286,11 @@ public class Parser extends Tokenizer {
     SourceLocation startLocation = this.getLocation();
 
     Statement[] firstStatement = new Statement[1];
-    List<Directive> directives = this.parseDirective(firstStatement, null);
+    ImmutableList<Directive> directives = this.parseDirective(firstStatement, null);
 
-    List<Statement> statements = this.parseSourceElements();
+    ImmutableList<Statement> statements = this.parseSourceElements();
     if (firstStatement[0] != null) {
-      statements = List.cons(firstStatement[0], statements);
+      statements = ImmutableList.cons(firstStatement[0], statements);
     }
 
     return this.markLocation(startLocation, new FunctionBody(directives, statements));
@@ -304,7 +304,7 @@ public class Parser extends Tokenizer {
     this.expect(TokenType.LBRACE);
 
     Statement[] firstStatement = new Statement[1];
-    List<Directive> directives = this.parseDirective(firstStatement, null);
+    ImmutableList<Directive> directives = this.parseDirective(firstStatement, null);
     HashSet<String> oldLabelSet = this.labelSet;
     boolean oldInIteration = this.inIteration;
     boolean oldInSwitch = this.inSwitch;
@@ -315,9 +315,9 @@ public class Parser extends Tokenizer {
     this.inSwitch = false;
     this.inFunctionBody = true;
 
-    List<Statement> statements = this.parseSourceElementsInFunctionBody();
+    ImmutableList<Statement> statements = this.parseSourceElementsInFunctionBody();
     if (firstStatement[0] != null) {
-      statements = List.cons(firstStatement[0], statements);
+      statements = ImmutableList.cons(firstStatement[0], statements);
     }
 
     this.expect(TokenType.RBRACE);
@@ -332,19 +332,19 @@ public class Parser extends Tokenizer {
   }
 
   @NotNull
-  private List<Statement> parseSourceElements() throws JsError {
+  private ImmutableList<Statement> parseSourceElements() throws JsError {
     if (this.eof()) {
-      return List.nil();
+      return ImmutableList.nil();
     }
-    return List.cons(this.parseSourceElement(), this.parseSourceElements());
+    return ImmutableList.cons(this.parseSourceElement(), this.parseSourceElements());
   }
 
   @NotNull
-  private List<Statement> parseSourceElementsInFunctionBody() throws JsError {
+  private ImmutableList<Statement> parseSourceElementsInFunctionBody() throws JsError {
     if (this.eof() || this.match(TokenType.RBRACE)) {
-      return List.nil();
+      return ImmutableList.nil();
     }
-    return List.cons(this.parseSourceElement(), this.parseSourceElementsInFunctionBody());
+    return ImmutableList.cons(this.parseSourceElement(), this.parseSourceElementsInFunctionBody());
   }
 
   @NotNull
@@ -458,7 +458,7 @@ public class Parser extends Tokenizer {
     }
     this.strict = previousStrict;
 
-    return this.markLocation(startLocation, new FunctionDeclaration(id, List.from(info.params), body));
+    return this.markLocation(startLocation, new FunctionDeclaration(id, ImmutableList.from(info.params), body));
   }
 
   @NotNull
@@ -535,16 +535,16 @@ public class Parser extends Tokenizer {
 
   // guaranteed to parse at least one declarator
   @NotNull
-  private NonEmptyList<VariableDeclarator> parseVariableDeclaratorList() throws JsError {
+  private NonEmptyImmutableList<VariableDeclarator> parseVariableDeclaratorList() throws JsError {
     VariableDeclarator variableDeclarator = this.parseVariableDeclarator();
     if (!this.match(TokenType.COMMA)) {
-      return List.list(variableDeclarator);
+      return ImmutableList.list(variableDeclarator);
     }
     this.lex();
     if (this.eof()) {
-      return List.list(variableDeclarator);
+      return ImmutableList.list(variableDeclarator);
     }
-    return List.cons(variableDeclarator, this.parseVariableDeclaratorList());
+    return ImmutableList.cons(variableDeclarator, this.parseVariableDeclaratorList());
   }
 
   @NotNull
@@ -565,7 +565,7 @@ public class Parser extends Tokenizer {
     }
     SourceLocation startLocation = this.getLocation();
     this.lex();
-    NonEmptyList<VariableDeclarator> variableDeclarators = this.parseVariableDeclaratorList();
+    NonEmptyImmutableList<VariableDeclarator> variableDeclarators = this.parseVariableDeclaratorList();
     return this.markLocation(startLocation, new VariableDeclaration(kind, variableDeclarators));
   }
 
@@ -594,7 +594,7 @@ public class Parser extends Tokenizer {
     SourceLocation startLocation = this.getLocation();
     this.expect(TokenType.LBRACE);
 
-    List<Statement> body = this.parseStatementList();
+    ImmutableList<Statement> body = this.parseStatementList();
 
     this.expect(TokenType.RBRACE);
 
@@ -899,16 +899,16 @@ public class Parser extends Tokenizer {
 
     if (this.match(TokenType.RBRACE)) {
       this.lex();
-      return this.markLocation(startLocation, new SwitchStatement(discriminant, List.nil()));
+      return this.markLocation(startLocation, new SwitchStatement(discriminant, ImmutableList.nil()));
     }
     boolean oldInSwitch = this.inSwitch;
     this.inSwitch = true;
 
-    List<SwitchCase> cases = this.parseSwitchCases();
+    ImmutableList<SwitchCase> cases = this.parseSwitchCases();
 
     if (this.match(TokenType.DEFAULT)) {
       SwitchDefault switchDefault = this.parseSwitchDefault();
-      List<SwitchCase> postDefaultCases = this.parseSwitchCases();
+      ImmutableList<SwitchCase> postDefaultCases = this.parseSwitchCases();
       if (this.match(TokenType.DEFAULT)) {
         throw this.createError(MULTIPLE_DEFAULTS_IN_SWITCH);
       }
@@ -928,11 +928,11 @@ public class Parser extends Tokenizer {
     }
   }
 
-  private List<SwitchCase> parseSwitchCases() throws JsError {
+  private ImmutableList<SwitchCase> parseSwitchCases() throws JsError {
     if (this.eof() || this.match(TokenType.RBRACE) || this.match(TokenType.DEFAULT)) {
-      return List.nil();
+      return ImmutableList.nil();
     }
-    return List.cons(this.parseSwitchCase(), this.parseSwitchCases());
+    return ImmutableList.cons(this.parseSwitchCase(), this.parseSwitchCases());
   }
 
   @NotNull
@@ -1039,15 +1039,15 @@ public class Parser extends Tokenizer {
   @NotNull
   // ECMAScript 5 does not allow FunctionDeclarations in block statements, but no
   // implementations comply to this restriction.
-  private List<Statement> parseStatementList() throws JsError {
+  private ImmutableList<Statement> parseStatementList() throws JsError {
     if (this.eof()) {
-      return List.nil();
+      return ImmutableList.nil();
     }
 
     if (this.match(TokenType.RBRACE)) {
-      return List.nil();
+      return ImmutableList.nil();
     }
-    return List.cons(this.parseSourceElement(), this.parseStatementList());
+    return ImmutableList.cons(this.parseSourceElement(), this.parseStatementList());
   }
 
   @NotNull
@@ -1066,16 +1066,16 @@ public class Parser extends Tokenizer {
     return this.markLocation(startLocation, new SwitchDefault(this.parseSwitchCaseBody()));
   }
 
-  private List<Statement> parseSwitchCaseBody() throws JsError {
+  private ImmutableList<Statement> parseSwitchCaseBody() throws JsError {
     this.expect(TokenType.COLON);
     return this.parseStatementListInSwitchCaseBody();
   }
 
-  private List<Statement> parseStatementListInSwitchCaseBody() throws JsError {
+  private ImmutableList<Statement> parseStatementListInSwitchCaseBody() throws JsError {
     if (this.eof() || this.match(TokenType.RBRACE) || this.match(TokenType.DEFAULT) || this.match(TokenType.CASE)) {
-      return List.nil();
+      return ImmutableList.nil();
     }
-    return List.cons(this.parseSourceElement(), this.parseStatementListInSwitchCaseBody());
+    return ImmutableList.cons(this.parseSourceElement(), this.parseStatementListInSwitchCaseBody());
   }
 
   @NotNull
@@ -1260,7 +1260,7 @@ public class Parser extends Tokenizer {
 
     this.lex();
     Expression left = leftPlaceholder.expression;
-    List<ExprStackItem> stack = List.nil();
+    ImmutableList<ExprStackItem> stack = ImmutableList.nil();
     stack = stack.cons(new ExprStackItem(location, left, operator));
     location = this.getLocation();
     Expression expr = this.parseUnaryExpression().expression;
@@ -1269,11 +1269,11 @@ public class Parser extends Tokenizer {
     while (operator != null) {
       Precedence precedence = operator.getPrecedence();
       // Reduce: make a binary expression from the three topmost entries.
-      while ((stack.isNotEmpty()) && (precedence.ordinal() <= ((NonEmptyList<ExprStackItem>) stack).head.precedence)) {
-        ExprStackItem stackItem = ((NonEmptyList<ExprStackItem>) stack).head;
+      while ((stack.isNotEmpty()) && (precedence.ordinal() <= ((NonEmptyImmutableList<ExprStackItem>) stack).head.precedence)) {
+        ExprStackItem stackItem = ((NonEmptyImmutableList<ExprStackItem>) stack).head;
         BinaryOperator stackOperator = stackItem.operator;
         left = stackItem.left;
-        stack = ((NonEmptyList<ExprStackItem>) stack).tail();
+        stack = ((NonEmptyImmutableList<ExprStackItem>) stack).tail();
         location = stackItem.startLocation;
         expr = this.markLocation(stackItem.startLocation, new BinaryExpression(stackOperator, left, expr));
       }
@@ -1422,7 +1422,7 @@ public class Parser extends Tokenizer {
         startLocation, new NewExpression(
             callee,
             this.match(TokenType.LPAREN) ? this.parseArgumentList() :
-                List.nil()));
+                ImmutableList.nil()));
   }
 
   @NotNull
@@ -1505,24 +1505,24 @@ public class Parser extends Tokenizer {
   }
 
   @NotNull
-  private List<Expression> parseArgumentList() throws JsError {
+  private ImmutableList<Expression> parseArgumentList() throws JsError {
     this.expect(TokenType.LPAREN);
-    List<Expression> args = this.parseArguments();
+    ImmutableList<Expression> args = this.parseArguments();
     this.expect(TokenType.RPAREN);
     return args;
   }
 
   @NotNull
-  private List<Expression> parseArguments() throws JsError {
+  private ImmutableList<Expression> parseArguments() throws JsError {
     if (this.match(TokenType.RPAREN) || this.eof()) {
-      return List.nil();
+      return ImmutableList.nil();
     }
     Expression arg = this.parseAssignmentExpression().expression;
     if (this.match(TokenType.COMMA)) {
       this.expect(TokenType.COMMA);
-      return List.cons(arg, this.parseArguments());
+      return ImmutableList.cons(arg, this.parseArguments());
     }
-    return List.list(arg);
+    return ImmutableList.list(arg);
   }
 
   // 11.2 Left-Hand-Side Expressions;
@@ -1595,7 +1595,7 @@ public class Parser extends Tokenizer {
     }
     this.strict = previousStrict;
     return this.markLocation(
-        startLocation, new FunctionExpression(Maybe.fromNullable(id), List.from(info.params), body)
+        startLocation, new FunctionExpression(Maybe.fromNullable(id), ImmutableList.from(info.params), body)
     );
   }
 
@@ -1605,7 +1605,7 @@ public class Parser extends Tokenizer {
 
     this.expect(TokenType.LBRACK);
 
-    List<Maybe<Expression>> elements = this.parseArrayExpressionElements();
+    ImmutableList<Maybe<Expression>> elements = this.parseArrayExpressionElements();
 
     this.expect(TokenType.RBRACK);
 
@@ -1613,9 +1613,9 @@ public class Parser extends Tokenizer {
   }
 
   @NotNull
-  private List<Maybe<Expression>> parseArrayExpressionElements() throws JsError {
+  private ImmutableList<Maybe<Expression>> parseArrayExpressionElements() throws JsError {
     if (this.match(TokenType.RBRACK)) {
-      return List.nil();
+      return ImmutableList.nil();
     }
 
     Maybe<Expression> el;
@@ -1629,7 +1629,7 @@ public class Parser extends Tokenizer {
         this.expect(TokenType.COMMA);
       }
     }
-    return List.cons(el, this.parseArrayExpressionElements());
+    return ImmutableList.cons(el, this.parseArrayExpressionElements());
   }
 
   @NotNull
@@ -1639,7 +1639,7 @@ public class Parser extends Tokenizer {
     this.expect(TokenType.LBRACE);
 
     HashMap<String, ObjectPropertyCombination> propertyMap = new HashMap<>();
-    List<ObjectProperty> properties = this.parseObjectExpressionItems(propertyMap);
+    ImmutableList<ObjectProperty> properties = this.parseObjectExpressionItems(propertyMap);
 
     this.expect(TokenType.RBRACE);
 
@@ -1647,11 +1647,11 @@ public class Parser extends Tokenizer {
   }
 
   @NotNull
-  private List<ObjectProperty> parseObjectExpressionItems(
+  private ImmutableList<ObjectProperty> parseObjectExpressionItems(
       @NotNull HashMap<String, ObjectPropertyCombination> propertyMap)
       throws JsError {
     if (this.match(TokenType.RBRACE)) {
-      return List.nil();
+      return ImmutableList.nil();
     }
 
     ObjectProperty property = this.parseObjectProperty();
@@ -1694,7 +1694,7 @@ public class Parser extends Tokenizer {
       this.expect(TokenType.COMMA);
     }
 
-    return List.cons(property, this.parseObjectExpressionItems(propertyMap));
+    return ImmutableList.cons(property, this.parseObjectExpressionItems(propertyMap));
   }
 
   @NotNull

@@ -16,7 +16,7 @@
 
 package com.shapesecurity.shift.ast.statement;
 
-import com.shapesecurity.functional.data.List;
+import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.shift.ast.Function;
 import com.shapesecurity.shift.ast.FunctionBody;
 import com.shapesecurity.shift.ast.Identifier;
@@ -29,13 +29,13 @@ public class FunctionDeclaration extends Statement implements Function {
   @NotNull
   public final Identifier name;
   @NotNull
-  public final List<Identifier> parameters;
+  public final ImmutableList<Identifier> parameters;
   @NotNull
   public final FunctionBody body;
 
   public FunctionDeclaration(
       @NotNull Identifier name,
-      @NotNull List<Identifier> parameters,
+      @NotNull ImmutableList<Identifier> parameters,
       @NotNull FunctionBody body) {
     super();
     this.name = name;
@@ -59,7 +59,7 @@ public class FunctionDeclaration extends Statement implements Function {
 
   @NotNull
   @Override
-  public List<Identifier> parameters() {
+  public ImmutableList<Identifier> parameters() {
     return this.parameters;
   }
 
@@ -69,7 +69,7 @@ public class FunctionDeclaration extends Statement implements Function {
   }
 
   @NotNull
-  public List<Identifier> getParameters() {
+  public ImmutableList<Identifier> getParameters() {
     return this.parameters;
   }
 
@@ -84,7 +84,7 @@ public class FunctionDeclaration extends Statement implements Function {
   }
 
   @NotNull
-  public FunctionDeclaration setParameters(@NotNull List<Identifier> parameters) {
+  public FunctionDeclaration setParameters(@NotNull ImmutableList<Identifier> parameters) {
     return new FunctionDeclaration(this.name, parameters, this.body);
   }
 

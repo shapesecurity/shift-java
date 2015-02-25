@@ -18,9 +18,9 @@
 package com.shapesecurity.shift.visitor;
 
 import com.shapesecurity.functional.data.Either;
-import com.shapesecurity.functional.data.List;
+import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.functional.data.Maybe;
-import com.shapesecurity.functional.data.NonEmptyList;
+import com.shapesecurity.functional.data.NonEmptyImmutableList;
 import com.shapesecurity.shift.ast.Block;
 import com.shapesecurity.shift.ast.CatchClause;
 import com.shapesecurity.shift.ast.Directive;
@@ -95,7 +95,7 @@ public final class Director {
   }
 
   @NotNull
-  public static <State> State reduce(@NotNull Reducer<State> reducer, @NotNull Node node, @NotNull List<Branch> path) {
+  public static <State> State reduce(@NotNull Reducer<State> reducer, @NotNull Node node, @NotNull ImmutableList<Branch> path) {
     if (node instanceof Script) {
       return reduceScript(reducer, (Script) node, path);
     } else if (node instanceof FunctionBody) {
@@ -134,8 +134,8 @@ public final class Director {
   Maybe<ExpressionState> reduceOptionExpression(
       @NotNull ReducerP<ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> reducer,
       @NotNull Maybe<Expression> node,
-      @NotNull List<Branch> path) {
-    NonEmptyList<Branch> just_path = path.cons(StaticBranch.JUST);
+      @NotNull ImmutableList<Branch> path) {
+    NonEmptyImmutableList<Branch> just_path = path.cons(StaticBranch.JUST);
     return node.map(n -> reduceExpression(reducer, n, just_path));
   }
 
@@ -144,51 +144,51 @@ public final class Director {
   Maybe<StatementState> reduceOptionStatement(
       @NotNull ReducerP<ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> reducer,
       @NotNull Maybe<Statement> node,
-      @NotNull List<Branch> path) {
-    NonEmptyList<Branch> just_path = path.cons(StaticBranch.JUST);
+      @NotNull ImmutableList<Branch> path) {
+    NonEmptyImmutableList<Branch> just_path = path.cons(StaticBranch.JUST);
     return node.map(n -> reduceStatement(reducer, n, just_path));
   }
 
   @NotNull
   private static <ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState>
-  List<StatementState> reduceListStatement(
+  ImmutableList<StatementState> reduceListStatement(
       @NotNull ReducerP<ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> reducer,
-      @NotNull List<Statement> list,
-      @NotNull List<Branch> path) {
+      @NotNull ImmutableList<Statement> list,
+      @NotNull ImmutableList<Branch> path) {
     return list.mapWithIndex((i, el) -> reduceStatement(reducer, el, path.cons(IndexedBranch.from(i))));
   }
 
   @NotNull
   private static <ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState>
-  List<ExpressionState> reduceListExpression(
+  ImmutableList<ExpressionState> reduceListExpression(
       @NotNull ReducerP<ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> reducer,
-      @NotNull List<Expression> list,
-      @NotNull List<Branch> path) {
+      @NotNull ImmutableList<Expression> list,
+      @NotNull ImmutableList<Branch> path) {
     return list.mapWithIndex((i, el) -> reduceExpression(reducer, el, path.cons(IndexedBranch.from(i))));
   }
 
   @NotNull
   private static <ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState>
-  List<IdentifierState> reduceListIdentifier(
+  ImmutableList<IdentifierState> reduceListIdentifier(
       @NotNull ReducerP<ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> reducer,
-      @NotNull List<Identifier> list,
-      @NotNull List<Branch> path) {
+      @NotNull ImmutableList<Identifier> list,
+      @NotNull ImmutableList<Branch> path) {
     return list.mapWithIndex((i, el) -> reduceIdentifier(reducer, el, path.cons(IndexedBranch.from(i))));
   }
 
   private static <ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState>
-  List<DirectiveState> reducerListDirective(
+  ImmutableList<DirectiveState> reducerListDirective(
       @NotNull ReducerP<ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> reducer,
-      @NotNull List<Directive> directives,
-      @NotNull List<Branch> path) {
+      @NotNull ImmutableList<Directive> directives,
+      @NotNull ImmutableList<Branch> path) {
     return directives.mapWithIndex((i, el) -> reduceDirective(reducer, el, path.cons(IndexedBranch.from(i))));
   }
 
   private static <ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState>
-  List<PropertyState> reducerListProperty(
+  ImmutableList<PropertyState> reducerListProperty(
       @NotNull ReducerP<ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> reducer,
-      @NotNull List<ObjectProperty> properties,
-      @NotNull List<Branch> path) {
+      @NotNull ImmutableList<ObjectProperty> properties,
+      @NotNull ImmutableList<Branch> path) {
     return properties.mapWithIndex((i, el) -> reduceObjectProperty(reducer, el, path.cons(IndexedBranch.from(i))));
   }
 
@@ -196,17 +196,17 @@ public final class Director {
   Either<DeclarationState, ExpressionState> reduceEitherVariableDeclarationExpression(
       @NotNull ReducerP<ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> reducer,
       @NotNull Either<VariableDeclaration, Expression> node,
-      @NotNull NonEmptyList<Branch> path) {
+      @NotNull NonEmptyImmutableList<Branch> path) {
     return node.map(
         n -> reduceVariableDeclaration(reducer, n, path.cons(StaticBranch.LEFT)),
         n -> reduceExpression(reducer, n, path.cons(StaticBranch.RIGHT)));
   }
 
   private static <ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState>
-  List<SwitchCaseState> reduceListSwitchCase(
+  ImmutableList<SwitchCaseState> reduceListSwitchCase(
       @NotNull ReducerP<ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> reducer,
-      @NotNull List<SwitchCase> node,
-      @NotNull NonEmptyList<Branch> path) {
+      @NotNull ImmutableList<SwitchCase> node,
+      @NotNull NonEmptyImmutableList<Branch> path) {
     return node.mapWithIndex((i, el) -> reduceSwitchCase(reducer, el, path.cons(IndexedBranch.from(i))));
   }
 
@@ -214,7 +214,7 @@ public final class Director {
   Maybe<IdentifierState> reducerMaybeIdentifier(
       @NotNull ReducerP<ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> reducer,
       @NotNull Maybe<Identifier> node,
-      @NotNull NonEmptyList<Branch> path) {
+      @NotNull NonEmptyImmutableList<Branch> path) {
     return node.map(n -> reduceIdentifier(reducer, n, path.cons(StaticBranch.JUST)));
   }
 
@@ -223,7 +223,7 @@ public final class Director {
   ScriptState reduceScript(
       @NotNull ReducerP<ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> reducer,
       @NotNull Script node,
-      @NotNull List<Branch> path) {
+      @NotNull ImmutableList<Branch> path) {
     return reducer.reduceScript(node, path, reduceFunctionBody(reducer, node.body, path.cons(StaticBranch.BODY)));
   }
 
@@ -232,7 +232,7 @@ public final class Director {
   ProgramBodyState reduceFunctionBody(
       @NotNull ReducerP<ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> reducer,
       @NotNull FunctionBody node,
-      @NotNull List<Branch> path) {
+      @NotNull ImmutableList<Branch> path) {
     return reducer.reduceFunctionBody(
         node,
         path,
@@ -245,7 +245,7 @@ public final class Director {
   PropertyState reduceObjectProperty(
       @NotNull ReducerP<ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> reducer,
       @NotNull ObjectProperty node,
-      @NotNull List<Branch> path) {
+      @NotNull ImmutableList<Branch> path) {
     PropertyNameState nameState = reducePropertyName(reducer, node.name, path.cons(StaticBranch.NAME));
     switch (node.type()) {
     case DataProperty: {
@@ -283,7 +283,7 @@ public final class Director {
   PropertyNameState reducePropertyName(
       @NotNull ReducerP<ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> reducer,
       @NotNull PropertyName node,
-      @NotNull List<Branch> path) {
+      @NotNull ImmutableList<Branch> path) {
     return reducer.reducePropertyName(node, path);
   }
 
@@ -292,7 +292,7 @@ public final class Director {
   IdentifierState reduceIdentifier(
       @NotNull ReducerP<ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> reducer,
       @NotNull Identifier node,
-      @NotNull List<Branch> path) {
+      @NotNull ImmutableList<Branch> path) {
     return reducer.reduceIdentifier(node, path);
   }
 
@@ -301,7 +301,7 @@ public final class Director {
   ExpressionState reduceExpression(
       @NotNull ReducerP<ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> reducer,
       @NotNull Expression node,
-      @NotNull List<Branch> path) {
+      @NotNull ImmutableList<Branch> path) {
     switch (node.type()) {
     case FunctionExpression: {
       FunctionExpression tNode = (FunctionExpression) node;
@@ -338,7 +338,7 @@ public final class Director {
     }
     case ArrayExpression: {
       ArrayExpression tNode = (ArrayExpression) node;
-      NonEmptyList<Branch> elementsPath = path.cons(StaticBranch.ELEMENTS);
+      NonEmptyImmutableList<Branch> elementsPath = path.cons(StaticBranch.ELEMENTS);
       return reducer.reduceArrayExpression(
           tNode,
           path,
@@ -447,7 +447,7 @@ public final class Director {
   DirectiveState reduceDirective(
       @NotNull ReducerP<ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> reducer,
       @NotNull Directive node,
-      @NotNull List<Branch> path) {
+      @NotNull ImmutableList<Branch> path) {
     if (node instanceof UseStrictDirective) {
       return reducer.reduceUseStrictDirective(((UseStrictDirective) node), path);
     } else {
@@ -460,7 +460,7 @@ public final class Director {
   StatementState reduceStatement(
       @NotNull ReducerP<ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> reducer,
       @NotNull Statement node,
-      @NotNull List<Branch> path) {
+      @NotNull ImmutableList<Branch> path) {
     switch (node.type()) {
     case FunctionDeclaration: {
       FunctionDeclaration tNode = (FunctionDeclaration) node;
@@ -517,7 +517,7 @@ public final class Director {
     }
     case ForInStatement: {
       ForInStatement tNode = (ForInStatement) node;
-      NonEmptyList<Branch> inner_path = path.cons(StaticBranch.LEFT);
+      NonEmptyImmutableList<Branch> inner_path = path.cons(StaticBranch.LEFT);
       Either<VariableDeclaration, Expression> left_node = tNode.left;
       return reducer.reduceForInStatement(
           tNode,
@@ -528,7 +528,7 @@ public final class Director {
     }
     case ForStatement: {
       ForStatement tNode = (ForStatement) node;
-      NonEmptyList<Branch> inner_path = path.cons(StaticBranch.INIT).cons(StaticBranch.JUST);
+      NonEmptyImmutableList<Branch> inner_path = path.cons(StaticBranch.INIT).cons(StaticBranch.JUST);
       return reducer.reduceForStatement(
           tNode,
           path,
@@ -640,7 +640,7 @@ public final class Director {
   BlockState reduceBlock(
       @NotNull ReducerP<ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> reducer,
       @NotNull Block node,
-      @NotNull List<Branch> path) {
+      @NotNull ImmutableList<Branch> path) {
     return reducer.reduceBlock(
         node,
         path,
@@ -652,7 +652,7 @@ public final class Director {
   DeclaratorState reduceVariableDeclarator(
       @NotNull ReducerP<ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> reducer,
       @NotNull VariableDeclarator node,
-      @NotNull List<Branch> path) {
+      @NotNull ImmutableList<Branch> path) {
     return reducer.reduceVariableDeclarator(
         node,
         path,
@@ -665,8 +665,8 @@ public final class Director {
   DeclarationState reduceVariableDeclaration(
       @NotNull ReducerP<ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> reducer,
       @NotNull VariableDeclaration node,
-      @NotNull List<Branch> path) {
-    NonEmptyList<Branch> declsPath = path.cons(StaticBranch.DECLARATORS);
+      @NotNull ImmutableList<Branch> path) {
+    NonEmptyImmutableList<Branch> declsPath = path.cons(StaticBranch.DECLARATORS);
     return reducer.reduceVariableDeclaration(
         node,
         path,
@@ -683,7 +683,7 @@ public final class Director {
   SwitchCaseState reduceSwitchCase(
       @NotNull ReducerP<ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> reducer,
       @NotNull SwitchCase node,
-      @NotNull List<Branch> path) {
+      @NotNull ImmutableList<Branch> path) {
     return reducer.reduceSwitchCase(
         node,
         path,
@@ -696,7 +696,7 @@ public final class Director {
   SwitchDefaultState reduceSwitchDefault(
       @NotNull ReducerP<ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> reducer,
       @NotNull SwitchDefault node,
-      @NotNull List<Branch> path) {
+      @NotNull ImmutableList<Branch> path) {
     return reducer.reduceSwitchDefault(
         node,
         path,
@@ -708,7 +708,7 @@ public final class Director {
   CatchClauseState reduceCatchClause(
       @NotNull ReducerP<ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> reducer,
       @NotNull CatchClause node,
-      @NotNull List<Branch> path) {
+      @NotNull ImmutableList<Branch> path) {
     return reducer.reduceCatchClause(
         node,
         path,

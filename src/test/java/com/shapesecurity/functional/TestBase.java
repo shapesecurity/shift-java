@@ -16,8 +16,8 @@
 
 package com.shapesecurity.functional;
 
-import com.shapesecurity.functional.data.List;
-import com.shapesecurity.functional.data.NonEmptyList;
+import com.shapesecurity.functional.data.ImmutableList;
+import com.shapesecurity.functional.data.NonEmptyImmutableList;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Before;
 
@@ -67,7 +67,7 @@ public abstract class TestBase {
 
   // static
 
-  static protected NonEmptyList<Integer> LONG_LIST = List.list(rand());
+  static protected NonEmptyImmutableList<Integer> LONG_LIST = ImmutableList.list(rand());
 
   static {
     for (int i = 0; i < 1000; i++) {
@@ -81,18 +81,18 @@ public abstract class TestBase {
   }
 
   @NotNull
-  public List<Integer> range(final int upper) {
+  public ImmutableList<Integer> range(final int upper) {
     return range(0, upper);
   }
 
   @NotNull
-  public List<Integer> range(final int lower, final int upper) {
+  public ImmutableList<Integer> range(final int lower, final int upper) {
     return range(lower, upper, 1);
   }
 
   @NotNull
-  public List<Integer> range(final int lower, final int upper, final int step) {
-    List<Integer> result = List.nil();
+  public ImmutableList<Integer> range(final int lower, final int upper, final int step) {
+    ImmutableList<Integer> result = ImmutableList.nil();
     for (int i = upper - ((upper - lower + step - 1) % step + 1); i >= lower; i -= step) {
       result = result.cons(i);
     }

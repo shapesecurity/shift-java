@@ -20,9 +20,9 @@ package com.shapesecurity.shift.path;
 import com.shapesecurity.functional.F;
 import com.shapesecurity.functional.F2;
 import com.shapesecurity.functional.data.Either;
-import com.shapesecurity.functional.data.List;
+import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.functional.data.Maybe;
-import com.shapesecurity.functional.data.NonEmptyList;
+import com.shapesecurity.functional.data.NonEmptyImmutableList;
 import com.shapesecurity.shift.ast.Block;
 import com.shapesecurity.shift.ast.CatchClause;
 import com.shapesecurity.shift.ast.Directive;
@@ -105,19 +105,19 @@ class TypedBranches {
     return (p, a) -> f.apply(p, a.maybe);
   }
 
-  private static <P, A> F<P, ListNode<A>> list(F<P, List<A>> f, GenType a) {
+  private static <P, A> F<P, ListNode<A>> list(F<P, ImmutableList<A>> f, GenType a) {
     return n -> new ListNode<>(f.apply(n), ListType.from(a));
   }
 
-  private static <P, A> F2<P, ListNode<A>, P> list(F2<P, List<A>, P> f) {
+  private static <P, A> F2<P, ListNode<A>, P> list(F2<P, ImmutableList<A>, P> f) {
     return (p, a) -> f.apply(p, a.list);
   }
 
-  private static <P, A> F<P, NonEmptyListNode<A>> nel(F<P, NonEmptyList<A>> f, GenType a) {
+  private static <P, A> F<P, NonEmptyListNode<A>> nel(F<P, NonEmptyImmutableList<A>> f, GenType a) {
     return n -> new NonEmptyListNode<>(f.apply(n), NonEmptyListType.from(a));
   }
 
-  private static <P, A> F2<P, NonEmptyListNode<A>, P> nel(F2<P, NonEmptyList<A>, P> f) {
+  private static <P, A> F2<P, NonEmptyListNode<A>, P> nel(F2<P, NonEmptyImmutableList<A>, P> f) {
     return (p, a) -> f.apply(p, a.list);
   }
 
@@ -145,8 +145,8 @@ class TypedBranches {
   private static <P extends Node, C> TypedBranch<P, ListNode<C>> defl(
       @NotNull GenType parentType,
       @NotNull GenType childType,
-      @NotNull F<P, List<C>> view,
-      @NotNull F2<P, List<C>, P> set) {
+      @NotNull F<P, ImmutableList<C>> view,
+      @NotNull F2<P, ImmutableList<C>, P> set) {
     F<P, ListNode<C>> lView = list(view, childType);
     F2<P, ListNode<C>, P> lSet = list(set);
     return new TypedBranch<P, ListNode<C>>(parentType, ListType.from(childType)) {
@@ -168,8 +168,8 @@ class TypedBranches {
   private static <P extends Node, C> TypedBranch<P, NonEmptyListNode<C>> defnel(
       @NotNull GenType parentType,
       @NotNull GenType childType,
-      @NotNull F<P, NonEmptyList<C>> view,
-      @NotNull F2<P, NonEmptyList<C>, P> set) {
+      @NotNull F<P, NonEmptyImmutableList<C>> view,
+      @NotNull F2<P, NonEmptyImmutableList<C>, P> set) {
     F<P, NonEmptyListNode<C>> nelView = nel(view, childType);
     F2<P, NonEmptyListNode<C>, P> nelSet = nel(set);
     return new TypedBranch<P, NonEmptyListNode<C>>(parentType, NonEmptyListType.from(childType)) {

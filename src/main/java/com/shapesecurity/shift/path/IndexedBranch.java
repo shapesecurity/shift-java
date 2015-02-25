@@ -16,8 +16,8 @@
 
 package com.shapesecurity.shift.path;
 
-import com.shapesecurity.functional.data.List;
-import com.shapesecurity.functional.data.NonEmptyList;
+import com.shapesecurity.functional.data.ImmutableList;
+import com.shapesecurity.functional.data.NonEmptyImmutableList;
 import com.shapesecurity.shift.ast.ListNode;
 import com.shapesecurity.shift.ast.Node;
 import com.shapesecurity.shift.ast.NonEmptyListNode;
@@ -90,7 +90,7 @@ public final class IndexedBranch implements Branch {
       if (list.genType.elementType.isAssignableFrom(child.genType())) {
         if (this.index <= list.list.length) {
           return new ListNode<>(
-              list.list.patch(this.index, 1, List.list(child)),
+              list.list.patch(this.index, 1, ImmutableList.list(child)),
               list.genType);
         }
       }
@@ -99,7 +99,7 @@ public final class IndexedBranch implements Branch {
       if (list.genType.elementType.isAssignableFrom(child.genType())) {
         if (this.index <= list.list.length) {
           return new NonEmptyListNode<>(
-              (NonEmptyList<Node>) list.list.patch(this.index, 1, List.list(child)),
+              (NonEmptyImmutableList<Node>) list.list.patch(this.index, 1, ImmutableList.list(child)),
               list.genType);
         }
       }

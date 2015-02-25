@@ -22,7 +22,7 @@ import com.shapesecurity.functional.Pair;
 
 import org.jetbrains.annotations.NotNull;
 
-public final class Nil<T> extends List<T> {
+public final class Nil<T> extends ImmutableList<T> {
   private final static int DEFAULT_HASH_CODE;
 
   static {
@@ -65,63 +65,63 @@ public final class Nil<T> extends List<T> {
 
   @NotNull
   @Override
-  public Maybe<List<T>> maybeTail() {
+  public Maybe<ImmutableList<T>> maybeTail() {
     return Maybe.nothing();
   }
 
   @NotNull
   @Override
-  public Maybe<List<T>> maybeInit() {
+  public Maybe<ImmutableList<T>> maybeInit() {
     return Maybe.nothing();
   }
 
   @NotNull
   @Override
-  public List<T> filter(@NotNull F<T, Boolean> f) {
+  public ImmutableList<T> filter(@NotNull F<T, Boolean> f) {
     return this;
   }
 
   @NotNull
   @Override
-  public <B> List<B> map(@NotNull F<T, B> f) {
+  public <B> ImmutableList<B> map(@NotNull F<T, B> f) {
     return nil();
   }
 
   @NotNull
   @Override
-  public <B> List<B> mapWithIndex(@NotNull F2<Integer, T, B> f) {
+  public <B> ImmutableList<B> mapWithIndex(@NotNull F2<Integer, T, B> f) {
     return nil();
   }
 
   @NotNull
   @Override
-  public List<T> take(int n) {
+  public ImmutableList<T> take(int n) {
     return this;
   }
 
   @NotNull
   @Override
-  public List<T> drop(int n) {
+  public ImmutableList<T> drop(int n) {
     return this;
   }
 
   @NotNull
   @Override
-  public Maybe<NonEmptyList<T>> toNonEmptyList() {
+  public Maybe<NonEmptyImmutableList<T>> toNonEmptyList() {
     return Maybe.nothing();
   }
 
   @NotNull
   @Override
-  public <B> Maybe<B> decons(@NotNull F2<T, List<T>, B> f) {
+  public <B> Maybe<B> decons(@NotNull F2<T, ImmutableList<T>, B> f) {
     return Maybe.nothing();
   }
 
   @SuppressWarnings("unchecked")
   @NotNull
   @Override
-  public <B, C> List<C> zipWith(@NotNull F2<T, B, C> f, @NotNull List<B> list) {
-    return (List<C>) this;
+  public <B, C> ImmutableList<C> zipWith(@NotNull F2<T, B, C> f, @NotNull ImmutableList<B> list) {
+    return (ImmutableList<C>) this;
   }
 
   @Override
@@ -132,9 +132,9 @@ public final class Nil<T> extends List<T> {
   @NotNull
   @Override
   @SuppressWarnings("unchecked")
-  public <B extends T> List<T> append(@NotNull List<B> defaultClause) {
+  public <B extends T> ImmutableList<T> append(@NotNull ImmutableList<B> defaultClause) {
     // This is safe due to erasure.
-    return (List<T>) defaultClause;
+    return (ImmutableList<T>) defaultClause;
   }
 
   @Override
@@ -144,40 +144,40 @@ public final class Nil<T> extends List<T> {
 
   @NotNull
   @Override
-  public Pair<List<T>, List<T>> span(@NotNull F<T, Boolean> f) {
+  public Pair<ImmutableList<T>, ImmutableList<T>> span(@NotNull F<T, Boolean> f) {
     return new Pair<>(nil(), nil());
   }
 
   @NotNull
   @Override
   @SuppressWarnings("unchecked")
-  public <B> List<B> flatMap(@NotNull F<T, List<B>> f) {
-    return (List<B>) this;
+  public <B> ImmutableList<B> flatMap(@NotNull F<T, ImmutableList<B>> f) {
+    return (ImmutableList<B>) this;
   }
 
   @NotNull
   @Override
-  public List<T> removeAll(@NotNull F<T, Boolean> f) {
+  public ImmutableList<T> removeAll(@NotNull F<T, Boolean> f) {
     return this;
   }
 
   @NotNull
   @Override
-  public List<T> reverse() {
+  public ImmutableList<T> reverse() {
     return this;
   }
 
   @NotNull
   @SuppressWarnings("unchecked")
   @Override
-  public <B extends T> List<T> patch(int index, int patchLength, @NotNull List<B> replacements) {
-    return (List<T>) replacements;
+  public <B extends T> ImmutableList<T> patch(int index, int patchLength, @NotNull ImmutableList<B> replacements) {
+    return (ImmutableList<T>) replacements;
   }
 
   @NotNull
   @Override
-  public <B, C> Pair<B, List<C>> mapAccumL(@NotNull F2<B, T, Pair<B, C>> f, @NotNull B acc) {
-    return new Pair<>(acc, List.nil());
+  public <B, C> Pair<B, ImmutableList<C>> mapAccumL(@NotNull F2<B, T, Pair<B, C>> f, @NotNull B acc) {
+    return new Pair<>(acc, ImmutableList.nil());
   }
 
   @SuppressWarnings("unchecked")

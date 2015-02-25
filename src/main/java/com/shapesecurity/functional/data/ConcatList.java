@@ -47,11 +47,11 @@ public abstract class ConcatList<T> {
   }
 
   @NotNull
-  public final List<T> toList() {
-    return this.toList(List.nil());
+  public final ImmutableList<T> toList() {
+    return this.toList(ImmutableList.nil());
   }
 
-  protected abstract List<T> toList(@NotNull List<T> acc);
+  protected abstract ImmutableList<T> toList(@NotNull ImmutableList<T> acc);
 
   @NotNull
   public abstract <B> B foldLeft(@NotNull F2<B, ? super T, B> f, @NotNull B init);
@@ -90,7 +90,7 @@ public abstract class ConcatList<T> {
 
     @NotNull
     @Override
-    protected List<T> toList(@NotNull List<T> acc) {
+    protected ImmutableList<T> toList(@NotNull ImmutableList<T> acc) {
       return acc;
     }
 
@@ -159,7 +159,7 @@ public abstract class ConcatList<T> {
 
     @NotNull
     @Override
-    protected List<T> toList(@NotNull List<T> acc) {
+    protected ImmutableList<T> toList(@NotNull ImmutableList<T> acc) {
       return acc.cons(this.data);
     }
 
@@ -232,7 +232,7 @@ public abstract class ConcatList<T> {
 
     @NotNull
     @Override
-    protected List<T> toList(@NotNull List<T> acc) {
+    protected ImmutableList<T> toList(@NotNull ImmutableList<T> acc) {
       return this.left.toList(this.right.toList(acc));
     }
 

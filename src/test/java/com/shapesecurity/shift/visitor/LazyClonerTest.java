@@ -18,7 +18,7 @@ package com.shapesecurity.shift.visitor;
 
 import static org.junit.Assert.assertTrue;
 
-import com.shapesecurity.functional.data.List;
+import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.shift.TestBase;
 import com.shapesecurity.shift.ast.Expression;
 import com.shapesecurity.shift.ast.Identifier;
@@ -37,7 +37,7 @@ import org.junit.Test;
 public class LazyClonerTest extends TestBase {
   @Test
   public void testLibraries() throws IOException, JsError {
-    List<String> jsFiles = List.nil();
+    ImmutableList<String> jsFiles = ImmutableList.nil();
     setFatal(true); // Collect the failures in an ErrorCollector
 
     // Get a list of the js files within the resources directory to process
@@ -48,7 +48,7 @@ public class LazyClonerTest extends TestBase {
     }
     for (File file : files) {
       if (file.isFile() && file.getName().endsWith(".js")) {
-        jsFiles = List.cons(file.getName(), jsFiles);
+        jsFiles = ImmutableList.cons(file.getName(), jsFiles);
       }
     }
 
@@ -79,7 +79,7 @@ public class LazyClonerTest extends TestBase {
       @NotNull
       @Override
       public DirtyState<Identifier> reduceIdentifier(
-          @NotNull Identifier node, @NotNull List<Branch> path) {
+          @NotNull Identifier node, @NotNull ImmutableList<Branch> path) {
         return DirtyState.dirty(new Identifier("a"));
       }
     };
@@ -87,7 +87,7 @@ public class LazyClonerTest extends TestBase {
       @NotNull
       @Override
       public DirtyState<Expression> reduceLiteralStringExpression(
-          @NotNull LiteralStringExpression node, @NotNull List<Branch> path) {
+          @NotNull LiteralStringExpression node, @NotNull ImmutableList<Branch> path) {
         return DirtyState.dirty(new LiteralStringExpression("a"));
       }
     };

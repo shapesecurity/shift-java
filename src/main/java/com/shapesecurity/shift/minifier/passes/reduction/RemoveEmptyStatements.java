@@ -17,7 +17,7 @@
 package com.shapesecurity.shift.minifier.passes.reduction;
 
 import com.shapesecurity.functional.F;
-import com.shapesecurity.functional.data.List;
+import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.shift.ast.Block;
 import com.shapesecurity.shift.ast.FunctionBody;
 import com.shapesecurity.shift.ast.Statement;
@@ -50,7 +50,7 @@ public class RemoveEmptyStatements extends ReductionRule {
   @NotNull
   @Override
   public DirtyState<Block> transform(@NotNull Block node) {
-    List<Statement> filteredStatements = node.statements.filter(isNotEmptyStatement);
+    ImmutableList<Statement> filteredStatements = node.statements.filter(isNotEmptyStatement);
     return filteredStatements.length == node.statements.length ? DirtyState.clean(node) : DirtyState.dirty(
         new Block(filteredStatements));
   }
@@ -58,7 +58,7 @@ public class RemoveEmptyStatements extends ReductionRule {
   @NotNull
   @Override
   public DirtyState<FunctionBody> transform(@NotNull FunctionBody node) {
-    List<Statement> filteredStatements = node.statements.filter(isNotEmptyStatement);
+    ImmutableList<Statement> filteredStatements = node.statements.filter(isNotEmptyStatement);
     return filteredStatements.length == node.statements.length ? DirtyState.clean(node) : DirtyState.dirty(
         new FunctionBody(node.directives, filteredStatements));
   }
@@ -66,7 +66,7 @@ public class RemoveEmptyStatements extends ReductionRule {
   @NotNull
   @Override
   public DirtyState<SwitchCase> transform(@NotNull SwitchCase node) {
-    List<Statement> filteredStatements = node.consequent.filter(isNotEmptyStatement);
+    ImmutableList<Statement> filteredStatements = node.consequent.filter(isNotEmptyStatement);
     return filteredStatements.length == node.consequent.length ? DirtyState.clean(node) : DirtyState.dirty(
         new SwitchCase(node.test, filteredStatements));
   }
@@ -74,7 +74,7 @@ public class RemoveEmptyStatements extends ReductionRule {
   @NotNull
   @Override
   public DirtyState<SwitchDefault> transform(@NotNull SwitchDefault node) {
-    List<Statement> filteredStatements = node.consequent.filter(isNotEmptyStatement);
+    ImmutableList<Statement> filteredStatements = node.consequent.filter(isNotEmptyStatement);
     return filteredStatements.length == node.consequent.length ? DirtyState.clean(node) : DirtyState.dirty(
         new SwitchDefault(filteredStatements));
   }

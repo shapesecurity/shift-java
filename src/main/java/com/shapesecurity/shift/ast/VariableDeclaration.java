@@ -16,9 +16,8 @@
 
 package com.shapesecurity.shift.ast;
 
-import com.shapesecurity.functional.data.NonEmptyList;
+import com.shapesecurity.functional.data.NonEmptyImmutableList;
 import com.shapesecurity.shift.ast.types.Type;
-import com.shapesecurity.shift.visitor.TransformerP;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -26,11 +25,11 @@ public class VariableDeclaration extends Node {
   @NotNull
   public final VariableDeclarationKind kind;
   @NotNull
-  public final NonEmptyList<VariableDeclarator> declarators;
+  public final NonEmptyImmutableList<VariableDeclarator> declarators;
 
   public VariableDeclaration(
       @NotNull VariableDeclarationKind kind,
-      @NotNull NonEmptyList<VariableDeclarator> declarators) {
+      @NotNull NonEmptyImmutableList<VariableDeclarator> declarators) {
     super();
     this.kind = kind;
     this.declarators = declarators;
@@ -71,7 +70,7 @@ public class VariableDeclaration extends Node {
   }
 
   @NotNull
-  public NonEmptyList<VariableDeclarator> getDeclarators() {
+  public NonEmptyImmutableList<VariableDeclarator> getDeclarators() {
     return this.declarators;
   }
 
@@ -81,7 +80,7 @@ public class VariableDeclaration extends Node {
   }
 
   @NotNull
-  public VariableDeclaration setDeclarators(@NotNull NonEmptyList<VariableDeclarator> declarators) {
+  public VariableDeclaration setDeclarators(@NotNull NonEmptyImmutableList<VariableDeclarator> declarators) {
     return new VariableDeclaration(this.kind, declarators);
   }
 }
