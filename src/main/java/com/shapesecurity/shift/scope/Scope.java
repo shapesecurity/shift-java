@@ -21,9 +21,9 @@ import com.shapesecurity.functional.data.List;
 import com.shapesecurity.functional.data.Maybe;
 import com.shapesecurity.shift.ast.Identifier;
 import com.shapesecurity.shift.ast.Node;
+import com.shapesecurity.shift.path.Branch;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -34,8 +34,7 @@ public class Scope {
   @NotNull
   public final Node astNode;
   @NotNull
-  // TODO: immutable data structure.
-  public final HashTable<String, ProjectionTree<Reference>> through;
+  public final HashTable<String, HashTable<List<Branch>, Reference>> through;
   @NotNull
   public final List<Scope> children;
   @NotNull
@@ -49,7 +48,7 @@ public class Scope {
       @NotNull List<Scope> children,
       @NotNull List<Variable> variables,
       @NotNull List<Variable> blockScopedTiedVar,
-      @NotNull HashTable<String, ProjectionTree<Reference>> through,
+      @NotNull HashTable<String, HashTable<List<Branch>, Reference>> through,
       @NotNull Type type,
       boolean isDynamic,
       @NotNull Node astNode) {
@@ -108,21 +107,19 @@ public class Scope {
   }
 
   @NotNull
-  private List<Variable> findVariablesHelper(@NotNull final Identifier identifier, boolean lookInReferences,
-                                             boolean lookInDeclarations) {
+  private List<Variable> findVariablesHelper(
+      @NotNull final Identifier identifier,
+      boolean lookInReferences,
+      boolean lookInDeclarations) {
     for (Variable v : this.variables.values()) {
       if (lookInReferences) {
-        for (Reference r : v.references) {
-          if (r.node == identifier) {
-            return List.list(v);
-          }
+        if (v.references.find(p -> p.b.node == identifier).isJust()) {
+          return List.list(v);
         }
       }
       if (lookInDeclarations) {
-        for (Declaration d : v.declarations) {
-          if (d.node == identifier) {
-            return List.list(v);
-          }
+        if (v.declarations.find(p -> p.b.node == identifier).isJust()) {
+          return List.list(v);
         }
       }
     }

@@ -98,49 +98,21 @@ public class Tokenizer {
                     true, true, true, true, false, false, false, false, false};
   @NotNull
   final String source;
-  private final boolean directed;
   @NotNull
   protected Token lookahead;
-  boolean hasLineTerminatorBeforeNext;
-  boolean strict;
-  boolean collectingToken;
+  protected boolean hasLineTerminatorBeforeNext;
+  protected boolean strict;
   private int index, line, lineStart;
-  private int lastIndex, lastLine, lastLineStart;
+  private int lastIndex;
   private int startIndex, startLine, startLineStart;
-
-  @Nullable
-  private SourceRange lastWhitespace;
-  @Nullable
-  private Token prevToken;
-  @Nullable
-  private TokenType curlyCheckToken;
-  @Nullable
-  private TokenType funcCheckToken;
-  @Nullable
-  private TokenType parenCheckToken;
 
   private SourceLocation cachedSourceLocation;
   private int lastCachedSourceLocation = -1;
 
   public Tokenizer(@NotNull String source) throws JsError {
-    this(false, source);
-  }
-
-  Tokenizer(boolean directed, @NotNull String source) throws JsError {
-    this.directed = directed;
     this.source = source;
     this.lookahead = this.collectToken();
     this.hasLineTerminatorBeforeNext = false;
-  }
-
-  @NotNull
-  public static ArrayList<Token> tokenize(@NotNull String source) throws JsError {
-    Tokenizer tokenizer = new Tokenizer(source);
-    ArrayList<Token> result = new ArrayList<>();
-    while (tokenizer.lookahead.type != TokenType.EOS) {
-      result.add(tokenizer.lex());
-    }
-    return result;
   }
 
   private static boolean cse2(@NotNull CharSequence id, char ch1, char ch2) {
@@ -434,6 +406,9 @@ public class Tokenizer {
 
   @NotNull
   private JsError createILLEGAL() {
+    this.startIndex = this.index;
+    this.startLine = this.line;
+    this.startLineStart = this.lineStart;
     return this.createError(ErrorMessages.UNEXPECTED_ILLEGAL_TOKEN);
   }
 
@@ -466,11 +441,7 @@ public class Tokenizer {
   @NotNull
   JsError createError(@NotNull String message, @NotNull Object... args) {
     String msg = String.format(message, args);
-    if (this.collectingToken) {
-      return new JsError(this.index, this.line + 1, this.index - this.lineStart, msg);
-    } else {
-      return new JsError(this.startIndex, this.startLine + 1, this.startIndex - this.startLineStart, msg);
-    }
+    return new JsError(this.startIndex, this.startLine + 1, this.startIndex - this.startLineStart, msg);
   }
 
   @NotNull
@@ -1150,9 +1121,7 @@ public class Tokenizer {
     this.index = this.startIndex;
     this.line = this.startLine;
     this.lineStart = this.startLineStart;
-    this.collectingToken = true;
     this.lookahead = this.scanRegExp();
-    this.collectingToken = false;
     return this.lookahead;
   }
 
@@ -1215,126 +1184,6 @@ public class Tokenizer {
     return new RegularExpressionLiteralToken(this.getSlice(start), str.toString());
   }
 
-  private boolean guessRegexp() {
-    // Using the following algorithm:
-    // https://github.com/mozilla/sweet.js/wiki/design
-
-    if (this.prevToken == null) {
-      // Nothing before that: it cannot be a division.
-      return true;
-    }
-
-    if (this.prevToken.type.klass == TokenClass.Keyword) {
-      return true;
-    }
-
-    if (this.prevToken.type.klass == TokenClass.Punctuator) {
-      if (this.prevToken.type == TokenType.RBRACK) {
-        return false;
-      }
-      if (this.prevToken.type == TokenType.RPAREN) {
-        if (this.parenCheckToken != null) {
-          switch (this.parenCheckToken) {
-          case IF:
-          case WHILE:
-          case FOR:
-          case WITH:
-            return true;
-          default:
-            break;
-          }
-        }
-        return false;
-      }
-      if (this.prevToken.type == TokenType.RBRACE) {
-        if (this.curlyCheckToken == null) {
-          return true;
-        }
-
-        TokenType checkToken = this.curlyCheckToken;
-        // Dividing a function by anything makes little sense,
-        // but we have to check for that.
-        if (checkToken == TokenType.RPAREN) {
-          // Anonymous function.
-          if (this.parenCheckToken == TokenType.FUNCTION || this.parenCheckToken == TokenType.IDENTIFIER) {
-            checkToken = this.funcCheckToken;
-          }
-        }
-
-        if (checkToken == null) {
-          return true;
-        }
-
-        // checkToken determines whether the function is
-        // a declaration or an expression.
-        switch (checkToken) {
-        case LPAREN:
-        case LBRACE:
-        case LBRACK:
-        case IN:
-        case TYPEOF:
-        case INSTANCEOF:
-        case NEW:
-        case RETURN:
-        case CASE:
-        case DELETE:
-        case THROW:
-        case VOID:
-
-          // assignment operators
-        case ASSIGN:
-        case ASSIGN_ADD:
-        case ASSIGN_SUB:
-        case ASSIGN_MUL:
-        case ASSIGN_DIV:
-        case ASSIGN_MOD:
-        case ASSIGN_SHL:
-        case ASSIGN_SHR:
-        case ASSIGN_SHR_UNSIGNED:
-        case ASSIGN_BIT_AND:
-        case ASSIGN_BIT_OR:
-        case ASSIGN_BIT_XOR:
-        case COMMA:
-
-          // binary/unary operators
-        case ADD:
-        case SUB:
-        case MUL:
-        case DIV:
-        case MOD:
-        case INC:
-        case DEC:
-        case SHL:
-        case SHR:
-        case SHR_UNSIGNED:
-        case BIT_AND:
-        case BIT_OR:
-        case BIT_XOR:
-        case NOT:
-        case BIT_NOT:
-        case AND:
-        case OR:
-        case CONDITIONAL:
-        case COLON:
-        case EQ_STRICT:
-        case EQ:
-        case GTE:
-        case LTE:
-        case LT:
-        case GT:
-        case NE:
-        case NE_STRICT:
-          return false;
-        default:
-          // It is a declaration.
-          return true;
-        }
-      }
-      return true;
-    }
-    return false;
-  }
-
   @NotNull
   private Token advance() throws JsError {
     char ch = this.source.charAt(this.index);
@@ -1368,16 +1217,6 @@ public class Tokenizer {
 
       // Slash (/) U+002F can also start a regex.
       if (ch == '/') {
-        if (!this.directed) {
-          int index = this.index;
-          if (this.guessRegexp()) {
-            try {
-              return this.scanRegExp();
-            } catch (JsError ignored) {
-              this.index = index;
-            }
-          }
-        }
         return this.scanPunctuator();
       }
       throw this.createILLEGAL();
@@ -1396,12 +1235,10 @@ public class Tokenizer {
 
   @NotNull
   private Token collectToken() throws JsError {
-    this.collectingToken = true;
+    this.hasLineTerminatorBeforeNext = false;
     int start = this.index;
 
     this.lastIndex = this.index;
-    this.lastLine = this.line;
-    this.lastLineStart = this.lineStart;
 
     this.skipComment();
 
@@ -1409,7 +1246,7 @@ public class Tokenizer {
     this.startLine = this.line;
     this.startLineStart = this.lineStart;
 
-    this.lastWhitespace = this.getSlice(start);
+    SourceRange lastWhitespace = this.getSlice(start);
     if (this.index >= this.source.length()) {
       return new EOFToken(this.getSlice(start));
     }
@@ -1417,31 +1254,20 @@ public class Tokenizer {
     Token token = this.advance();
 
 
-    token.leadingWhitespace = this.lastWhitespace;
-    this.collectingToken = false;
+    token.leadingWhitespace = lastWhitespace;
     return token;
   }
 
   @NotNull
   Token lex() throws JsError {
-    if (this.prevToken != null && this.prevToken.type == TokenType.EOS) {
-      return this.prevToken;
+    if (this.lookahead.type == TokenType.EOS) {
+      return this.lookahead;
     }
 
-    Token prevToken2 = this.prevToken;
-    this.prevToken = this.lookahead;
-    this.hasLineTerminatorBeforeNext = false;
+    Token prevToken = this.lookahead;
+
     this.lookahead = this.collectToken();
 
-    if (prevToken2 != null) {
-      if (this.prevToken.type == TokenType.LPAREN) {
-        this.parenCheckToken = prevToken2.type;
-      } else if (this.prevToken.type == TokenType.FUNCTION) {
-        this.funcCheckToken = prevToken2.type;
-      } else if (this.prevToken.type == TokenType.LBRACE) {
-        this.curlyCheckToken = prevToken2.type;
-      }
-    }
-    return this.prevToken;
+    return prevToken;
   }
 }

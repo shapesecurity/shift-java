@@ -16,6 +16,10 @@
 
 package com.shapesecurity.shift.scope;
 
+import com.shapesecurity.functional.data.HashTable;
+import com.shapesecurity.functional.data.List;
+import com.shapesecurity.shift.path.Branch;
+
 import org.jetbrains.annotations.NotNull;
 
 public class Variable {
@@ -28,17 +32,17 @@ public class Variable {
    * references of this variable *
    */
   @NotNull
-  public final ProjectionTree<Reference> references;
+  public final HashTable<List<Branch>, Reference> references;
   /**
    * references of this variable *
    */
   @NotNull
-  public final ProjectionTree<Declaration> declarations;
+  public final HashTable<List<Branch>, Declaration> declarations;
 
   public Variable(
       @NotNull String name,
-      @NotNull ProjectionTree<Reference> references,
-      @NotNull ProjectionTree<Declaration> declarations) {
+      @NotNull HashTable<List<Branch>, Reference> references,
+      @NotNull HashTable<List<Branch>, Declaration> declarations) {
     this.name = name;
     this.references = references;
     this.declarations = declarations;

@@ -139,7 +139,7 @@ public class Parser extends Tokenizer {
   private boolean allowIn = true;
 
   private Parser(@NotNull String source) throws JsError {
-    super(true, source);
+    super(source);
   }
 
   @Nullable
@@ -182,7 +182,7 @@ public class Parser extends Tokenizer {
 
   @NotNull
   public static Script parse(@NotNull String text) throws JsError {
-    return new Parser(text).parse();
+    return new Parser(text).parseScript();
   }
 
   @NotNull
@@ -195,7 +195,7 @@ public class Parser extends Tokenizer {
         ((Located) node).setLoc(startLocation.withSourceRange(this.getSliceBeforeLookahead(start)));
         return node;
       }
-    }.parse();
+    }.parseScript();
   }
 
   @NotNull
@@ -272,7 +272,7 @@ public class Parser extends Tokenizer {
   }
 
   @NotNull
-  Script parse() throws JsError {
+  Script parseScript() throws JsError {
     SourceLocation startLocation = this.getLocation();
     this.strict = false;
 

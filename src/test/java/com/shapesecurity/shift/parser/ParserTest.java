@@ -698,15 +698,15 @@ public class ParserTest extends TestBase {
     testFailure("x\\u002a", 7, "Unexpected token ILLEGAL");
     testFailure("a\\u", 3, "Unexpected token ILLEGAL");
     testFailure("\\ua", 2, "Unexpected token ILLEGAL");
-    testFailure("/", 1, "Invalid regular expression: missing /");
-    testFailure("/test", 5, "Invalid regular expression: missing /");
-    testFailure("/test\n/", 5, "Invalid regular expression: missing /");
+    testFailure("/", 0, "Invalid regular expression: missing /");
+    testFailure("/test", 0, "Invalid regular expression: missing /");
+    testFailure("/test\n/", 0, "Invalid regular expression: missing /");
     testFailure("[", 1, "Unexpected end of input");
     testFailure("[,", 2, "Unexpected end of input");
     testFailure("1 + {", 5, "Unexpected end of input");
     testFailure("1 + { t:t ", 10, "Unexpected end of input");
     testFailure("1 + { t:t,", 10, "Unexpected end of input");
-    testFailure("var x = /\n/", 9, "Invalid regular expression: missing /");
+    testFailure("var x = /\n/", 8, "Invalid regular expression: missing /");
     testFailure("var x = \"\n", 9, "Unexpected token ILLEGAL");
     testFailure("var if = 42", 4, "Unexpected token if");
     testFailure("i #= 42", 2, "Unexpected token ILLEGAL");
@@ -779,7 +779,7 @@ public class ParserTest extends TestBase {
     testFailureML("\n\r]", 3, 1, 3, "Unexpected token ]");
     testFailureML("//\r\n]", 2, 1, 5, "Unexpected token ]");
     testFailureML("//\n\r]", 3, 1, 5, "Unexpected token ]");
-    testFailure("/a\\\n/", 3, "Invalid regular expression: missing /");
+    testFailure("/a\\\n/", 0, "Invalid regular expression: missing /");
     testFailureML("//\r \n]", 3, 1, 6, "Unexpected token ]");
     testFailureML("/*\r\n*/]", 2, 3, 7, "Unexpected token ]");
     testFailureML("/*\n\r*/]", 3, 3, 7, "Unexpected token ]");
@@ -891,7 +891,7 @@ public class ParserTest extends TestBase {
 
     // ES3: a slash in a regexp character class will terminate the regexp
     // ES5: a slash is allowed within a regexp character class
-    testFailure("[/[/]", 5, "Invalid regular expression: missing /");
+    testFailure("[/[/]", 1, "Invalid regular expression: missing /");
   }
 
   @Test

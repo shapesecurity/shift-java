@@ -25,20 +25,6 @@ import org.jetbrains.annotations.NotNull;
 
 @SuppressWarnings("MagicNumber")
 public final class Utils {
-  private static final long WHITESPACE1 = 0x20;
-  private static final long WHITESPACE2 = 0x09;
-  private static final long WHITESPACE3 = 0x0B;
-  private static final long WHITESPACE4 = 0x0C;
-  private static final long WHITESPACE5 = 0xA0;
-  private static final long WHITESPACE6 = 0x1680;
-  private static final long WHITESPACE7 = 0x1680;
-  private static final long WHITESPACE8 = 0x180E;
-  private static final long WHITESPACE9 = 0x2000;
-  private static final long WHITESPACE10 = 0x200A;
-  private static final long WHITESPACE11 = 0x202F;
-  private static final long WHITESPACE12 = 0x205F;
-  private static final long WHITESPACE13 = 0x3000;
-  private static final long WHITESPACE14 = 0xFEFF;
   // Lu, Ll, Lt, Lm, Lo, Nl,
   // Mn, Mc, Nd, Pc
   private final static int IDENT_PART_MASK = ((1 << Character.UPPERCASE_LETTER) |
@@ -201,11 +187,11 @@ public final class Utils {
   }
 
   public static boolean isWhitespace(char ch) {
-    return (ch == WHITESPACE1) || (ch == WHITESPACE2) || (ch == WHITESPACE3) || (ch == WHITESPACE4) ||
-        (ch == WHITESPACE5) || ch >= WHITESPACE6 && (ch == WHITESPACE7 || ch == WHITESPACE8 ||
-        WHITESPACE9 <= ch && ch <= WHITESPACE10 ||
-        ch == WHITESPACE11 || ch == WHITESPACE12 ||
-        ch == WHITESPACE13 || ch == WHITESPACE14);
+    return (ch == 0x20) || (ch == 0x09) || (ch == 0x0B) || (ch == 0x0C) ||
+        (ch == 0xA0) || ch >= 0x1680 && (ch == 0x1680 || ch == 0x180E ||
+        0x2000 <= ch && ch <= 0x200A ||
+        ch == 0x202F || ch == 0x205F ||
+        ch == 0x3000 || ch == 0xFEFF);
   }
 
   @SuppressWarnings("checkstyle:magicnumber")
