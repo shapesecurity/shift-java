@@ -16,13 +16,18 @@
 
 package com.shapesecurity.functional.data;
 
-import com.shapesecurity.functional.*;
-import org.jetbrains.annotations.NotNull;
-
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+
+import com.shapesecurity.functional.Effect;
+import com.shapesecurity.functional.F;
+import com.shapesecurity.functional.F2;
+import com.shapesecurity.functional.Pair;
+import com.shapesecurity.functional.Thunk;
+
+import org.jetbrains.annotations.NotNull;
 
 /**
  * An immutable singly linked list implementation. None of the operations in {@link ImmutableList} changes the list itself. Therefore you can freely share the list in
@@ -98,6 +103,10 @@ public abstract class ImmutableList<A> implements Iterable<A> {
 
   /**
    * A helper constructor to create a {@link NonEmptyImmutableList}.
+   * @param head The first element
+   * @param el rest of the elements
+   * @param <T> The type of the element
+   * @return a <code>NonEmptyImmutableList</code> of type <code>T</code>.
    */
   @NotNull
   @SafeVarargs
@@ -113,7 +122,10 @@ public abstract class ImmutableList<A> implements Iterable<A> {
   }
 
   /**
-   * A helper constructor to create a {@link ImmutableList}.
+   * A helper constructor to create a potentially empty {@link ImmutableList}.
+   * @param el Elements of the list
+   * @param <A> The type of elements
+   * @return a <code>ImmutableList</code> of type <code>A</code>.
    */
   @NotNull
   @SafeVarargs
@@ -413,7 +425,7 @@ public abstract class ImmutableList<A> implements Iterable<A> {
    * the
    * same size, type or number.
    * <p>
-   * This operation is often called "bind" or ">>=" of a monad in pure functional programming context.
+   * This operation is often called "bind" or "&gt;&gt;=" of a monad in pure functional programming context.
    *
    * @param f   The function to expand the list element.
    * @param <B> The type of the result list.
@@ -452,6 +464,8 @@ public abstract class ImmutableList<A> implements Iterable<A> {
    * <code>Maybe.just</code>. Other wise return <code>Maybe.nothing()</code>
    *
    * @param f The predicate.
+   * @param <B> The type of the result of the mapping function.
+   *
    * @return <code>Maybe.just(the found element)</code> if an element is found or <code>Maybe.nothing()</code> if none is found.
    */
   @NotNull

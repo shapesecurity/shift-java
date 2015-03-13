@@ -27,8 +27,8 @@ import org.jetbrains.annotations.Nullable;
 /**
  * An immutable hash trie tree implementation.
  *
- * @param <K>
- * @param <V>
+ * @param <K> Key type
+ * @param <V> Value type
  */
 public abstract class HashTable<K, V> {
   private final static Hasher<Object> DEFAULT_HASHER = new Hasher<Object>() {
@@ -125,8 +125,8 @@ public abstract class HashTable<K, V> {
   /**
    * An empty hash table.
    *
-   * @param <K>
-   * @param <V>
+   * @param <K> Key type
+   * @param <V> Value type
    */
   private final static class Empty<K, V> extends HashTable<K, V> {
     protected Empty(@NotNull Hasher<K> hasher) {
@@ -195,8 +195,8 @@ public abstract class HashTable<K, V> {
   /**
    * A leaf node that contains a list of pairs where all the keys have exactly the same hash code.
    *
-   * @param <K>
-   * @param <V>
+   * @param <K> Key type
+   * @param <V> Value type
    */
   private final static class Leaf<K, V> extends HashTable<K, V> {
     @NotNull
