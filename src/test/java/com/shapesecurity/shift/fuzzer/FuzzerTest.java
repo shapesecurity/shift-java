@@ -17,7 +17,7 @@
 
 package com.shapesecurity.shift.fuzzer;
 
-import static org.junit.Assert.assertEquals;
+import java.util.Random;
 
 import com.shapesecurity.shift.ast.Script;
 import com.shapesecurity.shift.codegen.CodeGen;
@@ -25,7 +25,7 @@ import com.shapesecurity.shift.parser.JsError;
 import com.shapesecurity.shift.parser.Parser;
 import com.shapesecurity.shift.validator.Validator;
 
-import java.util.Random;
+import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
@@ -52,7 +52,7 @@ public class FuzzerTest {
     assertEquals("", CodeGen.codeGen(script));
     test(10, 10);
     long start = System.nanoTime();
-    int N = 100000;
+    int N = 10000;
     for (int i = 799; i < N; i++) {
       test(i, 10);
       if (i % 30 == 0) {
