@@ -36,7 +36,7 @@ public class Minifier {
   private static final FixPointTransformer REDUCTION = new FixPointTransformer(new ComposedRule<>(
       new ReductionRule[]{FlattenBlocks.INSTANCE, ReduceNestedIfStatements.INSTANCE, RemoveEmptyBlocks.INSTANCE,
                           RemoveEmptyStatements.INSTANCE, RemoveEmptyTrailingDefault.INSTANCE,
-                          RemoveSingleStatementBlocks.INSTANCE, ReplaceWhileWithFor.INSTANCE,}));
+                          ReplaceWhileWithFor.INSTANCE,}));
   private static final FixPointTransformer EXPANSION = new FixPointTransformer(new ComposedRule<>(
       new ExpansionRule[]{ReplaceStaticMemberAccessWithDynamicMemberAccess.INSTANCE, ExpandBooleanLiterals.INSTANCE,
                           TopLevelExpressionWithProhibitedFirstToken.INSTANCE,}));
