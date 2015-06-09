@@ -11,11 +11,7 @@ public class ThisExpressionTest extends Assertions {
 
   @Test
   public void testThisExpression() throws JsError {
-    testScript("this;", new Script(ImmutableList.nil(), ImmutableList.list(
-        new ExpressionStatement(new ThisExpression())
-    )));
-    testModule("this;", new Module(ImmutableList.nil(), ImmutableList.list(
-        new ExpressionStatement(new ThisExpression())
-    )));
+    testScript("this;", new ThisExpression());
+    testModule("this;", new ThisExpression());
   }
 }
