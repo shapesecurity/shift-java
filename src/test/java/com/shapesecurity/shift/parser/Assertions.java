@@ -1,7 +1,6 @@
 package com.shapesecurity.shift.parser;
 
-import com.shapesecurity.shift.ast.Module;
-import com.shapesecurity.shift.ast.Script;
+import com.shapesecurity.shift.ast.*;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -16,32 +15,48 @@ public class Assertions {
   }
 
   public static void testScript(String source, Script expected) throws JsError {
-    {
-      Script node = Parser.parseScript(source);
-      assertEquals(expected, node);
-    }
-    {
-      //Script node = Parser.parseScriptWithLocation(source);
-      //assertEquals(expected, jsonString);
-      //node.reduce(new RangeCheckerReducer());
-    }
+    Script node = Parser.parseScript(source);
+    assertEquals(expected, node);
   }
+
+  public static void testScript(String source, Statement expected) throws JsError {
+    Script node = Parser.parseScript(source);
+    assert(node.statements.isNotEmpty());
+    assertEquals(expected, node.statements.maybeHead().just());
+  }
+
+  public static void testScript(String source, Expression expected) throws JsError {
+    Script node = Parser.parseScript(source);
+    assert(node.statements.isNotEmpty());
+    Statement stmt = node.statements.maybeHead().just();
+    assert(stmt instanceof ExpressionStatement);
+    assertEquals(expected, ((ExpressionStatement) stmt).expression);
+  }
+
 
   public static void testModule(String source) throws JsError {
     Parser.parseModule(source);
   }
 
   public static void testModule(String source, Module expected) throws JsError {
-    {
-      Module node = Parser.parseModule(source);
-      assertEquals(expected, node);
-    }
-    {
-      //Module node = Parser.parseModuleWithLocation(source);
-      //assertEquals(expected, jsonString);
-      //node.reduce(new RangeCheckerReducer());
-    }
+    Module node = Parser.parseModule(source);
+    assertEquals(expected, node);
   }
+
+  public static void testModule(String source, ImportDeclarationExportDeclarationStatement expected) throws JsError {
+    Module node = Parser.parseModule(source);
+    assert(node.items.isNotEmpty());
+    assertEquals(expected, node.items.maybeHead().just());
+  }
+
+  public static void testModule(String source, Expression expected) throws JsError {
+    Module node = Parser.parseModule(source);
+    assert(node.items.isNotEmpty());
+    ImportDeclarationExportDeclarationStatement stmt = node.items.maybeHead().just();
+    assert(stmt instanceof ExpressionStatement);
+    assertEquals(expected, ((ExpressionStatement) stmt).expression);
+  }
+
 
   public static void testScriptFailureML(@NotNull String source, int line, int column, int index, @NotNull String error) {
     try {
