@@ -616,9 +616,28 @@ public class Parser extends Tokenizer {
   }
 
   private Expression parseUnaryExpression() throws JsError {
+    if (this.lookahead.type.klass != TokenClass.Punctuator && this.lookahead.type.klass != TokenClass.Keyword) {
+      return this.parseUpdateExpression();
+    }
+
     SourceLocation startLocation = this.getLocation();
-    // TODO: rest of function
-    return this.parseUpdateExpression();
+    Token operatorToken = this.lookahead;
+    if (!this.isPrefixOperator(operatorToken)) {
+      return this.parseUpdateExpression();
+    }
+
+    this.lex();
+    this.isBindingElement = this.isAssignmentTarget = false;
+    Expression operand = this.parseUnaryExpression();
+
+    Node node;
+    UpdateOperator updateOperator = this.lookupUpdateOperator(operatorToken);
+    if (updateOperator != null) {
+      return createUpdateExpression(startLocation, operand, updateOperator);
+    }
+    UnaryOperator operator = this.lookupUnaryOperator(operatorToken);
+    assert operator != null;
+    return new UnaryExpression(operator, operand);
   }
 
   @NotNull
@@ -630,6 +649,12 @@ public class Parser extends Tokenizer {
     if (operator == null) {
       return operand;
     }
+    this.lex();
+    return createUpdateExpression(startLocation, operand, operator);
+  }
+
+  @NotNull
+  private Expression createUpdateExpression(@NotNull SourceLocation startLocation, @NotNull Expression operand, @NotNull UpdateOperator operator) throws JsError {
     BindingIdentifierMemberExpression restrictedOperand;
     if (operand instanceof MemberExpression) {
       restrictedOperand = (MemberExpression) operand;
@@ -639,9 +664,9 @@ public class Parser extends Tokenizer {
     } else {
       throw this.createError("Cannot increment/decrement expression of type " + operand.getClass().getName());
     }
-    this.lex();
     return this.markLocation(startLocation, new UpdateExpression(false, operator, restrictedOperand));
   }
+
 
   private Expression parseNumericLiteral() throws JsError {
     SourceLocation startLocation = this.getLocation();
@@ -815,6 +840,52 @@ public class Parser extends Tokenizer {
     return null;
   }
 
+
+  private boolean isUpdateOperator(Token token) {
+    switch (token.type) {
+      case INC:
+      case DEC:
+        return true;
+    }
+    return false;
+  }
+
+  private boolean isPrefixOperator(Token token) {
+    switch (token.type) {
+      case INC:
+      case DEC:
+      case ADD:
+      case SUB:
+      case BIT_NOT:
+      case NOT:
+      case DELETE:
+      case VOID:
+      case TYPEOF:
+        return true;
+    }
+    return false;
+  }
+
+  @Nullable
+  private UnaryOperator lookupUnaryOperator(Token token) {
+    switch (token.type) {
+      case ADD:
+        return UnaryOperator.Plus;
+      case SUB:
+        return UnaryOperator.Minus;
+      case BIT_NOT:
+        return UnaryOperator.BitNot;
+      case NOT:
+        return UnaryOperator.LogicalNot;
+      case DELETE:
+        return UnaryOperator.Delete;
+      case VOID:
+        return UnaryOperator.Void;
+      case TYPEOF:
+        return UnaryOperator.Typeof;
+    }
+    return null;
+  }
 
   @Nullable
   private UpdateOperator lookupUpdateOperator(Token token) {
