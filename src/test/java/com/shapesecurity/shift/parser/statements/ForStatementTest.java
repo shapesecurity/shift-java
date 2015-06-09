@@ -3,7 +3,6 @@ package com.shapesecurity.shift.parser.statements;
 import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.functional.data.Maybe;
 import com.shapesecurity.shift.ast.*;
-import com.shapesecurity.shift.ast.operators.AssignmentOperator;
 import com.shapesecurity.shift.ast.operators.CompoundAssignmentOperator;
 import com.shapesecurity.shift.parser.Assertions;
 import com.shapesecurity.shift.parser.JsError;
