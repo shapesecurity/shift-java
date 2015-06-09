@@ -18,8 +18,6 @@ package com.shapesecurity.shift.ast.operators;
 
 public enum Precedence {
   SEQUENCE,
-  SPREAD,
-  YIELD,
   ASSIGNMENT,
   CONDITIONAL,
   LOGICAL_OR,

@@ -627,60 +627,6 @@ public class Tokenizer {
     return r1 << 4 | r2;
   }
 
-  @NotNull
-  private CharSequence getEscapedIdentifier() throws JsError {
-    char ch = this.source.charAt(this.index);
-    this.index++;
-    if (this.index >= this.source.length()) {
-      throw this.createILLEGAL();
-    }
-
-    StringBuilder id = new StringBuilder();
-
-    if (ch == '\\') {
-      if (this.source.charAt(this.index) != 'u') {
-        throw this.createILLEGAL();
-      }
-      this.index++;
-      if (this.index >= this.source.length()) {
-        throw this.createILLEGAL();
-      }
-      int ich = this.scanHexEscape4();
-      if (ich < 0 || ich == '\\' || !Utils.isIdentifierStart((char) ich)) {
-        throw this.createILLEGAL();
-      }
-      ch = (char) ich;
-    }
-    id.append(ch);
-
-    while (this.index < this.source.length()) {
-      ch = this.source.charAt(this.index);
-      if (!Utils.isIdentifierPart(ch) && ch != '\\') {
-        break;
-      }
-      this.index++;
-      if (ch == '\\') {
-        if (this.index >= this.source.length()) {
-          throw this.createILLEGAL();
-        }
-        if (this.source.charAt(this.index) != 'u') {
-          throw this.createILLEGAL();
-        }
-        this.index++;
-        if (this.index >= this.source.length()) {
-          throw this.createILLEGAL();
-        }
-        int ich = this.scanHexEscape4();
-        if (ich < 0 || ich == '\\' || !Utils.isIdentifierPart((char) ich)) {
-          throw this.createILLEGAL();
-        }
-        ch = (char) ich;
-      }
-      id.append(ch);
-    }
-
-    return id;
-  }
 
   @NotNull
   private CharSequence getIdentifier() throws JsError {
@@ -906,286 +852,7 @@ public class Tokenizer {
   }
 
   @NotNull
-  private Token scanNumericLiteral() throws JsError {
-    @NotNull
-    BigInteger value = BigInteger.ZERO;
-    char ch = this.source.charAt(this.index);
-    // assert(ch == '.' || '0' <= ch && ch <= '9')
-    int start = this.index;
-
-    if (ch == '0') {
-      this.index++;
-      if (this.index < this.source.length()) {
-        ch = this.source.charAt(this.index);
-        if (ch == 'x' || ch == 'X') {
-          this.index++;
-          return this.scanHexLiteral(start);
-        } else if ('0' <= ch && ch <= '9') {
-          return this.scanOctalLiteral(start);
-        }
-      } else {
-        return new NumericLiteralToken(this.getSlice(start), 0);
-      }
-    } else if (ch != '.') {
-      // Must be '1'..'9'
-      ch = this.source.charAt(this.index);
-      while ('0' <= ch && ch <= '9') {
-        value = value.multiply(BigInteger.TEN);
-        value = value.add(BigInteger.valueOf(ch - '0'));
-        this.index++;
-        if (this.index == this.source.length()) {
-          return new NumericLiteralToken(this.getSlice(start), value.doubleValue());
-        }
-        ch = this.source.charAt(this.index);
-      }
-    }
-
-    int e = 0;
-    if (ch == '.') {
-      this.index++;
-      if (this.index == this.source.length()) {
-        return new NumericLiteralToken(this.getSlice(start), value.doubleValue());
-      }
-
-      ch = this.source.charAt(this.index);
-      while ('0' <= ch && ch <= '9') {
-        e++;
-        value = value.multiply(BigInteger.TEN);
-        value = value.add(BigInteger.valueOf(ch - '0'));
-        this.index++;
-        if (this.index == this.source.length()) {
-          return new NumericLiteralToken(this.getSlice(start), new BigDecimal(value, e).doubleValue());
-        }
-        ch = this.source.charAt(this.index);
-      }
-    }
-
-    // EOF not reached here
-    if (ch == 'e' || ch == 'E') {
-      this.index++;
-      if (this.index == this.source.length()) {
-        throw this.createILLEGAL();
-      }
-
-      ch = this.source.charAt(this.index);
-      boolean neg = false;
-      if (ch == '+' || ch == '-') {
-        neg = ch == '-';
-        this.index++;
-        if (this.index == this.source.length()) {
-          throw this.createILLEGAL();
-        }
-        ch = this.source.charAt(this.index);
-      }
-
-      int f = 0;
-      if ('0' <= ch && ch <= '9') {
-        while ('0' <= ch && ch <= '9') {
-          f *= 10;
-          f += ch - '0';
-          this.index++;
-          if (this.index == this.source.length()) {
-            break;
-          }
-          ch = this.source.charAt(this.index);
-        }
-      } else {
-        throw this.createILLEGAL();
-      }
-      e += neg ? f : -f;
-    }
-
-    if (Utils.isIdentifierStart(ch)) {
-      throw this.createILLEGAL();
-    }
-
-    return new NumericLiteralToken(this.getSlice(start), new BigDecimal(value, e).doubleValue());
-  }
-
-  // 7.8.4 String Literals
-  @NotNull
-  private Token scanStringLiteral() throws JsError {
-    StringBuilder str = new StringBuilder();
-
-    char quote = this.source.charAt(this.index);
-    //	assert((quote == '\'' || quote == '"'),
-    //		'String literal must starts with a quote')
-
-    int start = this.index;
-    this.index++;
-
-    boolean octal = false;
-    while (this.index < this.source.length()) {
-      char ch = this.source.charAt(this.index);
-      if (ch == quote) {
-        this.index++;
-        return new StringLiteralToken(this.getSlice(start), str.toString(), octal);
-      } else if (ch == '\\') {
-        this.index++;
-        if (this.index == this.source.length()) {
-          throw this.createILLEGAL();
-        }
-        ch = this.source.charAt(this.index);
-        if (!Utils.isLineTerminator(ch)) {
-          switch (ch) {
-          case 'n':
-            str.append('\n');
-            this.index++;
-            break;
-          case 'r':
-            str.append('\r');
-            this.index++;
-            break;
-          case 't':
-            str.append('\t');
-            this.index++;
-            break;
-          case 'u':
-          case 'x':
-            int restore = this.index;
-            int unescaped;
-            this.index++;
-            if (this.index >= this.source.length()) {
-              throw this.createILLEGAL();
-            }
-            unescaped = ch == 'u' ? this.scanHexEscape4() : this.scanHexEscape2();
-            if (unescaped >= 0) {
-              str.append((char) unescaped);
-            } else {
-              this.index = restore;
-              str.append(ch);
-              this.index++;
-            }
-            break;
-          case 'b':
-            str.append('\b');
-            this.index++;
-            break;
-          case 'f':
-            str.append('\f');
-            this.index++;
-            break;
-          case 'v':
-            str.append('\u000B');
-            this.index++;
-            break;
-          default:
-            if ('0' <= ch && ch <= '7') {
-              octal = true;
-              int octLen = 1;
-              // 3 digits are only allowed when string starts
-              // with 0, 1, 2, 3
-              if ('0' <= ch && ch <= '3') {
-                octLen = 0;
-              }
-              int code = 0;
-              while (octLen < 3 && '0' <= ch && ch <= '7') {
-                code *= 8;
-                octLen++;
-                code += ch - '0';
-                this.index++;
-                if (this.index == this.source.length()) {
-                  throw this.createILLEGAL();
-                }
-                ch = this.source.charAt(this.index);
-              }
-              str.append((char) code);
-            } else {
-              str.append(ch);
-              this.index++;
-            }
-          }
-        } else {
-          this.hasLineTerminatorBeforeNext = true;
-          this.index++;
-          if (ch == '\r' && this.source.charAt(this.index) == '\n') {
-            this.index++;
-          }
-          this.lineStart = this.index;
-          this.line++;
-        }
-      } else if (Utils.isLineTerminator(ch)) {
-        throw this.createILLEGAL();
-      } else {
-        str.append(ch);
-        this.index++;
-      }
-    }
-
-    throw this.createILLEGAL();
-  }
-
-  @NotNull
-  protected Token rescanRegExp() throws JsError {
-    // rollback to the beginning of the token.
-    this.index = this.startIndex;
-    this.line = this.startLine;
-    this.lineStart = this.startLineStart;
-    this.lookahead = this.scanRegExp();
-    return this.lookahead;
-  }
-
-  @NotNull
-  private Token scanRegExp() throws JsError {
-    int start = this.index;
-
-    StringBuilder str = new StringBuilder();
-    str.append('/');
-    this.index++;
-
-    boolean terminated = false;
-    boolean classMarker = false;
-    while (this.index < this.source.length()) {
-      char ch = this.source.charAt(this.index);
-      if (ch == '\\') {
-        str.append(ch);
-        this.index++;
-        ch = this.source.charAt(this.index);
-        // ECMA-262 7.8.5
-        if (Utils.isLineTerminator(ch)) {
-          throw this.createError(ErrorMessages.UNTERMINATED_REG_EXP);
-        }
-        str.append(ch);
-        this.index++;
-      } else if (Utils.isLineTerminator(ch)) {
-        throw this.createError(ErrorMessages.UNTERMINATED_REG_EXP);
-      } else {
-        if (classMarker) {
-          if (ch == ']') {
-            classMarker = false;
-          }
-        } else {
-          if (ch == '/') {
-            terminated = true;
-            str.append(ch);
-            this.index++;
-            break;
-          } else if (ch == '[') {
-            classMarker = true;
-          }
-        }
-        str.append(ch);
-        this.index++;
-      }
-    }
-
-    if (!terminated) {
-      throw this.createError(ErrorMessages.UNTERMINATED_REG_EXP);
-    }
-
-    while (this.index < this.source.length()) {
-      char ch = this.source.charAt(this.index);
-      if (!Utils.isIdentifierPart(ch) && ch != '\\') {
-        break;
-      }
-      this.index++;
-      str.append(ch);
-    }
-    return new RegularExpressionLiteralToken(this.getSlice(start), str.toString());
-  }
-
-  @NotNull
-  private Token advance() throws JsError {
+  public Token advance() throws JsError {
     char ch = this.source.charAt(this.index);
 
     if (ch < 0x80) {
@@ -1229,6 +896,112 @@ public class Tokenizer {
     }
   }
 
+  @NotNull
+  private Token scanStringLiteral() {
+    return null;
+  }
+
+  @NotNull
+  private Token scanNumericLiteral() throws JsError {
+    char ch = this.source.charAt(this.index);
+    SourceLocation startLocation = this.getLocation();
+    int start = this.index;
+
+    if (ch == '0') {
+      this.index++;
+      if (this.index < this.source.length()) {
+        ch = this.source.charAt(this.index);
+        if (ch == 'x' || ch == 'X') {
+          this.index++;
+          return this.scanHexLiteral(start);
+        } else if (ch == 'b' || ch == 'B') {
+//          return this.scan TODO: scan binary literal
+        } else if (ch =='o' || ch == 'O') {
+          return this.scanOctalLiteral(start);
+        } else if ('0' <= ch && ch <= '9') {
+          // TODO: scan legacy octal literal
+        }
+      } else {
+        SourceRange slice = this.getSlice(start);
+        return new NumericLiteralToken(slice, Double.parseDouble(slice.toString()));
+      }
+    }
+    else if (ch != '.') {
+      ch = this.source.charAt(this.index);
+      while ('0' <= ch && ch <= '9') {
+        this.index++;
+        if (this.index == this.source.length()) {
+          SourceRange slice = this.getSlice(start);
+          return new NumericLiteralToken(slice, Double.parseDouble(slice.toString()));
+        }
+        ch = this.source.charAt(this.index);
+      }
+    }
+
+    if (ch == '.') {
+      this.index++;
+      if (this.index == this.source.length()) {
+        SourceRange slice = this.getSlice(start);
+        return new NumericLiteralToken(slice, Double.parseDouble(slice.toString()));
+      }
+    }
+
+    int e = 0;
+    ch = this.source.charAt(this.index);
+    while ('0' <= ch && ch <= '9') {
+      e++;
+      this.index++;
+      if (this.index == this.source.length()) {
+        SourceRange slice = this.getSlice(start);
+        return new NumericLiteralToken(slice, Double.parseDouble(slice.toString()));
+      }
+      ch = this.source.charAt(this.index);
+    }
+
+    if (ch == 'e' || ch == 'E') {
+      this.index++;
+      if (this.index == this.source.length()) {
+        throw this.createILLEGAL();
+      }
+
+      ch = this.source.charAt(this.index);
+
+      boolean neg = false;
+      if (ch == '+' || ch == '-') {
+        neg = ch == '-';
+        this.index++;
+        if (this.index == this.source.length()) {
+          throw this.createILLEGAL();
+        }
+        ch = this.source.charAt(this.index);
+      }
+
+      int f = 0;
+      if ('0' <= ch && ch <= '9') {
+        while ('0' <= ch && ch <= '9') {
+          f *= 10;
+          f += +ch;
+          this.index++;
+          if (this.index == this.source.length()) {
+            break;
+          }
+          ch = this.source.charAt(this.index);
+        }
+      } else {
+        throw this.createILLEGAL();
+      }
+      e += neg ? f : -f;
+    }
+
+    if (Utils.isIdentifierStart(ch)) {
+      throw this.createILLEGAL();
+    }
+
+    SourceRange slice = this.getSlice(start);
+    return new NumericLiteralToken(slice, Double.parseDouble(slice.toString()));
+  }
+
+
   protected boolean eof() {
     return this.lookahead.type == TokenType.EOS;
   }
@@ -1269,5 +1042,10 @@ public class Tokenizer {
     this.lookahead = this.collectToken();
 
     return prevToken;
+  }
+
+  @NotNull
+  public CharSequence getEscapedIdentifier() {
+    return null;
   }
 }

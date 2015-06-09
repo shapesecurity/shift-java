@@ -28,8 +28,6 @@ import com.shapesecurity.shift.TestReducer;
 import com.shapesecurity.shift.TestReducerWithPath;
 import com.shapesecurity.shift.parser.JsError;
 import com.shapesecurity.shift.parser.Parser;
-import com.shapesecurity.shift.path.Branch;
-import com.shapesecurity.shift.path.StaticBranch;
 
 import static org.junit.Assert.*;
 

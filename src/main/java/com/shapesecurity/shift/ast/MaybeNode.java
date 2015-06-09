@@ -18,30 +18,13 @@
 package com.shapesecurity.shift.ast;
 
 import com.shapesecurity.functional.data.Maybe;
-import com.shapesecurity.shift.ast.types.GenType;
-import com.shapesecurity.shift.ast.types.MaybeType;
-import com.shapesecurity.shift.ast.types.Type;
 
 import org.jetbrains.annotations.NotNull;
 
 public class MaybeNode<T> extends Node {
   public final Maybe<T> maybe;
-  public final MaybeType genType;
 
-  public MaybeNode(@NotNull Maybe<T> maybe, @NotNull MaybeType genType) {
+  public MaybeNode(@NotNull Maybe<T> maybe) {
     this.maybe = maybe;
-    this.genType = genType;
-  }
-
-  @NotNull
-  @Override
-  public Type type() {
-    return Type.Maybe;
-  }
-
-  @NotNull
-  @Override
-  public GenType genType() {
-    return this.genType;
   }
 }
