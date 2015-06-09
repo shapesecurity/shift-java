@@ -16,13 +16,13 @@
 
 package com.shapesecurity.shift.parser;
 
-import com.shapesecurity.functional.Pair;
+import com.shapesecurity.functional.Thunk;
 import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.functional.data.Maybe;
+import com.shapesecurity.functional.data.NonEmptyImmutableList;
 import com.shapesecurity.shift.ast.*;
-import com.shapesecurity.shift.ast.BinaryExpression;
-import com.shapesecurity.shift.ast.Expression;
 import com.shapesecurity.shift.ast.operators.BinaryOperator;
+import com.shapesecurity.shift.ast.operators.Precedence;
 import com.shapesecurity.shift.ast.operators.UnaryOperator;
 import com.shapesecurity.shift.ast.operators.UpdateOperator;
 import org.jetbrains.annotations.NotNull;
@@ -31,7 +31,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.function.BiFunction;
-import java.util.function.Supplier;
 
 public class Parser extends Tokenizer {
   @NotNull
@@ -85,7 +84,6 @@ public class Parser extends Tokenizer {
         return null;
     }
   }
-
 
 
   /*
@@ -167,12 +165,10 @@ public class Parser extends Tokenizer {
   }
 
   @NotNull
-  private Script parseScript() throws JsError
-  {
+  private Script parseScript() throws JsError {
     SourceLocation startLocation = this.getLocation();
     Script node = this.parseBody(this::parseStatementListItem, Script::new);
-    if (!this.match(TokenType.EOS))
-    {
+    if (!this.match(TokenType.EOS)) {
       throw this.createUnexpected(this.lookahead);
     }
     return this.markLocation(startLocation, node);
@@ -194,16 +190,13 @@ public class Parser extends Tokenizer {
   }
 
   @NotNull
-  private <A, B> B parseBody(@NotNull ExceptionalSupplier<A> parser, @NotNull BiFunction<ImmutableList<Directive>, ImmutableList<A>, B> constructor) throws JsError
-  {
+  private <A, B> B parseBody(@NotNull ExceptionalSupplier<A> parser, @NotNull BiFunction<ImmutableList<Directive>, ImmutableList<A>, B> constructor) throws JsError {
     ArrayList<Directive> directives = new ArrayList<>();
     ArrayList<A> statements = new ArrayList<>();
     boolean parsingDirectives = true;
 
-    while (true)
-    {
-      if (this.eof() || this.match(TokenType.RBRACE))
-      {
+    while (true) {
+      if (this.eof() || this.match(TokenType.RBRACE)) {
         break;
       }
 
@@ -213,20 +206,14 @@ public class Parser extends Tokenizer {
       SourceLocation directiveLocation = this.getLocation();
       A stmt = parser.get();
 
-      if (parsingDirectives)
-      {
-        if (isStringLiteral && stmt.getClass() == ExpressionStatement.class && ((ExpressionStatement)stmt).expression.getClass() == LiteralStringExpression.class)
-        {
+      if (parsingDirectives) {
+        if (isStringLiteral && stmt.getClass() == ExpressionStatement.class && ((ExpressionStatement) stmt).expression.getClass() == LiteralStringExpression.class) {
           directives.add(this.markLocation(directiveLocation, new Directive(text.substring(1, -1))));
-        }
-        else
-        {
+        } else {
           parsingDirectives = false;
           statements.add(stmt);
         }
-      }
-      else
-      {
+      } else {
         statements.add(stmt);
       }
     }
@@ -302,12 +289,12 @@ public class Parser extends Tokenizer {
       this.expect(TokenType.ASSIGN);
     }
 
-    Expression init = null;
+    Maybe<Expression> init = Maybe.nothing();
     if (this.eat(TokenType.ASSIGN)) {
-      init = this.parseAssignmentExpression();
+      init = Maybe.just(this.parseAssignmentExpression());
     }
 
-    return this.markLocation(startLocation, new VariableDeclarator(binding, Maybe.fromNullable(init)));
+    return this.markLocation(startLocation, new VariableDeclarator(binding, init));
   }
 
   private Binding parseBindingTarget() throws JsError {
@@ -363,7 +350,7 @@ public class Parser extends Tokenizer {
   }
 
   private Statement parseIfStatementChild() throws JsError {
-    return this.match(TokenType.FUNCTION) ? this.parseFunction(false, false): this.parseStatement();
+    return this.match(TokenType.FUNCTION) ? this.parseFunction(false, false) : this.parseStatement();
   }
 
   // isExpr is false
@@ -463,37 +450,47 @@ public class Parser extends Tokenizer {
     return binding;
   }
 
-  private Statement parseStatement() throws JsError
-  {
+  private Statement parseStatement() throws JsError {
     SourceLocation startLocation = this.getLocation();
     Statement stmt = this.parseStatementHelper();
     return this.markLocation(startLocation, stmt);
   }
 
-  private Statement parseStatementHelper() throws JsError
-  {
+  private Statement parseStatementHelper() throws JsError {
     SourceLocation startLocation = this.getLocation();
-    if (this.eof())
-    {
+    if (this.eof()) {
       throw this.createUnexpected(this.lookahead);
     }
 
-    switch (this.lookahead.type)
-    {
+    // TODO: rest of function
+    switch (this.lookahead.type) {
       case SEMICOLON:
         return this.parseEmptyStatement();
       case LPAREN:
         return this.parseExpressionStatement();
+      case LBRACE:
+        return this.parseBlockStatement();
       case IF:
         return this.parseIfStatement();
       case WHILE:
         return this.parseWhileStatement();
       case VAR:
         return this.parseVariableDeclarationStatement();
-      default:
+      default: {
+        if (this.lookaheadLexicalDeclaration()) {
+          throw this.createUnexpected(this.lookahead);
+        }
         Expression expr = this.parseExpression();
+//        if (expr.getClass() == IdentifierExpression.class && this.eat(TokenType.COLON)) {
+//          Statement labeledBody = this.match(TokenType.FUNCTION) ? this.parseFunction(false, false) : this.parseStatement();
+//          return new LabeledStatement(expr.toString(), labeledBody);
+//        } else {
+//          this.consumeSemicolon();
+//          return new ExpressionStatement(expr);
+//        }
         this.consumeSemicolon();
-        return this.markLocation(startLocation, new ExpressionStatement(expr));
+        return new ExpressionStatement(expr);
+      }
     }
   }
 
@@ -516,8 +513,19 @@ public class Parser extends Tokenizer {
     return body;
   }
 
-  private Statement parseBlockStatement() {
-    return null;
+  private Statement parseBlockStatement() throws JsError {
+    return new BlockStatement(this.parseBlock());
+  }
+
+  private Block parseBlock() throws JsError {
+    SourceLocation startLocation = this.getLocation();
+    this.expect(TokenType.LBRACE);
+    ArrayList<Statement> body = new ArrayList<>();
+    while (!this.match(TokenType.RBRACE)) {
+      body.add(parseStatementListItem());
+    }
+    this.expect(TokenType.RBRACE);
+    return this.markLocation(startLocation, new Block(ImmutableList.from(body)));
   }
 
   private Statement parseExpressionStatement() throws JsError {
@@ -526,10 +534,9 @@ public class Parser extends Tokenizer {
     return new ExpressionStatement(expr);
   }
 
-  private Expression parseExpression() throws JsError
-  {
+  private Expression parseExpression() throws JsError {
     SourceLocation startLocation = this.getLocation();
-    Expression left = this.parseAssignmentExpressionOrBindingElement();
+    Expression left = this.parseAssignmentExpression();
     if (!this.match(TokenType.COMMA)) {
       while (!this.eof()) {
         if (!this.match(TokenType.COMMA)) {
@@ -541,8 +548,6 @@ public class Parser extends Tokenizer {
       }
     }
     return left;
-
-//    return this.markLocation(startLocation, this.parsePrimaryExpression());
   }
 
   // TODO: rest of expression hierarchy
@@ -568,14 +573,74 @@ public class Parser extends Tokenizer {
   private Expression parseBinaryExpression() throws JsError {
     SourceLocation startLocation = this.getLocation();
     Expression left = this.parseUnaryExpression();
-    // TODO: rest of function
-    return left;
+
+    BinaryOperator operator = this.lookupBinaryOperator(this.lookahead);
+    if (operator == null) {
+      return left;
+    }
+
+    this.isBindingElement = this.isAssignmentTarget = false;
+
+    this.lex();
+    ImmutableList<ExprStackItem> stack = ImmutableList.nil();
+    stack = stack.cons(new ExprStackItem(startLocation, left, operator));
+    startLocation = this.getLocation();
+    Expression expr = this.parseUnaryExpression();
+
+    operator = this.lookupBinaryOperator(this.lookahead);
+    while (operator != null) {
+      Precedence precedence = operator.getPrecedence();
+      // Reduce: make a binary expression from the three topmost entries.
+      while ((stack.isNotEmpty()) && (precedence.ordinal() <= ((NonEmptyImmutableList<ExprStackItem>) stack).head.precedence)) {
+        ExprStackItem stackItem = ((NonEmptyImmutableList<ExprStackItem>) stack).head;
+        BinaryOperator stackOperator = stackItem.operator;
+        left = stackItem.left;
+        stack = ((NonEmptyImmutableList<ExprStackItem>) stack).tail();
+        startLocation = stackItem.startLocation;
+        expr = this.markLocation(stackItem.startLocation, new BinaryExpression(stackOperator, left, expr));
+      }
+
+      // Shift.
+      this.lex();
+      stack = stack.cons(new ExprStackItem(startLocation, expr, operator));
+      startLocation = this.getLocation();
+      expr = this.parseUnaryExpression();
+
+      operator = this.lookupBinaryOperator(this.lookahead);
+    }
+
+    // Final reduce to clean-up the stack.
+    return stack.foldLeft(
+        (expr1, stackItem) -> this.markLocation(
+            stackItem.startLocation, new BinaryExpression(stackItem.operator, stackItem.left, expr1)), expr);
   }
 
   private Expression parseUnaryExpression() throws JsError {
     SourceLocation startLocation = this.getLocation();
     // TODO: rest of function
-    return this.parseLeftHandSideExpression(true);
+    return this.parseUpdateExpression();
+  }
+
+  @NotNull
+  private Expression parseUpdateExpression() throws JsError {
+    SourceLocation startLocation = this.getLocation();
+    Expression operand = this.parseLeftHandSideExpression(true);
+    if (this.hasLineTerminatorBeforeNext) return operand;
+    UpdateOperator operator = this.lookupUpdateOperator(this.lookahead);
+    if (operator == null) {
+      return operand;
+    }
+    BindingIdentifierMemberExpression restrictedOperand;
+    if (operand instanceof MemberExpression) {
+      restrictedOperand = (MemberExpression) operand;
+    } else if (operand instanceof IdentifierExpression) {
+      String name = ((IdentifierExpression) operand).name;
+      restrictedOperand = operand.loc.map(loc -> new BindingIdentifier(loc, name)).orJustLazy(Thunk.from(() -> new BindingIdentifier(name)));
+    } else {
+      throw this.createError("Cannot increment/decrement expression of type " + operand.getClass().getName());
+    }
+    this.lex();
+    return this.markLocation(startLocation, new UpdateExpression(false, operator, restrictedOperand));
   }
 
   private Expression parseNumericLiteral() throws JsError {
@@ -651,8 +716,7 @@ public class Parser extends Tokenizer {
     return ImmutableList.from(result);
   }
 
-  private Expression parsePrimaryExpression() throws JsError
-  {
+  private Expression parsePrimaryExpression() throws JsError {
     if (this.match(TokenType.LPAREN)) {
       return this.parseGroupExpression();
     }
@@ -696,6 +760,87 @@ public class Parser extends Tokenizer {
     Expression group = this.parseAssignmentExpressionOrBindingElement();
     this.expect(TokenType.RPAREN);
     return group;
+  }
+
+  @Nullable
+  private BinaryOperator lookupBinaryOperator(@NotNull Token token) {
+    switch (token.type) {
+      case OR:
+        return BinaryOperator.LogicalOr;
+      case AND:
+        return BinaryOperator.LogicalAnd;
+      case BIT_OR:
+        return BinaryOperator.BitwiseOr;
+      case BIT_XOR:
+        return BinaryOperator.BitwiseXor;
+      case BIT_AND:
+        return BinaryOperator.BitwiseAnd;
+      case EQ:
+        return BinaryOperator.Equal;
+      case NE:
+        return BinaryOperator.NotEqual;
+      case EQ_STRICT:
+        return BinaryOperator.StrictEqual;
+      case NE_STRICT:
+        return BinaryOperator.StrictNotEqual;
+      case LT:
+        return BinaryOperator.LessThan;
+      case GT:
+        return BinaryOperator.GreaterThan;
+      case LTE:
+        return BinaryOperator.LessThanEqual;
+      case GTE:
+        return BinaryOperator.GreaterThanEqual;
+      case INSTANCEOF:
+        return BinaryOperator.Instanceof;
+      case IN:
+        return this.allowIn ? BinaryOperator.In : null;
+      case SHL:
+        return BinaryOperator.Left;
+      case SHR:
+        return BinaryOperator.Right;
+      case SHR_UNSIGNED:
+        return BinaryOperator.UnsignedRight;
+      case ADD:
+        return BinaryOperator.Plus;
+      case SUB:
+        return BinaryOperator.Minus;
+      case MUL:
+        return BinaryOperator.Mul;
+      case DIV:
+        return BinaryOperator.Div;
+      case MOD:
+        return BinaryOperator.Rem;
+    }
+    return null;
+  }
+
+
+  @Nullable
+  private UpdateOperator lookupUpdateOperator(Token token) {
+    switch (token.type) {
+      case INC:
+        return UpdateOperator.Increment;
+      case DEC:
+        return UpdateOperator.Decrement;
+    }
+    return null;
+  }
+
+  private static class ExprStackItem {
+    final SourceLocation startLocation;
+    @NotNull
+    final Expression left;
+    @NotNull
+    final BinaryOperator operator;
+    final int precedence;
+
+    ExprStackItem(@NotNull SourceLocation startLocation, @NotNull Expression left, @NotNull BinaryOperator operator) {
+      this.startLocation = startLocation;
+      this.left = left;
+      this.operator = operator;
+      this.precedence = operator.getPrecedence().ordinal();
+    }
   }
 
 
