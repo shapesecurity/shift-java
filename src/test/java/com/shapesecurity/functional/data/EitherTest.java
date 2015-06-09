@@ -44,10 +44,10 @@ public class EitherTest {
     assertTrue(e1.mapRight(plusOne).right().isNothing());
     assertEquals("a", e1.mapRight(plusOne).left().just());
     assertEquals("a", e1.mapRight(plusOne).left().just());
-    assertTrue(e1.map(F.<String>id(), plusOne).left().isJust());
-    assertTrue(e1.map(F.<String>id(), plusOne).right().isNothing());
-    assertEquals("a", e1.map(F.<String>id(), plusOne).left().just());
-    assertEquals("a", e1.map(F.<String>id(), plusOne).left().just());
+    assertTrue(e1.map(F.id(), plusOne).left().isJust());
+    assertTrue(e1.map(F.id(), plusOne).right().isNothing());
+    assertEquals("a", e1.map(F.id(), plusOne).left().just());
+    assertEquals("a", e1.map(F.id(), plusOne).left().just());
 
     assertTrue(e2.left().isNothing());
     assertTrue(e2.right().isJust());
@@ -57,10 +57,10 @@ public class EitherTest {
     assertTrue(e2.mapRight(plusOne).right().isJust());
     assertEquals(2, (int) e2.mapRight(plusOne).right().just());
     assertEquals(2, (int) e2.mapRight(plusOne).right().just());
-    assertTrue(e2.map(F.<String>id(), plusOne).left().isNothing());
-    assertTrue(e2.map(F.<String>id(), plusOne).right().isJust());
-    assertEquals(2, (int) e2.map(F.<String>id(), plusOne).right().just());
-    assertEquals(2, (int) e2.map(F.<String>id(), plusOne).right().just());
+    assertTrue(e2.map(F.id(), plusOne).left().isNothing());
+    assertTrue(e2.map(F.id(), plusOne).right().isJust());
+    assertEquals(2, (int) e2.map(F.id(), plusOne).right().just());
+    assertEquals(2, (int) e2.map(F.id(), plusOne).right().just());
 
     assertEquals(Either.left(3), Either.left(3));
     assertEquals(Either.right(3), Either.right(3));

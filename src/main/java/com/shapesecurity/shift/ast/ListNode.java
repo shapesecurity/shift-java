@@ -18,30 +18,13 @@
 package com.shapesecurity.shift.ast;
 
 import com.shapesecurity.functional.data.ImmutableList;
-import com.shapesecurity.shift.ast.types.GenType;
-import com.shapesecurity.shift.ast.types.ListType;
-import com.shapesecurity.shift.ast.types.Type;
 
 import org.jetbrains.annotations.NotNull;
 
 public class ListNode<T> extends Node {
   public final ImmutableList<T> list;
-  public final ListType genType;
 
-  public ListNode(@NotNull ImmutableList<T> list, @NotNull ListType genType) {
+  public ListNode(@NotNull ImmutableList<T> list) {
     this.list = list;
-    this.genType = genType;
-  }
-
-  @NotNull
-  @Override
-  public Type type() {
-    return Type.List;
-  }
-
-  @NotNull
-  @Override
-  public GenType genType() {
-    return this.genType;
   }
 }

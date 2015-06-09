@@ -21,7 +21,7 @@ import org.jetbrains.annotations.NotNull;
 @FunctionalInterface
 public interface F<A, R> {
   @NotNull
-  public static <A> F<A, A> id() {
+  public static <A extends B, B> F<A, B> id() {
     return o -> o;
   }
 

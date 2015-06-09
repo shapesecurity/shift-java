@@ -20,20 +20,26 @@ import com.shapesecurity.functional.F;
 
 import org.jetbrains.annotations.NotNull;
 
-public abstract class Either<A, B> {
+public final class Either<A, B> {
+  private final Object data;
+
+  private final int tag;
+
   // class local
-  private Either() {
+  private Either(Object data, int tag) {
     super();
+    this.data = data;
+    this.tag = tag;
   }
 
   @NotNull
-  public static <A, B> Left<A, B> left(@NotNull A a) {
-    return new Left<>(a);
+  public static <A, B> Either<A, B> left(@NotNull A a) {
+    return new Either<>(a, 0);
   }
 
   @NotNull
-  public static <A, B> Right<A, B> right(@NotNull B b) {
-    return new Right<>(b);
+  public static <A, B> Either<A, B> right(@NotNull B b) {
+    return new Either<>(b, 1);
   }
 
   @NotNull
@@ -41,159 +47,62 @@ public abstract class Either<A, B> {
     return e.either(x -> x, x -> x);
   }
 
-  public abstract boolean isLeft();
-
-  public final boolean isRight() {
-    return !this.isLeft();
+  public final boolean isLeft() {
+    return tag == 0;
   }
 
-  public abstract <X> X either(F<A, X> f1, F<B, X> f2);
+  public final boolean isRight() {
+    return tag == 1;
+  }
+
+  @SuppressWarnings("unchecked")
+  public <X> X either(F<A, X> f1, F<B, X> f2) {
+    if (tag == 0) {
+      return f1.apply((A) data);
+    } else {
+      return f2.apply((B) data);
+    }
+  }
 
   @NotNull
-  public abstract <X, Y> Either<X, Y> map(F<A, X> f1, F<B, Y> f2);
+  public <X, Y> Either<X, Y> map(F<A, X> f1, F<B, Y> f2) {
+    return either(a -> Either.<X, Y>left(f1.apply(a)), b -> Either.<X, Y>right(f2.apply(b)));
+  }
 
   @NotNull
-  public abstract <X> Either<X, B> mapLeft(@NotNull F<A, X> f);
+  public <X> Either<X, B> mapLeft(@NotNull F<A, X> f) {
+    return map(a -> f.apply(a), b -> b);
+  }
 
   @NotNull
-  public abstract <Y> Either<A, Y> mapRight(@NotNull F<B, Y> f);
+  public <Y> Either<A, Y> mapRight(@NotNull F<B, Y> f) {
+    return map(a -> a, b -> f.apply(b));
+  }
 
+  @SuppressWarnings("unchecked")
   @NotNull
-  public abstract Maybe<A> left();
+  public Maybe<A> left() {
+    return tag == 0 ? Maybe.just((A) data) : Maybe.nothing();
+  }
 
+  @SuppressWarnings("unchecked")
   @NotNull
-  public abstract Maybe<B> right();
+  public Maybe<B> right() {
+    return tag == 1 ? Maybe.just((B) data) : Maybe.nothing();
+  }
 
-  public abstract boolean eq(Either<A, B> either);
+  public boolean eq(Either<A, B> either) {
+    return either.tag == this.tag && either.data.equals(this.data);
+  }
 
   @Override
-  public abstract int hashCode();
+  public int hashCode() {
+    return (0b10101010 << tag) ^ this.data.hashCode();
+  }
 
   @SuppressWarnings("unchecked")
   @Override
   public final boolean equals(Object object) {
     return this == object || object instanceof Either && this.eq((Either<A, B>) object);
-  }
-
-  public static final class Left<A, B> extends Either<A, B> {
-    @NotNull
-    public final A a;
-
-    private Left(@NotNull A a) {
-      super();
-      this.a = a;
-    }
-
-    @Override
-    public int hashCode() {
-      return this.a.hashCode();
-    }
-
-    @Override
-    public boolean isLeft() {
-      return true;
-    }
-
-    @Override
-    public <X> X either(F<A, X> f1, F<B, X> f2) {
-      return f1.apply(this.a);
-    }
-
-    @NotNull
-    @Override
-    public <X, Y> Left<X, Y> map(F<A, X> f1, F<B, Y> f2) {
-      return Either.left(f1.apply(this.a));
-    }
-
-    @NotNull
-    @Override
-    public <X> Left<X, B> mapLeft(@NotNull F<A, X> f) {
-      return Either.left(f.apply(this.a));
-    }
-
-    @NotNull
-    @Override
-    public Maybe<A> left() {
-      return Maybe.just(this.a);
-    }
-
-    @NotNull
-    @Override
-    public Maybe<B> right() {
-      return Maybe.nothing();
-    }
-
-    @Override
-    public boolean eq(Either<A, B> either) {
-      return either instanceof Left && this.a.equals(((Left) either).a);
-    }
-
-    @SuppressWarnings("unchecked")
-    @NotNull
-    @Override
-    public <C> Left<A, C> mapRight(@NotNull F<B, C> f) {
-      return (Left<A, C>) this;
-    }
-  }
-
-  public static final class Right<A, B> extends Either<A, B> {
-    @NotNull
-    public final B b;
-
-    private Right(@NotNull B b) {
-      super();
-      this.b = b;
-    }
-
-    @Override
-    public boolean isLeft() {
-      return false;
-    }
-
-    @Override
-    public int hashCode() {
-      return this.b.hashCode();
-    }
-
-    @Override
-    public <X> X either(F<A, X> f1, F<B, X> f2) {
-      return f2.apply(this.b);
-    }
-
-    @NotNull
-    @Override
-    public <X, Y> Either<X, Y> map(F<A, X> f1, F<B, Y> f2) {
-      return Either.right(f2.apply(this.b));
-    }
-
-    @SuppressWarnings("unchecked")
-    @NotNull
-    @Override
-    public <X> Right<X, B> mapLeft(@NotNull F<A, X> f) {
-      return (Right<X, B>) this;
-    }
-
-    @NotNull
-    @Override
-    public <C> Right<A, C> mapRight(@NotNull F<B, C> f) {
-      return Either.right(f.apply(this.b));
-    }
-
-    @NotNull
-    @Override
-    public Maybe<A> left() {
-      return Maybe.nothing();
-    }
-
-    @NotNull
-    @Override
-    public Maybe<B> right() {
-      return Maybe.just(this.b);
-    }
-
-    @Override
-    public boolean eq(Either<A, B> either) {
-      return either instanceof Right && this.b.equals(((Right) either).b);
-    }
   }
 }
