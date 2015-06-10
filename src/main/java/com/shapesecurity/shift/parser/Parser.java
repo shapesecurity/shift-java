@@ -466,6 +466,14 @@ public class Parser extends Tokenizer {
     switch (this.lookahead.type) {
       case SEMICOLON:
         return this.parseEmptyStatement();
+      case BREAK:
+        return this.parseBreakStatement();
+      case CONTINUE:
+        return this.parseContinueStatement();
+      case DEBUGGER:
+        return this.parseDebuggerStatement();
+      case DO:
+        return this.parseDoWhileStatement();
       case LPAREN:
         return this.parseExpressionStatement();
       case LBRACE:
@@ -480,6 +488,8 @@ public class Parser extends Tokenizer {
         return this.parseWhileStatement();
       case WITH:
         return this.parseWithStatement();
+      case TRY:
+        return this.parseTryStatement();
       case VAR:
         return this.parseVariableDeclarationStatement();
       default: {
@@ -487,17 +497,102 @@ public class Parser extends Tokenizer {
           throw this.createUnexpected(this.lookahead);
         }
         Expression expr = this.parseExpression();
-//        if (expr instanceof IdentifierExpression && this.eat(TokenType.COLON)) {
-//          Statement labeledBody = this.match(TokenType.FUNCTION) ? this.parseFunction(false, false) : this.parseStatement();
-//          return new LabeledStatement(expr.toString(), labeledBody);
-//        } else {
-//          this.consumeSemicolon();
-//          return new ExpressionStatement(expr);
-//        }
-        this.consumeSemicolon();
-        return new ExpressionStatement(expr);
+        if (expr instanceof IdentifierExpression && this.eat(TokenType.COLON)) {
+          Statement labeledBody = this.match(TokenType.FUNCTION) ? this.parseFunction(false, false) : this.parseStatement();
+          return new LabeledStatement(((IdentifierExpression) expr).getName(), labeledBody);
+        } else {
+          this.consumeSemicolon();
+          return new ExpressionStatement(expr);
+        }
+//        this.consumeSemicolon();
+//        return new ExpressionStatement(expr);
       }
     }
+  }
+
+  private Statement parseDebuggerStatement() throws JsError {
+    this.lex();
+    this.consumeSemicolon();
+    return new DebuggerStatement();
+  }
+
+  private Statement parseDoWhileStatement() throws JsError {
+    this.lex();
+    Statement body = this.parseStatement();
+    this.expect(TokenType.WHILE);
+    this.expect(TokenType.LPAREN);
+    Expression test = this.parseExpression();
+    this.expect(TokenType.RPAREN);
+    this.eat(TokenType.SEMICOLON);
+    return new DoWhileStatement(test, body);
+  }
+
+  private Statement parseContinueStatement() throws JsError {
+    this.lex();
+
+    if (this.eat(TokenType.SEMICOLON) || this.hasLineTerminatorBeforeNext) {
+      return new ContinueStatement(Maybe.nothing());
+    }
+
+    Maybe<String> label = Maybe.nothing();
+    if (this.match(TokenType.IDENTIFIER) || this.match(TokenType.YIELD) || this.match(TokenType.LET)) {
+      label = Maybe.just(this.parseIdentifier());
+    }
+
+    this.consumeSemicolon();
+
+    return new ContinueStatement(label);
+
+  }
+
+  private Statement parseBreakStatement() throws JsError {
+    this.lex();
+    if (this.eat(TokenType.SEMICOLON) || this.hasLineTerminatorBeforeNext) {
+      return new BreakStatement(Maybe.nothing());
+    }
+
+    Maybe<String> label = Maybe.nothing();
+    if (this.match(TokenType.IDENTIFIER) || this.match(TokenType.YIELD) || this.match(TokenType.LET)) {
+      label = Maybe.just(this.parseIdentifier());
+    }
+
+    this.consumeSemicolon();
+
+    return new BreakStatement(label);
+  }
+
+  private Statement parseTryStatement() throws JsError {
+    this.lex();
+    Block body = this.parseBlock();
+
+    if (this.match(TokenType.CATCH)) {
+      CatchClause catchClause = this.parseCatchClause();
+      if (this.eat(TokenType.FINALLY)) {
+        Block finalizer = this.parseBlock();
+        return new TryFinallyStatement(body, Maybe.just(catchClause), finalizer);
+      }
+      return new TryCatchStatement(body, catchClause);
+    }
+    if (this.eat(TokenType.FINALLY)) {
+      Block finalizer = this.parseBlock();
+      return new TryFinallyStatement(body, Maybe.nothing(), finalizer);
+    } else {
+      throw this.createError(ErrorMessages.NO_CATCH_OR_FINALLY);
+    }
+  }
+
+  private CatchClause parseCatchClause() throws JsError {
+    SourceLocation startLocation = this.getLocation();
+    this.lex();
+    this.expect(TokenType.LPAREN);
+    if (this.match(TokenType.RPAREN) || this.match(TokenType.LPAREN)) {
+      throw this.createUnexpected(this.lookahead);
+    }
+    Binding binding = this.parseBindingTarget();
+    this.expect(TokenType.RPAREN);
+    Block body = this.parseBlock();
+
+    return this.markLocation(startLocation, new CatchClause(binding, body));
   }
 
   private Statement parseThrowStatement() throws JsError {
@@ -583,7 +678,7 @@ public class Parser extends Tokenizer {
   private Expression parseExpression() throws JsError {
     SourceLocation startLocation = this.getLocation();
     Expression left = this.parseAssignmentExpression();
-    if (!this.match(TokenType.COMMA)) {
+    if (this.match(TokenType.COMMA)) {
       while (!this.eof()) {
         if (!this.match(TokenType.COMMA)) {
           break;
@@ -766,24 +861,24 @@ public class Parser extends Tokenizer {
   }
 
   private ImmutableList parseArguments() throws JsError {
-    ArrayList<Expression> result = new ArrayList();
-//    while (true) {
-//      if (this.match(TokenType.RPAREN) || this.eof()) {
-//        return ImmutableList.from(result);
-//      }
-//      Expression arg;
-//      if (this.match(TokenType.ELLIPSIS)) {
-//        SourceLocation startLocation = this.getLocation();
-//        arg = this.markLocation(startLocation, new SpreadElement(this.parseAssignmentExpression()))
-//      }
-//      else {
-//        arg = this.parseAssignmentExpression();
-//      }
-//      result.add(arg);
-//      if (!this.eat(TokenType.COMMA)) {
-//        break;
-//      }
-//    }
+    ArrayList<SpreadElementExpression> result = new ArrayList();
+    while (true) {
+      if (this.match(TokenType.RPAREN) || this.eof()) {
+        return ImmutableList.from(result);
+      }
+      SpreadElementExpression arg;
+      if (this.match(TokenType.ELLIPSIS)) {
+        SourceLocation startLocation = this.getLocation();
+        arg = this.markLocation(startLocation, new SpreadElement(this.parseAssignmentExpression()));
+      }
+      else {
+        arg = this.parseAssignmentExpression();
+      }
+      result.add(arg);
+      if (!this.eat(TokenType.COMMA)) {
+        break;
+      }
+    }
     return ImmutableList.from(result);
   }
 
