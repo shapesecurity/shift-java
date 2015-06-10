@@ -45,21 +45,6 @@ public final class Utils {
     return "eval".equals(name) || "arguments".equals(name);
   }
 
-  public static boolean isValidIdentifierName(@NotNull String name) {
-    if (name.isEmpty()) {
-      return false;
-    }
-    if (!isIdentifierStart(name.charAt(0))) {
-      return false;
-    }
-    for (int i = 1; i < name.length(); i++) {
-      if (!isIdentifierPart(name.charAt(i))) {
-        return false;
-      }
-    }
-    return true;
-  }
-
   public static boolean areUniqueNames(@NotNull ImmutableList<String> list) {
     HashSet<String> paramSet = new HashSet<>();
     for (String item : list) {
@@ -194,7 +179,7 @@ public final class Utils {
   }
 
   @SuppressWarnings("checkstyle:magicnumber")
-  public static boolean isIdentifierStart(char ch) {
+  public static boolean isIdentifierStart(int ch) {
     if (ch < 0x80) {
       return Character.isJavaIdentifierStart(ch);
     }
@@ -204,7 +189,7 @@ public final class Utils {
   }
 
   @SuppressWarnings("checkstyle:magicnumber")
-  public static boolean isIdentifierPart(char ch) {
+  public static boolean isIdentifierPart(int ch) {
     if (ch < 0x80) {
       return Character.isJavaIdentifierPart(ch);
     }

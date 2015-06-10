@@ -42,6 +42,8 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.function.Function;
+import java.util.regex.Pattern;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -51,51 +53,61 @@ public class Tokenizer {
       "interface", "package", "private", "protected", "public", "static", "yield", "let"));
   private static final TokenType[] ONE_CHAR_PUNCTUATOR =
       new TokenType[]{TokenType.ILLEGAL, TokenType.ILLEGAL, TokenType.ILLEGAL, TokenType.ILLEGAL, TokenType.ILLEGAL,
-                      TokenType.ILLEGAL, TokenType.ILLEGAL, TokenType.ILLEGAL, TokenType.ILLEGAL, TokenType.ILLEGAL,
-                      TokenType.ILLEGAL, TokenType.ILLEGAL, TokenType.ILLEGAL, TokenType.ILLEGAL, TokenType.ILLEGAL,
-                      TokenType.ILLEGAL, TokenType.ILLEGAL, TokenType.ILLEGAL, TokenType.ILLEGAL, TokenType.ILLEGAL,
-                      TokenType.ILLEGAL, TokenType.ILLEGAL, TokenType.ILLEGAL, TokenType.ILLEGAL, TokenType.ILLEGAL,
-                      TokenType.ILLEGAL, TokenType.ILLEGAL, TokenType.ILLEGAL, TokenType.ILLEGAL, TokenType.ILLEGAL,
-                      TokenType.ILLEGAL, TokenType.ILLEGAL, TokenType.ILLEGAL, TokenType.NOT, TokenType.ILLEGAL,
-                      TokenType.ILLEGAL, TokenType.ILLEGAL, TokenType.MOD, TokenType.BIT_AND, TokenType.ILLEGAL,
-                      TokenType.LPAREN, TokenType.RPAREN, TokenType.MUL, TokenType.ADD, TokenType.COMMA, TokenType.SUB,
-                      TokenType.PERIOD, TokenType.DIV, TokenType.ILLEGAL, TokenType.ILLEGAL, TokenType.ILLEGAL,
-                      TokenType.ILLEGAL, TokenType.ILLEGAL, TokenType.ILLEGAL, TokenType.ILLEGAL, TokenType.ILLEGAL,
-                      TokenType.ILLEGAL, TokenType.ILLEGAL, TokenType.COLON, TokenType.SEMICOLON, TokenType.LT,
-                      TokenType.ASSIGN, TokenType.GT, TokenType.CONDITIONAL, TokenType.ILLEGAL, TokenType.ILLEGAL,
-                      TokenType.ILLEGAL, TokenType.ILLEGAL, TokenType.ILLEGAL, TokenType.ILLEGAL, TokenType.ILLEGAL,
-                      TokenType.ILLEGAL, TokenType.ILLEGAL, TokenType.ILLEGAL, TokenType.ILLEGAL, TokenType.ILLEGAL,
-                      TokenType.ILLEGAL, TokenType.ILLEGAL, TokenType.ILLEGAL, TokenType.ILLEGAL, TokenType.ILLEGAL,
-                      TokenType.ILLEGAL, TokenType.ILLEGAL, TokenType.ILLEGAL, TokenType.ILLEGAL, TokenType.ILLEGAL,
-                      TokenType.ILLEGAL, TokenType.ILLEGAL, TokenType.ILLEGAL, TokenType.ILLEGAL, TokenType.ILLEGAL,
-                      TokenType.LBRACK, TokenType.ILLEGAL, TokenType.RBRACK, TokenType.BIT_XOR, TokenType.ILLEGAL,
-                      TokenType.ILLEGAL, TokenType.ILLEGAL, TokenType.ILLEGAL, TokenType.ILLEGAL, TokenType.ILLEGAL,
-                      TokenType.ILLEGAL, TokenType.ILLEGAL, TokenType.ILLEGAL, TokenType.ILLEGAL, TokenType.ILLEGAL,
-                      TokenType.ILLEGAL, TokenType.ILLEGAL, TokenType.ILLEGAL, TokenType.ILLEGAL, TokenType.ILLEGAL,
-                      TokenType.ILLEGAL, TokenType.ILLEGAL, TokenType.ILLEGAL, TokenType.ILLEGAL, TokenType.ILLEGAL,
-                      TokenType.ILLEGAL, TokenType.ILLEGAL, TokenType.ILLEGAL, TokenType.ILLEGAL, TokenType.ILLEGAL,
-                      TokenType.ILLEGAL, TokenType.ILLEGAL, TokenType.LBRACE, TokenType.BIT_OR, TokenType.RBRACE,
-                      TokenType.BIT_NOT};
+          TokenType.ILLEGAL, TokenType.ILLEGAL, TokenType.ILLEGAL, TokenType.ILLEGAL, TokenType.ILLEGAL,
+          TokenType.ILLEGAL, TokenType.ILLEGAL, TokenType.ILLEGAL, TokenType.ILLEGAL, TokenType.ILLEGAL,
+          TokenType.ILLEGAL, TokenType.ILLEGAL, TokenType.ILLEGAL, TokenType.ILLEGAL, TokenType.ILLEGAL,
+          TokenType.ILLEGAL, TokenType.ILLEGAL, TokenType.ILLEGAL, TokenType.ILLEGAL, TokenType.ILLEGAL,
+          TokenType.ILLEGAL, TokenType.ILLEGAL, TokenType.ILLEGAL, TokenType.ILLEGAL, TokenType.ILLEGAL,
+          TokenType.ILLEGAL, TokenType.ILLEGAL, TokenType.ILLEGAL, TokenType.NOT, TokenType.ILLEGAL,
+          TokenType.ILLEGAL, TokenType.ILLEGAL, TokenType.MOD, TokenType.BIT_AND, TokenType.ILLEGAL,
+          TokenType.LPAREN, TokenType.RPAREN, TokenType.MUL, TokenType.ADD, TokenType.COMMA, TokenType.SUB,
+          TokenType.PERIOD, TokenType.DIV, TokenType.ILLEGAL, TokenType.ILLEGAL, TokenType.ILLEGAL,
+          TokenType.ILLEGAL, TokenType.ILLEGAL, TokenType.ILLEGAL, TokenType.ILLEGAL, TokenType.ILLEGAL,
+          TokenType.ILLEGAL, TokenType.ILLEGAL, TokenType.COLON, TokenType.SEMICOLON, TokenType.LT,
+          TokenType.ASSIGN, TokenType.GT, TokenType.CONDITIONAL, TokenType.ILLEGAL, TokenType.ILLEGAL,
+          TokenType.ILLEGAL, TokenType.ILLEGAL, TokenType.ILLEGAL, TokenType.ILLEGAL, TokenType.ILLEGAL,
+          TokenType.ILLEGAL, TokenType.ILLEGAL, TokenType.ILLEGAL, TokenType.ILLEGAL, TokenType.ILLEGAL,
+          TokenType.ILLEGAL, TokenType.ILLEGAL, TokenType.ILLEGAL, TokenType.ILLEGAL, TokenType.ILLEGAL,
+          TokenType.ILLEGAL, TokenType.ILLEGAL, TokenType.ILLEGAL, TokenType.ILLEGAL, TokenType.ILLEGAL,
+          TokenType.ILLEGAL, TokenType.ILLEGAL, TokenType.ILLEGAL, TokenType.ILLEGAL, TokenType.ILLEGAL,
+          TokenType.LBRACK, TokenType.ILLEGAL, TokenType.RBRACK, TokenType.BIT_XOR, TokenType.ILLEGAL,
+          TokenType.ILLEGAL, TokenType.ILLEGAL, TokenType.ILLEGAL, TokenType.ILLEGAL, TokenType.ILLEGAL,
+          TokenType.ILLEGAL, TokenType.ILLEGAL, TokenType.ILLEGAL, TokenType.ILLEGAL, TokenType.ILLEGAL,
+          TokenType.ILLEGAL, TokenType.ILLEGAL, TokenType.ILLEGAL, TokenType.ILLEGAL, TokenType.ILLEGAL,
+          TokenType.ILLEGAL, TokenType.ILLEGAL, TokenType.ILLEGAL, TokenType.ILLEGAL, TokenType.ILLEGAL,
+          TokenType.ILLEGAL, TokenType.ILLEGAL, TokenType.ILLEGAL, TokenType.ILLEGAL, TokenType.ILLEGAL,
+          TokenType.ILLEGAL, TokenType.ILLEGAL, TokenType.LBRACE, TokenType.BIT_OR, TokenType.RBRACE,
+          TokenType.BIT_NOT};
   private static final boolean[] PUNCTUATOR_START =
       new boolean[]{false, false, false, false, false, false, false, false, false, false, false, false, false, false,
-                    false, false, false, false, false, false, false, false, false, false, false, false, false, false,
-                    false, false, false, false, false, true, false, false, false, true, true, false, true, true, true,
-                    true, true, true, false, false, false, false, false, false, false, false, false, false, false,
-                    false, true, true, true, true, true, true, false, false, false, false, false, false, false, false,
-                    false, false, false, false, false, false, false, false, false, false, false, false, false, false,
-                    false, false, false, false, false, true, false, true, true, false, false, false, false, false,
-                    false, false, false, false, false, false, false, false, false, false, false, false, false, false,
-                    false, false, false, false, false, false, false, false, false, true, true, true, true, false};
+          false, false, false, false, false, false, false, false, false, false, false, false, false, false, false,
+          false, false, false, false, true, false, false, false, true, true, false, true, true, true, true, true, true,
+          false, true, false, false, false, false, false, false, false, false, false, false, true, true, true, true,
+          true, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false,
+          false, false, false, false, false, false, false, false, false, false, false, false, false, true, false, true,
+          true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false,
+          false, false, false, false, false, false, false, false, false, false, false, false, false, true, true, true,
+          true, false};
   private static final boolean[] IDENTIFIER_START =
       new boolean[]{false, false, false, false, false, false, false, false, false, false, false, false, false, false,
-                    false, false, false, false, false, false, false, false, false, false, false, false, false, false,
-                    false, false, false, false, false, false, false, false, true, false, false, false, false, false,
-                    false, false, false, false, false, false, false, false, false, false, false, false, false, false,
-                    false, false, false, false, false, false, false, false, false, true, true, true, true, true, true,
-                    true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true,
-                    true, true, true, true, false, true, false, false, true, false, true, true, true, true, true, true,
-                    true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true,
-                    true, true, true, true, false, false, false, false, false};
+          false, false, false, false, false, false, false, false, false, false, false, false, false, false,
+          false, false, false, false, false, false, false, false, true, false, false, false, false, false,
+          false, false, false, false, false, false, false, false, false, false, false, false, false, false,
+          false, false, false, false, false, false, false, false, false, true, true, true, true, true, true,
+          true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true,
+          true, true, true, true, false, true, false, false, true, false, true, true, true, true, true, true,
+          true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true,
+          true, true, true, true, false, false, false, false, false};
+  private static final boolean[] IDENTIFIER_PART =
+      new boolean[]{false, false, false, false, false, false, false, false, false, false, false, false, false, false,
+          false, false, false, false, false, false, false, false, false, false, false, false, false, false, false,
+          false, false, false, false, false, false, false, true, false, false, false, false, false, false, false, false,
+          false, false, false, true, true, true, true, true, true, true, true, true, true, false, false, false, false,
+          false, false, false, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true,
+          true, true, true, true, true, true, true, true, true, true, true, false, false, false, false, true, false,
+          true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true,
+          true, true, true, true, true, true, true, true, false, false, false, false, false};
+
   @NotNull
   final String source;
   @NotNull
@@ -164,242 +176,242 @@ public class Tokenizer {
       return TokenType.ILLEGAL;
     }
     switch (id.length()) {
-    case 2:
-      switch (id.charAt(0)) {
-      case 'i':
-        switch (id.charAt(1)) {
-        case 'f':
-          return TokenType.IF;
-        case 'n':
-          return TokenType.IN;
-        default:
-          break;
+      case 2:
+        switch (id.charAt(0)) {
+          case 'i':
+            switch (id.charAt(1)) {
+              case 'f':
+                return TokenType.IF;
+              case 'n':
+                return TokenType.IN;
+              default:
+                break;
+            }
+            break;
+          case 'd':
+            if (id.charAt(1) == 'o') {
+              return TokenType.DO;
+            }
+            break;
+          default:
+            break;
         }
         break;
-      case 'd':
-        if (id.charAt(1) == 'o') {
-          return TokenType.DO;
+      case 3:
+        switch (id.charAt(0)) {
+          case 'v':
+            if (cse2(id, 'a', 'r')) {
+              return TokenType.VAR;
+            }
+            break;
+          case 'f':
+            if (cse2(id, 'o', 'r')) {
+              return TokenType.FOR;
+            }
+            break;
+          case 'n':
+            if (cse2(id, 'e', 'w')) {
+              return TokenType.NEW;
+            }
+            break;
+          case 't':
+            if (cse2(id, 'r', 'y')) {
+              return TokenType.TRY;
+            }
+            break;
+          case 'l':
+            if (cse2(id, 'e', 't')) {
+              return TokenType.LET;
+            }
+            break;
+          default:
+            break;
         }
         break;
-      default:
-        break;
-      }
-      break;
-    case 3:
-      switch (id.charAt(0)) {
-      case 'v':
-        if (cse2(id, 'a', 'r')) {
-          return TokenType.VAR;
+      case 4:
+        switch (id.charAt(0)) {
+          case 't':
+            if (cse3(id, 'h', 'i', 's')) {
+              return TokenType.THIS;
+            }
+            break;
+          case 'e':
+            if (cse3(id, 'l', 's', 'e')) {
+              return TokenType.ELSE;
+            } else if (cse3(id, 'n', 'u', 'm')) {
+              return TokenType.FUTURE_RESERVED_WORD;
+            }
+            break;
+          case 'c':
+            if (cse3(id, 'a', 's', 'e')) {
+              return TokenType.CASE;
+            }
+            break;
+          case 'v':
+            if (cse3(id, 'o', 'i', 'd')) {
+              return TokenType.VOID;
+            }
+            break;
+          case 'w':
+            if (cse3(id, 'i', 't', 'h')) {
+              return TokenType.WITH;
+            }
+            break;
+          default:
+            break;
         }
         break;
-      case 'f':
-        if (cse2(id, 'o', 'r')) {
-          return TokenType.FOR;
+      case 5:
+        switch (id.charAt(0)) {
+          case 'w': // WHILE
+            if (cse4(id, 'h', 'i', 'l', 'e')) {
+              return TokenType.WHILE;
+            }
+            break;
+          case 'b': // BREAK
+            if (cse4(id, 'r', 'e', 'a', 'k')) {
+              return TokenType.BREAK;
+            }
+            break;
+          case 'c': // CATCH
+            if (cse4(id, 'a', 't', 'c', 'h')) {
+              return TokenType.CATCH;
+            } else if (cse4(id, 'o', 'n', 's', 't')) {
+              return TokenType.CONST;
+            } else if (cse4(id, 'l', 'a', 's', 's')) {
+              return TokenType.FUTURE_RESERVED_WORD;
+            }
+            break;
+          case 't': // THROW
+            if (cse4(id, 'h', 'r', 'o', 'w')) {
+              return TokenType.THROW;
+            }
+            break;
+          case 'y': // YIELD
+            if (cse4(id, 'i', 'e', 'l', 'd')) {
+              return TokenType.YIELD;
+            }
+            break;
+          case 's': // SUPER
+            if (cse4(id, 'u', 'p', 'e', 'r')) {
+              return TokenType.FUTURE_RESERVED_WORD;
+            }
+            break;
+          default:
+            break;
         }
         break;
-      case 'n':
-        if (cse2(id, 'e', 'w')) {
-          return TokenType.NEW;
+      case 6:
+        switch (id.charAt(0)) {
+          case 'r':
+            if (cse5(id, 'e', 't', 'u', 'r', 'n')) {
+              return TokenType.RETURN;
+            }
+            break;
+          case 't':
+            if (cse5(id, 'y', 'p', 'e', 'o', 'f')) {
+              return TokenType.TYPEOF;
+            }
+            break;
+          case 'd':
+            if (cse5(id, 'e', 'l', 'e', 't', 'e')) {
+              return TokenType.DELETE;
+            }
+            break;
+          case 's':
+            if (cse5(id, 'w', 'i', 't', 'c', 'h')) {
+              return TokenType.SWITCH;
+            } else if (this.strict && cse5(id, 't', 'a', 't', 'i', 'c')) {
+              return TokenType.FUTURE_STRICT_RESERVED_WORD;
+            }
+            break;
+          case 'e':
+            if (cse5(id, 'x', 'p', 'o', 'r', 't')) {
+              return TokenType.FUTURE_RESERVED_WORD;
+            }
+            break;
+          case 'i':
+            if (cse5(id, 'm', 'p', 'o', 'r', 't')) {
+              return TokenType.FUTURE_RESERVED_WORD;
+            }
+            break;
+          case 'p':
+            if (this.strict && cse5(id, 'u', 'b', 'l', 'i', 'c')) {
+              return TokenType.FUTURE_STRICT_RESERVED_WORD;
+            }
+            break;
+          default:
+            break;
         }
         break;
-      case 't':
-        if (cse2(id, 'r', 'y')) {
-          return TokenType.TRY;
+      case 7:
+        switch (id.charAt(0)) {
+          case 'd': // default
+            if (cse6(id, 'e', 'f', 'a', 'u', 'l', 't')) {
+              return TokenType.DEFAULT;
+            }
+            break;
+          case 'f': // finally
+            if (cse6(id, 'i', 'n', 'a', 'l', 'l', 'y')) {
+              return TokenType.FINALLY;
+            }
+            break;
+          case 'e': // extends
+            if (cse6(id, 'x', 't', 'e', 'n', 'd', 's')) {
+              return TokenType.FUTURE_RESERVED_WORD;
+            }
+            break;
+          case 'p':
+            if (this.strict) {
+              String s = id.toString();
+              if ("private".equals(s) || "package".equals(s)) {
+                return TokenType.FUTURE_STRICT_RESERVED_WORD;
+              }
+            }
+            break;
+          default:
+            break;
         }
         break;
-      case 'l':
-        if (cse2(id, 'e', 't')) {
-          return TokenType.LET;
+      case 8:
+        switch (id.charAt(0)) {
+          case 'f':
+            if (cse7(id, 'u', 'n', 'c', 't', 'i', 'o', 'n')) {
+              return TokenType.FUNCTION;
+            }
+            break;
+          case 'c':
+            if (cse7(id, 'o', 'n', 't', 'i', 'n', 'u', 'e')) {
+              return TokenType.CONTINUE;
+            }
+            break;
+          case 'd':
+            if (cse7(id, 'e', 'b', 'u', 'g', 'g', 'e', 'r')) {
+              return TokenType.DEBUGGER;
+            }
+            break;
+          default:
+            break;
         }
         break;
-      default:
-        break;
-      }
-      break;
-    case 4:
-      switch (id.charAt(0)) {
-      case 't':
-        if (cse3(id, 'h', 'i', 's')) {
-          return TokenType.THIS;
-        }
-        break;
-      case 'e':
-        if (cse3(id, 'l', 's', 'e')) {
-          return TokenType.ELSE;
-        } else if (cse3(id, 'n', 'u', 'm')) {
-          return TokenType.FUTURE_RESERVED_WORD;
-        }
-        break;
-      case 'c':
-        if (cse3(id, 'a', 's', 'e')) {
-          return TokenType.CASE;
-        }
-        break;
-      case 'v':
-        if (cse3(id, 'o', 'i', 'd')) {
-          return TokenType.VOID;
-        }
-        break;
-      case 'w':
-        if (cse3(id, 'i', 't', 'h')) {
-          return TokenType.WITH;
-        }
-        break;
-      default:
-        break;
-      }
-      break;
-    case 5:
-      switch (id.charAt(0)) {
-      case 'w': // WHILE
-        if (cse4(id, 'h', 'i', 'l', 'e')) {
-          return TokenType.WHILE;
-        }
-        break;
-      case 'b': // BREAK
-        if (cse4(id, 'r', 'e', 'a', 'k')) {
-          return TokenType.BREAK;
-        }
-        break;
-      case 'c': // CATCH
-        if (cse4(id, 'a', 't', 'c', 'h')) {
-          return TokenType.CATCH;
-        } else if (cse4(id, 'o', 'n', 's', 't')) {
-          return TokenType.CONST;
-        } else if (cse4(id, 'l', 'a', 's', 's')) {
-          return TokenType.FUTURE_RESERVED_WORD;
-        }
-        break;
-      case 't': // THROW
-        if (cse4(id, 'h', 'r', 'o', 'w')) {
-          return TokenType.THROW;
-        }
-        break;
-      case 'y': // YIELD
-        if (cse4(id, 'i', 'e', 'l', 'd')) {
-          return this.strict ? TokenType.FUTURE_STRICT_RESERVED_WORD : TokenType.ILLEGAL;
-        }
-        break;
-      case 's': // SUPER
-        if (cse4(id, 'u', 'p', 'e', 'r')) {
-          return TokenType.FUTURE_RESERVED_WORD;
-        }
-        break;
-      default:
-        break;
-      }
-      break;
-    case 6:
-      switch (id.charAt(0)) {
-      case 'r':
-        if (cse5(id, 'e', 't', 'u', 'r', 'n')) {
-          return TokenType.RETURN;
-        }
-        break;
-      case 't':
-        if (cse5(id, 'y', 'p', 'e', 'o', 'f')) {
-          return TokenType.TYPEOF;
-        }
-        break;
-      case 'd':
-        if (cse5(id, 'e', 'l', 'e', 't', 'e')) {
-          return TokenType.DELETE;
-        }
-        break;
-      case 's':
-        if (cse5(id, 'w', 'i', 't', 'c', 'h')) {
-          return TokenType.SWITCH;
-        } else if (this.strict && cse5(id, 't', 'a', 't', 'i', 'c')) {
-          return TokenType.FUTURE_STRICT_RESERVED_WORD;
-        }
-        break;
-      case 'e':
-        if (cse5(id, 'x', 'p', 'o', 'r', 't')) {
-          return TokenType.FUTURE_RESERVED_WORD;
-        }
-        break;
-      case 'i':
-        if (cse5(id, 'm', 'p', 'o', 'r', 't')) {
-          return TokenType.FUTURE_RESERVED_WORD;
-        }
-        break;
-      case 'p':
-        if (this.strict && cse5(id, 'u', 'b', 'l', 'i', 'c')) {
-          return TokenType.FUTURE_STRICT_RESERVED_WORD;
-        }
-        break;
-      default:
-        break;
-      }
-      break;
-    case 7:
-      switch (id.charAt(0)) {
-      case 'd': // default
-        if (cse6(id, 'e', 'f', 'a', 'u', 'l', 't')) {
-          return TokenType.DEFAULT;
-        }
-        break;
-      case 'f': // finally
-        if (cse6(id, 'i', 'n', 'a', 'l', 'l', 'y')) {
-          return TokenType.FINALLY;
-        }
-        break;
-      case 'e': // extends
-        if (cse6(id, 'x', 't', 'e', 'n', 'd', 's')) {
-          return TokenType.FUTURE_RESERVED_WORD;
-        }
-        break;
-      case 'p':
-        if (this.strict) {
+      case 9:
+        if (this.strict && (id.charAt(0) == 'p' || id.charAt(0) == 'i')) {
           String s = id.toString();
-          if ("private".equals(s) || "package".equals(s)) {
+          if ("protected".equals(s) || "interface".equals(s)) {
             return TokenType.FUTURE_STRICT_RESERVED_WORD;
           }
         }
         break;
-      default:
-        break;
-      }
-      break;
-    case 8:
-      switch (id.charAt(0)) {
-      case 'f':
-        if (cse7(id, 'u', 'n', 'c', 't', 'i', 'o', 'n')) {
-          return TokenType.FUNCTION;
-        }
-        break;
-      case 'c':
-        if (cse7(id, 'o', 'n', 't', 'i', 'n', 'u', 'e')) {
-          return TokenType.CONTINUE;
-        }
-        break;
-      case 'd':
-        if (cse7(id, 'e', 'b', 'u', 'g', 'g', 'e', 'r')) {
-          return TokenType.DEBUGGER;
-        }
-        break;
-      default:
-        break;
-      }
-      break;
-    case 9:
-      if (this.strict && (id.charAt(0) == 'p' || id.charAt(0) == 'i')) {
+      case 10:
         String s = id.toString();
-        if ("protected".equals(s) || "interface".equals(s)) {
+        if ("instanceof".equals(s)) {
+          return TokenType.INSTANCEOF;
+        } else if (this.strict && "implements".equals(s)) {
           return TokenType.FUTURE_STRICT_RESERVED_WORD;
         }
-      }
-      break;
-    case 10:
-      String s = id.toString();
-      if ("instanceof".equals(s)) {
-        return TokenType.INSTANCEOF;
-      } else if (this.strict && "implements".equals(s)) {
-        return TokenType.FUTURE_STRICT_RESERVED_WORD;
-      }
-      break;
-    default:
-      break;
+        break;
+      default:
+        break;
     }
     return TokenType.ILLEGAL;
   }
@@ -414,26 +426,26 @@ public class Tokenizer {
 
   JsError createUnexpected(@NotNull Token token) {
     switch (token.type.klass) {
-    case Eof:
-      return this.createError(UNEXPECTED_EOS);
-    case NumericLiteral:
-      return this.createError(UNEXPECTED_NUMBER);
-    case StringLiteral:
-      return this.createError(UNEXPECTED_STRING);
-    case Ident:
-      return this.createError(UNEXPECTED_IDENTIFIER);
-    case Keyword:
-      if ((token.type == TokenType.FUTURE_RESERVED_WORD)) {
-        return this.createError(UNEXPECTED_RESERVED_WORD);
-      }
-      if ((token.type == TokenType.FUTURE_STRICT_RESERVED_WORD)) {
-        return this.createError(STRICT_RESERVED_WORD);
-      }
-      return this.createError(UNEXPECTED_TOKEN, token.slice.getString());
-    case Punctuator:
-      return this.createError(UNEXPECTED_TOKEN, token.type.toString());
-    default:
-      break;
+      case Eof:
+        return this.createError(UNEXPECTED_EOS);
+      case NumericLiteral:
+        return this.createError(UNEXPECTED_NUMBER);
+      case StringLiteral:
+        return this.createError(UNEXPECTED_STRING);
+      case Ident:
+        return this.createError(UNEXPECTED_IDENTIFIER);
+      case Keyword:
+        if ((token.type == TokenType.FUTURE_RESERVED_WORD)) {
+          return this.createError(UNEXPECTED_RESERVED_WORD);
+        }
+        if ((token.type == TokenType.FUTURE_STRICT_RESERVED_WORD)) {
+          return this.createError(STRICT_RESERVED_WORD);
+        }
+        return this.createError(UNEXPECTED_TOKEN, token.slice.getString());
+      case Punctuator:
+        return this.createError(UNEXPECTED_TOKEN, token.type.toString());
+      default:
+        break;
     }
     return this.createError(UNEXPECTED_TOKEN, token.getValueString());
   }
@@ -444,8 +456,7 @@ public class Tokenizer {
     return new JsError(this.startIndex, this.startLine + 1, this.startIndex - this.startLineStart, msg);
   }
 
-  @NotNull
-  JsError createErrorWithToken(@NotNull SourceLocation location, @NotNull String message, @NotNull Object... args) {
+  JsError createErrorWithLocation(@NotNull SourceLocation location, @NotNull String message, @NotNull Object... args) {
     String msg = String.format(message, args);
     return new JsError(location.offset, location.line + 1, location.column, msg);
   }
@@ -494,31 +505,31 @@ public class Tokenizer {
       char ch = this.source.charAt(i);
       if (ch < 0x80) {
         switch (ch) {
-        case '*':
-          // Block comment ends with '*/'.
-          if (i + 1 < length && this.source.charAt(i + 1) == '/') {
-            this.index = i + 2;
-            return;
-          }
-          i++;
-          break;
-        case '\n':
-          this.hasLineTerminatorBeforeNext = true;
-          i++;
-          this.lineStart = i;
-          this.line++;
-          break;
-        case '\r':
-          this.hasLineTerminatorBeforeNext = true;
-          if (i < length - 1 && this.source.charAt(i + 1) == '\n') {
+          case '*':
+            // Block comment ends with '*/'.
+            if (i + 1 < length && this.source.charAt(i + 1) == '/') {
+              this.index = i + 2;
+              return;
+            }
             i++;
-          }
-          i++;
-          this.lineStart = i;
-          this.line++;
-          break;
-        default:
-          i++;
+            break;
+          case '\n':
+            this.hasLineTerminatorBeforeNext = true;
+            i++;
+            this.lineStart = i;
+            this.line++;
+            break;
+          case '\r':
+            this.hasLineTerminatorBeforeNext = true;
+            if (i < length - 1 && this.source.charAt(i + 1) == '\n') {
+              i++;
+            }
+            i++;
+            this.lineStart = i;
+            this.line++;
+            break;
+          default:
+            i++;
         }
       } else if (ch == 0x2028 || ch == 0x2029) {
         i++;
@@ -631,23 +642,26 @@ public class Tokenizer {
   @NotNull
   private CharSequence getIdentifier() throws JsError {
     int start = this.index;
-    this.index++;
     int l = this.source.length();
     int i = this.index;
+    Function<Integer, Boolean> check = Utils::isIdentifierStart;
     while (i < l) {
       char ch = this.source.charAt(i);
-      if (ch == '\\') {
+      int code = (int) ch;
+      if (ch == '\\' || 0xD800 <= code && code <= 0xDBFF) {
         // Go back and try the hard one.
         this.index = start;
         return this.getEscapedIdentifier();
-      } else if (Utils.isIdentifierPart(ch)) {
-        i++;
-      } else {
-        break;
       }
+      if (!check.apply(code)) {
+        this.index = i;
+        return this.source.subSequence(start, i);
+      }
+      ++i;
+      check = Utils::isIdentifierPart;
     }
     this.index = i;
-    return this.getSlice(start);
+    return this.source.subSequence(start, i);
   }
 
   @NotNull
@@ -662,7 +676,7 @@ public class Tokenizer {
     SourceRange slice = this.getSlice(start);
 
     if ((id.length() == 1)) {
-      return new IdentifierToken(slice);
+      return new IdentifierToken(slice, id);
     }
 
     TokenType subType = this.getKeyword(id);
@@ -683,7 +697,7 @@ public class Tokenizer {
       return new FalseLiteralToken(slice);
     }
 
-    return new IdentifierToken(slice);
+    return new IdentifierToken(slice, id);
   }
 
   @NotNull
@@ -691,62 +705,62 @@ public class Tokenizer {
     char ch1 = this.source.charAt(this.index);
 
     switch (ch1) {
-    // Check for most common single-character punctuators.
-    case '.':
-      return TokenType.PERIOD;
-    case '(':
-      return TokenType.LPAREN;
-    case ')':
-    case ';':
-    case ',':
-      return ONE_CHAR_PUNCTUATOR[ch1];
-    case '{':
-      return TokenType.LBRACE;
-    case '}':
-    case '[':
-    case ']':
-    case ':':
-    case '?':
-    case '~':
-      return ONE_CHAR_PUNCTUATOR[ch1];
-    default:
-      // '=' (U+003D) marks an assignment or comparison operator.
-      if (this.index + 1 < this.source.length() && this.source.charAt(this.index + 1) == '=') {
-        switch (ch1) {
-        case '=':
-          if (this.index + 2 < this.source.length() && this.source.charAt(this.index + 2) == '=') {
-            return TokenType.EQ_STRICT;
+      // Check for most common single-character punctuators.
+      case '.':
+        return TokenType.PERIOD;
+      case '(':
+        return TokenType.LPAREN;
+      case ')':
+      case ';':
+      case ',':
+        return ONE_CHAR_PUNCTUATOR[ch1];
+      case '{':
+        return TokenType.LBRACE;
+      case '}':
+      case '[':
+      case ']':
+      case ':':
+      case '?':
+      case '~':
+        return ONE_CHAR_PUNCTUATOR[ch1];
+      default:
+        // '=' (U+003D) marks an assignment or comparison operator.
+        if (this.index + 1 < this.source.length() && this.source.charAt(this.index + 1) == '=') {
+          switch (ch1) {
+            case '=':
+              if (this.index + 2 < this.source.length() && this.source.charAt(this.index + 2) == '=') {
+                return TokenType.EQ_STRICT;
+              }
+              return TokenType.EQ;
+            case '!':
+              if (this.index + 2 < this.source.length() && this.source.charAt(this.index + 2) == '=') {
+                return TokenType.NE_STRICT;
+              }
+              return TokenType.NE;
+            case '|':
+              return TokenType.ASSIGN_BIT_OR;
+            case '+':
+              return TokenType.ASSIGN_ADD;
+            case '-':
+              return TokenType.ASSIGN_SUB;
+            case '*':
+              return TokenType.ASSIGN_MUL;
+            case '<':
+              return TokenType.LTE;
+            case '>':
+              return TokenType.GTE;
+            case '/':
+              return TokenType.ASSIGN_DIV;
+            case '%':
+              return TokenType.ASSIGN_MOD;
+            case '^':
+              return TokenType.ASSIGN_BIT_XOR;
+            case '&':
+              return TokenType.ASSIGN_BIT_AND;
+            default:
+              break; //failed
           }
-          return TokenType.EQ;
-        case '!':
-          if (this.index + 2 < this.source.length() && this.source.charAt(this.index + 2) == '=') {
-            return TokenType.NE_STRICT;
-          }
-          return TokenType.NE;
-        case '|':
-          return TokenType.ASSIGN_BIT_OR;
-        case '+':
-          return TokenType.ASSIGN_ADD;
-        case '-':
-          return TokenType.ASSIGN_SUB;
-        case '*':
-          return TokenType.ASSIGN_MUL;
-        case '<':
-          return TokenType.LTE;
-        case '>':
-          return TokenType.GTE;
-        case '/':
-          return TokenType.ASSIGN_DIV;
-        case '%':
-          return TokenType.ASSIGN_MOD;
-        case '^':
-          return TokenType.ASSIGN_BIT_XOR;
-        case '&':
-          return TokenType.ASSIGN_BIT_AND;
-        default:
-          break; //failed
         }
-      }
     }
 
     if (this.index + 1 < this.source.length()) {
@@ -772,20 +786,20 @@ public class Tokenizer {
         }
         // Other 2-character punctuators: ++ -- << >> && ||
         switch (ch1) {
-        case '+':
-          return TokenType.INC;
-        case '-':
-          return TokenType.DEC;
-        case '<':
-          return TokenType.SHL;
-        case '>':
-          return TokenType.SHR;
-        case '&':
-          return TokenType.AND;
-        case '|':
-          return TokenType.OR;
-        default:
-          break; //failed
+          case '+':
+            return TokenType.INC;
+          case '-':
+            return TokenType.DEC;
+          case '<':
+            return TokenType.SHL;
+          case '>':
+            return TokenType.SHR;
+          case '&':
+            return TokenType.AND;
+          case '|':
+            return TokenType.OR;
+          default:
+            break; //failed
         }
       }
     }
@@ -860,7 +874,7 @@ public class Tokenizer {
         return this.scanPunctuator();
       }
 
-      if (IDENTIFIER_START[ch]) {
+      if (IDENTIFIER_START[ch] || ch == '\\') {
         return this.scanIdentifier();
       }
 
@@ -882,13 +896,9 @@ public class Tokenizer {
         return this.scanNumericLiteral();
       }
 
-      // Slash (/) U+002F can also start a regex.
-      if (ch == '/') {
-        return this.scanPunctuator();
-      }
       throw this.createILLEGAL();
     } else {
-      if (Utils.isIdentifierStart(ch)) {
+      if (Utils.isIdentifierStart(ch) || 0xD800 <= ch && ch <= 0xDBFF) {
         return this.scanIdentifier();
       }
 
@@ -916,7 +926,7 @@ public class Tokenizer {
           return this.scanHexLiteral(start);
         } else if (ch == 'b' || ch == 'B') {
 //          return this.scan TODO: scan binary literal
-        } else if (ch =='o' || ch == 'O') {
+        } else if (ch == 'o' || ch == 'O') {
           return this.scanOctalLiteral(start);
         } else if ('0' <= ch && ch <= '9') {
           // TODO: scan legacy octal literal
@@ -925,8 +935,7 @@ public class Tokenizer {
         SourceRange slice = this.getSlice(start);
         return new NumericLiteralToken(slice, Double.parseDouble(slice.toString()));
       }
-    }
-    else if (ch != '.') {
+    } else if (ch != '.') {
       ch = this.source.charAt(this.index);
       while ('0' <= ch && ch <= '9') {
         this.index++;
@@ -1044,8 +1053,133 @@ public class Tokenizer {
     return prevToken;
   }
 
+  private static String fromCodePoint(int cp) {
+    if (cp <= 0xFFFF) {
+      return Character.toString((char) cp);
+    }
+    return String.valueOf(Character.toChars(cp));
+  }
+
+  private static int decodeUtf16(int lead, int trail) {
+    return (lead - 0xD800) * 0x400 + (trail - 0xDC00) + 0x10000;
+  }
+  
   @NotNull
-  public CharSequence getEscapedIdentifier() {
-    return null;
+  public CharSequence getEscapedIdentifier() throws JsError {
+    StringBuilder id = new StringBuilder();
+    Function<Integer, Boolean> check = Utils::isIdentifierStart;
+
+    while (this.index < this.source.length()) {
+      char ch = this.source.charAt(this.index);
+      int code = (int) ch;
+      String s = "";
+      int start = this.index;
+      ++this.index;
+      if (ch == '\\') {
+        if (this.index >= this.source.length()) {
+          throw this.createILLEGAL();
+        }
+        if (this.source.charAt(this.index) != 'u') {
+          throw this.createILLEGAL();
+        }
+        ++this.index;
+        code = this.scanUnicode();
+        s = fromCodePoint(code);
+      } else if (0xD800 <= code && code <= 0xDBFF) {
+        if (this.index >= this.source.length()) {
+          throw this.createILLEGAL();
+        }
+        int lowSurrogateCode = (int) this.source.charAt(this.index);
+        ++this.index;
+        if (!(0xDC00 <= lowSurrogateCode && lowSurrogateCode <= 0xDFFF)) {
+          throw this.createILLEGAL();
+        }
+        code = decodeUtf16(code, lowSurrogateCode);
+        s = fromCodePoint(code);
+      } else {
+        s = "" + ch;
+      }
+      if (!check.apply(code)) {
+        if (id.length() < 1) {
+          throw this.createILLEGAL();
+        }
+        this.index = start;
+        return id;
+      }
+      check = Utils::isIdentifierPart;
+      id.append(s);
+    }
+    return id;
+  }
+
+  private int scanUnicode() throws JsError {
+    if (this.source.charAt(this.index) == '{') {
+      // \ u { HexDigits }
+      int i = this.index + 1;
+      int hexDigits = 0;
+      char ch = '\0';
+      while (i < this.source.length()) {
+        ch = this.source.charAt(i);
+        int hex;
+        try {
+          hex = Integer.valueOf(Character.toString(ch), 16);
+        } catch (NumberFormatException e) {
+          break;
+        }
+        hexDigits = (hexDigits << 4) | hex;
+        if (hexDigits > 0x10FFFF) {
+          throw this.createILLEGAL();
+        }
+        i++;
+      }
+      if (ch != '}') {
+        throw this.createILLEGAL();
+      }
+      this.index = i + 1;
+      return hexDigits;
+    } else {
+      // \ u Hex4Digits
+      if (this.index + 4 > this.source.length()) {
+        return -1;
+      }
+      try {
+        int x = Integer.valueOf(new String(new char[]{
+            this.source.charAt(this.index),
+            this.source.charAt(this.index + 1),
+            this.source.charAt(this.index + 2),
+            this.source.charAt(this.index + 3)
+        }), 16);
+        this.index += 4;
+        return x;
+      } catch (NumberFormatException e) {
+        throw this.createILLEGAL();
+      }
+    }
+  }
+
+  public TokenizerState saveTokenizerState() {
+    return new TokenizerState(
+        this.index,
+        this.line,
+        this.lineStart,
+        this.startIndex,
+        this.startLine,
+        this.startLineStart,
+        this.lastIndex,
+        this.lookahead,
+        this.hasLineTerminatorBeforeNext
+    );
+  }
+
+  public void restoreTokenizerState(TokenizerState s) {
+    this.index = s.index;
+    this.line = s.line;
+    this.lineStart = s.lineStart;
+    this.startIndex = s.startIndex;
+    this.startLine = s.startLine;
+    this.startLineStart = s.startLineStart;
+    this.lastIndex = s.lastIndex;
+    this.lookahead = s.lookahead;
+    this.hasLineTerminatorBeforeNext = s.hasLineTerminatorBeforeNext;
   }
 }

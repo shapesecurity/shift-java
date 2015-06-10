@@ -142,13 +142,13 @@ public class Parser extends Tokenizer {
 
   private boolean lookaheadLexicalDeclaration() throws JsError {
     if (this.match(TokenType.LET) || this.match(TokenType.CONST)) {
-//      lexerState = this.saveLexerState();
+      TokenizerState tokenizerState = this.saveTokenizerState();
       this.lex();
       if (this.match(TokenType.IDENTIFIER) || this.match(TokenType.LET) || this.match(TokenType.LBRACE) || this.match(TokenType.LBRACK)) {
-//        this.restoreLexerState(lexerState);
+        this.restoreTokenizerState(tokenizerState);
         return true;
       } else {
-//        this.restoreLexerState(lexerState);
+        this.restoreTokenizerState(tokenizerState);
       }
     }
     return false;
@@ -207,7 +207,7 @@ public class Parser extends Tokenizer {
       A stmt = parser.get();
 
       if (parsingDirectives) {
-        if (isStringLiteral && stmt.getClass() == ExpressionStatement.class && ((ExpressionStatement) stmt).expression.getClass() == LiteralStringExpression.class) {
+        if (isStringLiteral && stmt instanceof ExpressionStatement && ((ExpressionStatement) stmt).expression instanceof LiteralStringExpression) {
           directives.add(this.markLocation(directiveLocation, new Directive(text.substring(1, -1))));
         } else {
           parsingDirectives = false;
@@ -271,7 +271,7 @@ public class Parser extends Tokenizer {
   }
 
   private ImmutableList<VariableDeclarator> parseVariableDeclaratorList(boolean bindingPatternsMustHaveInit) throws JsError {
-    ArrayList<VariableDeclarator> result = new ArrayList();
+    ArrayList<VariableDeclarator> result = new ArrayList<>();
     do {
       result.add(this.parseVariableDeclarator(bindingPatternsMustHaveInit));
     } while (this.eat(TokenType.COMMA));
@@ -285,7 +285,7 @@ public class Parser extends Tokenizer {
       throw this.createUnexpected(this.lookahead);
     }
     Binding binding = this.parseBindingTarget();
-    if (bindingPatternsMustHaveInit && binding.getClass() != BindingIdentifier.class && !this.match(TokenType.ASSIGN)) {
+    if (bindingPatternsMustHaveInit && !(binding instanceof BindingIdentifier) && !this.match(TokenType.ASSIGN)) {
       this.expect(TokenType.ASSIGN);
     }
 
@@ -301,7 +301,7 @@ public class Parser extends Tokenizer {
     switch (this.lookahead.type) {
       case IDENTIFIER:
       case LET:
-//      case YIELD:
+      case YIELD:
         return this.parseBindingIdentifier();
 //      case LBRACK:
 //        return this.parseArrayBinding();
@@ -317,7 +317,7 @@ public class Parser extends Tokenizer {
   }
 
   private String parseIdentifier() throws JsError {
-    if (this.match(TokenType.IDENTIFIER)) {
+    if (this.match(TokenType.IDENTIFIER) || !this.allowYieldExpression && this.match(TokenType.YIELD) || this.match(TokenType.LET)) {
       return this.lex().toString();
     } else {
       throw this.createUnexpected(this.lookahead);
@@ -472,8 +472,14 @@ public class Parser extends Tokenizer {
         return this.parseBlockStatement();
       case IF:
         return this.parseIfStatement();
+      case RETURN:
+        return this.parseReturnStatement();
+      case THROW:
+        return this.parseThrowStatement();
       case WHILE:
         return this.parseWhileStatement();
+      case WITH:
+        return this.parseWithStatement();
       case VAR:
         return this.parseVariableDeclarationStatement();
       default: {
@@ -481,7 +487,7 @@ public class Parser extends Tokenizer {
           throw this.createUnexpected(this.lookahead);
         }
         Expression expr = this.parseExpression();
-//        if (expr.getClass() == IdentifierExpression.class && this.eat(TokenType.COLON)) {
+//        if (expr instanceof IdentifierExpression && this.eat(TokenType.COLON)) {
 //          Statement labeledBody = this.match(TokenType.FUNCTION) ? this.parseFunction(false, false) : this.parseStatement();
 //          return new LabeledStatement(expr.toString(), labeledBody);
 //        } else {
@@ -492,6 +498,38 @@ public class Parser extends Tokenizer {
         return new ExpressionStatement(expr);
       }
     }
+  }
+
+  private Statement parseThrowStatement() throws JsError {
+    this.lex();
+    if (this.hasLineTerminatorBeforeNext) {
+      throw this.createErrorWithLocation(this.getLocation(), ErrorMessages.NEWLINE_AFTER_THROW);
+    }
+    Expression expression = this.parseExpression();
+    this.consumeSemicolon();
+    return new ThrowStatement(expression);
+
+  }
+
+  private Statement parseReturnStatement() throws JsError {
+    if (!this.inFunctionBody) {
+      throw this.createError(ErrorMessages.ILLEGAL_RETURN);
+    }
+
+    this.lex();
+
+    if (this.hasLineTerminatorBeforeNext) {
+      return new ReturnStatement(Maybe.nothing());
+    }
+
+    Maybe<Expression> expression = Maybe.nothing();
+
+    if (!this.match(TokenType.SEMICOLON) && !this.match(TokenType.RBRACE) && !this.eof()) {
+      expression = Maybe.just(this.parseExpression());
+    }
+
+    this.consumeSemicolon();
+    return new ReturnStatement(expression);
   }
 
   private Statement parseEmptyStatement() throws JsError {
@@ -505,6 +543,14 @@ public class Parser extends Tokenizer {
     Expression test = this.parseExpression();
     Statement body = this.getIteratorStatementEpilogue();
     return new WhileStatement(test, body);
+  }
+
+  private Statement parseWithStatement() throws JsError {
+    this.lex();
+    this.expect(TokenType.LPAREN);
+    Expression test = this.parseExpression();
+    Statement body = this.getIteratorStatementEpilogue();
+    return new WithStatement(test, body);
   }
 
   private Statement getIteratorStatementEpilogue() throws JsError {
@@ -775,9 +821,20 @@ public class Parser extends Tokenizer {
         this.lex();
         this.isBindingElement = this.isAssignmentTarget = false;
         return new ThisExpression();
+      case LBRACE:
+        return this.parseObjectExpression();
       default:
         throw this.createUnexpected(this.lookahead);
     }
+  }
+
+  private Expression parseObjectExpression() throws JsError {
+    SourceLocation startLocation = this.getLocation();
+    this.lex();
+    ArrayList<ObjectProperty> properties = new ArrayList<>();
+    // TODO: rest of function
+    this.expect(TokenType.RBRACE);
+    return this.markLocation(startLocation, new ObjectExpression(ImmutableList.from(properties)));
   }
 
   private Expression parseGroupExpression() throws JsError {
