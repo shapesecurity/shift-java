@@ -1,5 +1,7 @@
 package com.shapesecurity.shift.parser;
 
+import com.shapesecurity.functional.data.ImmutableList;
+import com.shapesecurity.functional.data.Maybe;
 import com.shapesecurity.shift.ast.*;
 import org.jetbrains.annotations.NotNull;
 
@@ -9,6 +11,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
 public class Assertions {
+
+  protected static FormalParameters NO_PARAMETERS = new FormalParameters(ImmutableList.nil(), Maybe.nothing());
 
   public static void testScript(String source) throws JsError {
     Parser.parseScript(source);

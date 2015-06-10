@@ -22,7 +22,18 @@ import com.shapesecurity.shift.parser.TokenType;
 import org.jetbrains.annotations.NotNull;
 
 public class IdentifierToken extends IdentifierLikeToken {
-  public IdentifierToken(@NotNull SourceRange slice) {
+
+  @NotNull
+  private final CharSequence name;
+
+  public IdentifierToken(@NotNull SourceRange slice, @NotNull CharSequence name) {
     super(TokenType.IDENTIFIER, slice);
+    this.name = name;
+  }
+
+  @Override
+  @NotNull
+  public String toString() {
+    return String.valueOf(this.name);
   }
 }

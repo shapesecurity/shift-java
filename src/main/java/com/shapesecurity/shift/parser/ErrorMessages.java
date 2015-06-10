@@ -17,7 +17,7 @@
 package com.shapesecurity.shift.parser;
 
 interface ErrorMessages {
-  String UNEXPECTED_TOKEN = "Unexpected token %s";
+  String UNEXPECTED_TOKEN = "Unexpected token \"%s\"";
   String UNEXPECTED_ILLEGAL_TOKEN = "Unexpected token ILLEGAL";
   String UNEXPECTED_NUMBER = "Unexpected number";
   String UNEXPECTED_STRING = "Unexpected string";
