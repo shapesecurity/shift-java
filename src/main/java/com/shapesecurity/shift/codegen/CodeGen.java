@@ -342,7 +342,12 @@ public final class CodeGen implements Reducer<CodeRep> {
         node.callee, node.getPrecedence(), callee);
     return seqVA(
         factory.token("new"), callee, arguments.isEmpty() ? factory.empty() : factory.paren(
-            factory.commaSep(arguments)));
+            factory.commaSep(
+                arguments.mapWithIndex(
+                    (i, arg) -> factory.expr(
+                        node.arguments.index(i).just(),
+                        Precedence.ASSIGNMENT,
+                        arg)))));
   }
 
   @Override
@@ -354,7 +359,12 @@ public final class CodeGen implements Reducer<CodeRep> {
       @NotNull ImmutableList<CodeRep> arguments) {
     CodeRep result = seqVA(
         factory.expr(node.callee, node.getPrecedence(), callee), factory.paren(
-            factory.commaSep(arguments)));
+            factory.commaSep(
+                arguments.mapWithIndex(
+                    (i, arg) -> factory.expr(
+                        node.arguments.index(i).just(),
+                        Precedence.ASSIGNMENT,
+                        arg)))));
     result.startsWithFunctionOrCurly = callee.startsWithFunctionOrCurly;
     return result;
   }
