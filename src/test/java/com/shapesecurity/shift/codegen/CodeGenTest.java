@@ -116,6 +116,14 @@ public class CodeGenTest extends TestBase {
   }
 
   @Test
+  public void testCallExpression() throws JsError {
+    test("a()");
+    test("a(0,0)");
+    test("a((0,0))");
+    test("(0,0)()");
+  }
+
+  @Test
   public void testObjectExpression() throws JsError {
     test("({})");
     test("({a:1})", "({a:1,})");
