@@ -64,6 +64,7 @@
   <properties>
     <jdk.version>1.8</jdk.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <skipGPG>true</skipGPG>
   </properties>
 
   <build>
@@ -84,7 +85,7 @@
         <artifactId>maven-gpg-plugin</artifactId>
         <version>1.5</version>
         <configuration>
-          <skip>true</skip>
+          <skip>${skipGPG}</skip>
         </configuration>
         <executions>
           <execution>
