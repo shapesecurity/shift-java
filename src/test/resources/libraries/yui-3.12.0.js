@@ -8013,7 +8013,7 @@ Y.Loader.prototype = {
             comp++;
         }
 
-        //console.log('Resolved Modules: ', modules);
+        //console.log('Resolved modules: ', modules);
 
         complete = function(d) {
             actions++;
