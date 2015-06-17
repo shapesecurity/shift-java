@@ -603,6 +603,10 @@ public class Tokenizer {
     }
   }
 
+//  private RegularExpressionLiteralToken scanRegExp() {
+//
+//  }
+
   private int scanHexEscape4() {
     if (this.index + 4 > this.source.length()) {
       return -1;
