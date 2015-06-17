@@ -21,10 +21,10 @@ public class StaticMemberExpressionTest extends Assertions {
 
     testScript("a.if", new StaticMemberExpression("if", new IdentifierExpression("a")));
 
-    testScript("a.true", new StaticMemberExpression("true", new IdentifierExpression("a")));
+//    testScript("a.true", new StaticMemberExpression("true", new IdentifierExpression("a")));
 
-    testScript("a.false", new StaticMemberExpression("false", new IdentifierExpression("a")));
+//    testScript("a.false", new StaticMemberExpression("false", new IdentifierExpression("a")));
 
-    testScript("a.null", new StaticMemberExpression("null", new IdentifierExpression("a")));
+//    testScript("a.null", new StaticMemberExpression("null", new IdentifierExpression("a")));
   }
 }
