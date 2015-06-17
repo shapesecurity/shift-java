@@ -55,6 +55,10 @@ public abstract class Maybe<A> {
   @Nullable
   public abstract A toNullable();
 
+  public static <A> Maybe<A> join(@NotNull Maybe<Maybe<A>> m) {
+    return m.flatMap((a) -> a);
+  }
+
   @NotNull
   public static <A> ImmutableList<A> catMaybes(@NotNull ImmutableList<Maybe<A>> l) {
     return l.foldRight((a, b) -> a.maybe(b, c -> ImmutableList.cons(c, b)), ImmutableList.nil());

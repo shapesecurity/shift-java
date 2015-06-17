@@ -16,6 +16,7 @@
 
 package com.shapesecurity.functional;
 
+import com.shapesecurity.shift.parser.JsError;
 import org.jetbrains.annotations.NotNull;
 
 @FunctionalInterface

@@ -30,7 +30,8 @@ public enum TokenClass {
   RegularExpression("RegularExpression"),
   LineComment("Line"),
   BlockComment("Block"),
-  Illegal("Illegal");
+  Illegal("Illegal"),
+  TemplateElement("Template");
   private final String name;
 
   private TokenClass(String name) {

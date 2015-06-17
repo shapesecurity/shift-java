@@ -58,12 +58,12 @@ public class ContinueStatementTest extends Assertions {
         new LiteralNumericExpression(0.0), new BlockStatement(new Block(ImmutableList.list(new ContinueStatement(
         Maybe.nothing()), new ExpressionStatement(new IdentifierExpression("b"))))))));
 
-//    testScript("a: while (0) { continue /*\u2028*/ b; }", new LabeledStatement("a", new WhileStatement(
-//        new LiteralNumericExpression(0.0), new BlockStatement(new Block(ImmutableList.list(new ContinueStatement(
-//        Maybe.nothing()), new ExpressionStatement(new IdentifierExpression("b"))))))));
-//
-//    testScript("a: while (0) { continue /*\u2029*/ b; }", new LabeledStatement("a", new WhileStatement(
-//        new LiteralNumericExpression(0.0), new BlockStatement(new Block(ImmutableList.list(new ContinueStatement(
-//        Maybe.nothing()), new ExpressionStatement(new IdentifierExpression("b"))))))));
+    testScript("a: while (0) { continue /*\u2028*/ b; }", new LabeledStatement("a", new WhileStatement(
+        new LiteralNumericExpression(0.0), new BlockStatement(new Block(ImmutableList.list(new ContinueStatement(
+        Maybe.nothing()), new ExpressionStatement(new IdentifierExpression("b"))))))));
+
+    testScript("a: while (0) { continue /*\u2029*/ b; }", new LabeledStatement("a", new WhileStatement(
+        new LiteralNumericExpression(0.0), new BlockStatement(new Block(ImmutableList.list(new ContinueStatement(
+        Maybe.nothing()), new ExpressionStatement(new IdentifierExpression("b"))))))));
   }
 }
