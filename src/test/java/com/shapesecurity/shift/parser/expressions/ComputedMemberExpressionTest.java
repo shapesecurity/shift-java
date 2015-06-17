@@ -12,16 +12,16 @@ import org.junit.Test;
 public class ComputedMemberExpressionTest extends Assertions {
   @Test
   public void testComputedMemberExpression() throws JsError {
-    testScript("a[b, c]", new ComputedMemberExpression(new IdentifierExpression("a"), new BinaryExpression(
-        BinaryOperator.Sequence, new IdentifierExpression("b"), new IdentifierExpression("c"))));
+    testScript("a[b, c]", new ComputedMemberExpression(new BinaryExpression(
+        BinaryOperator.Sequence, new IdentifierExpression("b"), new IdentifierExpression("c")), new IdentifierExpression("a")));
 
-    testScript("a[b]", new ComputedMemberExpression(new IdentifierExpression("a"), new IdentifierExpression("b")));
+    testScript("a[b]", new ComputedMemberExpression(new IdentifierExpression("b"), new IdentifierExpression("a")));
 
-    testScript("a[b] = b",new AssignmentExpression(new ComputedMemberExpression(new IdentifierExpression("a"), new IdentifierExpression("b")), new IdentifierExpression("b")));
+    testScript("a[b] = b",new AssignmentExpression(new ComputedMemberExpression(new IdentifierExpression("b"), new IdentifierExpression("a")), new IdentifierExpression("b")));
 
     testScript("(a[b]||(c[d]=e))", new BinaryExpression(BinaryOperator.LogicalOr, new ComputedMemberExpression(
-        new IdentifierExpression("a"), new IdentifierExpression("b")), new AssignmentExpression(
-        new ComputedMemberExpression(new IdentifierExpression("c"), new IdentifierExpression("d")),
+        new IdentifierExpression("b"), new IdentifierExpression("a")), new AssignmentExpression(
+        new ComputedMemberExpression(new IdentifierExpression("d"), new IdentifierExpression("c")),
         new IdentifierExpression("e"))));
 
     testScript("a&&(b=c)&&(d=e)", new BinaryExpression(BinaryOperator.LogicalAnd, new BinaryExpression(

@@ -102,7 +102,7 @@ public class VariableDeclarationStatementTest extends Assertions {
     testScript("var static;", new VariableDeclarationStatement(new VariableDeclaration(VariableDeclarationKind.Var,
         ImmutableList.list(new VariableDeclarator(new BindingIdentifier("static"), Maybe.nothing())))));
 
-    testScript("(let[a])", new ComputedMemberExpression(new IdentifierExpression("let"), new IdentifierExpression("a")));
+    testScript("(let[a])", new ComputedMemberExpression(new IdentifierExpression("a"), new IdentifierExpression("let")));
 
     testScriptFailure("var const", 4, "Unexpected token \"const\"");
     testScriptFailure("var a[0]=0;", 5, "Unexpected token \"[\"");
