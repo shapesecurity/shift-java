@@ -17,8 +17,8 @@ public class UnaryExpressionTest extends Assertions {
   public void testUnaryExpression() throws JsError {
     testScript("!a", new UnaryExpression(UnaryOperator.LogicalNot, new IdentifierExpression("a")));
 
-//    testScript("!(a=b)", new UnaryExpression(UnaryOperator.LogicalNot, new AssignmentExpression(
-//        new BindingIdentifier("a"), new IdentifierExpression("b"))));
+    testScript("!(a=b)", new UnaryExpression(UnaryOperator.LogicalNot, new AssignmentExpression(
+        new BindingIdentifier("a"), new IdentifierExpression("b"))));
 
     testScript("typeof a", new UnaryExpression(UnaryOperator.Typeof, new IdentifierExpression("a")));
 
