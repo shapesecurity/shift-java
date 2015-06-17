@@ -109,7 +109,10 @@ public enum TokenType {
   CONST(TokenClass.Keyword, "const"),
   LET(TokenClass.Keyword, "let"),
   YIELD(TokenClass.Keyword, "yield"),
-  ILLEGAL(TokenClass.Illegal, "");
+  EXTENDS(TokenClass.Keyword, "extends"),
+  CLASS(TokenClass.Keyword, "class"),
+  ILLEGAL(TokenClass.Illegal, ""),
+  TEMPLATE(TokenClass.TemplateElement, "");
   public static final TokenType[] TOKEN_SUB_TYPES = values();
   @NotNull
   public final TokenClass klass;

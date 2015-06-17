@@ -13,8 +13,8 @@ import org.junit.Test;
 public class LabeledStatementTest extends Assertions {
   @Test
   public void testLabeledStatement() throws JsError {
-//    testScript("start: for (;;) break start", new LabeledStatement("start", new ForStatement(Maybe.nothing(),
-//        Maybe.nothing(), Maybe.nothing(), new BreakStatement(Maybe.just("start")))));
+    testScript("start: for (;;) break start", new LabeledStatement("start", new ForStatement(Maybe.nothing(),
+        Maybe.nothing(), Maybe.nothing(), new BreakStatement(Maybe.just("start")))));
 
     testScript("start: while (true) break start", new LabeledStatement("start", new WhileStatement(
         new LiteralBooleanExpression(true), new BreakStatement(Maybe.just("start")))));

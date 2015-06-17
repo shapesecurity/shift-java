@@ -24,6 +24,7 @@ import static com.shapesecurity.shift.parser.ErrorMessages.UNEXPECTED_RESERVED_W
 import static com.shapesecurity.shift.parser.ErrorMessages.UNEXPECTED_STRING;
 import static com.shapesecurity.shift.parser.ErrorMessages.UNEXPECTED_TOKEN;
 
+import com.shapesecurity.functional.Pair;
 import com.shapesecurity.shift.ast.SourceLocation;
 import com.shapesecurity.shift.parser.token.EOFToken;
 import com.shapesecurity.shift.parser.token.FalseLiteralToken;
@@ -279,7 +280,7 @@ public class Tokenizer {
             } else if (cse4(id, 'o', 'n', 's', 't')) {
               return TokenType.CONST;
             } else if (cse4(id, 'l', 'a', 's', 's')) {
-              return TokenType.FUTURE_RESERVED_WORD;
+              return TokenType.CLASS;
             }
             break;
           case 't': // THROW
@@ -294,7 +295,7 @@ public class Tokenizer {
             break;
           case 's': // SUPER
             if (cse4(id, 'u', 'p', 'e', 'r')) {
-              return TokenType.FUTURE_RESERVED_WORD;
+              return TokenType.SUPER;
             }
             break;
           default:
@@ -358,7 +359,7 @@ public class Tokenizer {
             break;
           case 'e': // extends
             if (cse6(id, 'x', 't', 'e', 'n', 'd', 's')) {
-              return TokenType.FUTURE_RESERVED_WORD;
+              return TokenType.EXTENDS;
             }
             break;
           case 'p':
@@ -500,6 +501,7 @@ public class Tokenizer {
   private void skipMultiLineComment() throws JsError {
     this.index += 2;
     int length = this.source.length();
+    boolean isLineStart = false;
     int i = this.index;
     while (i < length) {
       char ch = this.source.charAt(i);
@@ -514,6 +516,7 @@ public class Tokenizer {
             i++;
             break;
           case '\n':
+            isLineStart = true;
             this.hasLineTerminatorBeforeNext = true;
             i++;
             this.lineStart = i;
@@ -532,6 +535,8 @@ public class Tokenizer {
             i++;
         }
       } else if (ch == 0x2028 || ch == 0x2029) {
+        isLineStart = true;
+        this.hasLineTerminatorBeforeNext = true;
         i++;
         this.lineStart = i;
         this.line++;
@@ -707,7 +712,11 @@ public class Tokenizer {
     switch (ch1) {
       // Check for most common single-character punctuators.
       case '.':
-        return TokenType.PERIOD;
+        char ch2 = this.source.charAt(this.index + 1);
+        if (ch2 != '.') return TokenType.PERIOD;
+        char ch3 = this.source.charAt(this.index + 2);
+        if (ch3 != '.') return TokenType.PERIOD;
+        return TokenType.ELLIPSIS;
       case '(':
         return TokenType.LPAREN;
       case ')':
@@ -906,9 +915,151 @@ public class Tokenizer {
     }
   }
 
+//  @NotNull
+//  private Token scanTemplateElement() {
+//    SourceLocation startLocation = this.getLocation();
+//    int start = this.index;
+//    while (this.index < this.source.length()) {
+//      char ch = this.source.charAt(this.index);
+//      switch (ch) {
+//        case 0x60:  // `
+//          this.index++;
+//          return new ;
+//          return { type: TokenType.TEMPLATE, tail: true, slice: this.getSlice(start, startLocation) };
+//        case 0x24:  // $
+//          if (this.source.charAt(this.index + 1) === 0x7B) {  // {
+//            this.index += 2;
+//            return { type: TokenType.TEMPLATE, tail: false, slice: this.getSlice(start, startLocation) };
+//          }
+//          this.index++;
+//          break;
+//        case 0x5C:  // \\
+//        {
+//          let octal = this.scanStringEscape("", false)[1];
+//          if (octal) {
+//            throw this.createILLEGAL();
+//          }
+//          break;
+//        }
+//        default:
+//          this.index++;
+//      }
+//    }
+//  }
+
   @NotNull
-  private Token scanStringLiteral() {
-    return null;
+  private Token scanStringLiteral() throws JsError {
+    String str = "";
+    char quote = this.source.charAt(this.index);
+    SourceLocation startLocation = this.getLocation();
+    int start = this.index;
+    this.index++;
+
+    boolean octal = false;
+    while (this.index < this.source.length()) {
+      char ch = this.source.charAt(this.index);
+      if (ch == quote) {
+        this.index++;
+        return new StringLiteralToken(this.getSlice(start), str, octal);
+      } else if (ch == '\\') {
+        Pair<String, Boolean> info = this.scanStringEscape(str, octal);
+        str = info.a;
+        octal = info.b;
+      } else if (Utils.isLineTerminator(ch)) {
+        throw this.createILLEGAL();
+      } else {
+        str += ch;
+        this.index++;
+      }
+    }
+
+    throw this.createILLEGAL();
+  }
+
+  private Pair<String, Boolean> scanStringEscape(String str, boolean octal) throws JsError {
+    this.index++;
+    if (this.index == this.source.length()) {
+      throw this.createILLEGAL();
+    }
+    char ch = this.source.charAt(this.index);
+    if (!Utils.isLineTerminator(ch)) {
+      switch (ch) {
+        case 'n':
+          str += "\n";
+          this.index++;
+          break;
+        case 'r':
+          str += "\r";
+          this.index++;
+          break;
+        case 't':
+          str += "\t";
+          this.index++;
+          break;
+        case 'u':
+        case 'x':
+          int unescaped;
+          this.index++;
+          if (this.index >= this.source.length()) {
+            throw this.createILLEGAL();
+          }
+          unescaped = ch == 'u' ? this.scanUnicode() : this.scanHexEscape2();
+          if (unescaped < 0) {
+            throw this.createILLEGAL();
+          }
+          str += fromCodePoint(unescaped);
+          break;
+        case 'b':
+          str += "\b";
+          this.index++;
+          break;
+        case 'f':
+          str += "\f";
+          this.index++;
+          break;
+        case 'v':
+          str += "\u000B";
+          this.index++;
+          break;
+        default:
+          if ('0' <= ch && ch <= '7') {
+            int octLen = 1;
+            // 3 digits are only allowed when string starts
+            // with 0, 1, 2, 3
+            if ('0' <= ch && ch <= '3') {
+              octLen = 0;
+            }
+            int code = 0;
+            while (octLen < 3 && '0' <= ch && ch <= '7') {
+              if (octLen > 0 || ch != '0') {
+                octal = true;
+              }
+              code *= 8;
+              octLen++;
+              code += ch - '0';
+              this.index++;
+              if (this.index == this.source.length()) {
+                throw this.createILLEGAL();
+              }
+              ch = this.source.charAt(this.index);
+            }
+            str += fromCodePoint(code);
+          } else if (ch == '8' || ch == '9') {
+            throw this.createILLEGAL();
+          } else {
+            str += ch;
+            this.index++;
+          }
+      }
+    } else {
+      this.index++;
+      if (ch == '\r' && this.source.charAt(this.index) == '\n') {
+        this.index++;
+      }
+      this.lineStart = this.index;
+      this.line++;
+    }
+    return new Pair<String, Boolean>(str, octal);
   }
 
   @NotNull
