@@ -1496,7 +1496,7 @@ public class Parser extends Tokenizer {
 //      if (this.eat(TokenType.ASSIGN)) {
 //        Expression init = this.parseAssignmentExpression();
 ////        this.firstExprError = this.createErrorWithLocation(startLocation, ErrorMessages.ILLEGAL_PROPERTY);
-//        return this.markLocation(startLocation, new BindingPropertyIdentifier(transformDestructuring(methodOrKey), init)); TODO: transform destructuring for node input
+//        return this.markLocation(startLocation, new BindingPropertyIdentifier(transformDestructuring(methodOrKey), init)); //TODO: transform destructuring for node input
 //      } else
       if (!this.match(TokenType.COLON)) {
         if (token.type != TokenType.IDENTIFIER && token.type != TokenType.YIELD && token.type != TokenType.LET) {
