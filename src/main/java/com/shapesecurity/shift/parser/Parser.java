@@ -190,8 +190,8 @@ public class Parser extends Tokenizer {
     switch (this.lookahead.type) {
       case IMPORT:
         return this.parseImportDeclaration();
-//      case EXPORT:
-//        return this.parseExportDeclaration();
+      case EXPORT:
+        return this.parseExportDeclaration();
       default:
         return this.parseStatementListItem();
     }  }
@@ -782,7 +782,7 @@ public class Parser extends Tokenizer {
   }
 
   private boolean matchContextualKeyword(String keyword) {
-    return this.lookahead.type == TokenType.IDENTIFIER && keyword.equals(this.lookahead.type.name);
+    return this.lookahead.type == TokenType.IDENTIFIER && keyword.equals(this.lookahead.toString());
   }
 
   private Statement parseSwitchStatement() throws JsError {
@@ -1741,7 +1741,7 @@ public class Parser extends Tokenizer {
   }
 
   // class declaration, isExpr = false
-  private Statement parseClass(boolean inDefault) throws JsError {
+  private ClassDeclaration parseClass(boolean inDefault) throws JsError {
     SourceLocation startLocation = this.getLocation();
 
     this.lex();
@@ -1842,7 +1842,7 @@ public class Parser extends Tokenizer {
     if (this.match(TokenType.IDENTIFIER) || this.match(TokenType.YIELD) || this.match(TokenType.LET)) {
       name = Maybe.just(this.parseIdentifier());
       if (this.eatContextualKeyword("as") == null) {
-        return this.markLocation(startLocation, new ImportSpecifier(name, this.markLocation(startLocation, new BindingIdentifier(name.just()))));
+        return this.markLocation(startLocation, new ImportSpecifier(Maybe.nothing(), this.markLocation(startLocation, new BindingIdentifier(name.just()))));
       }
     } else if (this.isIdentifierName(this.lookahead.type.klass)) {
       name = Maybe.just(this.parseIdentifierName());
@@ -1882,7 +1882,78 @@ public class Parser extends Tokenizer {
     }
   }
 
+  private ExportDeclaration parseExportDeclaration() throws JsError {
+    SourceLocation startLocation = this.getLocation();
+    ExportDeclaration decl;
+    this.expect(TokenType.EXPORT);
+    switch (this.lookahead.type) {
+      case MUL:
+        this.lex();
+        decl = new ExportAllFrom(this.parseFromClause());
+        break;
+      case LBRACE:
+        ImmutableList<ExportSpecifier> namedExports = this.parseExportClause();
+        Maybe<String> moduleSpecifier = Maybe.nothing();
+        if (this.matchContextualKeyword("from")) {
+          moduleSpecifier = Maybe.just(this.parseFromClause());
+        }
+        decl = new ExportFrom(namedExports, moduleSpecifier);
+        break;
+      case CLASS:
+        decl = new Export(this.parseClass(false));
+        break;
+      case FUNCTION:
+        decl = new Export((FunctionDeclaration) this.parseFunction(false, true));
+        break;
+      case DEFAULT:
+        this.lex();
+        switch (this.lookahead.type) {
+          case FUNCTION:
+            decl = new ExportDefault((FunctionDeclaration) this.parseFunction(true, true));
+            break;
+          case CLASS:
+            decl = new ExportDefault(this.parseClass(true));
+            break;
+          default:
+            decl = new ExportDefault(this.parseAssignmentExpression());
+            this.consumeSemicolon();
+            break;
+        }
+        break;
+      case VAR:
+      case LET:
+      case CONST:
+        decl = new Export(this.parseVariableDeclaration(true));
+        this.consumeSemicolon();
+        break;
+      default:
+        throw this.createUnexpected(this.lookahead);
+    }
+    return this.markLocation(startLocation, decl);
+  }
 
+  private ImmutableList<ExportSpecifier> parseExportClause() throws JsError {
+    this.expect(TokenType.LBRACE);
+    ArrayList<ExportSpecifier> result = new ArrayList<>();
+    while (!this.eat(TokenType.RBRACE)) {
+      result.add(this.parseExportSpecifier());
+      if (!this.eat(TokenType.COMMA)) {
+        this.expect(TokenType.RBRACE);
+        break;
+      }
+    }
+    return ImmutableList.from(result);
+  }
+
+  private ExportSpecifier parseExportSpecifier() throws JsError {
+    SourceLocation startLocation = this.getLocation();
+    String name = this.parseIdentifierName();
+    if (this.eatContextualKeyword("as") != null) {
+      String exportedName = this.parseIdentifierName();
+      return this.markLocation(startLocation, new ExportSpecifier(Maybe.just(name), exportedName));
+    }
+    return this.markLocation(startLocation, new ExportSpecifier(Maybe.nothing(), name));
+  }
 
   @Nullable
   private CompoundAssignmentOperator lookupCompoundAssignmentOperator(@NotNull Token token) {

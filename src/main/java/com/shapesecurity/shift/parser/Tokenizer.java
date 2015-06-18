@@ -174,7 +174,7 @@ public class Tokenizer {
     // Some others are from future reserved words.
 
     if (id.length() == 1 || id.length() > 10) {
-      return TokenType.ILLEGAL;
+      return TokenType.IDENTIFIER;
     }
     switch (id.length()) {
       case 2:
@@ -414,7 +414,7 @@ public class Tokenizer {
       default:
         break;
     }
-    return TokenType.ILLEGAL;
+    return TokenType.IDENTIFIER;
   }
 
   @NotNull
