@@ -111,6 +111,8 @@ public enum TokenType {
   YIELD(TokenClass.Keyword, "yield"),
   EXTENDS(TokenClass.Keyword, "extends"),
   CLASS(TokenClass.Keyword, "class"),
+  IMPORT(TokenClass.Keyword, "import"),
+  EXPORT(TokenClass.Keyword, "export"),
   ILLEGAL(TokenClass.Illegal, ""),
   TEMPLATE(TokenClass.TemplateElement, "");
   public static final TokenType[] TOKEN_SUB_TYPES = values();

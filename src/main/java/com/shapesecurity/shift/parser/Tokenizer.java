@@ -328,12 +328,12 @@ public class Tokenizer {
             break;
           case 'e':
             if (cse5(id, 'x', 'p', 'o', 'r', 't')) {
-              return TokenType.FUTURE_RESERVED_WORD;
+              return TokenType.EXPORT;
             }
             break;
           case 'i':
             if (cse5(id, 'm', 'p', 'o', 'r', 't')) {
-              return TokenType.FUTURE_RESERVED_WORD;
+              return TokenType.IMPORT;
             }
             break;
           case 'p':
