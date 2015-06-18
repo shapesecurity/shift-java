@@ -1489,7 +1489,7 @@ public class Parser extends Tokenizer {
             throw this.firstExprError;
           }
         }
-        exprs.add(Maybe.just((Expression) expr));
+        exprs.add(Maybe.just(expr));
 
         if (!this.match(TokenType.RBRACK)) {
           this.expect(TokenType.COMMA);

@@ -111,16 +111,16 @@ public class IncompatibilitiesTest extends Assertions {
 //        )), new ExpressionStatement(new LiteralNumericExpression(0.0)))
 //    );
 //
-//    testScript("<!--");
-//    testScript("-->");
+    testScript("<!--");
+    testScript("-->");
 //
-//    testScriptFailure("a -->", 0, "Unexpected end of input");
-//    testScriptFailure(";/**/-->", 0, "Unexpected token \">\"");
+    testScriptFailure("a -->", 5, "Unexpected end of input");
+    testScriptFailure(";/**/-->", 7, "Unexpected token \">\"");
 //
-//    testScript("\n  -->");
-//    testScript("/*\n*/-->");
+    testScript("\n  -->");
+    testScript("/*\n*/-->");
 //
-//    testScript("a<!--b", new IdentifierExpression("a"));
+    testScript("a<!--b", new IdentifierExpression("a"));
 //
 //    testModuleFailure("<!--", 0, "Unexpected token \"<\"");
 //    testModuleFailure("-->", 0, "Unexpected token \">\"");
