@@ -76,8 +76,9 @@ public class SuperExpressionTest extends Assertions {
 
     testScript("({ set a(x) { super.b[0] = 1; } });", new ObjectExpression(ImmutableList.list(new Setter(
         new BindingIdentifier("x"), new FunctionBody(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(
-        new AssignmentExpression(new ComputedMemberExpression(new StaticMemberExpression("b", new Super()),
-            new LiteralNumericExpression(0.0)), new LiteralNumericExpression(1.0))))), new StaticPropertyName("a")))));
+        new AssignmentExpression(new ComputedMemberExpression(new LiteralNumericExpression(0.0),
+            new StaticMemberExpression("b", new Super())), new LiteralNumericExpression(1.0))))),
+        new StaticPropertyName("a")))));
 
     testScript("(class { constructor() { super.x } });", new ClassExpression(Maybe.nothing(), Maybe.nothing(),
         ImmutableList.list(new ClassElement(false, new Method(false, new FormalParameters(ImmutableList.nil(),
