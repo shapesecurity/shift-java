@@ -187,8 +187,14 @@ public class Parser extends Tokenizer {
   }
 
   private ImportDeclarationExportDeclarationStatement parseModuleItem() throws JsError {
-    return this.parseStatementListItem();
-  }
+    switch (this.lookahead.type) {
+      case IMPORT:
+        return this.parseImportDeclaration();
+//      case EXPORT:
+//        return this.parseExportDeclaration();
+      default:
+        return this.parseStatementListItem();
+    }  }
 
   @FunctionalInterface
   private static interface ExceptionalSupplier<A> {
@@ -1785,6 +1791,98 @@ public class Parser extends Tokenizer {
     this.inGeneratorParameter = previousInGeneratorParameter;
     return this.markLocation(startLocation, new ClassDeclaration(name.just(), heritage, ImmutableList.from(elements)));
   }
+
+  private ImportDeclaration parseImportDeclaration() throws JsError {
+    SourceLocation startLocation = this.getLocation();
+    Maybe<BindingIdentifier> defaultBinding = Maybe.nothing();
+    String moduleSpecifier;
+
+    this.expect(TokenType.IMPORT);
+
+    switch (this.lookahead.type) {
+      case STRING:
+        moduleSpecifier = this.lex().toString();
+        this.consumeSemicolon();
+        return this.markLocation(startLocation, new Import(defaultBinding, ImmutableList.nil(), moduleSpecifier));
+      case IDENTIFIER:
+      case YIELD:
+      case LET:
+        defaultBinding = Maybe.just(this.parseBindingIdentifier());
+        if (!this.eat(TokenType.COMMA)) {
+          return this.markLocation(startLocation, new Import(defaultBinding, ImmutableList.nil(), this.parseFromClause()));
+        }
+        break;
+    }
+    if (this.match(TokenType.MUL)) {
+      return this.markLocation(startLocation, new ImportNamespace(defaultBinding, this.parseNameSpaceBinding(), this.parseFromClause()));
+    } else if (this.match(TokenType.LBRACE)) {
+      return this.markLocation(startLocation, new Import(defaultBinding, this.parseNamedImports(), this.parseFromClause()));
+    } else {
+      throw this.createUnexpected(this.lookahead);
+    }
+  }
+
+  private ImmutableList<ImportSpecifier> parseNamedImports() throws JsError {
+    ArrayList<ImportSpecifier> result = new ArrayList<>();
+    this.expect(TokenType.LBRACE);
+    while (!this.eat(TokenType.RBRACE)) {
+      result.add(this.parseImportSpecifier());
+      if (!this.eat(TokenType.COMMA)) {
+        this.expect(TokenType.RBRACE);
+        break;
+      }
+    }
+    return ImmutableList.from(result);
+  }
+
+  private ImportSpecifier parseImportSpecifier() throws JsError {
+    SourceLocation startLocation = this.getLocation();
+    Maybe<String> name = Maybe.nothing();
+
+    if (this.match(TokenType.IDENTIFIER) || this.match(TokenType.YIELD) || this.match(TokenType.LET)) {
+      name = Maybe.just(this.parseIdentifier());
+      if (this.eatContextualKeyword("as") == null) {
+        return this.markLocation(startLocation, new ImportSpecifier(name, this.markLocation(startLocation, new BindingIdentifier(name.just()))));
+      }
+    } else if (this.isIdentifierName(this.lookahead.type.klass)) {
+      name = Maybe.just(this.parseIdentifierName());
+      this.expectContextualKeyword("as");
+    }
+
+    return this.markLocation(startLocation, new ImportSpecifier(name, this.parseBindingIdentifier()));
+  }
+
+  @Nullable
+  private Token eatContextualKeyword(String keyword) throws JsError {
+    if (this.lookahead.type == TokenType.IDENTIFIER && this.lookahead.toString().equals(keyword)) {
+      return this.lex();
+    } else {
+      return null;
+    }
+  }
+
+  private BindingIdentifier parseNameSpaceBinding() throws JsError {
+    this.expect(TokenType.MUL);
+    this.expectContextualKeyword("as");
+    return this.parseBindingIdentifier();
+  }
+
+  private String parseFromClause() throws JsError {
+    this.expectContextualKeyword("from");
+    String value = this.expect(TokenType.STRING).toString();
+    this.consumeSemicolon();
+    return value;
+  }
+
+  private Token expectContextualKeyword(String keyword) throws JsError {
+    if (this.lookahead.type == TokenType.IDENTIFIER && this.lookahead.toString().equals(keyword)) {
+      return this.lex();
+    } else {
+      throw this.createUnexpected(this.lookahead);
+    }
+  }
+
+
 
   @Nullable
   private CompoundAssignmentOperator lookupCompoundAssignmentOperator(@NotNull Token token) {
