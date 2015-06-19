@@ -100,8 +100,8 @@ public class FunctionDeclarationTest extends Assertions {
 
     testScriptFailure("a: function* a(){}", 11, "Unexpected token \"*\"");
     testScriptFailure("for(;;) function a(){}", 8, "Unexpected token \"function\"");
-//    testScriptFailure("for(a in b) function c(){}", 0, "Unexpected token \"function\"");
-//    testScriptFailure("for(a of b) function c(){}", 0, "Unexpected token \"function\"");
+    testScriptFailure("for(a in b) function c(){}", 12, "Unexpected token \"function\"");
+    testScriptFailure("for(a of b) function c(){}", 12, "Unexpected token \"function\"");
     testScriptFailure("while(true) function a(){}", 12, "Unexpected token \"function\"");
     testScriptFailure("with(true) function a(){}", 11, "Unexpected token \"function\"");
   }
