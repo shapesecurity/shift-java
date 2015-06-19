@@ -183,6 +183,7 @@ public class Parser extends Tokenizer {
 
   @NotNull
   private Module parseModule() throws JsError {
+    this.moduleIsTheGoalSymbol = this.module = true;
     return this.markLocation(this.getLocation(), this.parseBody(this::parseModuleItem, Module::new));
   }
 

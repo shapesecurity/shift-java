@@ -21,10 +21,10 @@ public class ExpressionStatementTest extends Assertions {
 
     testScript("\\u0061", new ExpressionStatement(new IdentifierExpression("a")));
 
-    testScript("a\\u0061", new ExpressionStatement(new IdentifierExpression("aa")));
+//    testScript("a\\u0061", new ExpressionStatement(new IdentifierExpression("aa")));
 
-    testScript("\\u0061a", new ExpressionStatement(new IdentifierExpression("aa")));
+//    testScript("\\u0061a", new ExpressionStatement(new IdentifierExpression("aa")));
 
-    testScript("\\u0061a ", new ExpressionStatement(new IdentifierExpression("aa")));
+//    testScript("\\u0061a ", new ExpressionStatement(new IdentifierExpression("aa")));
   }
 }

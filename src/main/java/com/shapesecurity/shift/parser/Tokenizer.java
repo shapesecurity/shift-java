@@ -115,6 +115,7 @@ public class Tokenizer {
   protected Token lookahead;
   protected boolean hasLineTerminatorBeforeNext;
   protected boolean strict;
+  protected boolean moduleIsTheGoalSymbol = false;
   private int index, line, lineStart;
   private int lastIndex;
   private int startIndex, startLine, startLineStart;
@@ -234,6 +235,13 @@ public class Tokenizer {
           case 't':
             if (cse3(id, 'h', 'i', 's')) {
               return TokenType.THIS;
+            } else if (Tokenizer.cse3(id, 'r', 'u', 'e')) {
+              return TokenType.TRUE_LITERAL;
+            }
+            break;
+          case 'n':
+            if (Tokenizer.cse3(id, 'u', 'l', 'l')) {
+              return TokenType.NULL_LITERAL;
             }
             break;
           case 'e':
@@ -264,6 +272,11 @@ public class Tokenizer {
         break;
       case 5:
         switch (id.charAt(0)) {
+          case 'a':
+            if (this.moduleIsTheGoalSymbol && Tokenizer.cse4(id, 'w', 'a', 'i', 't')) {
+              return TokenType.AWAIT;
+            }
+            break;
           case 'w': // WHILE
             if (cse4(id, 'h', 'i', 'l', 'e')) {
               return TokenType.WHILE;
@@ -296,6 +309,11 @@ public class Tokenizer {
           case 's': // SUPER
             if (cse4(id, 'u', 'p', 'e', 'r')) {
               return TokenType.SUPER;
+            }
+            break;
+          case 'f':
+            if (Tokenizer.cse4(id, 'a', 'l', 's', 'e')) {
+              return TokenType.FALSE_LITERAL;
             }
             break;
           default:
