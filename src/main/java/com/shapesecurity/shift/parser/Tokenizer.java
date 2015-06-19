@@ -235,12 +235,12 @@ public class Tokenizer {
           case 't':
             if (cse3(id, 'h', 'i', 's')) {
               return TokenType.THIS;
-            } else if (Tokenizer.cse3(id, 'r', 'u', 'e')) {
+            } else if (cse3(id, 'r', 'u', 'e')) {
               return TokenType.TRUE_LITERAL;
             }
             break;
           case 'n':
-            if (Tokenizer.cse3(id, 'u', 'l', 'l')) {
+            if (cse3(id, 'u', 'l', 'l')) {
               return TokenType.NULL_LITERAL;
             }
             break;
@@ -273,7 +273,7 @@ public class Tokenizer {
       case 5:
         switch (id.charAt(0)) {
           case 'a':
-            if (this.moduleIsTheGoalSymbol && Tokenizer.cse4(id, 'w', 'a', 'i', 't')) {
+            if (this.moduleIsTheGoalSymbol && cse4(id, 'w', 'a', 'i', 't')) {
               return TokenType.AWAIT;
             }
             break;
@@ -312,7 +312,7 @@ public class Tokenizer {
             }
             break;
           case 'f':
-            if (Tokenizer.cse4(id, 'a', 'l', 's', 'e')) {
+            if (cse4(id, 'a', 'l', 's', 'e')) {
               return TokenType.FALSE_LITERAL;
             }
             break;
@@ -706,25 +706,26 @@ public class Tokenizer {
       return new IdentifierToken(slice, id);
     }
 
-    TokenType subType = this.getKeyword(id);
-    if (subType != TokenType.ILLEGAL) {
-      return new KeywordToken(subType, slice);
-    }
-
-    if (id.length() == 4) {
-      id = id.toString();
-      if ("null".equals(id)) {
-        return new NullLiteralToken(slice);
-      } else if ("true".equals(id)) {
-        return new TrueLiteralToken(slice);
-      }
-    }
-
-    if (id.length() == 5 && "false".equals(id.toString())) {
-      return new FalseLiteralToken(slice);
-    }
-
-    return new IdentifierToken(slice, id);
+    return new KeywordToken(this.getKeyword(id), slice);
+//    TokenType subType = this.getKeyword(id);
+//    if (subType != TokenType.ILLEGAL) {
+//      return new KeywordToken(subType, slice);
+//    }
+//
+//    if (id.length() == 4) {
+//      id = id.toString();
+//      if ("null".equals(id)) {
+//        return new NullLiteralToken(slice);
+//      } else if ("true".equals(id)) {
+//        return new TrueLiteralToken(slice);
+//      }
+//    }
+//
+//    if (id.length() == 5 && "false".equals(id.toString())) {
+//      return new FalseLiteralToken(slice);
+//    }
+//
+//    return new IdentifierToken(slice, id);
   }
 
   @NotNull
