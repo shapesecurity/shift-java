@@ -36,8 +36,8 @@ public class IdentifierExpressionTest extends Assertions {
 //        ImmutableList.list(new VariableDeclarator(new BindingIdentifier("yield"), Maybe.nothing()))),
 //        new LiteralNumericExpression(0.0), new EmptyStatement()));
 
-//    testScript("for(let.let in 0);", new ForInStatement(new StaticMemberExpression("let", new IdentifierExpression("let")),
-//        new LiteralNumericExpression(0.0), new EmptyStatement()));
+    testScript("for(let.let in 0);", new ForInStatement(new StaticMemberExpression("let", new IdentifierExpression("let")),
+        new LiteralNumericExpression(0.0), new EmptyStatement()));
 
     testScript("日本語", new IdentifierExpression("日本語"));
 
@@ -55,9 +55,9 @@ public class IdentifierExpressionTest extends Assertions {
 
 //    testModuleFailure("await", 0, "Unexpected token \"await\"");
 //    testModuleFailure("function f() { var await }", 0, "Unexpected token \"await\"");
-//    testScriptFailure("for(let[a].b of 0);", 0, "Unexpected token \".\"");
-//    testScriptFailure("for(let[a]().b of 0);", 0, "Unexpected token \"(\"");
-//    testScriptFailure("for(let.a of 0);", 0, "Invalid left-hand side in for-of");
+    testScriptFailure("for(let[a].b of 0);", 10, "Unexpected token \".\"");
+    testScriptFailure("for(let[a]().b of 0);", 10, "Unexpected token \"(\"");
+    testScriptFailure("for(let.a of 0);", 10, "Invalid left-hand side in for-of");
 //    testScriptFailure("\\uD800\\uDC00", 0, "Unexpected \"\\\\\"");
   }
 }

@@ -617,7 +617,6 @@ public class Parser extends Tokenizer {
     }
   }
 
-  // TODO: finish this method
   private Statement parseForStatement() throws JsError {
     this.lex();
     this.expect(TokenType.LPAREN);
@@ -644,7 +643,7 @@ public class Parser extends Tokenizer {
 
         if (((VariableDeclaration) init).declarators.length == 1 && (this.match((TokenType.IN)) || this.matchContextualKeyword("of"))) {
           if (this.match(TokenType.IN)) {
-            if (((VariableDeclaration) init).declarators.index(0).just().init != null) {
+            if (!(((VariableDeclaration) init).declarators.index(0).just().init).equals(Maybe.nothing())) {
               throw this.createError(ErrorMessages.INVALID_VAR_INIT_FOR_IN);
             }
             this.lex();
@@ -652,7 +651,7 @@ public class Parser extends Tokenizer {
             Statement body = this.getIteratorStatementEpilogue();
             return new ForInStatement((VariableDeclarationBinding) init, right.just(), body);
           } else {
-            if (((VariableDeclaration) init).declarators.index(0).just().init != null) {
+            if (!(((VariableDeclaration) init).declarators.index(0).just().init).equals(Maybe.nothing())) {
               throw this.createError(ErrorMessages.INVALID_VAR_INIT_FOR_OF);
             }
             this.lex();
@@ -677,7 +676,7 @@ public class Parser extends Tokenizer {
         Expression expr = this.parseAssignmentExpressionOrBindingElement();
         this.allowIn = previousAllowIn;
 
-        if (this.isAssignmentTarget && expr instanceof AssignmentExpression && (this.match(TokenType.IN) || this.matchContextualKeyword("of"))) {
+        if (this.isAssignmentTarget && !(expr instanceof AssignmentExpression) && (this.match(TokenType.IN) || this.matchContextualKeyword("of"))) {
           if (startsWithLet && this.matchContextualKeyword("of")) {
             throw this.createError(ErrorMessages.INVALID_LHS_IN_FOR_OF);
           }
@@ -691,9 +690,9 @@ public class Parser extends Tokenizer {
             return new ForOfStatement(Parser.transformDestructuring(expr), right.just(), this.getIteratorStatementEpilogue());
           }
         } else {
-//          if (this.firstExprError) {
-//            throw this.firstExprError;
-//          }
+          if (this.firstExprError != null) {
+            throw this.firstExprError;
+          }
           while (this.eat(TokenType.COMMA)) {
             Expression rhs = this.parseAssignmentExpression();
             expr = this.markLocation(leftLocation, new BinaryExpression(BinaryOperator.Sequence, expr, rhs));
