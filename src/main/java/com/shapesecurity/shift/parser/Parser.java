@@ -387,7 +387,7 @@ public class Parser extends Tokenizer {
       Maybe<BindingBindingWithDefault> el;
 
       if (this.eat(TokenType.COMMA)) {
-        el = null;
+        el = Maybe.nothing();
       } else {
         if (this.eat(TokenType.ELLIPSIS)) {
           restElement = Maybe.just(this.parseBindingIdentifier());
@@ -730,14 +730,14 @@ public class Parser extends Tokenizer {
   }
 
   // TODO: preserve location information in transformDestructuring() functions by implementing copyLocation()
-  private static Binding transformDestructuring(Expression node) throws JsError {
+  private static Binding transformDestructuring(Node node) throws JsError {
     if (node instanceof ObjectExpression) {
       ObjectExpression objectExpression = (ObjectExpression) node;
-      ImmutableList<BindingProperty> properties = ImmutableList.nil();
+      ArrayList<BindingProperty> properties = new ArrayList<>();
       for (ObjectProperty p : objectExpression.properties) {
-        properties = properties.cons(Parser.transformDestructuring(p));
+        properties.add(Parser.transformDestructuring(p));
       }
-      return new ObjectBinding(properties);
+      return new ObjectBinding(ImmutableList.from(properties));
     } else if (node instanceof ArrayExpression) {
       ArrayExpression arrayExpression = (ArrayExpression) node;
       Maybe<SpreadElementExpression> last = Maybe.join(arrayExpression.elements.maybeLast());
@@ -763,12 +763,12 @@ public class Parser extends Tokenizer {
       }
     } else if (node instanceof IdentifierExpression) {
       return new BindingIdentifier(((IdentifierExpression) node).name);
-    } else if (node instanceof ComputedMemberExpression || node instanceof StaticMemberExpression) {
+    } else if (node instanceof ComputedMemberExpression || node instanceof StaticMemberExpression
+        || node instanceof ArrayBinding || node instanceof StaticPropertyName) {
       return (Binding) node;
     }
     throw new JsError(0, 0, 0, "not reached");
   }
-
   private static BindingBindingWithDefault transformDestructuringWithDefault(Expression node) throws JsError {
     if (node instanceof AssignmentExpression) {
       AssignmentExpression assignmentExpression = (AssignmentExpression) node;
@@ -1556,12 +1556,11 @@ public class Parser extends Tokenizer {
       this.isBindingElement = this.isAssignmentTarget = false;
       return methodOrKey;
     } else if (kind.equals("identifier")) {
-//      if (this.eat(TokenType.ASSIGN)) {
-//        Expression init = this.isolateCoverGrammar(this::parseAssignmentExpression);
-////        this.firstExprError = this.createErrorWithLocation(startLocation, ErrorMessages.ILLEGAL_PROPERTY);
-//        return this.markLocation(startLocation, new BindingPropertyIdentifier(transformDestructuring(methodOrKey), init)); //TODO: transform destructuring for node input
-//      } else
-      if (!this.match(TokenType.COLON)) {
+      if (this.eat(TokenType.ASSIGN)) {
+        Expression init = this.isolateCoverGrammar(this::parseAssignmentExpression);
+        this.firstExprError = this.createErrorWithLocation(startLocation, ErrorMessages.ILLEGAL_PROPERTY);
+        return this.markLocation(startLocation, new BindingPropertyIdentifier((BindingIdentifier)transformDestructuring(methodOrKey), Maybe.just(init))); //TODO: transform destructuring for node input
+      } else if (!this.match(TokenType.COLON)) {
         if (token.type != TokenType.IDENTIFIER && token.type != TokenType.YIELD && token.type != TokenType.LET) {
           throw this.createUnexpected(token);
         }
