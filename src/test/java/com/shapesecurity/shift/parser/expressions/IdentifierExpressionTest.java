@@ -54,7 +54,7 @@ public class IdentifierExpressionTest extends Assertions {
 //    testScript("\\u2163\\u2161\\u200A", new IdentifierExpression("\\u2163\\u2161\\u200A"));
 
 //    testModuleFailure("await", 0, "Unexpected token \"await\"");
-//    testModuleFailure("function f() { var await }", 0, "Unexpected token \"await\"");
+    testModuleFailure("function f() { var await }", 19, "Unexpected token \"await\"");
     testScriptFailure("for(let[a].b of 0);", 10, "Unexpected token \".\"");
     testScriptFailure("for(let[a]().b of 0);", 10, "Unexpected token \"(\"");
     testScriptFailure("for(let.a of 0);", 10, "Invalid left-hand side in for-of");
