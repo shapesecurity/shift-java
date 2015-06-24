@@ -42,7 +42,9 @@ public class ObjectBindingTest extends Assertions {
         new StaticPropertyName("x"), new ObjectBinding(ImmutableList.list(new BindingPropertyProperty(
         new StaticPropertyName("y"), new BindingIdentifier("a"))))))), Maybe.just(new LiteralNumericExpression(0.0)))))));
 
-//    testScript("(a, b, [c]) => 0", new ArrowExpression(new FormalParameters(ImmutableList.list(new BindingIdentifier("a"), new BindingIdentifier("b"), new ArrayBinding(ImmutableList.list(Maybe.just(new BindingIdentifier("c"))), Maybe.nothing())), Maybe.nothing()), new LiteralNumericExpression(0.0)));
+    testScript("(a, b, [c]) => 0", new ArrowExpression(new FormalParameters(ImmutableList.list(new BindingIdentifier("a"),
+        new BindingIdentifier("b"), new ArrayBinding(ImmutableList.list(Maybe.just(new BindingIdentifier("c"))),
+            Maybe.nothing())), Maybe.nothing()), new LiteralNumericExpression(0.0)));
 
     testScript("try {} catch ({e}) {}", new TryCatchStatement(new Block(ImmutableList.nil()), new CatchClause(
         new ObjectBinding(ImmutableList.list(new BindingPropertyIdentifier(new BindingIdentifier("e"), Maybe.nothing()))),
@@ -53,7 +55,7 @@ public class ObjectBindingTest extends Assertions {
             new LiteralNumericExpression(0.0))))), new Block(ImmutableList.nil()))));
 
     testScriptFailure("var {a: b.c} = 0;", 9, "Unexpected token \".\"");
-//    testScriptFailure("({e: a.b}) => 0", 0, "Illegal arrow function parameter list");
+    testScriptFailure("({e: a.b}) => 0", 0, "Illegal arrow function parameter list");
     testScriptFailure("function a({e: a.b}) {}", 16, "Unexpected token \".\"");
     testScriptFailure("function* a({e: a.b}) {}", 17, "Unexpected token \".\"");
     testScriptFailure("(function ({e: a.b}) {})", 16, "Unexpected token \".\"");

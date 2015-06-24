@@ -1445,7 +1445,7 @@ public class Parser extends Tokenizer {
 
   private Expression parseNewExpression() throws JsError {
     SourceLocation startLocation = this.getLocation();
-    this.lex();
+    Token token = this.lex();
     if (this.eat(TokenType.PERIOD)) {
       Token ident = this.expect(TokenType.IDENTIFIER);
       if ((!ident.toString().equals("target"))) {
@@ -1455,10 +1455,9 @@ public class Parser extends Tokenizer {
     }
     ExpressionSuper callee = this.isolateCoverGrammar(() -> this.parseLeftHandSideExpression(false));
     if (!(callee instanceof Expression)) {
-      createUnexpected(this.lookahead);
+      throw this.createUnexpected(this.lookahead);
     }
-    return this.markLocation(startLocation, new NewExpression((Expression) callee, this.match(TokenType.LPAREN) ?
-        this.parseArgumentList() : ImmutableList.nil()));
+    return this.markLocation(startLocation, new NewExpression((Expression)callee, this.match(TokenType.LPAREN) ? this.parseArgumentList() : ImmutableList.nil()));
   }
 
   private ImmutableList parseArgumentList() throws JsError {

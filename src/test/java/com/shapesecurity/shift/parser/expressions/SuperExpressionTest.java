@@ -44,20 +44,20 @@ public class SuperExpressionTest extends Assertions {
             new CallExpression(new Super(), ImmutableList.nil()), new StaticPropertyName("a"))))))),
         new StaticPropertyName("constructor"))))));
 
-//    testScript("class A extends B { constructor() { () => super(); } }", new ClassDeclaration(new BindingIdentifier("A"),
-//        Maybe.just(new IdentifierExpression("B")), ImmutableList.list(new ClassElement(false, new Method(false,
-//        new FormalParameters(ImmutableList.nil(), Maybe.nothing()), new FunctionBody(ImmutableList.nil(),
-//        ImmutableList.list(new ExpressionStatement(new ArrowExpression(new FormalParameters(ImmutableList.nil(),
-//            Maybe.nothing()), new CallExpression(new Super(), ImmutableList.nil()))))),
-//        new StaticPropertyName("constructor"))))));
-//
-//    testScript("class A extends B { constructor() { () => { super(); } } }", new ClassDeclaration(
-//        new BindingIdentifier("A"), Maybe.just(new IdentifierExpression("B")), ImmutableList.list(new ClassElement(false,
-//        new Method(false, new FormalParameters(ImmutableList.nil(), Maybe.nothing()), new FunctionBody(
-//            ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new ArrowExpression(new FormalParameters(
-//            ImmutableList.nil(), Maybe.nothing()), new FunctionBody(ImmutableList.nil(), ImmutableList.list(
-//            new ExpressionStatement(new CallExpression(new Super(), ImmutableList.nil())))))))),
-//            new StaticPropertyName("constructor"))))));
+    testScript("class A extends B { constructor() { () => super(); } }", new ClassDeclaration(new BindingIdentifier("A"),
+        Maybe.just(new IdentifierExpression("B")), ImmutableList.list(new ClassElement(false, new Method(false,
+        new FormalParameters(ImmutableList.nil(), Maybe.nothing()), new FunctionBody(ImmutableList.nil(),
+        ImmutableList.list(new ExpressionStatement(new ArrowExpression(new FormalParameters(ImmutableList.nil(),
+            Maybe.nothing()), new CallExpression(new Super(), ImmutableList.nil()))))),
+        new StaticPropertyName("constructor"))))));
+
+    testScript("class A extends B { constructor() { () => { super(); } } }", new ClassDeclaration(
+        new BindingIdentifier("A"), Maybe.just(new IdentifierExpression("B")), ImmutableList.list(new ClassElement(false,
+        new Method(false, new FormalParameters(ImmutableList.nil(), Maybe.nothing()), new FunctionBody(
+            ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new ArrowExpression(new FormalParameters(
+            ImmutableList.nil(), Maybe.nothing()), new FunctionBody(ImmutableList.nil(), ImmutableList.list(
+            new ExpressionStatement(new CallExpression(new Super(), ImmutableList.nil())))))))),
+            new StaticPropertyName("constructor"))))));
 
     testScript("({ a() { super.b(); } });", new ObjectExpression(ImmutableList.list(new Method(false,
         new FormalParameters(ImmutableList.nil(), Maybe.nothing()), new FunctionBody(ImmutableList.nil(),
@@ -91,11 +91,11 @@ public class SuperExpressionTest extends Assertions {
         ImmutableList.list(new ExpressionStatement(new StaticMemberExpression("x", new Super())))),
         new StaticPropertyName("constructor"))))));
 
-//    testScript("class A { a() { () => super.b; } }", new ClassDeclaration(new BindingIdentifier("A"), Maybe.nothing(),
-//        ImmutableList.list(new ClassElement(false, new Method(false, new FormalParameters(ImmutableList.nil(),
-//            Maybe.nothing()), new FunctionBody(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(
-//            new ArrowExpression(new FormalParameters(ImmutableList.nil(), Maybe.nothing()), new StaticMemberExpression(
-//                "b", new Super()))))), new StaticPropertyName("a"))))));
+    testScript("class A { a() { () => super.b; } }", new ClassDeclaration(new BindingIdentifier("A"), Maybe.nothing(),
+        ImmutableList.list(new ClassElement(false, new Method(false, new FormalParameters(ImmutableList.nil(),
+            Maybe.nothing()), new FunctionBody(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(
+            new ArrowExpression(new FormalParameters(ImmutableList.nil(), Maybe.nothing()), new StaticMemberExpression(
+                "b", new Super()))))), new StaticPropertyName("a"))))));
 
     testScript("class A { a() { new super.b; } }", new ClassDeclaration(new BindingIdentifier("A"), Maybe.nothing(),
         ImmutableList.list(new ClassElement(false, new Method(false, new FormalParameters(ImmutableList.nil(),
@@ -108,7 +108,7 @@ public class SuperExpressionTest extends Assertions {
             Maybe.nothing()), new FunctionBody(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(
             new NewExpression(new StaticMemberExpression("b", new Super()), ImmutableList.nil())))),
             new StaticPropertyName("a"))))));
-//
+
     testScriptFailure("function f() { (super)() }", 21, "Unexpected token \"super\"");
     testScriptFailure("class A extends B { constructor() { super; } }", 41, "Unexpected token \"super\"");
     testScriptFailure("class A extends B { constructor() { (super)(); } }", 42, "Unexpected token \"super\"");
