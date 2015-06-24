@@ -31,6 +31,7 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.xml.crypto.Data;
 import javax.xml.transform.Source;
+import java.text.Normalizer;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -417,6 +418,46 @@ public class Parser extends Tokenizer {
       return this.lex().toString();
     } else {
       throw this.createUnexpected(this.lookahead);
+    }
+  }
+
+//  // TODO: fix this
+  private Expression parseArrowExpressionTail(Expression head, SourceLocation startLocation) throws JsError {
+//    Token arrow = this.expect(TokenType.ARROW);
+//
+//    ArrayList<BindingBindingWithDefault> params = new ArrayList<>();
+//    Maybe<BindingIdentifier> rest = Maybe.nothing();
+//
+//    // TODO
+//    if (!(head instance of ARROW_EXPRESSION_PARAMS)) {
+//      if (head instance of IdentifierExpression) {
+//        params = [transformDestructuring(head)];
+//      } else {
+//        throw this.createUnexpected(arrow);
+//      }
+//    }
+//
+//    FormalParameters paramsNode = this.markLocation(startLocation, new FormalParameters(ImmutableList.from(params), rest));
+//
+//    if (this.match(TokenType.LBRACE)) {
+//      boolean previousYield = this.allowYieldExpression;
+//      this.allowYieldExpression = false;
+//      FunctionBody body = this.parseFunctionBody();
+//      this.allowYieldExpression = previousYield;
+//      return this.markLocation(startLocation, new ArrayExpression(paramsNode, body)); // TODO: wrong type
+//    } else {
+//      Expression body = this.parseAssignmentExpression();
+//      return this.markLocation(startLocation, new ArrayExpression(paramsNode, body)); // TODO: wrong type
+//    }
+    return null;
+  }
+
+  public void ensureArrow() throws JsError {
+    if (this.hasLineTerminatorBeforeNext) {
+      throw this.createError(ErrorMessages.UNEXPECTED_LINE_TERMINATOR);
+    }
+    if (!this.match(TokenType.ARROW)) {
+      this.expect(TokenType.ARROW);
     }
   }
 
@@ -1058,12 +1099,11 @@ public class Parser extends Tokenizer {
 
     Expression expr = this.parseConditionalExpression();
 
-    // TODO: arrow
-//    if (!this.hasLineTerminatorBeforeNext && this.match(TokenType.ARROW)) {
-//      this.isBindingElement = this.isAssignmentTarget = false;
-//      this.firstExprError = null;
-//      return this.parseArrowExpressionTail(expr, startLocation);
-//    }
+    if (!this.hasLineTerminatorBeforeNext && this.match(TokenType.ARROW)) {
+      this.isBindingElement = this.isAssignmentTarget = false;
+      this.firstExprError = null;
+      return this.parseArrowExpressionTail(expr, startLocation);
+    }
 
     boolean isAssignmentOperator = false;
     Token operator = this.lookahead;
@@ -1523,12 +1563,29 @@ public class Parser extends Tokenizer {
   }
 
   private Expression parseGroupExpression() throws JsError {
-    Expression rest = null;
+    Maybe<BindingIdentifier> rest = Maybe.nothing();
     Token start = this.expect(TokenType.LPAREN);
     if (this.eat(TokenType.RPAREN)) {
-      // TODO arrow stuff
+      this.ensureArrow();
+      this.isBindingElement = this.isAssignmentTarget = false;
+      // TODO: return arrow expression params
+//      return {
+//          type: ARROW_EXPRESSION_PARAMS,
+//          params: [],
+//      rest:
+//      null,
+//      };
     } else if (this.eat(TokenType.ELLIPSIS)) {
-      // TODO arrow stuff
+      rest = Maybe.just(this.parseBindingIdentifier());
+      this.expect(TokenType.RPAREN);
+      this.ensureArrow();
+      this.isBindingElement = this.isAssignmentTarget = false;
+      // TODO: return arrow expression params
+//      return {
+//          type: ARROW_EXPRESSION_PARAMS,
+//          params: [],
+//      rest: rest,
+//      };
     }
 
     SourceLocation startLocation = this.getLocation();
@@ -1538,6 +1595,7 @@ public class Parser extends Tokenizer {
       // TODO rest of function
       Expression expr = this.parseAssignmentExpressionOrBindingElement();
       group = new BinaryExpression(BinaryOperator.Sequence, group, expr);
+      // TODO: arrow stuff
     }
 
     this.expect(TokenType.RPAREN);
