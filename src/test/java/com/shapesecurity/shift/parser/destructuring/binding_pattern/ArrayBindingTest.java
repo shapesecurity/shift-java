@@ -24,7 +24,7 @@ public class ArrayBindingTest extends Assertions {
 
     testScriptFailure("var [a.b] = 0", 6, "Unexpected token \".\"");
     testScriptFailure("var ([x]) = 0", 4, "Unexpected token \"(\"");
-//    testScriptFailure("([a.b]) => 0", 0, "Illegal arrow function parameter list"); // TODO wrong error msg
+    testScriptFailure("([a.b]) => 0", 0, "Illegal arrow function parameter list");
     testScriptFailure("function a([a.b]) {}", 13, "Unexpected token \".\"");
     testScriptFailure("function* a([a.b]) {}", 14, "Unexpected token \".\"");
     testScriptFailure("(function ([a.b]) {})", 13, "Unexpected token \".\"");

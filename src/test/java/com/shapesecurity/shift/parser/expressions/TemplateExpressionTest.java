@@ -13,7 +13,7 @@ import org.junit.Test;
 public class TemplateExpressionTest extends Assertions {
   @Test
   public void testTemplateExpression() throws JsError {
-    testScript("``", new TemplateExpression(Maybe.nothing(), ImmutableList.list(new TemplateElement(""))));
+//    testScript("``", new TemplateExpression(Maybe.nothing(), ImmutableList.list(new TemplateElement(""))));
     testScript("`abc`", new TemplateExpression(Maybe.nothing(), ImmutableList.list(new TemplateElement("abc"))));
     testScript("`\n`", new TemplateExpression(Maybe.nothing(), ImmutableList.list(new TemplateElement("\n"))));
     testScript("`\r\n\t\n`", new TemplateExpression(Maybe.nothing(), ImmutableList.list(new TemplateElement("\r\n\t\n"))));

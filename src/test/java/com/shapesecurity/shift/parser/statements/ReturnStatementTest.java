@@ -29,8 +29,9 @@ public class ReturnStatementTest extends Assertions {
             Maybe.just(new BinaryExpression(BinaryOperator.Mul, new IdentifierExpression("x"), new IdentifierExpression("y")))
         )))));
 
-    // TODO
-//    testScript("_ => { return 0; }");
+    testScript("_ => { return 0; }", new ArrowExpression(new FormalParameters(ImmutableList.list(
+        new BindingIdentifier("_")), Maybe.nothing()), new FunctionBody(ImmutableList.nil(), ImmutableList.list(
+        new ReturnStatement(Maybe.just(new LiteralNumericExpression(0.0)))))));
 
     testScriptFailure("return;", 0, "Illegal return statement");
     testScriptFailure("{ return; }", 2, "Illegal return statement");
