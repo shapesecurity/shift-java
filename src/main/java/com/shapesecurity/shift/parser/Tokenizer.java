@@ -26,16 +26,7 @@ import static com.shapesecurity.shift.parser.ErrorMessages.UNEXPECTED_TOKEN;
 
 import com.shapesecurity.functional.Pair;
 import com.shapesecurity.shift.ast.SourceLocation;
-import com.shapesecurity.shift.parser.token.EOFToken;
-import com.shapesecurity.shift.parser.token.FalseLiteralToken;
-import com.shapesecurity.shift.parser.token.IdentifierToken;
-import com.shapesecurity.shift.parser.token.KeywordToken;
-import com.shapesecurity.shift.parser.token.NullLiteralToken;
-import com.shapesecurity.shift.parser.token.NumericLiteralToken;
-import com.shapesecurity.shift.parser.token.PunctuatorToken;
-import com.shapesecurity.shift.parser.token.RegularExpressionLiteralToken;
-import com.shapesecurity.shift.parser.token.StringLiteralToken;
-import com.shapesecurity.shift.parser.token.TrueLiteralToken;
+import com.shapesecurity.shift.parser.token.*;
 import com.shapesecurity.shift.utils.Utils;
 
 import java.math.BigDecimal;
@@ -116,12 +107,14 @@ public class Tokenizer {
   protected boolean hasLineTerminatorBeforeNext;
   protected boolean strict;
   protected boolean moduleIsTheGoalSymbol = false;
-  private int index, line, lineStart;
+  protected int index, line, lineStart;
   private int lastIndex;
-  private int startIndex, startLine, startLineStart;
+  protected int startIndex, startLine, startLineStart;
 
   private SourceLocation cachedSourceLocation;
   private int lastCachedSourceLocation = -1;
+  private int lastLine;
+  private int lastLineStart;
 
   public Tokenizer(@NotNull String source) throws JsError {
     this.source = source;
@@ -436,7 +429,7 @@ public class Tokenizer {
   }
 
   @NotNull
-  private JsError createILLEGAL() {
+  protected JsError createILLEGAL() {
     this.startIndex = this.index;
     this.startLine = this.line;
     this.startLineStart = this.lineStart;
@@ -930,6 +923,10 @@ public class Tokenizer {
         return this.scanNumericLiteral();
       }
 
+      if (ch == 0x60) {
+        return this.scanTemplateElement();
+      }
+
       throw this.createILLEGAL();
     } else {
       if (Utils.isIdentifierStart(ch) || 0xD800 <= ch && ch <= 0xDBFF) {
@@ -940,37 +937,37 @@ public class Tokenizer {
     }
   }
 
-//  @NotNull
-//  private Token scanTemplateElement() {
-//    SourceLocation startLocation = this.getLocation();
-//    int start = this.index;
-//    while (this.index < this.source.length()) {
-//      char ch = this.source.charAt(this.index);
-//      switch (ch) {
-//        case 0x60:  // `
-//          this.index++;
-//          return new ;
-//          return { type: TokenType.TEMPLATE, tail: true, slice: this.getSlice(start, startLocation) };
-//        case 0x24:  // $
-//          if (this.source.charAt(this.index + 1) === 0x7B) {  // {
-//            this.index += 2;
-//            return { type: TokenType.TEMPLATE, tail: false, slice: this.getSlice(start, startLocation) };
-//          }
-//          this.index++;
-//          break;
-//        case 0x5C:  // \\
-//        {
-//          let octal = this.scanStringEscape("", false)[1];
-//          if (octal) {
-//            throw this.createILLEGAL();
-//          }
-//          break;
-//        }
-//        default:
-//          this.index++;
-//      }
-//    }
-//  }
+  @NotNull
+  protected Token scanTemplateElement() throws JsError {
+    SourceLocation startLocation = this.getLocation();
+    int start = this.index;
+    while (this.index < this.source.length()) {
+      char ch = this.source.charAt(this.index);
+      switch (ch) {
+        case 0x60:  // `
+          this.index++;
+          return new TemplateToken(this.getSlice(start), true);
+        case 0x24:  // $
+          if (this.source.charAt(this.index + 1) == 0x7B) {  // {
+            this.index += 2;
+            return new TemplateToken(this.getSlice(start), false);
+          }
+          this.index++;
+          break;
+        case 0x5C:  // \\
+        {
+          boolean octal = this.scanStringEscape("", false).b;
+          if (octal) {
+            throw this.createILLEGAL();
+          }
+          break;
+        }
+        default:
+          this.index++;
+      }
+    }
+    throw this.createILLEGAL();
+  }
 
   @NotNull
   private Token scanStringLiteral() throws JsError {
