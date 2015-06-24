@@ -833,6 +833,8 @@ public class Tokenizer {
           default:
             break; //failed
         }
+      } else if (ch1 == '=' && ch2 == '>') {
+        return TokenType.ARROW;
       }
     }
 

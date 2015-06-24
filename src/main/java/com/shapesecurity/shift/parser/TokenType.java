@@ -68,6 +68,7 @@ public enum TokenType {
   GT(TokenClass.Punctuator, ">"),
   LTE(TokenClass.Punctuator, "<="),
   GTE(TokenClass.Punctuator, ">="),
+  ARROW(TokenClass.Punctuator, "=>"),
   INSTANCEOF(TokenClass.Keyword, "instanceof"),
   IN(TokenClass.Keyword, "in"),
   NOT(TokenClass.Punctuator, "!"),
