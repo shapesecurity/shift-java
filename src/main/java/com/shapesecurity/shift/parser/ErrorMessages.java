@@ -26,8 +26,8 @@ interface ErrorMessages {
   String UNEXPECTED_IDENTIFIER = "Unexpected identifier";
   String UNEXPECTED_RESERVED_WORD = "Unexpected reserved word";
   String UNEXPECTED_EOS = "Unexpected end of input";
-  String UNEXPECTED_LINE_TERMINATOR = "Unexpected line terminator";
   String NEWLINE_AFTER_THROW = "Illegal newline after throw";
+  String NEWLINE_AFTER_ARROW_PARAMS = "Illegal newline after arrow parameters";
   String UNTERMINATED_REG_EXP = "Invalid regular expression: missing /";
   String INVALID_REG_EXP_FLAGS = "In valid regular expression flags";
   String INVALID_LHS_IN_ASSIGNMENT = "Invalid left-hand side in assignment";

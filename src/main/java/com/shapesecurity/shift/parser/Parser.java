@@ -26,6 +26,7 @@ import com.shapesecurity.shift.ast.*;
 import com.shapesecurity.shift.ast.Class;
 import com.shapesecurity.shift.ast.operators.*;
 import com.shapesecurity.shift.parser.token.IdentifierToken;
+import com.shapesecurity.shift.parser.token.TemplateToken;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -422,42 +423,25 @@ public class Parser extends Tokenizer {
   }
 
 //  // TODO: fix this
-  private Expression parseArrowExpressionTail(Expression head, SourceLocation startLocation) throws JsError {
-//    Token arrow = this.expect(TokenType.ARROW);
-//
-//    ArrayList<BindingBindingWithDefault> params = new ArrayList<>();
-//    Maybe<BindingIdentifier> rest = Maybe.nothing();
-//
-//    // TODO
-//    if (!(head instance of ARROW_EXPRESSION_PARAMS)) {
-//      if (head instance of IdentifierExpression) {
-//        params = [transformDestructuring(head)];
-//      } else {
-//        throw this.createUnexpected(arrow);
-//      }
-//    }
-//
-//    FormalParameters paramsNode = this.markLocation(startLocation, new FormalParameters(ImmutableList.from(params), rest));
-//
-//    if (this.match(TokenType.LBRACE)) {
-//      boolean previousYield = this.allowYieldExpression;
-//      this.allowYieldExpression = false;
-//      FunctionBody body = this.parseFunctionBody();
-//      this.allowYieldExpression = previousYield;
-//      return this.markLocation(startLocation, new ArrayExpression(paramsNode, body)); // TODO: wrong type
-//    } else {
-//      Expression body = this.parseAssignmentExpression();
-//      return this.markLocation(startLocation, new ArrayExpression(paramsNode, body)); // TODO: wrong type
-//    }
-    return null;
-  }
-
-  public void ensureArrow() throws JsError {
+  private Expression parseArrowExpressionTail(ArrayList<BindingBindingWithDefault> params, Maybe<BindingIdentifier> rest, SourceLocation startLocation) throws JsError {
     if (this.hasLineTerminatorBeforeNext) {
-      throw this.createError(ErrorMessages.UNEXPECTED_LINE_TERMINATOR);
+      throw this.createError(ErrorMessages.NEWLINE_AFTER_ARROW_PARAMS);
     }
-    if (!this.match(TokenType.ARROW)) {
-      this.expect(TokenType.ARROW);
+    this.expect(TokenType.ARROW);
+    this.isBindingElement = this.isAssignmentTarget = false;
+    this.firstExprError = null;
+
+    FormalParameters paramsNode = this.markLocation(startLocation, new FormalParameters(ImmutableList.from(params), rest));
+
+    if (this.match(TokenType.LBRACE)) {
+      boolean previousYield = this.allowYieldExpression;
+      this.allowYieldExpression = false;
+      FunctionBody body = this.parseFunctionBody();
+      this.allowYieldExpression = previousYield;
+      return this.markLocation(startLocation, new ArrowExpression(paramsNode, body));
+    } else {
+      Expression body = this.parseAssignmentExpression();
+      return this.markLocation(startLocation, new ArrowExpression(paramsNode, body));
     }
   }
 
@@ -801,14 +785,23 @@ public class Parser extends Tokenizer {
           }
           return new ArrayBinding(newElements, Maybe.nothing());
         }
+      } else {
+        return new ArrayBinding(ImmutableList.nil(), Maybe.nothing());
       }
     } else if (node instanceof IdentifierExpression) {
       return new BindingIdentifier(((IdentifierExpression) node).name);
-    } else if (node instanceof ComputedMemberExpression || node instanceof StaticMemberExpression
-        || node instanceof ArrayBinding || node instanceof StaticPropertyName) {
+    } else if (node instanceof ComputedMemberExpression || node instanceof StaticMemberExpression) {
       return (Binding) node;
     }
     throw new JsError(0, 0, 0, "not reached");
+  }
+
+  private static StaticPropertyName transformDestructuring(StaticPropertyName property) {
+    return property;
+  }
+
+  private static  ArrayBinding transformDestructuring(ArrayBinding binding) {
+    return binding;
   }
   private static BindingBindingWithDefault transformDestructuringWithDefault(Expression node) throws JsError {
     if (node instanceof AssignmentExpression) {
@@ -1069,8 +1062,8 @@ public class Parser extends Tokenizer {
   // TODO: rest of expression hierarchy
 
   private <T> T isolateCoverGrammar(ExceptionalSupplier<T> parser) throws JsError {
-    boolean oldIsBindingElement = this.isBindingElement,
-        oldIsAssignmentTarget = this.isAssignmentTarget;
+    boolean oldIsBindingElement = this.isBindingElement;
+    boolean oldIsAssignmentTarget = this.isAssignmentTarget;
     JsError oldFirstExprError = this.firstExprError;
     T result;
     this.isBindingElement = this.isAssignmentTarget = true;
@@ -1085,10 +1078,25 @@ public class Parser extends Tokenizer {
     return result;
   }
 
+  private <T> T inheritCoverGrammar(ExceptionalSupplier<T> parser) throws JsError {
+    boolean oldIsBindingElement = this.isBindingElement;
+    boolean oldIsAssignmentTarget = this.isAssignmentTarget;
+    JsError oldFirstExprError = this.firstExprError;
+    T result;
+    this.isBindingElement = this.isAssignmentTarget = true;
+    this.firstExprError = null;
+    result = parser.get();
+    this.isBindingElement = this.isBindingElement && oldIsBindingElement;
+    this.isAssignmentTarget = this.isAssignmentTarget && oldIsAssignmentTarget;
+    this.firstExprError = oldFirstExprError != null ? oldFirstExprError : this.firstExprError;
+    return result;
+  }
+
   private Expression parseAssignmentExpression() throws JsError {
     return this.isolateCoverGrammar(this::parseAssignmentExpressionOrBindingElement);
   }
 
+  @NotNull
   private Expression parseAssignmentExpressionOrBindingElement() throws JsError {
     SourceLocation startLocation = this.getLocation();
 
@@ -1097,12 +1105,18 @@ public class Parser extends Tokenizer {
       return this.parseYieldExpression();
     }
 
-    Expression expr = this.parseConditionalExpression();
-
-    if (!this.hasLineTerminatorBeforeNext && this.match(TokenType.ARROW)) {
-      this.isBindingElement = this.isAssignmentTarget = false;
-      this.firstExprError = null;
-      return this.parseArrowExpressionTail(expr, startLocation);
+    Expression expr;
+    if (this.match(TokenType.IDENTIFIER)) {
+      expr = this.parseConditionalExpression();
+      if (!this.hasLineTerminatorBeforeNext && this.match(TokenType.ARROW)) {
+        this.isBindingElement = this.isAssignmentTarget = false;
+        this.firstExprError = null;
+        ArrayList<BindingBindingWithDefault> params = new ArrayList<>();
+        params.add(transformDestructuring(expr));
+        return this.parseArrowExpressionTail(params, Maybe.nothing(), startLocation);
+      }
+    } else {
+      expr = this.parseConditionalExpression();
     }
 
     boolean isAssignmentOperator = false;
@@ -1328,58 +1342,58 @@ public class Parser extends Tokenizer {
     boolean previousAllowIn = this.allowIn;
     this.allowIn = allowCall;
 
-    Maybe<ExpressionSuper> expr = Maybe.nothing();
+    ExpressionSuper expr;
     Token token = this.lookahead;
 
     if (this.eat(TokenType.SUPER)) {
       this.isBindingElement = this.isAssignmentTarget = false;
-      expr = Maybe.just(this.markLocation(startLocation, new Super()));
+      expr = this.markLocation(startLocation, new Super());
 
       if (this.match(TokenType.LPAREN)) {
         if (allowCall) {
-          expr = Maybe.just((Expression) this.markLocation(startLocation, new CallExpression(expr.just(), this.parseArgumentList())));
+          expr = this.markLocation(startLocation, new CallExpression(expr, this.parseArgumentList()));
         }
       } else if (this.match(TokenType.LBRACK)) {
-        expr = Maybe.just((Expression) this.markLocation(startLocation, new ComputedMemberExpression(this.parseComputedMember(), expr.just())));
+        expr = this.markLocation(startLocation, new ComputedMemberExpression(this.parseComputedMember(), expr));
         this.isAssignmentTarget = true;
       } else if (this.match(TokenType.PERIOD)) {
-        expr = Maybe.just((Expression) this.markLocation(startLocation, new StaticMemberExpression(this.parseStaticMember(), expr.just())));
+        expr = this.markLocation(startLocation, new StaticMemberExpression(this.parseStaticMember(), expr));
         this.isAssignmentTarget = true;
       } else {
         throw this.createUnexpected(token);
       }
     } else if (this.match(TokenType.NEW)) {
       this.isBindingElement = this.isAssignmentTarget = false;
-      expr = Maybe.just(this.parseNewExpression());
+      expr = this.parseNewExpression();
     } else {
-      expr = Maybe.just(this.parsePrimaryExpression());
+      expr = this.parsePrimaryExpression();
       if (this.firstExprError != null) {
-        return expr.just();
+        return expr;
       }
     }
 
     while (true) {
       if (allowCall && this.match((TokenType.LPAREN))) {
         this.isBindingElement = this.isAssignmentTarget = false;
-        expr = Maybe.just(this.markLocation(startLocation, new CallExpression(expr.just(), this.parseArgumentList())));
-//      } else if (this.match(TokenType.TEMPLATE)) {
-//        this.isBindingElement = this.isAssignmentTarget = false;
-//        return this.markLocation(startLocation, new TemplateExpression(Maybe.just(expr), this.parseTemplateElements()));
+        expr = this.markLocation(startLocation, new CallExpression(expr, this.parseArgumentList()));
+      } else if (this.match(TokenType.TEMPLATE)) {
+        this.isBindingElement = this.isAssignmentTarget = false;
+        expr = this.markLocation(startLocation, new TemplateExpression(Maybe.just((Expression)expr), this.parseTemplateElements()));
       } else if (this.match(TokenType.LBRACK)) {
         this.isBindingElement = false;
         this.isAssignmentTarget = true;
-        expr = Maybe.just(this.markLocation(startLocation, new ComputedMemberExpression(this.parseComputedMember(), expr.just())));
+        expr = this.markLocation(startLocation, new ComputedMemberExpression(this.parseComputedMember(), expr));
       } else if (this.match(TokenType.PERIOD)) {
         this.isBindingElement = false;
         this.isAssignmentTarget = true;
-        expr = Maybe.just(this.markLocation(startLocation, new StaticMemberExpression(this.parseStaticMember(), expr.just())));
+        expr = this.markLocation(startLocation, new StaticMemberExpression(this.parseStaticMember(), expr));
       } else {
         break;
       }
     }
 
     this.allowIn = previousAllowIn;
-    return expr.just();
+    return expr;
   }
 
   private String parseStaticMember() throws JsError {
@@ -1398,10 +1412,36 @@ public class Parser extends Tokenizer {
     return expr;
   }
 
-//  private ImmutableList<ExpressionTemplateElement> parseTemplateElements() {
-//    // TODO: implement this
-//
-//  }
+  private ImmutableList<ExpressionTemplateElement> parseTemplateElements() throws JsError {
+    SourceLocation startLocation = this.getLocation();
+    Token token = this.lookahead;
+    ArrayList<ExpressionTemplateElement> result = new ArrayList<>();
+    if (((TemplateToken)token).tail) {
+      this.lex();
+      result.add(this.markLocation(startLocation, new TemplateElement(token.slice.toString())));
+      return ImmutableList.from(result);
+    }
+
+    result.add(this.markLocation(startLocation, new TemplateElement(token.slice.toString())));
+    while (true) {
+      result.add(this.parseExpression());
+      if (!this.match(TokenType.RBRACE)) {
+        throw this.createILLEGAL();
+      }
+      this.index = this.startIndex;
+      this.line = this.startLine;
+      this.lineStart = this.startLineStart;
+      this.lookahead = this.scanTemplateElement();
+      startLocation = this.getLocation();
+      token = this.lex();
+      if (((TemplateToken)token).tail) {
+        result.add(this.markLocation(startLocation, new TemplateElement(token.slice.toString())));
+        return ImmutableList.from(result);
+      } else {
+        result.add(this.markLocation(startLocation, new TemplateElement(token.slice.toString())));
+      }
+    }
+  }
 
   private Expression parseNewExpression() throws JsError {
     SourceLocation startLocation = this.getLocation();
@@ -1414,9 +1454,9 @@ public class Parser extends Tokenizer {
       return this.markLocation(startLocation, new NewTargetExpression());
     }
     ExpressionSuper callee = this.isolateCoverGrammar(() -> this.parseLeftHandSideExpression(false));
-//    if (!(callee instanceof Expression)) {
-//      createUnexpected(this.lookahead);
-//    }
+    if (!(callee instanceof Expression)) {
+      createUnexpected(this.lookahead);
+    }
     return this.markLocation(startLocation, new NewExpression((Expression) callee, this.match(TokenType.LPAREN) ?
         this.parseArgumentList() : ImmutableList.nil()));
   }
@@ -1492,8 +1532,10 @@ public class Parser extends Tokenizer {
       case CLASS:
         this.isBindingElement = this.isAssignmentTarget = false;
         return this.parseClass();
-      // TODO: template
-      // TODO: regex
+      case TEMPLATE:
+        this.isBindingElement = this.isAssignmentTarget = false;
+        return this.markLocation(startLocation, new TemplateExpression(Maybe.nothing(), this.parseTemplateElements()));
+        // TODO: regex
       default:
         throw this.createUnexpected(this.lookahead);
     }
@@ -1563,43 +1605,69 @@ public class Parser extends Tokenizer {
   }
 
   private Expression parseGroupExpression() throws JsError {
-    Maybe<BindingIdentifier> rest = Maybe.nothing();
+    SourceLocation startLocation = this.getLocation();
+
     Token start = this.expect(TokenType.LPAREN);
     if (this.eat(TokenType.RPAREN)) {
-      this.ensureArrow();
-      this.isBindingElement = this.isAssignmentTarget = false;
-      // TODO: return arrow expression params
-//      return {
-//          type: ARROW_EXPRESSION_PARAMS,
-//          params: [],
-//      rest:
-//      null,
-//      };
+      return this.parseArrowExpressionTail(new ArrayList<>(), Maybe.nothing(), startLocation);
     } else if (this.eat(TokenType.ELLIPSIS)) {
-      rest = Maybe.just(this.parseBindingIdentifier());
+      Maybe<BindingIdentifier> rest = Maybe.just(this.parseBindingIdentifier());
       this.expect(TokenType.RPAREN);
-      this.ensureArrow();
-      this.isBindingElement = this.isAssignmentTarget = false;
-      // TODO: return arrow expression params
-//      return {
-//          type: ARROW_EXPRESSION_PARAMS,
-//          params: [],
-//      rest: rest,
-//      };
+      return this.parseArrowExpressionTail(new ArrayList<>(), rest, startLocation);
     }
 
-    SourceLocation startLocation = this.getLocation();
-    Expression group = this.parseAssignmentExpressionOrBindingElement();
+    Expression group = this.inheritCoverGrammar(this::parseAssignmentExpressionOrBindingElement);
+
+    ArrayList<BindingBindingWithDefault> params = new ArrayList<>();
+    if (this.isBindingElement) {
+      params.add(transformDestructuring(group));
+    }
+
+    boolean mustBeArrowParameterList = false;
 
     while (this.eat(TokenType.COMMA)) {
-      // TODO rest of function
-      Expression expr = this.parseAssignmentExpressionOrBindingElement();
-      group = new BinaryExpression(BinaryOperator.Sequence, group, expr);
-      // TODO: arrow stuff
+      this.isAssignmentTarget = false;
+      if (this.match(TokenType.ELLIPSIS)) {
+        if (!this.isBindingElement) {
+          throw this.createUnexpected(this.lookahead);
+        }
+        this.lex();
+        Maybe<BindingIdentifier> rest = Maybe.just(this.parseBindingIdentifier());
+        this.expect(TokenType.RPAREN);
+        return this.parseArrowExpressionTail(params, rest, startLocation);
+      }
+
+      if (mustBeArrowParameterList) {
+        // Can be only binding elements.
+        BindingBindingWithDefault binding = this.parseBindingElement();
+        params.add(binding);
+      } else {
+        // Can be either binding element or assignment target.
+        Expression expr = this.inheritCoverGrammar(this::parseAssignmentExpressionOrBindingElement);
+        if (this.isBindingElement) {
+          params.add(transformDestructuring(expr));
+        }
+
+        if (this.firstExprError == null) {
+          group = this.markLocation(startLocation, new BinaryExpression(BinaryOperator.Sequence, group, expr));
+        } else {
+          mustBeArrowParameterList = true;
+        }
+      }
     }
 
     this.expect(TokenType.RPAREN);
-    return group;
+
+    if (!this.hasLineTerminatorBeforeNext && this.match(TokenType.ARROW) || mustBeArrowParameterList) {
+      if (!this.isBindingElement) {
+        throw this.createErrorWithLocation(startLocation, ErrorMessages.ILLEGAL_ARROW_FUNCTION_PARAMS);
+      }
+      return this.parseArrowExpressionTail(params, Maybe.nothing(), startLocation);
+    } else {
+      // Ensure assignment pattern:
+      this.isBindingElement = false;
+      return group;
+    }
   }
 
   private Node parsePropertyDefinition() throws JsError {
