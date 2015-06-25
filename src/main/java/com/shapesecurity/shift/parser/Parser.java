@@ -19,6 +19,7 @@ package com.shapesecurity.shift.parser;
 import com.shapesecurity.functional.F2;
 import com.shapesecurity.functional.Pair;
 import com.shapesecurity.functional.Thunk;
+import com.shapesecurity.functional.data.Either;
 import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.functional.data.Maybe;
 import com.shapesecurity.functional.data.NonEmptyImmutableList;
@@ -796,13 +797,14 @@ public class Parser extends Tokenizer {
     throw new JsError(0, 0, 0, "not reached");
   }
 
-  private static StaticPropertyName transformDestructuring(StaticPropertyName property) {
-    return property;
+  private static BindingIdentifier transformDestructuring(StaticPropertyName property) {
+    return new BindingIdentifier(property.value);
   }
 
   private static  ArrayBinding transformDestructuring(ArrayBinding binding) {
     return binding;
   }
+
   private static BindingBindingWithDefault transformDestructuringWithDefault(Expression node) throws JsError {
     if (node instanceof AssignmentExpression) {
       AssignmentExpression assignmentExpression = (AssignmentExpression) node;
@@ -1468,7 +1470,7 @@ public class Parser extends Tokenizer {
   }
 
   private ImmutableList parseArguments() throws JsError {
-    ArrayList<SpreadElementExpression> result = new ArrayList();
+    ArrayList<SpreadElementExpression> result = new ArrayList<>();
     while (true) {
       if (this.match(TokenType.RPAREN) || this.eof()) {
         return ImmutableList.from(result);
@@ -1593,8 +1595,12 @@ public class Parser extends Tokenizer {
     this.lex();
     ArrayList<ObjectProperty> properties = new ArrayList<>();
     while (!this.match(TokenType.RBRACE)) {
-      ObjectProperty property = (ObjectProperty) this.parsePropertyDefinition();
-      properties.add(property);
+      if (this.parsePropertyDefinition().isLeft()) {
+        ObjectProperty property =  this.parsePropertyDefinition().left().just();
+        properties.add(property);
+      } else {
+        // TODO what to do if it's binding property identifier?
+      }
       if (!this.match(TokenType.RBRACE)) {
         this.expect(TokenType.COMMA);
       }
@@ -1669,37 +1675,46 @@ public class Parser extends Tokenizer {
     }
   }
 
-  private Node parsePropertyDefinition() throws JsError {
+  private Either<ObjectProperty, BindingPropertyIdentifier> parsePropertyDefinition() throws JsError {
     SourceLocation startLocation = this.getLocation();
     Token token = this.lookahead;
 
-    Pair<Node, String> fromParseMethodDefinition = this.parseMethodDefinition();
-    Node methodOrKey = fromParseMethodDefinition.a;
-    String kind = fromParseMethodDefinition.b;
+    Either<PropertyName, MethodDefinition> methodOrKey = this.parseMethodDefinition();
 
-    if (kind.equals("method")) {
+    if (methodOrKey.isRight()) {
       this.isBindingElement = this.isAssignmentTarget = false;
-      return methodOrKey;
-    } else if (kind.equals("identifier")) {
-      if (this.eat(TokenType.ASSIGN)) {
-        Expression init = this.isolateCoverGrammar(this::parseAssignmentExpression);
-        this.firstExprError = this.createErrorWithLocation(startLocation, ErrorMessages.ILLEGAL_PROPERTY);
-        return this.markLocation(startLocation, new BindingPropertyIdentifier((BindingIdentifier)transformDestructuring(methodOrKey), Maybe.just(init))); //TODO: transform destructuring for node input
-      } else if (!this.match(TokenType.COLON)) {
-        if (token.type != TokenType.IDENTIFIER && token.type != TokenType.YIELD && token.type != TokenType.LET) {
-          throw this.createUnexpected(token);
+      return Either.left(methodOrKey.right().just());
+    } else if (methodOrKey.isLeft()) {
+      PropertyName propName = methodOrKey.left().just();
+      if (propName instanceof StaticPropertyName) {
+        StaticPropertyName staticPropertyName = (StaticPropertyName) propName;
+        if (this.eat(TokenType.ASSIGN)) {
+          Expression init = this.isolateCoverGrammar(this::parseAssignmentExpression);
+          this.firstExprError = this.createErrorWithLocation(startLocation, ErrorMessages.ILLEGAL_PROPERTY);
+          BindingPropertyIdentifier toReturn = new BindingPropertyIdentifier(transformDestructuring(staticPropertyName), Maybe.just(init));
+          this.markLocation(startLocation, toReturn);
+          return Either.right(toReturn);
         }
-        return this.markLocation(startLocation, new ShorthandProperty(((StaticPropertyName) methodOrKey).value));
+        if (!this.match(TokenType.COLON)) {
+          if (token.type != TokenType.IDENTIFIER && token.type != TokenType.YIELD && token.type != TokenType.LET) {
+            throw this.createUnexpected(token);
+          }
+          ShorthandProperty toReturn = new ShorthandProperty(staticPropertyName.value);
+          this.markLocation(startLocation, toReturn);
+          return Either.left(toReturn);
+        }
       }
     }
 
     this.expect(TokenType.COLON);
 
     Expression expr = this.parseAssignmentExpressionOrBindingElement();
-    return this.markLocation(startLocation, new DataProperty(expr, (PropertyName) methodOrKey));
+    DataProperty toReturn = new DataProperty(expr, methodOrKey.left().just());
+    this.markLocation(startLocation, toReturn);
+    return Either.left(toReturn);
   }
 
-  private Pair<Node, String> parseMethodDefinition() throws JsError {
+  private Either<PropertyName, MethodDefinition> parseMethodDefinition() throws JsError {
     Token token = this.lookahead;
     SourceLocation startLocation = this.getLocation();
 
@@ -1707,7 +1722,6 @@ public class Parser extends Tokenizer {
 
     Pair<PropertyName, Maybe<Binding>> fromParsePropertyName = this.parsePropertyName();
     PropertyName name = fromParsePropertyName.a;
-//    Binding binding = fromParsePropertyName.b.just();
 
     if (!isGenerator && token.type == TokenType.IDENTIFIER) {
       String tokenName = token.toString();
@@ -1718,7 +1732,7 @@ public class Parser extends Tokenizer {
           this.expect(TokenType.LPAREN);
           this.expect(TokenType.RPAREN);
           FunctionBody body = this.parseFunctionBody();
-          return new Pair<>(this.markLocation(startLocation, new Getter(body, name)), "method");
+          return Either.right(this.markLocation(startLocation, new Getter(body, name)));
         } else if (tokenName.equals("set") && this.lookaheadPropertyName()) {
           name = this.parsePropertyName().a;
           this.expect(TokenType.LPAREN);
@@ -1728,7 +1742,7 @@ public class Parser extends Tokenizer {
           this.allowYieldExpression = false;
           FunctionBody body = this.parseFunctionBody();
           this.allowYieldExpression = previousYield;
-          return new Pair<>(this.markLocation(startLocation, new Setter(param, body, name)), "method");
+          return Either.right(this.markLocation(startLocation, new Setter(param, body, name)));
         }
       }
     }
@@ -1746,14 +1760,14 @@ public class Parser extends Tokenizer {
       FunctionBody body = this.parseFunctionBody();
       this.allowYieldExpression = previousYield;
 
-      return new Pair<>(this.markLocation(startLocation, new Method(isGenerator, params, body, name)), "method");
+      return Either.right(this.markLocation(startLocation, new Method(isGenerator, params, body, name)));
     }
 
     if (isGenerator && this.match(TokenType.COLON)) {
       throw this.createUnexpected(this.lookahead);
     }
 
-    return new Pair<>(name, this.isIdentifierName(token.type.klass) ? "identifier" : "property");
+    return Either.left(name);
   }
 
   private boolean lookaheadPropertyName() {
@@ -1783,7 +1797,7 @@ public class Parser extends Tokenizer {
         Expression numLiteral = this.parseNumericLiteral();
         double numberValue = numLiteral instanceof LiteralInfinityExpression ? 1.0 : ((LiteralNumericExpression) numLiteral).value;
         int val = (int) numberValue;
-        Integer number = new Integer(val);
+        Integer number = val;
         return new Pair<>(this.markLocation(startLocation, new StaticPropertyName((number.toString()))), Maybe.nothing());
       case LBRACK:
         boolean previousYield = this.allowYieldExpression;
@@ -1844,17 +1858,13 @@ public class Parser extends Tokenizer {
         continue;
       }
       boolean isStatic = false;
-      Pair<Node, String> fromParseMethodDefinition = this.parseMethodDefinition();
-      Node methodOrKey = fromParseMethodDefinition.a;
-      String kind = fromParseMethodDefinition.b;
-      if (kind.equals("identifier") && ((StaticPropertyName) methodOrKey).value.equals("static")) {
+      Either<PropertyName, MethodDefinition> methodOrKey = this.parseMethodDefinition();
+      if (methodOrKey.isLeft() && ((StaticPropertyName)methodOrKey.left().just()).value.equals("static")) {
         isStatic = true;
-        fromParseMethodDefinition = this.parseMethodDefinition();
-        methodOrKey = fromParseMethodDefinition.a;
-        kind = fromParseMethodDefinition.b;
+        methodOrKey = this.parseMethodDefinition();
       }
-      if (kind.equals("method")) {
-        elements.add(new ClassElement(isStatic, (MethodDefinition) methodOrKey));
+      if (methodOrKey.isRight()) {
+        elements.add(new ClassElement(isStatic, methodOrKey.right().just()));
       } else {
         throw this.createError("Only methods are allowed in classes");
       }
@@ -1896,17 +1906,13 @@ public class Parser extends Tokenizer {
         continue;
       }
       boolean isStatic = false;
-      Pair<Node, String> fromParseMethodDefinition = this.parseMethodDefinition();
-      Node methodOrKey = fromParseMethodDefinition.a;
-      String kind = fromParseMethodDefinition.b;
-      if (kind.equals("identifier") && ((StaticPropertyName) methodOrKey).value.equals("static")) {
+      Either<PropertyName, MethodDefinition> methodOrKey = this.parseMethodDefinition();
+      if (methodOrKey.isLeft() && ((StaticPropertyName) methodOrKey.left().just()).value.equals("static")) {
         isStatic = true;
-        fromParseMethodDefinition = this.parseMethodDefinition();
-        methodOrKey = fromParseMethodDefinition.a;
-        kind = fromParseMethodDefinition.b;
+        methodOrKey = this.parseMethodDefinition();
       }
-      if (kind.equals("method")) {
-        elements.add(new ClassElement(isStatic, (MethodDefinition) methodOrKey));
+      if (methodOrKey.isRight()) {
+        elements.add(new ClassElement(isStatic, methodOrKey.right().just()));
       } else {
         throw this.createError("Only methods are allowed in classes");
       }
