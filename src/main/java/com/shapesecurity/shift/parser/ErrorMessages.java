@@ -43,6 +43,7 @@ interface ErrorMessages {
 
   // not in error.js, but already used in java version
   String STRICT_RESERVED_WORD = "Use of future reserved word in strict mode";
+  String UNEXPECTED_OBJECT_BINDING = "Unexpected ObjectBinding in place of Expression";
 
   // not in error.js, not used
   String INVALID_REGULAR_EXPRESSION = "Invalid regular expression";
