@@ -433,7 +433,9 @@ public class Tokenizer {
     this.startIndex = this.index;
     this.startLine = this.line;
     this.startLineStart = this.lineStart;
-    return this.createError(ErrorMessages.UNEXPECTED_ILLEGAL_TOKEN);
+    return this.index < this.source.length()
+            ? this.createError(ErrorMessages.UNEXPECTED_ILLEGAL_TOKEN, this.source.charAt(this.index))
+            : this.createError(ErrorMessages.UNEXPECTED_EOS);
   }
 
   JsError createUnexpected(@NotNull Token token) {
@@ -941,6 +943,7 @@ public class Tokenizer {
   protected Token scanTemplateElement() throws JsError {
     SourceLocation startLocation = this.getLocation();
     int start = this.index;
+    this.index++;
     while (this.index < this.source.length()) {
       char ch = this.source.charAt(this.index);
       switch (ch) {
