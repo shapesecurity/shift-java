@@ -79,6 +79,10 @@ public class Assertions {
     testScriptFailureML(source, 1, index, index, error);
   }
 
+  public static void testScriptFailure(@NotNull String source, int line, int column, int index, @NotNull String error) {
+    testScriptFailureML(source, line, column, index, error);
+  }
+
   public static void testModuleFailureML(@NotNull String source, int line, int column, int index, @NotNull String error) {
     try {
       Parser.parseModule(source);
