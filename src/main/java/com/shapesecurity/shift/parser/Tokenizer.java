@@ -466,7 +466,11 @@ public class Tokenizer {
 
   @NotNull
   JsError createError(@NotNull String message, @NotNull Object... args) {
-    String msg = String.format(message, args);
+    ArrayList<String> escapedArgs = new ArrayList<String>();
+    for(Object arg : args) {
+      escapedArgs.add(arg.toString().replace("\\", "\\\\").replace("\"", "\\\""));
+    }
+    String msg = String.format(message, escapedArgs.toArray());
     return new JsError(this.startIndex, this.startLine + 1, this.startIndex - this.startLineStart, msg);
   }
 
@@ -693,34 +697,15 @@ public class Tokenizer {
     // Backslash (U+005C) starts an escaped character.
     CharSequence id = this.source.charAt(this.index) == '\\' ? this.getEscapedIdentifier() : this.getIdentifier();
 
-    // There is no keyword or literal with only one character.
-    // Thus, it must be an identifier.
     SourceRange slice = this.getSlice(start);
 
-    if ((id.length() == 1)) {
+    TokenType subType = this.getKeyword(id);
+    if (subType == TokenType.IDENTIFIER) {
       return new IdentifierToken(slice, id);
     }
-
-    return new KeywordToken(this.getKeyword(id), slice);
-//    TokenType subType = this.getKeyword(id);
-//    if (subType != TokenType.ILLEGAL) {
-//      return new KeywordToken(subType, slice);
-//    }
-//
-//    if (id.length() == 4) {
-//      id = id.toString();
-//      if ("null".equals(id)) {
-//        return new NullLiteralToken(slice);
-//      } else if ("true".equals(id)) {
-//        return new TrueLiteralToken(slice);
-//      }
-//    }
-//
-//    if (id.length() == 5 && "false".equals(id.toString())) {
-//      return new FalseLiteralToken(slice);
-//    }
-//
-//    return new IdentifierToken(slice, id);
+    else {
+      return new KeywordToken(subType, slice);
+    }
   }
 
   @NotNull
