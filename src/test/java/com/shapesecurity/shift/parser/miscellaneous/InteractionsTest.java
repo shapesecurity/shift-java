@@ -199,6 +199,6 @@ public class InteractionsTest extends Assertions {
                 new IdentifierExpression("c"), new Super())))), new IdentifierExpression("d"))))),
         new StaticPropertyName("a"))))));
 
-  testScriptFailure("0.toString", 0, "Unexpected \"t\"");
+    testScriptFailure("0.toString", 0, "Unexpected \"t\"");
   }
 }
