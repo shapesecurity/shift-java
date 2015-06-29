@@ -40,9 +40,9 @@ public class NewTargetExpressionTest extends Assertions {
             ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new NewTargetExpression()))),
             new StaticPropertyName("m")))));
 
-//    testScript("function f() { new.\\u0074arget; }", new FunctionDeclaration(new BindingIdentifier("f"), false,
-//        new FormalParameters(ImmutableList.nil(), Maybe.nothing()), new FunctionBody(ImmutableList.nil(),
-//        ImmutableList.list(new ExpressionStatement(new NewTargetExpression())))));
+    testScript("function f() { new.\\u0074arget; }", new FunctionDeclaration(new BindingIdentifier("f"), false,
+        new FormalParameters(ImmutableList.nil(), Maybe.nothing()), new FunctionBody(ImmutableList.nil(),
+        ImmutableList.list(new ExpressionStatement(new NewTargetExpression())))));
 
     testScript("function f() { new new.target; }", new FunctionDeclaration (new BindingIdentifier("f"), false,
         new FormalParameters(ImmutableList.nil(), Maybe.nothing()), new FunctionBody(ImmutableList.nil(),

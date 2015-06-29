@@ -34,9 +34,9 @@ public class GroupedExpressionTest extends Assertions {
     testScript("((((((((((((((((((((((((((((((((((((((((a))))))))))))))))))))))))))))))))))))))))",
         new IdentifierExpression("a"));
 
-//    testScriptFailure("(0, {a = 0}) = 0", 0, "Invalid left-hand side in assignment");
-//    testScriptFailure("({a = 0})", 0, "Illegal property initializer");
-//    testScriptFailure("(0, {a = 0}) => 0", 0, "Illegal arrow function parameter list");
-//    testScriptFailure("({a = 0}, {a = 0}, 0) => 0", 0, "Unexpected number");
+    testScriptFailure("(0, {a = 0}) = 0", 0, "Invalid left-hand side in assignment");
+    testScriptFailure("({a = 0})", 0, "Illegal property initializer");
+    testScriptFailure("(0, {a = 0}) => 0", 0, "Illegal arrow function parameter list");
+    testScriptFailure("({a = 0}, {a = 0}, 0) => 0", 0, "Unexpected number");
   }
 }

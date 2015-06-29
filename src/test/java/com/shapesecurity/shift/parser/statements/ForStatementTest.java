@@ -84,6 +84,6 @@ public class ForStatementTest extends Assertions {
             ImmutableList.list(new VariableDeclarator(new BindingIdentifier("a"), Maybe.nothing())))), Maybe.nothing(),
             Maybe.nothing(), new EmptyStatement()));
 
-//    testScriptFailure("for({a=0};;);", 4, "Illegal property initializer");
+    testScriptFailure("for({a=0};;);", 4, "Illegal property initializer");
   }
 }

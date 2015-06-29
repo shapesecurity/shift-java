@@ -112,7 +112,7 @@ public class SuperExpressionTest extends Assertions {
     testScriptFailure("function f() { (super)() }", 21, "Unexpected token \"super\"");
     testScriptFailure("class A extends B { constructor() { super; } }", 41, "Unexpected token \"super\"");
     testScriptFailure("class A extends B { constructor() { (super)(); } }", 42, "Unexpected token \"super\"");
-//    testScriptFailure("class A extends B { constructor() { new super(); } }", 0, "Unexpected token \"super\"");
+    testScriptFailure("class A extends B { constructor() { new super(); } }", 0, "Unexpected token \"super\"");
     testScriptFailure("({ a() { (super).b(); } });", 15, "Unexpected token \"super\"");
     testScriptFailure("class A extends B { constructor() { (super).a(); } }", 42, "Unexpected token \"super\"");
   }

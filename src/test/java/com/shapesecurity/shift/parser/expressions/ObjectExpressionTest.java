@@ -26,14 +26,14 @@ public class ObjectExpressionTest extends Assertions {
     testScript("({ if: 0 })", new ObjectExpression(ImmutableList.list(new DataProperty(new LiteralNumericExpression(0.0),
         new StaticPropertyName("if")))));
 
-//    testScript("({ true: 0 })", new ObjectExpression(ImmutableList.list(new DataProperty(new LiteralNumericExpression(0.0),
-//        new StaticPropertyName("true")))));
+    testScript("({ true: 0 })", new ObjectExpression(ImmutableList.list(new DataProperty(new LiteralNumericExpression(0.0),
+        new StaticPropertyName("true")))));
 
-//    testScript("({ false: 0 })", new ObjectExpression(ImmutableList.list(new DataProperty(new LiteralNumericExpression(0.0),
-//        new StaticPropertyName("false")))));
+    testScript("({ false: 0 })", new ObjectExpression(ImmutableList.list(new DataProperty(new LiteralNumericExpression(0.0),
+        new StaticPropertyName("false")))));
 
-//    testScript("({ null: 0 })", new ObjectExpression(ImmutableList.list(new DataProperty(new LiteralNumericExpression(0.0),
-//        new StaticPropertyName("null")))));
+    testScript("({ null: 0 })", new ObjectExpression(ImmutableList.list(new DataProperty(new LiteralNumericExpression(0.0),
+        new StaticPropertyName("null")))));
 
     testScript("({ \"answer\": 0 })", new ObjectExpression(ImmutableList.list(new DataProperty(
         new LiteralNumericExpression(0.0), new StaticPropertyName("\"answer\"")))));
@@ -51,15 +51,15 @@ public class ObjectExpressionTest extends Assertions {
 
     testScript("({ get if() {} })", new ObjectExpression(ImmutableList.list(new Getter(new FunctionBody(
         ImmutableList.nil(), ImmutableList.nil()) ,new StaticPropertyName("if")))));
-//
-//    testScript("({ get true() {} })", new ObjectExpression(ImmutableList.list(new Getter(new FunctionBody(
-//        ImmutableList.nil(), ImmutableList.nil()) ,new StaticPropertyName("true")))));
-//
-//    testScript("({ get false() {} })", new ObjectExpression(ImmutableList.list(new Getter(new FunctionBody(
-//        ImmutableList.nil(), ImmutableList.nil()) ,new StaticPropertyName("false")))));
-//
-//    testScript("({ get null() {} })", new ObjectExpression(ImmutableList.list(new Getter(new FunctionBody(
-//        ImmutableList.nil(), ImmutableList.nil()) ,new StaticPropertyName("null")))));
+
+    testScript("({ get true() {} })", new ObjectExpression(ImmutableList.list(new Getter(new FunctionBody(
+        ImmutableList.nil(), ImmutableList.nil()) ,new StaticPropertyName("true")))));
+
+    testScript("({ get false() {} })", new ObjectExpression(ImmutableList.list(new Getter(new FunctionBody(
+        ImmutableList.nil(), ImmutableList.nil()) ,new StaticPropertyName("false")))));
+
+    testScript("({ get null() {} })", new ObjectExpression(ImmutableList.list(new Getter(new FunctionBody(
+        ImmutableList.nil(), ImmutableList.nil()) ,new StaticPropertyName("null")))));
 
     testScript("({ get \"undef\"() {} })", new ObjectExpression(ImmutableList.list(new Getter(new FunctionBody(
         ImmutableList.nil(), ImmutableList.nil()) ,new StaticPropertyName("\"undef\"")))));
@@ -75,21 +75,21 @@ public class ObjectExpressionTest extends Assertions {
         new FunctionBody(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new IdentifierExpression("w")))),
         new StaticPropertyName("if")))));
 
-//    testScript("({ set true(w) { w } })", new ObjectExpression(ImmutableList.list(new Setter(new BindingIdentifier("w"),
-//        new FunctionBody(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new IdentifierExpression("w")))),
-//        new StaticPropertyName("true")))));
-//
-//    testScript("({ set false(w) { w } })", new ObjectExpression(ImmutableList.list(new Setter(new BindingIdentifier("w"),
-//        new FunctionBody(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new IdentifierExpression("w")))),
-//        new StaticPropertyName("false")))));
-//
-//    testScript("({ set null(w) { w } })", new ObjectExpression(ImmutableList.list(new Setter(new BindingIdentifier("w"),
-//        new FunctionBody(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new IdentifierExpression("w")))),
-//        new StaticPropertyName("null")))));
-//
-//    testScript("({ set \"null\"(w) { w } })", new ObjectExpression(ImmutableList.list(new Setter(new BindingIdentifier("w"),
-//        new FunctionBody(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new IdentifierExpression("w")))),
-//        new StaticPropertyName("\"null\"")))));
+    testScript("({ set true(w) { w } })", new ObjectExpression(ImmutableList.list(new Setter(new BindingIdentifier("w"),
+        new FunctionBody(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new IdentifierExpression("w")))),
+        new StaticPropertyName("true")))));
+
+    testScript("({ set false(w) { w } })", new ObjectExpression(ImmutableList.list(new Setter(new BindingIdentifier("w"),
+        new FunctionBody(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new IdentifierExpression("w")))),
+        new StaticPropertyName("false")))));
+
+    testScript("({ set null(w) { w } })", new ObjectExpression(ImmutableList.list(new Setter(new BindingIdentifier("w"),
+        new FunctionBody(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new IdentifierExpression("w")))),
+        new StaticPropertyName("null")))));
+
+    testScript("({ set \"null\"(w) { w } })", new ObjectExpression(ImmutableList.list(new Setter(new BindingIdentifier("w"),
+        new FunctionBody(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new IdentifierExpression("w")))),
+        new StaticPropertyName("\"null\"")))));
 
     testScript("({ set 10(w) { w } })", new ObjectExpression(ImmutableList.list(new Setter(new BindingIdentifier("w"),
         new FunctionBody(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new IdentifierExpression("w")))),

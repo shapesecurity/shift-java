@@ -21,7 +21,7 @@ public class IncompatibilitiesTest extends Assertions {
 
     // ES3: a slash in a regexp character class will terminate the regexp
     // ES5: a slash is allowed within a regexp character class
-//    testScriptFailure("[/[/]", 1, "Invalid regular expression: missing /"); // TODO
+    testScriptFailure("[/[/]", 1, "Invalid regular expression: missing /"); // TODO
   }
 
   @Test
@@ -121,11 +121,11 @@ public class IncompatibilitiesTest extends Assertions {
 
     testScript("a<!--b", new IdentifierExpression("a"));
 
-//    testModuleFailure("<!--", 0, "Unexpected token \"<\"");
-//    testModuleFailure("-->", 0, "Unexpected token \">\"");
-//
-//    testModule("a<!--b",
-//        new BinaryExpression(BinaryOperator.LessThan, new IdentifierExpression("a"),
-//            new UnaryExpression(UnaryOperator.LogicalNot, new UpdateExpression(true, UpdateOperator.Decrement, new BindingIdentifier("b")))));
+    testModuleFailure("<!--", 0, "Unexpected token \"<\"");
+    testModuleFailure("-->", 0, "Unexpected token \">\"");
+
+    testModule("a<!--b",
+        new BinaryExpression(BinaryOperator.LessThan, new IdentifierExpression("a"),
+            new UnaryExpression(UnaryOperator.LogicalNot, new UpdateExpression(true, UpdateOperator.Decrement, new BindingIdentifier("b")))));
   }
 }
