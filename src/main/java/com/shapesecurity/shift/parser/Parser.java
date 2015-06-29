@@ -24,6 +24,8 @@ import com.shapesecurity.shift.ast.*;
 import com.shapesecurity.shift.ast.Class;
 import com.shapesecurity.shift.ast.operators.*;
 import com.shapesecurity.shift.parser.token.IdentifierToken;
+import com.shapesecurity.shift.parser.token.NumericLiteralToken;
+import com.shapesecurity.shift.parser.token.RegularExpressionLiteralToken;
 import com.shapesecurity.shift.parser.token.TemplateToken;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -1369,7 +1371,11 @@ public class Parser extends Tokenizer {
   private Expression parseNumericLiteral() throws JsError {
     SourceLocation startLocation = this.getLocation();
     Token token = this.lex();
-    return this.markLocation(startLocation, new LiteralNumericExpression(Double.parseDouble(token.toString())));
+    if (Double.isInfinite(((NumericLiteralToken)token).value)) {
+      return this.markLocation(startLocation, new LiteralInfinityExpression());
+    } else {
+      return this.markLocation(startLocation, new LiteralNumericExpression(Double.parseDouble(token.toString())));
+    }
   }
 
   private Either<ExpressionSuper, ObjectBinding> parseLeftHandSideExpression(boolean allowCall) throws JsError {
@@ -1585,7 +1591,13 @@ public class Parser extends Tokenizer {
         return Either.left(this.markLocation(startLocation, new TemplateExpression(Maybe.nothing(), this.parseTemplateElements())));
       case DIV:
       case ASSIGN_DIV:
-        // TODO: regex
+        this.isBindingElement = this.isAssignmentTarget = false;
+        this.lookahead = this.scanRegExp(this.match(TokenType.DIV) ? "/" : "/=");
+        Token token = this.lex();
+        int lastSlash = ((RegularExpressionLiteralToken)token).getValueString().lastIndexOf("/");
+        String pattern = ((RegularExpressionLiteralToken)token).getValueString().substring(1, lastSlash);
+        String flags = ((RegularExpressionLiteralToken)token).getValueString().substring(lastSlash + 1);
+        return Either.left(this.markLocation(startLocation, new LiteralRegExpExpression(pattern, flags)));
       default:
         throw this.createUnexpected(this.lookahead);
     }
@@ -1884,7 +1896,7 @@ public class Parser extends Tokenizer {
         return new Pair<>(this.markLocation(startLocation, new StaticPropertyName(stringValue)), Maybe.nothing());
       case NUMBER:
         Expression numLiteral = this.parseNumericLiteral();
-        double numberValue = numLiteral instanceof LiteralInfinityExpression ? 1.0 : ((LiteralNumericExpression) numLiteral).value;
+        double numberValue = numLiteral instanceof LiteralInfinityExpression ? 1/0 : ((LiteralNumericExpression) numLiteral).value;
         int val = (int) numberValue;
         Integer number = val;
         return new Pair<>(this.markLocation(startLocation, new StaticPropertyName((number.toString()))), Maybe.nothing());
