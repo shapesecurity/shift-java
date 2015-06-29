@@ -1454,14 +1454,17 @@ public class Parser extends Tokenizer {
   private ImmutableList<ExpressionTemplateElement> parseTemplateElements() throws JsError {
     SourceLocation startLocation = this.getLocation();
     Token token = this.lookahead;
+    String nonTemplatePart;
     ArrayList<ExpressionTemplateElement> result = new ArrayList<>();
     if (((TemplateToken)token).tail) {
       this.lex();
-      result.add(this.markLocation(startLocation, new TemplateElement(token.slice.toString())));
+      nonTemplatePart = token.slice.subSequence(1, token.slice.length()-1).toString();
+      result.add(this.markLocation(startLocation, new TemplateElement(nonTemplatePart)));
       return ImmutableList.from(result);
     }
-
-    result.add(this.markLocation(startLocation, new TemplateElement(token.slice.toString())));
+    token = this.lex();
+    nonTemplatePart = token.slice.subSequence(1, token.slice.length()-2).toString();
+    result.add(this.markLocation(startLocation, new TemplateElement(nonTemplatePart)));
     while (true) {
       result.add(this.parseExpression().left().just());
       if (!this.match(TokenType.RBRACE)) {
@@ -1474,10 +1477,12 @@ public class Parser extends Tokenizer {
       startLocation = this.getLocation();
       token = this.lex();
       if (((TemplateToken)token).tail) {
-        result.add(this.markLocation(startLocation, new TemplateElement(token.slice.toString())));
+        nonTemplatePart = token.slice.subSequence(1, token.slice.length()-1).toString();
+        result.add(this.markLocation(startLocation, new TemplateElement(nonTemplatePart)));
         return ImmutableList.from(result);
       } else {
-        result.add(this.markLocation(startLocation, new TemplateElement(token.slice.toString())));
+        nonTemplatePart = token.slice.subSequence(1, token.slice.length()-2).toString();
+        result.add(this.markLocation(startLocation, new TemplateElement(nonTemplatePart)));
       }
     }
   }
