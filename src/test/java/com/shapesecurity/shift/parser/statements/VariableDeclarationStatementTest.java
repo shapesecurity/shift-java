@@ -105,8 +105,6 @@ public class VariableDeclarationStatementTest extends Assertions {
     testScript("let[let]=0", new VariableDeclarationStatement(new VariableDeclaration(VariableDeclarationKind.Let,
         ImmutableList.list(new VariableDeclarator(new ArrayBinding(ImmutableList.list(Maybe.just(new BindingIdentifier("let"))), Maybe.nothing()), Maybe.just(new LiteralNumericExpression(0.0)))))));
 
-    testScript("(let[a])", new ComputedMemberExpression(new IdentifierExpression("a"), new IdentifierExpression("let")));
-
     testScriptFailure("var const", 4, "Unexpected token \"const\"");
     testScriptFailure("var a[0]=0;", 5, "Unexpected token \"[\"");
     testScriptFailure("var (a)=0;", 4, "Unexpected token \"(\"");
@@ -117,7 +115,5 @@ public class VariableDeclarationStatementTest extends Assertions {
     testScriptFailure("var [a];", 7, "Unexpected token \";\"");
     testScriptFailure("var {a};", 7, "Unexpected token \";\"");
     testScriptFailure("var {a:a};", 9, "Unexpected token \";\"");
-
-    testScriptFailure("let[let]", 8, "Unexpected end of input");
   }
 }

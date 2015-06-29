@@ -13,21 +13,25 @@ import org.junit.Test;
 public class IdentifierExpressionTest extends Assertions {
   @Test
   public void testIdentifierExpression() throws JsError {
-   testScript("x", new IdentifierExpression("x"));
+    testScript("x", new IdentifierExpression("x"));
 
-   testScript("x;", new IdentifierExpression("x"));
+    testScript("x;", new IdentifierExpression("x"));
 
-   testScript("await", new IdentifierExpression("await"));
+    testScript("await", new IdentifierExpression("await"));
 
-   testScript("let", new IdentifierExpression("let"));
+    testScript("let", new IdentifierExpression("let"));
 
-   testScript("let()", new CallExpression(new IdentifierExpression("let"), ImmutableList.nil()));
+    testScript("let()", new CallExpression(new IdentifierExpression("let"), ImmutableList.nil()));
 
-   testScript("let.let", new StaticMemberExpression("let", new IdentifierExpression("let")));
+    testScript("let.let", new StaticMemberExpression("let", new IdentifierExpression("let")));
 
-   testScript("for(let;;);", new ForStatement(Maybe.just(new IdentifierExpression("let")), Maybe.nothing(), Maybe.nothing(), new EmptyStatement()));
+    testScript("(let[let])", new ComputedMemberExpression(new IdentifierExpression("let"), new IdentifierExpression("let")));
 
-   testScript("for(let();;);", new ForStatement(Maybe.just(new CallExpression(new IdentifierExpression("let"),
+    testScript("(let[a])", new ComputedMemberExpression(new IdentifierExpression("a"), new IdentifierExpression("let")));
+
+    testScript("for(let;;);", new ForStatement(Maybe.just(new IdentifierExpression("let")), Maybe.nothing(), Maybe.nothing(), new EmptyStatement()));
+
+    testScript("for(let();;);", new ForStatement(Maybe.just(new CallExpression(new IdentifierExpression("let"),
        ImmutableList.nil())), Maybe.nothing(), Maybe.nothing(), new EmptyStatement()));
 
     testScript("for(let yield in 0);", new ForInStatement(new VariableDeclaration(VariableDeclarationKind.Let,
