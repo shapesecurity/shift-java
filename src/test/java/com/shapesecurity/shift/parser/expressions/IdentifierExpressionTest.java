@@ -23,8 +23,6 @@ public class IdentifierExpressionTest extends Assertions {
 
    testScript("let()", new CallExpression(new IdentifierExpression("let"), ImmutableList.nil()));
 
-   testScript("let[let]", new ComputedMemberExpression(new IdentifierExpression("let"), new IdentifierExpression("let")));
-
    testScript("let.let", new StaticMemberExpression("let", new IdentifierExpression("let")));
 
    testScript("for(let;;);", new ForStatement(Maybe.just(new IdentifierExpression("let")), Maybe.nothing(), Maybe.nothing(), new EmptyStatement()));
