@@ -65,7 +65,7 @@ public class YieldExpressionTest extends Assertions {
         true, new FormalParameters(ImmutableList.nil(), Maybe.nothing()), new FunctionBody(ImmutableList.nil(),
         ImmutableList.list(new ExpressionStatement(new YieldExpression(Maybe.just(new LiteralRegExpExpression("a", ""))))))));
 
-    testScript("function *a(){yield =3}", new FunctionDeclaration(new BindingIdentifier("a"),
+    testScript("function *a(){yield /=3/}", new FunctionDeclaration(new BindingIdentifier("a"),
         true, new FormalParameters(ImmutableList.nil(), Maybe.nothing()), new FunctionBody(ImmutableList.nil(),
         ImmutableList.list(new ExpressionStatement(new YieldExpression(Maybe.just(new LiteralRegExpExpression("=3", ""))))))));
 

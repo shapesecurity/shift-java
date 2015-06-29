@@ -28,8 +28,8 @@ interface ErrorMessages {
   String UNEXPECTED_EOS = "Unexpected end of input";
   String NEWLINE_AFTER_THROW = "Illegal newline after throw";
   String NEWLINE_AFTER_ARROW_PARAMS = "Illegal newline after arrow parameters";
-  String UNTERMINATED_REG_EXP = "Invalid regular expression: missing /";
-  String INVALID_REG_EXP_FLAGS = "In valid regular expression flags";
+  String UNTERMINATED_REGEXP = "Invalid regular expression: missing /";
+  String INVALID_REGEXP_FLAGS = "In valid regular expression flags";
   String INVALID_LHS_IN_ASSIGNMENT = "Invalid left-hand side in assignment";
   String INVALID_LHS_IN_FOR_IN = "Invalid left-hand side in for-in";
   String INVALID_LHS_IN_FOR_OF = "Invalid left-hand side in for-of";

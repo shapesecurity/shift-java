@@ -620,9 +620,62 @@ public class Tokenizer {
     }
   }
 
-//  private RegularExpressionLiteralToken scanRegExp() {
-//
-//  }
+  protected RegularExpressionLiteralToken scanRegExp(String str) throws JsError {
+    SourceLocation startLocation = this.getLocation();
+    int start = this.index;
+
+    boolean terminated = false;
+    boolean classMarker = false;
+    while (this.index < this.source.length()) {
+      char ch = this.source.charAt(this.index);
+      if (ch == '\\') {
+        str += ch;
+        this.index++;
+        ch = this.source.charAt(this.index);
+        if (Utils.isLineTerminator(ch)) {
+          throw this.createError(ErrorMessages.UNTERMINATED_REGEXP);
+        }
+        str += ch;
+        this.index++;
+      } else if (Utils.isLineTerminator(ch)) {
+        throw this.createError(ErrorMessages.UNTERMINATED_REGEXP);
+      } else {
+        if (classMarker) {
+          if (ch == ']') {
+            classMarker = false;
+          }
+        } else {
+          if (ch == '/') {
+            terminated = true;
+            str += ch;
+            this.index++;
+            break;
+          } else if (ch == '[') {
+            classMarker = true;
+          }
+        }
+        str += ch;
+        this.index++;
+      }
+    }
+
+    if (!terminated) {
+      throw this.createError(ErrorMessages.UNTERMINATED_REGEXP);
+    }
+
+    while (this.index < this.source.length()) {
+      char ch = this.source.charAt(this.index);
+      if (ch == '\\') {
+        throw this.createError(ErrorMessages.INVALID_REGEXP_FLAGS);
+      }
+      if (!Utils.isIdentifierPart(ch)) {
+        break;
+      }
+      this.index++;
+      str += ch;
+    }
+    return new RegularExpressionLiteralToken(this.getSlice(start), str);
+  }
 
   private int scanHexEscape4() {
     if (this.index + 4 > this.source.length()) {
