@@ -363,7 +363,7 @@ public class Parser extends Tokenizer {
           if (this.inGeneratorParameter) {
             this.allowYieldExpression = false;
           }
-          Either<Expression,ObjectBinding> expr = this.parseAssignmentExpression();
+          Either<Expression, Binding> expr = this.parseAssignmentExpression();
           defaultValue = expr.left();
           this.allowYieldExpression = previousAllowYieldExpression;
         }
@@ -440,7 +440,7 @@ public class Parser extends Tokenizer {
       this.allowYieldExpression = previousYield;
       return this.markLocation(startLocation, new ArrowExpression(paramsNode, body));
     } else {
-      Either<Expression, ObjectBinding> body = this.parseAssignmentExpression();
+      Either<Expression, Binding> body = this.parseAssignmentExpression();
       return this.markLocation(startLocation, new ArrowExpression(paramsNode, body.left().just()));
     }
   }
@@ -564,7 +564,7 @@ public class Parser extends Tokenizer {
         this.allowYieldExpression = false;
       }
       this.inGeneratorParameter = false;
-      Either<Expression, ObjectBinding> init = this.parseAssignmentExpression();
+      Either<Expression, Binding> init = this.parseAssignmentExpression();
       bbwd = this.markLocation(startLocation, new BindingWithDefault(binding, init.left().just()));
       this.inGeneratorParameter = previousInGeneratorParameter;
       this.allowYieldExpression = previousYieldExpression;
@@ -766,28 +766,30 @@ public class Parser extends Tokenizer {
     } else if (node instanceof ArrayExpression) {
       ArrayExpression arrayExpression = (ArrayExpression) node;
       Maybe<SpreadElementExpression> last = Maybe.join(arrayExpression.elements.maybeLast());
-      NonEmptyImmutableList<Maybe<SpreadElementExpression>> elements = (NonEmptyImmutableList<Maybe<SpreadElementExpression>>) arrayExpression.elements;
+      ImmutableList<Maybe<SpreadElementExpression>> elements = arrayExpression.elements;
 //      if (arrayExpression.elements instanceof Nil) {
 //        elements = (NonEmptyImmutableList<Maybe<SpreadElementExpression>>) arrayExpression.elements;
 //      } else {
 //        return new ArrayBinding(ImmutableList.nil(), Maybe.nothing());
 //      }
-      ImmutableList<Maybe<BindingBindingWithDefault>> newElements = ImmutableList.list();
+      ArrayList<Maybe<BindingBindingWithDefault>> newElements = new ArrayList<>();
       if (last.isJust() && last.just() instanceof SpreadElement) {
         SpreadElement spreadElement = (SpreadElement) last.just();
-        for (Maybe<SpreadElementExpression> maybeBbwd : elements.init()) {
+        for (Maybe<SpreadElementExpression> maybeBbwd : ((NonEmptyImmutableList<Maybe<SpreadElementExpression>>) elements).init()) {
           if (maybeBbwd.isJust()) {
-            newElements = newElements.cons(Maybe.just(Parser.transformDestructuringWithDefault((Expression) maybeBbwd.just())));
+            newElements.add(Maybe.just(Parser.transformDestructuringWithDefault((Expression) maybeBbwd.just())));
           }
         }
-        return new ArrayBinding(newElements, Maybe.just(Parser.transformDestructuring(spreadElement.expression)));
+        return new ArrayBinding(ImmutableList.from(newElements), Maybe.just(Parser.transformDestructuring(spreadElement.expression)));
       } else {
         for (Maybe<SpreadElementExpression> maybeBbwd : elements) {
           if (maybeBbwd.isJust()) {
-            newElements = newElements.cons(Maybe.just(Parser.transformDestructuringWithDefault((Expression) maybeBbwd.just())));
+            newElements.add(Maybe.just(Parser.transformDestructuringWithDefault((Expression) maybeBbwd.just())));
+          } else {
+            newElements.add(Maybe.nothing());
           }
         }
-        return new ArrayBinding(newElements, Maybe.nothing());
+        return new ArrayBinding(ImmutableList.from(newElements), Maybe.nothing());
       }
 
     } else if (node instanceof IdentifierExpression) {
@@ -800,10 +802,6 @@ public class Parser extends Tokenizer {
 
   private static BindingIdentifier transformDestructuring(StaticPropertyName property) {
     return new BindingIdentifier(property.value);
-  }
-
-  private static ArrayBinding transformDestructuring(ArrayBinding binding) {
-    return binding;
   }
 
   private static BindingBindingWithDefault transformDestructuringWithDefault(Expression node) throws JsError {
@@ -1046,9 +1044,9 @@ public class Parser extends Tokenizer {
     return new ExpressionStatement(expr);
   }
 
-  private Either<Expression, ObjectBinding> parseExpression() throws JsError {
+  private Either<Expression, Binding> parseExpression() throws JsError {
     SourceLocation startLocation = this.getLocation();
-    Either<Expression, ObjectBinding> left = this.parseAssignmentExpression();
+    Either<Expression, Binding> left = this.parseAssignmentExpression();
     if (this.match(TokenType.COMMA)) {
       while (!this.eof()) {
         if (!this.match(TokenType.COMMA)) {
@@ -1093,12 +1091,12 @@ public class Parser extends Tokenizer {
     return result;
   }
 
-  private Either<Expression, ObjectBinding> parseAssignmentExpression() throws JsError {
+  private Either<Expression, Binding> parseAssignmentExpression() throws JsError {
     return this.isolateCoverGrammar(this::parseAssignmentExpressionOrBindingElement);
   }
 
   @NotNull
-  private Either<Expression, ObjectBinding> parseAssignmentExpressionOrBindingElement() throws JsError {
+  private Either<Expression, Binding> parseAssignmentExpressionOrBindingElement() throws JsError {
     SourceLocation startLocation = this.getLocation();
 
     if (this.allowYieldExpression && !this.inGeneratorParameter && this.match(TokenType.YIELD)) {
@@ -1106,7 +1104,7 @@ public class Parser extends Tokenizer {
       return Either.left(this.parseYieldExpression());
     }
 
-    Either<Expression, ObjectBinding> expr;
+    Either<Expression, Binding> expr;
     if (this.match(TokenType.IDENTIFIER)) {
       expr = this.parseConditionalExpression();
       if (!this.hasLineTerminatorBeforeNext && this.match(TokenType.ARROW)) {
@@ -1120,7 +1118,7 @@ public class Parser extends Tokenizer {
       expr = this.parseConditionalExpression();
     }
 
-//    Either<Expression, ObjectBinding> expr = this.parseConditionalExpression();
+//    Either<Expression, Binding> expr = this.parseConditionalExpression();
 //    if (!this.hasLineTerminatorBeforeNext && this.match(TokenType.ARROW)) {
 //      this.isBindingElement = this.isAssignmentTarget = false;
 //      this.firstExprError = null;
@@ -1170,7 +1168,7 @@ public class Parser extends Tokenizer {
     this.lex();
     boolean previousInGeneratorParameter = this.inGeneratorParameter;
     this.inGeneratorParameter = false;
-    Either<Expression, ObjectBinding> rhs = this.parseAssignmentExpression();
+    Either<Expression, Binding> rhs = this.parseAssignmentExpression();
     if (rhs.isRight()) {
       throw this.createError(ErrorMessages.UNEXPECTED_OBJECT_BINDING);
     }
@@ -1234,9 +1232,9 @@ public class Parser extends Tokenizer {
 
   }
 
-  private Either<Expression, ObjectBinding> parseConditionalExpression() throws JsError {
+  private Either<Expression, Binding> parseConditionalExpression() throws JsError {
     SourceLocation startLocation = this.getLocation();
-    Either<Expression, ObjectBinding> test = this.parseBinaryExpression();
+    Either<Expression, Binding> test = this.parseBinaryExpression();
     if (this.firstExprError != null) {
       return test;
     }
@@ -1257,9 +1255,9 @@ public class Parser extends Tokenizer {
     return test;
   }
 
-  private Either<Expression, ObjectBinding> parseBinaryExpression() throws JsError {
+  private Either<Expression, Binding> parseBinaryExpression() throws JsError {
     SourceLocation startLocation = this.getLocation();
-    Either<Expression, ObjectBinding> left = this.parseUnaryExpression();
+    Either<Expression, Binding> left = this.parseUnaryExpression();
 
     BinaryOperator operator = this.lookupBinaryOperator(this.lookahead);
     if (operator == null) {
@@ -1273,7 +1271,7 @@ public class Parser extends Tokenizer {
       ImmutableList<ExprStackItem> stack = ImmutableList.nil();
       stack = stack.cons(new ExprStackItem(startLocation, left.left().just(), operator));
       startLocation = this.getLocation();
-      Either<Expression, ObjectBinding> expr = this.isolateCoverGrammar(this::parseUnaryExpression);
+      Either<Expression, Binding> expr = this.isolateCoverGrammar(this::parseUnaryExpression);
       operator = this.lookupBinaryOperator(this.lookahead);
       while (operator != null) {
         Precedence precedence = operator.getPrecedence();
@@ -1305,7 +1303,7 @@ public class Parser extends Tokenizer {
     }
   }
 
-  private Either<Expression, ObjectBinding> parseUnaryExpression() throws JsError {
+  private Either<Expression, Binding> parseUnaryExpression() throws JsError {
     if (this.lookahead.type.klass != TokenClass.Punctuator && this.lookahead.type.klass != TokenClass.Keyword) {
       return this.parseUpdateExpression();
     }
@@ -1318,7 +1316,7 @@ public class Parser extends Tokenizer {
 
     this.lex();
     this.isBindingElement = this.isAssignmentTarget = false;
-    Either<Expression, ObjectBinding> operand = this.isolateCoverGrammar(this::parseUnaryExpression);
+    Either<Expression, Binding> operand = this.isolateCoverGrammar(this::parseUnaryExpression);
 
     if (operand.isLeft()) {
       UpdateOperator updateOperator = this.lookupUpdateOperator(operatorToken);
@@ -1334,9 +1332,9 @@ public class Parser extends Tokenizer {
   }
 
   @NotNull
-  private Either<Expression, ObjectBinding> parseUpdateExpression() throws JsError {
+  private Either<Expression, Binding> parseUpdateExpression() throws JsError {
     SourceLocation startLocation = this.getLocation();
-    Either<Expression, ObjectBinding> operand = this.parseLeftHandSideExpression(true).mapLeft(x -> (Expression)x);
+    Either<Expression, Binding> operand = this.parseLeftHandSideExpression(true).mapLeft(x -> (Expression)x);
     if (this.firstExprError != null && this.hasLineTerminatorBeforeNext) {
       return operand;
     }
@@ -1374,16 +1372,16 @@ public class Parser extends Tokenizer {
     if (Double.isInfinite(((NumericLiteralToken)token).value)) {
       return this.markLocation(startLocation, new LiteralInfinityExpression());
     } else {
-      return this.markLocation(startLocation, new LiteralNumericExpression(Double.parseDouble(token.toString())));
+      return this.markLocation(startLocation, new LiteralNumericExpression(((NumericLiteralToken)token).value));
     }
   }
 
-  private Either<ExpressionSuper, ObjectBinding> parseLeftHandSideExpression(boolean allowCall) throws JsError {
+  private Either<ExpressionSuper, Binding> parseLeftHandSideExpression(boolean allowCall) throws JsError {
     SourceLocation startLocation = this.getLocation();
     boolean previousAllowIn = this.allowIn;
     this.allowIn = allowCall;
 
-    Either<ExpressionSuper, ObjectBinding> expr;
+    Either<ExpressionSuper, Binding> expr;
     Token token = this.lookahead;
 
     if (this.eat(TokenType.SUPER)) {
@@ -1450,9 +1448,9 @@ public class Parser extends Tokenizer {
     }
   }
 
-  private Either<Expression, ObjectBinding> parseComputedMember() throws JsError {
+  private Either<Expression, Binding> parseComputedMember() throws JsError {
     this.lex();
-    Either<Expression, ObjectBinding> expr = this.parseExpression();
+    Either<Expression, Binding> expr = this.parseExpression();
     this.expect(TokenType.RBRACK);
     return expr;
   }
@@ -1503,7 +1501,7 @@ public class Parser extends Tokenizer {
       }
       return this.markLocation(startLocation, new NewTargetExpression());
     }
-    Either<ExpressionSuper, ObjectBinding> fromParseLeftHandSideExpression = this.isolateCoverGrammar(() -> this.parseLeftHandSideExpression(false));
+    Either<ExpressionSuper, Binding> fromParseLeftHandSideExpression = this.isolateCoverGrammar(() -> this.parseLeftHandSideExpression(false));
     if (fromParseLeftHandSideExpression.isLeft()) {
       ExpressionSuper callee = fromParseLeftHandSideExpression.left().just();
       if (!(callee instanceof Expression)) {
@@ -1543,7 +1541,7 @@ public class Parser extends Tokenizer {
     return ImmutableList.from(result);
   }
 
-  private Either<Expression, ObjectBinding> parsePrimaryExpression() throws JsError {
+  private Either<Expression, Binding> parsePrimaryExpression() throws JsError {
     if (this.match(TokenType.LPAREN)) {
       return this.parseGroupExpression();
     }
@@ -1613,6 +1611,8 @@ public class Parser extends Tokenizer {
     this.lex();
 
     ArrayList<Maybe<SpreadElementExpression>> exprs = new ArrayList<>();
+    ArrayList<Maybe<ObjectBinding>> objectBindings = new ArrayList<>();
+    boolean allSEEsSoFar = true;
 
     while (true) {
       if (this.match(TokenType.RBRACK)) {
@@ -1646,47 +1646,46 @@ public class Parser extends Tokenizer {
         }
       }
     }
-    this.expect(TokenType.RBRACK);
 
+    this.expect(TokenType.RBRACK);
     return this.markLocation(startLocation, new ArrayExpression(ImmutableList.from(exprs)));
   }
 
-  private Either<Expression, ObjectBinding> parseObjectExpression() throws JsError {
+  private Either<Expression, Binding> parseObjectExpression() throws JsError {
     SourceLocation startLocation = this.getLocation();
     this.lex();
 
     ArrayList<ObjectProperty> objectProperties = new ArrayList<>();
     ArrayList<BindingProperty> bindingProperties = new ArrayList<>();
 
-    boolean changeMode = false;
-    boolean initialChange = true;
+    boolean allExpressionsSoFar = true;
 
     while (!this.match(TokenType.RBRACE)) {
       Either<ObjectProperty, BindingPropertyIdentifier> fromParsePropertyDefinition = this.parsePropertyDefinition();
-      if (fromParsePropertyDefinition.isLeft()) {
-        ObjectProperty property = fromParsePropertyDefinition.left().just();
-        if (!changeMode) {
-          objectProperties.add(property);
+      if (allExpressionsSoFar) {
+        if (fromParsePropertyDefinition.isLeft()) {
+          objectProperties.add(fromParsePropertyDefinition.left().just());
         } else {
-          bindingProperties.add(transformDestructuring(property));
-        }
-      } else {
-        changeMode = true;
-        if (initialChange) {
+          allExpressionsSoFar = false;
+          BindingPropertyIdentifier propertyIdentifier = fromParsePropertyDefinition.right().just();
           for (ObjectProperty objectProperty : objectProperties) {
             bindingProperties.add(transformDestructuring(objectProperty));
           }
+          bindingProperties.add(fromParsePropertyDefinition.right().just());
         }
-        BindingPropertyIdentifier propertyIdentifier = fromParsePropertyDefinition.right().just();
-        bindingProperties.add(propertyIdentifier);
-        initialChange = false;
+      } else {
+        if (fromParsePropertyDefinition.isLeft()) {
+          bindingProperties.add(transformDestructuring(fromParsePropertyDefinition.left().just()));
+        } else {
+          bindingProperties.add(fromParsePropertyDefinition.right().just());
+        }
       }
       if (!this.match(TokenType.RBRACE)) {
         this.expect(TokenType.COMMA);
       }
     }
     this.expect(TokenType.RBRACE);
-    if (!changeMode) {
+    if (allExpressionsSoFar) {
       ObjectExpression toReturn = new ObjectExpression(ImmutableList.from(objectProperties));
       this.markLocation(startLocation, toReturn);
       return Either.left(toReturn);
@@ -1697,7 +1696,7 @@ public class Parser extends Tokenizer {
     }
   }
 
-  private Either<Expression, ObjectBinding> parseGroupExpression() throws JsError {
+  private Either<Expression, Binding> parseGroupExpression() throws JsError {
     SourceLocation startLocation = this.getLocation();
 
     Token start = this.expect(TokenType.LPAREN);
@@ -1711,7 +1710,7 @@ public class Parser extends Tokenizer {
       return Either.left(this.parseArrowExpressionTail(new ArrayList<>(), rest, startLocation));
     }
 
-    Either<Expression, ObjectBinding> group = this.inheritCoverGrammar(this::parseAssignmentExpressionOrBindingElement);
+    Either<Expression, Binding> group = this.inheritCoverGrammar(this::parseAssignmentExpressionOrBindingElement);
 
     ArrayList<BindingBindingWithDefault> params = new ArrayList<>();
 //    this.isBindingElement = false; // TODO: temporary fix for test group expression
@@ -1743,7 +1742,7 @@ public class Parser extends Tokenizer {
         params.add(binding);
       } else {
         // Can be either binding element or assignment target.
-        Either<Expression, ObjectBinding> expr = this.inheritCoverGrammar(this::parseAssignmentExpressionOrBindingElement);
+        Either<Expression, Binding> expr = this.inheritCoverGrammar(this::parseAssignmentExpressionOrBindingElement);
         if (this.isBindingElement) {
           if (expr.isLeft()) {
             params.add(transformDestructuring(expr.left().just()));
@@ -1765,7 +1764,7 @@ public class Parser extends Tokenizer {
     if (!this.hasLineTerminatorBeforeNext && this.match(TokenType.ARROW) || mustBeArrowParameterList) {
 //      this.isBindingElement = true; // TODO: temporary fix for binding patter / object binding test
       if (!this.isBindingElement) {
-        throw this.createErrorWithLocation(startLocation, ErrorMessages.ILLEGAL_ARROW_FUNCTION_PARAMS);
+        throw this.createErrorWithLocation(startLocation, this.match(TokenType.ASSIGN) ? ErrorMessages.INVALID_LHS_IN_ASSIGNMENT : ErrorMessages.ILLEGAL_ARROW_FUNCTION_PARAMS);
       }
       this.isBindingElement = false;
       return Either.left(this.parseArrowExpressionTail(params, Maybe.nothing(), startLocation));
@@ -1896,10 +1895,13 @@ public class Parser extends Tokenizer {
         return new Pair<>(this.markLocation(startLocation, new StaticPropertyName(stringValue)), Maybe.nothing());
       case NUMBER:
         Expression numLiteral = this.parseNumericLiteral();
-        double numberValue = numLiteral instanceof LiteralInfinityExpression ? 1/0 : ((LiteralNumericExpression) numLiteral).value;
-        int val = (int) numberValue;
-        Integer number = val;
-        return new Pair<>(this.markLocation(startLocation, new StaticPropertyName((number.toString()))), Maybe.nothing());
+        if (numLiteral instanceof LiteralInfinityExpression) {
+          return new Pair<>(this.markLocation(startLocation, new StaticPropertyName("Infinity")), Maybe.nothing());
+        } else {
+          double value = ((LiteralNumericExpression) numLiteral).value;
+
+          return new Pair<>(this.markLocation(startLocation, new StaticPropertyName(String.valueOf(value).split("\\.")[0])), Maybe.nothing());
+        }
       case LBRACK:
         boolean previousYield = this.allowYieldExpression;
         if (this.inGeneratorParameter) {
@@ -1926,7 +1928,7 @@ public class Parser extends Tokenizer {
   }
 
   private boolean isIdentifierName(TokenClass klass) {
-    if (klass.getName().equals("Identifier") || klass.getName().equals("Keyword")) {
+    if (klass.getName().equals("Identifier") || klass.getName().equals("Keyword") || klass.getName().equals("Boolean") || klass.getName().equals("Null")) {
       return true;
     }
     return false;
@@ -1949,7 +1951,7 @@ public class Parser extends Tokenizer {
     this.inGeneratorParameter = false;
     this.allowYieldExpression = false;
     if (this.eat(TokenType.EXTENDS)) {
-      Either<ExpressionSuper, ObjectBinding> fromParseLeftHandSideExpression = this.isolateCoverGrammar(() -> this.parseLeftHandSideExpression(true));
+      Either<ExpressionSuper, Binding> fromParseLeftHandSideExpression = this.isolateCoverGrammar(() -> this.parseLeftHandSideExpression(true));
       if (fromParseLeftHandSideExpression.isLeft()) {
         heritage = Maybe.just((Expression)fromParseLeftHandSideExpression.left().just());
       } else {
@@ -2003,7 +2005,7 @@ public class Parser extends Tokenizer {
 
     if (this.eat(TokenType.EXTENDS)) {
 //      heritage = Maybe.just((Expression) this.isolateCoverGrammar(() -> this.parseLeftHandSideExpression(true)));
-      Either<ExpressionSuper, ObjectBinding> fromParseLeftHandSideExpression = this.isolateCoverGrammar(() -> this.parseLeftHandSideExpression(true));
+      Either<ExpressionSuper, Binding> fromParseLeftHandSideExpression = this.isolateCoverGrammar(() -> this.parseLeftHandSideExpression(true));
       if (fromParseLeftHandSideExpression.isLeft()) {
         heritage = Maybe.just((Expression)fromParseLeftHandSideExpression.left().just());
       } else {
