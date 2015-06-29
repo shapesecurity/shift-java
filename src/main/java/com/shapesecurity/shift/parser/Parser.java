@@ -1494,11 +1494,11 @@ public class Parser extends Tokenizer {
     }
     Either<ExpressionSuper, ObjectBinding> fromParseLeftHandSideExpression = this.isolateCoverGrammar(() -> this.parseLeftHandSideExpression(false));
     if (fromParseLeftHandSideExpression.isLeft()) {
-      Expression callee = (Expression)fromParseLeftHandSideExpression.left().just();
+      ExpressionSuper callee = fromParseLeftHandSideExpression.left().just();
       if (!(callee instanceof Expression)) {
         throw this.createUnexpected(this.lookahead);
       }
-      return this.markLocation(startLocation, new NewExpression((Expression) callee, this.match(TokenType.LPAREN) ? this.parseArgumentList() : ImmutableList.nil()));
+      return this.markLocation(startLocation, new NewExpression((Expression)callee, this.match(TokenType.LPAREN) ? this.parseArgumentList() : ImmutableList.nil()));
     } else {
       throw this.createError(ErrorMessages.UNEXPECTED_OBJECT_BINDING);
     }
