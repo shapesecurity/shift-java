@@ -61,11 +61,11 @@ public class AssignmentExpressionTest extends Assertions {
     testScript("x |= 0", new CompoundAssignmentExpression(CompoundAssignmentOperator.AssignBitOr,
         new BindingIdentifier("x"), new LiteralNumericExpression(0.0)));
 
-//    testScript("'use strict'; eval[0] = 0", new AssignmentExpression(new ComputedMemberExpression(
-//        new IdentifierExpression("eval"), new LiteralNumericExpression(0.0)), new LiteralNumericExpression(0.0)));
-//
-//    testScript("'use strict'; arguments[0] = 0", new AssignmentExpression(new ComputedMemberExpression(
-//        new IdentifierExpression("arguments"), new LiteralNumericExpression(0.0)), new LiteralNumericExpression(0.0)));
+    testScript("'use strict'; eval[0] = 0", new AssignmentExpression(new ComputedMemberExpression(
+            new LiteralNumericExpression(0.0), new IdentifierExpression("eval")), new LiteralNumericExpression(0.0)));
+
+    testScript("'use strict'; arguments[0] = 0", new AssignmentExpression(new ComputedMemberExpression(
+            new LiteralNumericExpression(0.0), new IdentifierExpression("arguments")), new LiteralNumericExpression(0.0)));
 
     testScript("((((((((((((((((((((((((((((((((((((((((a)))))))))))))))))))))))))))))))))))))))) = 0",
         new AssignmentExpression(new BindingIdentifier("a"), new LiteralNumericExpression(0.0)));

@@ -53,21 +53,21 @@ public class YieldExpressionTest extends Assertions {
         ImmutableList.list(new ExpressionStatement(new YieldExpression(Maybe.just(new UnaryExpression(UnaryOperator.Minus,
             new LiteralNumericExpression(0.0)))))))));
 
-//    testScript("function *a(){yield 2e308}", new FunctionDeclaration(new BindingIdentifier("a"),
-//        true, new FormalParameters(ImmutableList.nil(), Maybe.nothing()), new FunctionBody(ImmutableList.nil(),
-//        ImmutableList.list(new ExpressionStatement(new YieldExpression(Maybe.just(new LiteralInfinityExpression())))))));
+    testScript("function *a(){yield 2e308}", new FunctionDeclaration(new BindingIdentifier("a"),
+        true, new FormalParameters(ImmutableList.nil(), Maybe.nothing()), new FunctionBody(ImmutableList.nil(),
+        ImmutableList.list(new ExpressionStatement(new YieldExpression(Maybe.just(new LiteralInfinityExpression())))))));
 
     testScript("function *a(){yield(0)}", new FunctionDeclaration(new BindingIdentifier("a"),
         true, new FormalParameters(ImmutableList.nil(), Maybe.nothing()), new FunctionBody(ImmutableList.nil(),
         ImmutableList.list(new ExpressionStatement(new YieldExpression(Maybe.just(new LiteralNumericExpression(0.0))))))));
 
-//    testScript("function *a(){yield /a/}", new FunctionDeclaration(new BindingIdentifier("a"),
-//        true, new FormalParameters(ImmutableList.nil(), Maybe.nothing()), new FunctionBody(ImmutableList.nil(),
-//        ImmutableList.list(new ExpressionStatement(new YieldExpression(Maybe.just(new LiteralRegExpExpression("a", ""))))))));
+    testScript("function *a(){yield /a/}", new FunctionDeclaration(new BindingIdentifier("a"),
+        true, new FormalParameters(ImmutableList.nil(), Maybe.nothing()), new FunctionBody(ImmutableList.nil(),
+        ImmutableList.list(new ExpressionStatement(new YieldExpression(Maybe.just(new LiteralRegExpExpression("a", ""))))))));
 
-//    testScript("function *a(){yield =3}", new FunctionDeclaration(new BindingIdentifier("a"),
-//        true, new FormalParameters(ImmutableList.nil(), Maybe.nothing()), new FunctionBody(ImmutableList.nil(),
-//        ImmutableList.list(new ExpressionStatement(new YieldExpression(Maybe.just(new LiteralRegExpExpression("=3", ""))))))));
+    testScript("function *a(){yield =3}", new FunctionDeclaration(new BindingIdentifier("a"),
+        true, new FormalParameters(ImmutableList.nil(), Maybe.nothing()), new FunctionBody(ImmutableList.nil(),
+        ImmutableList.list(new ExpressionStatement(new YieldExpression(Maybe.just(new LiteralRegExpExpression("=3", ""))))))));
 
     testScript("function *a(){yield class{}}", new FunctionDeclaration(new BindingIdentifier("a"),
         true, new FormalParameters(ImmutableList.nil(), Maybe.nothing()), new FunctionBody(ImmutableList.nil(),

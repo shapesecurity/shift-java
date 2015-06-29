@@ -14,8 +14,8 @@ import org.junit.Test;
 public class PropertyNameTest extends Assertions {
   @Test
   public void testPropertyName() throws JsError {
-//    testScript("({0x0:0})", new ObjectExpression(ImmutableList.list(new DataProperty(new LiteralNumericExpression(0.0), new StaticPropertyName("0")))));
-//    testScript("({2e308:0})", new ObjectExpression(ImmutableList.list(new DataProperty(new LiteralNumericExpression(0.0), new StaticPropertyName("Infinity")))));
+    testScript("({0x0:0})", new ObjectExpression(ImmutableList.list(new DataProperty(new LiteralNumericExpression(0.0), new StaticPropertyName("0")))));
+    testScript("({2e308:0})", new ObjectExpression(ImmutableList.list(new DataProperty(new LiteralNumericExpression(0.0), new StaticPropertyName("Infinity")))));
     testScript("({get b() {}})", new ObjectExpression(ImmutableList.list(new Getter(new FunctionBody(ImmutableList.nil(), ImmutableList.nil()), new StaticPropertyName("b")))));
     testScript("({set c(x) {}})", new ObjectExpression(ImmutableList.list(new Setter(new BindingIdentifier("x"), new FunctionBody(ImmutableList.nil(), ImmutableList.nil()), new StaticPropertyName("c")))));
     testScript("({__proto__:0})", new ObjectExpression(ImmutableList.list(new DataProperty(new LiteralNumericExpression(0.0), new StaticPropertyName("__proto__")))));

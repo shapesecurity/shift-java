@@ -23,7 +23,7 @@ public class YieldGeneratorExpressionTest extends Assertions {
         ImmutableList.list(new ExpressionStatement(new BinaryExpression(BinaryOperator.Mul,
             new IdentifierExpression("yield"), new IdentifierExpression("a")))))));
 
-//    testScriptFailure("function *a(){yield\n*a}", 0, "Unexpected token \"*\"");
+    testScriptFailure("function *a(){yield\n*a}", 0, "Unexpected token \"*\"");
     testScriptFailure("function *a(){yield*}", 20, "Unexpected token \"}\"");
   }
 }

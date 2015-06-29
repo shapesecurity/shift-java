@@ -18,30 +18,30 @@ public class CallExpressionTest extends Assertions {
 
     testScript("(    foo  )()", new CallExpression(new IdentifierExpression("foo"), ImmutableList.nil()));
 
-//    testScript("f(...a)", new CallExpression(new IdentifierExpression("f"), ImmutableList.list(new SpreadElement(new IdentifierExpression("a")))));
-//
-//    testScript("f(...a = b)", new CallExpression(new IdentifierExpression("f"), ImmutableList.list(new SpreadElement(
-//        new AssignmentExpression(new BindingIdentifier("a"), new IdentifierExpression("b"))))));
-//
-//    testScript("f(...a, ...b)", new CallExpression(new IdentifierExpression("f"), ImmutableList.list(new SpreadElement(
-//        new IdentifierExpression("a")), new SpreadElement(new IdentifierExpression("b")))));
-//
-//    testScript("f(a, ...b, c)", new CallExpression(new IdentifierExpression("f"), ImmutableList.list(
-//        new IdentifierExpression("a"), new SpreadElement(new IdentifierExpression("b")), new IdentifierExpression("c"))));
-//
-//    testScript("f(...a, b, ...c)", new CallExpression(new IdentifierExpression("f"), ImmutableList.list(
-//        new SpreadElement(new IdentifierExpression("a")), new IdentifierExpression("b"), new SpreadElement(
-//            new IdentifierExpression("c")))));
-//
-//    testScript("f(....0)", new CallExpression(new IdentifierExpression("f"), ImmutableList.list(new SpreadElement(
-//        new LiteralNumericExpression(0.0)))));
+    testScript("f(...a)", new CallExpression(new IdentifierExpression("f"), ImmutableList.list(new SpreadElement(new IdentifierExpression("a")))));
+
+    testScript("f(...a = b)", new CallExpression(new IdentifierExpression("f"), ImmutableList.list(new SpreadElement(
+        new AssignmentExpression(new BindingIdentifier("a"), new IdentifierExpression("b"))))));
+
+    testScript("f(...a, ...b)", new CallExpression(new IdentifierExpression("f"), ImmutableList.list(new SpreadElement(
+        new IdentifierExpression("a")), new SpreadElement(new IdentifierExpression("b")))));
+
+    testScript("f(a, ...b, c)", new CallExpression(new IdentifierExpression("f"), ImmutableList.list(
+        new IdentifierExpression("a"), new SpreadElement(new IdentifierExpression("b")), new IdentifierExpression("c"))));
+
+    testScript("f(...a, b, ...c)", new CallExpression(new IdentifierExpression("f"), ImmutableList.list(
+        new SpreadElement(new IdentifierExpression("a")), new IdentifierExpression("b"), new SpreadElement(
+            new IdentifierExpression("c")))));
+
+    testScript("f(....0)", new CallExpression(new IdentifierExpression("f"), ImmutableList.list(new SpreadElement(
+        new LiteralNumericExpression(0.0)))));
 
     testScript("f(.0)", new CallExpression(new IdentifierExpression("f"), ImmutableList.list(
         new LiteralNumericExpression(0.0))));
 
     testScriptFailure("f(..a)", 2, "Unexpected token \".\"");
-//    testScriptFailure("f(....a)", 0, "Unexpected token \".\"");
-//    testScriptFailure("f(... ... a)", 0, "Unexpected token \"...\"");
+    testScriptFailure("f(....a)", 5, "Unexpected token \".\"");
+    testScriptFailure("f(... ... a)", 6, "Unexpected token \"...\"");
 
   }
 }

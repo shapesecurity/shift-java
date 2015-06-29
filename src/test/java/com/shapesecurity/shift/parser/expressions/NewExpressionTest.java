@@ -28,19 +28,19 @@ public class NewExpressionTest extends Assertions {
     testScript("new new foo()", new NewExpression(new NewExpression(new IdentifierExpression("foo"),
         ImmutableList.nil()), ImmutableList.nil()));
 
-//    testScript("new f(...a)", new NewExpression(new IdentifierExpression("f"), ImmutableList.list(new SpreadElement(new IdentifierExpression("a")))));
-//
-//    testScript("new f(...a = b)", new NewExpression(new IdentifierExpression("f"), ImmutableList.list(
-//        new SpreadElement(new AssignmentExpression(new BindingIdentifier("a"), new IdentifierExpression("b"))))));
-//
-//    testScript("new f(...a, ...b)", new NewExpression(new IdentifierExpression("f"), ImmutableList.list(
-//        new SpreadElement(new IdentifierExpression("a")), new SpreadElement(new IdentifierExpression("b")))));
-//
-//    testScript("new f(a, ...b, c)", new NewExpression(new IdentifierExpression("f"), ImmutableList.list(
-//        new IdentifierExpression("a"), new SpreadElement(new IdentifierExpression("b")), new IdentifierExpression("c"))));
-//
-//    testScript("new f(...a, b, ...c)", new NewExpression(new IdentifierExpression("f"), ImmutableList.list(
-//        new SpreadElement(new IdentifierExpression("a")), new IdentifierExpression("b"), new SpreadElement(
-//            new IdentifierExpression("c")))));
+    testScript("new f(...a)", new NewExpression(new IdentifierExpression("f"), ImmutableList.list(new SpreadElement(new IdentifierExpression("a")))));
+
+    testScript("new f(...a = b)", new NewExpression(new IdentifierExpression("f"), ImmutableList.list(
+        new SpreadElement(new AssignmentExpression(new BindingIdentifier("a"), new IdentifierExpression("b"))))));
+
+    testScript("new f(...a, ...b)", new NewExpression(new IdentifierExpression("f"), ImmutableList.list(
+        new SpreadElement(new IdentifierExpression("a")), new SpreadElement(new IdentifierExpression("b")))));
+
+    testScript("new f(a, ...b, c)", new NewExpression(new IdentifierExpression("f"), ImmutableList.list(
+        new IdentifierExpression("a"), new SpreadElement(new IdentifierExpression("b")), new IdentifierExpression("c"))));
+
+    testScript("new f(...a, b, ...c)", new NewExpression(new IdentifierExpression("f"), ImmutableList.list(
+        new SpreadElement(new IdentifierExpression("a")), new IdentifierExpression("b"), new SpreadElement(
+            new IdentifierExpression("c")))));
   }
 }

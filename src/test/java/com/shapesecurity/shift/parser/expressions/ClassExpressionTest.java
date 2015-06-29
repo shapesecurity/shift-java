@@ -71,8 +71,8 @@ public class ClassExpressionTest extends Assertions {
     testScript("(class extends (a,b) {})", new ClassExpression(Maybe.nothing(), Maybe.just(new BinaryExpression(
         BinaryOperator.Sequence, new IdentifierExpression("a"), new IdentifierExpression("b"))), ImmutableList.nil()));
 
-//    testScript("var x = class extends (a,b) {};", new ClassExpression(Maybe.nothing(), Maybe.just(new BinaryExpression(
-//        BinaryOperator.Sequence, new IdentifierExpression("a"), new IdentifierExpression("b"))), ImmutableList.nil()));
+    testScript("var x = class extends (a,b) {};", new ClassExpression(Maybe.nothing(), Maybe.just(new BinaryExpression(
+        BinaryOperator.Sequence, new IdentifierExpression("a"), new IdentifierExpression("b"))), ImmutableList.nil()));
 
     testScript("(class {static(){}})", new ClassExpression(Maybe.nothing(), Maybe.nothing(), ImmutableList.list(
         new ClassElement(false, new Method(false, new FormalParameters(ImmutableList.nil(), Maybe.nothing()),
