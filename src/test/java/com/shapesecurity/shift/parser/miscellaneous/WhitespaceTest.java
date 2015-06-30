@@ -87,6 +87,5 @@ public class WhitespaceTest extends Assertions {
     testScriptFailure("throw /* \n */ e", 2, 0, 0, "Illegal newline after throw");
     testScriptFailure("throw /* \u2028 */ e", 0, "Illegal newline after throw");
     testScriptFailure("throw /* \u2029 */ e", 0, "Illegal newline after throw");
-
   }
 }

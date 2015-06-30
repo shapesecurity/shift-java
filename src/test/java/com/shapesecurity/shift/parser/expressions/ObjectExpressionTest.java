@@ -8,9 +8,6 @@ import com.shapesecurity.shift.parser.Assertions;
 import com.shapesecurity.shift.parser.JsError;
 import org.junit.Test;
 
-/**
- * Created by u478 on 6/14/15.
- */
 public class ObjectExpressionTest extends Assertions {
   @Test
   public void testObjectExpression() throws JsError {
