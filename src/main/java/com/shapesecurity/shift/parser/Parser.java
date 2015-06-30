@@ -16,34 +16,21 @@
 
 package com.shapesecurity.shift.parser;
 
-import com.shapesecurity.functional.F2;
 import com.shapesecurity.functional.Pair;
 import com.shapesecurity.functional.Thunk;
 import com.shapesecurity.functional.data.*;
 import com.shapesecurity.shift.ast.*;
-import com.shapesecurity.shift.ast.Class;
 import com.shapesecurity.shift.ast.operators.*;
-import com.shapesecurity.shift.parser.token.IdentifierToken;
 import com.shapesecurity.shift.parser.token.NumericLiteralToken;
 import com.shapesecurity.shift.parser.token.RegularExpressionLiteralToken;
 import com.shapesecurity.shift.parser.token.TemplateToken;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.xml.crypto.Data;
-import javax.xml.transform.Source;
-import java.text.Normalizer;
-import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Objects;
 import java.util.function.BiFunction;
 
 public class Parser extends Tokenizer {
-  @NotNull
-  private HashSet<String> labelSet = new HashSet<>();
-  private boolean inIteration;
-  private boolean inSwitch;
   private boolean inFunctionBody;
   private boolean module;
   private boolean allowIn = true;
@@ -58,57 +45,6 @@ public class Parser extends Tokenizer {
   private Parser(@NotNull String source) throws JsError {
     super(source);
   }
-
-  @Nullable
-  private static UnaryOperator lookupPrefixOperator(@NotNull TokenType type) {
-    switch (type) {
-      case ADD:
-        return UnaryOperator.Plus;
-      case SUB:
-        return UnaryOperator.Minus;
-      case BIT_NOT:
-        return UnaryOperator.BitNot;
-      case NOT:
-        return UnaryOperator.LogicalNot;
-      case DELETE:
-        return UnaryOperator.Delete;
-      case VOID:
-        return UnaryOperator.Void;
-      case TYPEOF:
-        return UnaryOperator.Typeof;
-      default:
-        return null;
-    }
-  }
-
-  @Nullable
-  private static UpdateOperator lookupPostfixOperator(@NotNull TokenType type) {
-    switch (type) {
-      case INC:
-        return UpdateOperator.Increment;
-      case DEC:
-        return UpdateOperator.Decrement;
-      default:
-        return null;
-    }
-  }
-
-
-  /*
-  @NotNull
-  public static Script parseWithLocation(@NotNull String text) throws JsError {
-    return new Parser(text) {
-      @NotNull
-      @Override
-      protected <T extends Node> T markLocation(@NotNull SourceLocation startLocation, @NotNull T node) {
-        int start = startLocation.offset;
-        ((Located) node).setLoc(startLocation.withSourceRange(this.getSliceBeforeLookahead(start)));
-        return node;
-      }
-    }.parseScript();
-  }
-  */
-
 
   boolean eat(@NotNull TokenType subType) throws JsError {
     if (this.lookahead.type != subType) {
@@ -145,6 +81,7 @@ public class Parser extends Tokenizer {
 
   @NotNull
   protected <T extends Node> T markLocation(@NotNull SourceLocation startLocation, @NotNull T node) {
+    // TODO: actually mark location
     return node;
   }
 
@@ -182,13 +119,13 @@ public class Parser extends Tokenizer {
     return this.markLocation(startLocation, node);
   }
 
-
   @NotNull
   private Module parseModule() throws JsError {
     this.moduleIsTheGoalSymbol = this.module = true;
     return this.markLocation(this.getLocation(), this.parseBody(this::parseModuleItem, Module::new));
   }
 
+  @NotNull
   private ImportDeclarationExportDeclarationStatement parseModuleItem() throws JsError {
     switch (this.lookahead.type) {
       case IMPORT:
@@ -200,7 +137,7 @@ public class Parser extends Tokenizer {
     }  }
 
   @FunctionalInterface
-  private static interface ExceptionalSupplier<A> {
+  private interface ExceptionalSupplier<A> {
     A get() throws JsError;
   }
 
@@ -236,6 +173,7 @@ public class Parser extends Tokenizer {
     return constructor.apply(ImmutableList.from(directives), ImmutableList.from(statements));
   }
 
+  @NotNull
   private FunctionBody parseFunctionBody() throws JsError {
     SourceLocation startLocation = this.getLocation();
     boolean oldInFunctionBody = this.inFunctionBody;
@@ -253,6 +191,7 @@ public class Parser extends Tokenizer {
     return this.markLocation(startLocation, body);
   }
 
+  @NotNull
   private Statement parseStatementListItem() throws JsError {
     if (this.eof()) {
       throw this.createUnexpected(this.lookahead);
@@ -272,12 +211,14 @@ public class Parser extends Tokenizer {
     }
   }
 
+  @NotNull
   private Statement parseVariableDeclarationStatement() throws JsError {
     VariableDeclaration declaration = this.parseVariableDeclaration(true);
     this.consumeSemicolon();
     return new VariableDeclarationStatement(declaration);
   }
 
+  @NotNull
   private VariableDeclaration parseVariableDeclaration(boolean bindingPatternsMustHaveInit) throws JsError {
     SourceLocation startLocation = this.getLocation();
     Token token = this.lex();
@@ -288,6 +229,7 @@ public class Parser extends Tokenizer {
 
   }
 
+  @NotNull
   private ImmutableList<VariableDeclarator> parseVariableDeclaratorList(boolean bindingPatternsMustHaveInit) throws JsError {
     ArrayList<VariableDeclarator> result = new ArrayList<>();
     do {
@@ -296,6 +238,7 @@ public class Parser extends Tokenizer {
     return ImmutableList.from(result);
   }
 
+  @NotNull
   private VariableDeclarator parseVariableDeclarator(boolean bindingPatternsMustHaveInit) throws JsError {
     SourceLocation startLocation = this.getLocation();
 
@@ -315,6 +258,7 @@ public class Parser extends Tokenizer {
     return this.markLocation(startLocation, new VariableDeclarator(binding, init));
   }
 
+  @NotNull
   private Binding parseBindingTarget() throws JsError {
     switch (this.lookahead.type) {
       case IDENTIFIER:
@@ -329,6 +273,7 @@ public class Parser extends Tokenizer {
     throw this.createUnexpected(this.lookahead);
   }
 
+  @NotNull
   private Binding parseObjectBinding() throws JsError {
     SourceLocation startLocation = this.getLocation();
 
@@ -347,6 +292,7 @@ public class Parser extends Tokenizer {
     return this.markLocation(startLocation, new ObjectBinding(ImmutableList.from(properties)));
   }
 
+  @NotNull
   private BindingProperty parseBindingProperty() throws JsError {
     SourceLocation startLocation = this.getLocation();
     Token token = this.lookahead;
@@ -373,15 +319,14 @@ public class Parser extends Tokenizer {
     this.expect(TokenType.COLON);
     binding = Maybe.just((Binding) this.parseBindingElement());
     return this.markLocation(startLocation, new BindingPropertyProperty(name, binding.just()));
-
   }
 
+  @NotNull
   private Binding parseArrayBinding() throws JsError {
     SourceLocation startLocation = this.getLocation();
     this.expect(TokenType.LBRACK);
     ArrayList<Maybe<BindingBindingWithDefault>> elements = new ArrayList<>();
     Maybe<Binding> restElement = Maybe.nothing();
-
     while (true) {
       if (this.match(TokenType.RBRACK)) {
         break;
@@ -403,17 +348,17 @@ public class Parser extends Tokenizer {
       }
       elements.add(el);
     }
-
     this.expect(TokenType.RBRACK);
-
     return this.markLocation(startLocation, new ArrayBinding(ImmutableList.from(elements), restElement));
   }
 
+  @NotNull
   private BindingIdentifier parseBindingIdentifier() throws JsError {
     SourceLocation startLocation = this.getLocation();
     return this.markLocation(startLocation, new BindingIdentifier(this.parseIdentifier()));
   }
 
+  @NotNull
   private String parseIdentifier() throws JsError {
     if (this.match(TokenType.IDENTIFIER) || !this.allowYieldExpression && this.match(TokenType.YIELD) || this.match(TokenType.LET)) {
       return this.lex().toString();
@@ -422,7 +367,7 @@ public class Parser extends Tokenizer {
     }
   }
 
-//  // TODO: fix this
+  @NotNull
   private Expression parseArrowExpressionTail(ArrayList<BindingBindingWithDefault> params, Maybe<BindingIdentifier> rest, SourceLocation startLocation) throws JsError {
     if (this.hasLineTerminatorBeforeNext) {
       throw this.createError(ErrorMessages.NEWLINE_AFTER_ARROW_PARAMS);
@@ -445,36 +390,29 @@ public class Parser extends Tokenizer {
     }
   }
 
+  @NotNull
   private Statement parseIfStatement() throws JsError {
-
     SourceLocation startLocation = this.getLocation();
-
     this.lex();
-
     this.expect(TokenType.LPAREN);
-
     Expression test = this.parseExpression().left().just();
-
     this.expect(TokenType.RPAREN);
-
     Statement consequent = this.parseIfStatementChild();
-
-    Maybe<Statement> alternate = Maybe.nothing();
-
+    Maybe<Statement> alternate;
     if (this.eat(TokenType.ELSE)) {
       alternate = Maybe.just(this.parseIfStatementChild());
     } else {
       alternate = Maybe.nothing();
     }
-
     return this.markLocation(startLocation, new IfStatement(test, consequent, alternate));
   }
 
+  @NotNull
   private Statement parseIfStatementChild() throws JsError {
     return this.match(TokenType.FUNCTION) ? this.parseFunction(false, false) : this.parseStatement();
   }
 
-  // isExpr is false
+  @NotNull
   private Statement parseFunction(boolean inDefault, boolean allowGenerator) throws JsError {
     SourceLocation startLocation = this.getLocation();
     this.lex();
@@ -501,6 +439,7 @@ public class Parser extends Tokenizer {
     return this.markLocation(startLocation, new FunctionDeclaration(name, isGenerator, params, body));
   }
 
+  @NotNull
   private Expression parseFunction(boolean allowGenerator) throws JsError {
     SourceLocation startLocation = this.getLocation();
     this.lex();
@@ -523,10 +462,11 @@ public class Parser extends Tokenizer {
     return this.markLocation(startLocation, new FunctionExpression(name, isGenerator, params, body));
   }
 
+  @NotNull
   private FormalParameters parseParams() throws JsError {
     SourceLocation paramsLocation = this.getLocation();
     this.expect(TokenType.LPAREN);
-    ArrayList<BindingBindingWithDefault> items = new ArrayList();
+    ArrayList<BindingBindingWithDefault> items = new ArrayList<>();
     BindingIdentifier rest = null;
     if (!this.match(TokenType.RPAREN)) {
       while (!this.eof()) {
@@ -545,6 +485,7 @@ public class Parser extends Tokenizer {
     return this.markLocation(paramsLocation, new FormalParameters(ImmutableList.from(items), Maybe.fromNullable(rest)));
   }
 
+  @NotNull
   private BindingBindingWithDefault parseParam() throws JsError {
     boolean previousInParameter = this.inParameter;
     this.inParameter = true;
@@ -553,6 +494,7 @@ public class Parser extends Tokenizer {
     return param;
   }
 
+  @NotNull
   private BindingBindingWithDefault parseBindingElement() throws JsError {
     SourceLocation startLocation = this.getLocation();
     Binding binding = this.parseBindingTarget();
@@ -573,19 +515,17 @@ public class Parser extends Tokenizer {
   }
 
   private boolean isValidSimpleAssignmentTarget(Node node) {
-    if (node instanceof IdentifierExpression || node instanceof ComputedMemberExpression
-        || node instanceof StaticMemberExpression) {
-      return true;
-    }
-    return false;
+    return (node instanceof IdentifierExpression || node instanceof ComputedMemberExpression || node instanceof StaticMemberExpression);
   }
 
+  @NotNull
   private Statement parseStatement() throws JsError {
     SourceLocation startLocation = this.getLocation();
     Statement stmt = this.isolateCoverGrammar(this::parseStatementHelper);
     return this.markLocation(startLocation, stmt);
   }
 
+  @NotNull
   private Statement parseStatementHelper() throws JsError {
     if (this.eof()) {
       throw this.createUnexpected(this.lookahead);
@@ -643,14 +583,12 @@ public class Parser extends Tokenizer {
     }
   }
 
+  @NotNull
   private Statement parseForStatement() throws JsError {
     this.lex();
     this.expect(TokenType.LPAREN);
     Maybe<Expression> test = Maybe.nothing();
     Maybe<Expression> right = Maybe.nothing();
-    if (this.match(TokenType.LBRACE)) {
-      this.createError(ErrorMessages.ILLEGAL_PROPERTY);
-    }
     if (this.eat(TokenType.SEMICOLON)) {
       if (!this.match(TokenType.SEMICOLON)) {
         test = this.parseExpression().left();
@@ -752,6 +690,7 @@ public class Parser extends Tokenizer {
     }
   }
 
+  @NotNull
   private BindingProperty transformDestructuring(ObjectProperty objectProperty) throws JsError {
     if (objectProperty instanceof DataProperty) {
       DataProperty dataProperty = (DataProperty) objectProperty;
@@ -764,6 +703,7 @@ public class Parser extends Tokenizer {
   }
 
   // TODO: preserve location information in transformDestructuring() functions by implementing copyLocation()
+  @NotNull
   private Binding transformDestructuring(Expression node) throws JsError {
     if (node instanceof ObjectExpression) {
       ObjectExpression objectExpression = (ObjectExpression) node;
@@ -804,10 +744,12 @@ public class Parser extends Tokenizer {
     throw this.createError(ErrorMessages.INVALID_LHS_IN_ASSIGNMENT);
   }
 
+  @NotNull
   private BindingIdentifier transformDestructuring(StaticPropertyName property) {
     return new BindingIdentifier(property.value);
   }
 
+  @NotNull
   private BindingBindingWithDefault transformDestructuringWithDefault(Expression node) throws JsError {
     if (node instanceof AssignmentExpression) {
       AssignmentExpression assignmentExpression = (AssignmentExpression) node;
@@ -816,7 +758,8 @@ public class Parser extends Tokenizer {
     return this.transformDestructuring(node);
   }
 
-  private static Binding transformDestructuring(Binding b) {
+  @NotNull
+  private Binding transformDestructuring(Binding b) {
     return b;
   }
 
@@ -824,6 +767,7 @@ public class Parser extends Tokenizer {
     return this.lookahead.type == TokenType.IDENTIFIER && keyword.equals(this.lookahead.toString());
   }
 
+  @NotNull
   private Statement parseSwitchStatement() throws JsError {
     this.lex();
     this.expect(TokenType.LPAREN);
@@ -850,6 +794,7 @@ public class Parser extends Tokenizer {
     }
   }
 
+  @NotNull
   private ImmutableList<SwitchCase> parseSwitchCases() throws JsError {
     ArrayList<SwitchCase> result = new ArrayList<>();
     while (!(this.eof() || this.match(TokenType.RBRACE) || this.match(TokenType.DEFAULT))) {
@@ -858,17 +803,20 @@ public class Parser extends Tokenizer {
     return ImmutableList.from(result);
   }
 
+  @NotNull
   private SwitchCase parseSwitchCase() throws JsError {
     SourceLocation startLocation = this.getLocation();
     this.expect(TokenType.CASE);
     return markLocation(startLocation, new SwitchCase(this.parseExpression().left().just(), this.parseSwitchCaseBody()));
   }
 
+  @NotNull
   private ImmutableList<Statement> parseSwitchCaseBody() throws JsError {
     this.expect(TokenType.COLON);
     return this.parseStatementListInSwitchCaseBody();
   }
 
+  @NotNull
   private ImmutableList<Statement> parseStatementListInSwitchCaseBody() throws JsError {
     ArrayList<Statement> result = new ArrayList<>();
     while (!(this.eof() || this.match(TokenType.RBRACE) || this.match(TokenType.DEFAULT) || this.match(TokenType.CASE))) {
@@ -877,18 +825,21 @@ public class Parser extends Tokenizer {
     return ImmutableList.from(result);
   }
 
+  @NotNull
   private SwitchDefault parseSwitchDefault() throws JsError {
     SourceLocation startLocation = this.getLocation();
     this.expect(TokenType.DEFAULT);
     return this.markLocation(startLocation, new SwitchDefault(this.parseSwitchCaseBody()));
   }
 
+  @NotNull
   private Statement parseDebuggerStatement() throws JsError {
     this.lex();
     this.consumeSemicolon();
     return new DebuggerStatement();
   }
 
+  @NotNull
   private Statement parseDoWhileStatement() throws JsError {
     this.lex();
     Statement body = this.parseStatement();
@@ -900,40 +851,35 @@ public class Parser extends Tokenizer {
     return new DoWhileStatement(test, body);
   }
 
+  @NotNull
   private Statement parseContinueStatement() throws JsError {
     this.lex();
-
     if (this.eat(TokenType.SEMICOLON) || this.hasLineTerminatorBeforeNext) {
       return new ContinueStatement(Maybe.nothing());
     }
-
     Maybe<String> label = Maybe.nothing();
     if (this.match(TokenType.IDENTIFIER) || this.match(TokenType.YIELD) || this.match(TokenType.LET)) {
       label = Maybe.just(this.parseIdentifier());
     }
-
     this.consumeSemicolon();
-
     return new ContinueStatement(label);
-
   }
 
+  @NotNull
   private Statement parseBreakStatement() throws JsError {
     this.lex();
     if (this.eat(TokenType.SEMICOLON) || this.hasLineTerminatorBeforeNext) {
       return new BreakStatement(Maybe.nothing());
     }
-
     Maybe<String> label = Maybe.nothing();
     if (this.match(TokenType.IDENTIFIER) || this.match(TokenType.YIELD) || this.match(TokenType.LET)) {
       label = Maybe.just(this.parseIdentifier());
     }
-
     this.consumeSemicolon();
-
     return new BreakStatement(label);
   }
 
+  @NotNull
   private Statement parseTryStatement() throws JsError {
     this.lex();
     Block body = this.parseBlock();
@@ -954,6 +900,7 @@ public class Parser extends Tokenizer {
     }
   }
 
+  @NotNull
   private CatchClause parseCatchClause() throws JsError {
     SourceLocation startLocation = this.getLocation();
     this.lex();
@@ -968,6 +915,7 @@ public class Parser extends Tokenizer {
     return this.markLocation(startLocation, new CatchClause(binding, body));
   }
 
+  @NotNull
   private Statement parseThrowStatement() throws JsError {
     this.lex();
     if (this.hasLineTerminatorBeforeNext) {
@@ -979,6 +927,7 @@ public class Parser extends Tokenizer {
 
   }
 
+  @NotNull
   private Statement parseReturnStatement() throws JsError {
     if (!this.inFunctionBody) {
       throw this.createError(ErrorMessages.ILLEGAL_RETURN);
@@ -1000,11 +949,13 @@ public class Parser extends Tokenizer {
     return new ReturnStatement(expression);
   }
 
+  @NotNull
   private Statement parseEmptyStatement() throws JsError {
     this.lex();
     return new EmptyStatement();
   }
 
+  @NotNull
   private Statement parseWhileStatement() throws JsError {
     this.lex();
     this.expect(TokenType.LPAREN);
@@ -1013,6 +964,7 @@ public class Parser extends Tokenizer {
     return new WhileStatement(test, body);
   }
 
+  @NotNull
   private Statement parseWithStatement() throws JsError {
     this.lex();
     this.expect(TokenType.LPAREN);
@@ -1021,16 +973,18 @@ public class Parser extends Tokenizer {
     return new WithStatement(test, body);
   }
 
+  @NotNull
   private Statement getIteratorStatementEpilogue() throws JsError {
     this.expect(TokenType.RPAREN);
-    Statement body = this.parseStatement();
-    return body;
+    return this.parseStatement();
   }
 
+  @NotNull
   private Statement parseBlockStatement() throws JsError {
     return new BlockStatement(this.parseBlock());
   }
 
+  @NotNull
   private Block parseBlock() throws JsError {
     SourceLocation startLocation = this.getLocation();
     this.expect(TokenType.LBRACE);
@@ -1042,12 +996,14 @@ public class Parser extends Tokenizer {
     return this.markLocation(startLocation, new Block(ImmutableList.from(body)));
   }
 
+  @NotNull
   private Statement parseExpressionStatement() throws JsError {
     Expression expr = this.parseExpression().left().just();
     this.consumeSemicolon();
     return new ExpressionStatement(expr);
   }
 
+  @NotNull
   private Either<Expression, Binding> parseExpression() throws JsError {
     SourceLocation startLocation = this.getLocation();
     Either<Expression, Binding> left = this.parseAssignmentExpression();
@@ -1064,6 +1020,7 @@ public class Parser extends Tokenizer {
     return left;
   }
 
+  @NotNull
   private <T> T isolateCoverGrammar(ExceptionalSupplier<T> parser) throws JsError {
     boolean oldIsBindingElement = this.isBindingElement;
     boolean oldIsAssignmentTarget = this.isAssignmentTarget;
@@ -1081,6 +1038,7 @@ public class Parser extends Tokenizer {
     return result;
   }
 
+  @NotNull
   private <T> T inheritCoverGrammar(ExceptionalSupplier<T> parser) throws JsError {
     boolean oldIsBindingElement = this.isBindingElement;
     boolean oldIsAssignmentTarget = this.isAssignmentTarget;
@@ -1095,6 +1053,7 @@ public class Parser extends Tokenizer {
     return result;
   }
 
+  @NotNull
   private Either<Expression, Binding> parseAssignmentExpression() throws JsError {
     return this.isolateCoverGrammar(this::parseAssignmentExpressionOrBindingElement);
   }
@@ -1121,15 +1080,6 @@ public class Parser extends Tokenizer {
     } else {
       expr = this.parseConditionalExpression();
     }
-
-//    Either<Expression, Binding> expr = this.parseConditionalExpression();
-//    if (!this.hasLineTerminatorBeforeNext && this.match(TokenType.ARROW)) {
-//      this.isBindingElement = this.isAssignmentTarget = false;
-//      this.firstExprError = null;
-//      ArrayList<BindingBindingWithDefault> params = new ArrayList<>();
-//      params.add(this.transformDestructuring(expr.left().just()));
-//      return Either.left(this.parseArrowExpressionTail(params, Maybe.nothing(), startLocation));
-//    }
 
     boolean isAssignmentOperator = false;
     Token operator = this.lookahead;
@@ -1167,8 +1117,6 @@ public class Parser extends Tokenizer {
       return expr;
     }
 
-//    this.isBindingElement = false; //TODO: deleted this.isAssignmentTarget = false, might cause errors
-
     this.lex();
     boolean previousInGeneratorParameter = this.inGeneratorParameter;
     this.inGeneratorParameter = false;
@@ -1182,10 +1130,16 @@ public class Parser extends Tokenizer {
     if (operator.type == TokenType.ASSIGN) {
       return Either.left(this.markLocation(startLocation, new AssignmentExpression(assignmentTarget, rhs.left().just())));
     } else {
-      return Either.left(this.markLocation(startLocation, new CompoundAssignmentExpression(this.lookupCompoundAssignmentOperator(operator), (BindingIdentifierMemberExpression) assignmentTarget, rhs.left().just())));
+      CompoundAssignmentOperator compoundAssignmentOperator = this.lookupCompoundAssignmentOperator(operator);
+      if (compoundAssignmentOperator != null) {
+        return Either.left(this.markLocation(startLocation, new CompoundAssignmentExpression(compoundAssignmentOperator, (BindingIdentifierMemberExpression) assignmentTarget, rhs.left().just())));
+      } else {
+        throw this.createError("should not be here", 0, 0, 0);
+      }
     }
   }
 
+  @NotNull
   private Expression parseYieldExpression() throws JsError {
     SourceLocation startLocation = this.getLocation();
 
@@ -1236,6 +1190,7 @@ public class Parser extends Tokenizer {
 
   }
 
+  @NotNull
   private Either<Expression, Binding> parseConditionalExpression() throws JsError {
     SourceLocation startLocation = this.getLocation();
     Either<Expression, Binding> test = this.parseBinaryExpression();
@@ -1259,6 +1214,7 @@ public class Parser extends Tokenizer {
     return test;
   }
 
+  @NotNull
   private Either<Expression, Binding> parseBinaryExpression() throws JsError {
     SourceLocation startLocation = this.getLocation();
     Either<Expression, Binding> left = this.parseUnaryExpression();
@@ -1307,6 +1263,7 @@ public class Parser extends Tokenizer {
     }
   }
 
+  @NotNull
   private Either<Expression, Binding> parseUnaryExpression() throws JsError {
     if (this.lookahead.type.klass != TokenClass.Punctuator && this.lookahead.type.klass != TokenClass.Keyword) {
       return this.parseUpdateExpression();
@@ -1356,7 +1313,7 @@ public class Parser extends Tokenizer {
   }
 
   @NotNull
-  private Expression createUpdateExpression(@NotNull SourceLocation startLocation, @NotNull Expression operand, @NotNull UpdateOperator operator, @NotNull boolean isPrefix) throws JsError {
+  private Expression createUpdateExpression(@NotNull SourceLocation startLocation, @NotNull Expression operand, @NotNull UpdateOperator operator, boolean isPrefix) throws JsError {
     BindingIdentifierMemberExpression restrictedOperand;
     if (operand instanceof MemberExpression) {
       restrictedOperand = (MemberExpression) operand;
@@ -1369,7 +1326,7 @@ public class Parser extends Tokenizer {
     return this.markLocation(startLocation, new UpdateExpression(isPrefix, operator, restrictedOperand));
   }
 
-
+  @NotNull
   private Expression parseNumericLiteral() throws JsError {
     SourceLocation startLocation = this.getLocation();
     Token token = this.lex();
@@ -1380,6 +1337,7 @@ public class Parser extends Tokenizer {
     }
   }
 
+  @NotNull
   private Either<ExpressionSuper, Binding> parseLeftHandSideExpression(boolean allowCall) throws JsError {
     SourceLocation startLocation = this.getLocation();
     boolean previousAllowIn = this.allowIn;
@@ -1394,6 +1352,7 @@ public class Parser extends Tokenizer {
 
       if (this.match(TokenType.LPAREN)) {
         if (allowCall) {
+
           expr = Either.left(this.markLocation(startLocation, new CallExpression(expr.left().just(), this.parseArgumentList())));
         }
       } else if (this.match(TokenType.LBRACK)) {
@@ -1443,6 +1402,7 @@ public class Parser extends Tokenizer {
     }
   }
 
+  @NotNull
   private String parseStaticMember() throws JsError {
     this.lex();
     if (!this.isIdentifierName(this.lookahead.type.klass)) {
@@ -1452,6 +1412,7 @@ public class Parser extends Tokenizer {
     }
   }
 
+  @NotNull
   private Either<Expression, Binding> parseComputedMember() throws JsError {
     this.lex();
     Either<Expression, Binding> expr = this.parseExpression();
@@ -1459,6 +1420,7 @@ public class Parser extends Tokenizer {
     return expr;
   }
 
+  @NotNull
   private ImmutableList<ExpressionTemplateElement> parseTemplateElements() throws JsError {
     SourceLocation startLocation = this.getLocation();
     Token token = this.lookahead;
@@ -1495,9 +1457,10 @@ public class Parser extends Tokenizer {
     }
   }
 
+  @NotNull
   private Expression parseNewExpression() throws JsError {
     SourceLocation startLocation = this.getLocation();
-    Token token = this.lex();
+    this.lex();
     if (this.eat(TokenType.PERIOD)) {
       Token ident = this.expect(TokenType.IDENTIFIER);
       if ((!ident.toString().equals("target"))) {
@@ -1517,14 +1480,16 @@ public class Parser extends Tokenizer {
     }
   }
 
-  private ImmutableList parseArgumentList() throws JsError {
+  @NotNull
+  private ImmutableList<SpreadElementExpression> parseArgumentList() throws JsError {
     this.lex();
-    ImmutableList args = this.parseArguments();
+    ImmutableList<SpreadElementExpression> args = this.parseArguments();
     this.expect(TokenType.RPAREN);
     return args;
   }
 
-  private ImmutableList parseArguments() throws JsError {
+  @NotNull
+  private ImmutableList<SpreadElementExpression> parseArguments() throws JsError {
     ArrayList<SpreadElementExpression> result = new ArrayList<>();
     while (true) {
       if (this.match(TokenType.RPAREN) || this.eof()) {
@@ -1545,6 +1510,7 @@ public class Parser extends Tokenizer {
     return ImmutableList.from(result);
   }
 
+  @NotNull
   private Either<Expression, Binding> parsePrimaryExpression() throws JsError {
     if (this.match(TokenType.LPAREN)) {
       return this.parseGroupExpression();
@@ -1605,11 +1571,13 @@ public class Parser extends Tokenizer {
     }
   }
 
+  @NotNull
   private Expression parseStringLiteral() throws JsError {
     SourceLocation startLocation = this.getLocation();
     return this.markLocation(startLocation, new LiteralStringExpression(this.lex().toString()));
   }
 
+  @NotNull
   private Either<Expression, Binding> parseArrayExpression() throws JsError {
     SourceLocation startLocation = this.getLocation();
     this.lex();
@@ -1692,6 +1660,7 @@ public class Parser extends Tokenizer {
     }
   }
 
+  @NotNull
   private Either<Expression, Binding> parseObjectExpression() throws JsError {
     SourceLocation startLocation = this.getLocation();
     this.lex();
@@ -1708,7 +1677,6 @@ public class Parser extends Tokenizer {
           objectProperties.add(fromParsePropertyDefinition.left().just());
         } else {
           allExpressionsSoFar = false;
-          BindingPropertyIdentifier propertyIdentifier = fromParsePropertyDefinition.right().just();
           for (ObjectProperty objectProperty : objectProperties) {
             bindingProperties.add(this.transformDestructuring(objectProperty));
           }
@@ -1737,10 +1705,11 @@ public class Parser extends Tokenizer {
     }
   }
 
+  @NotNull
   private Either<Expression, Binding> parseGroupExpression() throws JsError {
     SourceLocation startLocation = this.getLocation();
 
-    Token start = this.expect(TokenType.LPAREN);
+    this.expect(TokenType.LPAREN);
     if (this.eat(TokenType.RPAREN)) {
       this.isBindingElement = this.isAssignmentTarget = false;
       return Either.left(this.parseArrowExpressionTail(new ArrayList<>(), Maybe.nothing(), startLocation));
@@ -1754,7 +1723,6 @@ public class Parser extends Tokenizer {
     Either<Expression, Binding> group = this.inheritCoverGrammar(this::parseAssignmentExpressionOrBindingElement);
 
     ArrayList<BindingBindingWithDefault> params = new ArrayList<>();
-//    this.isBindingElement = false; // TODO: temporary fix for test group expression
     if (this.isBindingElement) {
       if (group.isLeft()) {
         params.add(this.transformDestructuringWithDefault(group.left().just()));
@@ -1803,7 +1771,6 @@ public class Parser extends Tokenizer {
     this.expect(TokenType.RPAREN);
 
     if (!this.hasLineTerminatorBeforeNext && this.match(TokenType.ARROW) || mustBeArrowParameterList) {
-//      this.isBindingElement = true; // TODO: temporary fix for binding patter / object binding test
       if (!this.isBindingElement) {
         throw this.createErrorWithLocation(startLocation, this.match(TokenType.ASSIGN) ? ErrorMessages.INVALID_LHS_IN_ASSIGNMENT : ErrorMessages.ILLEGAL_ARROW_FUNCTION_PARAMS);
       }
@@ -1816,6 +1783,7 @@ public class Parser extends Tokenizer {
     }
   }
 
+  @NotNull
   private Either<ObjectProperty, BindingPropertyIdentifier> parsePropertyDefinition() throws JsError {
     SourceLocation startLocation = this.getLocation();
     Token token = this.lookahead;
@@ -1855,6 +1823,7 @@ public class Parser extends Tokenizer {
     return Either.left(toReturn);
   }
 
+  @NotNull
   private Either<PropertyName, MethodDefinition> parseMethodDefinition() throws JsError {
     Token token = this.lookahead;
     SourceLocation startLocation = this.getLocation();
@@ -1922,6 +1891,7 @@ public class Parser extends Tokenizer {
     }
   }
 
+  @NotNull
   private Pair<PropertyName, Maybe<Binding>> parsePropertyName() throws JsError {
     Token token = this.lookahead;
     SourceLocation startLocation = this.getLocation();
@@ -1960,6 +1930,7 @@ public class Parser extends Tokenizer {
     return new Pair<>(this.markLocation(startLocation, new StaticPropertyName(name)), maybeBinding); // TODO mark location on binding part
   }
 
+  @NotNull
   private String parseIdentifierName() throws JsError {
     if (this.isIdentifierName(this.lookahead.type.klass)) {
       return this.lex().toString();
@@ -1969,13 +1940,10 @@ public class Parser extends Tokenizer {
   }
 
   private boolean isIdentifierName(TokenClass klass) {
-    if (klass.getName().equals("Identifier") || klass.getName().equals("Keyword") || klass.getName().equals("Boolean") || klass.getName().equals("Null")) {
-      return true;
-    }
-    return false;
+    return (klass.getName().equals("Identifier") || klass.getName().equals("Keyword") || klass.getName().equals("Boolean") || klass.getName().equals("Null"));
   }
 
-  // class expression, isExpr = true
+  @NotNull
   private Expression parseClass() throws JsError {
     SourceLocation startLocation = this.getLocation();
 
@@ -2023,12 +1991,12 @@ public class Parser extends Tokenizer {
     return this.markLocation(startLocation, new ClassExpression(name, heritage, ImmutableList.from(elements)));
   }
 
-  // class declaration, isExpr = false
+  @NotNull
   private ClassDeclaration parseClass(boolean inDefault) throws JsError {
     SourceLocation startLocation = this.getLocation();
 
     this.lex();
-    Maybe<BindingIdentifier> name = Maybe.nothing();
+    Maybe<BindingIdentifier> name;
     Maybe<Expression> heritage = Maybe.nothing();
 
     if (this.match(TokenType.IDENTIFIER)) {
@@ -2045,7 +2013,6 @@ public class Parser extends Tokenizer {
     boolean previousParamYield = this.allowYieldExpression;
 
     if (this.eat(TokenType.EXTENDS)) {
-//      heritage = Maybe.just((Expression) this.isolateCoverGrammar(() -> this.parseLeftHandSideExpression(true)));
       Either<ExpressionSuper, Binding> fromParseLeftHandSideExpression = this.isolateCoverGrammar(() -> this.parseLeftHandSideExpression(true));
       if (fromParseLeftHandSideExpression.isLeft()) {
         heritage = Maybe.just((Expression)fromParseLeftHandSideExpression.left().just());
@@ -2077,6 +2044,7 @@ public class Parser extends Tokenizer {
     return this.markLocation(startLocation, new ClassDeclaration(name.just(), heritage, ImmutableList.from(elements)));
   }
 
+  @NotNull
   private ImportDeclaration parseImportDeclaration() throws JsError {
     SourceLocation startLocation = this.getLocation();
     Maybe<BindingIdentifier> defaultBinding = Maybe.nothing();
@@ -2107,6 +2075,7 @@ public class Parser extends Tokenizer {
     }
   }
 
+  @NotNull
   private ImmutableList<ImportSpecifier> parseNamedImports() throws JsError {
     ArrayList<ImportSpecifier> result = new ArrayList<>();
     this.expect(TokenType.LBRACE);
@@ -2120,6 +2089,7 @@ public class Parser extends Tokenizer {
     return ImmutableList.from(result);
   }
 
+  @NotNull
   private ImportSpecifier parseImportSpecifier() throws JsError {
     SourceLocation startLocation = this.getLocation();
     Maybe<String> name = Maybe.nothing();
@@ -2146,12 +2116,14 @@ public class Parser extends Tokenizer {
     }
   }
 
+  @NotNull
   private BindingIdentifier parseNameSpaceBinding() throws JsError {
     this.expect(TokenType.MUL);
     this.expectContextualKeyword("as");
     return this.parseBindingIdentifier();
   }
 
+  @NotNull
   private String parseFromClause() throws JsError {
     this.expectContextualKeyword("from");
     String value = this.expect(TokenType.STRING).toString();
@@ -2159,6 +2131,7 @@ public class Parser extends Tokenizer {
     return value;
   }
 
+  @NotNull
   private Token expectContextualKeyword(String keyword) throws JsError {
     if (this.lookahead.type == TokenType.IDENTIFIER && this.lookahead.toString().equals(keyword)) {
       return this.lex();
@@ -2167,6 +2140,7 @@ public class Parser extends Tokenizer {
     }
   }
 
+  @NotNull
   private ExportDeclaration parseExportDeclaration() throws JsError {
     SourceLocation startLocation = this.getLocation();
     ExportDeclaration decl;
@@ -2217,6 +2191,7 @@ public class Parser extends Tokenizer {
     return this.markLocation(startLocation, decl);
   }
 
+  @NotNull
   private ImmutableList<ExportSpecifier> parseExportClause() throws JsError {
     this.expect(TokenType.LBRACE);
     ArrayList<ExportSpecifier> result = new ArrayList<>();
@@ -2230,6 +2205,7 @@ public class Parser extends Tokenizer {
     return ImmutableList.from(result);
   }
 
+  @NotNull
   private ExportSpecifier parseExportSpecifier() throws JsError {
     SourceLocation startLocation = this.getLocation();
     String name = this.parseIdentifierName();
@@ -2321,16 +2297,6 @@ public class Parser extends Tokenizer {
         return BinaryOperator.Rem;
     }
     return null;
-  }
-
-
-  private boolean isUpdateOperator(Token token) {
-    switch (token.type) {
-      case INC:
-      case DEC:
-        return true;
-    }
-    return false;
   }
 
   private boolean isPrefixOperator(Token token) {
