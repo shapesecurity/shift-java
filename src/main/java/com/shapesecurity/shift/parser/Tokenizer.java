@@ -29,20 +29,13 @@ import com.shapesecurity.shift.ast.SourceLocation;
 import com.shapesecurity.shift.parser.token.*;
 import com.shapesecurity.shift.utils.Utils;
 
-import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.function.Function;
-import java.util.regex.Pattern;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public class Tokenizer {
-  static final HashSet<String> STRICT_MODE_RESERVED_WORD = new HashSet<>(Arrays.asList("implements",
-      "interface", "package", "private", "protected", "public", "static", "yield", "let"));
   private static final TokenType[] ONE_CHAR_PUNCTUATOR =
       new TokenType[]{TokenType.ILLEGAL, TokenType.ILLEGAL, TokenType.ILLEGAL, TokenType.ILLEGAL, TokenType.ILLEGAL,
           TokenType.ILLEGAL, TokenType.ILLEGAL, TokenType.ILLEGAL, TokenType.ILLEGAL, TokenType.ILLEGAL,
@@ -90,15 +83,6 @@ public class Tokenizer {
           true, true, true, true, false, true, false, false, true, false, true, true, true, true, true, true,
           true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true,
           true, true, true, true, false, false, false, false, false};
-  private static final boolean[] IDENTIFIER_PART =
-      new boolean[]{false, false, false, false, false, false, false, false, false, false, false, false, false, false,
-          false, false, false, false, false, false, false, false, false, false, false, false, false, false, false,
-          false, false, false, false, false, false, false, true, false, false, false, false, false, false, false, false,
-          false, false, false, true, true, true, true, true, true, true, true, true, true, false, false, false, false,
-          false, false, false, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true,
-          true, true, true, true, true, true, true, true, true, true, true, false, false, false, false, true, false,
-          true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true,
-          true, true, true, true, true, true, true, true, false, false, false, false, false};
 
   @NotNull
   final String source;
@@ -110,11 +94,8 @@ public class Tokenizer {
   protected int index, line, lineStart;
   private int lastIndex;
   protected int startIndex, startLine, startLineStart;
-
   private SourceLocation cachedSourceLocation;
   private int lastCachedSourceLocation = -1;
-  private int lastLine;
-  private int lastLineStart;
 
   public Tokenizer(@NotNull String source) throws JsError {
     this.source = source;
@@ -438,7 +419,8 @@ public class Tokenizer {
             : this.createError(ErrorMessages.UNEXPECTED_EOS);
   }
 
-  JsError createUnexpected(@NotNull Token token) {
+  @NotNull
+  protected JsError createUnexpected(@NotNull Token token) {
     switch (token.type.klass) {
       case Eof:
         return this.createError(UNEXPECTED_EOS);
@@ -465,8 +447,8 @@ public class Tokenizer {
   }
 
   @NotNull
-  JsError createError(@NotNull String message, @NotNull Object... args) {
-    ArrayList<String> escapedArgs = new ArrayList<String>();
+  protected JsError createError(@NotNull String message, @NotNull Object... args) {
+    ArrayList<String> escapedArgs = new ArrayList<>();
     for(Object arg : args) {
       escapedArgs.add(arg.toString().replace("\\", "\\\\").replace("\"", "\\\""));
     }
@@ -474,7 +456,8 @@ public class Tokenizer {
     return new JsError(this.startIndex, this.startLine + 1, this.startIndex - this.startLineStart, msg);
   }
 
-  JsError createErrorWithLocation(@NotNull SourceLocation location, @NotNull String message, @NotNull Object... args) {
+  @NotNull
+  protected JsError createErrorWithLocation(@NotNull SourceLocation location, @NotNull String message, @NotNull Object... args) {
     String msg = String.format(message, args);
     return new JsError(location.offset, location.line + 1, location.column, msg);
   }
@@ -491,11 +474,6 @@ public class Tokenizer {
   @NotNull
   private SourceRange getSlice(int start) {
     return new SourceRange(start, this.index, this.source);
-  }
-
-  @NotNull
-  SourceRange getSliceBeforeLookahead(int start) {
-    return new SourceRange(start, this.lastIndex, this.source);
   }
 
   private void skipSingleLineComment(int offset) {
@@ -518,7 +496,6 @@ public class Tokenizer {
   private void skipMultiLineComment() throws JsError {
     this.index += 2;
     int length = this.source.length();
-    boolean isLineStart = false;
     int i = this.index;
     while (i < length) {
       char ch = this.source.charAt(i);
@@ -533,7 +510,6 @@ public class Tokenizer {
             i++;
             break;
           case '\n':
-            isLineStart = true;
             this.hasLineTerminatorBeforeNext = true;
             i++;
             this.lineStart = i;
@@ -552,7 +528,6 @@ public class Tokenizer {
             i++;
         }
       } else if (ch == 0x2028 || ch == 0x2029) {
-        isLineStart = true;
         this.hasLineTerminatorBeforeNext = true;
         i++;
         this.lineStart = i;
@@ -620,8 +595,8 @@ public class Tokenizer {
     }
   }
 
+  @NotNull
   protected RegularExpressionLiteralToken scanRegExp(String str) throws JsError {
-    SourceLocation startLocation = this.getLocation();
     int start = this.index;
 
     boolean terminated = false;
@@ -677,30 +652,6 @@ public class Tokenizer {
     return new RegularExpressionLiteralToken(this.getSlice(start), str);
   }
 
-  private int scanHexEscape4() {
-    if (this.index + 4 > this.source.length()) {
-      return -1;
-    }
-    int r1 = Utils.getHexValue(this.source.charAt(this.index));
-    if (r1 == -1) {
-      return -1;
-    }
-    int r2 = Utils.getHexValue(this.source.charAt(this.index + 1));
-    if (r2 == -1) {
-      return -1;
-    }
-    int r3 = Utils.getHexValue(this.source.charAt(this.index + 2));
-    if (r3 == -1) {
-      return -1;
-    }
-    int r4 = Utils.getHexValue(this.source.charAt(this.index + 3));
-    if (r4 == -1) {
-      return -1;
-    }
-    this.index += 4;
-    return r1 << 12 | r2 << 8 | r3 << 4 | r4;
-  }
-
   private int scanHexEscape2() {
     if (this.index + 2 > this.source.length()) {
       return -1;
@@ -716,7 +667,6 @@ public class Tokenizer {
     this.index += 2;
     return r1 << 4 | r2;
   }
-
 
   @NotNull
   private CharSequence getIdentifier() throws JsError {
@@ -979,7 +929,6 @@ public class Tokenizer {
 
   @NotNull
   protected Token scanTemplateElement() throws JsError {
-    SourceLocation startLocation = this.getLocation();
     int start = this.index;
     this.index++;
     while (this.index < this.source.length()) {
@@ -1014,7 +963,6 @@ public class Tokenizer {
   private Token scanStringLiteral() throws JsError {
     String str = "";
     char quote = this.source.charAt(this.index);
-    SourceLocation startLocation = this.getLocation();
     int start = this.index;
     this.index++;
 
@@ -1039,6 +987,7 @@ public class Tokenizer {
     throw this.createILLEGAL();
   }
 
+  @NotNull
   private Pair<String, Boolean> scanStringEscape(String str, boolean octal) throws JsError {
     this.index++;
     if (this.index == this.source.length()) {
@@ -1122,13 +1071,12 @@ public class Tokenizer {
       this.lineStart = this.index;
       this.line++;
     }
-    return new Pair<String, Boolean>(str, octal);
+    return new Pair<>(str, octal);
   }
 
   @NotNull
   private Token scanNumericLiteral() throws JsError {
     char ch = this.source.charAt(this.index);
-    SourceLocation startLocation = this.getLocation();
     int start = this.index;
 
     if (ch == '0') {
@@ -1138,13 +1086,14 @@ public class Tokenizer {
         if (ch == 'x' || ch == 'X') {
           this.index++;
           return this.scanHexLiteral(start);
-        } else if (ch == 'b' || ch == 'B') {
-//          return this.scan TODO: scan binary literal
         } else if (ch == 'o' || ch == 'O') {
           return this.scanOctalLiteral(start);
-        } else if ('0' <= ch && ch <= '9') {
-          // TODO: scan legacy octal literal
         }
+//        else if (ch == 'b' || ch == 'B') {
+//          // TODO: scan binary literal
+//        }  else if ('0' <= ch && ch <= '9') {
+//          // TODO: scan legacy octal literal
+//        }
       } else {
         SourceRange slice = this.getSlice(start);
         return new NumericLiteralToken(slice, Double.parseDouble(slice.toString()));
@@ -1169,10 +1118,8 @@ public class Tokenizer {
       }
     }
 
-    int e = 0;
     ch = this.source.charAt(this.index);
     while ('0' <= ch && ch <= '9') {
-      e++;
       this.index++;
       if (this.index == this.source.length()) {
         SourceRange slice = this.getSlice(start);
@@ -1180,30 +1127,21 @@ public class Tokenizer {
       }
       ch = this.source.charAt(this.index);
     }
-
     if (ch == 'e' || ch == 'E') {
       this.index++;
       if (this.index == this.source.length()) {
         throw this.createILLEGAL();
       }
-
       ch = this.source.charAt(this.index);
-
-      boolean neg = false;
       if (ch == '+' || ch == '-') {
-        neg = ch == '-';
         this.index++;
         if (this.index == this.source.length()) {
           throw this.createILLEGAL();
         }
         ch = this.source.charAt(this.index);
       }
-
-      int f = 0;
       if ('0' <= ch && ch <= '9') {
         while ('0' <= ch && ch <= '9') {
-          f *= 10;
-          f += +ch;
           this.index++;
           if (this.index == this.source.length()) {
             break;
@@ -1213,7 +1151,6 @@ public class Tokenizer {
       } else {
         throw this.createILLEGAL();
       }
-      e += neg ? f : -f;
     }
 
     if (Utils.isIdentifierStart(ch)) {
@@ -1223,7 +1160,6 @@ public class Tokenizer {
     SourceRange slice = this.getSlice(start);
     return new NumericLiteralToken(slice, Double.parseDouble(slice.toString()));
   }
-
 
   protected boolean eof() {
     return this.lookahead.type == TokenType.EOS;
@@ -1267,6 +1203,7 @@ public class Tokenizer {
     return prevToken;
   }
 
+  @NotNull
   private static String fromCodePoint(int cp) {
     if (cp <= 0xFFFF) {
       return Character.toString((char) cp);
@@ -1286,7 +1223,7 @@ public class Tokenizer {
     while (this.index < this.source.length()) {
       char ch = this.source.charAt(this.index);
       int code = (int) ch;
-      String s = "";
+      String s;
       int start = this.index;
       ++this.index;
       if (ch == '\\') {
@@ -1371,6 +1308,7 @@ public class Tokenizer {
     }
   }
 
+  @NotNull
   public TokenizerState saveTokenizerState() {
     return new TokenizerState(
         this.index,
