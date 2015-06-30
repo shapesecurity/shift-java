@@ -42,9 +42,9 @@ public class ObjectBindingTest extends Assertions {
     testScriptFailure("({function} = 0)", 10, "Unexpected token \"function\"");
     testScriptFailure("({a:function} = 0)", 12, "Unexpected token \"}\"");
     testScriptFailure("({a:for} = 0)", 4, "Unexpected token \"for\"");
-    testScriptFailure("({'a'} = 0)", 5, "Unexpected token \"}\"");
+    testScriptFailure("({'a'} = 0)", 5, "Unexpected string"); // TODO: changed error from unexpected }
     testScriptFailure("({var} = 0)", 5, "Unexpected token \"var\"");
     testScriptFailure("({a.b} = 0)", 3, "Unexpected token \".\"");
-    testScriptFailure("({0} = 0)", 3, "Unexpected token \"}\"");
+    testScriptFailure("({0} = 0)", 3, "Unexpected number"); // TODO: changed error from unexpected }
   }
 }

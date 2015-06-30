@@ -31,7 +31,7 @@ public class PropertyNameTest extends Assertions {
     testScript("({\"oink\"(that, little, piggy) {}})", new ObjectExpression(ImmutableList.list(new Method(false, new FormalParameters(ImmutableList.list(new BindingIdentifier("that"), new BindingIdentifier("little"), new BindingIdentifier("piggy")), Maybe.nothing()), new FunctionBody(ImmutableList.nil(), ImmutableList.nil()), new StaticPropertyName("\"oink\"")))));
 
     testScriptFailure("({[1,2]:3})", 4, "Unexpected token \",\"");
-    testScriptFailure("({ *a })", 6, "Unexpected token \"}\"");
+    testScriptFailure("({ *a })", 6, "Unexpected token \"*\""); // TODO: changed error from unexpected }
     testScriptFailure("({ *a: 0 })", 5, "Unexpected token \":\"");
     testScriptFailure("({ *[0]: 0 })", 7, "Unexpected token \":\"");
   }

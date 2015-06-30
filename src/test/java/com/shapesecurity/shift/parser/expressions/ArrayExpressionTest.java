@@ -2,8 +2,7 @@ package com.shapesecurity.shift.parser.expressions;
 
 import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.functional.data.Maybe;
-import com.shapesecurity.shift.ast.ArrayExpression;
-import com.shapesecurity.shift.ast.LiteralNumericExpression;
+import com.shapesecurity.shift.ast.*;
 import com.shapesecurity.shift.parser.Assertions;
 import com.shapesecurity.shift.parser.JsError;
 import org.junit.Test;
@@ -35,8 +34,10 @@ public class ArrayExpressionTest extends Assertions {
         Maybe.just(new LiteralNumericExpression(1.0)), Maybe.nothing(), Maybe.nothing(),
         Maybe.just(new LiteralNumericExpression(2.0)), Maybe.just(new LiteralNumericExpression(3.0)), Maybe.nothing())));
 
-    testScriptFailure("[a, ...(b=c)] = 0", 14, "Invalid left-hand side in assignment");
+    // TODO: new test added
+    testScript("[a, ...(b=c)]", new ArrayExpression(ImmutableList.list(Maybe.just(new IdentifierExpression("a")), Maybe.just(new SpreadElement(new AssignmentExpression(new BindingIdentifier("b"), new IdentifierExpression("c")))))));
 
+    testScriptFailure("[a, ...(b=c)] = 0", 14, "Invalid left-hand side in assignment");
     testScriptFailure("[0] = 0", 4, "Invalid left-hand side in assignment");
   }
 }

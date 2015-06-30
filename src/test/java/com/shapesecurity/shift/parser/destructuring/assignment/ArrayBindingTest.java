@@ -41,5 +41,10 @@ public class ArrayBindingTest extends Assertions {
     testScriptFailure("[...0,{a=0}]=0", 11, "Invalid rest");
     testScriptFailure("[...{a=0},]", 9, "Invalid rest");
     testScriptFailure("[...{a=0},]=0", 9, "Invalid rest");
+
+    // TODO: new tests added
+    testScriptFailure("[0] = 0", 4, "Invalid left-hand side in assignment");
+    testScriptFailure("[a, ...b, {c=0}]", 11, "Illegal property initializer");
+    testScriptFailure("{a = [...b, c]} = 0", 16, "Unexpected token \"=\"");
   }
 }
