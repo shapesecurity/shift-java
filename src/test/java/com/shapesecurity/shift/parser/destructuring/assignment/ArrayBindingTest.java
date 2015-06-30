@@ -34,13 +34,12 @@ public class ArrayBindingTest extends Assertions {
     testScriptFailure("[...x, ...y] = 0", 13, "Invalid left-hand side in assignment");
     testScriptFailure("[...x, y] = 0", 10, "Invalid left-hand side in assignment");
     testScriptFailure("[...x,,] = 0", 9, "Invalid left-hand side in assignment");
-    testScriptFailure("[0,{a=0}] = 0", 0, "Illegal property initializer");
-    testScriptFailure("[{a=0},{b=0},0] = 0", 0, "Illegal property initializer");
-    testScriptFailure("[{a=0},...0]", 0, "Illegal property initializer");
+    testScriptFailure("[0,{a=0}] = 0", 8, "Invalid left-hand side in assignment");
+    testScriptFailure("[{a=0},{b=0},0] = 0", 14, "Invalid left-hand side in assignment");
+    testScriptFailure("[{a=0},...0]", 2, "Illegal property initializer");
     testScriptFailure("[...0,a]=0", 8, "Invalid left-hand side in assignment");
-    testScriptFailure("[...0,{a=0}]=0", 0, "Illegal property initializer");
-    testScriptFailure("[...0,...{a=0}]=0", 0, "Illegal property initializer");
-    testScriptFailure("[...{a=0},]", 0, "Illegal property initializer");
-    testScriptFailure("[...{a=0},]=0", 0, "Invalid left-hand side in assignment");
+    testScriptFailure("[...0,{a=0}]=0", 11, "Invalid rest");
+    testScriptFailure("[...{a=0},]", 9, "Invalid rest");
+    testScriptFailure("[...{a=0},]=0", 9, "Invalid rest");
   }
 }

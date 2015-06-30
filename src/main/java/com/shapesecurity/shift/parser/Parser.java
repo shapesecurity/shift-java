@@ -709,11 +709,11 @@ public class Parser extends Tokenizer {
           if (this.match(TokenType.IN)) {
             this.lex();
             right = this.parseExpression().left();
-            return new ForInStatement(Parser.transformDestructuring(expr), right.just(), this.getIteratorStatementEpilogue());
+            return new ForInStatement(this.transformDestructuring(expr), right.just(), this.getIteratorStatementEpilogue());
           } else {
             this.lex();
             right = this.parseExpression().left();
-            return new ForOfStatement(Parser.transformDestructuring(expr), right.just(), this.getIteratorStatementEpilogue());
+            return new ForOfStatement(this.transformDestructuring(expr), right.just(), this.getIteratorStatementEpilogue());
           }
         } else {
           if (this.firstExprError != null) {
@@ -743,48 +743,43 @@ public class Parser extends Tokenizer {
     }
   }
 
-  private static BindingProperty transformDestructuring(ObjectProperty objectProperty) throws JsError {
+  private BindingProperty transformDestructuring(ObjectProperty objectProperty) throws JsError {
     if (objectProperty instanceof DataProperty) {
       DataProperty dataProperty = (DataProperty) objectProperty;
-      return new BindingPropertyProperty(dataProperty.name, transformDestructuringWithDefault(dataProperty.expression));
+      return new BindingPropertyProperty(dataProperty.name, this.transformDestructuringWithDefault(dataProperty.expression));
     } else if (objectProperty instanceof ShorthandProperty) {
       ShorthandProperty shorthandProperty = (ShorthandProperty) objectProperty;
       return new BindingPropertyIdentifier(new BindingIdentifier(shorthandProperty.name), Maybe.nothing());
     }
-    throw new JsError(0, 0, 0, "not reached");
+    throw this.createError(ErrorMessages.INVALID_LHS_IN_ASSIGNMENT);
   }
 
   // TODO: preserve location information in transformDestructuring() functions by implementing copyLocation()
-  private static Binding transformDestructuring(Node node) throws JsError {
+  private Binding transformDestructuring(Expression node) throws JsError {
     if (node instanceof ObjectExpression) {
       ObjectExpression objectExpression = (ObjectExpression) node;
       ArrayList<BindingProperty> properties = new ArrayList<>();
       for (ObjectProperty p : objectExpression.properties) {
-        properties.add(Parser.transformDestructuring(p));
+        properties.add(this.transformDestructuring(p));
       }
       return new ObjectBinding(ImmutableList.from(properties));
     } else if (node instanceof ArrayExpression) {
       ArrayExpression arrayExpression = (ArrayExpression) node;
       Maybe<SpreadElementExpression> last = Maybe.join(arrayExpression.elements.maybeLast());
       ImmutableList<Maybe<SpreadElementExpression>> elements = arrayExpression.elements;
-//      if (arrayExpression.elements instanceof Nil) {
-//        elements = (NonEmptyImmutableList<Maybe<SpreadElementExpression>>) arrayExpression.elements;
-//      } else {
-//        return new ArrayBinding(ImmutableList.nil(), Maybe.nothing());
-//      }
       ArrayList<Maybe<BindingBindingWithDefault>> newElements = new ArrayList<>();
       if (last.isJust() && last.just() instanceof SpreadElement) {
         SpreadElement spreadElement = (SpreadElement) last.just();
         for (Maybe<SpreadElementExpression> maybeBbwd : ((NonEmptyImmutableList<Maybe<SpreadElementExpression>>) elements).init()) {
           if (maybeBbwd.isJust()) {
-            newElements.add(Maybe.just(Parser.transformDestructuringWithDefault((Expression) maybeBbwd.just())));
+            newElements.add(Maybe.just(this.transformDestructuringWithDefault((Expression) maybeBbwd.just())));
           }
         }
-        return new ArrayBinding(ImmutableList.from(newElements), Maybe.just(Parser.transformDestructuring(spreadElement.expression)));
+        return new ArrayBinding(ImmutableList.from(newElements), Maybe.just(this.transformDestructuring(spreadElement.expression)));
       } else {
         for (Maybe<SpreadElementExpression> maybeBbwd : elements) {
           if (maybeBbwd.isJust()) {
-            newElements.add(Maybe.just(Parser.transformDestructuringWithDefault((Expression) maybeBbwd.just())));
+            newElements.add(Maybe.just(this.transformDestructuringWithDefault((Expression) maybeBbwd.just())));
           } else {
             newElements.add(Maybe.nothing());
           }
@@ -797,19 +792,19 @@ public class Parser extends Tokenizer {
     } else if (node instanceof ComputedMemberExpression || node instanceof StaticMemberExpression) {
       return (Binding) node;
     }
-    throw new JsError(0, 0, 0, "not reached");
+    throw this.createError(ErrorMessages.INVALID_LHS_IN_ASSIGNMENT);
   }
 
-  private static BindingIdentifier transformDestructuring(StaticPropertyName property) {
+  private BindingIdentifier transformDestructuring(StaticPropertyName property) {
     return new BindingIdentifier(property.value);
   }
 
-  private static BindingBindingWithDefault transformDestructuringWithDefault(Expression node) throws JsError {
+  private BindingBindingWithDefault transformDestructuringWithDefault(Expression node) throws JsError {
     if (node instanceof AssignmentExpression) {
       AssignmentExpression assignmentExpression = (AssignmentExpression) node;
-      return new BindingWithDefault(transformDestructuring(assignmentExpression.binding), assignmentExpression.expression);
+      return new BindingWithDefault(this.transformDestructuring(assignmentExpression.binding), assignmentExpression.expression);
     }
-    return transformDestructuring(node);
+    return this.transformDestructuring(node);
   }
 
   private static Binding transformDestructuring(Binding b) {
@@ -1111,7 +1106,7 @@ public class Parser extends Tokenizer {
         this.isBindingElement = this.isAssignmentTarget = false;
         this.firstExprError = null;
         ArrayList<BindingBindingWithDefault> params = new ArrayList<>();
-        params.add(transformDestructuring(expr.left().just()));
+        params.add(this.transformDestructuring(expr.left().just()));
         return Either.left(this.parseArrowExpressionTail(params, Maybe.nothing(), startLocation));
       }
     } else {
@@ -1123,7 +1118,7 @@ public class Parser extends Tokenizer {
 //      this.isBindingElement = this.isAssignmentTarget = false;
 //      this.firstExprError = null;
 //      ArrayList<BindingBindingWithDefault> params = new ArrayList<>();
-//      params.add(transformDestructuring(expr.left().just()));
+//      params.add(this.transformDestructuring(expr.left().just()));
 //      return Either.left(this.parseArrowExpressionTail(params, Maybe.nothing(), startLocation));
 //    }
 
@@ -1149,13 +1144,13 @@ public class Parser extends Tokenizer {
       if (expr.isRight() || !this.isAssignmentTarget || !isValidSimpleAssignmentTarget(expr.left().just())) {
         throw this.createError(ErrorMessages.INVALID_LHS_IN_ASSIGNMENT);
       }
-      assignmentTarget = transformDestructuring(expr.left().just());
+      assignmentTarget = this.transformDestructuring(expr.left().just());
     } else if (operator.type == TokenType.ASSIGN) {
       if (!this.isAssignmentTarget) {
         throw this.createError(ErrorMessages.INVALID_LHS_IN_ASSIGNMENT);
       }
       if (expr.isLeft()) {
-        assignmentTarget = transformDestructuring(expr.left().just());
+        assignmentTarget = this.transformDestructuring(expr.left().just());
       } else {
         assignmentTarget = expr.right().just();
       }
@@ -1574,7 +1569,7 @@ public class Parser extends Tokenizer {
         this.isBindingElement = this.isAssignmentTarget = false;
         return Either.left(this.parseStringLiteral());
       case LBRACK:
-        return Either.left(this.parseArrayExpression());
+        return this.parseArrayExpression();
       case THIS:
         this.lex();
         this.isBindingElement = this.isAssignmentTarget = false;
@@ -1606,13 +1601,14 @@ public class Parser extends Tokenizer {
     return this.markLocation(startLocation, new LiteralStringExpression(this.lex().toString()));
   }
 
-  private Expression parseArrayExpression() throws JsError {
+  private Either<Expression, Binding> parseArrayExpression() throws JsError {
     SourceLocation startLocation = this.getLocation();
     this.lex();
 
     ArrayList<Maybe<SpreadElementExpression>> exprs = new ArrayList<>();
-    ArrayList<Maybe<ObjectBinding>> objectBindings = new ArrayList<>();
-    boolean allSEEsSoFar = true;
+    ArrayList<Maybe<BindingBindingWithDefault>> bindings = new ArrayList<>();
+    Maybe<Binding> rest = Maybe.nothing();
+    boolean allExpressionsSoFar = true;
 
     while (true) {
       if (this.match(TokenType.RBRACK)) {
@@ -1622,24 +1618,56 @@ public class Parser extends Tokenizer {
         exprs.add(Maybe.nothing());
       } else {
         SourceLocation elementLocation = this.getLocation();
-        SpreadElementExpression expr;
         if (this.eat(TokenType.ELLIPSIS)) {
-          // Spread/Rest element
-          expr = this.parseAssignmentExpressionOrBindingElement().left().just();
+          Either<SpreadElementExpression, Binding> expr = this.parseAssignmentExpressionOrBindingElement().mapLeft(x -> (SpreadElementExpression)x); //TODO inherit cover grammar
+          if (expr.isRight()) {
+            throw this.createError(ErrorMessages.INVALID_REST); // TODO: some better error message
+          } else {
+            exprs.add(Maybe.just(this.markLocation(elementLocation, new SpreadElement((Expression) expr.left().just()))));
+          }
           if (!this.isAssignmentTarget && this.firstExprError != null) {
             throw this.firstExprError;
           }
-          expr = this.markLocation(elementLocation, new SpreadElement((Expression) expr));
           if (!this.match(TokenType.RBRACK)) {
             this.isBindingElement = this.isAssignmentTarget = false;
           }
         } else {
-          expr = this.parseAssignmentExpressionOrBindingElement().left().just();
+          Either<Expression, Binding> expr = this.parseAssignmentExpressionOrBindingElement(); //TODO inherit cover grammar
+          if (allExpressionsSoFar) {
+            if (expr.isLeft()) {
+              exprs.add(expr.left().map(x -> (SpreadElementExpression) x));
+            } else {
+              allExpressionsSoFar = false;
+              for (Maybe<SpreadElementExpression> e : exprs) {
+                if (e.isNothing()) {
+                  bindings.add(Maybe.nothing());
+                } else {
+                  SpreadElementExpression r = e.just();
+                  if (r instanceof SpreadElement) {
+                    if (!(((SpreadElement) r).expression instanceof IdentifierExpression)) {
+                      throw this.createError(ErrorMessages.INVALID_REST);
+                    }
+                    rest = Maybe.just(this.transformDestructuring(((SpreadElement) r).expression));
+                    break;
+                  } else {
+                    bindings.add(Maybe.just(this.transformDestructuring((Expression) r)));
+                  }
+                }
+              }
+              bindings.add(expr.right().map(x -> (BindingBindingWithDefault) x));
+            }
+          } else {
+            if (expr.isLeft()) {
+              bindings.add(Maybe.just(this.transformDestructuring(expr.left().just())));
+            } else {
+              bindings.add(expr.right().map(x -> (BindingBindingWithDefault) x));
+            }
+          }
+
           if (!this.isAssignmentTarget && this.firstExprError != null) {
             throw this.firstExprError;
           }
         }
-        exprs.add(Maybe.just(expr));
 
         if (!this.match(TokenType.RBRACK)) {
           this.expect(TokenType.COMMA);
@@ -1648,7 +1676,11 @@ public class Parser extends Tokenizer {
     }
 
     this.expect(TokenType.RBRACK);
-    return this.markLocation(startLocation, new ArrayExpression(ImmutableList.from(exprs)));
+    if (allExpressionsSoFar) {
+      return Either.left(this.markLocation(startLocation, new ArrayExpression(ImmutableList.from(exprs))));
+    } else {
+      return Either.right(this.markLocation(startLocation, new ArrayBinding(ImmutableList.from(bindings), rest)));
+    }
   }
 
   private Either<Expression, Binding> parseObjectExpression() throws JsError {
@@ -1669,13 +1701,13 @@ public class Parser extends Tokenizer {
           allExpressionsSoFar = false;
           BindingPropertyIdentifier propertyIdentifier = fromParsePropertyDefinition.right().just();
           for (ObjectProperty objectProperty : objectProperties) {
-            bindingProperties.add(transformDestructuring(objectProperty));
+            bindingProperties.add(this.transformDestructuring(objectProperty));
           }
           bindingProperties.add(fromParsePropertyDefinition.right().just());
         }
       } else {
         if (fromParsePropertyDefinition.isLeft()) {
-          bindingProperties.add(transformDestructuring(fromParsePropertyDefinition.left().just()));
+          bindingProperties.add(this.transformDestructuring(fromParsePropertyDefinition.left().just()));
         } else {
           bindingProperties.add(fromParsePropertyDefinition.right().just());
         }
@@ -1716,7 +1748,7 @@ public class Parser extends Tokenizer {
 //    this.isBindingElement = false; // TODO: temporary fix for test group expression
     if (this.isBindingElement) {
       if (group.isLeft()) {
-        params.add(transformDestructuringWithDefault(group.left().just()));
+        params.add(this.transformDestructuringWithDefault(group.left().just()));
       } else {
         params.add(group.right().just());
       }
@@ -1745,7 +1777,7 @@ public class Parser extends Tokenizer {
         Either<Expression, Binding> expr = this.inheritCoverGrammar(this::parseAssignmentExpressionOrBindingElement);
         if (this.isBindingElement) {
           if (expr.isLeft()) {
-            params.add(transformDestructuring(expr.left().just()));
+            params.add(this.transformDestructuring(expr.left().just()));
           } else {
             params.add(expr.right().just());
           }
@@ -1791,7 +1823,7 @@ public class Parser extends Tokenizer {
         if (this.eat(TokenType.ASSIGN)) {
           Expression init = this.isolateCoverGrammar(this::parseAssignmentExpression).left().just();
           this.firstExprError = this.createErrorWithLocation(startLocation, ErrorMessages.ILLEGAL_PROPERTY);
-          BindingPropertyIdentifier toReturn = new BindingPropertyIdentifier(transformDestructuring(staticPropertyName), Maybe.just(init));
+          BindingPropertyIdentifier toReturn = new BindingPropertyIdentifier(this.transformDestructuring(staticPropertyName), Maybe.just(init));
           this.markLocation(startLocation, toReturn);
           return Either.right(toReturn);
         }

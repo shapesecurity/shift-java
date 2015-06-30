@@ -34,5 +34,9 @@ public class ArrayExpressionTest extends Assertions {
     testScript("[,,1,,,2,3,,]", new ArrayExpression(ImmutableList.list(Maybe.nothing(), Maybe.nothing(),
         Maybe.just(new LiteralNumericExpression(1.0)), Maybe.nothing(), Maybe.nothing(),
         Maybe.just(new LiteralNumericExpression(2.0)), Maybe.just(new LiteralNumericExpression(3.0)), Maybe.nothing())));
+
+      testScriptFailure("[a, ...(b=c)] = 0", 0, "");
+      testScriptFailure("[0] = 0", 0, "");
+
   }
 }
