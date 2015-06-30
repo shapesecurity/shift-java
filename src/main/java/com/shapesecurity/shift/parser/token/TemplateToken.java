@@ -5,9 +5,6 @@ import com.shapesecurity.shift.parser.Token;
 import com.shapesecurity.shift.parser.TokenType;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * Created by u478 on 6/24/15.
- */
 public final class TemplateToken extends Token {
 
   public final boolean tail;

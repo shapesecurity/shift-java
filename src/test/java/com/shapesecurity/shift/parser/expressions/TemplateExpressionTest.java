@@ -7,9 +7,6 @@ import com.shapesecurity.shift.parser.Assertions;
 import com.shapesecurity.shift.parser.JsError;
 import org.junit.Test;
 
-/**
- * Created by u478 on 6/24/15.
- */
 public class TemplateExpressionTest extends Assertions {
   @Test
   public void testTemplateExpression() throws JsError {

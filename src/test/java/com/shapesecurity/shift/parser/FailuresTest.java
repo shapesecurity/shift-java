@@ -2,9 +2,6 @@ package com.shapesecurity.shift.parser;
 
 import org.junit.Test;
 
-/**
- * Created by u478 on 6/19/15.
- */
 public class FailuresTest extends Assertions {
   @Test
   public void testFailures() throws JsError {

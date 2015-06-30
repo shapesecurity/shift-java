@@ -6,9 +6,6 @@ import com.shapesecurity.shift.parser.Assertions;
 import com.shapesecurity.shift.parser.JsError;
 import org.junit.Test;
 
-/**
- * Created by u478 on 6/12/15.
- */
 public class StaticMemberExpressionTest extends Assertions {
   @Test
   public void testStaticMemberExpression() throws JsError {
