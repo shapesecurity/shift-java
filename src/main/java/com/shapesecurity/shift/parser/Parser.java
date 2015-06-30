@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright 2014 Shape Security, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -89,7 +89,7 @@ public class Parser extends Tokenizer {
     if (this.match(TokenType.LET) || this.match(TokenType.CONST)) {
       TokenizerState tokenizerState = this.saveTokenizerState();
       this.lex();
-      if (this.match(TokenType.IDENTIFIER) || this.match(TokenType.LET) || this.match(TokenType.LBRACE) || this.match(TokenType.LBRACK)) {
+      if (this.match(TokenType.IDENTIFIER) || this.match(TokenType.LET) || this.match(TokenType.LBRACE) || this.match(TokenType.LBRACK) || this.match(TokenType.YIELD)) {
         this.restoreTokenizerState(tokenizerState);
         return true;
       } else {
@@ -241,7 +241,6 @@ public class Parser extends Tokenizer {
   @NotNull
   private VariableDeclarator parseVariableDeclarator(boolean bindingPatternsMustHaveInit) throws JsError {
     SourceLocation startLocation = this.getLocation();
-
     if (this.match(TokenType.LPAREN)) {
       throw this.createUnexpected(this.lookahead);
     }
@@ -249,12 +248,10 @@ public class Parser extends Tokenizer {
     if (bindingPatternsMustHaveInit && !(binding instanceof BindingIdentifier) && !this.match(TokenType.ASSIGN)) {
       this.expect(TokenType.ASSIGN);
     }
-
     Maybe<Expression> init = Maybe.nothing();
     if (this.eat(TokenType.ASSIGN)) {
       init = this.parseAssignmentExpression().left();
     }
-
     return this.markLocation(startLocation, new VariableDeclarator(binding, init));
   }
 
@@ -607,7 +604,6 @@ public class Parser extends Tokenizer {
         this.allowIn = false;
         VariableDeclarationExpression init = this.parseVariableDeclaration(false);
         this.allowIn = previousAllowIn;
-
         if (((VariableDeclaration) init).declarators.length == 1 && (this.match((TokenType.IN)) || this.matchContextualKeyword("of"))) {
           if (this.match(TokenType.IN)) {
             if (!(((VariableDeclaration) init).declarators.index(0).just().init).equals(Maybe.nothing())) {
@@ -648,7 +644,6 @@ public class Parser extends Tokenizer {
           throw this.createError(ErrorMessages.ILLEGAL_PROPERTY);
         }
         this.allowIn = previousAllowIn;
-
         if (this.isAssignmentTarget && !(expr instanceof AssignmentExpression) && (this.match(TokenType.IN) || this.matchContextualKeyword("of"))) {
           if (startsWithLet && this.matchContextualKeyword("of")) {
             throw this.createError(ErrorMessages.INVALID_LHS_IN_FOR_OF);
@@ -1296,7 +1291,7 @@ public class Parser extends Tokenizer {
   private Either<Expression, Binding> parseUpdateExpression() throws JsError {
     SourceLocation startLocation = this.getLocation();
     Either<Expression, Binding> operand = this.parseLeftHandSideExpression(true).mapLeft(x -> (Expression)x);
-    if (this.firstExprError != null && this.hasLineTerminatorBeforeNext) {
+    if (this.firstExprError != null || this.hasLineTerminatorBeforeNext) {
       return operand;
     }
     UpdateOperator operator = this.lookupUpdateOperator(this.lookahead);
@@ -1940,7 +1935,7 @@ public class Parser extends Tokenizer {
   }
 
   private boolean isIdentifierName(TokenClass klass) {
-    return (klass.getName().equals("Identifier") || klass.getName().equals("Keyword") || klass.getName().equals("Boolean") || klass.getName().equals("Null"));
+    return (klass.getName().equals("Identifier") || klass.getName().equals("Keyword") || klass.getName().equals("Boolean") || klass.getName().equals("Null") || klass.getName().equals("Yield"));
   }
 
   @NotNull

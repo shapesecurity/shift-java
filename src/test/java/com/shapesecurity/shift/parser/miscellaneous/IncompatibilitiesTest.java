@@ -21,7 +21,7 @@ public class IncompatibilitiesTest extends Assertions {
 
     // ES3: a slash in a regexp character class will terminate the regexp
     // ES5: a slash is allowed within a regexp character class
-    testScriptFailure("[/[/]", 1, "Invalid regular expression: missing /"); // TODO
+    testScriptFailure("[/[/]", 1, "Invalid regular expression: missing /");
   }
 
   @Test

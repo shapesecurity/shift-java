@@ -84,8 +84,8 @@ public class WhitespaceTest extends Assertions {
         new ExpressionStatement(new LiteralNumericExpression(2.0)), new ExpressionStatement(
             new LiteralNumericExpression(3.0)), new ExpressionStatement(new LiteralNumericExpression(4.0))))));
 
-    testScriptFailure("throw /* \n */ e", 2, 0, 0, "Illegal newline after throw");
-    testScriptFailure("throw /* \u2028 */ e", 0, "Illegal newline after throw");
-    testScriptFailure("throw /* \u2029 */ e", 0, "Illegal newline after throw");
+    testScriptFailure("throw /* \n */ e", 2, 4, 14, "Illegal newline after throw");
+    testScriptFailure("throw /* \u2028 */ e", 2, 4, 14, "Illegal newline after throw");
+    testScriptFailure("throw /* \u2029 */ e", 2, 4, 14, "Illegal newline after throw");
   }
 }
