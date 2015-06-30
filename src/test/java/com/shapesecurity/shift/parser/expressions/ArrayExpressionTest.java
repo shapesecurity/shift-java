@@ -35,8 +35,8 @@ public class ArrayExpressionTest extends Assertions {
         Maybe.just(new LiteralNumericExpression(1.0)), Maybe.nothing(), Maybe.nothing(),
         Maybe.just(new LiteralNumericExpression(2.0)), Maybe.just(new LiteralNumericExpression(3.0)), Maybe.nothing())));
 
-      testScriptFailure("[a, ...(b=c)] = 0", 0, "");
-      testScriptFailure("[0] = 0", 0, "");
+    testScriptFailure("[a, ...(b=c)] = 0", 14, "Invalid left-hand side in assignment");
 
+    testScriptFailure("[0] = 0", 4, "Invalid left-hand side in assignment");
   }
 }

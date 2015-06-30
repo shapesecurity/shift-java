@@ -648,6 +648,9 @@ public class Parser extends Tokenizer {
     this.expect(TokenType.LPAREN);
     Maybe<Expression> test = Maybe.nothing();
     Maybe<Expression> right = Maybe.nothing();
+    if (this.match(TokenType.LBRACE)) {
+      this.createError(ErrorMessages.ILLEGAL_PROPERTY);
+    }
     if (this.eat(TokenType.SEMICOLON)) {
       if (!this.match(TokenType.SEMICOLON)) {
         test = this.parseExpression().left();
@@ -699,7 +702,13 @@ public class Parser extends Tokenizer {
       } else {
         boolean previousAllowIn = this.allowIn;
         this.allowIn = false;
-        Expression expr = this.parseAssignmentExpressionOrBindingElement().left().just();
+        Either<Expression, Binding> fromParseAssignmentOrBinding = this.parseAssignmentExpressionOrBindingElement();
+        Expression expr;
+        if (fromParseAssignmentOrBinding.isLeft()) {
+          expr = fromParseAssignmentOrBinding.left().just();
+        } else {
+          throw this.createError(ErrorMessages.ILLEGAL_PROPERTY);
+        }
         this.allowIn = previousAllowIn;
 
         if (this.isAssignmentTarget && !(expr instanceof AssignmentExpression) && (this.match(TokenType.IN) || this.matchContextualKeyword("of"))) {
