@@ -90,14 +90,15 @@ public class Tokenizer {
   protected Token lookahead;
   protected boolean hasLineTerminatorBeforeNext;
   protected boolean strict;
-  protected boolean moduleIsTheGoalSymbol = false;
+  protected final boolean moduleIsTheGoalSymbol;
   protected int index, line, lineStart;
-  private int lastIndex;
+  protected int lastLine, lastLineStart, lastIndex;
   protected int startIndex, startLine, startLineStart;
   private SourceLocation cachedSourceLocation;
   private int lastCachedSourceLocation = -1;
 
-  public Tokenizer(@NotNull String source) throws JsError {
+  public Tokenizer(@NotNull String source, boolean isModule) throws JsError {
+    this.moduleIsTheGoalSymbol = isModule;
     this.source = source;
     this.lookahead = this.collectToken();
     this.hasLineTerminatorBeforeNext = false;
@@ -570,7 +571,7 @@ public class Tokenizer {
         } else {
           break;
         }
-      } else if (isLineStart && ch == '-') {
+      } else if (!this.moduleIsTheGoalSymbol && isLineStart && ch == '-') {
         if (this.index + 2 >= length) {
           break;
         }
@@ -582,7 +583,7 @@ public class Tokenizer {
           break;
         }
       } else if (ch == '<') {
-        if (this.index + 4 <= length && this.source.charAt(this.index + 1) == '!' && this.source.charAt(this.index + 2)
+        if (!this.moduleIsTheGoalSymbol && this.index + 4 <= length && this.source.charAt(this.index + 1) == '!' && this.source.charAt(this.index + 2)
             == '-' && this.source.charAt(
             this.index + 3) == '-') {
           this.skipSingleLineComment(4);

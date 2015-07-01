@@ -30,7 +30,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.function.BiFunction;
 
-public class Parser extends Tokenizer {
+public abstract class Parser extends Tokenizer {
   private boolean inFunctionBody;
   private boolean module;
   private boolean allowIn = true;
@@ -42,8 +42,9 @@ public class Parser extends Tokenizer {
   private boolean allowYieldExpression;
   private boolean inParameter = false;
 
-  private Parser(@NotNull String source) throws JsError {
-    super(source);
+  private Parser(@NotNull String source, boolean isModule) throws JsError {
+    super(source, isModule);
+    this.module = isModule;
   }
 
   boolean eat(@NotNull TokenType subType) throws JsError {
@@ -62,7 +63,7 @@ public class Parser extends Tokenizer {
     return this.lex();
   }
 
-  private boolean match(@NotNull TokenType subType) {
+  protected boolean match(@NotNull TokenType subType) {
     return this.lookahead.type == subType;
   }
 
@@ -82,6 +83,7 @@ public class Parser extends Tokenizer {
   @NotNull
   protected <T extends Node> T markLocation(@NotNull SourceLocation startLocation, @NotNull T node) {
     // TODO: actually mark location
+//    node.loc = Maybe.just(new SourceSpan(Maybe.nothing(), startLocation, new SourceLocation(this.lastLine+1, this.lastIndex-this.lastLineStart, this.lastIndex)));
     return node;
   }
 
@@ -101,32 +103,18 @@ public class Parser extends Tokenizer {
 
   @NotNull
   public static Script parseScript(@NotNull String text) throws JsError {
-    return new Parser(text).parseScript();
+    return new ScriptParser(text).parse();
   }
 
   @NotNull
   public static Module parseModule(@NotNull String text) throws JsError {
-    return new Parser(text).parseModule();
+    return new ModuleParser(text).parse();
   }
 
-  @NotNull
-  private Script parseScript() throws JsError {
-    SourceLocation startLocation = this.getLocation();
-    Script node = this.parseBody(this::parseStatementListItem, Script::new);
-    if (!this.match(TokenType.EOS)) {
-      throw this.createUnexpected(this.lookahead);
-    }
-    return this.markLocation(startLocation, node);
-  }
+  protected abstract Node parse() throws JsError;
 
   @NotNull
-  private Module parseModule() throws JsError {
-    this.moduleIsTheGoalSymbol = this.module = true;
-    return this.markLocation(this.getLocation(), this.parseBody(this::parseModuleItem, Module::new));
-  }
-
-  @NotNull
-  private ImportDeclarationExportDeclarationStatement parseModuleItem() throws JsError {
+  protected ImportDeclarationExportDeclarationStatement parseModuleItem() throws JsError {
     switch (this.lookahead.type) {
       case IMPORT:
         return this.parseImportDeclaration();
@@ -142,7 +130,7 @@ public class Parser extends Tokenizer {
   }
 
   @NotNull
-  private <A, B> B parseBody(@NotNull ExceptionalSupplier<A> parser, @NotNull BiFunction<ImmutableList<Directive>, ImmutableList<A>, B> constructor) throws JsError {
+  protected <A, B> B parseBody(@NotNull ExceptionalSupplier<A> parser, @NotNull BiFunction<ImmutableList<Directive>, ImmutableList<A>, B> constructor) throws JsError {
     ArrayList<Directive> directives = new ArrayList<>();
     ArrayList<A> statements = new ArrayList<>();
     boolean parsingDirectives = true;
@@ -192,7 +180,7 @@ public class Parser extends Tokenizer {
   }
 
   @NotNull
-  private Statement parseStatementListItem() throws JsError {
+  protected Statement parseStatementListItem() throws JsError {
     if (this.eof()) {
       throw this.createUnexpected(this.lookahead);
     }
@@ -2358,5 +2346,32 @@ public class Parser extends Tokenizer {
     }
   }
 
+  public static class ScriptParser extends Parser {
+    public ScriptParser(String text) throws JsError {
+      super(text, false);
+    }
 
+    @NotNull
+    @Override
+    public Script parse() throws JsError {
+      SourceLocation startLocation = this.getLocation();
+      Script node = this.parseBody(this::parseStatementListItem, Script::new);
+      if (!this.match(TokenType.EOS)) {
+        throw this.createUnexpected(this.lookahead);
+      }
+      return this.markLocation(startLocation, node);
+    }
+  }
+
+  public static class ModuleParser extends Parser {
+    public ModuleParser(String text) throws JsError {
+      super(text, true);
+    }
+
+    @NotNull
+    @Override
+    public Module parse() throws JsError {
+      return this.markLocation(this.getLocation(), this.parseBody(this::parseModuleItem, Module::new));
+    }
+  }
 }
