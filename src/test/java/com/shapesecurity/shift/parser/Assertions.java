@@ -61,7 +61,6 @@ public class Assertions {
     assertEquals(expected, ((ExpressionStatement) stmt).expression);
   }
 
-
   public static void testScriptFailureML(@NotNull String source, int line, int column, int index, @NotNull String error) {
     try {
       Parser.parseScript(source);

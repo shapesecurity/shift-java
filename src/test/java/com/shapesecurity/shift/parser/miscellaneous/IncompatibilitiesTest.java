@@ -122,7 +122,7 @@ public class IncompatibilitiesTest extends Assertions {
     testScript("a<!--b", new IdentifierExpression("a"));
 
     testModuleFailure("<!--", 0, "Unexpected token \"<\"");
-    testModuleFailure("-->", 0, "Unexpected token \">\"");
+    testModuleFailure("-->", 2, "Unexpected token \">\"");
 
     testModule("a<!--b",
         new BinaryExpression(BinaryOperator.LessThan, new IdentifierExpression("a"),
