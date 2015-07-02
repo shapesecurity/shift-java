@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.shapesecurity.shift.visitor;
+package com.shapesecurity.shift.visitor_old;
 
 import com.shapesecurity.functional.F;
 import com.shapesecurity.functional.data.Either;
@@ -81,6 +81,7 @@ import com.shapesecurity.shift.ast.statement.WhileStatement;
 import com.shapesecurity.shift.ast.statement.WithStatement;
 import com.shapesecurity.shift.path.Branch;
 
+import com.shapesecurity.shift.visitor.Director;
 import org.jetbrains.annotations.NotNull;
 
 public class FixPointTransformer extends LazyCloner {

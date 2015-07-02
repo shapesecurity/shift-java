@@ -21,19 +21,7 @@ import com.shapesecurity.functional.data.Either;
 import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.functional.data.Maybe;
 import com.shapesecurity.functional.data.NonEmptyImmutableList;
-import com.shapesecurity.shift.ast.Block;
-import com.shapesecurity.shift.ast.CatchClause;
-import com.shapesecurity.shift.ast.Directive;
-import com.shapesecurity.shift.ast.Expression;
-import com.shapesecurity.shift.ast.FunctionBody;
-import com.shapesecurity.shift.ast.Identifier;
-import com.shapesecurity.shift.ast.Node;
-import com.shapesecurity.shift.ast.Script;
-import com.shapesecurity.shift.ast.Statement;
-import com.shapesecurity.shift.ast.SwitchCase;
-import com.shapesecurity.shift.ast.SwitchDefault;
-import com.shapesecurity.shift.ast.VariableDeclaration;
-import com.shapesecurity.shift.ast.VariableDeclarator;
+import com.shapesecurity.shift.ast.*;
 import com.shapesecurity.shift.ast.directive.UnknownDirective;
 import com.shapesecurity.shift.ast.directive.UseStrictDirective;
 import com.shapesecurity.shift.ast.expression.ArrayExpression;
@@ -52,8 +40,7 @@ import com.shapesecurity.shift.ast.expression.LiteralRegExpExpression;
 import com.shapesecurity.shift.ast.expression.LiteralStringExpression;
 import com.shapesecurity.shift.ast.expression.NewExpression;
 import com.shapesecurity.shift.ast.expression.ObjectExpression;
-import com.shapesecurity.shift.ast.expression.PostfixExpression;
-import com.shapesecurity.shift.ast.expression.PrefixExpression;
+import com.shapesecurity.shift.ast.expression.*;
 import com.shapesecurity.shift.ast.expression.StaticMemberExpression;
 import com.shapesecurity.shift.ast.expression.ThisExpression;
 import com.shapesecurity.shift.ast.property.DataProperty;
@@ -85,7 +72,8 @@ import com.shapesecurity.shift.ast.statement.WithStatement;
 import com.shapesecurity.shift.path.Branch;
 import com.shapesecurity.shift.path.IndexedBranch;
 import com.shapesecurity.shift.path.StaticBranch;
-
+import com.shapesecurity.shift.visitor.Reducer;
+import com.shapesecurity.shift.visitor.ReducerP;
 import org.jetbrains.annotations.NotNull;
 
 public final class Director {
@@ -97,622 +85,531 @@ public final class Director {
   @NotNull
   public static <State> State reduce(@NotNull Reducer<State> reducer, @NotNull Node node, @NotNull ImmutableList<Branch> path) {
     if (node instanceof Script) {
-      return reduceScript(reducer, (Script) node, path);
+      Out reduceScript(reducer, (Script) node, path);
     } else if (node instanceof FunctionBody) {
-      return reduceFunctionBody(reducer, (FunctionBody) node, path);
+      Out reduceFunctionBody(reducer, (FunctionBody) node, path);
     } else if (node instanceof ObjectProperty) {
-      return reduceObjectProperty(reducer, (ObjectProperty) node, path);
+      Out reduceObjectProperty(reducer, (ObjectProperty) node, path);
     } else if (node instanceof PropertyName) {
-      return reducePropertyName(reducer, (PropertyName) node, path);
+      Out reducePropertyName(reducer, (PropertyName) node, path);
     } else if (node instanceof Identifier) {
-      return reduceIdentifier(reducer, (Identifier) node, path);
+      Out reduceIdentifier(reducer, (Identifier) node, path);
     } else if (node instanceof Expression) {
-      return reduceExpression(reducer, (Expression) node, path);
+      Out reduceExpression(reducer, (Expression) node, path);
     } else if (node instanceof Directive) {
-      return reduceDirective(reducer, (Directive) node, path);
+      Out reduceDirective(reducer, (Directive) node, path);
     } else if (node instanceof Statement) {
-      return reduceStatement(reducer, (Statement) node, path);
+      Out reduceStatement(reducer, (Statement) node, path);
     } else if (node instanceof Block) {
-      return reduceBlock(reducer, (Block) node, path);
+      Out reduceBlock(reducer, (Block) node, path);
     } else if (node instanceof VariableDeclarator) {
-      return reduceVariableDeclarator(reducer, (VariableDeclarator) node, path);
+      Out reduceVariableDeclarator(reducer, (VariableDeclarator) node, path);
     } else if (node instanceof VariableDeclaration) {
-      return reduceVariableDeclaration(reducer, (VariableDeclaration) node, path);
+      Out reduceVariableDeclaration(reducer, (VariableDeclaration) node, path);
     } else if (node instanceof SwitchCase) {
-      return reduceSwitchCase(reducer, (SwitchCase) node, path);
+      Out reduceSwitchCase(reducer, (SwitchCase) node, path);
     } else if (node instanceof SwitchDefault) {
-      return reduceSwitchDefault(reducer, (SwitchDefault) node, path);
+      Out reduceSwitchDefault(reducer, (SwitchDefault) node, path);
     } else if (node instanceof CatchClause) {
-      return reduceCatchClause(reducer, (CatchClause) node, path);
+      Out reduceCatchClause(reducer, (CatchClause) node, path);
     } else {
       throw new RuntimeException("not reached");
     }
   }
 
   @NotNull
-  private static <ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState>
-  Maybe<ExpressionState> reduceOptionExpression(
-      @NotNull ReducerP<ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> reducer,
-      @NotNull Maybe<Expression> node,
-      @NotNull ImmutableList<Branch> path) {
-    NonEmptyImmutableList<Branch> just_path = path.cons(StaticBranch.JUST);
-    return node.map(n -> reduceExpression(reducer, n, just_path));
+  public static <ArrayBindingState, ArrayExpressionState, ArrowExpressionState, AssignmentExpressionState, BinaryExpressionState, BindingState, BindingBindingWithDefaultState, BindingIdentifierState, BindingIdentifierMemberExpressionState, BindingPropertyState, BindingPropertyIdentifierState, BindingPropertyPropertyState, BindingWithDefaultState, BlockState, BlockStatementState, BreakStatementState, CallExpressionState, CatchClauseState, ClassDeclarationState, ClassElementState, ClassExpressionState, CompoundAssignmentExpressionState, ComputedMemberExpressionState, ComputedPropertyNameState, ConditionalExpressionState, ContinueStatementState, DataPropertyState, DebuggerStatementState, DirectiveState, DoWhileStatementState, EmptyStatementState, ExportState, ExportAllFromState, ExportDeclarationState, ExportDefaultState, ExportFromState, ExportSpecifierState, ExpressionState, ExpressionStatementState, ExpressionSuperState, ExpressionTemplateElementState, ForInStatementState, ForOfStatementState, ForStatementState, FormalParametersState, FunctionBodyState, FunctionBodyExpressionState, FunctionDeclarationState, FunctionDeclarationClassDeclarationExpressionState, FunctionDeclarationClassDeclarationVariableDeclarationState, FunctionExpressionState, GetterState, IdentifierExpressionState, IfStatementState, ImportState, ImportDeclarationState, ImportDeclarationExportDeclarationStatementState, ImportNamespaceState, ImportSpecifierState, LabeledStatementState, LiteralBooleanExpressionState, LiteralInfinityExpressionState, LiteralNullExpressionState, LiteralNumericExpressionState, LiteralRegExpExpressionState, LiteralStringExpressionState, MethodState, MethodDefinitionState, ModuleState, NamedObjectPropertyState, NewExpressionState, NewTargetExpressionState, ObjectBindingState, ObjectExpressionState, ObjectPropertyState, PropertyNameState, ReturnStatementState, ScriptState, SetterState, ShorthandPropertyState, SpreadElementState, SpreadElementExpressionState, StatementState, StaticMemberExpressionState, StaticPropertyNameState, SuperState, SwitchCaseState, SwitchDefaultState, SwitchStatementState, SwitchStatementWithDefaultState, TemplateElementState, TemplateExpressionState, ThisExpressionState, ThrowStatementState, TryCatchStatementState, TryFinallyStatementState, UnaryExpressionState, UpdateExpressionState, VariableDeclarationState, VariableDeclarationBindingState, VariableDeclarationExpressionState, VariableDeclarationStatementState, VariableDeclaratorState, WhileStatementState, WithStatementState, YieldExpressionState, YieldGeneratorExpressionState, Out>
+  Out reduceBlock(
+    @NotNull ReducerP<ArrayBindingState, ArrayExpressionState, ArrowExpressionState, AssignmentExpressionState, BinaryExpressionState, BindingState, BindingBindingWithDefaultState, BindingIdentifierState, BindingIdentifierMemberExpressionState, BindingPropertyState, BindingPropertyIdentifierState, BindingPropertyPropertyState, BindingWithDefaultState, BlockState, BlockStatementState, BreakStatementState, CallExpressionState, CatchClauseState, ClassDeclarationState, ClassElementState, ClassExpressionState, CompoundAssignmentExpressionState, ComputedMemberExpressionState, ComputedPropertyNameState, ConditionalExpressionState, ContinueStatementState, DataPropertyState, DebuggerStatementState, DirectiveState, DoWhileStatementState, EmptyStatementState, ExportState, ExportAllFromState, ExportDeclarationState, ExportDefaultState, ExportFromState, ExportSpecifierState, ExpressionState, ExpressionStatementState, ExpressionSuperState, ExpressionTemplateElementState, ForInStatementState, ForOfStatementState, ForStatementState, FormalParametersState, FunctionBodyState, FunctionBodyExpressionState, FunctionDeclarationState, FunctionDeclarationClassDeclarationExpressionState, FunctionDeclarationClassDeclarationVariableDeclarationState, FunctionExpressionState, GetterState, IdentifierExpressionState, IfStatementState, ImportState, ImportDeclarationState, ImportDeclarationExportDeclarationStatementState, ImportNamespaceState, ImportSpecifierState, LabeledStatementState, LiteralBooleanExpressionState, LiteralInfinityExpressionState, LiteralNullExpressionState, LiteralNumericExpressionState, LiteralRegExpExpressionState, LiteralStringExpressionState, MethodState, MethodDefinitionState, ModuleState, NamedObjectPropertyState, NewExpressionState, NewTargetExpressionState, ObjectBindingState, ObjectExpressionState, ObjectPropertyState, PropertyNameState, ReturnStatementState, ScriptState, SetterState, ShorthandPropertyState, SpreadElementState, SpreadElementExpressionState, StatementState, StaticMemberExpressionState, StaticPropertyNameState, SuperState, SwitchCaseState, SwitchDefaultState, SwitchStatementState, SwitchStatementWithDefaultState, TemplateElementState, TemplateExpressionState, ThisExpressionState, ThrowStatementState, TryCatchStatementState, TryFinallyStatementState, UnaryExpressionState, UpdateExpressionState, VariableDeclarationState, VariableDeclarationBindingState, VariableDeclarationExpressionState, VariableDeclarationStatementState, VariableDeclaratorState, WhileStatementState, WithStatementState, YieldExpressionState, YieldGeneratorExpressionState, Out> reducer,
+    @NotNull Block node) {
+    return reducer.reduceBlock(
+      node,
+      path,
+      reduceListStatement(reducer, node.statements));
   }
 
   @NotNull
-  private static <ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState>
-  Maybe<StatementState> reduceOptionStatement(
-      @NotNull ReducerP<ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> reducer,
-      @NotNull Maybe<Statement> node,
-      @NotNull ImmutableList<Branch> path) {
-    NonEmptyImmutableList<Branch> just_path = path.cons(StaticBranch.JUST);
-    return node.map(n -> reduceStatement(reducer, n, just_path));
+  public static <ArrayBindingState, ArrayExpressionState, ArrowExpressionState, AssignmentExpressionState, BinaryExpressionState, BindingState, BindingBindingWithDefaultState, BindingIdentifierState, BindingIdentifierMemberExpressionState, BindingPropertyState, BindingPropertyIdentifierState, BindingPropertyPropertyState, BindingWithDefaultState, BlockState, BlockStatementState, BreakStatementState, CallExpressionState, CatchClauseState, ClassDeclarationState, ClassElementState, ClassExpressionState, CompoundAssignmentExpressionState, ComputedMemberExpressionState, ComputedPropertyNameState, ConditionalExpressionState, ContinueStatementState, DataPropertyState, DebuggerStatementState, DirectiveState, DoWhileStatementState, EmptyStatementState, ExportState, ExportAllFromState, ExportDeclarationState, ExportDefaultState, ExportFromState, ExportSpecifierState, ExpressionState, ExpressionStatementState, ExpressionSuperState, ExpressionTemplateElementState, ForInStatementState, ForOfStatementState, ForStatementState, FormalParametersState, FunctionBodyState, FunctionBodyExpressionState, FunctionDeclarationState, FunctionDeclarationClassDeclarationExpressionState, FunctionDeclarationClassDeclarationVariableDeclarationState, FunctionExpressionState, GetterState, IdentifierExpressionState, IfStatementState, ImportState, ImportDeclarationState, ImportDeclarationExportDeclarationStatementState, ImportNamespaceState, ImportSpecifierState, LabeledStatementState, LiteralBooleanExpressionState, LiteralInfinityExpressionState, LiteralNullExpressionState, LiteralNumericExpressionState, LiteralRegExpExpressionState, LiteralStringExpressionState, MethodState, MethodDefinitionState, ModuleState, NamedObjectPropertyState, NewExpressionState, NewTargetExpressionState, ObjectBindingState, ObjectExpressionState, ObjectPropertyState, PropertyNameState, ReturnStatementState, ScriptState, SetterState, ShorthandPropertyState, SpreadElementState, SpreadElementExpressionState, StatementState, StaticMemberExpressionState, StaticPropertyNameState, SuperState, SwitchCaseState, SwitchDefaultState, SwitchStatementState, SwitchStatementWithDefaultState, TemplateElementState, TemplateExpressionState, ThisExpressionState, ThrowStatementState, TryCatchStatementState, TryFinallyStatementState, UnaryExpressionState, UpdateExpressionState, VariableDeclarationState, VariableDeclarationBindingState, VariableDeclarationExpressionState, VariableDeclarationStatementState, VariableDeclaratorState, WhileStatementState, WithStatementState, YieldExpressionState, YieldGeneratorExpressionState, Out>
+  Out reduceCatchClause(
+    @NotNull ReducerP<ArrayBindingState, ArrayExpressionState, ArrowExpressionState, AssignmentExpressionState, BinaryExpressionState, BindingState, BindingBindingWithDefaultState, BindingIdentifierState, BindingIdentifierMemberExpressionState, BindingPropertyState, BindingPropertyIdentifierState, BindingPropertyPropertyState, BindingWithDefaultState, BlockState, BlockStatementState, BreakStatementState, CallExpressionState, CatchClauseState, ClassDeclarationState, ClassElementState, ClassExpressionState, CompoundAssignmentExpressionState, ComputedMemberExpressionState, ComputedPropertyNameState, ConditionalExpressionState, ContinueStatementState, DataPropertyState, DebuggerStatementState, DirectiveState, DoWhileStatementState, EmptyStatementState, ExportState, ExportAllFromState, ExportDeclarationState, ExportDefaultState, ExportFromState, ExportSpecifierState, ExpressionState, ExpressionStatementState, ExpressionSuperState, ExpressionTemplateElementState, ForInStatementState, ForOfStatementState, ForStatementState, FormalParametersState, FunctionBodyState, FunctionBodyExpressionState, FunctionDeclarationState, FunctionDeclarationClassDeclarationExpressionState, FunctionDeclarationClassDeclarationVariableDeclarationState, FunctionExpressionState, GetterState, IdentifierExpressionState, IfStatementState, ImportState, ImportDeclarationState, ImportDeclarationExportDeclarationStatementState, ImportNamespaceState, ImportSpecifierState, LabeledStatementState, LiteralBooleanExpressionState, LiteralInfinityExpressionState, LiteralNullExpressionState, LiteralNumericExpressionState, LiteralRegExpExpressionState, LiteralStringExpressionState, MethodState, MethodDefinitionState, ModuleState, NamedObjectPropertyState, NewExpressionState, NewTargetExpressionState, ObjectBindingState, ObjectExpressionState, ObjectPropertyState, PropertyNameState, ReturnStatementState, ScriptState, SetterState, ShorthandPropertyState, SpreadElementState, SpreadElementExpressionState, StatementState, StaticMemberExpressionState, StaticPropertyNameState, SuperState, SwitchCaseState, SwitchDefaultState, SwitchStatementState, SwitchStatementWithDefaultState, TemplateElementState, TemplateExpressionState, ThisExpressionState, ThrowStatementState, TryCatchStatementState, TryFinallyStatementState, UnaryExpressionState, UpdateExpressionState, VariableDeclarationState, VariableDeclarationBindingState, VariableDeclarationExpressionState, VariableDeclarationStatementState, VariableDeclaratorState, WhileStatementState, WithStatementState, YieldExpressionState, YieldGeneratorExpressionState, Out> reducer,
+    @NotNull CatchClause node) {
+    return reducer.reduceCatchClause(
+      node,
+      path,
+      reduceIdentifier(reducer, node.binding),
+      reduceBlock(reducer, node.body));
   }
 
   @NotNull
-  private static <ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState>
-  ImmutableList<StatementState> reduceListStatement(
-      @NotNull ReducerP<ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> reducer,
-      @NotNull ImmutableList<Statement> list,
-      @NotNull ImmutableList<Branch> path) {
-    return list.mapWithIndex((i, el) -> reduceStatement(reducer, el, path.cons(IndexedBranch.from(i))));
+  public static <ArrayBindingState, ArrayExpressionState, ArrowExpressionState, AssignmentExpressionState, BinaryExpressionState, BindingState, BindingBindingWithDefaultState, BindingIdentifierState, BindingIdentifierMemberExpressionState, BindingPropertyState, BindingPropertyIdentifierState, BindingPropertyPropertyState, BindingWithDefaultState, BlockState, BlockStatementState, BreakStatementState, CallExpressionState, CatchClauseState, ClassDeclarationState, ClassElementState, ClassExpressionState, CompoundAssignmentExpressionState, ComputedMemberExpressionState, ComputedPropertyNameState, ConditionalExpressionState, ContinueStatementState, DataPropertyState, DebuggerStatementState, DirectiveState, DoWhileStatementState, EmptyStatementState, ExportState, ExportAllFromState, ExportDeclarationState, ExportDefaultState, ExportFromState, ExportSpecifierState, ExpressionState, ExpressionStatementState, ExpressionSuperState, ExpressionTemplateElementState, ForInStatementState, ForOfStatementState, ForStatementState, FormalParametersState, FunctionBodyState, FunctionBodyExpressionState, FunctionDeclarationState, FunctionDeclarationClassDeclarationExpressionState, FunctionDeclarationClassDeclarationVariableDeclarationState, FunctionExpressionState, GetterState, IdentifierExpressionState, IfStatementState, ImportState, ImportDeclarationState, ImportDeclarationExportDeclarationStatementState, ImportNamespaceState, ImportSpecifierState, LabeledStatementState, LiteralBooleanExpressionState, LiteralInfinityExpressionState, LiteralNullExpressionState, LiteralNumericExpressionState, LiteralRegExpExpressionState, LiteralStringExpressionState, MethodState, MethodDefinitionState, ModuleState, NamedObjectPropertyState, NewExpressionState, NewTargetExpressionState, ObjectBindingState, ObjectExpressionState, ObjectPropertyState, PropertyNameState, ReturnStatementState, ScriptState, SetterState, ShorthandPropertyState, SpreadElementState, SpreadElementExpressionState, StatementState, StaticMemberExpressionState, StaticPropertyNameState, SuperState, SwitchCaseState, SwitchDefaultState, SwitchStatementState, SwitchStatementWithDefaultState, TemplateElementState, TemplateExpressionState, ThisExpressionState, ThrowStatementState, TryCatchStatementState, TryFinallyStatementState, UnaryExpressionState, UpdateExpressionState, VariableDeclarationState, VariableDeclarationBindingState, VariableDeclarationExpressionState, VariableDeclarationStatementState, VariableDeclaratorState, WhileStatementState, WithStatementState, YieldExpressionState, YieldGeneratorExpressionState, Out>
+  Out reduceDirective(
+    @NotNull ReducerP<ArrayBindingState, ArrayExpressionState, ArrowExpressionState, AssignmentExpressionState, BinaryExpressionState, BindingState, BindingBindingWithDefaultState, BindingIdentifierState, BindingIdentifierMemberExpressionState, BindingPropertyState, BindingPropertyIdentifierState, BindingPropertyPropertyState, BindingWithDefaultState, BlockState, BlockStatementState, BreakStatementState, CallExpressionState, CatchClauseState, ClassDeclarationState, ClassElementState, ClassExpressionState, CompoundAssignmentExpressionState, ComputedMemberExpressionState, ComputedPropertyNameState, ConditionalExpressionState, ContinueStatementState, DataPropertyState, DebuggerStatementState, DirectiveState, DoWhileStatementState, EmptyStatementState, ExportState, ExportAllFromState, ExportDeclarationState, ExportDefaultState, ExportFromState, ExportSpecifierState, ExpressionState, ExpressionStatementState, ExpressionSuperState, ExpressionTemplateElementState, ForInStatementState, ForOfStatementState, ForStatementState, FormalParametersState, FunctionBodyState, FunctionBodyExpressionState, FunctionDeclarationState, FunctionDeclarationClassDeclarationExpressionState, FunctionDeclarationClassDeclarationVariableDeclarationState, FunctionExpressionState, GetterState, IdentifierExpressionState, IfStatementState, ImportState, ImportDeclarationState, ImportDeclarationExportDeclarationStatementState, ImportNamespaceState, ImportSpecifierState, LabeledStatementState, LiteralBooleanExpressionState, LiteralInfinityExpressionState, LiteralNullExpressionState, LiteralNumericExpressionState, LiteralRegExpExpressionState, LiteralStringExpressionState, MethodState, MethodDefinitionState, ModuleState, NamedObjectPropertyState, NewExpressionState, NewTargetExpressionState, ObjectBindingState, ObjectExpressionState, ObjectPropertyState, PropertyNameState, ReturnStatementState, ScriptState, SetterState, ShorthandPropertyState, SpreadElementState, SpreadElementExpressionState, StatementState, StaticMemberExpressionState, StaticPropertyNameState, SuperState, SwitchCaseState, SwitchDefaultState, SwitchStatementState, SwitchStatementWithDefaultState, TemplateElementState, TemplateExpressionState, ThisExpressionState, ThrowStatementState, TryCatchStatementState, TryFinallyStatementState, UnaryExpressionState, UpdateExpressionState, VariableDeclarationState, VariableDeclarationBindingState, VariableDeclarationExpressionState, VariableDeclarationStatementState, VariableDeclaratorState, WhileStatementState, WithStatementState, YieldExpressionState, YieldGeneratorExpressionState, Out> reducer,
+    @NotNull Directive node) {
+    return reducer.reduceDirective(node);
   }
 
-  @NotNull
-  private static <ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState>
-  ImmutableList<ExpressionState> reduceListExpression(
-      @NotNull ReducerP<ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> reducer,
-      @NotNull ImmutableList<Expression> list,
-      @NotNull ImmutableList<Branch> path) {
-    return list.mapWithIndex((i, el) -> reduceExpression(reducer, el, path.cons(IndexedBranch.from(i))));
-  }
-
-  @NotNull
-  private static <ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState>
-  ImmutableList<IdentifierState> reduceListIdentifier(
-      @NotNull ReducerP<ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> reducer,
-      @NotNull ImmutableList<Identifier> list,
-      @NotNull ImmutableList<Branch> path) {
-    return list.mapWithIndex((i, el) -> reduceIdentifier(reducer, el, path.cons(IndexedBranch.from(i))));
-  }
-
-  private static <ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState>
-  ImmutableList<DirectiveState> reducerListDirective(
-      @NotNull ReducerP<ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> reducer,
-      @NotNull ImmutableList<Directive> directives,
-      @NotNull ImmutableList<Branch> path) {
-    return directives.mapWithIndex((i, el) -> reduceDirective(reducer, el, path.cons(IndexedBranch.from(i))));
-  }
-
-  private static <ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState>
-  ImmutableList<PropertyState> reducerListProperty(
-      @NotNull ReducerP<ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> reducer,
-      @NotNull ImmutableList<ObjectProperty> properties,
-      @NotNull ImmutableList<Branch> path) {
-    return properties.mapWithIndex((i, el) -> reduceObjectProperty(reducer, el, path.cons(IndexedBranch.from(i))));
-  }
-
-  private static <ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState>
+  private static <ArrayBindingState, ArrayExpressionState, ArrowExpressionState, AssignmentExpressionState, BinaryExpressionState, BindingState, BindingBindingWithDefaultState, BindingIdentifierState, BindingIdentifierMemberExpressionState, BindingPropertyState, BindingPropertyIdentifierState, BindingPropertyPropertyState, BindingWithDefaultState, BlockState, BlockStatementState, BreakStatementState, CallExpressionState, CatchClauseState, ClassDeclarationState, ClassElementState, ClassExpressionState, CompoundAssignmentExpressionState, ComputedMemberExpressionState, ComputedPropertyNameState, ConditionalExpressionState, ContinueStatementState, DataPropertyState, DebuggerStatementState, DirectiveState, DoWhileStatementState, EmptyStatementState, ExportState, ExportAllFromState, ExportDeclarationState, ExportDefaultState, ExportFromState, ExportSpecifierState, ExpressionState, ExpressionStatementState, ExpressionSuperState, ExpressionTemplateElementState, ForInStatementState, ForOfStatementState, ForStatementState, FormalParametersState, FunctionBodyState, FunctionBodyExpressionState, FunctionDeclarationState, FunctionDeclarationClassDeclarationExpressionState, FunctionDeclarationClassDeclarationVariableDeclarationState, FunctionExpressionState, GetterState, IdentifierExpressionState, IfStatementState, ImportState, ImportDeclarationState, ImportDeclarationExportDeclarationStatementState, ImportNamespaceState, ImportSpecifierState, LabeledStatementState, LiteralBooleanExpressionState, LiteralInfinityExpressionState, LiteralNullExpressionState, LiteralNumericExpressionState, LiteralRegExpExpressionState, LiteralStringExpressionState, MethodState, MethodDefinitionState, ModuleState, NamedObjectPropertyState, NewExpressionState, NewTargetExpressionState, ObjectBindingState, ObjectExpressionState, ObjectPropertyState, PropertyNameState, ReturnStatementState, ScriptState, SetterState, ShorthandPropertyState, SpreadElementState, SpreadElementExpressionState, StatementState, StaticMemberExpressionState, StaticPropertyNameState, SuperState, SwitchCaseState, SwitchDefaultState, SwitchStatementState, SwitchStatementWithDefaultState, TemplateElementState, TemplateExpressionState, ThisExpressionState, ThrowStatementState, TryCatchStatementState, TryFinallyStatementState, UnaryExpressionState, UpdateExpressionState, VariableDeclarationState, VariableDeclarationBindingState, VariableDeclarationExpressionState, VariableDeclarationStatementState, VariableDeclaratorState, WhileStatementState, WithStatementState, YieldExpressionState, YieldGeneratorExpressionState, Out>
   Either<DeclarationState, ExpressionState> reduceEitherVariableDeclarationExpression(
-      @NotNull ReducerP<ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> reducer,
-      @NotNull Either<VariableDeclaration, Expression> node,
-      @NotNull NonEmptyImmutableList<Branch> path) {
+    @NotNull ReducerP<ArrayBindingState, ArrayExpressionState, ArrowExpressionState, AssignmentExpressionState, BinaryExpressionState, BindingState, BindingBindingWithDefaultState, BindingIdentifierState, BindingIdentifierMemberExpressionState, BindingPropertyState, BindingPropertyIdentifierState, BindingPropertyPropertyState, BindingWithDefaultState, BlockState, BlockStatementState, BreakStatementState, CallExpressionState, CatchClauseState, ClassDeclarationState, ClassElementState, ClassExpressionState, CompoundAssignmentExpressionState, ComputedMemberExpressionState, ComputedPropertyNameState, ConditionalExpressionState, ContinueStatementState, DataPropertyState, DebuggerStatementState, DirectiveState, DoWhileStatementState, EmptyStatementState, ExportState, ExportAllFromState, ExportDeclarationState, ExportDefaultState, ExportFromState, ExportSpecifierState, ExpressionState, ExpressionStatementState, ExpressionSuperState, ExpressionTemplateElementState, ForInStatementState, ForOfStatementState, ForStatementState, FormalParametersState, FunctionBodyState, FunctionBodyExpressionState, FunctionDeclarationState, FunctionDeclarationClassDeclarationExpressionState, FunctionDeclarationClassDeclarationVariableDeclarationState, FunctionExpressionState, GetterState, IdentifierExpressionState, IfStatementState, ImportState, ImportDeclarationState, ImportDeclarationExportDeclarationStatementState, ImportNamespaceState, ImportSpecifierState, LabeledStatementState, LiteralBooleanExpressionState, LiteralInfinityExpressionState, LiteralNullExpressionState, LiteralNumericExpressionState, LiteralRegExpExpressionState, LiteralStringExpressionState, MethodState, MethodDefinitionState, ModuleState, NamedObjectPropertyState, NewExpressionState, NewTargetExpressionState, ObjectBindingState, ObjectExpressionState, ObjectPropertyState, PropertyNameState, ReturnStatementState, ScriptState, SetterState, ShorthandPropertyState, SpreadElementState, SpreadElementExpressionState, StatementState, StaticMemberExpressionState, StaticPropertyNameState, SuperState, SwitchCaseState, SwitchDefaultState, SwitchStatementState, SwitchStatementWithDefaultState, TemplateElementState, TemplateExpressionState, ThisExpressionState, ThrowStatementState, TryCatchStatementState, TryFinallyStatementState, UnaryExpressionState, UpdateExpressionState, VariableDeclarationState, VariableDeclarationBindingState, VariableDeclarationExpressionState, VariableDeclarationStatementState, VariableDeclaratorState, WhileStatementState, WithStatementState, YieldExpressionState, YieldGeneratorExpressionState, Out> reducer,
+    @NotNull Either<VariableDeclaration, Expression> node,
+    @NotNull NonEmptyImmutableList<Branch> path) {
     return node.map(
-        n -> reduceVariableDeclaration(reducer, n, path.cons(StaticBranch.LEFT)),
-        n -> reduceExpression(reducer, n, path.cons(StaticBranch.RIGHT)));
-  }
-
-  private static <ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState>
-  ImmutableList<SwitchCaseState> reduceListSwitchCase(
-      @NotNull ReducerP<ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> reducer,
-      @NotNull ImmutableList<SwitchCase> node,
-      @NotNull NonEmptyImmutableList<Branch> path) {
-    return node.mapWithIndex((i, el) -> reduceSwitchCase(reducer, el, path.cons(IndexedBranch.from(i))));
-  }
-
-  private static <ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState>
-  Maybe<IdentifierState> reducerMaybeIdentifier(
-      @NotNull ReducerP<ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> reducer,
-      @NotNull Maybe<Identifier> node,
-      @NotNull NonEmptyImmutableList<Branch> path) {
-    return node.map(n -> reduceIdentifier(reducer, n, path.cons(StaticBranch.JUST)));
+      n -> reduceVariableDeclaration(reducer, n),
+      n -> reduceExpression(reducer, n));
   }
 
   @NotNull
-  public static <ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState>
-  ScriptState reduceScript(
-      @NotNull ReducerP<ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> reducer,
-      @NotNull Script node,
-      @NotNull ImmutableList<Branch> path) {
-    return reducer.reduceScript(node, path, reduceFunctionBody(reducer, node.body, path.cons(StaticBranch.BODY)));
-  }
-
-  @NotNull
-  public static <ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState>
-  ProgramBodyState reduceFunctionBody(
-      @NotNull ReducerP<ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> reducer,
-      @NotNull FunctionBody node,
-      @NotNull ImmutableList<Branch> path) {
-    return reducer.reduceFunctionBody(
-        node,
-        path,
-        reducerListDirective(reducer, node.directives, path.cons(StaticBranch.DIRECTIVES)),
-        reduceListStatement(reducer, node.statements, path.cons(StaticBranch.STATEMENTS)));
-  }
-
-  @NotNull
-  public static <ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState>
-  PropertyState reduceObjectProperty(
-      @NotNull ReducerP<ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> reducer,
-      @NotNull ObjectProperty node,
-      @NotNull ImmutableList<Branch> path) {
-    PropertyNameState nameState = reducePropertyName(reducer, node.name, path.cons(StaticBranch.NAME));
+  public static <ArrayBindingState, ArrayExpressionState, ArrowExpressionState, AssignmentExpressionState, BinaryExpressionState, BindingState, BindingBindingWithDefaultState, BindingIdentifierState, BindingIdentifierMemberExpressionState, BindingPropertyState, BindingPropertyIdentifierState, BindingPropertyPropertyState, BindingWithDefaultState, BlockState, BlockStatementState, BreakStatementState, CallExpressionState, CatchClauseState, ClassDeclarationState, ClassElementState, ClassExpressionState, CompoundAssignmentExpressionState, ComputedMemberExpressionState, ComputedPropertyNameState, ConditionalExpressionState, ContinueStatementState, DataPropertyState, DebuggerStatementState, DirectiveState, DoWhileStatementState, EmptyStatementState, ExportState, ExportAllFromState, ExportDeclarationState, ExportDefaultState, ExportFromState, ExportSpecifierState, ExpressionState, ExpressionStatementState, ExpressionSuperState, ExpressionTemplateElementState, ForInStatementState, ForOfStatementState, ForStatementState, FormalParametersState, FunctionBodyState, FunctionBodyExpressionState, FunctionDeclarationState, FunctionDeclarationClassDeclarationExpressionState, FunctionDeclarationClassDeclarationVariableDeclarationState, FunctionExpressionState, GetterState, IdentifierExpressionState, IfStatementState, ImportState, ImportDeclarationState, ImportDeclarationExportDeclarationStatementState, ImportNamespaceState, ImportSpecifierState, LabeledStatementState, LiteralBooleanExpressionState, LiteralInfinityExpressionState, LiteralNullExpressionState, LiteralNumericExpressionState, LiteralRegExpExpressionState, LiteralStringExpressionState, MethodState, MethodDefinitionState, ModuleState, NamedObjectPropertyState, NewExpressionState, NewTargetExpressionState, ObjectBindingState, ObjectExpressionState, ObjectPropertyState, PropertyNameState, ReturnStatementState, ScriptState, SetterState, ShorthandPropertyState, SpreadElementState, SpreadElementExpressionState, StatementState, StaticMemberExpressionState, StaticPropertyNameState, SuperState, SwitchCaseState, SwitchDefaultState, SwitchStatementState, SwitchStatementWithDefaultState, TemplateElementState, TemplateExpressionState, ThisExpressionState, ThrowStatementState, TryCatchStatementState, TryFinallyStatementState, UnaryExpressionState, UpdateExpressionState, VariableDeclarationState, VariableDeclarationBindingState, VariableDeclarationExpressionState, VariableDeclarationStatementState, VariableDeclaratorState, WhileStatementState, WithStatementState, YieldExpressionState, YieldGeneratorExpressionState, Out>
+  Out reduceExpression(
+    @NotNull ReducerP<ArrayBindingState, ArrayExpressionState, ArrowExpressionState, AssignmentExpressionState, BinaryExpressionState, BindingState, BindingBindingWithDefaultState, BindingIdentifierState, BindingIdentifierMemberExpressionState, BindingPropertyState, BindingPropertyIdentifierState, BindingPropertyPropertyState, BindingWithDefaultState, BlockState, BlockStatementState, BreakStatementState, CallExpressionState, CatchClauseState, ClassDeclarationState, ClassElementState, ClassExpressionState, CompoundAssignmentExpressionState, ComputedMemberExpressionState, ComputedPropertyNameState, ConditionalExpressionState, ContinueStatementState, DataPropertyState, DebuggerStatementState, DirectiveState, DoWhileStatementState, EmptyStatementState, ExportState, ExportAllFromState, ExportDeclarationState, ExportDefaultState, ExportFromState, ExportSpecifierState, ExpressionState, ExpressionStatementState, ExpressionSuperState, ExpressionTemplateElementState, ForInStatementState, ForOfStatementState, ForStatementState, FormalParametersState, FunctionBodyState, FunctionBodyExpressionState, FunctionDeclarationState, FunctionDeclarationClassDeclarationExpressionState, FunctionDeclarationClassDeclarationVariableDeclarationState, FunctionExpressionState, GetterState, IdentifierExpressionState, IfStatementState, ImportState, ImportDeclarationState, ImportDeclarationExportDeclarationStatementState, ImportNamespaceState, ImportSpecifierState, LabeledStatementState, LiteralBooleanExpressionState, LiteralInfinityExpressionState, LiteralNullExpressionState, LiteralNumericExpressionState, LiteralRegExpExpressionState, LiteralStringExpressionState, MethodState, MethodDefinitionState, ModuleState, NamedObjectPropertyState, NewExpressionState, NewTargetExpressionState, ObjectBindingState, ObjectExpressionState, ObjectPropertyState, PropertyNameState, ReturnStatementState, ScriptState, SetterState, ShorthandPropertyState, SpreadElementState, SpreadElementExpressionState, StatementState, StaticMemberExpressionState, StaticPropertyNameState, SuperState, SwitchCaseState, SwitchDefaultState, SwitchStatementState, SwitchStatementWithDefaultState, TemplateElementState, TemplateExpressionState, ThisExpressionState, ThrowStatementState, TryCatchStatementState, TryFinallyStatementState, UnaryExpressionState, UpdateExpressionState, VariableDeclarationState, VariableDeclarationBindingState, VariableDeclarationExpressionState, VariableDeclarationStatementState, VariableDeclaratorState, WhileStatementState, WithStatementState, YieldExpressionState, YieldGeneratorExpressionState, Out> reducer,
+    @NotNull Expression node) {
     switch (node.type()) {
-    case DataProperty: {
-      DataProperty tNode = (DataProperty) node;
-      return reducer.reduceDataProperty(
+      case FunctionExpression: {
+        FunctionExpression tNode = (FunctionExpression) node;
+        return reducer.reduceFunctionExpression(
           tNode,
           path,
-          nameState,
-          reduceExpression(reducer, tNode.value, path.cons(StaticBranch.VALUE)));
-    }
-    case Getter: {
-      Getter tNode = (Getter) node;
-      return reducer.reduceGetter(
+          reducerMaybeIdentifier(reducer, tNode.name),
+          reduceListIdentifier(reducer, tNode.parameters),
+          reduceFunctionBody(reducer, tNode.body));
+      }
+      case LiteralBooleanExpression: {
+        LiteralBooleanExpression tNode = (LiteralBooleanExpression) node;
+        return reducer.reduceLiteralBooleanExpression(tNode, path);
+      }
+      case LiteralNullExpression: {
+        LiteralNullExpression tNode = (LiteralNullExpression) node;
+        return reducer.reduceLiteralNullExpression(tNode, path);
+      }
+      case LiteralInfinityExpression: {
+        LiteralInfinityExpression tNode = (LiteralInfinityExpression) node;
+        return reducer.reduceLiteralInfinityExpression(tNode, path);
+      }
+      case LiteralNumericExpression: {
+        LiteralNumericExpression tNode = (LiteralNumericExpression) node;
+        return reducer.reduceLiteralNumericExpression(tNode, path);
+      }
+      case LiteralRegExpExpression: {
+        LiteralRegExpExpression tNode = (LiteralRegExpExpression) node;
+        return reducer.reduceLiteralRegExpExpression(tNode, path);
+      }
+      case LiteralStringExpression: {
+        LiteralStringExpression tNode = (LiteralStringExpression) node;
+        return reducer.reduceLiteralStringExpression(tNode, path);
+      }
+      case ArrayExpression: {
+        ArrayExpression tNode = (ArrayExpression) node;
+        NonEmptyImmutableList<Branch> elementsPath = path.cons(StaticBranch.ELEMENTS);
+        return reducer.reduceArrayExpression(
           tNode,
           path,
-          nameState,
-          reduceFunctionBody(reducer, tNode.body, path.cons(StaticBranch.BODY)));
-    }
-    case Setter: {
-      Setter tNode = (Setter) node;
-      return reducer.reduceSetter(
+          tNode.elements.mapWithIndex((i, el) ->
+            reduceOptionExpression(
+              reducer,
+              el,
+              elementsPath.cons(IndexedBranch.from(i)))));
+      }
+      case AssignmentExpression: {
+        AssignmentExpression tNode = (AssignmentExpression) node;
+        return reducer.reduceAssignmentExpression(
           tNode,
           path,
-          nameState,
-          reduceIdentifier(reducer, tNode.parameter, path.cons(StaticBranch.PARAMETER)),
-          reduceFunctionBody(reducer, tNode.body, path.cons(StaticBranch.BODY)));
-    }
-    default:
-      throw new RuntimeException("Not reached");
+          reduceExpression(reducer, tNode.binding),
+          reduceExpression(reducer, tNode.expression));
+      }
+      case BinaryExpression: {
+        BinaryExpression tNode = (BinaryExpression) node;
+        return reducer.reduceBinaryExpression(
+          tNode,
+          path,
+          reduceExpression(reducer, tNode.left),
+          reduceExpression(reducer, tNode.right));
+      }
+      case CallExpression: {
+        CallExpression tNode = (CallExpression) node;
+        return reducer.reduceCallExpression(
+          tNode,
+          path,
+          reduceExpression(reducer, tNode.callee),
+          reduceListExpression(reducer, tNode.arguments));
+      }
+      case ComputedMemberExpression: {
+        ComputedMemberExpression tNode = (ComputedMemberExpression) node;
+        return reducer.reduceComputedMemberExpression(
+          tNode,
+          path,
+          reduceExpression(reducer, tNode.object),
+          reduceExpression(reducer, tNode.expression));
+      }
+      case ConditionalExpression: {
+        ConditionalExpression tNode = (ConditionalExpression) node;
+        return reducer.reduceConditionalExpression(
+          tNode,
+          path,
+          reduceExpression(reducer, tNode.test),
+          reduceExpression(reducer, tNode.consequent),
+          reduceExpression(reducer, tNode.alternate));
+      }
+      case IdentifierExpression: {
+        IdentifierExpression tNode = (IdentifierExpression) node;
+        return reducer.reduceIdentifierExpression(
+          tNode,
+          path,
+          reduceIdentifier(reducer, tNode.identifier));
+      }
+      case NewExpression: {
+        NewExpression tNode = (NewExpression) node;
+        return reducer.reduceNewExpression(
+          tNode,
+          path,
+          reduceExpression(reducer, tNode.callee),
+          reduceListExpression(reducer, tNode.arguments));
+      }
+      case PostfixExpression: {
+        PostfixExpression tNode = (PostfixExpression) node;
+        return reducer.reducePostfixExpression(
+          tNode,
+          path,
+          reduceExpression(reducer, tNode.operand));
+      }
+      case ObjectExpression: {
+        ObjectExpression tNode = (ObjectExpression) node;
+        return reducer.reduceObjectExpression(
+          tNode,
+          path,
+          reducerListProperty(reducer, tNode.properties));
+      }
+      case PrefixExpression: {
+        PrefixExpression tNode = (PrefixExpression) node;
+        return reducer.reducePrefixExpression(
+          tNode,
+          path,
+          reduceExpression(reducer, tNode.operand));
+      }
+      case StaticMemberExpression: {
+        StaticMemberExpression tNode = (StaticMemberExpression) node;
+        return reducer.reduceStaticMemberExpression(
+          tNode,
+          path,
+          reduceExpression(reducer, tNode.object),
+          reduceIdentifier(reducer, tNode.property));
+      }
+      case ThisExpression: {
+        ThisExpression tNode = (ThisExpression) node;
+        return reducer.reduceThisExpression(tNode, path);
+      }
+      default:
+        throw new RuntimeException("Not reached");
     }
   }
 
   @NotNull
-  public static <ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState>
-  PropertyNameState reducePropertyName(
-      @NotNull ReducerP<ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> reducer,
-      @NotNull PropertyName node,
-      @NotNull ImmutableList<Branch> path) {
+  public static <ArrayBindingState, ArrayExpressionState, ArrowExpressionState, AssignmentExpressionState, BinaryExpressionState, BindingState, BindingBindingWithDefaultState, BindingIdentifierState, BindingIdentifierMemberExpressionState, BindingPropertyState, BindingPropertyIdentifierState, BindingPropertyPropertyState, BindingWithDefaultState, BlockState, BlockStatementState, BreakStatementState, CallExpressionState, CatchClauseState, ClassDeclarationState, ClassElementState, ClassExpressionState, CompoundAssignmentExpressionState, ComputedMemberExpressionState, ComputedPropertyNameState, ConditionalExpressionState, ContinueStatementState, DataPropertyState, DebuggerStatementState, DirectiveState, DoWhileStatementState, EmptyStatementState, ExportState, ExportAllFromState, ExportDeclarationState, ExportDefaultState, ExportFromState, ExportSpecifierState, ExpressionState, ExpressionStatementState, ExpressionSuperState, ExpressionTemplateElementState, ForInStatementState, ForOfStatementState, ForStatementState, FormalParametersState, FunctionBodyState, FunctionBodyExpressionState, FunctionDeclarationState, FunctionDeclarationClassDeclarationExpressionState, FunctionDeclarationClassDeclarationVariableDeclarationState, FunctionExpressionState, GetterState, IdentifierExpressionState, IfStatementState, ImportState, ImportDeclarationState, ImportDeclarationExportDeclarationStatementState, ImportNamespaceState, ImportSpecifierState, LabeledStatementState, LiteralBooleanExpressionState, LiteralInfinityExpressionState, LiteralNullExpressionState, LiteralNumericExpressionState, LiteralRegExpExpressionState, LiteralStringExpressionState, MethodState, MethodDefinitionState, ModuleState, NamedObjectPropertyState, NewExpressionState, NewTargetExpressionState, ObjectBindingState, ObjectExpressionState, ObjectPropertyState, PropertyNameState, ReturnStatementState, ScriptState, SetterState, ShorthandPropertyState, SpreadElementState, SpreadElementExpressionState, StatementState, StaticMemberExpressionState, StaticPropertyNameState, SuperState, SwitchCaseState, SwitchDefaultState, SwitchStatementState, SwitchStatementWithDefaultState, TemplateElementState, TemplateExpressionState, ThisExpressionState, ThrowStatementState, TryCatchStatementState, TryFinallyStatementState, UnaryExpressionState, UpdateExpressionState, VariableDeclarationState, VariableDeclarationBindingState, VariableDeclarationExpressionState, VariableDeclarationStatementState, VariableDeclaratorState, WhileStatementState, WithStatementState, YieldExpressionState, YieldGeneratorExpressionState, Out>
+  Out reduceFunctionBody(
+    @NotNull ReducerP<ArrayBindingState, ArrayExpressionState, ArrowExpressionState, AssignmentExpressionState, BinaryExpressionState, BindingState, BindingBindingWithDefaultState, BindingIdentifierState, BindingIdentifierMemberExpressionState, BindingPropertyState, BindingPropertyIdentifierState, BindingPropertyPropertyState, BindingWithDefaultState, BlockState, BlockStatementState, BreakStatementState, CallExpressionState, CatchClauseState, ClassDeclarationState, ClassElementState, ClassExpressionState, CompoundAssignmentExpressionState, ComputedMemberExpressionState, ComputedPropertyNameState, ConditionalExpressionState, ContinueStatementState, DataPropertyState, DebuggerStatementState, DirectiveState, DoWhileStatementState, EmptyStatementState, ExportState, ExportAllFromState, ExportDeclarationState, ExportDefaultState, ExportFromState, ExportSpecifierState, ExpressionState, ExpressionStatementState, ExpressionSuperState, ExpressionTemplateElementState, ForInStatementState, ForOfStatementState, ForStatementState, FormalParametersState, FunctionBodyState, FunctionBodyExpressionState, FunctionDeclarationState, FunctionDeclarationClassDeclarationExpressionState, FunctionDeclarationClassDeclarationVariableDeclarationState, FunctionExpressionState, GetterState, IdentifierExpressionState, IfStatementState, ImportState, ImportDeclarationState, ImportDeclarationExportDeclarationStatementState, ImportNamespaceState, ImportSpecifierState, LabeledStatementState, LiteralBooleanExpressionState, LiteralInfinityExpressionState, LiteralNullExpressionState, LiteralNumericExpressionState, LiteralRegExpExpressionState, LiteralStringExpressionState, MethodState, MethodDefinitionState, ModuleState, NamedObjectPropertyState, NewExpressionState, NewTargetExpressionState, ObjectBindingState, ObjectExpressionState, ObjectPropertyState, PropertyNameState, ReturnStatementState, ScriptState, SetterState, ShorthandPropertyState, SpreadElementState, SpreadElementExpressionState, StatementState, StaticMemberExpressionState, StaticPropertyNameState, SuperState, SwitchCaseState, SwitchDefaultState, SwitchStatementState, SwitchStatementWithDefaultState, TemplateElementState, TemplateExpressionState, ThisExpressionState, ThrowStatementState, TryCatchStatementState, TryFinallyStatementState, UnaryExpressionState, UpdateExpressionState, VariableDeclarationState, VariableDeclarationBindingState, VariableDeclarationExpressionState, VariableDeclarationStatementState, VariableDeclaratorState, WhileStatementState, WithStatementState, YieldExpressionState, YieldGeneratorExpressionState, Out> reducer,
+    @NotNull FunctionBody node) {
+    return reducer.reduceFunctionBody(
+      node,
+      path,
+      reduceListDirective(reducer, node.directives),
+      reduceListStatement(reducer, node.statements));
+  }
+
+  @NotNull
+  private static <ArrayBindingState, ArrayExpressionState, ArrowExpressionState, AssignmentExpressionState, BinaryExpressionState, BindingState, BindingBindingWithDefaultState, BindingIdentifierState, BindingIdentifierMemberExpressionState, BindingPropertyState, BindingPropertyIdentifierState, BindingPropertyPropertyState, BindingWithDefaultState, BlockState, BlockStatementState, BreakStatementState, CallExpressionState, CatchClauseState, ClassDeclarationState, ClassElementState, ClassExpressionState, CompoundAssignmentExpressionState, ComputedMemberExpressionState, ComputedPropertyNameState, ConditionalExpressionState, ContinueStatementState, DataPropertyState, DebuggerStatementState, DirectiveState, DoWhileStatementState, EmptyStatementState, ExportState, ExportAllFromState, ExportDeclarationState, ExportDefaultState, ExportFromState, ExportSpecifierState, ExpressionState, ExpressionStatementState, ExpressionSuperState, ExpressionTemplateElementState, ForInStatementState, ForOfStatementState, ForStatementState, FormalParametersState, FunctionBodyState, FunctionBodyExpressionState, FunctionDeclarationState, FunctionDeclarationClassDeclarationExpressionState, FunctionDeclarationClassDeclarationVariableDeclarationState, FunctionExpressionState, GetterState, IdentifierExpressionState, IfStatementState, ImportState, ImportDeclarationState, ImportDeclarationExportDeclarationStatementState, ImportNamespaceState, ImportSpecifierState, LabeledStatementState, LiteralBooleanExpressionState, LiteralInfinityExpressionState, LiteralNullExpressionState, LiteralNumericExpressionState, LiteralRegExpExpressionState, LiteralStringExpressionState, MethodState, MethodDefinitionState, ModuleState, NamedObjectPropertyState, NewExpressionState, NewTargetExpressionState, ObjectBindingState, ObjectExpressionState, ObjectPropertyState, PropertyNameState, ReturnStatementState, ScriptState, SetterState, ShorthandPropertyState, SpreadElementState, SpreadElementExpressionState, StatementState, StaticMemberExpressionState, StaticPropertyNameState, SuperState, SwitchCaseState, SwitchDefaultState, SwitchStatementState, SwitchStatementWithDefaultState, TemplateElementState, TemplateExpressionState, ThisExpressionState, ThrowStatementState, TryCatchStatementState, TryFinallyStatementState, UnaryExpressionState, UpdateExpressionState, VariableDeclarationState, VariableDeclarationBindingState, VariableDeclarationExpressionState, VariableDeclarationStatementState, VariableDeclaratorState, WhileStatementState, WithStatementState, YieldExpressionState, YieldGeneratorExpressionState, Out>
+  ImmutableList<Out> reduceListExpression(
+    @NotNull ReducerP<ArrayBindingState, ArrayExpressionState, ArrowExpressionState, AssignmentExpressionState, BinaryExpressionState, BindingState, BindingBindingWithDefaultState, BindingIdentifierState, BindingIdentifierMemberExpressionState, BindingPropertyState, BindingPropertyIdentifierState, BindingPropertyPropertyState, BindingWithDefaultState, BlockState, BlockStatementState, BreakStatementState, CallExpressionState, CatchClauseState, ClassDeclarationState, ClassElementState, ClassExpressionState, CompoundAssignmentExpressionState, ComputedMemberExpressionState, ComputedPropertyNameState, ConditionalExpressionState, ContinueStatementState, DataPropertyState, DebuggerStatementState, DirectiveState, DoWhileStatementState, EmptyStatementState, ExportState, ExportAllFromState, ExportDeclarationState, ExportDefaultState, ExportFromState, ExportSpecifierState, ExpressionState, ExpressionStatementState, ExpressionSuperState, ExpressionTemplateElementState, ForInStatementState, ForOfStatementState, ForStatementState, FormalParametersState, FunctionBodyState, FunctionBodyExpressionState, FunctionDeclarationState, FunctionDeclarationClassDeclarationExpressionState, FunctionDeclarationClassDeclarationVariableDeclarationState, FunctionExpressionState, GetterState, IdentifierExpressionState, IfStatementState, ImportState, ImportDeclarationState, ImportDeclarationExportDeclarationStatementState, ImportNamespaceState, ImportSpecifierState, LabeledStatementState, LiteralBooleanExpressionState, LiteralInfinityExpressionState, LiteralNullExpressionState, LiteralNumericExpressionState, LiteralRegExpExpressionState, LiteralStringExpressionState, MethodState, MethodDefinitionState, ModuleState, NamedObjectPropertyState, NewExpressionState, NewTargetExpressionState, ObjectBindingState, ObjectExpressionState, ObjectPropertyState, PropertyNameState, ReturnStatementState, ScriptState, SetterState, ShorthandPropertyState, SpreadElementState, SpreadElementExpressionState, StatementState, StaticMemberExpressionState, StaticPropertyNameState, SuperState, SwitchCaseState, SwitchDefaultState, SwitchStatementState, SwitchStatementWithDefaultState, TemplateElementState, TemplateExpressionState, ThisExpressionState, ThrowStatementState, TryCatchStatementState, TryFinallyStatementState, UnaryExpressionState, UpdateExpressionState, VariableDeclarationState, VariableDeclarationBindingState, VariableDeclarationExpressionState, VariableDeclarationStatementState, VariableDeclaratorState, WhileStatementState, WithStatementState, YieldExpressionState, YieldGeneratorExpressionState, Out> reducer,
+    @NotNull ImmutableList<Expression> list) {
+    return list.mapWithIndex((i, el) -> reduceExpression(reducer, el));
+  }
+
+  @NotNull
+  private static <ArrayBindingState, ArrayExpressionState, ArrowExpressionState, AssignmentExpressionState, BinaryExpressionState, BindingState, BindingBindingWithDefaultState, BindingIdentifierState, BindingIdentifierMemberExpressionState, BindingPropertyState, BindingPropertyIdentifierState, BindingPropertyPropertyState, BindingWithDefaultState, BlockState, BlockStatementState, BreakStatementState, CallExpressionState, CatchClauseState, ClassDeclarationState, ClassElementState, ClassExpressionState, CompoundAssignmentExpressionState, ComputedMemberExpressionState, ComputedPropertyNameState, ConditionalExpressionState, ContinueStatementState, DataPropertyState, DebuggerStatementState, DirectiveState, DoWhileStatementState, EmptyStatementState, ExportState, ExportAllFromState, ExportDeclarationState, ExportDefaultState, ExportFromState, ExportSpecifierState, ExpressionState, ExpressionStatementState, ExpressionSuperState, ExpressionTemplateElementState, ForInStatementState, ForOfStatementState, ForStatementState, FormalParametersState, FunctionBodyState, FunctionBodyExpressionState, FunctionDeclarationState, FunctionDeclarationClassDeclarationExpressionState, FunctionDeclarationClassDeclarationVariableDeclarationState, FunctionExpressionState, GetterState, IdentifierExpressionState, IfStatementState, ImportState, ImportDeclarationState, ImportDeclarationExportDeclarationStatementState, ImportNamespaceState, ImportSpecifierState, LabeledStatementState, LiteralBooleanExpressionState, LiteralInfinityExpressionState, LiteralNullExpressionState, LiteralNumericExpressionState, LiteralRegExpExpressionState, LiteralStringExpressionState, MethodState, MethodDefinitionState, ModuleState, NamedObjectPropertyState, NewExpressionState, NewTargetExpressionState, ObjectBindingState, ObjectExpressionState, ObjectPropertyState, PropertyNameState, ReturnStatementState, ScriptState, SetterState, ShorthandPropertyState, SpreadElementState, SpreadElementExpressionState, StatementState, StaticMemberExpressionState, StaticPropertyNameState, SuperState, SwitchCaseState, SwitchDefaultState, SwitchStatementState, SwitchStatementWithDefaultState, TemplateElementState, TemplateExpressionState, ThisExpressionState, ThrowStatementState, TryCatchStatementState, TryFinallyStatementState, UnaryExpressionState, UpdateExpressionState, VariableDeclarationState, VariableDeclarationBindingState, VariableDeclarationExpressionState, VariableDeclarationStatementState, VariableDeclaratorState, WhileStatementState, WithStatementState, YieldExpressionState, YieldGeneratorExpressionState, Out>
+  ImmutableList<Out> reduceListStatement(
+    @NotNull ReducerP<ArrayBindingState, ArrayExpressionState, ArrowExpressionState, AssignmentExpressionState, BinaryExpressionState, BindingState, BindingBindingWithDefaultState, BindingIdentifierState, BindingIdentifierMemberExpressionState, BindingPropertyState, BindingPropertyIdentifierState, BindingPropertyPropertyState, BindingWithDefaultState, BlockState, BlockStatementState, BreakStatementState, CallExpressionState, CatchClauseState, ClassDeclarationState, ClassElementState, ClassExpressionState, CompoundAssignmentExpressionState, ComputedMemberExpressionState, ComputedPropertyNameState, ConditionalExpressionState, ContinueStatementState, DataPropertyState, DebuggerStatementState, DirectiveState, DoWhileStatementState, EmptyStatementState, ExportState, ExportAllFromState, ExportDeclarationState, ExportDefaultState, ExportFromState, ExportSpecifierState, ExpressionState, ExpressionStatementState, ExpressionSuperState, ExpressionTemplateElementState, ForInStatementState, ForOfStatementState, ForStatementState, FormalParametersState, FunctionBodyState, FunctionBodyExpressionState, FunctionDeclarationState, FunctionDeclarationClassDeclarationExpressionState, FunctionDeclarationClassDeclarationVariableDeclarationState, FunctionExpressionState, GetterState, IdentifierExpressionState, IfStatementState, ImportState, ImportDeclarationState, ImportDeclarationExportDeclarationStatementState, ImportNamespaceState, ImportSpecifierState, LabeledStatementState, LiteralBooleanExpressionState, LiteralInfinityExpressionState, LiteralNullExpressionState, LiteralNumericExpressionState, LiteralRegExpExpressionState, LiteralStringExpressionState, MethodState, MethodDefinitionState, ModuleState, NamedObjectPropertyState, NewExpressionState, NewTargetExpressionState, ObjectBindingState, ObjectExpressionState, ObjectPropertyState, PropertyNameState, ReturnStatementState, ScriptState, SetterState, ShorthandPropertyState, SpreadElementState, SpreadElementExpressionState, StatementState, StaticMemberExpressionState, StaticPropertyNameState, SuperState, SwitchCaseState, SwitchDefaultState, SwitchStatementState, SwitchStatementWithDefaultState, TemplateElementState, TemplateExpressionState, ThisExpressionState, ThrowStatementState, TryCatchStatementState, TryFinallyStatementState, UnaryExpressionState, UpdateExpressionState, VariableDeclarationState, VariableDeclarationBindingState, VariableDeclarationExpressionState, VariableDeclarationStatementState, VariableDeclaratorState, WhileStatementState, WithStatementState, YieldExpressionState, YieldGeneratorExpressionState, Out> reducer,
+    @NotNull ImmutableList<Statement> list) {
+    return list.mapWithIndex((i, el) -> reduceStatement(reducer, el));
+  }
+
+  private static <ArrayBindingState, ArrayExpressionState, ArrowExpressionState, AssignmentExpressionState, BinaryExpressionState, BindingState, BindingBindingWithDefaultState, BindingIdentifierState, BindingIdentifierMemberExpressionState, BindingPropertyState, BindingPropertyIdentifierState, BindingPropertyPropertyState, BindingWithDefaultState, BlockState, BlockStatementState, BreakStatementState, CallExpressionState, CatchClauseState, ClassDeclarationState, ClassElementState, ClassExpressionState, CompoundAssignmentExpressionState, ComputedMemberExpressionState, ComputedPropertyNameState, ConditionalExpressionState, ContinueStatementState, DataPropertyState, DebuggerStatementState, DirectiveState, DoWhileStatementState, EmptyStatementState, ExportState, ExportAllFromState, ExportDeclarationState, ExportDefaultState, ExportFromState, ExportSpecifierState, ExpressionState, ExpressionStatementState, ExpressionSuperState, ExpressionTemplateElementState, ForInStatementState, ForOfStatementState, ForStatementState, FormalParametersState, FunctionBodyState, FunctionBodyExpressionState, FunctionDeclarationState, FunctionDeclarationClassDeclarationExpressionState, FunctionDeclarationClassDeclarationVariableDeclarationState, FunctionExpressionState, GetterState, IdentifierExpressionState, IfStatementState, ImportState, ImportDeclarationState, ImportDeclarationExportDeclarationStatementState, ImportNamespaceState, ImportSpecifierState, LabeledStatementState, LiteralBooleanExpressionState, LiteralInfinityExpressionState, LiteralNullExpressionState, LiteralNumericExpressionState, LiteralRegExpExpressionState, LiteralStringExpressionState, MethodState, MethodDefinitionState, ModuleState, NamedObjectPropertyState, NewExpressionState, NewTargetExpressionState, ObjectBindingState, ObjectExpressionState, ObjectPropertyState, PropertyNameState, ReturnStatementState, ScriptState, SetterState, ShorthandPropertyState, SpreadElementState, SpreadElementExpressionState, StatementState, StaticMemberExpressionState, StaticPropertyNameState, SuperState, SwitchCaseState, SwitchDefaultState, SwitchStatementState, SwitchStatementWithDefaultState, TemplateElementState, TemplateExpressionState, ThisExpressionState, ThrowStatementState, TryCatchStatementState, TryFinallyStatementState, UnaryExpressionState, UpdateExpressionState, VariableDeclarationState, VariableDeclarationBindingState, VariableDeclarationExpressionState, VariableDeclarationStatementState, VariableDeclaratorState, WhileStatementState, WithStatementState, YieldExpressionState, YieldGeneratorExpressionState, Out>
+  ImmutableList<Out> reduceListSwitchCase(
+    @NotNull ReducerP<ArrayBindingState, ArrayExpressionState, ArrowExpressionState, AssignmentExpressionState, BinaryExpressionState, BindingState, BindingBindingWithDefaultState, BindingIdentifierState, BindingIdentifierMemberExpressionState, BindingPropertyState, BindingPropertyIdentifierState, BindingPropertyPropertyState, BindingWithDefaultState, BlockState, BlockStatementState, BreakStatementState, CallExpressionState, CatchClauseState, ClassDeclarationState, ClassElementState, ClassExpressionState, CompoundAssignmentExpressionState, ComputedMemberExpressionState, ComputedPropertyNameState, ConditionalExpressionState, ContinueStatementState, DataPropertyState, DebuggerStatementState, DirectiveState, DoWhileStatementState, EmptyStatementState, ExportState, ExportAllFromState, ExportDeclarationState, ExportDefaultState, ExportFromState, ExportSpecifierState, ExpressionState, ExpressionStatementState, ExpressionSuperState, ExpressionTemplateElementState, ForInStatementState, ForOfStatementState, ForStatementState, FormalParametersState, FunctionBodyState, FunctionBodyExpressionState, FunctionDeclarationState, FunctionDeclarationClassDeclarationExpressionState, FunctionDeclarationClassDeclarationVariableDeclarationState, FunctionExpressionState, GetterState, IdentifierExpressionState, IfStatementState, ImportState, ImportDeclarationState, ImportDeclarationExportDeclarationStatementState, ImportNamespaceState, ImportSpecifierState, LabeledStatementState, LiteralBooleanExpressionState, LiteralInfinityExpressionState, LiteralNullExpressionState, LiteralNumericExpressionState, LiteralRegExpExpressionState, LiteralStringExpressionState, MethodState, MethodDefinitionState, ModuleState, NamedObjectPropertyState, NewExpressionState, NewTargetExpressionState, ObjectBindingState, ObjectExpressionState, ObjectPropertyState, PropertyNameState, ReturnStatementState, ScriptState, SetterState, ShorthandPropertyState, SpreadElementState, SpreadElementExpressionState, StatementState, StaticMemberExpressionState, StaticPropertyNameState, SuperState, SwitchCaseState, SwitchDefaultState, SwitchStatementState, SwitchStatementWithDefaultState, TemplateElementState, TemplateExpressionState, ThisExpressionState, ThrowStatementState, TryCatchStatementState, TryFinallyStatementState, UnaryExpressionState, UpdateExpressionState, VariableDeclarationState, VariableDeclarationBindingState, VariableDeclarationExpressionState, VariableDeclarationStatementState, VariableDeclaratorState, WhileStatementState, WithStatementState, YieldExpressionState, YieldGeneratorExpressionState, Out> reducer,
+    @NotNull ImmutableList<SwitchCase> node) {
+    return node.mapWithIndex((i, el) -> reduceSwitchCase(reducer, el));
+  }
+
+  @NotNull
+  public static <ArrayBindingState, ArrayExpressionState, ArrowExpressionState, AssignmentExpressionState, BinaryExpressionState, BindingState, BindingBindingWithDefaultState, BindingIdentifierState, BindingIdentifierMemberExpressionState, BindingPropertyState, BindingPropertyIdentifierState, BindingPropertyPropertyState, BindingWithDefaultState, BlockState, BlockStatementState, BreakStatementState, CallExpressionState, CatchClauseState, ClassDeclarationState, ClassElementState, ClassExpressionState, CompoundAssignmentExpressionState, ComputedMemberExpressionState, ComputedPropertyNameState, ConditionalExpressionState, ContinueStatementState, DataPropertyState, DebuggerStatementState, DirectiveState, DoWhileStatementState, EmptyStatementState, ExportState, ExportAllFromState, ExportDeclarationState, ExportDefaultState, ExportFromState, ExportSpecifierState, ExpressionState, ExpressionStatementState, ExpressionSuperState, ExpressionTemplateElementState, ForInStatementState, ForOfStatementState, ForStatementState, FormalParametersState, FunctionBodyState, FunctionBodyExpressionState, FunctionDeclarationState, FunctionDeclarationClassDeclarationExpressionState, FunctionDeclarationClassDeclarationVariableDeclarationState, FunctionExpressionState, GetterState, IdentifierExpressionState, IfStatementState, ImportState, ImportDeclarationState, ImportDeclarationExportDeclarationStatementState, ImportNamespaceState, ImportSpecifierState, LabeledStatementState, LiteralBooleanExpressionState, LiteralInfinityExpressionState, LiteralNullExpressionState, LiteralNumericExpressionState, LiteralRegExpExpressionState, LiteralStringExpressionState, MethodState, MethodDefinitionState, ModuleState, NamedObjectPropertyState, NewExpressionState, NewTargetExpressionState, ObjectBindingState, ObjectExpressionState, ObjectPropertyState, PropertyNameState, ReturnStatementState, ScriptState, SetterState, ShorthandPropertyState, SpreadElementState, SpreadElementExpressionState, StatementState, StaticMemberExpressionState, StaticPropertyNameState, SuperState, SwitchCaseState, SwitchDefaultState, SwitchStatementState, SwitchStatementWithDefaultState, TemplateElementState, TemplateExpressionState, ThisExpressionState, ThrowStatementState, TryCatchStatementState, TryFinallyStatementState, UnaryExpressionState, UpdateExpressionState, VariableDeclarationState, VariableDeclarationBindingState, VariableDeclarationExpressionState, VariableDeclarationStatementState, VariableDeclaratorState, WhileStatementState, WithStatementState, YieldExpressionState, YieldGeneratorExpressionState, Out>
+  Out reduceObjectProperty(
+    @NotNull ReducerP<ArrayBindingState, ArrayExpressionState, ArrowExpressionState, AssignmentExpressionState, BinaryExpressionState, BindingState, BindingBindingWithDefaultState, BindingIdentifierState, BindingIdentifierMemberExpressionState, BindingPropertyState, BindingPropertyIdentifierState, BindingPropertyPropertyState, BindingWithDefaultState, BlockState, BlockStatementState, BreakStatementState, CallExpressionState, CatchClauseState, ClassDeclarationState, ClassElementState, ClassExpressionState, CompoundAssignmentExpressionState, ComputedMemberExpressionState, ComputedPropertyNameState, ConditionalExpressionState, ContinueStatementState, DataPropertyState, DebuggerStatementState, DirectiveState, DoWhileStatementState, EmptyStatementState, ExportState, ExportAllFromState, ExportDeclarationState, ExportDefaultState, ExportFromState, ExportSpecifierState, ExpressionState, ExpressionStatementState, ExpressionSuperState, ExpressionTemplateElementState, ForInStatementState, ForOfStatementState, ForStatementState, FormalParametersState, FunctionBodyState, FunctionBodyExpressionState, FunctionDeclarationState, FunctionDeclarationClassDeclarationExpressionState, FunctionDeclarationClassDeclarationVariableDeclarationState, FunctionExpressionState, GetterState, IdentifierExpressionState, IfStatementState, ImportState, ImportDeclarationState, ImportDeclarationExportDeclarationStatementState, ImportNamespaceState, ImportSpecifierState, LabeledStatementState, LiteralBooleanExpressionState, LiteralInfinityExpressionState, LiteralNullExpressionState, LiteralNumericExpressionState, LiteralRegExpExpressionState, LiteralStringExpressionState, MethodState, MethodDefinitionState, ModuleState, NamedObjectPropertyState, NewExpressionState, NewTargetExpressionState, ObjectBindingState, ObjectExpressionState, ObjectPropertyState, PropertyNameState, ReturnStatementState, ScriptState, SetterState, ShorthandPropertyState, SpreadElementState, SpreadElementExpressionState, StatementState, StaticMemberExpressionState, StaticPropertyNameState, SuperState, SwitchCaseState, SwitchDefaultState, SwitchStatementState, SwitchStatementWithDefaultState, TemplateElementState, TemplateExpressionState, ThisExpressionState, ThrowStatementState, TryCatchStatementState, TryFinallyStatementState, UnaryExpressionState, UpdateExpressionState, VariableDeclarationState, VariableDeclarationBindingState, VariableDeclarationExpressionState, VariableDeclarationStatementState, VariableDeclaratorState, WhileStatementState, WithStatementState, YieldExpressionState, YieldGeneratorExpressionState, Out> reducer,
+    @NotNull ObjectProperty node) {
+    PropertyNameState nameState = reducePropertyName(reducer, node.name);
+    switch (node.type()) {
+      case DataProperty: {
+        DataProperty tNode = (DataProperty) node;
+        return reducer.reduceDataProperty(
+          tNode,
+          path,
+          nameState,
+          reduceExpression(reducer, tNode.value));
+      }
+      case Getter: {
+        Getter tNode = (Getter) node;
+        return reducer.reduceGetter(
+          tNode,
+          path,
+          nameState,
+          reduceFunctionBody(reducer, tNode.body));
+      }
+      case Setter: {
+        Setter tNode = (Setter) node;
+        return reducer.reduceSetter(
+          tNode,
+          path,
+          nameState,
+          reduceIdentifier(reducer, tNode.parameter),
+          reduceFunctionBody(reducer, tNode.body));
+      }
+      default:
+        throw new RuntimeException("Not reached");
+    }
+  }
+
+  @NotNull
+  private static <ArrayBindingState, ArrayExpressionState, ArrowExpressionState, AssignmentExpressionState, BinaryExpressionState, BindingState, BindingBindingWithDefaultState, BindingIdentifierState, BindingIdentifierMemberExpressionState, BindingPropertyState, BindingPropertyIdentifierState, BindingPropertyPropertyState, BindingWithDefaultState, BlockState, BlockStatementState, BreakStatementState, CallExpressionState, CatchClauseState, ClassDeclarationState, ClassElementState, ClassExpressionState, CompoundAssignmentExpressionState, ComputedMemberExpressionState, ComputedPropertyNameState, ConditionalExpressionState, ContinueStatementState, DataPropertyState, DebuggerStatementState, DirectiveState, DoWhileStatementState, EmptyStatementState, ExportState, ExportAllFromState, ExportDeclarationState, ExportDefaultState, ExportFromState, ExportSpecifierState, ExpressionState, ExpressionStatementState, ExpressionSuperState, ExpressionTemplateElementState, ForInStatementState, ForOfStatementState, ForStatementState, FormalParametersState, FunctionBodyState, FunctionBodyExpressionState, FunctionDeclarationState, FunctionDeclarationClassDeclarationExpressionState, FunctionDeclarationClassDeclarationVariableDeclarationState, FunctionExpressionState, GetterState, IdentifierExpressionState, IfStatementState, ImportState, ImportDeclarationState, ImportDeclarationExportDeclarationStatementState, ImportNamespaceState, ImportSpecifierState, LabeledStatementState, LiteralBooleanExpressionState, LiteralInfinityExpressionState, LiteralNullExpressionState, LiteralNumericExpressionState, LiteralRegExpExpressionState, LiteralStringExpressionState, MethodState, MethodDefinitionState, ModuleState, NamedObjectPropertyState, NewExpressionState, NewTargetExpressionState, ObjectBindingState, ObjectExpressionState, ObjectPropertyState, PropertyNameState, ReturnStatementState, ScriptState, SetterState, ShorthandPropertyState, SpreadElementState, SpreadElementExpressionState, StatementState, StaticMemberExpressionState, StaticPropertyNameState, SuperState, SwitchCaseState, SwitchDefaultState, SwitchStatementState, SwitchStatementWithDefaultState, TemplateElementState, TemplateExpressionState, ThisExpressionState, ThrowStatementState, TryCatchStatementState, TryFinallyStatementState, UnaryExpressionState, UpdateExpressionState, VariableDeclarationState, VariableDeclarationBindingState, VariableDeclarationExpressionState, VariableDeclarationStatementState, VariableDeclaratorState, WhileStatementState, WithStatementState, YieldExpressionState, YieldGeneratorExpressionState, Out>
+  Maybe<Out> reduceOptionExpression(
+    @NotNull ReducerP<ArrayBindingState, ArrayExpressionState, ArrowExpressionState, AssignmentExpressionState, BinaryExpressionState, BindingState, BindingBindingWithDefaultState, BindingIdentifierState, BindingIdentifierMemberExpressionState, BindingPropertyState, BindingPropertyIdentifierState, BindingPropertyPropertyState, BindingWithDefaultState, BlockState, BlockStatementState, BreakStatementState, CallExpressionState, CatchClauseState, ClassDeclarationState, ClassElementState, ClassExpressionState, CompoundAssignmentExpressionState, ComputedMemberExpressionState, ComputedPropertyNameState, ConditionalExpressionState, ContinueStatementState, DataPropertyState, DebuggerStatementState, DirectiveState, DoWhileStatementState, EmptyStatementState, ExportState, ExportAllFromState, ExportDeclarationState, ExportDefaultState, ExportFromState, ExportSpecifierState, ExpressionState, ExpressionStatementState, ExpressionSuperState, ExpressionTemplateElementState, ForInStatementState, ForOfStatementState, ForStatementState, FormalParametersState, FunctionBodyState, FunctionBodyExpressionState, FunctionDeclarationState, FunctionDeclarationClassDeclarationExpressionState, FunctionDeclarationClassDeclarationVariableDeclarationState, FunctionExpressionState, GetterState, IdentifierExpressionState, IfStatementState, ImportState, ImportDeclarationState, ImportDeclarationExportDeclarationStatementState, ImportNamespaceState, ImportSpecifierState, LabeledStatementState, LiteralBooleanExpressionState, LiteralInfinityExpressionState, LiteralNullExpressionState, LiteralNumericExpressionState, LiteralRegExpExpressionState, LiteralStringExpressionState, MethodState, MethodDefinitionState, ModuleState, NamedObjectPropertyState, NewExpressionState, NewTargetExpressionState, ObjectBindingState, ObjectExpressionState, ObjectPropertyState, PropertyNameState, ReturnStatementState, ScriptState, SetterState, ShorthandPropertyState, SpreadElementState, SpreadElementExpressionState, StatementState, StaticMemberExpressionState, StaticPropertyNameState, SuperState, SwitchCaseState, SwitchDefaultState, SwitchStatementState, SwitchStatementWithDefaultState, TemplateElementState, TemplateExpressionState, ThisExpressionState, ThrowStatementState, TryCatchStatementState, TryFinallyStatementState, UnaryExpressionState, UpdateExpressionState, VariableDeclarationState, VariableDeclarationBindingState, VariableDeclarationExpressionState, VariableDeclarationStatementState, VariableDeclaratorState, WhileStatementState, WithStatementState, YieldExpressionState, YieldGeneratorExpressionState, Out> reducer,
+    @NotNull Maybe<Expression> node) {
+    return node.map(n -> reduceExpression(reducer, n));
+  }
+
+  @NotNull
+  private static <ArrayBindingState, ArrayExpressionState, ArrowExpressionState, AssignmentExpressionState, BinaryExpressionState, BindingState, BindingBindingWithDefaultState, BindingIdentifierState, BindingIdentifierMemberExpressionState, BindingPropertyState, BindingPropertyIdentifierState, BindingPropertyPropertyState, BindingWithDefaultState, BlockState, BlockStatementState, BreakStatementState, CallExpressionState, CatchClauseState, ClassDeclarationState, ClassElementState, ClassExpressionState, CompoundAssignmentExpressionState, ComputedMemberExpressionState, ComputedPropertyNameState, ConditionalExpressionState, ContinueStatementState, DataPropertyState, DebuggerStatementState, DirectiveState, DoWhileStatementState, EmptyStatementState, ExportState, ExportAllFromState, ExportDeclarationState, ExportDefaultState, ExportFromState, ExportSpecifierState, ExpressionState, ExpressionStatementState, ExpressionSuperState, ExpressionTemplateElementState, ForInStatementState, ForOfStatementState, ForStatementState, FormalParametersState, FunctionBodyState, FunctionBodyExpressionState, FunctionDeclarationState, FunctionDeclarationClassDeclarationExpressionState, FunctionDeclarationClassDeclarationVariableDeclarationState, FunctionExpressionState, GetterState, IdentifierExpressionState, IfStatementState, ImportState, ImportDeclarationState, ImportDeclarationExportDeclarationStatementState, ImportNamespaceState, ImportSpecifierState, LabeledStatementState, LiteralBooleanExpressionState, LiteralInfinityExpressionState, LiteralNullExpressionState, LiteralNumericExpressionState, LiteralRegExpExpressionState, LiteralStringExpressionState, MethodState, MethodDefinitionState, ModuleState, NamedObjectPropertyState, NewExpressionState, NewTargetExpressionState, ObjectBindingState, ObjectExpressionState, ObjectPropertyState, PropertyNameState, ReturnStatementState, ScriptState, SetterState, ShorthandPropertyState, SpreadElementState, SpreadElementExpressionState, StatementState, StaticMemberExpressionState, StaticPropertyNameState, SuperState, SwitchCaseState, SwitchDefaultState, SwitchStatementState, SwitchStatementWithDefaultState, TemplateElementState, TemplateExpressionState, ThisExpressionState, ThrowStatementState, TryCatchStatementState, TryFinallyStatementState, UnaryExpressionState, UpdateExpressionState, VariableDeclarationState, VariableDeclarationBindingState, VariableDeclarationExpressionState, VariableDeclarationStatementState, VariableDeclaratorState, WhileStatementState, WithStatementState, YieldExpressionState, YieldGeneratorExpressionState, Out>
+  Maybe<Out> reduceOptionStatement(
+    @NotNull ReducerP<ArrayBindingState, ArrayExpressionState, ArrowExpressionState, AssignmentExpressionState, BinaryExpressionState, BindingState, BindingBindingWithDefaultState, BindingIdentifierState, BindingIdentifierMemberExpressionState, BindingPropertyState, BindingPropertyIdentifierState, BindingPropertyPropertyState, BindingWithDefaultState, BlockState, BlockStatementState, BreakStatementState, CallExpressionState, CatchClauseState, ClassDeclarationState, ClassElementState, ClassExpressionState, CompoundAssignmentExpressionState, ComputedMemberExpressionState, ComputedPropertyNameState, ConditionalExpressionState, ContinueStatementState, DataPropertyState, DebuggerStatementState, DirectiveState, DoWhileStatementState, EmptyStatementState, ExportState, ExportAllFromState, ExportDeclarationState, ExportDefaultState, ExportFromState, ExportSpecifierState, ExpressionState, ExpressionStatementState, ExpressionSuperState, ExpressionTemplateElementState, ForInStatementState, ForOfStatementState, ForStatementState, FormalParametersState, FunctionBodyState, FunctionBodyExpressionState, FunctionDeclarationState, FunctionDeclarationClassDeclarationExpressionState, FunctionDeclarationClassDeclarationVariableDeclarationState, FunctionExpressionState, GetterState, IdentifierExpressionState, IfStatementState, ImportState, ImportDeclarationState, ImportDeclarationExportDeclarationStatementState, ImportNamespaceState, ImportSpecifierState, LabeledStatementState, LiteralBooleanExpressionState, LiteralInfinityExpressionState, LiteralNullExpressionState, LiteralNumericExpressionState, LiteralRegExpExpressionState, LiteralStringExpressionState, MethodState, MethodDefinitionState, ModuleState, NamedObjectPropertyState, NewExpressionState, NewTargetExpressionState, ObjectBindingState, ObjectExpressionState, ObjectPropertyState, PropertyNameState, ReturnStatementState, ScriptState, SetterState, ShorthandPropertyState, SpreadElementState, SpreadElementExpressionState, StatementState, StaticMemberExpressionState, StaticPropertyNameState, SuperState, SwitchCaseState, SwitchDefaultState, SwitchStatementState, SwitchStatementWithDefaultState, TemplateElementState, TemplateExpressionState, ThisExpressionState, ThrowStatementState, TryCatchStatementState, TryFinallyStatementState, UnaryExpressionState, UpdateExpressionState, VariableDeclarationState, VariableDeclarationBindingState, VariableDeclarationExpressionState, VariableDeclarationStatementState, VariableDeclaratorState, WhileStatementState, WithStatementState, YieldExpressionState, YieldGeneratorExpressionState, Out> reducer,
+    @NotNull Maybe<Statement> node) {
+    return node.map(n -> reduceStatement(reducer, n));
+  }
+
+  @NotNull
+  public static <ArrayBindingState, ArrayExpressionState, ArrowExpressionState, AssignmentExpressionState, BinaryExpressionState, BindingState, BindingBindingWithDefaultState, BindingIdentifierState, BindingIdentifierMemberExpressionState, BindingPropertyState, BindingPropertyIdentifierState, BindingPropertyPropertyState, BindingWithDefaultState, BlockState, BlockStatementState, BreakStatementState, CallExpressionState, CatchClauseState, ClassDeclarationState, ClassElementState, ClassExpressionState, CompoundAssignmentExpressionState, ComputedMemberExpressionState, ComputedPropertyNameState, ConditionalExpressionState, ContinueStatementState, DataPropertyState, DebuggerStatementState, DirectiveState, DoWhileStatementState, EmptyStatementState, ExportState, ExportAllFromState, ExportDeclarationState, ExportDefaultState, ExportFromState, ExportSpecifierState, ExpressionState, ExpressionStatementState, ExpressionSuperState, ExpressionTemplateElementState, ForInStatementState, ForOfStatementState, ForStatementState, FormalParametersState, FunctionBodyState, FunctionBodyExpressionState, FunctionDeclarationState, FunctionDeclarationClassDeclarationExpressionState, FunctionDeclarationClassDeclarationVariableDeclarationState, FunctionExpressionState, GetterState, IdentifierExpressionState, IfStatementState, ImportState, ImportDeclarationState, ImportDeclarationExportDeclarationStatementState, ImportNamespaceState, ImportSpecifierState, LabeledStatementState, LiteralBooleanExpressionState, LiteralInfinityExpressionState, LiteralNullExpressionState, LiteralNumericExpressionState, LiteralRegExpExpressionState, LiteralStringExpressionState, MethodState, MethodDefinitionState, ModuleState, NamedObjectPropertyState, NewExpressionState, NewTargetExpressionState, ObjectBindingState, ObjectExpressionState, ObjectPropertyState, PropertyNameState, ReturnStatementState, ScriptState, SetterState, ShorthandPropertyState, SpreadElementState, SpreadElementExpressionState, StatementState, StaticMemberExpressionState, StaticPropertyNameState, SuperState, SwitchCaseState, SwitchDefaultState, SwitchStatementState, SwitchStatementWithDefaultState, TemplateElementState, TemplateExpressionState, ThisExpressionState, ThrowStatementState, TryCatchStatementState, TryFinallyStatementState, UnaryExpressionState, UpdateExpressionState, VariableDeclarationState, VariableDeclarationBindingState, VariableDeclarationExpressionState, VariableDeclarationStatementState, VariableDeclaratorState, WhileStatementState, WithStatementState, YieldExpressionState, YieldGeneratorExpressionState, Out>
+  Out reducePropertyName(
+    @NotNull ReducerP<ArrayBindingState, ArrayExpressionState, ArrowExpressionState, AssignmentExpressionState, BinaryExpressionState, BindingState, BindingBindingWithDefaultState, BindingIdentifierState, BindingIdentifierMemberExpressionState, BindingPropertyState, BindingPropertyIdentifierState, BindingPropertyPropertyState, BindingWithDefaultState, BlockState, BlockStatementState, BreakStatementState, CallExpressionState, CatchClauseState, ClassDeclarationState, ClassElementState, ClassExpressionState, CompoundAssignmentExpressionState, ComputedMemberExpressionState, ComputedPropertyNameState, ConditionalExpressionState, ContinueStatementState, DataPropertyState, DebuggerStatementState, DirectiveState, DoWhileStatementState, EmptyStatementState, ExportState, ExportAllFromState, ExportDeclarationState, ExportDefaultState, ExportFromState, ExportSpecifierState, ExpressionState, ExpressionStatementState, ExpressionSuperState, ExpressionTemplateElementState, ForInStatementState, ForOfStatementState, ForStatementState, FormalParametersState, FunctionBodyState, FunctionBodyExpressionState, FunctionDeclarationState, FunctionDeclarationClassDeclarationExpressionState, FunctionDeclarationClassDeclarationVariableDeclarationState, FunctionExpressionState, GetterState, IdentifierExpressionState, IfStatementState, ImportState, ImportDeclarationState, ImportDeclarationExportDeclarationStatementState, ImportNamespaceState, ImportSpecifierState, LabeledStatementState, LiteralBooleanExpressionState, LiteralInfinityExpressionState, LiteralNullExpressionState, LiteralNumericExpressionState, LiteralRegExpExpressionState, LiteralStringExpressionState, MethodState, MethodDefinitionState, ModuleState, NamedObjectPropertyState, NewExpressionState, NewTargetExpressionState, ObjectBindingState, ObjectExpressionState, ObjectPropertyState, PropertyNameState, ReturnStatementState, ScriptState, SetterState, ShorthandPropertyState, SpreadElementState, SpreadElementExpressionState, StatementState, StaticMemberExpressionState, StaticPropertyNameState, SuperState, SwitchCaseState, SwitchDefaultState, SwitchStatementState, SwitchStatementWithDefaultState, TemplateElementState, TemplateExpressionState, ThisExpressionState, ThrowStatementState, TryCatchStatementState, TryFinallyStatementState, UnaryExpressionState, UpdateExpressionState, VariableDeclarationState, VariableDeclarationBindingState, VariableDeclarationExpressionState, VariableDeclarationStatementState, VariableDeclaratorState, WhileStatementState, WithStatementState, YieldExpressionState, YieldGeneratorExpressionState, Out> reducer,
+    @NotNull PropertyName node) {
     return reducer.reducePropertyName(node, path);
   }
 
   @NotNull
-  public static <ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState>
-  IdentifierState reduceIdentifier(
-      @NotNull ReducerP<ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> reducer,
-      @NotNull Identifier node,
-      @NotNull ImmutableList<Branch> path) {
-    return reducer.reduceIdentifier(node, path);
+  public static <ArrayBindingState, ArrayExpressionState, ArrowExpressionState, AssignmentExpressionState, BinaryExpressionState, BindingState, BindingBindingWithDefaultState, BindingIdentifierState, BindingIdentifierMemberExpressionState, BindingPropertyState, BindingPropertyIdentifierState, BindingPropertyPropertyState, BindingWithDefaultState, BlockState, BlockStatementState, BreakStatementState, CallExpressionState, CatchClauseState, ClassDeclarationState, ClassElementState, ClassExpressionState, CompoundAssignmentExpressionState, ComputedMemberExpressionState, ComputedPropertyNameState, ConditionalExpressionState, ContinueStatementState, DataPropertyState, DebuggerStatementState, DirectiveState, DoWhileStatementState, EmptyStatementState, ExportState, ExportAllFromState, ExportDeclarationState, ExportDefaultState, ExportFromState, ExportSpecifierState, ExpressionState, ExpressionStatementState, ExpressionSuperState, ExpressionTemplateElementState, ForInStatementState, ForOfStatementState, ForStatementState, FormalParametersState, FunctionBodyState, FunctionBodyExpressionState, FunctionDeclarationState, FunctionDeclarationClassDeclarationExpressionState, FunctionDeclarationClassDeclarationVariableDeclarationState, FunctionExpressionState, GetterState, IdentifierExpressionState, IfStatementState, ImportState, ImportDeclarationState, ImportDeclarationExportDeclarationStatementState, ImportNamespaceState, ImportSpecifierState, LabeledStatementState, LiteralBooleanExpressionState, LiteralInfinityExpressionState, LiteralNullExpressionState, LiteralNumericExpressionState, LiteralRegExpExpressionState, LiteralStringExpressionState, MethodState, MethodDefinitionState, ModuleState, NamedObjectPropertyState, NewExpressionState, NewTargetExpressionState, ObjectBindingState, ObjectExpressionState, ObjectPropertyState, PropertyNameState, ReturnStatementState, ScriptState, SetterState, ShorthandPropertyState, SpreadElementState, SpreadElementExpressionState, StatementState, StaticMemberExpressionState, StaticPropertyNameState, SuperState, SwitchCaseState, SwitchDefaultState, SwitchStatementState, SwitchStatementWithDefaultState, TemplateElementState, TemplateExpressionState, ThisExpressionState, ThrowStatementState, TryCatchStatementState, TryFinallyStatementState, UnaryExpressionState, UpdateExpressionState, VariableDeclarationState, VariableDeclarationBindingState, VariableDeclarationExpressionState, VariableDeclarationStatementState, VariableDeclaratorState, WhileStatementState, WithStatementState, YieldExpressionState, YieldGeneratorExpressionState, Out>
+  Out reduceScript(
+    @NotNull ReducerP<ArrayBindingState, ArrayExpressionState, ArrowExpressionState, AssignmentExpressionState, BinaryExpressionState, BindingState, BindingBindingWithDefaultState, BindingIdentifierState, BindingIdentifierMemberExpressionState, BindingPropertyState, BindingPropertyIdentifierState, BindingPropertyPropertyState, BindingWithDefaultState, BlockState, BlockStatementState, BreakStatementState, CallExpressionState, CatchClauseState, ClassDeclarationState, ClassElementState, ClassExpressionState, CompoundAssignmentExpressionState, ComputedMemberExpressionState, ComputedPropertyNameState, ConditionalExpressionState, ContinueStatementState, DataPropertyState, DebuggerStatementState, DirectiveState, DoWhileStatementState, EmptyStatementState, ExportState, ExportAllFromState, ExportDeclarationState, ExportDefaultState, ExportFromState, ExportSpecifierState, ExpressionState, ExpressionStatementState, ExpressionSuperState, ExpressionTemplateElementState, ForInStatementState, ForOfStatementState, ForStatementState, FormalParametersState, FunctionBodyState, FunctionBodyExpressionState, FunctionDeclarationState, FunctionDeclarationClassDeclarationExpressionState, FunctionDeclarationClassDeclarationVariableDeclarationState, FunctionExpressionState, GetterState, IdentifierExpressionState, IfStatementState, ImportState, ImportDeclarationState, ImportDeclarationExportDeclarationStatementState, ImportNamespaceState, ImportSpecifierState, LabeledStatementState, LiteralBooleanExpressionState, LiteralInfinityExpressionState, LiteralNullExpressionState, LiteralNumericExpressionState, LiteralRegExpExpressionState, LiteralStringExpressionState, MethodState, MethodDefinitionState, ModuleState, NamedObjectPropertyState, NewExpressionState, NewTargetExpressionState, ObjectBindingState, ObjectExpressionState, ObjectPropertyState, PropertyNameState, ReturnStatementState, ScriptState, SetterState, ShorthandPropertyState, SpreadElementState, SpreadElementExpressionState, StatementState, StaticMemberExpressionState, StaticPropertyNameState, SuperState, SwitchCaseState, SwitchDefaultState, SwitchStatementState, SwitchStatementWithDefaultState, TemplateElementState, TemplateExpressionState, ThisExpressionState, ThrowStatementState, TryCatchStatementState, TryFinallyStatementState, UnaryExpressionState, UpdateExpressionState, VariableDeclarationState, VariableDeclarationBindingState, VariableDeclarationExpressionState, VariableDeclarationStatementState, VariableDeclaratorState, WhileStatementState, WithStatementState, YieldExpressionState, YieldGeneratorExpressionState, Out> reducer,
+    @NotNull Script node) {
+    return reducer.reduceScript(
+      node,
+      reduceListDirective(reducer, node.directives),
+      reduceListStatement(reducer, node.statements)
+    );
   }
 
   @NotNull
-  public static <ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState>
-  ExpressionState reduceExpression(
-      @NotNull ReducerP<ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> reducer,
-      @NotNull Expression node,
-      @NotNull ImmutableList<Branch> path) {
-    switch (node.type()) {
-    case FunctionExpression: {
-      FunctionExpression tNode = (FunctionExpression) node;
-      return reducer.reduceFunctionExpression(
-          tNode,
-          path,
-          reducerMaybeIdentifier(reducer, tNode.name, path.cons(StaticBranch.NAME)),
-          reduceListIdentifier(reducer, tNode.parameters, path.cons(StaticBranch.PARAMETERS)),
-          reduceFunctionBody(reducer, tNode.body, path.cons(StaticBranch.BODY)));
-    }
-    case LiteralBooleanExpression: {
-      LiteralBooleanExpression tNode = (LiteralBooleanExpression) node;
-      return reducer.reduceLiteralBooleanExpression(tNode, path);
-    }
-    case LiteralNullExpression: {
-      LiteralNullExpression tNode = (LiteralNullExpression) node;
-      return reducer.reduceLiteralNullExpression(tNode, path);
-    }
-    case LiteralInfinityExpression: {
-      LiteralInfinityExpression tNode = (LiteralInfinityExpression) node;
-      return reducer.reduceLiteralInfinityExpression(tNode, path);
-    }
-    case LiteralNumericExpression: {
-      LiteralNumericExpression tNode = (LiteralNumericExpression) node;
-      return reducer.reduceLiteralNumericExpression(tNode, path);
-    }
-    case LiteralRegExpExpression: {
-      LiteralRegExpExpression tNode = (LiteralRegExpExpression) node;
-      return reducer.reduceLiteralRegExpExpression(tNode, path);
-    }
-    case LiteralStringExpression: {
-      LiteralStringExpression tNode = (LiteralStringExpression) node;
-      return reducer.reduceLiteralStringExpression(tNode, path);
-    }
-    case ArrayExpression: {
-      ArrayExpression tNode = (ArrayExpression) node;
-      NonEmptyImmutableList<Branch> elementsPath = path.cons(StaticBranch.ELEMENTS);
-      return reducer.reduceArrayExpression(
-          tNode,
-          path,
-          tNode.elements.mapWithIndex((i, el) ->
-              reduceOptionExpression(
-                  reducer,
-                  el,
-                  elementsPath.cons(IndexedBranch.from(i)))));
-    }
-    case AssignmentExpression: {
-      AssignmentExpression tNode = (AssignmentExpression) node;
-      return reducer.reduceAssignmentExpression(
-          tNode,
-          path,
-          reduceExpression(reducer, tNode.binding, path.cons(StaticBranch.BINDING)),
-          reduceExpression(reducer, tNode.expression, path.cons(StaticBranch.EXPRESSION)));
-    }
-    case BinaryExpression: {
-      BinaryExpression tNode = (BinaryExpression) node;
-      return reducer.reduceBinaryExpression(
-          tNode,
-          path,
-          reduceExpression(reducer, tNode.left, path.cons(StaticBranch.LEFT)),
-          reduceExpression(reducer, tNode.right, path.cons(StaticBranch.RIGHT)));
-    }
-    case CallExpression: {
-      CallExpression tNode = (CallExpression) node;
-      return reducer.reduceCallExpression(
-          tNode,
-          path,
-          reduceExpression(reducer, tNode.callee, path.cons(StaticBranch.CALLEE)),
-          reduceListExpression(reducer, tNode.arguments, path.cons(StaticBranch.ARGUMENTS)));
-    }
-    case ComputedMemberExpression: {
-      ComputedMemberExpression tNode = (ComputedMemberExpression) node;
-      return reducer.reduceComputedMemberExpression(
-          tNode,
-          path,
-          reduceExpression(reducer, tNode.object, path.cons(StaticBranch.OBJECT)),
-          reduceExpression(reducer, tNode.expression, path.cons(StaticBranch.EXPRESSION)));
-    }
-    case ConditionalExpression: {
-      ConditionalExpression tNode = (ConditionalExpression) node;
-      return reducer.reduceConditionalExpression(
-          tNode,
-          path,
-          reduceExpression(reducer, tNode.test, path.cons(StaticBranch.TEST)),
-          reduceExpression(reducer, tNode.consequent, path.cons(StaticBranch.CONSEQUENT)),
-          reduceExpression(reducer, tNode.alternate, path.cons(StaticBranch.ALTERNATE)));
-    }
-    case IdentifierExpression: {
-      IdentifierExpression tNode = (IdentifierExpression) node;
-      return reducer.reduceIdentifierExpression(
-          tNode,
-          path,
-          reduceIdentifier(reducer, tNode.identifier, path.cons(StaticBranch.IDENTIFIER)));
-    }
-    case NewExpression: {
-      NewExpression tNode = (NewExpression) node;
-      return reducer.reduceNewExpression(
-          tNode,
-          path,
-          reduceExpression(reducer, tNode.callee, path.cons(StaticBranch.CALLEE)),
-          reduceListExpression(reducer, tNode.arguments, path.cons(StaticBranch.ARGUMENTS)));
-    }
-    case PostfixExpression: {
-      PostfixExpression tNode = (PostfixExpression) node;
-      return reducer.reducePostfixExpression(
-          tNode,
-          path,
-          reduceExpression(reducer, tNode.operand, path.cons(StaticBranch.OPERAND)));
-    }
-    case ObjectExpression: {
-      ObjectExpression tNode = (ObjectExpression) node;
-      return reducer.reduceObjectExpression(
-          tNode,
-          path,
-          reducerListProperty(reducer, tNode.properties, path.cons(StaticBranch.PROPERTIES)));
-    }
-    case PrefixExpression: {
-      PrefixExpression tNode = (PrefixExpression) node;
-      return reducer.reducePrefixExpression(
-          tNode,
-          path,
-          reduceExpression(reducer, tNode.operand, path.cons(StaticBranch.OPERAND)));
-    }
-    case StaticMemberExpression: {
-      StaticMemberExpression tNode = (StaticMemberExpression) node;
-      return reducer.reduceStaticMemberExpression(
-          tNode,
-          path,
-          reduceExpression(reducer, tNode.object, path.cons(StaticBranch.OBJECT)),
-          reduceIdentifier(reducer, tNode.property, path.cons(StaticBranch.PROPERTY)));
-    }
-    case ThisExpression: {
-      ThisExpression tNode = (ThisExpression) node;
-      return reducer.reduceThisExpression(tNode, path);
-    }
-    default:
-      throw new RuntimeException("Not reached");
-    }
-  }
-
-  @NotNull
-  public static <ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState>
-  DirectiveState reduceDirective(
-      @NotNull ReducerP<ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> reducer,
-      @NotNull Directive node,
-      @NotNull ImmutableList<Branch> path) {
-    if (node instanceof UseStrictDirective) {
-      return reducer.reduceUseStrictDirective(((UseStrictDirective) node), path);
-    } else {
-      return reducer.reduceUnknownDirective(((UnknownDirective) node), path);
-    }
-  }
-
-  @NotNull
-  public static <ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState>
-  StatementState reduceStatement(
-      @NotNull ReducerP<ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> reducer,
-      @NotNull Statement node,
-      @NotNull ImmutableList<Branch> path) {
-    switch (node.type()) {
-    case FunctionDeclaration: {
+  public static <ArrayBindingState, ArrayExpressionState, ArrowExpressionState, AssignmentExpressionState, BinaryExpressionState, BindingState, BindingBindingWithDefaultState, BindingIdentifierState, BindingIdentifierMemberExpressionState, BindingPropertyState, BindingPropertyIdentifierState, BindingPropertyPropertyState, BindingWithDefaultState, BlockState, BlockStatementState, BreakStatementState, CallExpressionState, CatchClauseState, ClassDeclarationState, ClassElementState, ClassExpressionState, CompoundAssignmentExpressionState, ComputedMemberExpressionState, ComputedPropertyNameState, ConditionalExpressionState, ContinueStatementState, DataPropertyState, DebuggerStatementState, DirectiveState, DoWhileStatementState, EmptyStatementState, ExportState, ExportAllFromState, ExportDeclarationState, ExportDefaultState, ExportFromState, ExportSpecifierState, ExpressionState, ExpressionStatementState, ExpressionSuperState, ExpressionTemplateElementState, ForInStatementState, ForOfStatementState, ForStatementState, FormalParametersState, FunctionBodyState, FunctionBodyExpressionState, FunctionDeclarationState, FunctionDeclarationClassDeclarationExpressionState, FunctionDeclarationClassDeclarationVariableDeclarationState, FunctionExpressionState, GetterState, IdentifierExpressionState, IfStatementState, ImportState, ImportDeclarationState, ImportDeclarationExportDeclarationStatementState, ImportNamespaceState, ImportSpecifierState, LabeledStatementState, LiteralBooleanExpressionState, LiteralInfinityExpressionState, LiteralNullExpressionState, LiteralNumericExpressionState, LiteralRegExpExpressionState, LiteralStringExpressionState, MethodState, MethodDefinitionState, ModuleState, NamedObjectPropertyState, NewExpressionState, NewTargetExpressionState, ObjectBindingState, ObjectExpressionState, ObjectPropertyState, PropertyNameState, ReturnStatementState, ScriptState, SetterState, ShorthandPropertyState, SpreadElementState, SpreadElementExpressionState, StatementState, StaticMemberExpressionState, StaticPropertyNameState, SuperState, SwitchCaseState, SwitchDefaultState, SwitchStatementState, SwitchStatementWithDefaultState, TemplateElementState, TemplateExpressionState, ThisExpressionState, ThrowStatementState, TryCatchStatementState, TryFinallyStatementState, UnaryExpressionState, UpdateExpressionState, VariableDeclarationState, VariableDeclarationBindingState, VariableDeclarationExpressionState, VariableDeclarationStatementState, VariableDeclaratorState, WhileStatementState, WithStatementState, YieldExpressionState, YieldGeneratorExpressionState, Out>
+  Out reduceStatement(
+    @NotNull ReducerP<ArrayBindingState, ArrayExpressionState, ArrowExpressionState, AssignmentExpressionState, BinaryExpressionState, BindingState, BindingBindingWithDefaultState, BindingIdentifierState, BindingIdentifierMemberExpressionState, BindingPropertyState, BindingPropertyIdentifierState, BindingPropertyPropertyState, BindingWithDefaultState, BlockState, BlockStatementState, BreakStatementState, CallExpressionState, CatchClauseState, ClassDeclarationState, ClassElementState, ClassExpressionState, CompoundAssignmentExpressionState, ComputedMemberExpressionState, ComputedPropertyNameState, ConditionalExpressionState, ContinueStatementState, DataPropertyState, DebuggerStatementState, DirectiveState, DoWhileStatementState, EmptyStatementState, ExportState, ExportAllFromState, ExportDeclarationState, ExportDefaultState, ExportFromState, ExportSpecifierState, ExpressionState, ExpressionStatementState, ExpressionSuperState, ExpressionTemplateElementState, ForInStatementState, ForOfStatementState, ForStatementState, FormalParametersState, FunctionBodyState, FunctionBodyExpressionState, FunctionDeclarationState, FunctionDeclarationClassDeclarationExpressionState, FunctionDeclarationClassDeclarationVariableDeclarationState, FunctionExpressionState, GetterState, IdentifierExpressionState, IfStatementState, ImportState, ImportDeclarationState, ImportDeclarationExportDeclarationStatementState, ImportNamespaceState, ImportSpecifierState, LabeledStatementState, LiteralBooleanExpressionState, LiteralInfinityExpressionState, LiteralNullExpressionState, LiteralNumericExpressionState, LiteralRegExpExpressionState, LiteralStringExpressionState, MethodState, MethodDefinitionState, ModuleState, NamedObjectPropertyState, NewExpressionState, NewTargetExpressionState, ObjectBindingState, ObjectExpressionState, ObjectPropertyState, PropertyNameState, ReturnStatementState, ScriptState, SetterState, ShorthandPropertyState, SpreadElementState, SpreadElementExpressionState, StatementState, StaticMemberExpressionState, StaticPropertyNameState, SuperState, SwitchCaseState, SwitchDefaultState, SwitchStatementState, SwitchStatementWithDefaultState, TemplateElementState, TemplateExpressionState, ThisExpressionState, ThrowStatementState, TryCatchStatementState, TryFinallyStatementState, UnaryExpressionState, UpdateExpressionState, VariableDeclarationState, VariableDeclarationBindingState, VariableDeclarationExpressionState, VariableDeclarationStatementState, VariableDeclaratorState, WhileStatementState, WithStatementState, YieldExpressionState, YieldGeneratorExpressionState, Out> reducer,
+    @NotNull Statement node) {
+    if (node instanceof FunctionDeclaration) {
       FunctionDeclaration tNode = (FunctionDeclaration) node;
-      return reducer.reduceFunctionDeclaration(
-          tNode,
-          path,
-          reduceIdentifier(reducer, tNode.name, path.cons(StaticBranch.NAME)),
-          reduceListIdentifier(reducer, tNode.parameters, path.cons(StaticBranch.PARAMETERS)),
-          reduceFunctionBody(reducer, tNode.body, path.cons(StaticBranch.BODY)));
-    }
-    case BlockStatement: {
+      return reducer.reduceFunctionDeclaration(tNode, reduceBindingIdentifier(reducer, tNode.name), reduceFormalParameters(reducer, tNode.params), reduceFunctionBody(reducer, tNode.body));
+    } else if (node instanceof BlockStatement) {
       BlockStatement tNode = (BlockStatement) node;
-      return reducer.reduceBlockStatement(
-          tNode,
-          path,
-          reduceBlock(reducer, tNode.block, path.cons(StaticBranch.BLOCK)));
-    }
-    case BreakStatement: {
+      return reducer.reduceBlockStatement(tNode, reduceBlock(reducer, tNode.block);
+    } else if (node instanceof BreakStatement) {
       BreakStatement tNode = (BreakStatement) node;
-      return reducer.reduceBreakStatement(
-          tNode,
-          path,
-          tNode.label.map(n -> reduceIdentifier(reducer, n, path.cons(StaticBranch.LABEL).cons(StaticBranch.JUST))));
-    }
-    case ContinueStatement: {
+      return reducer.reduceBreakStatement(tNode);
+    } else if (node instanceof ContinueStatement) {
       ContinueStatement tNode = (ContinueStatement) node;
-      return reducer.reduceContinueStatement(
-          tNode,
-          path,
-          tNode.label.map(n -> reduceIdentifier(reducer, n, path.cons(StaticBranch.LABEL).cons(StaticBranch.JUST))));
-    }
-    case DebuggerStatement: {
+      return reducer.reduceContinueStatement(tNode);
+    } else if (node instanceof DebuggerStatement) {
       DebuggerStatement tNode = (DebuggerStatement) node;
-      return reducer.reduceDebuggerStatement(tNode, path);
-    }
-    case DoWhileStatement: {
+      return reducer.reduceDebuggerStatement(tNode);
+    } else if (node instanceof DoWhileStatement) {
       DoWhileStatement tNode = (DoWhileStatement) node;
-      return reducer.reduceDoWhileStatement(
-          tNode,
-          path,
-          reduceStatement(reducer, tNode.body, path.cons(StaticBranch.BODY)),
-          reduceExpression(reducer, tNode.test, path.cons(StaticBranch.TEST)));
-    }
-    case EmptyStatement: {
+      return reducer.reduceDoWhileStatement(tNode, reduceStatement(reducer, tNode.body), reduceExpression(reducer, tNode.test));
+    } else if (node instanceof EmptyStatement) {
       EmptyStatement tNode = (EmptyStatement) node;
-      return reducer.reduceEmptyStatement(tNode, path);
-    }
-    case ExpressionStatement: {
+      return reducer.reduceEmptyStatement(tNode);
+    } else if (node instanceof ExpressionStatement) {
       ExpressionStatement tNode = (ExpressionStatement) node;
-      return reducer.reduceExpressionStatement(
-          tNode,
-          path,
-          reduceExpression(reducer, tNode.expression, path.cons(StaticBranch.EXPRESSION)));
-    }
-    case ForInStatement: {
+      return reducer.reduceExpressionStatement(tNode, reduceExpression(reducer, tNode.expression));
+    } else if (node instanceof ForInStatement) {
       ForInStatement tNode = (ForInStatement) node;
-      NonEmptyImmutableList<Branch> inner_path = path.cons(StaticBranch.LEFT);
-      Either<VariableDeclaration, Expression> left_node = tNode.left;
-      return reducer.reduceForInStatement(
-          tNode,
-          path,
-          reduceEitherVariableDeclarationExpression(reducer, left_node, inner_path),
-          reduceExpression(reducer, tNode.right, path.cons(StaticBranch.RIGHT)),
-          reduceStatement(reducer, tNode.body, path.cons(StaticBranch.BODY)));
-    }
-    case ForStatement: {
+      return reducer.reduceForInStatement(tNode, reduceVariableDeclarationBinding(reducer, tNode.left), reduceExpression(reducer, tNode.right), reduceStatement(reducer, tNode.body));
+    } else if (node instanceof ForStatement) {
       ForStatement tNode = (ForStatement) node;
-      NonEmptyImmutableList<Branch> inner_path = path.cons(StaticBranch.INIT).cons(StaticBranch.JUST);
-      return reducer.reduceForStatement(
-          tNode,
-          path,
-          tNode.init.map(init -> reduceEitherVariableDeclarationExpression(reducer, init, inner_path)),
-          reduceOptionExpression(reducer, tNode.test, path.cons(StaticBranch.TEST)),
-          reduceOptionExpression(reducer, tNode.update, path.cons(StaticBranch.UPDATE)),
-          reduceStatement(reducer, tNode.body, path.cons(StaticBranch.BODY)));
-    }
-    case IfStatement: {
+      return reducer.reduceForStatement(tNode, tNode.init.map(init -> reduceVariableDeclarationExpression(reducer, tNode.init)), reduceOptionExpression(reducer, tNode.test), reduceOptionExpression(reducer, tNode.update), reduceStatement(reducer, tNode.body));
+    } else if (node instanceof IfStatement) {
       IfStatement tNode = (IfStatement) node;
-      return reducer.reduceIfStatement(
-          tNode,
-          path,
-          reduceExpression(reducer, tNode.test, path.cons(StaticBranch.TEST)),
-          reduceStatement(reducer, tNode.consequent, path.cons(StaticBranch.CONSEQUENT)),
-          reduceOptionStatement(reducer, tNode.alternate, path.cons(StaticBranch.ALTERNATE)));
-    }
-    case LabeledStatement: {
+      return reducer.reduceIfStatement(tNode, reduceExpression(reducer, tNode.test), reduceStatement(reducer, tNode.consequent), reduceOptionStatement(reducer, tNode.alternate));
+    } else if (node instanceof LabeledStatement) {
       LabeledStatement tNode = (LabeledStatement) node;
-      return reducer.reduceLabeledStatement(
-          tNode,
-          path,
-          reduceIdentifier(reducer, tNode.label, path.cons(StaticBranch.LABEL)),
-          reduceStatement(reducer, tNode.body, path.cons(StaticBranch.BODY)));
-    }
-    case ReturnStatement: {
+      return reducer.reduceLabeledStatement(tNode, reduceStatement(reducer, tNode.body));
+    } else if (node instanceof ReturnStatement) {
       ReturnStatement tNode = (ReturnStatement) node;
-      return reducer.reduceReturnStatement(
-          tNode,
-          path,
-          reduceOptionExpression(reducer, tNode.expression, path.cons(StaticBranch.EXPRESSION)));
-    }
-    case SwitchStatement: {
+      return reducer.reduceReturnStatement(tNode, reduceOptionExpression(reducer, tNode.expression));
+    } else if (node instanceof SwitchStatement) {
       SwitchStatement tNode = (SwitchStatement) node;
-      return reducer.reduceSwitchStatement(
-          tNode,
-          path,
-          reduceExpression(reducer, tNode.discriminant, path.cons(StaticBranch.DISCRIMINANT)),
-          reduceListSwitchCase(reducer, tNode.cases, path.cons(StaticBranch.CASES)));
-    }
-    case SwitchStatementWithDefault: {
+      return reducer.reduceSwitchStatement(tNode, reduceExpression(reducer, tNode.discriminant), reduceListSwitchCase(reducer, tNode.cases));
+    } else if (node instanceof SwitchStatementWithDefault) {
       SwitchStatementWithDefault tNode = (SwitchStatementWithDefault) node;
-      return reducer.reduceSwitchStatementWithDefault(
-          tNode,
-          path,
-          reduceExpression(reducer, tNode.discriminant, path.cons(StaticBranch.DISCRIMINANT)),
-          reduceListSwitchCase(reducer, tNode.preDefaultCases, path.cons(StaticBranch.PREDEFAULTCASES)),
-          reduceSwitchDefault(reducer, tNode.defaultCase, path.cons(StaticBranch.DEFAULTCASE)),
-          reduceListSwitchCase(reducer, tNode.postDefaultCases, path.cons(StaticBranch.POSTDEFAULTCASES)));
-    }
-    case ThrowStatement: {
+      return reducer.reduceSwitchStatementWithDefault(tNode, reduceExpression(reducer, tNode.discriminant), reduceListSwitchCase(reducer, tNode.preDefaultCases), reduceSwitchDefault(reducer, tNode.defaultCase), reduceListSwitchCase(reducer, tNode.postDefaultCases));
+    } else if (node instanceof ThrowStatement) {
       ThrowStatement tNode = (ThrowStatement) node;
-      return reducer.reduceThrowStatement(
-          tNode,
-          path,
-          reduceExpression(reducer, tNode.expression, path.cons(StaticBranch.EXPRESSION)));
-    }
-    case TryCatchStatement: {
+      return reducer.reduceThrowStatement(tNode, reduceExpression(reducer, tNode.expression));
+    } else if (node instanceof TryCatchStatement) {
       TryCatchStatement tNode = (TryCatchStatement) node;
-      return reducer.reduceTryCatchStatement(
-          tNode,
-          path,
-          reduceBlock(reducer, tNode.body, path.cons(StaticBranch.BODY)),
-          reduceCatchClause(reducer, tNode.catchClause, path.cons(StaticBranch.CATCHCLAUSE)));
-    }
-    case TryFinallyStatement: {
+      return reducer.reduceTryCatchStatement(tNode, reduceBlock(reducer, tNode.body), reduceCatchClause(reducer, tNode.catchClause));
+    } else if (node instanceof TryFinallyStatement) {
       TryFinallyStatement tNode = (TryFinallyStatement) node;
-      return reducer.reduceTryFinallyStatement(
-          tNode,
-          path,
-          reduceBlock(reducer, tNode.body, path.cons(StaticBranch.BODY)),
-          tNode.catchClause.map(n ->
-              reduceCatchClause(
-                  reducer,
-                  n,
-                  path.cons(StaticBranch.CATCHCLAUSE).cons(StaticBranch.JUST))),
-          reduceBlock(reducer, tNode.finalizer, path.cons(StaticBranch.FINALIZER)));
-    }
-    case VariableDeclarationStatement: {
+      return reducer.reduceTryFinallyStatement(tNode, reduceBlock(reducer, tNode.body), tNode.catchClause.map(n -> reduceCatchClause(reducer, n)), reduceBlock(reducer, tNode.finalizer));
+    } else if (node instanceof VariableDeclarationStatement) {
       VariableDeclarationStatement tNode = (VariableDeclarationStatement) node;
-      return reducer.reduceVariableDeclarationStatement(
-          tNode,
-          path,
-          reduceVariableDeclaration(reducer, tNode.declaration, path.cons(StaticBranch.DECLARATION)));
-    }
-    case WhileStatement: {
+      return reducer.reduceVariableDeclarationStatement(tNode, reduceVariableDeclaration(reducer, tNode.declaration));
+    } else if (node instanceof WhileStatement) {
       WhileStatement tNode = (WhileStatement) node;
-      return reducer.reduceWhileStatement(
-          tNode,
-          path,
-          reduceExpression(reducer, tNode.test, path.cons(StaticBranch.TEST)),
-          reduceStatement(reducer, tNode.body, path.cons(StaticBranch.BODY)));
-    }
-    case WithStatement: {
+      return reducer.reduceWhileStatement(tNode, reduceExpression(reducer, tNode.test), reduceStatement(reducer, tNode.body));
+    } else if (node instanceof WithStatement) {
       WithStatement tNode = (WithStatement) node;
-      return reducer.reduceWithStatement(
-          tNode,
-          path,
-          reduceExpression(reducer, tNode.object, path.cons(StaticBranch.OBJECT)),
-          reduceStatement(reducer, tNode.body, path.cons(StaticBranch.BODY)));
+      return reducer.reduceWithStatement(tNode, reduceExpression(reducer, tNode._object), reduceStatement(reducer, tNode.body));
     }
-    default:
-      throw new RuntimeException("Not reached");
+    throw new RuntimeException("Not reached");
+  }
+
+  private static <ArrayBindingState, ArrayExpressionState, ArrowExpressionState, AssignmentExpressionState, BinaryExpressionState, BindingState, BindingBindingWithDefaultState, BindingIdentifierState, BindingIdentifierMemberExpressionState, BindingPropertyState, BindingPropertyIdentifierState, BindingPropertyPropertyState, BindingWithDefaultState, BlockState, BlockStatementState, BreakStatementState, CallExpressionState, CatchClauseState, ClassDeclarationState, ClassElementState, ClassExpressionState, CompoundAssignmentExpressionState, ComputedMemberExpressionState, ComputedPropertyNameState, ConditionalExpressionState, ContinueStatementState, DataPropertyState, DebuggerStatementState, DirectiveState, DoWhileStatementState, EmptyStatementState, ExportState, ExportAllFromState, ExportDeclarationState, ExportDefaultState, ExportFromState, ExportSpecifierState, ExpressionState, ExpressionStatementState, ExpressionSuperState, ExpressionTemplateElementState, ForInStatementState, ForOfStatementState, ForStatementState, FormalParametersState, FunctionBodyState, FunctionBodyExpressionState, FunctionDeclarationState, FunctionDeclarationClassDeclarationExpressionState, FunctionDeclarationClassDeclarationVariableDeclarationState, FunctionExpressionState, GetterState, IdentifierExpressionState, IfStatementState, ImportState, ImportDeclarationState, ImportDeclarationExportDeclarationStatementState, ImportNamespaceState, ImportSpecifierState, LabeledStatementState, LiteralBooleanExpressionState, LiteralInfinityExpressionState, LiteralNullExpressionState, LiteralNumericExpressionState, LiteralRegExpExpressionState, LiteralStringExpressionState, MethodState, MethodDefinitionState, ModuleState, NamedObjectPropertyState, NewExpressionState, NewTargetExpressionState, ObjectBindingState, ObjectExpressionState, ObjectPropertyState, PropertyNameState, ReturnStatementState, ScriptState, SetterState, ShorthandPropertyState, SpreadElementState, SpreadElementExpressionState, StatementState, StaticMemberExpressionState, StaticPropertyNameState, SuperState, SwitchCaseState, SwitchDefaultState, SwitchStatementState, SwitchStatementWithDefaultState, TemplateElementState, TemplateExpressionState, ThisExpressionState, ThrowStatementState, TryCatchStatementState, TryFinallyStatementState, UnaryExpressionState, UpdateExpressionState, VariableDeclarationState, VariableDeclarationBindingState, VariableDeclarationExpressionState, VariableDeclarationStatementState, VariableDeclaratorState, WhileStatementState, WithStatementState, YieldExpressionState, YieldGeneratorExpressionState, Out>
+  Out reduceFormalParameters(
+    ReducerP<ArrayBindingState, ArrayExpressionState, ArrowExpressionState, AssignmentExpressionState, BinaryExpressionState, BindingState, BindingBindingWithDefaultState, BindingIdentifierState, BindingIdentifierMemberExpressionState, BindingPropertyState, BindingPropertyIdentifierState, BindingPropertyPropertyState, BindingWithDefaultState, BlockState, BlockStatementState, BreakStatementState, CallExpressionState, CatchClauseState, ClassDeclarationState, ClassElementState, ClassExpressionState, CompoundAssignmentExpressionState, ComputedMemberExpressionState, ComputedPropertyNameState, ConditionalExpressionState, ContinueStatementState, DataPropertyState, DebuggerStatementState, DirectiveState, DoWhileStatementState, EmptyStatementState, ExportState, ExportAllFromState, ExportDeclarationState, ExportDefaultState, ExportFromState, ExportSpecifierState, ExpressionState, ExpressionStatementState, ExpressionSuperState, ExpressionTemplateElementState, ForInStatementState, ForOfStatementState, ForStatementState, FormalParametersState, FunctionBodyState, FunctionBodyExpressionState, FunctionDeclarationState, FunctionDeclarationClassDeclarationExpressionState, FunctionDeclarationClassDeclarationVariableDeclarationState, FunctionExpressionState, GetterState, IdentifierExpressionState, IfStatementState, ImportState, ImportDeclarationState, ImportDeclarationExportDeclarationStatementState, ImportNamespaceState, ImportSpecifierState, LabeledStatementState, LiteralBooleanExpressionState, LiteralInfinityExpressionState, LiteralNullExpressionState, LiteralNumericExpressionState, LiteralRegExpExpressionState, LiteralStringExpressionState, MethodState, MethodDefinitionState, ModuleState, NamedObjectPropertyState, NewExpressionState, NewTargetExpressionState, ObjectBindingState, ObjectExpressionState, ObjectPropertyState, PropertyNameState, ReturnStatementState, ScriptState, SetterState, ShorthandPropertyState, SpreadElementState, SpreadElementExpressionState, StatementState, StaticMemberExpressionState, StaticPropertyNameState, SuperState, SwitchCaseState, SwitchDefaultState, SwitchStatementState, SwitchStatementWithDefaultState, TemplateElementState, TemplateExpressionState, ThisExpressionState, ThrowStatementState, TryCatchStatementState, TryFinallyStatementState, UnaryExpressionState, UpdateExpressionState, VariableDeclarationState, VariableDeclarationBindingState, VariableDeclarationExpressionState, VariableDeclarationStatementState, VariableDeclaratorState, WhileStatementState, WithStatementState, YieldExpressionState, YieldGeneratorExpressionState, Out> reducer,
+    FormalParameters node) {
+    return reducer.reduceFormalParameters(node.items.map((i) -> reducer.reduceBindingBindingWithDefault(i)), node.rest.map(reducer::reduceBindingIdentifier));
+  }
+
+  private static <ArrayBindingState, ArrayExpressionState, ArrowExpressionState, AssignmentExpressionState, BinaryExpressionState, BindingState, BindingBindingWithDefaultState, BindingIdentifierState, BindingIdentifierMemberExpressionState, BindingPropertyState, BindingPropertyIdentifierState, BindingPropertyPropertyState, BindingWithDefaultState, BlockState, BlockStatementState, BreakStatementState, CallExpressionState, CatchClauseState, ClassDeclarationState, ClassElementState, ClassExpressionState, CompoundAssignmentExpressionState, ComputedMemberExpressionState, ComputedPropertyNameState, ConditionalExpressionState, ContinueStatementState, DataPropertyState, DebuggerStatementState, DirectiveState, DoWhileStatementState, EmptyStatementState, ExportState, ExportAllFromState, ExportDeclarationState, ExportDefaultState, ExportFromState, ExportSpecifierState, ExpressionState, ExpressionStatementState, ExpressionSuperState, ExpressionTemplateElementState, ForInStatementState, ForOfStatementState, ForStatementState, FormalParametersState, FunctionBodyState, FunctionBodyExpressionState, FunctionDeclarationState, FunctionDeclarationClassDeclarationExpressionState, FunctionDeclarationClassDeclarationVariableDeclarationState, FunctionExpressionState, GetterState, IdentifierExpressionState, IfStatementState, ImportState, ImportDeclarationState, ImportDeclarationExportDeclarationStatementState, ImportNamespaceState, ImportSpecifierState, LabeledStatementState, LiteralBooleanExpressionState, LiteralInfinityExpressionState, LiteralNullExpressionState, LiteralNumericExpressionState, LiteralRegExpExpressionState, LiteralStringExpressionState, MethodState, MethodDefinitionState, ModuleState, NamedObjectPropertyState, NewExpressionState, NewTargetExpressionState, ObjectBindingState, ObjectExpressionState, ObjectPropertyState, PropertyNameState, ReturnStatementState, ScriptState, SetterState, ShorthandPropertyState, SpreadElementState, SpreadElementExpressionState, StatementState, StaticMemberExpressionState, StaticPropertyNameState, SuperState, SwitchCaseState, SwitchDefaultState, SwitchStatementState, SwitchStatementWithDefaultState, TemplateElementState, TemplateExpressionState, ThisExpressionState, ThrowStatementState, TryCatchStatementState, TryFinallyStatementState, UnaryExpressionState, UpdateExpressionState, VariableDeclarationState, VariableDeclarationBindingState, VariableDeclarationExpressionState, VariableDeclarationStatementState, VariableDeclaratorState, WhileStatementState, WithStatementState, YieldExpressionState, YieldGeneratorExpressionState, Out>
+  Out reduceBindingBindingWithDefault(
+    ReducerP<ArrayBindingState, ArrayExpressionState, ArrowExpressionState, AssignmentExpressionState, BinaryExpressionState, BindingState, BindingBindingWithDefaultState, BindingIdentifierState, BindingIdentifierMemberExpressionState, BindingPropertyState, BindingPropertyIdentifierState, BindingPropertyPropertyState, BindingWithDefaultState, BlockState, BlockStatementState, BreakStatementState, CallExpressionState, CatchClauseState, ClassDeclarationState, ClassElementState, ClassExpressionState, CompoundAssignmentExpressionState, ComputedMemberExpressionState, ComputedPropertyNameState, ConditionalExpressionState, ContinueStatementState, DataPropertyState, DebuggerStatementState, DirectiveState, DoWhileStatementState, EmptyStatementState, ExportState, ExportAllFromState, ExportDeclarationState, ExportDefaultState, ExportFromState, ExportSpecifierState, ExpressionState, ExpressionStatementState, ExpressionSuperState, ExpressionTemplateElementState, ForInStatementState, ForOfStatementState, ForStatementState, FormalParametersState, FunctionBodyState, FunctionBodyExpressionState, FunctionDeclarationState, FunctionDeclarationClassDeclarationExpressionState, FunctionDeclarationClassDeclarationVariableDeclarationState, FunctionExpressionState, GetterState, IdentifierExpressionState, IfStatementState, ImportState, ImportDeclarationState, ImportDeclarationExportDeclarationStatementState, ImportNamespaceState, ImportSpecifierState, LabeledStatementState, LiteralBooleanExpressionState, LiteralInfinityExpressionState, LiteralNullExpressionState, LiteralNumericExpressionState, LiteralRegExpExpressionState, LiteralStringExpressionState, MethodState, MethodDefinitionState, ModuleState, NamedObjectPropertyState, NewExpressionState, NewTargetExpressionState, ObjectBindingState, ObjectExpressionState, ObjectPropertyState, PropertyNameState, ReturnStatementState, ScriptState, SetterState, ShorthandPropertyState, SpreadElementState, SpreadElementExpressionState, StatementState, StaticMemberExpressionState, StaticPropertyNameState, SuperState, SwitchCaseState, SwitchDefaultState, SwitchStatementState, SwitchStatementWithDefaultState, TemplateElementState, TemplateExpressionState, ThisExpressionState, ThrowStatementState, TryCatchStatementState, TryFinallyStatementState, UnaryExpressionState, UpdateExpressionState, VariableDeclarationState, VariableDeclarationBindingState, VariableDeclarationExpressionState, VariableDeclarationStatementState, VariableDeclaratorState, WhileStatementState, WithStatementState, YieldExpressionState, YieldGeneratorExpressionState, Out> reducer,
+    BindingBindingWithDefault node) {
+    if (node instanceof Binding) {
+      return reduceBinding(reducer, (Binding) node);
+    } else {
+      return reduceBindingWithDefault(reducer, (BindingWithDefault) node);
     }
   }
 
-  @NotNull
-  public static <ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState>
-  BlockState reduceBlock(
-      @NotNull ReducerP<ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> reducer,
-      @NotNull Block node,
-      @NotNull ImmutableList<Branch> path) {
-    return reducer.reduceBlock(
-        node,
-        path,
-        reduceListStatement(reducer, node.statements, path.cons(StaticBranch.STATEMENTS)));
+  private static <ArrayBindingState, ArrayExpressionState, ArrowExpressionState, AssignmentExpressionState, BinaryExpressionState, BindingState, BindingBindingWithDefaultState, BindingIdentifierState, BindingIdentifierMemberExpressionState, BindingPropertyState, BindingPropertyIdentifierState, BindingPropertyPropertyState, BindingWithDefaultState, BlockState, BlockStatementState, BreakStatementState, CallExpressionState, CatchClauseState, ClassDeclarationState, ClassElementState, ClassExpressionState, CompoundAssignmentExpressionState, ComputedMemberExpressionState, ComputedPropertyNameState, ConditionalExpressionState, ContinueStatementState, DataPropertyState, DebuggerStatementState, DirectiveState, DoWhileStatementState, EmptyStatementState, ExportState, ExportAllFromState, ExportDeclarationState, ExportDefaultState, ExportFromState, ExportSpecifierState, ExpressionState, ExpressionStatementState, ExpressionSuperState, ExpressionTemplateElementState, ForInStatementState, ForOfStatementState, ForStatementState, FormalParametersState, FunctionBodyState, FunctionBodyExpressionState, FunctionDeclarationState, FunctionDeclarationClassDeclarationExpressionState, FunctionDeclarationClassDeclarationVariableDeclarationState, FunctionExpressionState, GetterState, IdentifierExpressionState, IfStatementState, ImportState, ImportDeclarationState, ImportDeclarationExportDeclarationStatementState, ImportNamespaceState, ImportSpecifierState, LabeledStatementState, LiteralBooleanExpressionState, LiteralInfinityExpressionState, LiteralNullExpressionState, LiteralNumericExpressionState, LiteralRegExpExpressionState, LiteralStringExpressionState, MethodState, MethodDefinitionState, ModuleState, NamedObjectPropertyState, NewExpressionState, NewTargetExpressionState, ObjectBindingState, ObjectExpressionState, ObjectPropertyState, PropertyNameState, ReturnStatementState, ScriptState, SetterState, ShorthandPropertyState, SpreadElementState, SpreadElementExpressionState, StatementState, StaticMemberExpressionState, StaticPropertyNameState, SuperState, SwitchCaseState, SwitchDefaultState, SwitchStatementState, SwitchStatementWithDefaultState, TemplateElementState, TemplateExpressionState, ThisExpressionState, ThrowStatementState, TryCatchStatementState, TryFinallyStatementState, UnaryExpressionState, UpdateExpressionState, VariableDeclarationState, VariableDeclarationBindingState, VariableDeclarationExpressionState, VariableDeclarationStatementState, VariableDeclaratorState, WhileStatementState, WithStatementState, YieldExpressionState, YieldGeneratorExpressionState, Out>
+  Out reduceBindingWithDefault(
+    ReducerP<ArrayBindingState, ArrayExpressionState, ArrowExpressionState, AssignmentExpressionState, BinaryExpressionState, BindingState, BindingBindingWithDefaultState, BindingIdentifierState, BindingIdentifierMemberExpressionState, BindingPropertyState, BindingPropertyIdentifierState, BindingPropertyPropertyState, BindingWithDefaultState, BlockState, BlockStatementState, BreakStatementState, CallExpressionState, CatchClauseState, ClassDeclarationState, ClassElementState, ClassExpressionState, CompoundAssignmentExpressionState, ComputedMemberExpressionState, ComputedPropertyNameState, ConditionalExpressionState, ContinueStatementState, DataPropertyState, DebuggerStatementState, DirectiveState, DoWhileStatementState, EmptyStatementState, ExportState, ExportAllFromState, ExportDeclarationState, ExportDefaultState, ExportFromState, ExportSpecifierState, ExpressionState, ExpressionStatementState, ExpressionSuperState, ExpressionTemplateElementState, ForInStatementState, ForOfStatementState, ForStatementState, FormalParametersState, FunctionBodyState, FunctionBodyExpressionState, FunctionDeclarationState, FunctionDeclarationClassDeclarationExpressionState, FunctionDeclarationClassDeclarationVariableDeclarationState, FunctionExpressionState, GetterState, IdentifierExpressionState, IfStatementState, ImportState, ImportDeclarationState, ImportDeclarationExportDeclarationStatementState, ImportNamespaceState, ImportSpecifierState, LabeledStatementState, LiteralBooleanExpressionState, LiteralInfinityExpressionState, LiteralNullExpressionState, LiteralNumericExpressionState, LiteralRegExpExpressionState, LiteralStringExpressionState, MethodState, MethodDefinitionState, ModuleState, NamedObjectPropertyState, NewExpressionState, NewTargetExpressionState, ObjectBindingState, ObjectExpressionState, ObjectPropertyState, PropertyNameState, ReturnStatementState, ScriptState, SetterState, ShorthandPropertyState, SpreadElementState, SpreadElementExpressionState, StatementState, StaticMemberExpressionState, StaticPropertyNameState, SuperState, SwitchCaseState, SwitchDefaultState, SwitchStatementState, SwitchStatementWithDefaultState, TemplateElementState, TemplateExpressionState, ThisExpressionState, ThrowStatementState, TryCatchStatementState, TryFinallyStatementState, UnaryExpressionState, UpdateExpressionState, VariableDeclarationState, VariableDeclarationBindingState, VariableDeclarationExpressionState, VariableDeclarationStatementState, VariableDeclaratorState, WhileStatementState, WithStatementState, YieldExpressionState, YieldGeneratorExpressionState, Out> reducer,
+    BindingWithDefault node) {
+    return reducer.reduceBindingWithDefault(node, reduceBinding(reducer, node.binding), reduceExpression(reducer, node.init));
+  }
+
+  private static <ArrayBindingState, ArrayExpressionState, ArrowExpressionState, AssignmentExpressionState, BinaryExpressionState, BindingState, BindingBindingWithDefaultState, BindingIdentifierState extends Out, BindingIdentifierMemberExpressionState, BindingPropertyState, BindingPropertyIdentifierState, BindingPropertyPropertyState, BindingWithDefaultState, BlockState, BlockStatementState, BreakStatementState, CallExpressionState, CatchClauseState, ClassDeclarationState, ClassElementState, ClassExpressionState, CompoundAssignmentExpressionState, ComputedMemberExpressionState extends Out, ComputedPropertyNameState, ConditionalExpressionState, ContinueStatementState, DataPropertyState, DebuggerStatementState, DirectiveState, DoWhileStatementState, EmptyStatementState, ExportState, ExportAllFromState, ExportDeclarationState, ExportDefaultState, ExportFromState, ExportSpecifierState, ExpressionState, ExpressionStatementState, ExpressionSuperState extends Out, ExpressionTemplateElementState, ForInStatementState, ForOfStatementState, ForStatementState, FormalParametersState, FunctionBodyState, FunctionBodyExpressionState, FunctionDeclarationState, FunctionDeclarationClassDeclarationExpressionState, FunctionDeclarationClassDeclarationVariableDeclarationState, FunctionExpressionState, GetterState, IdentifierExpressionState, IfStatementState, ImportState, ImportDeclarationState, ImportDeclarationExportDeclarationStatementState, ImportNamespaceState, ImportSpecifierState, LabeledStatementState, LiteralBooleanExpressionState, LiteralInfinityExpressionState, LiteralNullExpressionState, LiteralNumericExpressionState, LiteralRegExpExpressionState, LiteralStringExpressionState, MethodState, MethodDefinitionState, ModuleState, NamedObjectPropertyState, NewExpressionState, NewTargetExpressionState, ObjectBindingState, ObjectExpressionState, ObjectPropertyState, PropertyNameState, ReturnStatementState, ScriptState, SetterState, ShorthandPropertyState, SpreadElementState, SpreadElementExpressionState, StatementState, StaticMemberExpressionState extends Out, StaticPropertyNameState, SuperState extends Out, SwitchCaseState, SwitchDefaultState, SwitchStatementState, SwitchStatementWithDefaultState, TemplateElementState, TemplateExpressionState, ThisExpressionState, ThrowStatementState, TryCatchStatementState, TryFinallyStatementState, UnaryExpressionState, UpdateExpressionState, VariableDeclarationState, VariableDeclarationBindingState, VariableDeclarationExpressionState, VariableDeclarationStatementState, VariableDeclaratorState, WhileStatementState, WithStatementState, YieldExpressionState, YieldGeneratorExpressionState, Out>
+  Out reduceCompoundAssignmentExpression(
+    ReducerP<ArrayBindingState, ArrayExpressionState, ArrowExpressionState, AssignmentExpressionState, BinaryExpressionState, BindingState, BindingBindingWithDefaultState, BindingIdentifierState, BindingIdentifierMemberExpressionState, BindingPropertyState, BindingPropertyIdentifierState, BindingPropertyPropertyState, BindingWithDefaultState, BlockState, BlockStatementState, BreakStatementState, CallExpressionState, CatchClauseState, ClassDeclarationState, ClassElementState, ClassExpressionState, CompoundAssignmentExpressionState, ComputedMemberExpressionState, ComputedPropertyNameState, ConditionalExpressionState, ContinueStatementState, DataPropertyState, DebuggerStatementState, DirectiveState, DoWhileStatementState, EmptyStatementState, ExportState, ExportAllFromState, ExportDeclarationState, ExportDefaultState, ExportFromState, ExportSpecifierState, ExpressionState, ExpressionStatementState, ExpressionSuperState, ExpressionTemplateElementState, ForInStatementState, ForOfStatementState, ForStatementState, FormalParametersState, FunctionBodyState, FunctionBodyExpressionState, FunctionDeclarationState, FunctionDeclarationClassDeclarationExpressionState, FunctionDeclarationClassDeclarationVariableDeclarationState, FunctionExpressionState, GetterState, IdentifierExpressionState, IfStatementState, ImportState, ImportDeclarationState, ImportDeclarationExportDeclarationStatementState, ImportNamespaceState, ImportSpecifierState, LabeledStatementState, LiteralBooleanExpressionState, LiteralInfinityExpressionState, LiteralNullExpressionState, LiteralNumericExpressionState, LiteralRegExpExpressionState, LiteralStringExpressionState, MethodState, MethodDefinitionState, ModuleState, NamedObjectPropertyState, NewExpressionState, NewTargetExpressionState, ObjectBindingState, ObjectExpressionState, ObjectPropertyState, PropertyNameState, ReturnStatementState, ScriptState, SetterState, ShorthandPropertyState, SpreadElementState, SpreadElementExpressionState, StatementState, StaticMemberExpressionState, StaticPropertyNameState, SuperState, SwitchCaseState, SwitchDefaultState, SwitchStatementState, SwitchStatementWithDefaultState, TemplateElementState, TemplateExpressionState, ThisExpressionState, ThrowStatementState, TryCatchStatementState, TryFinallyStatementState, UnaryExpressionState, UpdateExpressionState, VariableDeclarationState, VariableDeclarationBindingState, VariableDeclarationExpressionState, VariableDeclarationStatementState, VariableDeclaratorState, WhileStatementState, WithStatementState, YieldExpressionState, YieldGeneratorExpressionState, Out> reducer,
+    CompoundAssignmentExpression node) {
+    return reducer.reduceCompoundAssignmentExpression(node, reduceBindingIdentifierMemberExpression(reducer, node.binding), reduceExpression(reducer, node.expression));
+  }
+
+  private static <ArrayBindingState, ArrayExpressionState, ArrowExpressionState, AssignmentExpressionState, BinaryExpressionState, BindingState, BindingBindingWithDefaultState, BindingIdentifierState extends Out, BindingIdentifierMemberExpressionState, BindingPropertyState, BindingPropertyIdentifierState, BindingPropertyPropertyState, BindingWithDefaultState, BlockState, BlockStatementState, BreakStatementState, CallExpressionState, CatchClauseState, ClassDeclarationState, ClassElementState, ClassExpressionState, CompoundAssignmentExpressionState, ComputedMemberExpressionState, ComputedPropertyNameState, ConditionalExpressionState, ContinueStatementState, DataPropertyState, DebuggerStatementState, DirectiveState, DoWhileStatementState, EmptyStatementState, ExportState, ExportAllFromState, ExportDeclarationState, ExportDefaultState, ExportFromState, ExportSpecifierState, ExpressionState, ExpressionStatementState, ExpressionSuperState, ExpressionTemplateElementState, ForInStatementState, ForOfStatementState, ForStatementState, FormalParametersState, FunctionBodyState, FunctionBodyExpressionState, FunctionDeclarationState, FunctionDeclarationClassDeclarationExpressionState, FunctionDeclarationClassDeclarationVariableDeclarationState, FunctionExpressionState, GetterState, IdentifierExpressionState, IfStatementState, ImportState, ImportDeclarationState, ImportDeclarationExportDeclarationStatementState, ImportNamespaceState, ImportSpecifierState, LabeledStatementState, LiteralBooleanExpressionState, LiteralInfinityExpressionState, LiteralNullExpressionState, LiteralNumericExpressionState, LiteralRegExpExpressionState, LiteralStringExpressionState, MethodState, MethodDefinitionState, ModuleState, NamedObjectPropertyState, NewExpressionState, NewTargetExpressionState, ObjectBindingState, ObjectExpressionState, ObjectPropertyState, PropertyNameState, ReturnStatementState, ScriptState, SetterState, ShorthandPropertyState, SpreadElementState, SpreadElementExpressionState, StatementState, StaticMemberExpressionState, StaticPropertyNameState, SuperState extends Out, SwitchCaseState, SwitchDefaultState, SwitchStatementState, SwitchStatementWithDefaultState, TemplateElementState, TemplateExpressionState, ThisExpressionState, ThrowStatementState, TryCatchStatementState, TryFinallyStatementState, UnaryExpressionState, UpdateExpressionState, VariableDeclarationState, VariableDeclarationBindingState, VariableDeclarationExpressionState, VariableDeclarationStatementState, VariableDeclaratorState, WhileStatementState, WithStatementState, YieldExpressionState, YieldGeneratorExpressionState, Out>
+  Out reduceBindingIdentifierMemberExpression(
+    ReducerP<ArrayBindingState, ArrayExpressionState, ArrowExpressionState, AssignmentExpressionState, BinaryExpressionState, BindingState, BindingBindingWithDefaultState, BindingIdentifierState, BindingIdentifierMemberExpressionState, BindingPropertyState, BindingPropertyIdentifierState, BindingPropertyPropertyState, BindingWithDefaultState, BlockState, BlockStatementState, BreakStatementState, CallExpressionState, CatchClauseState, ClassDeclarationState, ClassElementState, ClassExpressionState, CompoundAssignmentExpressionState, ComputedMemberExpressionState, ComputedPropertyNameState, ConditionalExpressionState, ContinueStatementState, DataPropertyState, DebuggerStatementState, DirectiveState, DoWhileStatementState, EmptyStatementState, ExportState, ExportAllFromState, ExportDeclarationState, ExportDefaultState, ExportFromState, ExportSpecifierState, ExpressionState, ExpressionStatementState, ExpressionSuperState, ExpressionTemplateElementState, ForInStatementState, ForOfStatementState, ForStatementState, FormalParametersState, FunctionBodyState, FunctionBodyExpressionState, FunctionDeclarationState, FunctionDeclarationClassDeclarationExpressionState, FunctionDeclarationClassDeclarationVariableDeclarationState, FunctionExpressionState, GetterState, IdentifierExpressionState, IfStatementState, ImportState, ImportDeclarationState, ImportDeclarationExportDeclarationStatementState, ImportNamespaceState, ImportSpecifierState, LabeledStatementState, LiteralBooleanExpressionState, LiteralInfinityExpressionState, LiteralNullExpressionState, LiteralNumericExpressionState, LiteralRegExpExpressionState, LiteralStringExpressionState, MethodState, MethodDefinitionState, ModuleState, NamedObjectPropertyState, NewExpressionState, NewTargetExpressionState, ObjectBindingState, ObjectExpressionState, ObjectPropertyState, PropertyNameState, ReturnStatementState, ScriptState, SetterState, ShorthandPropertyState, SpreadElementState, SpreadElementExpressionState, StatementState, StaticMemberExpressionState, StaticPropertyNameState, SuperState, SwitchCaseState, SwitchDefaultState, SwitchStatementState, SwitchStatementWithDefaultState, TemplateElementState, TemplateExpressionState, ThisExpressionState, ThrowStatementState, TryCatchStatementState, TryFinallyStatementState, UnaryExpressionState, UpdateExpressionState, VariableDeclarationState, VariableDeclarationBindingState, VariableDeclarationExpressionState, VariableDeclarationStatementState, VariableDeclaratorState, WhileStatementState, WithStatementState, YieldExpressionState, YieldGeneratorExpressionState, Out> reducer,
+    BindingIdentifierMemberExpression node) {
+    if (node instanceof BindingIdentifier) {
+      return reducer.reduceBindingIdentifier((BindingIdentifier) node);
+    } else {
+      return reduceMemberExpression(reducer, (MemberExpression) node);
+    }
+  }
+
+  private static <ArrayBindingState, ArrayExpressionState, ArrowExpressionState, AssignmentExpressionState, BinaryExpressionState, BindingState, BindingBindingWithDefaultState, BindingIdentifierState, BindingIdentifierMemberExpressionState, BindingPropertyState, BindingPropertyIdentifierState, BindingPropertyPropertyState, BindingWithDefaultState, BlockState, BlockStatementState, BreakStatementState, CallExpressionState, CatchClauseState, ClassDeclarationState, ClassElementState, ClassExpressionState, CompoundAssignmentExpressionState, ComputedMemberExpressionState, ComputedPropertyNameState, ConditionalExpressionState, ContinueStatementState, DataPropertyState, DebuggerStatementState, DirectiveState, DoWhileStatementState, EmptyStatementState, ExportState, ExportAllFromState, ExportDeclarationState, ExportDefaultState, ExportFromState, ExportSpecifierState, ExpressionState, ExpressionStatementState, ExpressionSuperState, ExpressionTemplateElementState, ForInStatementState, ForOfStatementState, ForStatementState, FormalParametersState, FunctionBodyState, FunctionBodyExpressionState, FunctionDeclarationState, FunctionDeclarationClassDeclarationExpressionState, FunctionDeclarationClassDeclarationVariableDeclarationState, FunctionExpressionState, GetterState, IdentifierExpressionState, IfStatementState, ImportState, ImportDeclarationState, ImportDeclarationExportDeclarationStatementState, ImportNamespaceState, ImportSpecifierState, LabeledStatementState, LiteralBooleanExpressionState, LiteralInfinityExpressionState, LiteralNullExpressionState, LiteralNumericExpressionState, LiteralRegExpExpressionState, LiteralStringExpressionState, MethodState, MethodDefinitionState, ModuleState, NamedObjectPropertyState, NewExpressionState, NewTargetExpressionState, ObjectBindingState, ObjectExpressionState, ObjectPropertyState, PropertyNameState, ReturnStatementState, ScriptState, SetterState, ShorthandPropertyState, SpreadElementState, SpreadElementExpressionState, StatementState, StaticMemberExpressionState, StaticPropertyNameState, SuperState extends Out, SwitchCaseState, SwitchDefaultState, SwitchStatementState, SwitchStatementWithDefaultState, TemplateElementState, TemplateExpressionState, ThisExpressionState, ThrowStatementState, TryCatchStatementState, TryFinallyStatementState, UnaryExpressionState, UpdateExpressionState, VariableDeclarationState, VariableDeclarationBindingState, VariableDeclarationExpressionState, VariableDeclarationStatementState, VariableDeclaratorState, WhileStatementState, WithStatementState, YieldExpressionState, YieldGeneratorExpressionState, Out>
+  Out reduceMemberExpression(
+    ReducerP<ArrayBindingState, ArrayExpressionState, ArrowExpressionState, AssignmentExpressionState, BinaryExpressionState, BindingState, BindingBindingWithDefaultState, BindingIdentifierState, BindingIdentifierMemberExpressionState, BindingPropertyState, BindingPropertyIdentifierState, BindingPropertyPropertyState, BindingWithDefaultState, BlockState, BlockStatementState, BreakStatementState, CallExpressionState, CatchClauseState, ClassDeclarationState, ClassElementState, ClassExpressionState, CompoundAssignmentExpressionState, ComputedMemberExpressionState, ComputedPropertyNameState, ConditionalExpressionState, ContinueStatementState, DataPropertyState, DebuggerStatementState, DirectiveState, DoWhileStatementState, EmptyStatementState, ExportState, ExportAllFromState, ExportDeclarationState, ExportDefaultState, ExportFromState, ExportSpecifierState, ExpressionState, ExpressionStatementState, ExpressionSuperState, ExpressionTemplateElementState, ForInStatementState, ForOfStatementState, ForStatementState, FormalParametersState, FunctionBodyState, FunctionBodyExpressionState, FunctionDeclarationState, FunctionDeclarationClassDeclarationExpressionState, FunctionDeclarationClassDeclarationVariableDeclarationState, FunctionExpressionState, GetterState, IdentifierExpressionState, IfStatementState, ImportState, ImportDeclarationState, ImportDeclarationExportDeclarationStatementState, ImportNamespaceState, ImportSpecifierState, LabeledStatementState, LiteralBooleanExpressionState, LiteralInfinityExpressionState, LiteralNullExpressionState, LiteralNumericExpressionState, LiteralRegExpExpressionState, LiteralStringExpressionState, MethodState, MethodDefinitionState, ModuleState, NamedObjectPropertyState, NewExpressionState, NewTargetExpressionState, ObjectBindingState, ObjectExpressionState, ObjectPropertyState, PropertyNameState, ReturnStatementState, ScriptState, SetterState, ShorthandPropertyState, SpreadElementState, SpreadElementExpressionState, StatementState, StaticMemberExpressionState, StaticPropertyNameState, SuperState, SwitchCaseState, SwitchDefaultState, SwitchStatementState, SwitchStatementWithDefaultState, TemplateElementState, TemplateExpressionState, ThisExpressionState, ThrowStatementState, TryCatchStatementState, TryFinallyStatementState, UnaryExpressionState, UpdateExpressionState, VariableDeclarationState, VariableDeclarationBindingState, VariableDeclarationExpressionState, VariableDeclarationStatementState, VariableDeclaratorState, WhileStatementState, WithStatementState, YieldExpressionState, YieldGeneratorExpressionState, Out> reducer,
+    MemberExpression node) {
+    if (node instanceof ComputedMemberExpression) {
+      ComputedMemberExpression computedMemberExpression = (ComputedMemberExpression) node;
+      return reducer.reduceComputedMemberExpression(computedMemberExpression, reduceExpressionSuper(reducer, computedMemberExpression._object), reduceExpression(reducer, computedMemberExpression.expression));
+    } else {
+      StaticMemberExpression staticMemberExpression = (StaticMemberExpression) node;
+      return reducer.reduceStaticMemberExpression(staticMemberExpression, reduceExpressionSuper(reducer, staticMemberExpression._object));
+    }
+  }
+
+  private static <ArrayBindingState, ArrayExpressionState, ArrowExpressionState, AssignmentExpressionState, BinaryExpressionState, BindingState, BindingBindingWithDefaultState, BindingIdentifierState, BindingIdentifierMemberExpressionState, BindingPropertyState, BindingPropertyIdentifierState, BindingPropertyPropertyState, BindingWithDefaultState, BlockState, BlockStatementState, BreakStatementState, CallExpressionState, CatchClauseState, ClassDeclarationState, ClassElementState, ClassExpressionState, CompoundAssignmentExpressionState, ComputedMemberExpressionState, ComputedPropertyNameState, ConditionalExpressionState, ContinueStatementState, DataPropertyState, DebuggerStatementState, DirectiveState, DoWhileStatementState, EmptyStatementState, ExportState, ExportAllFromState, ExportDeclarationState, ExportDefaultState, ExportFromState, ExportSpecifierState, ExpressionState, ExpressionStatementState, ExpressionSuperState, ExpressionTemplateElementState, ForInStatementState, ForOfStatementState, ForStatementState, FormalParametersState, FunctionBodyState, FunctionBodyExpressionState, FunctionDeclarationState, FunctionDeclarationClassDeclarationExpressionState, FunctionDeclarationClassDeclarationVariableDeclarationState, FunctionExpressionState, GetterState, IdentifierExpressionState, IfStatementState, ImportState, ImportDeclarationState, ImportDeclarationExportDeclarationStatementState, ImportNamespaceState, ImportSpecifierState, LabeledStatementState, LiteralBooleanExpressionState, LiteralInfinityExpressionState, LiteralNullExpressionState, LiteralNumericExpressionState, LiteralRegExpExpressionState, LiteralStringExpressionState, MethodState, MethodDefinitionState, ModuleState, NamedObjectPropertyState, NewExpressionState, NewTargetExpressionState, ObjectBindingState, ObjectExpressionState, ObjectPropertyState, PropertyNameState, ReturnStatementState, ScriptState, SetterState, ShorthandPropertyState, SpreadElementState, SpreadElementExpressionState, StatementState, StaticMemberExpressionState, StaticPropertyNameState, SuperState extends Out, SwitchCaseState, SwitchDefaultState, SwitchStatementState, SwitchStatementWithDefaultState, TemplateElementState, TemplateExpressionState, ThisExpressionState, ThrowStatementState, TryCatchStatementState, TryFinallyStatementState, UnaryExpressionState, UpdateExpressionState, VariableDeclarationState, VariableDeclarationBindingState, VariableDeclarationExpressionState, VariableDeclarationStatementState, VariableDeclaratorState, WhileStatementState, WithStatementState, YieldExpressionState, YieldGeneratorExpressionState, Out>
+  Out reduceExpressionSuper(
+    ReducerP<ArrayBindingState, ArrayExpressionState, ArrowExpressionState, AssignmentExpressionState, BinaryExpressionState, BindingState, BindingBindingWithDefaultState, BindingIdentifierState, BindingIdentifierMemberExpressionState, BindingPropertyState, BindingPropertyIdentifierState, BindingPropertyPropertyState, BindingWithDefaultState, BlockState, BlockStatementState, BreakStatementState, CallExpressionState, CatchClauseState, ClassDeclarationState, ClassElementState, ClassExpressionState, CompoundAssignmentExpressionState, ComputedMemberExpressionState, ComputedPropertyNameState, ConditionalExpressionState, ContinueStatementState, DataPropertyState, DebuggerStatementState, DirectiveState, DoWhileStatementState, EmptyStatementState, ExportState, ExportAllFromState, ExportDeclarationState, ExportDefaultState, ExportFromState, ExportSpecifierState, ExpressionState, ExpressionStatementState, ExpressionSuperState, ExpressionTemplateElementState, ForInStatementState, ForOfStatementState, ForStatementState, FormalParametersState, FunctionBodyState, FunctionBodyExpressionState, FunctionDeclarationState, FunctionDeclarationClassDeclarationExpressionState, FunctionDeclarationClassDeclarationVariableDeclarationState, FunctionExpressionState, GetterState, IdentifierExpressionState, IfStatementState, ImportState, ImportDeclarationState, ImportDeclarationExportDeclarationStatementState, ImportNamespaceState, ImportSpecifierState, LabeledStatementState, LiteralBooleanExpressionState, LiteralInfinityExpressionState, LiteralNullExpressionState, LiteralNumericExpressionState, LiteralRegExpExpressionState, LiteralStringExpressionState, MethodState, MethodDefinitionState, ModuleState, NamedObjectPropertyState, NewExpressionState, NewTargetExpressionState, ObjectBindingState, ObjectExpressionState, ObjectPropertyState, PropertyNameState, ReturnStatementState, ScriptState, SetterState, ShorthandPropertyState, SpreadElementState, SpreadElementExpressionState, StatementState, StaticMemberExpressionState, StaticPropertyNameState, SuperState, SwitchCaseState, SwitchDefaultState, SwitchStatementState, SwitchStatementWithDefaultState, TemplateElementState, TemplateExpressionState, ThisExpressionState, ThrowStatementState, TryCatchStatementState, TryFinallyStatementState, UnaryExpressionState, UpdateExpressionState, VariableDeclarationState, VariableDeclarationBindingState, VariableDeclarationExpressionState, VariableDeclarationStatementState, VariableDeclaratorState, WhileStatementState, WithStatementState, YieldExpressionState, YieldGeneratorExpressionState, Out> reducer,
+    ExpressionSuper node) {
+    if (node instanceof Expression) {
+      return reduceExpression(reducer, (Expression) node);
+    } else {
+      return reducer.reduceSuper((Super) node);
+    }
+  }
+
+  private static <ArrayBindingState, ArrayExpressionState, ArrowExpressionState, AssignmentExpressionState, BinaryExpressionState, BindingState, BindingBindingWithDefaultState, BindingIdentifierState, BindingIdentifierMemberExpressionState, BindingPropertyState, BindingPropertyIdentifierState, BindingPropertyPropertyState, BindingWithDefaultState, BlockState, BlockStatementState, BreakStatementState, CallExpressionState, CatchClauseState, ClassDeclarationState, ClassElementState, ClassExpressionState, CompoundAssignmentExpressionState, ComputedMemberExpressionState, ComputedPropertyNameState, ConditionalExpressionState, ContinueStatementState, DataPropertyState, DebuggerStatementState, DirectiveState, DoWhileStatementState, EmptyStatementState, ExportState, ExportAllFromState, ExportDeclarationState, ExportDefaultState, ExportFromState, ExportSpecifierState, ExpressionState, ExpressionStatementState, ExpressionSuperState, ExpressionTemplateElementState, ForInStatementState, ForOfStatementState, ForStatementState, FormalParametersState, FunctionBodyState, FunctionBodyExpressionState, FunctionDeclarationState, FunctionDeclarationClassDeclarationExpressionState, FunctionDeclarationClassDeclarationVariableDeclarationState, FunctionExpressionState, GetterState, IdentifierExpressionState, IfStatementState, ImportState, ImportDeclarationState, ImportDeclarationExportDeclarationStatementState, ImportNamespaceState, ImportSpecifierState, LabeledStatementState, LiteralBooleanExpressionState, LiteralInfinityExpressionState, LiteralNullExpressionState, LiteralNumericExpressionState, LiteralRegExpExpressionState, LiteralStringExpressionState, MethodState, MethodDefinitionState, ModuleState, NamedObjectPropertyState, NewExpressionState, NewTargetExpressionState, ObjectBindingState, ObjectExpressionState, ObjectPropertyState, PropertyNameState, ReturnStatementState, ScriptState, SetterState, ShorthandPropertyState, SpreadElementState, SpreadElementExpressionState, StatementState, StaticMemberExpressionState, StaticPropertyNameState, SuperState, SwitchCaseState, SwitchDefaultState, SwitchStatementState, SwitchStatementWithDefaultState, TemplateElementState, TemplateExpressionState, ThisExpressionState, ThrowStatementState, TryCatchStatementState, TryFinallyStatementState, UnaryExpressionState, UpdateExpressionState, VariableDeclarationState, VariableDeclarationBindingState, VariableDeclarationExpressionState, VariableDeclarationStatementState, VariableDeclaratorState, WhileStatementState, WithStatementState, YieldExpressionState, YieldGeneratorExpressionState, Out>
+  Out reduceBinding(
+    ReducerP<ArrayBindingState, ArrayExpressionState, ArrowExpressionState, AssignmentExpressionState, BinaryExpressionState, BindingState, BindingBindingWithDefaultState, BindingIdentifierState, BindingIdentifierMemberExpressionState, BindingPropertyState, BindingPropertyIdentifierState, BindingPropertyPropertyState, BindingWithDefaultState, BlockState, BlockStatementState, BreakStatementState, CallExpressionState, CatchClauseState, ClassDeclarationState, ClassElementState, ClassExpressionState, CompoundAssignmentExpressionState, ComputedMemberExpressionState, ComputedPropertyNameState, ConditionalExpressionState, ContinueStatementState, DataPropertyState, DebuggerStatementState, DirectiveState, DoWhileStatementState, EmptyStatementState, ExportState, ExportAllFromState, ExportDeclarationState, ExportDefaultState, ExportFromState, ExportSpecifierState, ExpressionState, ExpressionStatementState, ExpressionSuperState, ExpressionTemplateElementState, ForInStatementState, ForOfStatementState, ForStatementState, FormalParametersState, FunctionBodyState, FunctionBodyExpressionState, FunctionDeclarationState, FunctionDeclarationClassDeclarationExpressionState, FunctionDeclarationClassDeclarationVariableDeclarationState, FunctionExpressionState, GetterState, IdentifierExpressionState, IfStatementState, ImportState, ImportDeclarationState, ImportDeclarationExportDeclarationStatementState, ImportNamespaceState, ImportSpecifierState, LabeledStatementState, LiteralBooleanExpressionState, LiteralInfinityExpressionState, LiteralNullExpressionState, LiteralNumericExpressionState, LiteralRegExpExpressionState, LiteralStringExpressionState, MethodState, MethodDefinitionState, ModuleState, NamedObjectPropertyState, NewExpressionState, NewTargetExpressionState, ObjectBindingState, ObjectExpressionState, ObjectPropertyState, PropertyNameState, ReturnStatementState, ScriptState, SetterState, ShorthandPropertyState, SpreadElementState, SpreadElementExpressionState, StatementState, StaticMemberExpressionState, StaticPropertyNameState, SuperState, SwitchCaseState, SwitchDefaultState, SwitchStatementState, SwitchStatementWithDefaultState, TemplateElementState, TemplateExpressionState, ThisExpressionState, ThrowStatementState, TryCatchStatementState, TryFinallyStatementState, UnaryExpressionState, UpdateExpressionState, VariableDeclarationState, VariableDeclarationBindingState, VariableDeclarationExpressionState, VariableDeclarationStatementState, VariableDeclaratorState, WhileStatementState, WithStatementState, YieldExpressionState, YieldGeneratorExpressionState, Out> reducer,
+    Binding node) {
+    return null;
   }
 
   @NotNull
-  public static <ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState>
-  DeclaratorState reduceVariableDeclarator(
-      @NotNull ReducerP<ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> reducer,
-      @NotNull VariableDeclarator node,
-      @NotNull ImmutableList<Branch> path) {
+  public static <ArrayBindingState, ArrayExpressionState, ArrowExpressionState, AssignmentExpressionState, BinaryExpressionState, BindingState, BindingBindingWithDefaultState, BindingIdentifierState, BindingIdentifierMemberExpressionState, BindingPropertyState, BindingPropertyIdentifierState, BindingPropertyPropertyState, BindingWithDefaultState, BlockState, BlockStatementState, BreakStatementState, CallExpressionState, CatchClauseState, ClassDeclarationState, ClassElementState, ClassExpressionState, CompoundAssignmentExpressionState, ComputedMemberExpressionState, ComputedPropertyNameState, ConditionalExpressionState, ContinueStatementState, DataPropertyState, DebuggerStatementState, DirectiveState, DoWhileStatementState, EmptyStatementState, ExportState, ExportAllFromState, ExportDeclarationState, ExportDefaultState, ExportFromState, ExportSpecifierState, ExpressionState, ExpressionStatementState, ExpressionSuperState, ExpressionTemplateElementState, ForInStatementState, ForOfStatementState, ForStatementState, FormalParametersState, FunctionBodyState, FunctionBodyExpressionState, FunctionDeclarationState, FunctionDeclarationClassDeclarationExpressionState, FunctionDeclarationClassDeclarationVariableDeclarationState, FunctionExpressionState, GetterState, IdentifierExpressionState, IfStatementState, ImportState, ImportDeclarationState, ImportDeclarationExportDeclarationStatementState, ImportNamespaceState, ImportSpecifierState, LabeledStatementState, LiteralBooleanExpressionState, LiteralInfinityExpressionState, LiteralNullExpressionState, LiteralNumericExpressionState, LiteralRegExpExpressionState, LiteralStringExpressionState, MethodState, MethodDefinitionState, ModuleState, NamedObjectPropertyState, NewExpressionState, NewTargetExpressionState, ObjectBindingState, ObjectExpressionState, ObjectPropertyState, PropertyNameState, ReturnStatementState, ScriptState, SetterState, ShorthandPropertyState, SpreadElementState, SpreadElementExpressionState, StatementState, StaticMemberExpressionState, StaticPropertyNameState, SuperState, SwitchCaseState, SwitchDefaultState, SwitchStatementState, SwitchStatementWithDefaultState, TemplateElementState, TemplateExpressionState, ThisExpressionState, ThrowStatementState, TryCatchStatementState, TryFinallyStatementState, UnaryExpressionState, UpdateExpressionState, VariableDeclarationState, VariableDeclarationBindingState, VariableDeclarationExpressionState, VariableDeclarationStatementState, VariableDeclaratorState, WhileStatementState, WithStatementState, YieldExpressionState, YieldGeneratorExpressionState, Out>
+  Out reduceSwitchCase(
+    @NotNull ReducerP<ArrayBindingState, ArrayExpressionState, ArrowExpressionState, AssignmentExpressionState, BinaryExpressionState, BindingState, BindingBindingWithDefaultState, BindingIdentifierState, BindingIdentifierMemberExpressionState, BindingPropertyState, BindingPropertyIdentifierState, BindingPropertyPropertyState, BindingWithDefaultState, BlockState, BlockStatementState, BreakStatementState, CallExpressionState, CatchClauseState, ClassDeclarationState, ClassElementState, ClassExpressionState, CompoundAssignmentExpressionState, ComputedMemberExpressionState, ComputedPropertyNameState, ConditionalExpressionState, ContinueStatementState, DataPropertyState, DebuggerStatementState, DirectiveState, DoWhileStatementState, EmptyStatementState, ExportState, ExportAllFromState, ExportDeclarationState, ExportDefaultState, ExportFromState, ExportSpecifierState, ExpressionState, ExpressionStatementState, ExpressionSuperState, ExpressionTemplateElementState, ForInStatementState, ForOfStatementState, ForStatementState, FormalParametersState, FunctionBodyState, FunctionBodyExpressionState, FunctionDeclarationState, FunctionDeclarationClassDeclarationExpressionState, FunctionDeclarationClassDeclarationVariableDeclarationState, FunctionExpressionState, GetterState, IdentifierExpressionState, IfStatementState, ImportState, ImportDeclarationState, ImportDeclarationExportDeclarationStatementState, ImportNamespaceState, ImportSpecifierState, LabeledStatementState, LiteralBooleanExpressionState, LiteralInfinityExpressionState, LiteralNullExpressionState, LiteralNumericExpressionState, LiteralRegExpExpressionState, LiteralStringExpressionState, MethodState, MethodDefinitionState, ModuleState, NamedObjectPropertyState, NewExpressionState, NewTargetExpressionState, ObjectBindingState, ObjectExpressionState, ObjectPropertyState, PropertyNameState, ReturnStatementState, ScriptState, SetterState, ShorthandPropertyState, SpreadElementState, SpreadElementExpressionState, StatementState, StaticMemberExpressionState, StaticPropertyNameState, SuperState, SwitchCaseState, SwitchDefaultState, SwitchStatementState, SwitchStatementWithDefaultState, TemplateElementState, TemplateExpressionState, ThisExpressionState, ThrowStatementState, TryCatchStatementState, TryFinallyStatementState, UnaryExpressionState, UpdateExpressionState, VariableDeclarationState, VariableDeclarationBindingState, VariableDeclarationExpressionState, VariableDeclarationStatementState, VariableDeclaratorState, WhileStatementState, WithStatementState, YieldExpressionState, YieldGeneratorExpressionState, Out> reducer,
+    @NotNull SwitchCase node) {
+    return reducer.reduceSwitchCase(node, reduceExpression(reducer, node.test), reduceListStatement(reducer, node.consequent));
+  }
+
+  @NotNull
+  public static <ArrayBindingState, ArrayExpressionState, ArrowExpressionState, AssignmentExpressionState, BinaryExpressionState, BindingState, BindingBindingWithDefaultState, BindingIdentifierState, BindingIdentifierMemberExpressionState, BindingPropertyState, BindingPropertyIdentifierState, BindingPropertyPropertyState, BindingWithDefaultState, BlockState, BlockStatementState, BreakStatementState, CallExpressionState, CatchClauseState, ClassDeclarationState, ClassElementState, ClassExpressionState, CompoundAssignmentExpressionState, ComputedMemberExpressionState, ComputedPropertyNameState, ConditionalExpressionState, ContinueStatementState, DataPropertyState, DebuggerStatementState, DirectiveState, DoWhileStatementState, EmptyStatementState, ExportState, ExportAllFromState, ExportDeclarationState, ExportDefaultState, ExportFromState, ExportSpecifierState, ExpressionState, ExpressionStatementState, ExpressionSuperState, ExpressionTemplateElementState, ForInStatementState, ForOfStatementState, ForStatementState, FormalParametersState, FunctionBodyState, FunctionBodyExpressionState, FunctionDeclarationState, FunctionDeclarationClassDeclarationExpressionState, FunctionDeclarationClassDeclarationVariableDeclarationState, FunctionExpressionState, GetterState, IdentifierExpressionState, IfStatementState, ImportState, ImportDeclarationState, ImportDeclarationExportDeclarationStatementState, ImportNamespaceState, ImportSpecifierState, LabeledStatementState, LiteralBooleanExpressionState, LiteralInfinityExpressionState, LiteralNullExpressionState, LiteralNumericExpressionState, LiteralRegExpExpressionState, LiteralStringExpressionState, MethodState, MethodDefinitionState, ModuleState, NamedObjectPropertyState, NewExpressionState, NewTargetExpressionState, ObjectBindingState, ObjectExpressionState, ObjectPropertyState, PropertyNameState, ReturnStatementState, ScriptState, SetterState, ShorthandPropertyState, SpreadElementState, SpreadElementExpressionState, StatementState, StaticMemberExpressionState, StaticPropertyNameState, SuperState, SwitchCaseState, SwitchDefaultState, SwitchStatementState, SwitchStatementWithDefaultState, TemplateElementState, TemplateExpressionState, ThisExpressionState, ThrowStatementState, TryCatchStatementState, TryFinallyStatementState, UnaryExpressionState, UpdateExpressionState, VariableDeclarationState, VariableDeclarationBindingState, VariableDeclarationExpressionState, VariableDeclarationStatementState, VariableDeclaratorState, WhileStatementState, WithStatementState, YieldExpressionState, YieldGeneratorExpressionState, Out>
+  Out reduceSwitchDefault(
+    @NotNull ReducerP<ArrayBindingState, ArrayExpressionState, ArrowExpressionState, AssignmentExpressionState, BinaryExpressionState, BindingState, BindingBindingWithDefaultState, BindingIdentifierState, BindingIdentifierMemberExpressionState, BindingPropertyState, BindingPropertyIdentifierState, BindingPropertyPropertyState, BindingWithDefaultState, BlockState, BlockStatementState, BreakStatementState, CallExpressionState, CatchClauseState, ClassDeclarationState, ClassElementState, ClassExpressionState, CompoundAssignmentExpressionState, ComputedMemberExpressionState, ComputedPropertyNameState, ConditionalExpressionState, ContinueStatementState, DataPropertyState, DebuggerStatementState, DirectiveState, DoWhileStatementState, EmptyStatementState, ExportState, ExportAllFromState, ExportDeclarationState, ExportDefaultState, ExportFromState, ExportSpecifierState, ExpressionState, ExpressionStatementState, ExpressionSuperState, ExpressionTemplateElementState, ForInStatementState, ForOfStatementState, ForStatementState, FormalParametersState, FunctionBodyState, FunctionBodyExpressionState, FunctionDeclarationState, FunctionDeclarationClassDeclarationExpressionState, FunctionDeclarationClassDeclarationVariableDeclarationState, FunctionExpressionState, GetterState, IdentifierExpressionState, IfStatementState, ImportState, ImportDeclarationState, ImportDeclarationExportDeclarationStatementState, ImportNamespaceState, ImportSpecifierState, LabeledStatementState, LiteralBooleanExpressionState, LiteralInfinityExpressionState, LiteralNullExpressionState, LiteralNumericExpressionState, LiteralRegExpExpressionState, LiteralStringExpressionState, MethodState, MethodDefinitionState, ModuleState, NamedObjectPropertyState, NewExpressionState, NewTargetExpressionState, ObjectBindingState, ObjectExpressionState, ObjectPropertyState, PropertyNameState, ReturnStatementState, ScriptState, SetterState, ShorthandPropertyState, SpreadElementState, SpreadElementExpressionState, StatementState, StaticMemberExpressionState, StaticPropertyNameState, SuperState, SwitchCaseState, SwitchDefaultState, SwitchStatementState, SwitchStatementWithDefaultState, TemplateElementState, TemplateExpressionState, ThisExpressionState, ThrowStatementState, TryCatchStatementState, TryFinallyStatementState, UnaryExpressionState, UpdateExpressionState, VariableDeclarationState, VariableDeclarationBindingState, VariableDeclarationExpressionState, VariableDeclarationStatementState, VariableDeclaratorState, WhileStatementState, WithStatementState, YieldExpressionState, YieldGeneratorExpressionState, Out> reducer,
+    @NotNull SwitchDefault node) {
+    return reducer.reduceSwitchDefault(node, reduceListStatement(reducer, node.consequent));
+  }
+
+  @NotNull
+  public static <ArrayBindingState, ArrayExpressionState, ArrowExpressionState, AssignmentExpressionState, BinaryExpressionState, BindingState, BindingBindingWithDefaultState, BindingIdentifierState, BindingIdentifierMemberExpressionState, BindingPropertyState, BindingPropertyIdentifierState, BindingPropertyPropertyState, BindingWithDefaultState, BlockState, BlockStatementState, BreakStatementState, CallExpressionState, CatchClauseState, ClassDeclarationState, ClassElementState, ClassExpressionState, CompoundAssignmentExpressionState, ComputedMemberExpressionState, ComputedPropertyNameState, ConditionalExpressionState, ContinueStatementState, DataPropertyState, DebuggerStatementState, DirectiveState, DoWhileStatementState, EmptyStatementState, ExportState, ExportAllFromState, ExportDeclarationState, ExportDefaultState, ExportFromState, ExportSpecifierState, ExpressionState, ExpressionStatementState, ExpressionSuperState, ExpressionTemplateElementState, ForInStatementState, ForOfStatementState, ForStatementState, FormalParametersState, FunctionBodyState, FunctionBodyExpressionState, FunctionDeclarationState, FunctionDeclarationClassDeclarationExpressionState, FunctionDeclarationClassDeclarationVariableDeclarationState, FunctionExpressionState, GetterState, IdentifierExpressionState, IfStatementState, ImportState, ImportDeclarationState, ImportDeclarationExportDeclarationStatementState, ImportNamespaceState, ImportSpecifierState, LabeledStatementState, LiteralBooleanExpressionState, LiteralInfinityExpressionState, LiteralNullExpressionState, LiteralNumericExpressionState, LiteralRegExpExpressionState, LiteralStringExpressionState, MethodState, MethodDefinitionState, ModuleState, NamedObjectPropertyState, NewExpressionState, NewTargetExpressionState, ObjectBindingState, ObjectExpressionState, ObjectPropertyState, PropertyNameState, ReturnStatementState, ScriptState, SetterState, ShorthandPropertyState, SpreadElementState, SpreadElementExpressionState, StatementState, StaticMemberExpressionState, StaticPropertyNameState, SuperState, SwitchCaseState, SwitchDefaultState, SwitchStatementState, SwitchStatementWithDefaultState, TemplateElementState, TemplateExpressionState, ThisExpressionState, ThrowStatementState, TryCatchStatementState, TryFinallyStatementState, UnaryExpressionState, UpdateExpressionState, VariableDeclarationState, VariableDeclarationBindingState, VariableDeclarationExpressionState, VariableDeclarationStatementState, VariableDeclaratorState, WhileStatementState, WithStatementState, YieldExpressionState, YieldGeneratorExpressionState, Out>
+  Out reduceVariableDeclaration(
+    @NotNull ReducerP<ArrayBindingState, ArrayExpressionState, ArrowExpressionState, AssignmentExpressionState, BinaryExpressionState, BindingState, BindingBindingWithDefaultState, BindingIdentifierState, BindingIdentifierMemberExpressionState, BindingPropertyState, BindingPropertyIdentifierState, BindingPropertyPropertyState, BindingWithDefaultState, BlockState, BlockStatementState, BreakStatementState, CallExpressionState, CatchClauseState, ClassDeclarationState, ClassElementState, ClassExpressionState, CompoundAssignmentExpressionState, ComputedMemberExpressionState, ComputedPropertyNameState, ConditionalExpressionState, ContinueStatementState, DataPropertyState, DebuggerStatementState, DirectiveState, DoWhileStatementState, EmptyStatementState, ExportState, ExportAllFromState, ExportDeclarationState, ExportDefaultState, ExportFromState, ExportSpecifierState, ExpressionState, ExpressionStatementState, ExpressionSuperState, ExpressionTemplateElementState, ForInStatementState, ForOfStatementState, ForStatementState, FormalParametersState, FunctionBodyState, FunctionBodyExpressionState, FunctionDeclarationState, FunctionDeclarationClassDeclarationExpressionState, FunctionDeclarationClassDeclarationVariableDeclarationState, FunctionExpressionState, GetterState, IdentifierExpressionState, IfStatementState, ImportState, ImportDeclarationState, ImportDeclarationExportDeclarationStatementState, ImportNamespaceState, ImportSpecifierState, LabeledStatementState, LiteralBooleanExpressionState, LiteralInfinityExpressionState, LiteralNullExpressionState, LiteralNumericExpressionState, LiteralRegExpExpressionState, LiteralStringExpressionState, MethodState, MethodDefinitionState, ModuleState, NamedObjectPropertyState, NewExpressionState, NewTargetExpressionState, ObjectBindingState, ObjectExpressionState, ObjectPropertyState, PropertyNameState, ReturnStatementState, ScriptState, SetterState, ShorthandPropertyState, SpreadElementState, SpreadElementExpressionState, StatementState, StaticMemberExpressionState, StaticPropertyNameState, SuperState, SwitchCaseState, SwitchDefaultState, SwitchStatementState, SwitchStatementWithDefaultState, TemplateElementState, TemplateExpressionState, ThisExpressionState, ThrowStatementState, TryCatchStatementState, TryFinallyStatementState, UnaryExpressionState, UpdateExpressionState, VariableDeclarationState, VariableDeclarationBindingState, VariableDeclarationExpressionState, VariableDeclarationStatementState, VariableDeclaratorState, WhileStatementState, WithStatementState, YieldExpressionState, YieldGeneratorExpressionState, Out> reducer,
+    @NotNull VariableDeclaration node) {
+    return reducer.reduceVariableDeclaration(node, node.declarators.map((el) -> reduceVariableDeclarator(reducer, el)));
+  }
+
+  @NotNull
+  public static <ArrayBindingState, ArrayExpressionState, ArrowExpressionState, AssignmentExpressionState, BinaryExpressionState, BindingState, BindingBindingWithDefaultState, BindingIdentifierState, BindingIdentifierMemberExpressionState, BindingPropertyState, BindingPropertyIdentifierState, BindingPropertyPropertyState, BindingWithDefaultState, BlockState, BlockStatementState, BreakStatementState, CallExpressionState, CatchClauseState, ClassDeclarationState, ClassElementState, ClassExpressionState, CompoundAssignmentExpressionState, ComputedMemberExpressionState, ComputedPropertyNameState, ConditionalExpressionState, ContinueStatementState, DataPropertyState, DebuggerStatementState, DirectiveState, DoWhileStatementState, EmptyStatementState, ExportState, ExportAllFromState, ExportDeclarationState, ExportDefaultState, ExportFromState, ExportSpecifierState, ExpressionState, ExpressionStatementState, ExpressionSuperState, ExpressionTemplateElementState, ForInStatementState, ForOfStatementState, ForStatementState, FormalParametersState, FunctionBodyState, FunctionBodyExpressionState, FunctionDeclarationState, FunctionDeclarationClassDeclarationExpressionState, FunctionDeclarationClassDeclarationVariableDeclarationState, FunctionExpressionState, GetterState, IdentifierExpressionState, IfStatementState, ImportState, ImportDeclarationState, ImportDeclarationExportDeclarationStatementState, ImportNamespaceState, ImportSpecifierState, LabeledStatementState, LiteralBooleanExpressionState, LiteralInfinityExpressionState, LiteralNullExpressionState, LiteralNumericExpressionState, LiteralRegExpExpressionState, LiteralStringExpressionState, MethodState, MethodDefinitionState, ModuleState, NamedObjectPropertyState, NewExpressionState, NewTargetExpressionState, ObjectBindingState, ObjectExpressionState, ObjectPropertyState, PropertyNameState, ReturnStatementState, ScriptState, SetterState, ShorthandPropertyState, SpreadElementState, SpreadElementExpressionState, StatementState, StaticMemberExpressionState, StaticPropertyNameState, SuperState, SwitchCaseState, SwitchDefaultState, SwitchStatementState, SwitchStatementWithDefaultState, TemplateElementState, TemplateExpressionState, ThisExpressionState, ThrowStatementState, TryCatchStatementState, TryFinallyStatementState, UnaryExpressionState, UpdateExpressionState, VariableDeclarationState, VariableDeclarationBindingState, VariableDeclarationExpressionState, VariableDeclarationStatementState, VariableDeclaratorState, WhileStatementState, WithStatementState, YieldExpressionState, YieldGeneratorExpressionState, Out>
+  Out reduceVariableDeclarator(
+    @NotNull ReducerP<ArrayBindingState, ArrayExpressionState, ArrowExpressionState, AssignmentExpressionState, BinaryExpressionState, BindingState, BindingBindingWithDefaultState, BindingIdentifierState, BindingIdentifierMemberExpressionState, BindingPropertyState, BindingPropertyIdentifierState, BindingPropertyPropertyState, BindingWithDefaultState, BlockState, BlockStatementState, BreakStatementState, CallExpressionState, CatchClauseState, ClassDeclarationState, ClassElementState, ClassExpressionState, CompoundAssignmentExpressionState, ComputedMemberExpressionState, ComputedPropertyNameState, ConditionalExpressionState, ContinueStatementState, DataPropertyState, DebuggerStatementState, DirectiveState, DoWhileStatementState, EmptyStatementState, ExportState, ExportAllFromState, ExportDeclarationState, ExportDefaultState, ExportFromState, ExportSpecifierState, ExpressionState, ExpressionStatementState, ExpressionSuperState, ExpressionTemplateElementState, ForInStatementState, ForOfStatementState, ForStatementState, FormalParametersState, FunctionBodyState, FunctionBodyExpressionState, FunctionDeclarationState, FunctionDeclarationClassDeclarationExpressionState, FunctionDeclarationClassDeclarationVariableDeclarationState, FunctionExpressionState, GetterState, IdentifierExpressionState, IfStatementState, ImportState, ImportDeclarationState, ImportDeclarationExportDeclarationStatementState, ImportNamespaceState, ImportSpecifierState, LabeledStatementState, LiteralBooleanExpressionState, LiteralInfinityExpressionState, LiteralNullExpressionState, LiteralNumericExpressionState, LiteralRegExpExpressionState, LiteralStringExpressionState, MethodState, MethodDefinitionState, ModuleState, NamedObjectPropertyState, NewExpressionState, NewTargetExpressionState, ObjectBindingState, ObjectExpressionState, ObjectPropertyState, PropertyNameState, ReturnStatementState, ScriptState, SetterState, ShorthandPropertyState, SpreadElementState, SpreadElementExpressionState, StatementState, StaticMemberExpressionState, StaticPropertyNameState, SuperState, SwitchCaseState, SwitchDefaultState, SwitchStatementState, SwitchStatementWithDefaultState, TemplateElementState, TemplateExpressionState, ThisExpressionState, ThrowStatementState, TryCatchStatementState, TryFinallyStatementState, UnaryExpressionState, UpdateExpressionState, VariableDeclarationState, VariableDeclarationBindingState, VariableDeclarationExpressionState, VariableDeclarationStatementState, VariableDeclaratorState, WhileStatementState, WithStatementState, YieldExpressionState, YieldGeneratorExpressionState, Out> reducer,
+    @NotNull VariableDeclarator node) {
     return reducer.reduceVariableDeclarator(
-        node,
-        path,
-        reduceIdentifier(reducer, node.binding, path.cons(StaticBranch.BINDING)),
-        reduceOptionExpression(reducer, node.init, path.cons(StaticBranch.INIT)));
+      node,
+      reduceBinding(reducer, node.binding),
+      reduceOptionExpression(reducer, node.init));
   }
 
-  @NotNull
-  public static <ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState>
-  DeclarationState reduceVariableDeclaration(
-      @NotNull ReducerP<ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> reducer,
-      @NotNull VariableDeclaration node,
-      @NotNull ImmutableList<Branch> path) {
-    NonEmptyImmutableList<Branch> declsPath = path.cons(StaticBranch.DECLARATORS);
-    return reducer.reduceVariableDeclaration(
-        node,
-        path,
-        node.declarators.mapWithIndex(
-            (i, el) ->
-                reduceVariableDeclarator(
-                    reducer,
-                    el,
-                    declsPath.cons(IndexedBranch.from(i)))));
+  private static <ArrayBindingState, ArrayExpressionState, ArrowExpressionState, AssignmentExpressionState, BinaryExpressionState, BindingState, BindingBindingWithDefaultState, BindingIdentifierState, BindingIdentifierMemberExpressionState, BindingPropertyState, BindingPropertyIdentifierState, BindingPropertyPropertyState, BindingWithDefaultState, BlockState, BlockStatementState, BreakStatementState, CallExpressionState, CatchClauseState, ClassDeclarationState, ClassElementState, ClassExpressionState, CompoundAssignmentExpressionState, ComputedMemberExpressionState, ComputedPropertyNameState, ConditionalExpressionState, ContinueStatementState, DataPropertyState, DebuggerStatementState, DirectiveState, DoWhileStatementState, EmptyStatementState, ExportState, ExportAllFromState, ExportDeclarationState, ExportDefaultState, ExportFromState, ExportSpecifierState, ExpressionState, ExpressionStatementState, ExpressionSuperState, ExpressionTemplateElementState, ForInStatementState, ForOfStatementState, ForStatementState, FormalParametersState, FunctionBodyState, FunctionBodyExpressionState, FunctionDeclarationState, FunctionDeclarationClassDeclarationExpressionState, FunctionDeclarationClassDeclarationVariableDeclarationState, FunctionExpressionState, GetterState, IdentifierExpressionState, IfStatementState, ImportState, ImportDeclarationState, ImportDeclarationExportDeclarationStatementState, ImportNamespaceState, ImportSpecifierState, LabeledStatementState, LiteralBooleanExpressionState, LiteralInfinityExpressionState, LiteralNullExpressionState, LiteralNumericExpressionState, LiteralRegExpExpressionState, LiteralStringExpressionState, MethodState, MethodDefinitionState, ModuleState, NamedObjectPropertyState, NewExpressionState, NewTargetExpressionState, ObjectBindingState, ObjectExpressionState, ObjectPropertyState, PropertyNameState, ReturnStatementState, ScriptState, SetterState, ShorthandPropertyState, SpreadElementState, SpreadElementExpressionState, StatementState, StaticMemberExpressionState, StaticPropertyNameState, SuperState, SwitchCaseState, SwitchDefaultState, SwitchStatementState, SwitchStatementWithDefaultState, TemplateElementState, TemplateExpressionState, ThisExpressionState, ThrowStatementState, TryCatchStatementState, TryFinallyStatementState, UnaryExpressionState, UpdateExpressionState, VariableDeclarationState, VariableDeclarationBindingState, VariableDeclarationExpressionState, VariableDeclarationStatementState, VariableDeclaratorState, WhileStatementState, WithStatementState, YieldExpressionState, YieldGeneratorExpressionState, Out>
+  ImmutableList<Out> reduceListDirective(
+    @NotNull ReducerP<ArrayBindingState, ArrayExpressionState, ArrowExpressionState, AssignmentExpressionState, BinaryExpressionState, BindingState, BindingBindingWithDefaultState, BindingIdentifierState, BindingIdentifierMemberExpressionState, BindingPropertyState, BindingPropertyIdentifierState, BindingPropertyPropertyState, BindingWithDefaultState, BlockState, BlockStatementState, BreakStatementState, CallExpressionState, CatchClauseState, ClassDeclarationState, ClassElementState, ClassExpressionState, CompoundAssignmentExpressionState, ComputedMemberExpressionState, ComputedPropertyNameState, ConditionalExpressionState, ContinueStatementState, DataPropertyState, DebuggerStatementState, DirectiveState, DoWhileStatementState, EmptyStatementState, ExportState, ExportAllFromState, ExportDeclarationState, ExportDefaultState, ExportFromState, ExportSpecifierState, ExpressionState, ExpressionStatementState, ExpressionSuperState, ExpressionTemplateElementState, ForInStatementState, ForOfStatementState, ForStatementState, FormalParametersState, FunctionBodyState, FunctionBodyExpressionState, FunctionDeclarationState, FunctionDeclarationClassDeclarationExpressionState, FunctionDeclarationClassDeclarationVariableDeclarationState, FunctionExpressionState, GetterState, IdentifierExpressionState, IfStatementState, ImportState, ImportDeclarationState, ImportDeclarationExportDeclarationStatementState, ImportNamespaceState, ImportSpecifierState, LabeledStatementState, LiteralBooleanExpressionState, LiteralInfinityExpressionState, LiteralNullExpressionState, LiteralNumericExpressionState, LiteralRegExpExpressionState, LiteralStringExpressionState, MethodState, MethodDefinitionState, ModuleState, NamedObjectPropertyState, NewExpressionState, NewTargetExpressionState, ObjectBindingState, ObjectExpressionState, ObjectPropertyState, PropertyNameState, ReturnStatementState, ScriptState, SetterState, ShorthandPropertyState, SpreadElementState, SpreadElementExpressionState, StatementState, StaticMemberExpressionState, StaticPropertyNameState, SuperState, SwitchCaseState, SwitchDefaultState, SwitchStatementState, SwitchStatementWithDefaultState, TemplateElementState, TemplateExpressionState, ThisExpressionState, ThrowStatementState, TryCatchStatementState, TryFinallyStatementState, UnaryExpressionState, UpdateExpressionState, VariableDeclarationState, VariableDeclarationBindingState, VariableDeclarationExpressionState, VariableDeclarationStatementState, VariableDeclaratorState, WhileStatementState, WithStatementState, YieldExpressionState, YieldGeneratorExpressionState, Out> reducer,
+    @NotNull ImmutableList<Directive> directives) {
+    return directives.mapWithIndex((i, el) -> reduceDirective(reducer, el));
   }
 
-  @NotNull
-  public static <ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState>
-  SwitchCaseState reduceSwitchCase(
-      @NotNull ReducerP<ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> reducer,
-      @NotNull SwitchCase node,
-      @NotNull ImmutableList<Branch> path) {
-    return reducer.reduceSwitchCase(
-        node,
-        path,
-        reduceExpression(reducer, node.test, path.cons(StaticBranch.TEST)),
-        reduceListStatement(reducer, node.consequent, path.cons(StaticBranch.CONSEQUENT)));
+  private static <ArrayBindingState, ArrayExpressionState, ArrowExpressionState, AssignmentExpressionState, BinaryExpressionState, BindingState, BindingBindingWithDefaultState, BindingIdentifierState, BindingIdentifierMemberExpressionState, BindingPropertyState, BindingPropertyIdentifierState, BindingPropertyPropertyState, BindingWithDefaultState, BlockState, BlockStatementState, BreakStatementState, CallExpressionState, CatchClauseState, ClassDeclarationState, ClassElementState, ClassExpressionState, CompoundAssignmentExpressionState, ComputedMemberExpressionState, ComputedPropertyNameState, ConditionalExpressionState, ContinueStatementState, DataPropertyState, DebuggerStatementState, DirectiveState, DoWhileStatementState, EmptyStatementState, ExportState, ExportAllFromState, ExportDeclarationState, ExportDefaultState, ExportFromState, ExportSpecifierState, ExpressionState, ExpressionStatementState, ExpressionSuperState, ExpressionTemplateElementState, ForInStatementState, ForOfStatementState, ForStatementState, FormalParametersState, FunctionBodyState, FunctionBodyExpressionState, FunctionDeclarationState, FunctionDeclarationClassDeclarationExpressionState, FunctionDeclarationClassDeclarationVariableDeclarationState, FunctionExpressionState, GetterState, IdentifierExpressionState, IfStatementState, ImportState, ImportDeclarationState, ImportDeclarationExportDeclarationStatementState, ImportNamespaceState, ImportSpecifierState, LabeledStatementState, LiteralBooleanExpressionState, LiteralInfinityExpressionState, LiteralNullExpressionState, LiteralNumericExpressionState, LiteralRegExpExpressionState, LiteralStringExpressionState, MethodState, MethodDefinitionState, ModuleState, NamedObjectPropertyState, NewExpressionState, NewTargetExpressionState, ObjectBindingState, ObjectExpressionState, ObjectPropertyState, PropertyNameState, ReturnStatementState, ScriptState, SetterState, ShorthandPropertyState, SpreadElementState, SpreadElementExpressionState, StatementState, StaticMemberExpressionState, StaticPropertyNameState, SuperState, SwitchCaseState, SwitchDefaultState, SwitchStatementState, SwitchStatementWithDefaultState, TemplateElementState, TemplateExpressionState, ThisExpressionState, ThrowStatementState, TryCatchStatementState, TryFinallyStatementState, UnaryExpressionState, UpdateExpressionState, VariableDeclarationState, VariableDeclarationBindingState, VariableDeclarationExpressionState, VariableDeclarationStatementState, VariableDeclaratorState, WhileStatementState, WithStatementState, YieldExpressionState, YieldGeneratorExpressionState, Out>
+  ImmutableList<Out> reducerListProperty(
+    @NotNull ReducerP<ArrayBindingState, ArrayExpressionState, ArrowExpressionState, AssignmentExpressionState, BinaryExpressionState, BindingState, BindingBindingWithDefaultState, BindingIdentifierState, BindingIdentifierMemberExpressionState, BindingPropertyState, BindingPropertyIdentifierState, BindingPropertyPropertyState, BindingWithDefaultState, BlockState, BlockStatementState, BreakStatementState, CallExpressionState, CatchClauseState, ClassDeclarationState, ClassElementState, ClassExpressionState, CompoundAssignmentExpressionState, ComputedMemberExpressionState, ComputedPropertyNameState, ConditionalExpressionState, ContinueStatementState, DataPropertyState, DebuggerStatementState, DirectiveState, DoWhileStatementState, EmptyStatementState, ExportState, ExportAllFromState, ExportDeclarationState, ExportDefaultState, ExportFromState, ExportSpecifierState, ExpressionState, ExpressionStatementState, ExpressionSuperState, ExpressionTemplateElementState, ForInStatementState, ForOfStatementState, ForStatementState, FormalParametersState, FunctionBodyState, FunctionBodyExpressionState, FunctionDeclarationState, FunctionDeclarationClassDeclarationExpressionState, FunctionDeclarationClassDeclarationVariableDeclarationState, FunctionExpressionState, GetterState, IdentifierExpressionState, IfStatementState, ImportState, ImportDeclarationState, ImportDeclarationExportDeclarationStatementState, ImportNamespaceState, ImportSpecifierState, LabeledStatementState, LiteralBooleanExpressionState, LiteralInfinityExpressionState, LiteralNullExpressionState, LiteralNumericExpressionState, LiteralRegExpExpressionState, LiteralStringExpressionState, MethodState, MethodDefinitionState, ModuleState, NamedObjectPropertyState, NewExpressionState, NewTargetExpressionState, ObjectBindingState, ObjectExpressionState, ObjectPropertyState, PropertyNameState, ReturnStatementState, ScriptState, SetterState, ShorthandPropertyState, SpreadElementState, SpreadElementExpressionState, StatementState, StaticMemberExpressionState, StaticPropertyNameState, SuperState, SwitchCaseState, SwitchDefaultState, SwitchStatementState, SwitchStatementWithDefaultState, TemplateElementState, TemplateExpressionState, ThisExpressionState, ThrowStatementState, TryCatchStatementState, TryFinallyStatementState, UnaryExpressionState, UpdateExpressionState, VariableDeclarationState, VariableDeclarationBindingState, VariableDeclarationExpressionState, VariableDeclarationStatementState, VariableDeclaratorState, WhileStatementState, WithStatementState, YieldExpressionState, YieldGeneratorExpressionState, Out> reducer,
+    @NotNull ImmutableList<ObjectProperty> properties) {
+    return properties.mapWithIndex((i, el) -> reduceObjectProperty(reducer, el));
   }
 
-  @NotNull
-  public static <ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState>
-  SwitchDefaultState reduceSwitchDefault(
-      @NotNull ReducerP<ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> reducer,
-      @NotNull SwitchDefault node,
-      @NotNull ImmutableList<Branch> path) {
-    return reducer.reduceSwitchDefault(
-        node,
-        path,
-        reduceListStatement(reducer, node.consequent, path.cons(StaticBranch.CONSEQUENT)));
-  }
-
-  @NotNull
-  public static <ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState>
-  CatchClauseState reduceCatchClause(
-      @NotNull ReducerP<ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> reducer,
-      @NotNull CatchClause node,
-      @NotNull ImmutableList<Branch> path) {
-    return reducer.reduceCatchClause(
-        node,
-        path,
-        reduceIdentifier(reducer, node.binding, path.cons(StaticBranch.BINDING)),
-        reduceBlock(reducer, node.body, path.cons(StaticBranch.BODY)));
+  private static <ArrayBindingState, ArrayExpressionState, ArrowExpressionState, AssignmentExpressionState, BinaryExpressionState, BindingState, BindingBindingWithDefaultState, BindingIdentifierState, BindingIdentifierMemberExpressionState, BindingPropertyState, BindingPropertyIdentifierState, BindingPropertyPropertyState, BindingWithDefaultState, BlockState, BlockStatementState, BreakStatementState, CallExpressionState, CatchClauseState, ClassDeclarationState, ClassElementState, ClassExpressionState, CompoundAssignmentExpressionState, ComputedMemberExpressionState, ComputedPropertyNameState, ConditionalExpressionState, ContinueStatementState, DataPropertyState, DebuggerStatementState, DirectiveState, DoWhileStatementState, EmptyStatementState, ExportState, ExportAllFromState, ExportDeclarationState, ExportDefaultState, ExportFromState, ExportSpecifierState, ExpressionState, ExpressionStatementState, ExpressionSuperState, ExpressionTemplateElementState, ForInStatementState, ForOfStatementState, ForStatementState, FormalParametersState, FunctionBodyState, FunctionBodyExpressionState, FunctionDeclarationState, FunctionDeclarationClassDeclarationExpressionState, FunctionDeclarationClassDeclarationVariableDeclarationState, FunctionExpressionState, GetterState, IdentifierExpressionState, IfStatementState, ImportState, ImportDeclarationState, ImportDeclarationExportDeclarationStatementState, ImportNamespaceState, ImportSpecifierState, LabeledStatementState, LiteralBooleanExpressionState, LiteralInfinityExpressionState, LiteralNullExpressionState, LiteralNumericExpressionState, LiteralRegExpExpressionState, LiteralStringExpressionState, MethodState, MethodDefinitionState, ModuleState, NamedObjectPropertyState, NewExpressionState, NewTargetExpressionState, ObjectBindingState, ObjectExpressionState, ObjectPropertyState, PropertyNameState, ReturnStatementState, ScriptState, SetterState, ShorthandPropertyState, SpreadElementState, SpreadElementExpressionState, StatementState, StaticMemberExpressionState, StaticPropertyNameState, SuperState, SwitchCaseState, SwitchDefaultState, SwitchStatementState, SwitchStatementWithDefaultState, TemplateElementState, TemplateExpressionState, ThisExpressionState, ThrowStatementState, TryCatchStatementState, TryFinallyStatementState, UnaryExpressionState, UpdateExpressionState, VariableDeclarationState, VariableDeclarationBindingState, VariableDeclarationExpressionState, VariableDeclarationStatementState, VariableDeclaratorState, WhileStatementState, WithStatementState, YieldExpressionState, YieldGeneratorExpressionState, Out>
+  Maybe<Out> reducerMaybeIdentifier(
+    @NotNull ReducerP<ArrayBindingState, ArrayExpressionState, ArrowExpressionState, AssignmentExpressionState, BinaryExpressionState, BindingState, BindingBindingWithDefaultState, BindingIdentifierState, BindingIdentifierMemberExpressionState, BindingPropertyState, BindingPropertyIdentifierState, BindingPropertyPropertyState, BindingWithDefaultState, BlockState, BlockStatementState, BreakStatementState, CallExpressionState, CatchClauseState, ClassDeclarationState, ClassElementState, ClassExpressionState, CompoundAssignmentExpressionState, ComputedMemberExpressionState, ComputedPropertyNameState, ConditionalExpressionState, ContinueStatementState, DataPropertyState, DebuggerStatementState, DirectiveState, DoWhileStatementState, EmptyStatementState, ExportState, ExportAllFromState, ExportDeclarationState, ExportDefaultState, ExportFromState, ExportSpecifierState, ExpressionState, ExpressionStatementState, ExpressionSuperState, ExpressionTemplateElementState, ForInStatementState, ForOfStatementState, ForStatementState, FormalParametersState, FunctionBodyState, FunctionBodyExpressionState, FunctionDeclarationState, FunctionDeclarationClassDeclarationExpressionState, FunctionDeclarationClassDeclarationVariableDeclarationState, FunctionExpressionState, GetterState, IdentifierExpressionState, IfStatementState, ImportState, ImportDeclarationState, ImportDeclarationExportDeclarationStatementState, ImportNamespaceState, ImportSpecifierState, LabeledStatementState, LiteralBooleanExpressionState, LiteralInfinityExpressionState, LiteralNullExpressionState, LiteralNumericExpressionState, LiteralRegExpExpressionState, LiteralStringExpressionState, MethodState, MethodDefinitionState, ModuleState, NamedObjectPropertyState, NewExpressionState, NewTargetExpressionState, ObjectBindingState, ObjectExpressionState, ObjectPropertyState, PropertyNameState, ReturnStatementState, ScriptState, SetterState, ShorthandPropertyState, SpreadElementState, SpreadElementExpressionState, StatementState, StaticMemberExpressionState, StaticPropertyNameState, SuperState, SwitchCaseState, SwitchDefaultState, SwitchStatementState, SwitchStatementWithDefaultState, TemplateElementState, TemplateExpressionState, ThisExpressionState, ThrowStatementState, TryCatchStatementState, TryFinallyStatementState, UnaryExpressionState, UpdateExpressionState, VariableDeclarationState, VariableDeclarationBindingState, VariableDeclarationExpressionState, VariableDeclarationStatementState, VariableDeclaratorState, WhileStatementState, WithStatementState, YieldExpressionState, YieldGeneratorExpressionState, Out> reducer,
+    @NotNull Maybe<Identifier> node) {
+    return node.map(n -> reduceIdentifier(reducer, n));
   }
 }

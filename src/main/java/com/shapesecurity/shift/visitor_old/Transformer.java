@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.shapesecurity.shift.visitor;
+package com.shapesecurity.shift.visitor_old;
 
 public interface Transformer<State>
     extends TransformerP<State, State, State, State, State, State, State, State, State, State, State, State, State, State> {
