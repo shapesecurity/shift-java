@@ -16,397 +16,559 @@
 
 package com.shapesecurity.shift.visitor;
 
-import com.shapesecurity.functional.data.Either;
 import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.functional.data.Maybe;
-import com.shapesecurity.functional.data.NonEmptyImmutableList;
-import com.shapesecurity.shift.ast.Block;
-import com.shapesecurity.shift.ast.CatchClause;
-import com.shapesecurity.shift.ast.FunctionBody;
-import com.shapesecurity.shift.ast.Identifier;
-import com.shapesecurity.shift.ast.Script;
-import com.shapesecurity.shift.ast.SwitchCase;
-import com.shapesecurity.shift.ast.SwitchDefault;
-import com.shapesecurity.shift.ast.VariableDeclaration;
-import com.shapesecurity.shift.ast.VariableDeclarator;
-import com.shapesecurity.shift.ast.directive.UnknownDirective;
-import com.shapesecurity.shift.ast.directive.UseStrictDirective;
-import com.shapesecurity.shift.ast.expression.ArrayExpression;
-import com.shapesecurity.shift.ast.expression.AssignmentExpression;
-import com.shapesecurity.shift.ast.expression.BinaryExpression;
-import com.shapesecurity.shift.ast.expression.CallExpression;
-import com.shapesecurity.shift.ast.expression.ComputedMemberExpression;
-import com.shapesecurity.shift.ast.expression.ConditionalExpression;
-import com.shapesecurity.shift.ast.expression.FunctionExpression;
-import com.shapesecurity.shift.ast.expression.IdentifierExpression;
-import com.shapesecurity.shift.ast.expression.LiteralBooleanExpression;
-import com.shapesecurity.shift.ast.expression.LiteralInfinityExpression;
-import com.shapesecurity.shift.ast.expression.LiteralNullExpression;
-import com.shapesecurity.shift.ast.expression.LiteralNumericExpression;
-import com.shapesecurity.shift.ast.expression.LiteralRegExpExpression;
-import com.shapesecurity.shift.ast.expression.LiteralStringExpression;
-import com.shapesecurity.shift.ast.expression.NewExpression;
-import com.shapesecurity.shift.ast.expression.ObjectExpression;
-import com.shapesecurity.shift.ast.expression.PostfixExpression;
-import com.shapesecurity.shift.ast.expression.PrefixExpression;
-import com.shapesecurity.shift.ast.expression.StaticMemberExpression;
-import com.shapesecurity.shift.ast.expression.ThisExpression;
-import com.shapesecurity.shift.ast.property.DataProperty;
-import com.shapesecurity.shift.ast.property.Getter;
-import com.shapesecurity.shift.ast.property.PropertyName;
-import com.shapesecurity.shift.ast.property.Setter;
-import com.shapesecurity.shift.ast.statement.BlockStatement;
-import com.shapesecurity.shift.ast.statement.BreakStatement;
-import com.shapesecurity.shift.ast.statement.ContinueStatement;
-import com.shapesecurity.shift.ast.statement.DebuggerStatement;
-import com.shapesecurity.shift.ast.statement.DoWhileStatement;
-import com.shapesecurity.shift.ast.statement.EmptyStatement;
-import com.shapesecurity.shift.ast.statement.ExpressionStatement;
-import com.shapesecurity.shift.ast.statement.ForInStatement;
-import com.shapesecurity.shift.ast.statement.ForStatement;
-import com.shapesecurity.shift.ast.statement.FunctionDeclaration;
-import com.shapesecurity.shift.ast.statement.IfStatement;
-import com.shapesecurity.shift.ast.statement.LabeledStatement;
-import com.shapesecurity.shift.ast.statement.ReturnStatement;
-import com.shapesecurity.shift.ast.statement.SwitchStatement;
-import com.shapesecurity.shift.ast.statement.SwitchStatementWithDefault;
-import com.shapesecurity.shift.ast.statement.ThrowStatement;
-import com.shapesecurity.shift.ast.statement.TryCatchStatement;
-import com.shapesecurity.shift.ast.statement.TryFinallyStatement;
-import com.shapesecurity.shift.ast.statement.VariableDeclarationStatement;
-import com.shapesecurity.shift.ast.statement.WhileStatement;
-import com.shapesecurity.shift.ast.statement.WithStatement;
-import com.shapesecurity.shift.path.Branch;
-
+import com.shapesecurity.shift.ast.*;
 import org.jetbrains.annotations.NotNull;
 
-public interface ReducerP<ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> {
-  @NotNull
-  ScriptState reduceScript(@NotNull Script node, @NotNull ImmutableList<Branch> path, @NotNull ProgramBodyState body);
+import java.lang.reflect.Array;
+
+public interface ReducerP<
+  ScriptState,
+  DirectiveState,
+  StatementState,
+  ExpressionState,
+  BindingIdentifierState,
+  FormalParametersState,
+  FunctionBodyState,
+  ExpressionSuperState,
+  ObjectPropertyState,
+  BindingState,
+  BindingIdentifierMemberExpressionState,
+  SpreadElementExpressionState,
+  BlockState,
+  CatchClauseState,
+  VariableDeclarationBindingState,
+  VariableDeclarationExpressionState,
+  SwitchCaseState,
+  SwitchDefaultState,
+  VariableDeclarationState,
+  PropertyNameState,
+  BindingBindingWithDefaultState,
+  PropertyState,
+  VariableDeclaratorState,
+  FunctionBodyExpressionState,
+  BindingPropertyState,
+  BindingPatternState,
+  BindingPropertyIdentifierState,
+  BindingPropertyPropertyState,
+  BindingWithDefaultState,
+  ClassElementState,
+  MethodDefinitionState,
+  ExportDeclarationState,
+  FunctionDeclarationClassDeclarationVariableDeclarationState,
+  FunctionDeclarationClassDeclarationExpressionState,
+  ExportSpecifierState,
+  ImportDeclarationState,
+  ImportSpecifierState,
+  ModuleState,
+  ImportDeclarationExportDeclarationStatementState,
+  NodeState,
+  ObjectBindingState,
+  SpreadElementState,
+  SuperState,
+  TemplateState,
+  ExpressionTemplateElementState
+  > {
 
   @NotNull
-  IdentifierState reduceIdentifier(@NotNull Identifier node, @NotNull ImmutableList<Branch> path);
+  ScriptState reduceScript(
+    @NotNull Script node,
+    @NotNull ImmutableList<DirectiveState> directives,
+    @NotNull ImmutableList<StatementState> statements);
 
   @NotNull
-  ExpressionState reduceIdentifierExpression(
-      @NotNull IdentifierExpression node,
-      @NotNull ImmutableList<Branch> path,
-      @NotNull IdentifierState identifier);
+  ExpressionState reduceIdentifierExpression(@NotNull IdentifierExpression node);
 
   @NotNull
-  ExpressionState reduceThisExpression(@NotNull ThisExpression node, @NotNull ImmutableList<Branch> path);
+  ExpressionState reduceThisExpression(@NotNull ThisExpression node);
 
   @NotNull
-  ExpressionState reduceLiteralBooleanExpression(@NotNull LiteralBooleanExpression node, @NotNull ImmutableList<Branch> path);
+  ExpressionState reduceLiteralBooleanExpression(@NotNull LiteralBooleanExpression node);
 
   @NotNull
-  ExpressionState reduceLiteralStringExpression(@NotNull LiteralStringExpression node, @NotNull ImmutableList<Branch> path);
+  ExpressionState reduceLiteralStringExpression(@NotNull LiteralStringExpression node);
 
   @NotNull
-  ExpressionState reduceLiteralRegExpExpression(@NotNull LiteralRegExpExpression node, @NotNull ImmutableList<Branch> path);
+  ExpressionState reduceLiteralRegExpExpression(@NotNull LiteralRegExpExpression node);
 
   @NotNull
-  ExpressionState reduceLiteralNumericExpression(@NotNull LiteralNumericExpression node, @NotNull ImmutableList<Branch> path);
+  ExpressionState reduceLiteralNumericExpression(@NotNull LiteralNumericExpression node);
 
   @NotNull
-  ExpressionState reduceLiteralInfinityExpression(@NotNull LiteralInfinityExpression node, @NotNull ImmutableList<Branch> path);
+  ExpressionState reduceLiteralInfinityExpression(@NotNull LiteralInfinityExpression node);
 
   @NotNull
-  ExpressionState reduceLiteralNullExpression(@NotNull LiteralNullExpression node, @NotNull ImmutableList<Branch> path);
+  ExpressionState reduceLiteralNullExpression(@NotNull LiteralNullExpression node);
 
   @NotNull
   ExpressionState reduceFunctionExpression(
-      @NotNull FunctionExpression node,
-      @NotNull ImmutableList<Branch> path,
-      @NotNull Maybe<IdentifierState> name,
-      @NotNull ImmutableList<IdentifierState> parameters,
-      @NotNull ProgramBodyState body);
+    @NotNull FunctionExpression node,
+    @NotNull Maybe<BindingIdentifierState> name,
+    @NotNull FormalParametersState parameters,
+    @NotNull FunctionBodyState body);
 
   @NotNull
   ExpressionState reduceStaticMemberExpression(
-      @NotNull StaticMemberExpression node,
-      @NotNull ImmutableList<Branch> path,
-      @NotNull ExpressionState object,
-      @NotNull IdentifierState property);
+    @NotNull StaticMemberExpression node,
+    @NotNull ExpressionSuperState object);
 
   @NotNull
   ExpressionState reduceComputedMemberExpression(
-      @NotNull ComputedMemberExpression node,
-      @NotNull ImmutableList<Branch> path,
-      @NotNull ExpressionState object,
-      @NotNull ExpressionState expression);
+    @NotNull ComputedMemberExpression node,
+    @NotNull ExpressionSuperState object,
+    @NotNull ExpressionState expression);
 
   @NotNull
   ExpressionState reduceObjectExpression(
-      @NotNull ObjectExpression node,
-      @NotNull ImmutableList<Branch> path,
-      @NotNull ImmutableList<PropertyState> properties);
+    @NotNull ObjectExpression node,
+    @NotNull ImmutableList<ObjectPropertyState> properties);
 
   @NotNull
   ExpressionState reduceBinaryExpression(
-      @NotNull BinaryExpression node,
-      @NotNull ImmutableList<Branch> path,
-      @NotNull ExpressionState left,
-      @NotNull ExpressionState right);
+    @NotNull BinaryExpression node,
+    @NotNull ExpressionState left,
+    @NotNull ExpressionState right);
 
   @NotNull
   ExpressionState reduceAssignmentExpression(
-      @NotNull AssignmentExpression node,
-      @NotNull ImmutableList<Branch> path,
-      @NotNull ExpressionState binding,
-      @NotNull ExpressionState expression);
+    @NotNull AssignmentExpression node,
+    @NotNull BindingState binding,
+    @NotNull ExpressionState expression);
+
+  @NotNull
+  ExpressionState reduceCompoundAssignmentExpression(
+    @NotNull CompoundAssignmentExpression node,
+    @NotNull BindingIdentifierMemberExpressionState binding,
+    @NotNull ExpressionState expression);
 
   @NotNull
   ExpressionState reduceArrayExpression(
-      @NotNull ArrayExpression node,
-      @NotNull ImmutableList<Branch> path,
-      @NotNull ImmutableList<Maybe<ExpressionState>> elements);
+    @NotNull ArrayExpression node,
+    @NotNull ImmutableList<Maybe<SpreadElementExpressionState>> elements);
 
   @NotNull
   ExpressionState reduceNewExpression(
-      @NotNull NewExpression node,
-      @NotNull ImmutableList<Branch> path,
-      @NotNull ExpressionState callee,
-      @NotNull ImmutableList<ExpressionState> arguments);
+    @NotNull NewExpression node,
+    @NotNull ExpressionState callee,
+    @NotNull ImmutableList<SpreadElementExpressionState> arguments);
 
   @NotNull
   ExpressionState reduceCallExpression(
-      @NotNull CallExpression node,
-      @NotNull ImmutableList<Branch> path,
-      @NotNull ExpressionState callee,
-      @NotNull ImmutableList<ExpressionState> arguments);
-
-  @NotNull
-  ExpressionState reducePostfixExpression(
-      @NotNull PostfixExpression node,
-      @NotNull ImmutableList<Branch> path,
-      @NotNull ExpressionState operand);
-
-  @NotNull
-  ExpressionState reducePrefixExpression(
-      @NotNull PrefixExpression node,
-      @NotNull ImmutableList<Branch> path,
-      @NotNull ExpressionState operand);
+    @NotNull CallExpression node,
+    @NotNull ExpressionSuperState callee,
+    @NotNull ImmutableList<SpreadElementExpressionState> arguments);
 
   @NotNull
   ExpressionState reduceConditionalExpression(
-      @NotNull ConditionalExpression node,
-      @NotNull ImmutableList<Branch> path,
-      @NotNull ExpressionState test,
-      @NotNull ExpressionState consequent,
-      @NotNull ExpressionState alternate);
+    @NotNull ConditionalExpression node,
+    @NotNull ExpressionState test,
+    @NotNull ExpressionState consequent,
+    @NotNull ExpressionState alternate);
 
   @NotNull
   StatementState reduceFunctionDeclaration(
-      @NotNull FunctionDeclaration node,
-      @NotNull ImmutableList<Branch> path,
-      @NotNull IdentifierState name,
-      @NotNull ImmutableList<IdentifierState> params,
-      @NotNull ProgramBodyState body);
-
-  @NotNull
-  DirectiveState reduceUseStrictDirective(@NotNull UseStrictDirective node, @NotNull ImmutableList<Branch> path);
-
-  @NotNull
-  DirectiveState reduceUnknownDirective(@NotNull UnknownDirective node, @NotNull ImmutableList<Branch> path);
+    @NotNull FunctionDeclaration node,
+    @NotNull BindingIdentifierState name,
+    @NotNull FormalParametersState params,
+    @NotNull FunctionBodyState body);
 
   @NotNull
   StatementState reduceBlockStatement(
-      @NotNull BlockStatement node,
-      @NotNull ImmutableList<Branch> path,
-      @NotNull BlockState block);
+    @NotNull BlockStatement node,
+    @NotNull BlockState block);
 
   @NotNull
-  StatementState reduceBreakStatement(
-      @NotNull BreakStatement node,
-      @NotNull ImmutableList<Branch> path,
-      @NotNull Maybe<IdentifierState> label);
+  StatementState reduceBreakStatement(@NotNull BreakStatement node);
 
   @NotNull
   CatchClauseState reduceCatchClause(
-      @NotNull CatchClause node,
-      @NotNull ImmutableList<Branch> path,
-      @NotNull IdentifierState binding,
-      @NotNull BlockState body);
+    @NotNull CatchClause node,
+    @NotNull BindingState binding,
+    @NotNull BlockState body);
 
   @NotNull
-  StatementState reduceContinueStatement(
-      @NotNull ContinueStatement node,
-      @NotNull ImmutableList<Branch> path,
-      @NotNull Maybe<IdentifierState> label);
+  StatementState reduceContinueStatement(@NotNull ContinueStatement node);
 
   @NotNull
-  StatementState reduceDebuggerStatement(@NotNull DebuggerStatement node, @NotNull ImmutableList<Branch> path);
+  StatementState reduceDebuggerStatement(@NotNull DebuggerStatement node);
 
   @NotNull
   StatementState reduceDoWhileStatement(
-      @NotNull DoWhileStatement node,
-      @NotNull ImmutableList<Branch> path,
-      @NotNull StatementState body,
-      @NotNull ExpressionState test);
+    @NotNull DoWhileStatement node,
+    @NotNull StatementState body,
+    @NotNull ExpressionState test);
 
   @NotNull
-  StatementState reduceEmptyStatement(@NotNull EmptyStatement node, @NotNull ImmutableList<Branch> path);
+  StatementState reduceEmptyStatement(@NotNull EmptyStatement node);
 
   @NotNull
   StatementState reduceExpressionStatement(
-      @NotNull ExpressionStatement node,
-      @NotNull ImmutableList<Branch> path,
-      @NotNull ExpressionState expression);
+    @NotNull ExpressionStatement node,
+    @NotNull ExpressionState expression);
 
   @NotNull
   StatementState reduceForInStatement(
-      @NotNull ForInStatement node,
-      @NotNull ImmutableList<Branch> path,
-      @NotNull Either<DeclarationState, ExpressionState> left,
-      @NotNull ExpressionState right,
-      @NotNull StatementState body);
+    @NotNull ForInStatement node,
+    @NotNull VariableDeclarationBindingState left,
+    @NotNull ExpressionState right,
+    @NotNull StatementState body);
 
   @NotNull
   StatementState reduceForStatement(
-      @NotNull ForStatement node,
-      @NotNull ImmutableList<Branch> path,
-      @NotNull Maybe<Either<DeclarationState, ExpressionState>> init,
-      @NotNull Maybe<ExpressionState> test,
-      @NotNull Maybe<ExpressionState> update,
-      @NotNull StatementState body);
+    @NotNull ForStatement node,
+    @NotNull Maybe<VariableDeclarationExpressionState> init,
+    @NotNull Maybe<ExpressionState> test,
+    @NotNull Maybe<ExpressionState> update,
+    @NotNull StatementState body);
 
   @NotNull
   StatementState reduceIfStatement(
-      @NotNull IfStatement node,
-      @NotNull ImmutableList<Branch> path,
-      @NotNull ExpressionState test,
-      @NotNull StatementState consequent,
-      @NotNull Maybe<StatementState> alternate);
+    @NotNull IfStatement node,
+    @NotNull ExpressionState test,
+    @NotNull StatementState consequent,
+    @NotNull Maybe<StatementState> alternate);
 
   @NotNull
   StatementState reduceLabeledStatement(
-      @NotNull LabeledStatement node,
-      @NotNull ImmutableList<Branch> path,
-      @NotNull IdentifierState label,
-      @NotNull StatementState body);
+    @NotNull LabeledStatement node,
+    @NotNull StatementState body);
 
   @NotNull
   StatementState reduceReturnStatement(
-      @NotNull ReturnStatement node,
-      @NotNull ImmutableList<Branch> path,
-      @NotNull Maybe<ExpressionState> expression);
+    @NotNull ReturnStatement node,
+    @NotNull Maybe<ExpressionState> expression);
 
   @NotNull
   SwitchCaseState reduceSwitchCase(
-      @NotNull SwitchCase node,
-      @NotNull ImmutableList<Branch> path,
-      @NotNull ExpressionState test,
-      @NotNull ImmutableList<StatementState> consequent);
+    @NotNull SwitchCase node,
+    @NotNull ExpressionState test,
+    @NotNull ImmutableList<StatementState> consequent);
 
   @NotNull
   SwitchDefaultState reduceSwitchDefault(
-      @NotNull SwitchDefault node,
-      @NotNull ImmutableList<Branch> path,
-      @NotNull ImmutableList<StatementState> consequent);
+    @NotNull SwitchDefault node,
+    @NotNull ImmutableList<StatementState> consequent);
 
   @NotNull
   StatementState reduceSwitchStatement(
-      @NotNull SwitchStatement node,
-      @NotNull ImmutableList<Branch> path,
-      @NotNull ExpressionState discriminant,
-      @NotNull ImmutableList<SwitchCaseState> cases);
+    @NotNull SwitchStatement node,
+    @NotNull ExpressionState discriminant,
+    @NotNull ImmutableList<SwitchCaseState> cases);
 
   @NotNull
   StatementState reduceSwitchStatementWithDefault(
-      @NotNull SwitchStatementWithDefault node,
-      @NotNull ImmutableList<Branch> path,
-      @NotNull ExpressionState discriminant,
-      @NotNull ImmutableList<SwitchCaseState> preDefaultCases,
-      @NotNull SwitchDefaultState defaultCase,
-      @NotNull ImmutableList<SwitchCaseState> postDefaultCases);
+    @NotNull SwitchStatementWithDefault node,
+    @NotNull ExpressionState discriminant,
+    @NotNull ImmutableList<SwitchCaseState> preDefaultCases,
+    @NotNull SwitchDefaultState defaultCase,
+    @NotNull ImmutableList<SwitchCaseState> postDefaultCases);
 
   @NotNull
   StatementState reduceThrowStatement(
-      @NotNull ThrowStatement node,
-      @NotNull ImmutableList<Branch> path,
-      @NotNull ExpressionState expression);
+    @NotNull ThrowStatement node,
+    @NotNull ExpressionState expression);
 
   @NotNull
   StatementState reduceTryCatchStatement(
-      @NotNull TryCatchStatement node,
-      @NotNull ImmutableList<Branch> path,
-      @NotNull BlockState block,
-      @NotNull CatchClauseState catchClause);
+    @NotNull TryCatchStatement node,
+    @NotNull BlockState block,
+    @NotNull CatchClauseState catchClause);
 
   @NotNull
   StatementState reduceTryFinallyStatement(
-      @NotNull TryFinallyStatement node,
-      @NotNull ImmutableList<Branch> path,
-      @NotNull BlockState block,
-      @NotNull Maybe<CatchClauseState> catchClause,
-      @NotNull BlockState finalizer);
+    @NotNull TryFinallyStatement node,
+    @NotNull BlockState block,
+    @NotNull Maybe<CatchClauseState> catchClause,
+    @NotNull BlockState finalizer);
 
   @NotNull
   StatementState reduceVariableDeclarationStatement(
-      @NotNull VariableDeclarationStatement node,
-      @NotNull ImmutableList<Branch> path,
-      @NotNull DeclarationState declaration);
+    @NotNull VariableDeclarationStatement node,
+    @NotNull VariableDeclarationState declaration);
 
   @NotNull
-  DeclarationState reduceVariableDeclaration(
-      @NotNull VariableDeclaration node,
-      @NotNull ImmutableList<Branch> path,
-      @NotNull NonEmptyImmutableList<DeclaratorState> declarators);
+  VariableDeclarationState reduceVariableDeclaration(
+    @NotNull VariableDeclaration node,
+    @NotNull ImmutableList<VariableDeclarator> declarators);
 
   @NotNull
   StatementState reduceWhileStatement(
-      @NotNull WhileStatement node,
-      @NotNull ImmutableList<Branch> path,
-      @NotNull ExpressionState test,
-      @NotNull StatementState body);
+    @NotNull WhileStatement node,
+    @NotNull ExpressionState test,
+    @NotNull StatementState body);
 
   @NotNull
   StatementState reduceWithStatement(
-      @NotNull WithStatement node,
-      @NotNull ImmutableList<Branch> path,
-      @NotNull ExpressionState object,
-      @NotNull StatementState body);
+    @NotNull WithStatement node,
+    @NotNull ExpressionState object,
+    @NotNull StatementState body);
 
   @NotNull
-  PropertyState reduceDataProperty(
-      @NotNull DataProperty node,
-      @NotNull ImmutableList<Branch> path,
-      @NotNull PropertyNameState name,
-      @NotNull ExpressionState value);
+  ObjectPropertyState reduceDataProperty(
+    @NotNull DataProperty node,
+    @NotNull ExpressionState value,
+    @NotNull PropertyNameState name);
 
   @NotNull
-  PropertyState reduceGetter(
-      @NotNull Getter node,
-      @NotNull ImmutableList<Branch> path,
-      @NotNull PropertyNameState name,
-      @NotNull ProgramBodyState body);
+  MethodDefinitionState reduceGetter(
+    @NotNull Getter node,
+    @NotNull FunctionBodyState body,
+    @NotNull PropertyNameState name);
 
   @NotNull
-  PropertyState reduceSetter(
-      @NotNull Setter node,
-      @NotNull ImmutableList<Branch> path,
-      @NotNull PropertyNameState name,
-      @NotNull IdentifierState parameter,
-      @NotNull ProgramBodyState body);
+  MethodDefinitionState reduceSetter(
+    @NotNull Setter node,
+    @NotNull BindingBindingWithDefaultState params,
+    @NotNull FunctionBodyState body,
+    @NotNull PropertyNameState name);
 
   @NotNull
-  PropertyNameState reducePropertyName(@NotNull PropertyName node, @NotNull ImmutableList<Branch> path);
+  PropertyNameState reducePropertyName(@NotNull PropertyName node);
 
   @NotNull
-  ProgramBodyState reduceFunctionBody(
-      @NotNull FunctionBody node,
-      @NotNull ImmutableList<Branch> path,
-      @NotNull ImmutableList<DirectiveState> directives,
-      @NotNull ImmutableList<StatementState> statements);
+  FunctionBodyState reduceFunctionBody(
+    @NotNull FunctionBody node,
+    @NotNull ImmutableList<DirectiveState> directives,
+    @NotNull ImmutableList<StatementState> statements);
 
   @NotNull
-  DeclaratorState reduceVariableDeclarator(
-      @NotNull VariableDeclarator node,
-      @NotNull ImmutableList<Branch> path,
-      @NotNull IdentifierState binding,
-      @NotNull Maybe<ExpressionState> init);
+  VariableDeclaratorState reduceVariableDeclarator(
+    @NotNull VariableDeclarator node,
+    @NotNull BindingState binding,
+    @NotNull Maybe<ExpressionState> init);
 
   @NotNull
-  BlockState reduceBlock(@NotNull Block node, @NotNull ImmutableList<Branch> path, @NotNull ImmutableList<StatementState> statements);
+  BlockState reduceBlock(
+    @NotNull Block node,
+    @NotNull ImmutableList<StatementState> statements);
+
+  @NotNull
+  BindingState reduceArrayBinding(
+    @NotNull ArrayBinding node,
+    @NotNull ImmutableList<Maybe<BindingBindingWithDefaultState>> elements,
+    @NotNull Maybe<BindingState> restElement);
+
+  @NotNull
+  ExpressionState reduceArrowExpression(
+    @NotNull ArrowExpression node,
+    @NotNull FormalParametersState params,
+    @NotNull FunctionBodyExpressionState body);
+
+  @NotNull
+  BindingIdentifierState reduceBindingIdentifier(
+    @NotNull BindingIdentifier node);
+
+  @NotNull
+  BindingPatternState reduceBindingPattern(
+    @NotNull BindingPattern node);
+
+  @NotNull
+  BindingPropertyState reduceBindingProperty(
+    @NotNull BindingProperty node);
+
+  @NotNull
+  BindingPropertyIdentifierState reduceBindingPropertyIdentifier(
+    @NotNull BindingPropertyIdentifier node,
+    @NotNull BindingIdentifierState binding,
+    @NotNull Maybe<ExpressionState> init);
+
+  @NotNull
+  BindingPropertyPropertyState reduceBindingPropertyProperty(
+    @NotNull BindingPropertyProperty node,
+    @NotNull PropertyNameState name,
+    @NotNull BindingBindingWithDefaultState binding);
+
+  @NotNull
+  BindingWithDefaultState reduceBindingWithDefault(
+    @NotNull BindingWithDefault node,
+    @NotNull BindingState binding,
+    @NotNull ExpressionState init);
+
+  @NotNull
+  StatementState reduceClassDeclaration(
+    @NotNull ClassDeclaration node,
+    @NotNull BindingIdentifierState name,
+    @NotNull Maybe<ExpressionState> _super);
+
+  @NotNull
+  ClassElementState reduceClassElement(
+    @NotNull ClassElement node,
+    @NotNull MethodDefinitionState method);
+
+  @NotNull
+  ExpressionState reduceClassExpression(
+    @NotNull ClassExpression node,
+    @NotNull Maybe<BindingIdentifierState> name,
+    @NotNull Maybe<ExpressionState> _super,
+    @NotNull ImmutableList<ClassElementState> elements);
+
+  @NotNull
+  PropertyNameState reduceComputedPropertyName(
+    @NotNull ComputedPropertyName node,
+    @NotNull ExpressionState expression);
+
+  @NotNull
+  ExpressionState reduceConditionExpression(
+    @NotNull ConditionalExpression node,
+    @NotNull ExpressionState test,
+    @NotNull ExpressionState consequent,
+    @NotNull ExpressionState alternate);
+
+  @NotNull
+  DirectiveState reduceDirective(@NotNull Directive node);
+
+  @NotNull
+  ExportDeclarationState reduceExport(
+    @NotNull Export node,
+    @NotNull FunctionDeclarationClassDeclarationVariableDeclarationState declaration);
+
+  @NotNull
+  ExportDeclarationState reduceExportAllFrom(@NotNull ExportAllFrom node);
+
+  @NotNull
+  ExportDeclarationState reduceExportDeclaration(@NotNull ExportDeclaration node);
+
+  @NotNull
+  ExportDeclarationState reduceExportDefault(
+    @NotNull ExportDefault node,
+    @NotNull FunctionDeclarationClassDeclarationExpressionState body);
+
+  @NotNull
+  ExportDeclarationState reduceExportFrom(
+    @NotNull ExportFrom node,
+    @NotNull ImmutableList<ExportSpecifierState> namedExports);
+
+  @NotNull
+  ExportSpecifierState reduceExportSpecifier(@NotNull ExportSpecifier node);
+
+  @NotNull
+  ExpressionState reduceExpression(@NotNull Expression node);
+
+  @NotNull
+  FormalParametersState reduceFormalParameters(
+    @NotNull FormalParameters node,
+    @NotNull ImmutableList<BindingBindingWithDefaultState> items,
+    @NotNull Maybe<BindingIdentifierState> rest);
+
+  @NotNull
+  StatementState reduceForOfStatement(
+    @NotNull ForOfStatement node,
+    @NotNull VariableDeclarationBindingState left,
+    @NotNull ExpressionState right,
+    @NotNull StatementState body);
+
+  @NotNull
+  ImportDeclarationState reduceImport(
+    @NotNull Import node,
+    @NotNull Maybe<BindingIdentifierState> defaultBinding,
+    @NotNull ImmutableList<ImportSpecifierState> namedImports);
+
+  @NotNull
+  ImportDeclarationState reduceImportDeclaration(@NotNull ImportDeclaration node);
+
+  @NotNull
+  ImportDeclarationState reduceImportNamespace(
+    @NotNull ImportNamespace node,
+    @NotNull Maybe<BindingIdentifierState> defaultBinding,
+    @NotNull BindingIdentifierState namespaceBinding);
+
+  @NotNull
+  ImportSpecifierState reduceImportSpecifier(
+    @NotNull ImportSpecifier node,
+    @NotNull BindingIdentifierState binding);
+
+  @NotNull
+  StatementState reduceIterationStatement(
+    @NotNull IterationStatement node,
+    @NotNull StatementState statement);
+
+  @NotNull
+  ExpressionState reduceMemberExpression(
+    @NotNull MemberExpression node,
+    @NotNull ExpressionSuperState object);
+
+  @NotNull
+  MethodDefinitionState reduceMethod(
+    @NotNull Method node,
+    @NotNull FormalParametersState params,
+    @NotNull FunctionBodyState body,
+    @NotNull PropertyNameState name);
+
+  @NotNull
+  MethodDefinitionState reduceMethodDefinition(
+    @NotNull MethodDefinition node,
+    @NotNull FunctionBodyState body,
+    @NotNull PropertyNameState name);
+
+  @NotNull
+  ModuleState reduceModule(
+    @NotNull Module node,
+    @NotNull ImmutableList<DirectiveState> directives,
+    @NotNull ImmutableList<ImportDeclarationExportDeclarationStatementState> items);
+
+  @NotNull
+  ObjectPropertyState reduceNamedObjectProperty(
+    @NotNull NamedObjectProperty node,
+    @NotNull PropertyNameState name);
+
+  @NotNull
+  ExpressionState reduceNewTargetExpression(@NotNull NewTargetExpression node);
+
+  @NotNull
+  NodeState reduceNode(@NotNull Node node);
+
+  @NotNull
+  ObjectBindingState reduceObjectBinding(
+    @NotNull ObjectBinding node,
+    @NotNull ImmutableList<BindingProperty> properties);
+
+  @NotNull
+  ObjectPropertyState reduceObjectProperty(@NotNull ObjectProperty node);
+
+  @NotNull
+  ObjectPropertyState reduceShorthandProperty(@NotNull ShorthandProperty node);
+
+  @NotNull
+  SpreadElementState reduceSpreadElement(
+    @NotNull SpreadElement node,
+    @NotNull ExpressionState expression);
+
+  @NotNull
+  StatementState reduceStatement(@NotNull Statement statement);
+
+  @NotNull
+  PropertyNameState reduceStaticPropertyName(@NotNull StaticPropertyName node);
+
+  @NotNull
+  SuperState reduceSuper(@NotNull Super node);
+
+  @NotNull
+  TemplateState reduceTemplate(@NotNull TemplateElement node);
+
+  @NotNull
+  ExpressionState reduceTemplateExpression(
+    @NotNull TemplateExpression node,
+    @NotNull Maybe<ExpressionState> tag,
+    @NotNull ImmutableList<ExpressionTemplateElementState> elements);
+
+  @NotNull
+  ExpressionState reduceUnaryExpression(
+    @NotNull UnaryExpression node,
+    @NotNull ExpressionState operand);
+
+  @NotNull
+  ExpressionState reduceUpdateExpression(
+    @NotNull UpdateExpression node,
+    @NotNull BindingIdentifierMemberExpressionState operand);
+
+  @NotNull
+  ExpressionState reduceYieldExpression(
+    @NotNull YieldExpression node,
+    @NotNull Maybe<ExpressionState> expression);
+
+  @NotNull
+  ExpressionState reduceYieldGeneratorExpression(
+    @NotNull YieldGeneratorExpression node,
+    @NotNull ExpressionState expression);
 }

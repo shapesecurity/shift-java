@@ -16,11 +16,8 @@
 
 package com.shapesecurity.shift.visitor;
 
-import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.functional.data.Monoid;
-import com.shapesecurity.shift.ast.Identifier;
-import com.shapesecurity.shift.path.Branch;
-
+import com.shapesecurity.shift.ast.IdentifierExpression;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -35,7 +32,7 @@ public class Counter extends MonoidalReducer<Integer> {
   public static class IdentifierCounter extends Counter {
     @NotNull
     @Override
-    public Integer reduceIdentifier(@NotNull Identifier node, @NotNull ImmutableList<Branch> path) {
+    public Integer reduceIdentifier(@NotNull IdentifierExpression node) {
       return 1;
     }
   }
