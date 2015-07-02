@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.shapesecurity.shift.visitor;
+package com.shapesecurity.shift.visitor_old;
 
 import com.shapesecurity.functional.F;
 import com.shapesecurity.functional.Thunk;

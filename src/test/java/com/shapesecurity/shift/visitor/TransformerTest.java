@@ -19,6 +19,8 @@ package com.shapesecurity.shift.visitor;
 import java.io.File;
 import java.io.IOException;
 
+import com.shapesecurity.shift.visitor_old.CloneReducer;
+import com.shapesecurity.shift.visitor_old.LazyCloner;
 import org.jetbrains.annotations.NotNull;
 
 import com.shapesecurity.functional.data.ImmutableList;

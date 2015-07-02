@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.shapesecurity.shift.visitor;
+package com.shapesecurity.shift.visitor_old;
 
 import com.shapesecurity.functional.Thunk;
 import com.shapesecurity.functional.data.Either;
@@ -83,6 +83,7 @@ import com.shapesecurity.shift.ast.statement.WhileStatement;
 import com.shapesecurity.shift.ast.statement.WithStatement;
 import com.shapesecurity.shift.path.Branch;
 
+import com.shapesecurity.shift.visitor.ReducerP;
 import org.jetbrains.annotations.NotNull;
 
 public class LazyCloner

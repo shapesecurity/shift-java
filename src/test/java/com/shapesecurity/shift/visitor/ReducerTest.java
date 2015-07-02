@@ -16,21 +16,17 @@
 
 package com.shapesecurity.shift.visitor;
 
+import com.shapesecurity.functional.TestBase;
 import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.functional.data.Maybe;
-import com.shapesecurity.shift.TestBase;
-import com.shapesecurity.shift.ast.Identifier;
+import com.shapesecurity.shift.ast.ObjectExpression;
 import com.shapesecurity.shift.ast.Script;
-import com.shapesecurity.shift.ast.expression.ObjectExpression;
-import com.shapesecurity.shift.ast.statement.ReturnStatement;
 import com.shapesecurity.shift.parser.JsError;
 import com.shapesecurity.shift.parser.Parser;
-import com.shapesecurity.shift.path.Branch;
-
-import java.io.IOException;
-
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
+
+import java.io.IOException;
 
 public class ReducerTest extends TestBase {
   private void count(String source, int expectedCount, Counter counter) throws JsError {
@@ -50,9 +46,9 @@ public class ReducerTest extends TestBase {
       @NotNull
       @Override
       public Integer reduceObjectExpression(
-          @NotNull ObjectExpression node,
-          @NotNull ImmutableList<Branch> path,
-          @NotNull ImmutableList<Integer> properties) {
+        @NotNull ObjectExpression node,
+        @NotNull ImmutableList<Branch> path,
+        @NotNull ImmutableList<Integer> properties) {
         return 1;
       }
     });
@@ -60,9 +56,9 @@ public class ReducerTest extends TestBase {
       @NotNull
       @Override
       public Integer reduceObjectExpression(
-          @NotNull ObjectExpression node,
-          @NotNull ImmutableList<Branch> path,
-          @NotNull ImmutableList<Integer> properties) {
+        @NotNull ObjectExpression node,
+        @NotNull ImmutableList<Branch> path,
+        @NotNull ImmutableList<Integer> properties) {
         return 1;
       }
     });
@@ -70,9 +66,9 @@ public class ReducerTest extends TestBase {
       @NotNull
       @Override
       public Integer reduceObjectExpression(
-          @NotNull ObjectExpression node,
-          @NotNull ImmutableList<Branch> path,
-          @NotNull ImmutableList<Integer> properties) {
+        @NotNull ObjectExpression node,
+        @NotNull ImmutableList<Branch> path,
+        @NotNull ImmutableList<Integer> properties) {
         return 1;
       }
     });
@@ -80,9 +76,9 @@ public class ReducerTest extends TestBase {
       @NotNull
       @Override
       public Integer reduceObjectExpression(
-          @NotNull ObjectExpression node,
-          @NotNull ImmutableList<Branch> path,
-          @NotNull ImmutableList<Integer> properties) {
+        @NotNull ObjectExpression node,
+        @NotNull ImmutableList<Branch> path,
+        @NotNull ImmutableList<Integer> properties) {
         return 1;
       }
     });
@@ -97,9 +93,9 @@ public class ReducerTest extends TestBase {
       @NotNull
       @Override
       public Integer reduceReturnStatement(
-          @NotNull ReturnStatement node,
-          @NotNull ImmutableList<Branch> path,
-          @NotNull Maybe<Integer> expression) {
+        @NotNull ReturnStatement node,
+        @NotNull ImmutableList<Branch> path,
+        @NotNull Maybe<Integer> expression) {
         return expression.orJust(0) + 1;
       }
     });
@@ -112,9 +108,9 @@ public class ReducerTest extends TestBase {
       @NotNull
       @Override
       public Integer reduceReturnStatement(
-          @NotNull ReturnStatement node,
-          @NotNull ImmutableList<Branch> path,
-          @NotNull Maybe<Integer> expression) {
+        @NotNull ReturnStatement node,
+        @NotNull ImmutableList<Branch> path,
+        @NotNull Maybe<Integer> expression) {
         return expression.orJust(0) + 1;
       }
     };
