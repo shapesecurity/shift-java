@@ -17,5 +17,9 @@
 package com.shapesecurity.shift.visitor;
 
 public interface Reducer<State>
-    extends ReducerP<State, State, State, State, State, State, State, State, State, State, State, State, State, State> {
+  extends ReducerP<
+  State, State, State, State, State, State, State, State, State, State, State, State, State, State,
+  State, State, State, State, State, State, State, State, State, State, State, State, State,
+  State, State, State, State, State, State, State, State, State, State, State, State, State
+  > {
 }
