@@ -5,11 +5,11 @@ import com.shapesecurity.functional.data.Maybe;
 import com.shapesecurity.shift.ast.*;
 import com.shapesecurity.shift.ast.operators.UnaryOperator;
 import com.shapesecurity.shift.ast.operators.UpdateOperator;
-import com.shapesecurity.shift.parser.Assertions;
+import com.shapesecurity.shift.parser.ParserTestCase;
 import com.shapesecurity.shift.parser.JsError;
 import org.junit.Test;
 
-public class YieldExpressionTest extends Assertions {
+public class YieldExpressionTest extends ParserTestCase {
   @Test
   public void testYieldExpression() throws JsError {
     testScript("function*a(){yield\na}", new FunctionDeclaration(new BindingIdentifier("a"),

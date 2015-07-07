@@ -3,11 +3,11 @@ package com.shapesecurity.shift.parser.destructuring.binding_pattern;
 import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.functional.data.Maybe;
 import com.shapesecurity.shift.ast.*;
-import com.shapesecurity.shift.parser.Assertions;
+import com.shapesecurity.shift.parser.ParserTestCase;
 import com.shapesecurity.shift.parser.JsError;
 import org.junit.Test;
 
-public class ObjectBindingTest extends Assertions {
+public class ObjectBindingTest extends ParserTestCase {
   @Test
   public void testObjectBinding() throws JsError {
     testScript("var {a} = 0;", new VariableDeclarationStatement(new VariableDeclaration(VariableDeclarationKind.Var,

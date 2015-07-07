@@ -258,12 +258,6 @@ public class MonoidalReducer<State> implements Reducer<State> {
 
   @NotNull
   @Override
-  public State reduceExportDeclaration(@NotNull ExportDeclaration node) {
-    return this.identity;
-  }
-
-  @NotNull
-  @Override
   public State reduceExportDefault(@NotNull ExportDefault node, @NotNull State body) {
     return body;
   }
@@ -361,12 +355,6 @@ public class MonoidalReducer<State> implements Reducer<State> {
 
   @NotNull
   @Override
-  public State reduceImportDeclaration(@NotNull ImportDeclaration node) {
-    return this.identity;
-  }
-
-  @NotNull
-  @Override
   public State reduceImportNamespace(@NotNull ImportNamespace node, @NotNull Maybe<State> defaultBinding, @NotNull State namespaceBinding) {
     return append(o(defaultBinding), namespaceBinding);
   }
@@ -429,12 +417,6 @@ public class MonoidalReducer<State> implements Reducer<State> {
   @Override
   public State reduceModule(@NotNull Module node, @NotNull ImmutableList<State> directives, @NotNull ImmutableList<State> items) {
     return append(fold(directives), fold(items));
-  }
-
-  @NotNull
-  @Override
-  public State reduceNamedObjectProperty(@NotNull NamedObjectProperty node, @NotNull State name) {
-    return name;
   }
 
   @NotNull

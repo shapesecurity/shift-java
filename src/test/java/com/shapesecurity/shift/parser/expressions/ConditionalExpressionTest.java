@@ -2,11 +2,11 @@ package com.shapesecurity.shift.parser.expressions;
 
 import com.shapesecurity.shift.ast.*;
 import com.shapesecurity.shift.ast.operators.BinaryOperator;
-import com.shapesecurity.shift.parser.Assertions;
+import com.shapesecurity.shift.parser.ParserTestCase;
 import com.shapesecurity.shift.parser.JsError;
 import org.junit.Test;
 
-public class ConditionalExpressionTest extends Assertions {
+public class ConditionalExpressionTest extends ParserTestCase {
   @Test
   public void testConditionalExpression() throws JsError {
     testScript("a?b:c", new ConditionalExpression(new IdentifierExpression("a"), new IdentifierExpression("b"),

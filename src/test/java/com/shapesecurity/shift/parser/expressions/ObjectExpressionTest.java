@@ -4,11 +4,11 @@ import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.functional.data.Maybe;
 import com.shapesecurity.shift.ast.*;
 import com.shapesecurity.shift.ast.operators.UnaryOperator;
-import com.shapesecurity.shift.parser.Assertions;
+import com.shapesecurity.shift.parser.ParserTestCase;
 import com.shapesecurity.shift.parser.JsError;
 import org.junit.Test;
 
-public class ObjectExpressionTest extends Assertions {
+public class ObjectExpressionTest extends ParserTestCase {
   @Test
   public void testObjectExpression() throws JsError {
     testScript("({})", new ObjectExpression(ImmutableList.nil()));

@@ -4,11 +4,11 @@ import com.shapesecurity.shift.ast.BinaryExpression;
 import com.shapesecurity.shift.ast.IdentifierExpression;
 import com.shapesecurity.shift.ast.LiteralNumericExpression;
 import com.shapesecurity.shift.ast.operators.BinaryOperator;
-import com.shapesecurity.shift.parser.Assertions;
+import com.shapesecurity.shift.parser.ParserTestCase;
 import com.shapesecurity.shift.parser.JsError;
 import org.junit.Test;
 
-public class BinaryExpressionTest extends Assertions {
+public class BinaryExpressionTest extends ParserTestCase {
   @Test
   public void testBinaryExpression() throws JsError {
     testScript("1+2", new BinaryExpression(BinaryOperator.Plus, new LiteralNumericExpression(1.0),

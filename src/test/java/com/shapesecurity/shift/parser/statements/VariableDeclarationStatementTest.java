@@ -3,11 +3,11 @@ package com.shapesecurity.shift.parser.statements;
 import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.functional.data.Maybe;
 import com.shapesecurity.shift.ast.*;
-import com.shapesecurity.shift.parser.Assertions;
+import com.shapesecurity.shift.parser.ParserTestCase;
 import com.shapesecurity.shift.parser.JsError;
 import org.junit.Test;
 
-public class VariableDeclarationStatementTest extends Assertions {
+public class VariableDeclarationStatementTest extends ParserTestCase {
   @Test
   public void testVariableDeclarationStatement() throws JsError {
     testScript("var x", new VariableDeclarationStatement(new VariableDeclaration(VariableDeclarationKind.Var,

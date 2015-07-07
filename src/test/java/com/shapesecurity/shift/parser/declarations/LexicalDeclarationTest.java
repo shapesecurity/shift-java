@@ -3,11 +3,11 @@ package com.shapesecurity.shift.parser.declarations;
 import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.functional.data.Maybe;
 import com.shapesecurity.shift.ast.*;
-import com.shapesecurity.shift.parser.Assertions;
+import com.shapesecurity.shift.parser.ParserTestCase;
 import com.shapesecurity.shift.parser.JsError;
 import org.junit.Test;
 
-public class LexicalDeclarationTest extends Assertions {
+public class LexicalDeclarationTest extends ParserTestCase {
   @Test
   public void testLexicalDeclaration() throws JsError {
     testScript("let a", new VariableDeclarationStatement(new VariableDeclaration(VariableDeclarationKind.Let,

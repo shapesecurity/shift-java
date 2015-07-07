@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.shapesecurity.shift.visitor_old;
+package com.shapesecurity.shift.visitor.disabled;
 
 import com.shapesecurity.functional.data.Either;
 import com.shapesecurity.functional.data.ImmutableList;
@@ -82,7 +82,6 @@ import com.shapesecurity.shift.ast.statement.WhileStatement;
 import com.shapesecurity.shift.ast.statement.WithStatement;
 import com.shapesecurity.shift.path.Branch;
 
-import com.shapesecurity.shift.visitor.ReducerP;
 import org.jetbrains.annotations.NotNull;
 
 public class CloneReducer

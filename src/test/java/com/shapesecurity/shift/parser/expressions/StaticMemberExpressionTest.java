@@ -2,11 +2,11 @@ package com.shapesecurity.shift.parser.expressions;
 
 import com.shapesecurity.shift.ast.IdentifierExpression;
 import com.shapesecurity.shift.ast.StaticMemberExpression;
-import com.shapesecurity.shift.parser.Assertions;
+import com.shapesecurity.shift.parser.ParserTestCase;
 import com.shapesecurity.shift.parser.JsError;
 import org.junit.Test;
 
-public class StaticMemberExpressionTest extends Assertions {
+public class StaticMemberExpressionTest extends ParserTestCase {
   @Test
   public void testStaticMemberExpression() throws JsError {
     testScript("a.b", new StaticMemberExpression("b", new IdentifierExpression("a")));

@@ -19,25 +19,28 @@ package com.shapesecurity.shift.visitor;
 import com.shapesecurity.functional.TestBase;
 import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.functional.data.Maybe;
+import com.shapesecurity.shift.ast.IdentifierExpression;
 import com.shapesecurity.shift.ast.ObjectExpression;
+import com.shapesecurity.shift.ast.ReturnStatement;
 import com.shapesecurity.shift.ast.Script;
 import com.shapesecurity.shift.parser.JsError;
 import com.shapesecurity.shift.parser.Parser;
+import junit.framework.TestCase;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 
 import java.io.IOException;
 
-public class ReducerTest extends TestBase {
+public class ReducerTest extends VisitorTestCase {
   private void count(String source, int expectedCount, Counter counter) throws JsError {
-    Script script = Parser.parse(source);
-    assertEquals(expectedCount, script.reduce(counter));
+    Script script = Parser.parseScript(source);
+    assertEquals(expectedCount, Director.reduce(counter, script).intValue());
   }
 
   private void countLibrary(String fileName, int expectedCount, Counter counter) throws JsError, IOException {
-    String source = readLibrary(fileName);
-    Script script = Parser.parse(source);
-    assertEquals(expectedCount, script.reduce(counter));
+    String source = readFile("libraries/" + fileName);
+    Script script = Parser.parseScript(source);
+    assertEquals(expectedCount, Director.reduceScript(counter, script).intValue());
   }
 
   @Test
@@ -47,54 +50,54 @@ public class ReducerTest extends TestBase {
       @Override
       public Integer reduceObjectExpression(
         @NotNull ObjectExpression node,
-        @NotNull ImmutableList<Branch> path,
         @NotNull ImmutableList<Integer> properties) {
         return 1;
       }
     });
+
     count("({a:1,b:2})", 1, new Counter() {
       @NotNull
       @Override
       public Integer reduceObjectExpression(
         @NotNull ObjectExpression node,
-        @NotNull ImmutableList<Branch> path,
         @NotNull ImmutableList<Integer> properties) {
         return 1;
       }
     });
+
     count("{a:1,b}", 0, new Counter() {
       @NotNull
       @Override
       public Integer reduceObjectExpression(
         @NotNull ObjectExpression node,
-        @NotNull ImmutableList<Branch> path,
         @NotNull ImmutableList<Integer> properties) {
         return 1;
       }
     });
+
     count("{a:1,b}", 0, new Counter() {
       @NotNull
       @Override
       public Integer reduceObjectExpression(
         @NotNull ObjectExpression node,
-        @NotNull ImmutableList<Branch> path,
         @NotNull ImmutableList<Integer> properties) {
         return 1;
       }
     });
-    count("+{get a() { return 0; }, set a(v) { return v; } }", 2, new Counter() {
+
+    count("+{get a() { return 0; }, set a(v) { return v; } }", 1, new Counter() {
       @NotNull
       @Override
-      public Integer reduceIdentifier(@NotNull Identifier node, @NotNull ImmutableList<Branch> path) {
+      public Integer reduceIdentifierExpression(@NotNull IdentifierExpression node) {
         return 1;
       }
     });
+
     count("+{get a() { return 0; }, set a(v) { return v; } }", 2, new Counter() {
       @NotNull
       @Override
       public Integer reduceReturnStatement(
         @NotNull ReturnStatement node,
-        @NotNull ImmutableList<Branch> path,
         @NotNull Maybe<Integer> expression) {
         return expression.orJust(0) + 1;
       }
@@ -109,7 +112,6 @@ public class ReducerTest extends TestBase {
       @Override
       public Integer reduceReturnStatement(
         @NotNull ReturnStatement node,
-        @NotNull ImmutableList<Branch> path,
         @NotNull Maybe<Integer> expression) {
         return expression.orJust(0) + 1;
       }

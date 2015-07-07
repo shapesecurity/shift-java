@@ -3,11 +3,11 @@ package com.shapesecurity.shift.parser.declarations;
 import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.functional.data.Maybe;
 import com.shapesecurity.shift.ast.*;
-import com.shapesecurity.shift.parser.Assertions;
+import com.shapesecurity.shift.parser.ParserTestCase;
 import com.shapesecurity.shift.parser.JsError;
 import org.junit.Test;
 
-public class GeneratorDeclarationTest extends Assertions {
+public class GeneratorDeclarationTest extends ParserTestCase {
   @Test
   public void testGeneratorDeclarationTest() throws JsError {
     testScript("function* a(){}", new FunctionDeclaration(new BindingIdentifier("a"), true, new FormalParameters(

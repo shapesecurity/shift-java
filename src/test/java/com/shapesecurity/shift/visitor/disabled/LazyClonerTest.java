@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.shapesecurity.shift.visitor;
+package com.shapesecurity.shift.visitor.disabled;
 
 import static org.junit.Assert.assertTrue;
 
@@ -31,8 +31,6 @@ import com.shapesecurity.shift.path.Branch;
 import java.io.File;
 import java.io.IOException;
 
-import com.shapesecurity.shift.visitor_old.DirtyState;
-import com.shapesecurity.shift.visitor_old.LazyCloner;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 

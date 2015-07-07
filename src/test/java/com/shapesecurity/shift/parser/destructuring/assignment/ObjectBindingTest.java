@@ -3,11 +3,11 @@ package com.shapesecurity.shift.parser.destructuring.assignment;
 import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.functional.data.Maybe;
 import com.shapesecurity.shift.ast.*;
-import com.shapesecurity.shift.parser.Assertions;
+import com.shapesecurity.shift.parser.ParserTestCase;
 import com.shapesecurity.shift.parser.JsError;
 import org.junit.Test;
 
-public class ObjectBindingTest extends Assertions {
+public class ObjectBindingTest extends ParserTestCase {
   @Test
   public void testObjectBinding() throws JsError {
     testScript("({x} = 0)", new AssignmentExpression(new ObjectBinding(ImmutableList.list(new BindingPropertyIdentifier(new BindingIdentifier("x"), Maybe.nothing()))), new LiteralNumericExpression(0.0)));

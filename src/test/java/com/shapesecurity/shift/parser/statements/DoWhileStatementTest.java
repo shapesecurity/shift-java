@@ -3,11 +3,11 @@ package com.shapesecurity.shift.parser.statements;
 import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.functional.data.Maybe;
 import com.shapesecurity.shift.ast.*;
-import com.shapesecurity.shift.parser.Assertions;
+import com.shapesecurity.shift.parser.ParserTestCase;
 import com.shapesecurity.shift.parser.JsError;
 import org.junit.Test;
 
-public class DoWhileStatementTest extends Assertions {
+public class DoWhileStatementTest extends ParserTestCase {
   @Test
   public void testDoWhileStatement() throws JsError {
     testScript("do keep(); while (true);", new DoWhileStatement(new LiteralBooleanExpression(true),
