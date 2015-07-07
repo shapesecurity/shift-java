@@ -16,9 +16,7 @@
 
 package com.shapesecurity.shift.scope;
 
-import com.shapesecurity.functional.data.HashTable;
 import com.shapesecurity.functional.data.ImmutableList;
-import com.shapesecurity.shift.path.Branch;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -32,17 +30,17 @@ public class Variable {
    * references of this variable *
    */
   @NotNull
-  public final HashTable<ImmutableList<Branch>, Reference> references;
+  public final ImmutableList<Reference> references;
   /**
    * references of this variable *
    */
   @NotNull
-  public final HashTable<ImmutableList<Branch>, Declaration> declarations;
+  public final ImmutableList<Declaration> declarations;
 
   public Variable(
       @NotNull String name,
-      @NotNull HashTable<ImmutableList<Branch>, Reference> references,
-      @NotNull HashTable<ImmutableList<Branch>, Declaration> declarations) {
+      @NotNull ImmutableList<Reference> references,
+      @NotNull ImmutableList<Declaration> declarations) {
     this.name = name;
     this.references = references;
     this.declarations = declarations;

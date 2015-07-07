@@ -16,33 +16,42 @@
 
 package com.shapesecurity.shift.scope;
 
-import com.shapesecurity.functional.data.ImmutableList;
-import com.shapesecurity.shift.ast.Identifier;
-import com.shapesecurity.shift.path.Branch;
+import com.shapesecurity.functional.data.Either;
+import com.shapesecurity.shift.ast.BindingIdentifier;
+import com.shapesecurity.shift.ast.IdentifierExpression;
 
 import org.jetbrains.annotations.NotNull;
 
 public final class Reference {
   @NotNull
-  public final Identifier node;
-  @NotNull
-  public final ImmutableList<Branch> path;
+  public final Either<BindingIdentifier, IdentifierExpression> node; // TODO should be EitherNode?
   @NotNull
   public final Accessibility accessibility;
 
-  public Reference(@NotNull Identifier node, @NotNull ImmutableList<Branch> path, @NotNull Accessibility accessibility) {
+  public Reference(@NotNull Either<BindingIdentifier, IdentifierExpression> node, @NotNull Accessibility accessibility) {
     this.node = node;
-    this.path = path;
     this.accessibility = accessibility;
   }
 
+  public Reference(@NotNull BindingIdentifier node, @NotNull Accessibility accessibility) {
+    this.node = Either.left(node);
+    this.accessibility = accessibility;
+  }
+
+  public Reference(@NotNull IdentifierExpression node, @NotNull Accessibility accessibility) {
+    this.node = Either.right(node);
+    this.accessibility = accessibility;
+  }
+
+
+
   @NotNull
   public final Reference withReadability() {
-    return new Reference(this.node, this.path, this.accessibility.withReadability());
+    return new Reference(this.node, this.accessibility.withReadability());
   }
 
   @NotNull
   public final Reference withWritability() {
-    return new Reference(this.node, this.path, this.accessibility.withWritability());
+    return new Reference(this.node, this.accessibility.withWritability());
   }
 }
