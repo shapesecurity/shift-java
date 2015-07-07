@@ -16,10 +16,8 @@
 
 package com.shapesecurity.shift.scope;
 
-import com.shapesecurity.functional.data.ImmutableList;
-import com.shapesecurity.shift.ast.Identifier;
-import com.shapesecurity.shift.ast.VariableDeclaration;
-import com.shapesecurity.shift.path.Branch;
+import com.shapesecurity.shift.ast.BindingIdentifier;
+import com.shapesecurity.shift.ast.VariableDeclarationKind;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -28,31 +26,24 @@ public class Declaration {
    * AST node representing the declaration of this node
    */
   @NotNull
-  public final Identifier node;
-  @NotNull
-  public final ImmutableList<Branch> path;
+  public final BindingIdentifier node;
   /**
    * Declared Variable kind
    */
   @NotNull
   public final Kind kind;
 
-  public Declaration(@NotNull Identifier node, @NotNull ImmutableList<Branch> path, @NotNull Kind kind) {
+  public Declaration(@NotNull BindingIdentifier node, @NotNull Kind kind) {
     this.node = node;
-    this.path = path;
     this.kind = kind;
-  }
-
-  @NotNull
-  public final ImmutableList<Branch> getPath() {
-    return this.path;
   }
 
   public static enum Kind {
     Var(false),
     Const(true),
     Let(true),
-    FunctionName(false),
+    FunctionName(true),
+    ClassName(true),
     Param(false),
     CatchParam(true);
     public final boolean isFunctionScoped;
@@ -64,7 +55,7 @@ public class Declaration {
     }
 
     @NotNull
-    public static Kind fromVariableDeclarationKind(@NotNull VariableDeclaration.VariableDeclarationKind kind) {
+    public static Kind fromVariableDeclarationKind(@NotNull VariableDeclarationKind kind) {
       switch (kind) {
       case Var:
         return Kind.Var;

@@ -19,9 +19,7 @@ package com.shapesecurity.shift.scope;
 import com.shapesecurity.functional.Pair;
 import com.shapesecurity.functional.data.HashTable;
 import com.shapesecurity.functional.data.ImmutableList;
-import com.shapesecurity.shift.ast.Identifier;
 import com.shapesecurity.shift.ast.Node;
-import com.shapesecurity.shift.path.Branch;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -29,15 +27,14 @@ public class GlobalScope extends Scope {
   GlobalScope(
       @NotNull ImmutableList<Scope> children,
       @NotNull ImmutableList<Variable> variables,
-      @NotNull ImmutableList<Variable> blockScopedTiedVar,
-      @NotNull HashTable<String, HashTable<ImmutableList<Branch>, Reference>> through,
+      @NotNull HashTable<String, ImmutableList<Reference>> through,
       @NotNull Node astNode) {
-    super(children, variables, blockScopedTiedVar, through, Type.Global, true, astNode);
-    for (Pair<String, HashTable<ImmutableList<Branch>, Reference>> var : through.entries()) {
-      this.variables.put(var.a, new Variable(var.a, var.b, HashTable.empty()));
+    super(children, variables, through, Type.Global, true, astNode);
+    for (Pair<String, ImmutableList<Reference>> var : through.entries()) {
+      this.variables.put(var.a, new Variable(var.a, var.b, ImmutableList.nil()));
     }
   }
-
+/* // TODO figure out how this should work
   @Override
   @NotNull
   public ImmutableList<Variable> findVariables(@NotNull final Identifier identifier) {
@@ -55,4 +52,5 @@ public class GlobalScope extends Scope {
   public ImmutableList<Variable> findVariablesReferencedBy(@NotNull final Identifier identifier) {
     return super.findVariablesReferencedBy(identifier);
   }
+*/
 }
