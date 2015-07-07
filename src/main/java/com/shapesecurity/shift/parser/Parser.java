@@ -1115,6 +1115,7 @@ public abstract class Parser extends Tokenizer {
     } else {
       CompoundAssignmentOperator compoundAssignmentOperator = this.lookupCompoundAssignmentOperator(operator);
       if (compoundAssignmentOperator != null) {
+        this.isBindingElement = this.isAssignmentTarget = false;
         return Either.left(this.markLocation(startLocation, new CompoundAssignmentExpression(compoundAssignmentOperator, (BindingIdentifierMemberExpression) assignmentTarget, rhs.left().just())));
       } else {
         throw this.createError("should not be here", 0, 0, 0);

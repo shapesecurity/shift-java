@@ -4,11 +4,11 @@ import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.functional.data.Maybe;
 import com.shapesecurity.shift.ast.*;
 import com.shapesecurity.shift.ast.operators.CompoundAssignmentOperator;
-import com.shapesecurity.shift.parser.Assertions;
+import com.shapesecurity.shift.parser.ParserTestCase;
 import com.shapesecurity.shift.parser.JsError;
 import org.junit.Test;
 
-public class AssignmentExpressionTest extends Assertions {
+public class AssignmentExpressionTest extends ParserTestCase {
   @Test
   public void testAssignmentExpression() throws JsError {
     testScript("a=0;", new AssignmentExpression(new BindingIdentifier("a"), new LiteralNumericExpression(0.0)));
@@ -58,11 +58,15 @@ public class AssignmentExpressionTest extends Assertions {
     testScript("x |= 0", new CompoundAssignmentExpression(CompoundAssignmentOperator.AssignBitOr,
         new BindingIdentifier("x"), new LiteralNumericExpression(0.0)));
 
+    testScript("x = (y += 0)", new AssignmentExpression(new BindingIdentifier("x"),
+        new CompoundAssignmentExpression(CompoundAssignmentOperator.AssignPlus,
+            new BindingIdentifier("y"), new LiteralNumericExpression(0.0))));
+
     testScript("'use strict'; eval[0] = 0", new AssignmentExpression(new ComputedMemberExpression(
-            new LiteralNumericExpression(0.0), new IdentifierExpression("eval")), new LiteralNumericExpression(0.0)));
+        new LiteralNumericExpression(0.0), new IdentifierExpression("eval")), new LiteralNumericExpression(0.0)));
 
     testScript("'use strict'; arguments[0] = 0", new AssignmentExpression(new ComputedMemberExpression(
-            new LiteralNumericExpression(0.0), new IdentifierExpression("arguments")), new LiteralNumericExpression(0.0)));
+        new LiteralNumericExpression(0.0), new IdentifierExpression("arguments")), new LiteralNumericExpression(0.0)));
 
     testScript("((((((((((((((((((((((((((((((((((((((((a)))))))))))))))))))))))))))))))))))))))) = 0",
         new AssignmentExpression(new BindingIdentifier("a"), new LiteralNumericExpression(0.0)));

@@ -3,11 +3,11 @@ package com.shapesecurity.shift.parser.statements;
 import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.shift.ast.*;
 import com.shapesecurity.shift.ast.operators.BinaryOperator;
-import com.shapesecurity.shift.parser.Assertions;
+import com.shapesecurity.shift.parser.ParserTestCase;
 import com.shapesecurity.shift.parser.JsError;
 import org.junit.Test;
 
-public class ThrowStatementTest extends Assertions {
+public class ThrowStatementTest extends ParserTestCase {
   @Test
   public void testThrowStatement() throws JsError {
     testScript("throw this", new ThrowStatement(new ThisExpression()));

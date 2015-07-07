@@ -4,11 +4,11 @@ import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.shift.ast.*;
 import com.shapesecurity.shift.ast.operators.BinaryOperator;
 import com.shapesecurity.shift.ast.operators.UpdateOperator;
-import com.shapesecurity.shift.parser.Assertions;
+import com.shapesecurity.shift.parser.ParserTestCase;
 import com.shapesecurity.shift.parser.JsError;
 import org.junit.Test;
 
-public class WhileStatementTest extends Assertions {
+public class WhileStatementTest extends ParserTestCase {
   @Test
   public void testWhileStatement() throws JsError {
     testScript("while(1);", new WhileStatement(new LiteralNumericExpression(1.0), new EmptyStatement()));

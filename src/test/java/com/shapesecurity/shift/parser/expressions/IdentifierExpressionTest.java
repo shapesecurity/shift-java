@@ -3,11 +3,11 @@ package com.shapesecurity.shift.parser.expressions;
 import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.functional.data.Maybe;
 import com.shapesecurity.shift.ast.*;
-import com.shapesecurity.shift.parser.Assertions;
+import com.shapesecurity.shift.parser.ParserTestCase;
 import com.shapesecurity.shift.parser.JsError;
 import org.junit.Test;
 
-public class IdentifierExpressionTest extends Assertions {
+public class IdentifierExpressionTest extends ParserTestCase {
   @Test
   public void testIdentifierExpression() throws JsError {
     testScript("x", new IdentifierExpression("x"));

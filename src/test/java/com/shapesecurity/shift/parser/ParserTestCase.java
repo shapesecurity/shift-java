@@ -3,14 +3,10 @@ package com.shapesecurity.shift.parser;
 import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.functional.data.Maybe;
 import com.shapesecurity.shift.ast.*;
+import junit.framework.TestCase;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.IOException;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
-
-public class Assertions {
+public abstract class ParserTestCase extends TestCase {
 
   protected static FormalParameters NO_PARAMETERS = new FormalParameters(ImmutableList.nil(), Maybe.nothing());
 

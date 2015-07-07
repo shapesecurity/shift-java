@@ -4,13 +4,12 @@ import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.functional.data.Maybe;
 import com.shapesecurity.shift.ast.*;
 import com.shapesecurity.shift.ast.operators.BinaryOperator;
-import com.shapesecurity.shift.ast.operators.CompoundAssignmentOperator;
 import com.shapesecurity.shift.ast.operators.UpdateOperator;
-import com.shapesecurity.shift.parser.Assertions;
+import com.shapesecurity.shift.parser.ParserTestCase;
 import com.shapesecurity.shift.parser.JsError;
 import org.junit.Test;
 
-public class ForStatementTest extends Assertions {
+public class ForStatementTest extends ParserTestCase {
   @Test
   public void testForStatement() throws JsError {
     testScript("for(x, y;;);", new ForStatement(

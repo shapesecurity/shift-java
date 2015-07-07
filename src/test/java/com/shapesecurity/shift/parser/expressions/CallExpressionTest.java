@@ -2,11 +2,11 @@ package com.shapesecurity.shift.parser.expressions;
 
 import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.shift.ast.*;
-import com.shapesecurity.shift.parser.Assertions;
+import com.shapesecurity.shift.parser.ParserTestCase;
 import com.shapesecurity.shift.parser.JsError;
 import org.junit.Test;
 
-public class CallExpressionTest extends Assertions {
+public class CallExpressionTest extends ParserTestCase {
   @Test
   public void testCallExpression() throws JsError {
     testScript("a(b,c)", new CallExpression(new IdentifierExpression("a"), ImmutableList.list(new IdentifierExpression("b"), new IdentifierExpression("c"))));

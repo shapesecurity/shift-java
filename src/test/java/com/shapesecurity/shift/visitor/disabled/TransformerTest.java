@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package com.shapesecurity.shift.visitor;
+package com.shapesecurity.shift.visitor.disabled;
 
 import java.io.File;
 import java.io.IOException;
 
-import com.shapesecurity.shift.visitor_old.CloneReducer;
-import com.shapesecurity.shift.visitor_old.LazyCloner;
+import com.shapesecurity.shift.visitor.disabled.CloneReducer;
+import com.shapesecurity.shift.visitor.disabled.LazyCloner;
 import org.jetbrains.annotations.NotNull;
 
 import com.shapesecurity.functional.data.ImmutableList;

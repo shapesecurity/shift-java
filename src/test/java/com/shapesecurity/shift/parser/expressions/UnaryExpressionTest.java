@@ -5,11 +5,11 @@ import com.shapesecurity.shift.ast.BindingIdentifier;
 import com.shapesecurity.shift.ast.IdentifierExpression;
 import com.shapesecurity.shift.ast.UnaryExpression;
 import com.shapesecurity.shift.ast.operators.UnaryOperator;
-import com.shapesecurity.shift.parser.Assertions;
+import com.shapesecurity.shift.parser.ParserTestCase;
 import com.shapesecurity.shift.parser.JsError;
 import org.junit.Test;
 
-public class UnaryExpressionTest extends Assertions {
+public class UnaryExpressionTest extends ParserTestCase {
   @Test
   public void testUnaryExpression() throws JsError {
     testScript("!a", new UnaryExpression(UnaryOperator.LogicalNot, new IdentifierExpression("a")));

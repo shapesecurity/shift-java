@@ -4,11 +4,11 @@ import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.functional.data.Maybe;
 import com.shapesecurity.shift.ast.*;
 import com.shapesecurity.shift.ast.operators.BinaryOperator;
-import com.shapesecurity.shift.parser.Assertions;
+import com.shapesecurity.shift.parser.ParserTestCase;
 import com.shapesecurity.shift.parser.JsError;
 import org.junit.Test;
 
-public class PropertyNameTest extends Assertions {
+public class PropertyNameTest extends ParserTestCase {
   @Test
   public void testPropertyName() throws JsError {
     testScript("({0x0:0})", new ObjectExpression(ImmutableList.list(new DataProperty(new LiteralNumericExpression(0.0), new StaticPropertyName("0")))));

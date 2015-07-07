@@ -6,11 +6,11 @@ import com.shapesecurity.shift.ast.BindingIdentifier;
 import com.shapesecurity.shift.ast.Import;
 import com.shapesecurity.shift.ast.ImportNamespace;
 import com.shapesecurity.shift.ast.ImportSpecifier;
-import com.shapesecurity.shift.parser.Assertions;
+import com.shapesecurity.shift.parser.ParserTestCase;
 import com.shapesecurity.shift.parser.JsError;
 import org.junit.Test;
 
-public class ImportTest extends Assertions {
+public class ImportTest extends ParserTestCase {
   @Test
   public void testImport() throws JsError {
     testModule("import * as a from 'a'", new ImportNamespace(Maybe.nothing(), new BindingIdentifier("a"), "\'a\'"));

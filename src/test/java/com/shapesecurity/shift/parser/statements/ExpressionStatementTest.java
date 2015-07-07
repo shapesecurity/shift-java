@@ -4,11 +4,11 @@ import com.shapesecurity.shift.ast.BinaryExpression;
 import com.shapesecurity.shift.ast.ExpressionStatement;
 import com.shapesecurity.shift.ast.IdentifierExpression;
 import com.shapesecurity.shift.ast.operators.BinaryOperator;
-import com.shapesecurity.shift.parser.Assertions;
+import com.shapesecurity.shift.parser.ParserTestCase;
 import com.shapesecurity.shift.parser.JsError;
 import org.junit.Test;
 
-public class ExpressionStatementTest extends Assertions {
+public class ExpressionStatementTest extends ParserTestCase {
   @Test
   public void testExpressionStatement() throws JsError {
     testScript("x", new ExpressionStatement(new IdentifierExpression("x")));

@@ -32,7 +32,7 @@ public class Counter extends MonoidalReducer<Integer> {
   public static class IdentifierCounter extends Counter {
     @NotNull
     @Override
-    public Integer reduceIdentifier(@NotNull IdentifierExpression node) {
+    public Integer reduceIdentifierExpression(@NotNull IdentifierExpression node) {
       return 1;
     }
   }

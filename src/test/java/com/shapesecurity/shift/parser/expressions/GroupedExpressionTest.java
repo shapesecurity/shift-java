@@ -4,11 +4,11 @@ import com.shapesecurity.shift.ast.BinaryExpression;
 import com.shapesecurity.shift.ast.IdentifierExpression;
 import com.shapesecurity.shift.ast.LiteralNumericExpression;
 import com.shapesecurity.shift.ast.operators.BinaryOperator;
-import com.shapesecurity.shift.parser.Assertions;
+import com.shapesecurity.shift.parser.ParserTestCase;
 import com.shapesecurity.shift.parser.JsError;
 import org.junit.Test;
 
-public class GroupedExpressionTest extends Assertions {
+public class GroupedExpressionTest extends ParserTestCase {
   @Test
   public void testGroupedExpression() throws JsError {
     testScript("(a)", new IdentifierExpression("a"));

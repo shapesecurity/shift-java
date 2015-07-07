@@ -4,11 +4,11 @@ import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.functional.data.Maybe;
 import com.shapesecurity.shift.ast.*;
 import com.shapesecurity.shift.ast.operators.BinaryOperator;
-import com.shapesecurity.shift.parser.Assertions;
+import com.shapesecurity.shift.parser.ParserTestCase;
 import com.shapesecurity.shift.parser.JsError;
 import org.junit.Test;
 
-public class YieldGeneratorExpressionTest extends Assertions {
+public class YieldGeneratorExpressionTest extends ParserTestCase {
   @Test
   public void testYieldGeneratorExpression() throws JsError {
     testScript("function*a(){yield*a}", new FunctionDeclaration(new BindingIdentifier("a"),

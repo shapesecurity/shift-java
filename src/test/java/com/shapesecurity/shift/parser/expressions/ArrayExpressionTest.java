@@ -3,11 +3,11 @@ package com.shapesecurity.shift.parser.expressions;
 import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.functional.data.Maybe;
 import com.shapesecurity.shift.ast.*;
-import com.shapesecurity.shift.parser.Assertions;
+import com.shapesecurity.shift.parser.ParserTestCase;
 import com.shapesecurity.shift.parser.JsError;
 import org.junit.Test;
 
-public class ArrayExpressionTest extends Assertions {
+public class ArrayExpressionTest extends ParserTestCase {
   @Test
   public void testArrayExpression() throws JsError {
     testScript("[]", new ArrayExpression(ImmutableList.nil()));

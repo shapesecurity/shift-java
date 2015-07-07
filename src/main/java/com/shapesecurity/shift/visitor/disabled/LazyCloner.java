@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.shapesecurity.shift.visitor_old;
+package com.shapesecurity.shift.visitor.disabled;
 
-import com.shapesecurity.functional.F;
+import com.shapesecurity.functional.Thunk;
 import com.shapesecurity.functional.data.Either;
 import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.functional.data.Maybe;
@@ -36,6 +36,7 @@ import com.shapesecurity.shift.ast.VariableDeclarator;
 import com.shapesecurity.shift.ast.directive.UnknownDirective;
 import com.shapesecurity.shift.ast.directive.UseStrictDirective;
 import com.shapesecurity.shift.ast.expression.ArrayExpression;
+import com.shapesecurity.shift.ast.expression.AssignmentExpression;
 import com.shapesecurity.shift.ast.expression.BinaryExpression;
 import com.shapesecurity.shift.ast.expression.CallExpression;
 import com.shapesecurity.shift.ast.expression.ComputedMemberExpression;
@@ -43,6 +44,7 @@ import com.shapesecurity.shift.ast.expression.ConditionalExpression;
 import com.shapesecurity.shift.ast.expression.FunctionExpression;
 import com.shapesecurity.shift.ast.expression.IdentifierExpression;
 import com.shapesecurity.shift.ast.expression.LiteralBooleanExpression;
+import com.shapesecurity.shift.ast.expression.LiteralInfinityExpression;
 import com.shapesecurity.shift.ast.expression.LiteralNullExpression;
 import com.shapesecurity.shift.ast.expression.LiteralNumericExpression;
 import com.shapesecurity.shift.ast.expression.LiteralRegExpExpression;
@@ -81,75 +83,46 @@ import com.shapesecurity.shift.ast.statement.WhileStatement;
 import com.shapesecurity.shift.ast.statement.WithStatement;
 import com.shapesecurity.shift.path.Branch;
 
-import com.shapesecurity.shift.visitor.Director;
 import org.jetbrains.annotations.NotNull;
 
-public class FixPointTransformer extends LazyCloner {
-  @NotNull
-  private final TransformerP<? extends DirtyState<Script>, ? extends DirtyState<FunctionBody>, ? extends DirtyState<ObjectProperty>, ? extends DirtyState<PropertyName>, ? extends DirtyState<Identifier>, ? extends DirtyState<Expression>, ? extends DirtyState<Directive>, ? extends DirtyState<Statement>, ? extends DirtyState<Block>, ? extends DirtyState<VariableDeclarator>, ? extends DirtyState<VariableDeclaration>, ? extends DirtyState<SwitchCase>, ? extends DirtyState<SwitchDefault>, ? extends DirtyState<CatchClause>>
-      t;
+public class LazyCloner
+    implements ReducerP<DirtyState<Script>, DirtyState<FunctionBody>, DirtyState<ObjectProperty>, DirtyState<PropertyName>, DirtyState<Identifier>, DirtyState<Expression>, DirtyState<Directive>, DirtyState<Statement>, DirtyState<Block>, DirtyState<VariableDeclarator>, DirtyState<VariableDeclaration>, DirtyState<SwitchCase>, DirtyState<SwitchDefault>, DirtyState<CatchClause>> {
+  public static final LazyCloner INSTANCE = new LazyCloner();
 
-  public FixPointTransformer(
-      @NotNull TransformerP<? extends DirtyState<Script>, ? extends DirtyState<FunctionBody>, ? extends
-          DirtyState<ObjectProperty>, ? extends DirtyState<PropertyName>, ? extends DirtyState<Identifier>, ? extends
-          DirtyState<Expression>, ? extends DirtyState<Directive>, ? extends DirtyState<Statement>, ? extends
-          DirtyState<Block>, ? extends DirtyState<VariableDeclarator>, ? extends DirtyState<VariableDeclaration>, ?
-          extends DirtyState<SwitchCase>, ? extends DirtyState<SwitchDefault>, ? extends DirtyState<CatchClause>> t) {
-    super();
-    this.t = t;
+  protected LazyCloner() {
   }
 
-  private F<Expression, DirtyState<Expression>> bindExp(@NotNull final ImmutableList<Branch> path) {
-    return node -> this.t.transform(node).onDirty(node1 -> Director.reduceExpression(this, node1, path).setDirty());
+  private static <T> DirtyState<ImmutableList<Maybe<T>>> lo(ImmutableList<Maybe<DirtyState<T>>> elements) {
+    return l(elements.map(LazyCloner::op));
   }
 
-  private F<Identifier, DirtyState<Identifier>> bindIdent(@NotNull final ImmutableList<Branch> path) {
-    return node -> this.t.transform(node).onDirty(node1 -> Director.reduceIdentifier(this, node1, path).setDirty());
+  private static <T> DirtyState<ImmutableList<T>> l(@NotNull ImmutableList<DirtyState<T>> node) {
+    return new DirtyState<>(node.map(tDirtyState -> tDirtyState.node), node.exists(tDirtyState -> tDirtyState.dirty));
   }
 
-  private F<Statement, DirtyState<Statement>> bindStmt(@NotNull final ImmutableList<Branch> path) {
-    return node -> this.t.transform(node).onDirty(node1 -> Director.reduceStatement(this, node1, path).setDirty());
+  private static <T> DirtyState<Maybe<T>> op(@NotNull Maybe<DirtyState<T>> node) {
+    if (node.isJust()) {
+      DirtyState<T> s = node.just();
+      return new DirtyState<>(Maybe.just(s.node), s.dirty);
+    } else {
+      return clean(Maybe.nothing());
+    }
   }
 
-  private F<Block, DirtyState<Block>> bindBlock(@NotNull final ImmutableList<Branch> path) {
-    return node -> this.t.transform(node).onDirty(node1 -> Director.reduceBlock(this, node1, path).setDirty());
+  private static <U> DirtyState<U> get(@NotNull U def, @NotNull DirtyState<Thunk<U>> s) {
+    return s.dirty ? dirty(s.node.get()) : clean(def);
   }
 
-  private F<VariableDeclaration, DirtyState<VariableDeclaration>> bindVarDeclStmt(@NotNull final ImmutableList<Branch> path) {
-    return node -> this.t.transform(node).onDirty(node1 -> Director.reduceVariableDeclaration(this, node1, path).setDirty());
+  private static <T> DirtyState<T> dirty(@NotNull T node) {
+    return new DirtyState<>(node, true);
   }
 
-  private F<SwitchCase, DirtyState<SwitchCase>> bindCase(@NotNull final ImmutableList<Branch> path) {
-    return node -> this.t.transform(node).onDirty(node1 -> Director.reduceSwitchCase(this, node1, path).setDirty());
+  private static <T> DirtyState<T> clean(@NotNull T node) {
+    return new DirtyState<>(node, false);
   }
 
-  private F<SwitchDefault, DirtyState<SwitchDefault>> bindDefault(@NotNull final ImmutableList<Branch> path) {
-    return node -> this.t.transform(node).onDirty(node1 -> Director.reduceSwitchDefault(this, node1, path).setDirty());
-  }
-
-  private F<Directive, DirtyState<Directive>> bindDirective(@NotNull final ImmutableList<Branch> path) {
-    return node -> this.t.transform(node).onDirty(node1 -> Director.reduceDirective(this, node1, path).setDirty());
-  }
-
-  private F<PropertyName, DirtyState<PropertyName>> bindPropName(@NotNull final ImmutableList<Branch> path) {
-    return node -> this.t.transform(node).onDirty(node1 -> Director.reducePropertyName(this, node1, path).setDirty());
-  }
-
-  private F<ObjectProperty, DirtyState<ObjectProperty>> bindProp(@NotNull final ImmutableList<Branch> path) {
-    return node -> this.t.transform(node).onDirty(node1 -> Director.reduceObjectProperty(this, node1, path).setDirty());
-  }
-
-  private F<Script, DirtyState<Script>> bindProgram(@NotNull final ImmutableList<Branch> path) {
-    return node -> this.t.transform(node).onDirty(node1 -> Director.reduceScript(this, node1, path).setDirty());
-  }
-
-  private F<FunctionBody, DirtyState<FunctionBody>> bindProgramBody(@NotNull final ImmutableList<Branch> path) {
-    return node -> this.t.transform(node).onDirty(node1 -> Director.reduceFunctionBody(this, node1, path).setDirty());
-  }
-
-  @NotNull
-  public Script transform(@NotNull Script script, @NotNull ImmutableList<Branch> path) {
-    return Director.reduceScript(this, script, path).node;
+  private static <T> DirtyState<NonEmptyImmutableList<T>> l(@NotNull NonEmptyImmutableList<DirtyState<T>> node) {
+    return new DirtyState<>(node.map(tDirtyState -> tDirtyState.node), node.exists(tDirtyState -> tDirtyState.dirty));
   }
 
   @NotNull
@@ -158,13 +131,16 @@ public class FixPointTransformer extends LazyCloner {
       @NotNull Script node,
       @NotNull ImmutableList<Branch> path,
       @NotNull DirtyState<FunctionBody> body) {
-    return super.reduceScript(node, path, body).bind(this.bindProgram(path));
+    if (body.dirty) {
+      return dirty(new Script(body.node));
+    }
+    return clean(node);
   }
 
   @NotNull
   @Override
   public DirtyState<Identifier> reduceIdentifier(@NotNull Identifier node, @NotNull ImmutableList<Branch> path) {
-    return super.reduceIdentifier(node, path).bind(this.bindIdent(path));
+    return clean(node);
   }
 
   @NotNull
@@ -173,13 +149,16 @@ public class FixPointTransformer extends LazyCloner {
       @NotNull IdentifierExpression node,
       @NotNull ImmutableList<Branch> path,
       @NotNull DirtyState<Identifier> identifier) {
-    return super.reduceIdentifierExpression(node, path, identifier).bind(this.bindExp(path));
+    if (identifier.dirty) {
+      return dirty((Expression) new IdentifierExpression(node.identifier));
+    }
+    return clean((Expression) node);
   }
 
   @NotNull
   @Override
   public DirtyState<Expression> reduceThisExpression(@NotNull ThisExpression node, @NotNull ImmutableList<Branch> path) {
-    return super.reduceThisExpression(node, path).bind(this.bindExp(path));
+    return clean((Expression) node);
   }
 
   @NotNull
@@ -187,7 +166,7 @@ public class FixPointTransformer extends LazyCloner {
   public DirtyState<Expression> reduceLiteralBooleanExpression(
       @NotNull LiteralBooleanExpression node,
       @NotNull ImmutableList<Branch> path) {
-    return super.reduceLiteralBooleanExpression(node, path).bind(this.bindExp(path));
+    return clean((Expression) node);
   }
 
   @NotNull
@@ -195,7 +174,7 @@ public class FixPointTransformer extends LazyCloner {
   public DirtyState<Expression> reduceLiteralStringExpression(
       @NotNull LiteralStringExpression node,
       @NotNull ImmutableList<Branch> path) {
-    return super.reduceLiteralStringExpression(node, path).bind(this.bindExp(path));
+    return clean((Expression) node);
   }
 
   @NotNull
@@ -203,7 +182,7 @@ public class FixPointTransformer extends LazyCloner {
   public DirtyState<Expression> reduceLiteralRegExpExpression(
       @NotNull LiteralRegExpExpression node,
       @NotNull ImmutableList<Branch> path) {
-    return super.reduceLiteralRegExpExpression(node, path).bind(this.bindExp(path));
+    return clean((Expression) node);
   }
 
   @NotNull
@@ -211,7 +190,14 @@ public class FixPointTransformer extends LazyCloner {
   public DirtyState<Expression> reduceLiteralNumericExpression(
       @NotNull LiteralNumericExpression node,
       @NotNull ImmutableList<Branch> path) {
-    return super.reduceLiteralNumericExpression(node, path).bind(this.bindExp(path));
+    return clean((Expression) node);
+  }
+
+  @NotNull
+  @Override
+  public DirtyState<Expression> reduceLiteralInfinityExpression(@NotNull LiteralInfinityExpression node,
+                                                                @NotNull ImmutableList<Branch> path) {
+    return clean(node);
   }
 
   @NotNull
@@ -219,7 +205,7 @@ public class FixPointTransformer extends LazyCloner {
   public DirtyState<Expression> reduceLiteralNullExpression(
       @NotNull LiteralNullExpression node,
       @NotNull ImmutableList<Branch> path) {
-    return super.reduceLiteralNullExpression(node, path).bind(this.bindExp(path));
+    return clean((Expression) node);
   }
 
   @NotNull
@@ -230,7 +216,12 @@ public class FixPointTransformer extends LazyCloner {
       @NotNull Maybe<DirtyState<Identifier>> name,
       @NotNull ImmutableList<DirtyState<Identifier>> parameters,
       @NotNull DirtyState<FunctionBody> body) {
-    return super.reduceFunctionExpression(node, path, name, parameters, body).bind(this.bindExp(path));
+    DirtyState<Maybe<Identifier>> i = op(name);
+    DirtyState<ImmutableList<Identifier>> p = l(parameters);
+    if (i.dirty || p.dirty || body.dirty) {
+      return dirty((Expression) new FunctionExpression(i.node, p.node, body.node));
+    }
+    return clean((Expression) node);
   }
 
   @NotNull
@@ -240,7 +231,10 @@ public class FixPointTransformer extends LazyCloner {
       @NotNull ImmutableList<Branch> path,
       @NotNull DirtyState<Expression> object,
       @NotNull DirtyState<Identifier> property) {
-    return super.reduceStaticMemberExpression(node, path, object, property).bind(this.bindExp(path));
+    if (object.dirty || property.dirty) {
+      return dirty((Expression) new StaticMemberExpression(object.node, property.node));
+    }
+    return clean((Expression) node);
   }
 
   @NotNull
@@ -249,8 +243,11 @@ public class FixPointTransformer extends LazyCloner {
       @NotNull ComputedMemberExpression node,
       @NotNull ImmutableList<Branch> path,
       @NotNull DirtyState<Expression> object,
-      @NotNull DirtyState<Expression> expression) {
-    return super.reduceComputedMemberExpression(node, path, object, expression).bind(this.bindExp(path));
+      @NotNull final DirtyState<Expression> expression) {
+    if (object.dirty || expression.dirty) {
+      return dirty((Expression) new ComputedMemberExpression(object.node, expression.node));
+    }
+    return clean((Expression) node);
   }
 
   @NotNull
@@ -259,17 +256,31 @@ public class FixPointTransformer extends LazyCloner {
       @NotNull ObjectExpression node,
       @NotNull ImmutableList<Branch> path,
       @NotNull ImmutableList<DirtyState<ObjectProperty>> properties) {
-    return super.reduceObjectExpression(node, path, properties).bind(this.bindExp(path));
+    DirtyState<ImmutableList<ObjectProperty>> p = l(properties);
+    if (p.dirty) {
+      return dirty((Expression) new ObjectExpression(p.node));
+    }
+    return clean((Expression) node);
   }
 
   @NotNull
   @Override
   public DirtyState<Expression> reduceBinaryExpression(
-      @NotNull BinaryExpression node,
+      @NotNull final BinaryExpression node,
       @NotNull ImmutableList<Branch> path,
       @NotNull DirtyState<Expression> left,
-      @NotNull DirtyState<Expression> right) {
-    return super.reduceBinaryExpression(node, path, left, right).bind(this.bindExp(path));
+      @NotNull final DirtyState<Expression> right) {
+    return get(node, left.bind(l -> right.bindLast(r -> new BinaryExpression(node.operator, l, r))));
+  }
+
+  @NotNull
+  @Override
+  public DirtyState<Expression> reduceAssignmentExpression(
+      @NotNull AssignmentExpression node,
+      @NotNull ImmutableList<Branch> path,
+      @NotNull DirtyState<Expression> binding,
+      @NotNull DirtyState<Expression> expression) {
+    return get(node, binding.bind(l -> expression.bindLast(r -> new AssignmentExpression(node.operator, l, r))));
   }
 
   @NotNull
@@ -278,7 +289,7 @@ public class FixPointTransformer extends LazyCloner {
       @NotNull ArrayExpression node,
       @NotNull ImmutableList<Branch> path,
       @NotNull ImmutableList<Maybe<DirtyState<Expression>>> elements) {
-    return super.reduceArrayExpression(node, path, elements).bind(this.bindExp(path));
+    return LazyCloner.get(node, lo(elements).bindLast(ArrayExpression::new));
   }
 
   @NotNull
@@ -287,8 +298,12 @@ public class FixPointTransformer extends LazyCloner {
       @NotNull NewExpression node,
       @NotNull ImmutableList<Branch> path,
       @NotNull DirtyState<Expression> callee,
-      @NotNull ImmutableList<DirtyState<Expression>> arguments) {
-    return super.reduceNewExpression(node, path, callee, arguments).bind(this.bindExp(path));
+      @NotNull final ImmutableList<DirtyState<Expression>> arguments) {
+    DirtyState<ImmutableList<Expression>> args = l(arguments);
+    if (callee.dirty || args.dirty) {
+      return dirty((Expression) new NewExpression(callee.node, args.node));
+    }
+    return clean((Expression) node);
   }
 
   @NotNull
@@ -297,26 +312,36 @@ public class FixPointTransformer extends LazyCloner {
       @NotNull CallExpression node,
       @NotNull ImmutableList<Branch> path,
       @NotNull DirtyState<Expression> callee,
-      @NotNull ImmutableList<DirtyState<Expression>> arguments) {
-    return super.reduceCallExpression(node, path, callee, arguments).bind(this.bindExp(path));
+      @NotNull final ImmutableList<DirtyState<Expression>> arguments) {
+    DirtyState<ImmutableList<Expression>> args = l(arguments);
+    if (callee.dirty || args.dirty) {
+      return dirty((Expression) new CallExpression(callee.node, args.node));
+    }
+    return clean((Expression) node);
   }
 
   @NotNull
   @Override
   public DirtyState<Expression> reducePostfixExpression(
-      @NotNull PostfixExpression node,
+      @NotNull final PostfixExpression node,
       @NotNull ImmutableList<Branch> path,
       @NotNull DirtyState<Expression> operand) {
-    return super.reducePostfixExpression(node, path, operand).bind(this.bindExp(path));
+    if (operand.dirty) {
+      return dirty((Expression) new PostfixExpression(node.operator, operand.node));
+    }
+    return clean((Expression) node);
   }
 
   @NotNull
   @Override
   public DirtyState<Expression> reducePrefixExpression(
-      @NotNull PrefixExpression node,
+      @NotNull final PrefixExpression node,
       @NotNull ImmutableList<Branch> path,
       @NotNull DirtyState<Expression> operand) {
-    return super.reducePrefixExpression(node, path, operand).bind(this.bindExp(path));
+    if (operand.dirty) {
+      return dirty((Expression) new PrefixExpression(node.operator, operand.node));
+    }
+    return clean((Expression) node);
   }
 
   @NotNull
@@ -324,10 +349,10 @@ public class FixPointTransformer extends LazyCloner {
   public DirtyState<Expression> reduceConditionalExpression(
       @NotNull ConditionalExpression node,
       @NotNull ImmutableList<Branch> path,
-      @NotNull DirtyState<Expression> test,
-      @NotNull DirtyState<Expression> consequent,
-      @NotNull DirtyState<Expression> alternate) {
-    return super.reduceConditionalExpression(node, path, test, consequent, alternate).bind(this.bindExp(path));
+      @NotNull final DirtyState<Expression> test,
+      @NotNull final DirtyState<Expression> consequent,
+      @NotNull final DirtyState<Expression> alternate) {
+    return get(node, test.bind(t -> consequent.bind(c -> alternate.bindLast(a -> new ConditionalExpression(t, c, a)))));
   }
 
   @NotNull
@@ -336,21 +361,22 @@ public class FixPointTransformer extends LazyCloner {
       @NotNull FunctionDeclaration node,
       @NotNull ImmutableList<Branch> path,
       @NotNull DirtyState<Identifier> name,
-      @NotNull ImmutableList<DirtyState<Identifier>> params,
-      @NotNull DirtyState<FunctionBody> body) {
-    return super.reduceFunctionDeclaration(node, path, name, params, body).bind(this.bindStmt(path));
+      @NotNull final ImmutableList<DirtyState<Identifier>> params,
+      @NotNull final DirtyState<FunctionBody> body) {
+    return get(node, name.bind(id1 -> l(params).bind(params1 -> body.bindLast(body1 -> new FunctionDeclaration(id1,
+        params1, body1)))));
   }
 
   @NotNull
   @Override
   public DirtyState<Directive> reduceUseStrictDirective(@NotNull UseStrictDirective node, @NotNull ImmutableList<Branch> path) {
-    return super.reduceUseStrictDirective(node, path).bind(this.bindDirective(path));
+    return clean((Directive) node);
   }
 
   @NotNull
   @Override
   public DirtyState<Directive> reduceUnknownDirective(@NotNull UnknownDirective node, @NotNull ImmutableList<Branch> path) {
-    return super.reduceUnknownDirective(node, path).bind(this.bindDirective(path));
+    return clean((Directive) node);
   }
 
   @NotNull
@@ -358,8 +384,11 @@ public class FixPointTransformer extends LazyCloner {
   public DirtyState<Statement> reduceBlockStatement(
       @NotNull BlockStatement node,
       @NotNull ImmutableList<Branch> path,
-      @NotNull DirtyState<Block> block) {
-    return super.reduceBlockStatement(node, path, block).bind(this.bindStmt(path));
+      @NotNull final DirtyState<Block> block) {
+    if (block.dirty) {
+      return dirty((Statement) new BlockStatement(block.node));
+    }
+    return clean((Statement) node);
   }
 
   @NotNull
@@ -368,19 +397,20 @@ public class FixPointTransformer extends LazyCloner {
       @NotNull BreakStatement node,
       @NotNull ImmutableList<Branch> path,
       @NotNull Maybe<DirtyState<Identifier>> label) {
-    return super.reduceBreakStatement(node, path, label).bind(this.bindStmt(path));
+    if (label.isJust() && label.just().dirty) {
+      return dirty((Statement) new BreakStatement(Maybe.just(label.just().node)));
+    }
+    return clean((Statement) node);
   }
 
   @NotNull
   @Override
   public DirtyState<CatchClause> reduceCatchClause(
       @NotNull CatchClause node,
-      @NotNull final ImmutableList<Branch> path,
-      @NotNull DirtyState<Identifier> binding,
-      @NotNull DirtyState<Block> body) {
-    return super.reduceCatchClause(node, path, binding, body).bind(
-        node1 -> this.t.transform(node1).onDirty(
-            node2 -> Director.reduceCatchClause(this, node2, path).setDirty()));
+      @NotNull ImmutableList<Branch> path,
+      @NotNull final DirtyState<Identifier> binding,
+      @NotNull final DirtyState<Block> body) {
+    return get(node, binding.bind(p -> body.bindLast(s -> new CatchClause(p, s))));
   }
 
   @NotNull
@@ -389,13 +419,16 @@ public class FixPointTransformer extends LazyCloner {
       @NotNull ContinueStatement node,
       @NotNull ImmutableList<Branch> path,
       @NotNull Maybe<DirtyState<Identifier>> label) {
-    return super.reduceContinueStatement(node, path, label).bind(this.bindStmt(path));
+    if (label.isJust() && label.just().dirty) {
+      return dirty((Statement) new ContinueStatement(Maybe.just(label.just().node)));
+    }
+    return clean((Statement) node);
   }
 
   @NotNull
   @Override
   public DirtyState<Statement> reduceDebuggerStatement(@NotNull DebuggerStatement node, @NotNull ImmutableList<Branch> path) {
-    return super.reduceDebuggerStatement(node, path).bind(this.bindStmt(path));
+    return clean((Statement) node);
   }
 
   @NotNull
@@ -404,14 +437,14 @@ public class FixPointTransformer extends LazyCloner {
       @NotNull DoWhileStatement node,
       @NotNull ImmutableList<Branch> path,
       @NotNull DirtyState<Statement> body,
-      @NotNull DirtyState<Expression> test) {
-    return super.reduceDoWhileStatement(node, path, body, test).bind(this.bindStmt(path));
+      @NotNull final DirtyState<Expression> test) {
+    return get(node, body.bind(body1 -> test.bindLast(test1 -> new DoWhileStatement(body1, test1))));
   }
 
   @NotNull
   @Override
   public DirtyState<Statement> reduceEmptyStatement(@NotNull EmptyStatement node, @NotNull ImmutableList<Branch> path) {
-    return super.reduceEmptyStatement(node, path).bind(this.bindStmt(path));
+    return clean((Statement) node);
   }
 
   @NotNull
@@ -420,7 +453,10 @@ public class FixPointTransformer extends LazyCloner {
       @NotNull ExpressionStatement node,
       @NotNull ImmutableList<Branch> path,
       @NotNull DirtyState<Expression> expression) {
-    return super.reduceExpressionStatement(node, path, expression).bind(this.bindStmt(path));
+    if (expression.dirty) {
+      return dirty((Statement) new ExpressionStatement(expression.node));
+    }
+    return clean((Statement) node);
   }
 
   @NotNull
@@ -429,9 +465,14 @@ public class FixPointTransformer extends LazyCloner {
       @NotNull ForInStatement node,
       @NotNull ImmutableList<Branch> path,
       @NotNull Either<DirtyState<VariableDeclaration>, DirtyState<Expression>> left,
-      @NotNull DirtyState<Expression> right,
-      @NotNull DirtyState<Statement> body) {
-    return super.reduceForInStatement(node, path, left, right, body).bind(this.bindStmt(path));
+      @NotNull final DirtyState<Expression> right,
+      @NotNull final DirtyState<Statement> body) {
+    boolean leftDirty = left.either(x -> x.dirty, x -> x.dirty);
+    Either<VariableDeclaration, Expression> leftNode = left.map(x -> x.node, x -> x.node);
+    if (leftDirty || right.dirty || body.dirty) {
+      return dirty((Statement) new ForInStatement(leftNode, right.node, body.node));
+    }
+    return clean((Statement) node);
   }
 
   @NotNull
@@ -440,10 +481,16 @@ public class FixPointTransformer extends LazyCloner {
       @NotNull ForStatement node,
       @NotNull ImmutableList<Branch> path,
       @NotNull Maybe<Either<DirtyState<VariableDeclaration>, DirtyState<Expression>>> init,
-      @NotNull Maybe<DirtyState<Expression>> test,
-      @NotNull Maybe<DirtyState<Expression>> update,
-      @NotNull DirtyState<Statement> body) {
-    return super.reduceForStatement(node, path, init, test, update, body).bind(this.bindStmt(path));
+      @NotNull final Maybe<DirtyState<Expression>> test,
+      @NotNull final Maybe<DirtyState<Expression>> update,
+      @NotNull final DirtyState<Statement> body) {
+    boolean iDirty = init.map(x -> x.either(y -> y.dirty, y -> y.dirty)).orJust(false);
+    Maybe<Either<VariableDeclaration, Expression>> iNode = init.map(x -> x.map(y -> y.node, y -> y.node));
+    DirtyState<Maybe<Expression>> t = op(test), u = op(update);
+    if (iDirty || t.dirty || u.dirty || body.dirty) {
+      return dirty((Statement) new ForStatement(iNode, t.node, u.node, body.node));
+    }
+    return clean((Statement) node);
   }
 
   @NotNull
@@ -452,9 +499,10 @@ public class FixPointTransformer extends LazyCloner {
       @NotNull IfStatement node,
       @NotNull ImmutableList<Branch> path,
       @NotNull DirtyState<Expression> test,
-      @NotNull DirtyState<Statement> consequent,
-      @NotNull Maybe<DirtyState<Statement>> alternate) {
-    return super.reduceIfStatement(node, path, test, consequent, alternate).bind(this.bindStmt(path));
+      @NotNull final DirtyState<Statement> consequent,
+      @NotNull final Maybe<DirtyState<Statement>> alternate) {
+    return get(node, test.bind(test1 -> consequent.bind(consequent1 -> op(alternate).bindLast(
+        alternate1 -> new IfStatement(test1, consequent1, alternate1)))));
   }
 
   @NotNull
@@ -463,8 +511,8 @@ public class FixPointTransformer extends LazyCloner {
       @NotNull LabeledStatement node,
       @NotNull ImmutableList<Branch> path,
       @NotNull DirtyState<Identifier> label,
-      @NotNull DirtyState<Statement> body) {
-    return super.reduceLabeledStatement(node, path, label, body).bind(this.bindStmt(path));
+      @NotNull final DirtyState<Statement> body) {
+    return get(node, label.bind(label1 -> body.bindLast(body1 -> new LabeledStatement(label1, body1))));
   }
 
   @NotNull
@@ -473,7 +521,10 @@ public class FixPointTransformer extends LazyCloner {
       @NotNull ReturnStatement node,
       @NotNull ImmutableList<Branch> path,
       @NotNull Maybe<DirtyState<Expression>> expression) {
-    return super.reduceReturnStatement(node, path, expression).bind(this.bindStmt(path));
+    if (expression.isNothing() || !expression.just().dirty) {
+      return clean((Statement) node);
+    }
+    return DirtyState.dirty((Statement) new ReturnStatement(Maybe.just(expression.just().node)));
   }
 
   @NotNull
@@ -482,8 +533,8 @@ public class FixPointTransformer extends LazyCloner {
       @NotNull SwitchCase node,
       @NotNull ImmutableList<Branch> path,
       @NotNull DirtyState<Expression> test,
-      @NotNull ImmutableList<DirtyState<Statement>> consequent) {
-    return super.reduceSwitchCase(node, path, test, consequent).bind(this.bindCase(path));
+      @NotNull final ImmutableList<DirtyState<Statement>> consequent) {
+    return get(node, test.bind(test1 -> l(consequent).bindLast(consequent1 -> new SwitchCase(test1, consequent1))));
   }
 
   @NotNull
@@ -492,17 +543,18 @@ public class FixPointTransformer extends LazyCloner {
       @NotNull SwitchDefault node,
       @NotNull ImmutableList<Branch> path,
       @NotNull ImmutableList<DirtyState<Statement>> consequent) {
-    return super.reduceSwitchDefault(node, path, consequent).bind(this.bindDefault(path));
+    return get(node, l(consequent).bindLast(SwitchDefault::new));
   }
 
   @NotNull
   @Override
   public DirtyState<Statement> reduceSwitchStatement(
-      @NotNull SwitchStatement node,
-      @NotNull ImmutableList<Branch> path,
+      @NotNull final SwitchStatement node,
+      @NotNull final ImmutableList<Branch> path,
       @NotNull DirtyState<Expression> discriminant,
-      @NotNull ImmutableList<DirtyState<SwitchCase>> cases) {
-    return super.reduceSwitchStatement(node, path, discriminant, cases).bind(this.bindStmt(path));
+      @NotNull final ImmutableList<DirtyState<SwitchCase>> cases) {
+    return get(node, discriminant.bind(discriminant1 -> l(cases).bindLast(
+        cases1 -> CloneReducer.INSTANCE.reduceSwitchStatement(node, path, discriminant1, cases1))));
   }
 
   @NotNull
@@ -514,8 +566,13 @@ public class FixPointTransformer extends LazyCloner {
       @NotNull ImmutableList<DirtyState<SwitchCase>> preDefaultCases,
       @NotNull DirtyState<SwitchDefault> defaultCase,
       @NotNull ImmutableList<DirtyState<SwitchCase>> postDefaultCases) {
-    return super.reduceSwitchStatementWithDefault(node, path, discriminant, preDefaultCases, defaultCase, postDefaultCases).bind(
-        this.bindStmt(path));
+    DirtyState<ImmutableList<SwitchCase>> cs = l(preDefaultCases);
+    DirtyState<ImmutableList<SwitchCase>> pcs = l(postDefaultCases);
+
+    if (discriminant.dirty || cs.dirty || defaultCase.dirty || pcs.dirty) {
+      return dirty((Statement) new SwitchStatementWithDefault(discriminant.node, cs.node, defaultCase.node, pcs.node));
+    }
+    return clean((Statement) node);
   }
 
   @NotNull
@@ -523,8 +580,8 @@ public class FixPointTransformer extends LazyCloner {
   public DirtyState<Statement> reduceThrowStatement(
       @NotNull ThrowStatement node,
       @NotNull ImmutableList<Branch> path,
-      @NotNull DirtyState<Expression> expression) {
-    return super.reduceThrowStatement(node, path, expression).bind(this.bindStmt(path));
+      @NotNull final DirtyState<Expression> expression) {
+    return get(node, expression.bindLast(ThrowStatement::new));
   }
 
   @NotNull
@@ -534,7 +591,10 @@ public class FixPointTransformer extends LazyCloner {
       @NotNull ImmutableList<Branch> path,
       @NotNull DirtyState<Block> block,
       @NotNull DirtyState<CatchClause> catchClause) {
-    return super.reduceTryCatchStatement(node, path, block, catchClause).bind(this.bindStmt(path));
+    if (block.dirty || catchClause.dirty) {
+      return DirtyState.dirty(new TryCatchStatement(block.node, catchClause.node));
+    }
+    return DirtyState.clean(node);
   }
 
   @NotNull
@@ -545,16 +605,23 @@ public class FixPointTransformer extends LazyCloner {
       @NotNull DirtyState<Block> block,
       @NotNull Maybe<DirtyState<CatchClause>> catchClause,
       @NotNull DirtyState<Block> finalizer) {
-    return super.reduceTryFinallyStatement(node, path, block, catchClause, finalizer).bind(this.bindStmt(path));
+    DirtyState<Maybe<CatchClause>> op = op(catchClause);
+    if (block.dirty || op.dirty || finalizer.dirty) {
+      return dirty(new TryFinallyStatement(block.node, op.node, finalizer.node));
+    }
+    return clean(node);
   }
 
   @NotNull
   @Override
   public DirtyState<Statement> reduceVariableDeclarationStatement(
-      @NotNull VariableDeclarationStatement node,
+      @NotNull final VariableDeclarationStatement node,
       @NotNull ImmutableList<Branch> path,
       @NotNull DirtyState<VariableDeclaration> declaration) {
-    return super.reduceVariableDeclarationStatement(node, path, declaration).bind(this.bindStmt(path));
+    if (declaration.dirty) {
+      return dirty((Statement) new VariableDeclarationStatement(declaration.node));
+    }
+    return clean((Statement) node);
   }
 
   @NotNull
@@ -563,7 +630,11 @@ public class FixPointTransformer extends LazyCloner {
       @NotNull VariableDeclaration node,
       @NotNull ImmutableList<Branch> path,
       @NotNull NonEmptyImmutableList<DirtyState<VariableDeclarator>> declarators) {
-    return super.reduceVariableDeclaration(node, path, declarators).bind(this.bindVarDeclStmt(path));
+    DirtyState<NonEmptyImmutableList<VariableDeclarator>> ds = l(declarators);
+    if (ds.dirty) {
+      return dirty(new VariableDeclaration(node.kind, ds.node));
+    }
+    return clean(node);
   }
 
   @NotNull
@@ -572,8 +643,11 @@ public class FixPointTransformer extends LazyCloner {
       @NotNull WhileStatement node,
       @NotNull ImmutableList<Branch> path,
       @NotNull DirtyState<Expression> test,
-      @NotNull DirtyState<Statement> body) {
-    return super.reduceWhileStatement(node, path, test, body).bind(this.bindStmt(path));
+      @NotNull final DirtyState<Statement> body) {
+    if (test.dirty || body.dirty) {
+      return dirty((Statement) new WhileStatement(test.node, body.node));
+    }
+    return clean((Statement) node);
   }
 
   @NotNull
@@ -582,17 +656,8 @@ public class FixPointTransformer extends LazyCloner {
       @NotNull WithStatement node,
       @NotNull ImmutableList<Branch> path,
       @NotNull DirtyState<Expression> object,
-      @NotNull DirtyState<Statement> body) {
-    return super.reduceWithStatement(node, path, object, body).bind(this.bindStmt(path));
-  }
-
-  @NotNull
-  @Override
-  public DirtyState<Block> reduceBlock(
-      @NotNull Block node,
-      @NotNull ImmutableList<Branch> path,
-      @NotNull ImmutableList<DirtyState<Statement>> statements) {
-    return super.reduceBlock(node, path, statements).bind(this.bindBlock(path));
+      @NotNull final DirtyState<Statement> body) {
+    return get(node, object.bind(object1 -> body.bindLast(body1 -> new WithStatement(object1, body1))));
   }
 
   @NotNull
@@ -601,8 +666,11 @@ public class FixPointTransformer extends LazyCloner {
       @NotNull DataProperty node,
       @NotNull ImmutableList<Branch> path,
       @NotNull DirtyState<PropertyName> name,
-      @NotNull DirtyState<Expression> value) {
-    return super.reduceDataProperty(node, path, name, value).bind(this.bindProp(path));
+      @NotNull final DirtyState<Expression> value) {
+    if (name.dirty || value.dirty) {
+      return dirty((ObjectProperty) new DataProperty(name.node, value.node));
+    }
+    return clean((ObjectProperty) node);
   }
 
   @NotNull
@@ -610,9 +678,9 @@ public class FixPointTransformer extends LazyCloner {
   public DirtyState<ObjectProperty> reduceGetter(
       @NotNull Getter node,
       @NotNull ImmutableList<Branch> path,
-      @NotNull DirtyState<PropertyName> name,
-      @NotNull DirtyState<FunctionBody> body) {
-    return super.reduceGetter(node, path, name, body).bind(this.bindProp(path));
+      @NotNull final DirtyState<PropertyName> name,
+      @NotNull final DirtyState<FunctionBody> body) {
+    return get(node, name.bind(propertyName -> body.bindLast(programBody -> new Getter(propertyName, programBody))));
   }
 
   @NotNull
@@ -621,15 +689,18 @@ public class FixPointTransformer extends LazyCloner {
       @NotNull Setter node,
       @NotNull ImmutableList<Branch> path,
       @NotNull DirtyState<PropertyName> name,
-      @NotNull DirtyState<Identifier> parameter,
-      @NotNull DirtyState<FunctionBody> body) {
-    return super.reduceSetter(node, path, name, parameter, body).bind(this.bindProp(path));
+      @NotNull final DirtyState<Identifier> parameter,
+      @NotNull final DirtyState<FunctionBody> body) {
+    if (name.dirty || parameter.dirty || body.dirty) {
+      return dirty((ObjectProperty) new Setter(name.node, parameter.node, body.node));
+    }
+    return clean((ObjectProperty) node);
   }
 
   @NotNull
   @Override
   public DirtyState<PropertyName> reducePropertyName(@NotNull PropertyName node, @NotNull ImmutableList<Branch> path) {
-    return super.reducePropertyName(node, path).bind(this.bindPropName(path));
+    return clean(node);
   }
 
   @NotNull
@@ -638,19 +709,41 @@ public class FixPointTransformer extends LazyCloner {
       @NotNull FunctionBody node,
       @NotNull ImmutableList<Branch> path,
       @NotNull ImmutableList<DirtyState<Directive>> directives,
-      @NotNull ImmutableList<DirtyState<Statement>> statements) {
-    return super.reduceFunctionBody(node, path, directives, statements).bind(this.bindProgramBody(path));
+      @NotNull final ImmutableList<DirtyState<Statement>> statements) {
+    DirtyState<ImmutableList<Directive>> dirs = l(directives);
+    DirtyState<ImmutableList<Statement>> ses = l(statements);
+    if (dirs.dirty || ses.dirty) {
+      return DirtyState.dirty(new FunctionBody(dirs.node, ses.node));
+    }
+    return clean(node);
   }
 
   @NotNull
   @Override
   public DirtyState<VariableDeclarator> reduceVariableDeclarator(
       @NotNull VariableDeclarator node,
-      @NotNull final ImmutableList<Branch> path,
+      @NotNull ImmutableList<Branch> path,
       @NotNull DirtyState<Identifier> binding,
-      @NotNull Maybe<DirtyState<Expression>> init) {
-    return super.reduceVariableDeclarator(node, path, binding, init).bind(
-        node1 -> this.t.transform(node1).onDirty(
-            variableDeclarator -> Director.reduceVariableDeclarator(this, variableDeclarator, path).setDirty()));
+      @NotNull final Maybe<DirtyState<Expression>> init) {
+    if (binding.dirty) {
+      return dirty(new VariableDeclarator(binding.node, init.map(expr -> expr.node)));
+    }
+    if (init.isJust() && init.just().dirty) {
+      return dirty(new VariableDeclarator(binding.node, Maybe.just(init.just().node)));
+    }
+    return clean(node);
+  }
+
+  @NotNull
+  @Override
+  public DirtyState<Block> reduceBlock(
+      @NotNull Block node,
+      @NotNull ImmutableList<Branch> path,
+      @NotNull ImmutableList<DirtyState<Statement>> statements) {
+    DirtyState<ImmutableList<Statement>> ds = l(statements);
+    if (ds.dirty) {
+      return DirtyState.dirty(new Block(ds.node));
+    }
+    return DirtyState.clean(node);
   }
 }

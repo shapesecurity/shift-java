@@ -6,11 +6,11 @@ import com.shapesecurity.shift.ast.*;
 import com.shapesecurity.shift.ast.operators.BinaryOperator;
 import com.shapesecurity.shift.ast.operators.UnaryOperator;
 import com.shapesecurity.shift.ast.operators.UpdateOperator;
-import com.shapesecurity.shift.parser.Assertions;
+import com.shapesecurity.shift.parser.ParserTestCase;
 import com.shapesecurity.shift.parser.JsError;
 import org.junit.Test;
 
-public class IncompatibilitiesTest extends Assertions {
+public class IncompatibilitiesTest extends ParserTestCase {
 
   @Test
   // programs that parse according to ES3 but either fail or parse differently according to ES5

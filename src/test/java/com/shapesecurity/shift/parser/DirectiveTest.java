@@ -4,11 +4,9 @@ import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.functional.data.Maybe;
 import com.shapesecurity.shift.ast.*;
 import com.shapesecurity.shift.ast.operators.BinaryOperator;
-import com.shapesecurity.shift.parser.Assertions;
-import com.shapesecurity.shift.parser.JsError;
 import org.junit.Test;
 
-public class DirectiveTest extends Assertions {
+public class DirectiveTest extends ParserTestCase {
   @Test
   public void testDirective() throws JsError {
     testScript("\"Hello\"", new Script(ImmutableList.list(new Directive("Hello")), ImmutableList.nil()));

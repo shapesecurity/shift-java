@@ -4,11 +4,11 @@ import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.functional.data.Maybe;
 import com.shapesecurity.shift.ast.*;
 import com.shapesecurity.shift.ast.operators.UpdateOperator;
-import com.shapesecurity.shift.parser.Assertions;
+import com.shapesecurity.shift.parser.ParserTestCase;
 import com.shapesecurity.shift.parser.JsError;
 import org.junit.Test;
 
-public class WhitespaceTest extends Assertions {
+public class WhitespaceTest extends ParserTestCase {
   @Test
   public void testWhitespace() throws JsError {
     testScript("{ x\n++y }", new BlockStatement(new Block(ImmutableList.list(new ExpressionStatement(

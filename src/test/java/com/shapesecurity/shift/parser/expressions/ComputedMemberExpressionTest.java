@@ -2,11 +2,11 @@ package com.shapesecurity.shift.parser.expressions;
 
 import com.shapesecurity.shift.ast.*;
 import com.shapesecurity.shift.ast.operators.BinaryOperator;
-import com.shapesecurity.shift.parser.Assertions;
+import com.shapesecurity.shift.parser.ParserTestCase;
 import com.shapesecurity.shift.parser.JsError;
 import org.junit.Test;
 
-public class ComputedMemberExpressionTest extends Assertions {
+public class ComputedMemberExpressionTest extends ParserTestCase {
   @Test
   public void testComputedMemberExpression() throws JsError {
     testScript("a[b, c]", new ComputedMemberExpression(new BinaryExpression(

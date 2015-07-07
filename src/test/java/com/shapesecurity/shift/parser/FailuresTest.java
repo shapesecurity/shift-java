@@ -2,7 +2,7 @@ package com.shapesecurity.shift.parser;
 
 import org.junit.Test;
 
-public class FailuresTest extends Assertions {
+public class FailuresTest extends ParserTestCase {
   @Test
   public void testFailures() throws JsError {
 //    testScriptFailure("/*", 0, "Unexpected end of input");

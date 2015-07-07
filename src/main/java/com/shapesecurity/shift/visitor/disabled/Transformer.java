@@ -14,17 +14,8 @@
  * limitations under the License.
  */
 
+package com.shapesecurity.shift.visitor.disabled;
 
-package com.shapesecurity.shift.ast;
-
-import com.shapesecurity.functional.data.Maybe;
-
-import org.jetbrains.annotations.NotNull;
-
-public class MaybeNode<T> extends Node {
-  public final Maybe<T> maybe;
-
-  public MaybeNode(@NotNull Maybe<T> maybe) {
-    this.maybe = maybe;
-  }
+public interface Transformer<State>
+    extends TransformerP<State, State, State, State, State, State, State, State, State, State, State, State, State, State> {
 }

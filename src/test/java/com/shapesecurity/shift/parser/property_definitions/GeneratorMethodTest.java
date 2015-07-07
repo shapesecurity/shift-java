@@ -3,11 +3,11 @@ package com.shapesecurity.shift.parser.property_definitions;
 import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.functional.data.Maybe;
 import com.shapesecurity.shift.ast.*;
-import com.shapesecurity.shift.parser.Assertions;
+import com.shapesecurity.shift.parser.ParserTestCase;
 import com.shapesecurity.shift.parser.JsError;
 import org.junit.Test;
 
-public class GeneratorMethodTest extends Assertions {
+public class GeneratorMethodTest extends ParserTestCase {
   @Test
   public void testGeneratorMethod() throws JsError {
     testScript("({*a(){}})", new ObjectExpression(ImmutableList.list(new Method(true, new FormalParameters(
