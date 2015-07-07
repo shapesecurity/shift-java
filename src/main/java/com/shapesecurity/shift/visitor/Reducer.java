@@ -25,6 +25,6 @@ public interface Reducer<State>
   State, State, State, State, State, State, State, State, State, State, State, State, State, State,
   State, State, State, State, State, State, State, State, State, State, State, State, State, State,
   State, State, State, State, State, State, State, State, State, State, State, State, State, State,
-  State, State, State, State, State, State, State, State, State, State
+  State, State, State, State, State, State, State, State, State
   > {
 }
