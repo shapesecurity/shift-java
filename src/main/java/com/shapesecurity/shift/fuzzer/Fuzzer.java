@@ -313,7 +313,7 @@ public class Fuzzer {
 
   @NotNull
   private static BindingIdentifier randomBindingIdentifier(@NotNull GenCtx ctx, int depth) {
-    return new BindingIdentifier(randomString(ctx, depth-1));
+    return new BindingIdentifier(randomIdentifierString(ctx));
   }
 
   @NotNull
@@ -577,7 +577,7 @@ public class Fuzzer {
 
   @NotNull
   private static FunctionDeclarationClassDeclarationExpression randomFunctionDeclarationClassDeclarationExpression(@NotNull GenCtx ctx, int depth) {
-    double number = Math.random();
+    double number = ctx.random.nextDouble();
     if (number >= 0 && number < 1.0/3) {
       return randomFunctionDeclaration(ctx, depth);
     } else if (number >= 1.0/3 && number < 2.0/3) {
@@ -589,7 +589,7 @@ public class Fuzzer {
 
   @NotNull
   private static FunctionDeclarationClassDeclarationVariableDeclaration randomFunctionDeclarationClassDeclarationVariableDeclaration(@NotNull GenCtx ctx, int depth) {
-    double number = Math.random();
+    double number = ctx.random.nextDouble();
     if (number >= 0 && number < 1.0/3) {
       return randomFunctionDeclaration(ctx, depth);
     } else if (number >= 1.0/3 && number < 2.0/3) {
@@ -695,7 +695,7 @@ public class Fuzzer {
 
   @NotNull
   private static ImportDeclarationExportDeclarationStatement randomImportDeclarationExportDeclarationStatement(@NotNull GenCtx ctx, int depth) {
-    double number = Math.random();
+    double number = ctx.random.nextDouble();
     if (number >= 0 && number < 1.0/3) {
       return randomImportDeclaration(ctx, depth);
     } else if (number >= 1.0/3 && number < 2.0/3) {
@@ -767,7 +767,7 @@ public class Fuzzer {
 
   @NotNull
   private static MethodDefinition randomMethodDefinition(@NotNull GenCtx ctx, int depth) {
-    double number = Math.random();
+    double number = ctx.random.nextDouble();
     if (number >= 0 && number < 1.0/3) {
       return randomGetter(ctx, depth);
     } else if (number >= 1.0/3 && number < 2.0/3) {
@@ -809,7 +809,7 @@ public class Fuzzer {
 
   @NotNull
   private static ObjectProperty randomObjectProperty(@NotNull GenCtx ctx, int depth) {
-    double random = Math.random();
+    double random = ctx.random.nextDouble();
     if (random >= 0 && random < 0.2) {
       return randomDataProperty(ctx, depth);
     } else if (random >= 0.2 && random < 0.8) {

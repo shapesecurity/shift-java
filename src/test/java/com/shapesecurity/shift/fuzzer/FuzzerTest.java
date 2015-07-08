@@ -19,6 +19,7 @@ package com.shapesecurity.shift.fuzzer;
 
 import java.util.Random;
 
+import com.shapesecurity.shift.ast.Node;
 import com.shapesecurity.shift.ast.Script;
 import com.shapesecurity.shift.codegen.CodeGen;
 import com.shapesecurity.shift.parser.JsError;
@@ -31,11 +32,11 @@ import org.junit.Test;
 
 public class FuzzerTest {
   private void test(int i, int depth) throws JsError {
-    Script tree = Fuzzer.generate(new Random(i), depth);
+    Node tree = Fuzzer.generate(new Random(i), depth);
     String text = CodeGen.codeGen(tree, true);
     assertEquals("Case " + i, 0, Validator.validate(tree).length);
     try {
-      Parser.parse(text);
+      Parser.parseScript(text);
     } catch (JsError e) {
       System.out.println(i);
       System.out.println(e.getMessage());
@@ -48,7 +49,7 @@ public class FuzzerTest {
   @Test
   public void testFuzzer() throws JsError {
     Random random = new Random(0);
-    Script script = Fuzzer.generate(random, 0);
+    Node script = Fuzzer.generate(random, 0);
     assertEquals("", CodeGen.codeGen(script));
     test(10, 10);
     long start = System.nanoTime();
