@@ -14,27 +14,23 @@
  * limitations under the License.
  */
 
-
 package com.shapesecurity.shift.fuzzer;
-
 import com.shapesecurity.functional.data.ImmutableList;
-import com.shapesecurity.shift.ast.Identifier;
-
 import java.util.Random;
-
+import com.shapesecurity.shift.ast.IdentifierExpression;
 import org.jetbrains.annotations.NotNull;
 
 class GenCtx {
   @NotNull
   final Random random;
   @NotNull
-  final ImmutableList<Identifier> labels;
+  final ImmutableList<IdentifierExpression> labels;
   @NotNull
-  final ImmutableList<Identifier> iterationLabels;
+  final ImmutableList<IdentifierExpression> iterationLabels;
   @NotNull
-  final ImmutableList<Identifier> labelsInFunctionBoundary;
+  final ImmutableList<IdentifierExpression> labelsInFunctionBoundary;
   @NotNull
-  final ImmutableList<Identifier> iterationLabelsInFunctionBoundary;
+  final ImmutableList<IdentifierExpression> iterationLabelsInFunctionBoundary;
 
   final boolean inIteration;
   final boolean inSwitch;
@@ -47,10 +43,10 @@ class GenCtx {
   }
 
   private GenCtx(@NotNull Random random,
-                 @NotNull ImmutableList<Identifier> labels,
-                 @NotNull ImmutableList<Identifier> iterationLabels,
-                 @NotNull ImmutableList<Identifier> labelsInFunctionBoundary,
-                 @NotNull ImmutableList<Identifier> iterationLabelsInFunctionBoundary,
+                 @NotNull ImmutableList<IdentifierExpression> labels,
+                 @NotNull ImmutableList<IdentifierExpression> iterationLabels,
+                 @NotNull ImmutableList<IdentifierExpression> labelsInFunctionBoundary,
+                 @NotNull ImmutableList<IdentifierExpression> iterationLabelsInFunctionBoundary,
                  boolean inIteration, boolean inSwitch, boolean inStrictMode,
                  boolean inFunctional,
                  boolean allowMissingElse) {
@@ -67,7 +63,7 @@ class GenCtx {
   }
 
   @NotNull
-  GenCtx withLabel(@NotNull Identifier identifier) {
+  GenCtx withLabel(@NotNull IdentifierExpression identifier) {
     return new GenCtx(this.random,
         this.labels.cons(identifier),
         this.iterationLabels,
@@ -81,7 +77,7 @@ class GenCtx {
   }
 
   @NotNull
-  GenCtx withIterationLabel(@NotNull Identifier identifier) {
+  GenCtx withIterationLabel(@NotNull IdentifierExpression identifier) {
     return new GenCtx(this.random,
         this.labels.cons(identifier),
         this.iterationLabels.cons(identifier),
