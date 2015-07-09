@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.shapesecurity.shift.path;
+package com.shapesecurity.shift.path.disabled;
 
 import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.functional.data.NonEmptyImmutableList;
@@ -69,14 +69,14 @@ public final class IndexedBranch implements Branch {
       if (node == null) {
         return null;
       }
-      return Branch.wrap(node, listNode.genType.elementType);
+      return wrap(node, listNode.genType.elementType);
     } else if (parent instanceof NonEmptyListNode) {
       NonEmptyListNode<Object> listNode = (NonEmptyListNode<Object>) parent;
       Object node = listNode.list.index(this.index).toNullable();
       if (node == null) {
         return null;
       }
-      return Branch.wrap(node, listNode.genType.elementType);
+      return wrap(node, listNode.genType.elementType);
     }
     return null;
   }

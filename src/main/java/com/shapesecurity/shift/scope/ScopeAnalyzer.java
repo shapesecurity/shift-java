@@ -25,9 +25,7 @@ import com.shapesecurity.shift.ast.*;
 import com.shapesecurity.shift.scope.Declaration.Kind;
 import com.shapesecurity.shift.visitor.Director;
 import com.shapesecurity.shift.visitor.MonoidalReducer;
-
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
   private static final ScopeAnalyzer INSTANCE = new ScopeAnalyzer();
@@ -41,25 +39,27 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
     return (GlobalScope) Director.reduceScript(INSTANCE, script).children.maybeHead().just();
   }
 
+  @NotNull
+  public static Scope analyze(@NotNull Module module) {
+      return Director.reduce(INSTANCE, module).children.maybeHead().just();
+  }
 
   @NotNull
-  private State functionHelper(@NotNull Node fnNode, @NotNull State params, @NotNull State body) {
-      // TODO handle arguments explicitly. NB different for arrow functions.
+  private State functionHelper(@NotNull Node fnNode, @NotNull State params, @NotNull State body, boolean isArrowFn) {
+      Scope.Type fnType = isArrowFn ? Scope.Type.ArrowFunction : Scope.Type.Function;
       if(params.hasParameterExpressions) {
           params = params.withoutParameterExpressions(); // no need to pass that information on
-          return new State(params, body.finish(fnNode, Scope.Type.Function)).addDeclarations(Kind.Param).finish(fnNode, Scope.Type.Parameters);
+          return new State(params, body.finish(fnNode, fnType)).addDeclarations(Kind.Param).finish(fnNode, Scope.Type.Parameters, !isArrowFn);
       }
       else {
-          return new State(params.addDeclarations(Kind.Param), body).finish(fnNode, Scope.Type.Function);
+          return new State(params.addDeclarations(Kind.Param), body).finish(fnNode, fnType, !isArrowFn);
       }
   }
 
   @NotNull
   @Override
   public State reduceArrowExpression(@NotNull ArrowExpression node, @NotNull State params, @NotNull State body) {
-      // TODO
-      //return super.reduceArrowExpression(node, params.addDeclarations(Kind.Param), body).finish(node, Scope.Type.ArrowFunction);
-      // slightly different scoping from regular functions: in particular, no `arguments`
+      return functionHelper(node, params, body, true);
   }
 
   @NotNull
@@ -171,13 +171,13 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
   @NotNull
   @Override
   public State reduceFunctionDeclaration(@NotNull FunctionDeclaration node, @NotNull State name, @NotNull State params, @NotNull State body) {
-      return functionHelper(node, params, body).addDeclarations(Kind.FunctionName);
+      return functionHelper(node, params, body, false).addDeclarations(Kind.FunctionName);
   }
 
   @NotNull
   @Override
   public State reduceFunctionExpression(@NotNull FunctionExpression node, @NotNull Maybe<State> name, @NotNull State parameters, @NotNull State body) {
-      State primary = functionHelper(node, parameters, body);
+      State primary = functionHelper(node, parameters, body, false);
       if(name.isJust()) {
           return primary.addDeclarations(Kind.FunctionName).finish(node, Scope.Type.FunctionName);
       }
@@ -196,7 +196,7 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
   @NotNull
   @Override
   public State reduceIdentifierExpression(@NotNull IdentifierExpression node) {
-      Reference ref = new Reference(node, Accessibility.Read);
+      Reference ref = new Reference(node);
       return new State(
           HashTable.<String, ImmutableList<Reference>>empty().put(node.name, ImmutableList.list(ref)),
           HashTable.empty(),
@@ -211,7 +211,7 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
   @NotNull
   @Override
   public State reduceMethod(@NotNull Method node, @NotNull State params, @NotNull State body, @NotNull State name) {
-      return new State(name, functionHelper(node, params, body));
+      return new State(name, functionHelper(node, params, body, false));
   }
 
   @NotNull
@@ -220,12 +220,16 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
       return super.reduceScript(node, directives, statements).finish(node, Scope.Type.Global);
   }
 
-  //reduceModule // todo
+  @NotNull
+  @Override
+  public State reduceModule(@NotNull Module node, @NotNull ImmutableList<State> directives, @NotNull ImmutableList<State> statements) {
+      return super.reduceModule(node, directives, statements).finish(node, Scope.Type.Module);
+  }
 
   @NotNull
   @Override
   public State reduceSetter(@NotNull Setter node, @NotNull State name, @NotNull State parameter, @NotNull State body) {
-      return new State(name, functionHelper(node, parameter.addDeclarations(Kind.Param), body));
+      return new State(name, functionHelper(node, parameter.addDeclarations(Kind.Param), body, false));
       // TODO eval scope
   }
 
@@ -239,8 +243,8 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
   @NotNull
   @Override
   public State reduceVariableDeclaration(@NotNull VariableDeclaration node, @NotNull ImmutableList<State> declarators) {
-      // passes bindingsForParent up, for for-in and for-of to add their write-references
       return super.reduceVariableDeclaration(node, declarators).addDeclarations(Kind.fromVariableDeclarationKind(node.kind), true);
+      // passes bindingsForParent up, for for-in and for-of to add their write-references
   }
 
   @NotNull
@@ -255,6 +259,7 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
       State res = super.reduceVariableDeclarator(node, binding, init);
       if(init.isJust()) {
           return res.addReferences(Accessibility.Write, true);
+          // passes bindingsForParent up, for variableDeclaration to add the appropriate type of declaration
       }
       else {
           return res;
@@ -352,6 +357,10 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
      * are carried forward into the new state object.
      */
     private State finish(@NotNull Node astNode, @NotNull Scope.Type scopeType) {
+        return finish(astNode, scopeType, false);
+    }
+
+    private State finish(@NotNull Node astNode, @NotNull Scope.Type scopeType, boolean resolveArguments) {
       ImmutableList<Variable> variables = ImmutableList.nil();
 
       HashTable<String, ImmutableList<Declaration>> functionScope = HashTable.empty();
@@ -360,7 +369,10 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
       switch (scopeType) {
       case Block:
       case Catch:
-      case With: // TODO ensure scope types are all covered correctly
+      case With:
+      case FunctionName:
+      case Parameters:
+      case ParameterExpression:
         // resolve only block-scoped free declarations
         ImmutableList<Variable> variables3 = variables;
         for (Pair<String, ImmutableList<Declaration>> entry2 : this.blockScopedDeclarations.entries()) {
@@ -373,9 +385,12 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
         variables = variables3;
         functionScope = this.functionScopedDeclarations;
         break;
-      default:
+      case Function:
+      case ArrowFunction:
+      case Global:
+      case Module:
         // resolve both block-scoped and function-scoped free declarations
-        if (scopeType == Scope.Type.Function) {
+        if (resolveArguments) {
           ImmutableList<Variable> variables1 = variables;
           ImmutableList<Reference> arguments = freeIdentifiers.get("arguments").orJust(ImmutableList.nil());
           freeIdentifiers = freeIdentifiers.remove("arguments");
@@ -401,7 +416,11 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
         }
         variables = variables1;
         break;
+      default:
+        throw new RuntimeException("Not reached");
       }
+
+      // TODO create a global to contain the module's scope
 
       Scope scope = scopeType == Scope.Type.Global ?
           new GlobalScope(this.children, variables, freeIdentifiers, astNode) :
@@ -485,46 +504,46 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
 
     @NotNull
     public State withoutBindingsForParent() {
-        return new State(
-                this.freeIdentifiers,
-                this.functionScopedDeclarations,
-                this.blockScopedDeclarations,
-                this.children,
-                this.dynamic,
-                ImmutableList.nil(),
-                this.hasParameterExpressions
-        );
+      return new State(
+          this.freeIdentifiers,
+          this.functionScopedDeclarations,
+          this.blockScopedDeclarations,
+          this.children,
+          this.dynamic,
+          ImmutableList.nil(),
+          this.hasParameterExpressions
+      );
     }
 
     @NotNull
     public State withParameterExpressions() {
-        return new State(
-                this.freeIdentifiers,
-                this.functionScopedDeclarations,
-                this.blockScopedDeclarations,
-                this.children,
-                this.dynamic,
-                this.bindingsForParent,
-                this.hasParameterExpressions
-        );
+      return new State(
+          this.freeIdentifiers,
+          this.functionScopedDeclarations,
+          this.blockScopedDeclarations,
+          this.children,
+          this.dynamic,
+          this.bindingsForParent,
+          true
+      );
     }
 
     @NotNull
     public State withoutParameterExpressions() {
-        return new State(
-                this.freeIdentifiers,
-                this.functionScopedDeclarations,
-                this.blockScopedDeclarations,
-                this.children,
-                this.dynamic,
-                this.bindingsForParent,
-                this.hasParameterExpressions
-        );
+      return new State(
+          this.freeIdentifiers,
+          this.functionScopedDeclarations,
+          this.blockScopedDeclarations,
+          this.children,
+          this.dynamic,
+          this.bindingsForParent,
+          false
+      );
     }
   }
 
   @SuppressWarnings("ProtectedInnerClass")
-  public static final class StateMonoid implements Monoid<State> {
+  private static final class StateMonoid implements Monoid<State> {
     @Override
     @NotNull
     public State identity() {

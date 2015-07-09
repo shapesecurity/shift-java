@@ -18,7 +18,6 @@ package com.shapesecurity.shift.scope;
 
 import com.shapesecurity.shift.ast.BindingIdentifier;
 import com.shapesecurity.shift.ast.VariableDeclarationKind;
-
 import org.jetbrains.annotations.NotNull;
 
 public class Declaration {
@@ -38,7 +37,7 @@ public class Declaration {
     this.kind = kind;
   }
 
-  public static enum Kind {
+  public enum Kind {
     Var(false),
     Const(true),
     Let(true),
@@ -49,7 +48,7 @@ public class Declaration {
     public final boolean isFunctionScoped;
     public final boolean isBlockScoped;
 
-    private Kind(boolean isBlockScoped) {
+    Kind(boolean isBlockScoped) {
       this.isFunctionScoped = !isBlockScoped;
       this.isBlockScoped = isBlockScoped;
     }
