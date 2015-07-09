@@ -376,7 +376,11 @@ public class Fuzzer {
 
   @NotNull
   private static CatchClause randomCatchClause(@NotNull GenCtx ctx, int depth) {
-    return new CatchClause(randomBinding(ctx, depth - 1), randomBlock(ctx, depth - 1));
+    Binding binding;
+    do {
+      binding = randomBinding(ctx, depth - 1);
+    } while (!(binding instanceof MemberExpression));
+    return new CatchClause(binding, randomBlock(ctx, depth - 1));
     // called randomIdentifier with false, false
   }
 
