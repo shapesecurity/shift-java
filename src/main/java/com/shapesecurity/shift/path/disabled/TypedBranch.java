@@ -15,7 +15,7 @@
  */
 
 
-package com.shapesecurity.shift.path;
+package com.shapesecurity.shift.path.disabled;
 
 import com.shapesecurity.shift.ast.Node;
 import com.shapesecurity.shift.ast.types.GenType;

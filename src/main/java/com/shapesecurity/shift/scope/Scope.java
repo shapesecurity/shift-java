@@ -19,13 +19,14 @@ package com.shapesecurity.shift.scope;
 import com.shapesecurity.functional.data.HashTable;
 import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.functional.data.Maybe;
+import com.shapesecurity.shift.ast.BindingIdentifier;
+import com.shapesecurity.shift.ast.IdentifierExpression;
 import com.shapesecurity.shift.ast.Node;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
-
-import org.jetbrains.annotations.NotNull;
 
 public class Scope {
 
@@ -73,56 +74,39 @@ public class Scope {
     return this.variables.values();
   }
 
-/* // TODO figure out how these should work
   @NotNull
-  protected ImmutableList<Variable> findVariables(@NotNull final Identifier identifier) {
-    ImmutableList<Variable> result = findVariablesHelper(identifier, true, true);
-    if (result.isEmpty()) {
-      return this.children.bind(scope -> scope.findVariables(identifier));
-    }
-    return result;
-  }
-
-  @NotNull
-  protected ImmutableList<Variable> findVariablesDeclaredBy(@NotNull final Identifier identifier) {
-    ImmutableList<Variable> result = findVariablesHelper(identifier, false, true);
-    if (result.isEmpty()) {
-      return this.children.bind(scope -> scope.findVariablesDeclaredBy(identifier));
-    }
-    return result;
-  }
-
-  @NotNull
-  protected ImmutableList<Variable> findVariablesReferencedBy(@NotNull final Identifier identifier) {
-    ImmutableList<Variable> result = findVariablesHelper(identifier, true, false);
-    if (result.isEmpty()) {
-      return this.children.bind(scope -> scope.findVariablesReferencedBy(identifier));
-    }
-    return result;
-  }
-
-  @NotNull
-  private ImmutableList<Variable> findVariablesHelper(
-      @NotNull final Identifier identifier,
-      boolean lookInReferences,
-      boolean lookInDeclarations) {
+  protected Maybe<Variable> findVariablesDeclaredBy(@NotNull final BindingIdentifier bindingIdentifier) {
     for (Variable v : this.variables.values()) {
-      if (lookInReferences) {
-        if (v.references.find(p -> p.b.node == identifier).isJust()) {
-          return ImmutableList.list(v);
-        }
-      }
-      if (lookInDeclarations) {
-        if (v.declarations.find(p -> p.b.node == identifier).isJust()) {
-          return ImmutableList.list(v);
-        }
+      if (v.declarations.exists(d -> d.node == bindingIdentifier)) {
+        return Maybe.just(v);
       }
     }
-    return ImmutableList.nil();
+    return this.children.findMap(scope -> scope.findVariablesDeclaredBy(bindingIdentifier));
   }
-*/
-  public static enum Type {
+
+  @NotNull
+  protected Maybe<Variable> findVariablesReferencedBy(@NotNull final IdentifierExpression identifierExpression) {
+    for (Variable v : this.variables.values()) {
+      if (v.references.exists(p -> p.node.mapRight(ie -> ie == identifierExpression).right().orJust(false))) {
+        return Maybe.just(v);
+      }
+    }
+    return this.children.findMap(scope -> scope.findVariablesReferencedBy(identifierExpression));
+  }
+
+  @NotNull
+  protected Maybe<Variable> findVariablesReferencedBy(@NotNull final BindingIdentifier bindingIdentifier) {
+    for (Variable v : this.variables.values()) {
+      if (v.references.exists(p -> p.node.mapLeft(bi -> bi == bindingIdentifier).left().orJust(false))) {
+        return Maybe.just(v);
+      }
+    }
+    return this.children.findMap(scope -> scope.findVariablesReferencedBy(bindingIdentifier));
+  }
+
+  public enum Type {
     Global,
+    Module,
     ArrowFunction,
     Function,
     FunctionName,

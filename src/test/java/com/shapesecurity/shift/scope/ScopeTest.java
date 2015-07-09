@@ -37,16 +37,12 @@ import static com.shapesecurity.shift.path.StaticBranch.PARAMETERS;
 import static com.shapesecurity.shift.path.StaticBranch.RIGHT;
 import static com.shapesecurity.shift.path.StaticBranch.STATEMENTS;
 import static com.shapesecurity.shift.path.StaticBranch.TEST;
-import static org.junit.Assert.assertTrue;
 
 import com.shapesecurity.functional.Pair;
 import com.shapesecurity.functional.data.HashTable;
 import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.functional.data.Maybe;
-import com.shapesecurity.shift.TestBase;
-import com.shapesecurity.shift.ast.Identifier;
-import com.shapesecurity.shift.ast.Node;
-import com.shapesecurity.shift.ast.Script;
+import com.shapesecurity.shift.ast.*;
 import com.shapesecurity.shift.parser.JsError;
 import com.shapesecurity.shift.parser.Parser;
 import com.shapesecurity.shift.path.Branch;
@@ -55,35 +51,16 @@ import com.shapesecurity.shift.path.IndexedBranch;
 import java.util.HashMap;
 import java.util.Map;
 
+import junit.framework.TestCase;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class ScopeTest extends TestBase {
-
-  private static class IdentifierP {
-    final ImmutableList<Branch> from;
-    final Identifier node;
-
-    public IdentifierP(ImmutableList<Branch> from, Identifier node) {
-      this.from = from;
-      this.node = node;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-      return obj == this || obj instanceof IdentifierP && ((IdentifierP) obj).from.equals(this.from) &&
-          ((IdentifierP) obj).node.equals(this.node);
-    }
-
-    @Override
-    public int hashCode() {
-      return this.from.hashCode() ^ (this.node.hashCode() << 3) ^ (this.node.hashCode() >>> 29);
-    }
-  }
+public class ScopeTest extends TestCase {
 
   private static final ImmutableList<IdentifierP> NO_REFERENCES = ImmutableList.nil();
   private static final ImmutableList<IdentifierP> NO_DECLARATIONS = NO_REFERENCES;
+
 
   private static class Getter {
     @NotNull
@@ -113,9 +90,15 @@ public class ScopeTest extends TestBase {
     }
 
     @NotNull
-    IdentifierP done() {
-      assertTrue("The endpoint is not identifier.", this.node instanceof Identifier);
-      return new IdentifierP(this.from, (Identifier) this.node);
+    IdentifierExpression getIdentifierExpression() {
+      assertTrue("The endpoint is not an IdentifierExpression.", this.node instanceof IdentifierExpression);
+      return (IdentifierExpression) this.node;
+    }
+
+    @NotNull
+    BindingIdentifier getBindingIdentifier() {
+      assertTrue("The endpoint is not a BindingIdentifier.", this.node instanceof BindingIdentifier);
+      return (BindingIdentifier) this.node;
     }
   }
 

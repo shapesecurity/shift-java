@@ -20,7 +20,6 @@ import com.shapesecurity.functional.Pair;
 import com.shapesecurity.functional.data.HashTable;
 import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.shift.ast.Node;
-
 import org.jetbrains.annotations.NotNull;
 
 public class GlobalScope extends Scope {
