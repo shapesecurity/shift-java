@@ -19,44 +19,15 @@ package com.shapesecurity.shift.validator;
 import com.shapesecurity.functional.data.Either;
 import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.functional.data.Maybe;
-import com.shapesecurity.shift.ast.CatchClause;
-import com.shapesecurity.shift.ast.FunctionBody;
-import com.shapesecurity.shift.ast.Identifier;
-import com.shapesecurity.shift.ast.Script;
-import com.shapesecurity.shift.ast.VariableDeclarator;
-import com.shapesecurity.shift.ast.expression.AssignmentExpression;
-import com.shapesecurity.shift.ast.expression.FunctionExpression;
-import com.shapesecurity.shift.ast.expression.IdentifierExpression;
-import com.shapesecurity.shift.ast.expression.LiteralNumericExpression;
-import com.shapesecurity.shift.ast.expression.ObjectExpression;
-import com.shapesecurity.shift.ast.expression.PrefixExpression;
-import com.shapesecurity.shift.ast.expression.StaticMemberExpression;
-import com.shapesecurity.shift.ast.operators.PrefixOperator;
-import com.shapesecurity.shift.ast.property.Getter;
-import com.shapesecurity.shift.ast.property.ObjectProperty;
-import com.shapesecurity.shift.ast.property.PropertyName;
-import com.shapesecurity.shift.ast.property.Setter;
-import com.shapesecurity.shift.ast.statement.BreakStatement;
-import com.shapesecurity.shift.ast.statement.ContinueStatement;
-import com.shapesecurity.shift.ast.statement.DoWhileStatement;
-import com.shapesecurity.shift.ast.statement.ForInStatement;
-import com.shapesecurity.shift.ast.statement.ForStatement;
-import com.shapesecurity.shift.ast.statement.FunctionDeclaration;
-import com.shapesecurity.shift.ast.statement.LabeledStatement;
-import com.shapesecurity.shift.ast.statement.ReturnStatement;
-import com.shapesecurity.shift.ast.statement.SwitchStatement;
-import com.shapesecurity.shift.ast.statement.SwitchStatementWithDefault;
-import com.shapesecurity.shift.ast.statement.WhileStatement;
-import com.shapesecurity.shift.ast.statement.WithStatement;
-import com.shapesecurity.shift.path.Branch;
+import com.shapesecurity.shift.ast.*;
 import com.shapesecurity.shift.utils.Utils;
 import com.shapesecurity.shift.visitor.MonoidalReducer;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
 
-import org.jetbrains.annotations.NotNull;
-
 public class Validator extends MonoidalReducer<ValidationContext> {
+
   public Validator() {
     super(ValidationContext.MONOID);
   }
@@ -67,11 +38,22 @@ public class Validator extends MonoidalReducer<ValidationContext> {
 
   @NotNull
   @Override
+  public ValidationContext reduceAssignmentExpression(
+      @NotNull AssignmentExpression node,
+      @NotNull ValidationContext binding,
+      @NotNull ValidationContext expression) {
+    ValidationContext v = super.reduceAssignmentExpression(node, binding, expression);
+    if (node.binding instanceof IdentifierExpression) {
+      v = v.checkRestricted((IdentifierExpression) node.binding);
+    }
+    return v;
+  }
+
+  @NotNull
+  @Override
   public ValidationContext reduceBreakStatement(
-      @NotNull BreakStatement node,
-      @NotNull ImmutableList<Branch> path,
-      @NotNull Maybe<ValidationContext> label) {
-    ValidationContext v = super.reduceBreakStatement(node, path, label);
+      @NotNull BreakStatement node) {
+    ValidationContext v = super.reduceBreakStatement(node);
     return node.label.maybe(
         v.addFreeBreakStatement(
             new ValidationError(
@@ -81,36 +63,20 @@ public class Validator extends MonoidalReducer<ValidationContext> {
 
   @NotNull
   @Override
-  public ValidationContext reduceAssignmentExpression(
-      @NotNull AssignmentExpression node,
-      @NotNull ImmutableList<Branch> path,
-      @NotNull ValidationContext binding,
-      @NotNull ValidationContext expression) {
-    ValidationContext v = super.reduceAssignmentExpression(node, path, binding, expression);
-    if (node.binding instanceof IdentifierExpression) {
-      v = v.checkRestricted(((IdentifierExpression) node.binding).identifier);
-    }
-    return v;
-  }
-
-  @NotNull
-  @Override
   public ValidationContext reduceCatchClause(
       @NotNull CatchClause node,
-      @NotNull ImmutableList<Branch> path,
       @NotNull ValidationContext binding,
       @NotNull ValidationContext body) {
-    ValidationContext v = super.reduceCatchClause(node, path, binding, body);
-    return v.checkRestricted(node.binding);
+    ValidationContext v = super.reduceCatchClause(node, binding, body);
+    return v.checkRestricted((IdentifierExpression) node.binding);
   }
 
   @NotNull
   @Override
   public ValidationContext reduceContinueStatement(
       @NotNull ContinueStatement node,
-      @NotNull ImmutableList<Branch> path,
       @NotNull Maybe<ValidationContext> label) {
-    final ValidationContext v = super.reduceContinueStatement(node, path, label).addFreeContinueStatement(node);
+    final ValidationContext v = super.reduceContinueStatement(node, label).addFreeContinueStatement(node);
     return node.label.maybe(v, v::addFreeJumpTarget);
   }
 
@@ -118,22 +84,63 @@ public class Validator extends MonoidalReducer<ValidationContext> {
   @Override
   public ValidationContext reduceDoWhileStatement(
       @NotNull DoWhileStatement node,
-      @NotNull ImmutableList<Branch> path,
       @NotNull ValidationContext body,
       @NotNull ValidationContext test) {
-    return super.reduceDoWhileStatement(node, path, body, test).clearFreeContinueStatements()
+    return super.reduceDoWhileStatement(node, body, test).clearFreeContinueStatements()
         .clearFreeBreakStatements();
+  }
+
+  @NotNull
+  @Override
+  public ValidationContext reduceForInStatement(
+      @NotNull ForInStatement node,
+      @NotNull Either<ValidationContext, ValidationContext> left,
+      @NotNull ValidationContext right,
+      @NotNull ValidationContext body) {
+    ValidationContext v = super.reduceForInStatement(node, left, right, body).clearFreeBreakStatements()
+        .clearFreeContinueStatements();
+    if (node.left.isLeft() && !node.left.left().just().declarators.tail().isEmpty()) {
+      v = v.addError(
+        new ValidationError(
+          node.left.left().just(),
+          "VariableDeclarationStatement in ForInVarStatement contains more than one VariableDeclarator"));
+    }
+    return v;
+  }
+
+  @NotNull
+  @Override
+  public ValidationContext reduceForStatement(
+      @NotNull ForStatement node,
+      @NotNull Maybe<Either<ValidationContext, ValidationContext>> init,
+      @NotNull Maybe<ValidationContext> test,
+      @NotNull Maybe<ValidationContext> update,
+      @NotNull ValidationContext body) {
+    return super.reduceForStatement(node, init, test, update, body).clearFreeBreakStatements()
+        .clearFreeContinueStatements();
+  }
+
+  @NotNull
+  @Override
+  public ValidationContext reduceFunctionBody(
+      @NotNull FunctionBody node,
+      @NotNull ImmutableList<ValidationContext> directives,
+      @NotNull ImmutableList<ValidationContext> statements) {
+    ValidationContext v = super.reduceFunctionBody(node, directives, statements).checkFreeJumpTargets();
+    if (node.isStrict()) {
+      v = v.invalidateStrictErrors();
+    }
+    return v.invalidateFreeContinueAndBreakErrors();
   }
 
   @NotNull
   @Override
   public ValidationContext reduceFunctionDeclaration(
       @NotNull FunctionDeclaration node,
-      @NotNull ImmutableList<Branch> path,
       @NotNull ValidationContext name,
       @NotNull ImmutableList<ValidationContext> params,
       @NotNull ValidationContext programBody) {
-    ValidationContext v = super.reduceFunctionDeclaration(node, path, name, params, programBody).clearUsedLabelNames()
+    ValidationContext v = super.reduceFunctionDeclaration(node, name, params, programBody).clearUsedLabelNames()
         .clearReturnStatements().clearUsedLabelNames();
     if (!Utils.areUniqueNames(node.parameters)) {
       v = v.addStrictError(new ValidationError(node, "FunctionDeclaration must have unique parameter names"));
@@ -149,13 +156,12 @@ public class Validator extends MonoidalReducer<ValidationContext> {
   @Override
   public ValidationContext reduceFunctionExpression(
       @NotNull FunctionExpression node,
-      @NotNull ImmutableList<Branch> path,
       @NotNull Maybe<ValidationContext> name,
       @NotNull ImmutableList<ValidationContext> parameters,
       @NotNull ValidationContext programBody) {
-    ValidationContext v = super.reduceFunctionExpression(node, path, name, parameters, programBody)
+    ValidationContext v = super.reduceFunctionExpression(node, name, parameters, programBody)
         .clearReturnStatements();
-    if (!Utils.areUniqueNames(node.parameters)) {
+    if (!Utils.areUniqueNames(node.params)) {
       v = v.addStrictError(new ValidationError(node, "FunctionExpression parameter names must be unique"));
     }
     v = node.parameters.foldLeft(ValidationContext::checkRestricted, node.name.map(v::checkRestricted).orJust(v));
@@ -167,70 +173,42 @@ public class Validator extends MonoidalReducer<ValidationContext> {
 
   @NotNull
   @Override
-  public ValidationContext reduceIdentifier(@NotNull Identifier node, @NotNull ImmutableList<Branch> path) {
-    ValidationContext v = new ValidationContext();
-    if (!Utils.isValidIdentifierName(node.name)) {
-      v = v.addError(new ValidationError(node, "Identifier `name` must be a valid IdentifierName"));
-    }
-    return v;
+  public ValidationContext reduceGetter(@NotNull Getter node,
+                                        @NotNull ValidationContext name, @NotNull ValidationContext body) {
+    return super.reduceGetter(node, name, body).clearReturnStatements();
   }
+
+//  @NotNull
+//  @Override
+//  public ValidationContext reduceIdentifier(@NotNull Identifier node) {
+//    ValidationContext v = new ValidationContext();
+//    if (!Utils.isValidIdentifierName(node.name)) {
+//      v = v.addError(new ValidationError(node, "Identifier `name` must be a valid IdentifierName"));
+//    }
+//    return v;
+//  }
 
   @NotNull
   @Override
   public ValidationContext reduceIdentifierExpression(
       @NotNull IdentifierExpression node,
-      @NotNull ImmutableList<Branch> path,
       @NotNull ValidationContext identifier) {
-    return super.reduceIdentifierExpression(node, path, identifier).checkReserved(node.identifier);
-  }
-
-  @NotNull
-  @Override
-  public ValidationContext reduceForInStatement(
-      @NotNull ForInStatement node,
-      @NotNull ImmutableList<Branch> path,
-      @NotNull Either<ValidationContext, ValidationContext> left,
-      @NotNull ValidationContext right,
-      @NotNull ValidationContext body) {
-    ValidationContext v = super.reduceForInStatement(node, path, left, right, body).clearFreeBreakStatements()
-        .clearFreeContinueStatements();
-    if (node.left.isLeft() && !node.left.left().just().declarators.tail().isEmpty()) {
-      v = v.addError(
-          new ValidationError(
-              node.left.left().just(),
-              "VariableDeclarationStatement in ForInVarStatement contains more than one VariableDeclarator"));
-    }
-    return v;
-  }
-
-  @NotNull
-  @Override
-  public ValidationContext reduceForStatement(
-      @NotNull ForStatement node,
-      @NotNull ImmutableList<Branch> path,
-      @NotNull Maybe<Either<ValidationContext, ValidationContext>> init,
-      @NotNull Maybe<ValidationContext> test,
-      @NotNull Maybe<ValidationContext> update,
-      @NotNull ValidationContext body) {
-    return super.reduceForStatement(node, path, init, test, update, body).clearFreeBreakStatements()
-        .clearFreeContinueStatements();
+    return super.reduceIdentifierExpression(node, identifier).checkReserved(node.identifier);
   }
 
   @NotNull
   @Override
   public ValidationContext reduceLabeledStatement(
       @NotNull LabeledStatement node,
-      @NotNull ImmutableList<Branch> path,
       @NotNull ValidationContext label,
       @NotNull ValidationContext body) {
-    return super.reduceLabeledStatement(node, path, label, body).observeLabelName(node.label);
+    return super.reduceLabeledStatement(node, label, body).observeLabelName(node.label);
   }
 
   @NotNull
   @Override
   public ValidationContext reduceLiteralNumericExpression(
-      @NotNull LiteralNumericExpression node,
-      @NotNull ImmutableList<Branch> path) {
+      @NotNull LiteralNumericExpression node) {
     ValidationContext v = new ValidationContext();
     if (node.value < 0 || node.value == 0 && 1 / node.value < 0) {
       v = v.addError(new ValidationError(node, "Numeric Literal node must be non-negative"));
@@ -246,9 +224,8 @@ public class Validator extends MonoidalReducer<ValidationContext> {
   @Override
   public ValidationContext reduceObjectExpression(
       @NotNull final ObjectExpression node,
-      @NotNull ImmutableList<Branch> path,
       @NotNull ImmutableList<ValidationContext> properties) {
-    ValidationContext v = super.reduceObjectExpression(node, path, properties);
+    ValidationContext v = super.reduceObjectExpression(node, properties);
     final HashSet<String> setKeys = new HashSet<>();
     final HashSet<String> getKeys = new HashSet<>();
     final HashSet<String> dataKeys = new HashSet<>();
@@ -313,141 +290,20 @@ public class Validator extends MonoidalReducer<ValidationContext> {
     return v;
   }
 
-  @NotNull
-  @Override
-  public ValidationContext reducePrefixExpression(
-      @NotNull PrefixExpression node,
-      @NotNull ImmutableList<Branch> path,
-      @NotNull ValidationContext operand) {
-    ValidationContext v = super.reducePrefixExpression(node, path, operand);
-    if (node.operator == PrefixOperator.Delete && node.operand instanceof IdentifierExpression) {
-      return v.addStrictError(
-          new ValidationError(
-              node,
-              "`delete` with unqualified identifier not allowed in strict mode"));
-    }
-    return v;
-  }
-
-  @NotNull
-  @Override
-  public ValidationContext reduceScript(
-      @NotNull Script node,
-      @NotNull ImmutableList<Branch> path,
-      @NotNull ValidationContext body) {
-    return super.reduceScript(node, path, body).invalidateFreeReturnErrors();
-  }
-
-  @NotNull
-  @Override
-  public ValidationContext reduceFunctionBody(
-      @NotNull FunctionBody node,
-      @NotNull ImmutableList<Branch> path,
-      @NotNull ImmutableList<ValidationContext> directives,
-      @NotNull ImmutableList<ValidationContext> statements) {
-    ValidationContext v = super.reduceFunctionBody(node, path, directives, statements).checkFreeJumpTargets();
-    if (node.isStrict()) {
-      v = v.invalidateStrictErrors();
-    }
-    return v.invalidateFreeContinueAndBreakErrors();
-  }
-
-  @NotNull
-  @Override
-  public ValidationContext reduceReturnStatement(
-      @NotNull ReturnStatement node,
-      @NotNull ImmutableList<Branch> path,
-      @NotNull Maybe<ValidationContext> expression) {
-    return super.reduceReturnStatement(node, path, expression).addFreeReturnStatement(node);
-  }
-
-  @NotNull
-  @Override
-  public ValidationContext reduceSetter(
-      @NotNull Setter node,
-      @NotNull ImmutableList<Branch> path,
-      @NotNull ValidationContext name,
-      @NotNull ValidationContext param,
-      @NotNull ValidationContext body) {
-    return super.reduceSetter(node, path, name, param, body).checkRestricted(node.parameter).clearReturnStatements();
-  }
-
-  @NotNull
-  @Override
-  public ValidationContext reduceGetter(@NotNull Getter node, @NotNull ImmutableList<Branch> path,
-                                        @NotNull ValidationContext name, @NotNull ValidationContext body) {
-    return super.reduceGetter(node, path, name, body).clearReturnStatements();
-  }
-
-  @NotNull
-  @Override
-  public ValidationContext reduceSwitchStatement(
-      @NotNull SwitchStatement node,
-      @NotNull ImmutableList<Branch> path,
-      @NotNull ValidationContext discriminant,
-      @NotNull ImmutableList<ValidationContext> cases) {
-    return super.reduceSwitchStatement(node, path, discriminant, cases).clearFreeBreakStatements();
-  }
-
-  @NotNull
-  @Override
-  public ValidationContext reduceSwitchStatementWithDefault(
-      @NotNull SwitchStatementWithDefault node,
-      @NotNull ImmutableList<Branch> path,
-      @NotNull ValidationContext discriminant,
-      @NotNull ImmutableList<ValidationContext> preDefaultCases,
-      @NotNull ValidationContext defaultCase,
-      @NotNull ImmutableList<ValidationContext> postDefaultCases) {
-    return super.reduceSwitchStatementWithDefault(
-        node,
-        path,
-        discriminant,
-        preDefaultCases,
-        defaultCase,
-        postDefaultCases)
-        .clearFreeBreakStatements();
-  }
-
-  @NotNull
-  @Override
-  public ValidationContext reduceVariableDeclarator(
-      @NotNull VariableDeclarator node,
-      @NotNull ImmutableList<Branch> path,
-      @NotNull ValidationContext binding,
-      @NotNull Maybe<ValidationContext> init) {
-    return super.reduceVariableDeclarator(node, path, binding, init).checkRestricted(node.binding);
-  }
-
-  @NotNull
-  @Override
-  public ValidationContext reduceWhileStatement(
-      @NotNull WhileStatement node,
-      @NotNull ImmutableList<Branch> path,
-      @NotNull ValidationContext test,
-      @NotNull ValidationContext body) {
-    return super.reduceWhileStatement(node, path, test, body).clearFreeBreakStatements().clearFreeContinueStatements();
-  }
-
-  @NotNull
-  @Override
-  public ValidationContext reduceWithStatement(
-      @NotNull WithStatement node,
-      @NotNull ImmutableList<Branch> path,
-      @NotNull ValidationContext object,
-      @NotNull ValidationContext body) {
-    return super.reduceWithStatement(node, path, object, body).addStrictError(
-        new ValidationError(node, "WithStatement not allowed in strict mode"));
-  }
-
-  @NotNull
-  @Override
-  public ValidationContext reduceStaticMemberExpression(
-      @NotNull StaticMemberExpression node,
-      @NotNull ImmutableList<Branch> path,
-      @NotNull ValidationContext object,
-      @NotNull ValidationContext property) {
-    return super.reduceStaticMemberExpression(node, path, object, property.clearIdentifierNameError());
-  }
+//  @NotNull
+//  @Override
+//  public ValidationContext reducePrefixExpression(
+//      @NotNull PrefixExpression node,
+//      @NotNull ValidationContext operand) {
+//    ValidationContext v = super.reducePrefixExpression(node, path, operand);
+//    if (node.operator == PrefixOperator.Delete && node.operand instanceof IdentifierExpression) {
+//      return v.addStrictError(
+//          new ValidationError(
+//              node,
+//              "`delete` with unqualified identifier not allowed in strict mode"));
+//    }
+//    return v;
+//  }
 
   @NotNull
   @Override
@@ -467,5 +323,94 @@ public class Validator extends MonoidalReducer<ValidationContext> {
       break;
     }
     return v;
+  }
+
+  @NotNull
+  @Override
+  public ValidationContext reduceReturnStatement(
+      @NotNull ReturnStatement node,
+      @NotNull Maybe<ValidationContext> expression) {
+    return super.reduceReturnStatement(node, expression).addFreeReturnStatement(node);
+  }
+
+  @NotNull
+  @Override
+  public ValidationContext reduceScript(
+      @NotNull Script node,
+      @NotNull ValidationContext body) {
+    return super.reduceScript(node, body).invalidateFreeReturnErrors();
+  }
+
+  @NotNull
+  @Override
+  public ValidationContext reduceSetter(
+      @NotNull Setter node,
+      @NotNull ValidationContext name,
+      @NotNull ValidationContext param,
+      @NotNull ValidationContext body) {
+    return super.reduceSetter(node, name, param, body).checkRestricted(node.param).clearReturnStatements();
+  }
+
+  @NotNull
+  @Override
+  public ValidationContext reduceStaticMemberExpression(
+      @NotNull StaticMemberExpression node,
+      @NotNull ValidationContext object,
+      @NotNull ValidationContext property) {
+    return super.reduceStaticMemberExpression(node, object, property.clearIdentifierNameError());
+  }
+
+  @NotNull
+  @Override
+  public ValidationContext reduceSwitchStatement(
+      @NotNull SwitchStatement node,
+      @NotNull ValidationContext discriminant,
+      @NotNull ImmutableList<ValidationContext> cases) {
+    return super.reduceSwitchStatement(node, discriminant, cases).clearFreeBreakStatements();
+  }
+
+  @NotNull
+  @Override
+  public ValidationContext reduceSwitchStatementWithDefault(
+      @NotNull SwitchStatementWithDefault node,
+      @NotNull ValidationContext discriminant,
+      @NotNull ImmutableList<ValidationContext> preDefaultCases,
+      @NotNull ValidationContext defaultCase,
+      @NotNull ImmutableList<ValidationContext> postDefaultCases) {
+    return super.reduceSwitchStatementWithDefault(
+      node,
+      discriminant,
+      preDefaultCases,
+      defaultCase,
+      postDefaultCases)
+        .clearFreeBreakStatements();
+  }
+
+  @NotNull
+  @Override
+  public ValidationContext reduceVariableDeclarator(
+      @NotNull VariableDeclarator node,
+      @NotNull ValidationContext binding,
+      @NotNull Maybe<ValidationContext> init) {
+    return super.reduceVariableDeclarator(node, binding, init).checkRestricted(node.binding);
+  }
+
+  @NotNull
+  @Override
+  public ValidationContext reduceWhileStatement(
+      @NotNull WhileStatement node,
+      @NotNull ValidationContext test,
+      @NotNull ValidationContext body) {
+    return super.reduceWhileStatement(node, test, body).clearFreeBreakStatements().clearFreeContinueStatements();
+  }
+
+  @NotNull
+  @Override
+  public ValidationContext reduceWithStatement(
+      @NotNull WithStatement node,
+      @NotNull ValidationContext object,
+      @NotNull ValidationContext body) {
+    return super.reduceWithStatement(node, object, body).addStrictError(
+        new ValidationError(node, "WithStatement not allowed in strict mode"));
   }
 }

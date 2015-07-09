@@ -19,27 +19,15 @@ package com.shapesecurity.shift.validator;
 import com.shapesecurity.functional.data.ConcatList;
 import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.functional.data.Monoid;
-import com.shapesecurity.shift.ast.Identifier;
+import com.shapesecurity.shift.ast.ContinueStatement;
+import com.shapesecurity.shift.ast.IdentifierExpression;
 import com.shapesecurity.shift.ast.Node;
-import com.shapesecurity.shift.ast.statement.ContinueStatement;
 import com.shapesecurity.shift.utils.Utils;
-
 import org.jetbrains.annotations.NotNull;
 
 public class ValidationContext {
-  public static final Monoid<ValidationContext> MONOID = new ValidationContextMonoid();
-  @NotNull
-  private final ConcatList<ValidationError> freeBreakStatements;
-  @NotNull
-  private final ConcatList<ValidationError> freeContinueStatements;
-  @NotNull
-  private final ImmutableList<String> usedLabelNames;
-  @NotNull
-  private final ImmutableList<Identifier> freeJumpTargets;
-  @NotNull
-  public final ConcatList<ValidationError> errors;
-  @NotNull
-  private final ConcatList<ValidationError> strictErrors;
+
+
   @NotNull
   private final ConcatList<ValidationError> freeReturnStatements;
 
@@ -56,7 +44,7 @@ public class ValidationContext {
   private ValidationContext(@NotNull ConcatList<ValidationError> freeBreakStatements,
                             @NotNull ConcatList<ValidationError> freeContinueStatements,
                             @NotNull ImmutableList<String> usedLabelNames,
-                            @NotNull ImmutableList<Identifier> freeJumpTargets,
+                            @NotNull ImmutableList<IdentifierExpression> freeJumpTargets,
                             @NotNull ConcatList<ValidationError> freeReturnStatements,
                             @NotNull ConcatList<ValidationError> errors,
                             @NotNull ConcatList<ValidationError> strictErrors) {
@@ -118,7 +106,7 @@ public class ValidationContext {
     );
   }
 
-  public ValidationContext observeLabelName(@NotNull final Identifier labelName) {
+  public ValidationContext observeLabelName(@NotNull final IdentifierExpression labelName) {
     ConcatList<ValidationError> errors = this.errors;
     if (this.usedLabelNames.exists(s -> s.equals(labelName.name))) {
       errors = errors.append1(new ValidationError(labelName, "Duplicate label name."));
@@ -146,7 +134,7 @@ public class ValidationContext {
     );
   }
 
-  public ValidationContext addFreeJumpTarget(@NotNull Identifier labelName) {
+  public ValidationContext addFreeJumpTarget(@NotNull IdentifierExpression labelName) {
     return new ValidationContext(
         this.freeBreakStatements,
         this.freeContinueStatements,
@@ -255,7 +243,7 @@ public class ValidationContext {
   }
 
 
-  public ValidationContext checkReserved(@NotNull Identifier identifier) {
+  public ValidationContext checkReserved(@NotNull IdentifierExpression identifier) {
     if (Utils.isStrictModeReservedWordES5(identifier.name)) {
       if (Utils.isReservedWordES5(identifier.name)) {
         return this.addError(new ValidationError(identifier, "Identifier must not be reserved word in this position"));
@@ -266,7 +254,7 @@ public class ValidationContext {
     return this;
   }
 
-  public ValidationContext checkRestricted(@NotNull Identifier identifier) {
+  public ValidationContext checkRestricted(@NotNull IdentifierExpression identifier) {
     ValidationContext v = this.checkReserved(identifier);
     if (Utils.isRestrictedWord(identifier.name)) {
       return v.addStrictError(new ValidationError(identifier,
