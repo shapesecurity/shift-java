@@ -599,7 +599,6 @@ public class Tokenizer {
   @NotNull
   protected RegularExpressionLiteralToken scanRegExp(String str) throws JsError {
     int start = this.index;
-
     boolean terminated = false;
     boolean classMarker = false;
     while (this.index < this.source.length()) {

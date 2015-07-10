@@ -19,12 +19,16 @@ package com.shapesecurity.shift.validator;
 import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.functional.data.Maybe;
 import com.shapesecurity.shift.ast.*;
+import com.shapesecurity.shift.parser.ErrorMessages;
+import com.shapesecurity.shift.parser.token.RegularExpressionLiteralToken;
 import com.shapesecurity.shift.utils.Utils;
 import com.shapesecurity.shift.visitor.Director;
 import com.shapesecurity.shift.visitor.MonoidalReducer;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.Class;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Validator extends MonoidalReducer<ValidationContext> {
 
@@ -246,7 +250,7 @@ public class Validator extends MonoidalReducer<ValidationContext> {
           s.addError(new ValidationError(node, "the elements field of template expression must be an alternating list of template element and expression, starting and ending with a template element"));
         }
       }
-      return true; // todo why does lambda have to return
+      return true; // todo how to not return things here
     });
     return s;
   }
@@ -256,7 +260,24 @@ public class Validator extends MonoidalReducer<ValidationContext> {
   public ValidationContext reduceLiteralRegExpExpression(@NotNull LiteralRegExpExpression node) {
     ValidationContext s = super.reduceLiteralRegExpExpression(node);
     // TODO pattern
+    if (!checkLiteralRegExpPattern(node.pattern)) {
+      s.addError(new ValidationError(node, "pattern field of literal regular expression expression must match the ES6 grammar production Pattern (21.2.1)"));
+    }
     // TODO flag
+    boolean hasBadChars = node.flags.chars().allMatch(x -> x != 'g' || x != 'i' || x != 'm' || x != 'u' || x != 'y');
+    if (hasBadChars) {
+      s.addError(new ValidationError(node, "flags field of literal regular expression expression must not contain characters other than 'g', 'i', 'm', 'u', or 'y'"));
+    }
+
+    Map<Integer, Boolean> charMap = new HashMap<>();
+    node.flags.chars().map(x -> {
+      if (charMap.containsKey(x)) {
+        s.addError(new ValidationError(node, "flags field of literal regular expression expression must not contain duplicate flag characters"));
+      } else {
+        charMap.put(x, true);
+      }
+      return 0; // todo how to not return things here
+    });
     return s;
   }
 
@@ -307,12 +328,53 @@ public class Validator extends MonoidalReducer<ValidationContext> {
   }
 
   private static boolean checkLiteralRegExpPattern(String pattern) {
-    // TODO
+    int index = 0;
+    boolean terminated = false;
+    boolean classMarker = false;
+    while (index < pattern.length()) {
+      char ch = pattern.charAt(index);
+      if (ch == '\\') {
+        index++;
+        ch = pattern.charAt(index);
+        if (Utils.isLineTerminator(ch)) {
+          return false;
+        }
+        index++;
+      } else if (Utils.isLineTerminator(ch)) {
+        return false;
+      } else {
+        if (classMarker) {
+          if (ch == ']') {
+            classMarker = false;
+          }
+        } else {
+          if (ch == '/') {
+            terminated = true;
+            index++;
+            break;
+          } else if (ch == '[') {
+            classMarker = true;
+          }
+        }
+        index++;
+      }
+    }
+
+    if (!terminated) {
+      return false;
+    }
+
+    while (index < pattern.length()) {
+      char ch = pattern.charAt(index);
+      if (ch == '\\') {
+        return false;
+      }
+      if (!Utils.isIdentifierPart(ch)) {
+        break;
+      }
+      index++;
+    }
     return true;
   }
 
-  private static boolean checkLiteralRegExpFlag(String flag) {
-    // TODO
-    return true;
-  }
 }
