@@ -19,6 +19,7 @@ package com.shapesecurity.functional.data;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.NoSuchElementException;
 
 import com.shapesecurity.functional.Effect;
@@ -67,7 +68,7 @@ public abstract class ImmutableList<A> implements Iterable<A> {
    * @return a new {@link ImmutableList} that is comprised of all the elements in the {@link java.util.ArrayList}.
    */
   @NotNull
-  public static <A> ImmutableList<A> from(@NotNull ArrayList<A> arrayList) {
+  public static <A> ImmutableList<A> from(@NotNull List<A> arrayList) {
     // Manual expansion of tail recursion.
     ImmutableList<A> l = nil();
     int size = arrayList.size();

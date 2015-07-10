@@ -11,6 +11,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Member;
 import java.util.*;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public class EarlyErrorContext {
   public static final Monoid<EarlyErrorContext> MONOID = new EarlyErrorContextMonoid();
@@ -35,50 +36,50 @@ public class EarlyErrorContext {
 
   // labeled BreakStatement nodes; cleared at LabeledStatement with same Label and function boundaries
   @NotNull
-  public final Map<String, BreakStatement> freeLabeledBreakStatements;
+  private final Map<String, BreakStatement> freeLabeledBreakStatements;
   // labeled ContinueStatement nodes; cleared at labeled iteration statement with same Label and function boundaries
   @NotNull
-  public final Map<String, ContinueStatement> freeLabeledContinueStatements;
+  private final Map<String, ContinueStatement> freeLabeledContinueStatements;
 
   // NewTargetExpression nodes; cleared at function (besides arrow expression) boundaries
   @NotNull
-  public final List<NewTargetExpression> newTargetExpressions;
+  private final List<NewTargetExpression> newTargetExpressions;
 
   // BindingIdentifier nodes; cleared at containing declaration node
   @NotNull
-  public final Multimap<String, BindingIdentifier> boundNames;
+  private final Multimap<String, BindingIdentifier> boundNames;
   // BindingIdentifiers that were found to be in a lexical binding position
   @NotNull
-  public final Multimap<String, BindingIdentifier> lexicallyDeclaredNames;
+  private final Multimap<String, BindingIdentifier> lexicallyDeclaredNames;
   // Previous BindingIdentifiers that were found to be in a lexical binding position
-  @NotNull
-  public Multimap<String, BindingIdentifier> previousLexicallyDeclaredNames;
+//  @NotNull
+//  private Multimap<String, BindingIdentifier> previousLexicallyDeclaredNames;
   // BindingIdentifiers that were the name of a FunctionDeclaration
   @NotNull
-  public final Multimap<String, BindingIdentifier> functionDeclarationNames;
+  private final Multimap<String, BindingIdentifier> functionDeclarationNames;
   // BindingIdentifiers that were found to be in a variable binding position
   @NotNull
-  public final Multimap<String, BindingIdentifier> varDeclaredNames;
+  private final Multimap<String, BindingIdentifier> varDeclaredNames;
   // BindingIdentifiers that were found to be in a variable binding position
   @NotNull
-  public final List<BindingIdentifier> forOfVarDeclaredNames;
+  private final List<BindingIdentifier> forOfVarDeclaredNames;
 
   // Names that this module exports
   @NotNull
-  public final Multimap<String, BindingIdentifier> exportedNames;
+  private final Multimap<String, BindingIdentifier> exportedNames;
   // Locally declared names that are referenced in export declarations
   @NotNull
-  public final Multimap<String, BindingIdentifier> exportedBindings;
+  private final Multimap<String, BindingIdentifier> exportedBindings;
 
   // CallExpressions with Super callee
   @NotNull
-  public final List<Super> superCallExpressions;
+  private final List<Super> superCallExpressions;
   // SuperCall expressions in the context of a Method named "constructor"
   @NotNull
-  public final List<Super> superCallExpressionsInConstructorMethod;
+  private final List<Super> superCallExpressionsInConstructorMethod;
   // MemberExpressions with Super object
   @NotNull
-  public final List<MemberExpression> superPropertyExpressions;
+  private final List<MemberExpression> superPropertyExpressions;
 
   public EarlyErrorContext() {
     this(
@@ -166,172 +167,145 @@ public class EarlyErrorContext {
     return this;
   }
 
-  public EarlyErrorContext addFreeBreakStatement(BreakStatement s) {
+  public void addFreeBreakStatement(BreakStatement s) {
     this.freeBreakStatements.add(s);
-    return this;
   }
 
-  public EarlyErrorContext addFreeLabeledBreakStatement(String string, BreakStatement s) {
+  public void addFreeLabeledBreakStatement(String string, BreakStatement s) {
     this.freeLabeledBreakStatements.put(string, s);
-    return this;
   }
 
-  public EarlyErrorContext clearFreeBreakStatements() {
+  public void clearFreeBreakStatements() {
     this.freeBreakStatements.clear();
-    return this;
   }
 
-  public EarlyErrorContext addFreeContinueStatement(ContinueStatement s) {
+  public void addFreeContinueStatement(ContinueStatement s) {
     this.freeContinueStatements.add(s);
-    return this;
   }
 
-  public EarlyErrorContext addFreeLabeledContinueStatement(String string, ContinueStatement s) {
+  public void addFreeLabeledContinueStatement(String string, ContinueStatement s) {
     this.freeLabeledContinueStatements.put(string, s);
-    return this;
   }
 
-  public EarlyErrorContext clearFreeContinueStatements() {
+  public void clearFreeContinueStatements() {
     this.freeContinueStatements.clear();
-    return this;
   }
 
-  public EarlyErrorContext enforceFreeBreakStatementErrors(Function<BreakStatement, EarlyError> createError) {
-//    [].push.apply(this.errors, this.freeBreakStatements.map(createError));
-      this.errors.addAll((Collection) this.freeBreakStatements.stream().map(createError::apply));
-      this.freeBreakStatements.clear();
-      return this;
+  public void enforceFreeBreakStatementErrors(Function<BreakStatement, EarlyError> createError) {
+//  [].push.apply(this.errors, this.freeBreakStatements.map(createError));
+    this.errors.addAll(this.freeBreakStatements.stream().map(createError::apply).collect(Collectors.toList()));
+    this.freeBreakStatements.clear();
   }
 
-  public EarlyErrorContext enforceFreeLabeledBreakStatementErrors(Function<BreakStatement, EarlyError> createError) {
+  public void enforceFreeLabeledBreakStatementErrors(Function<BreakStatement, EarlyError> createError) {
 //    [].push.apply(this.errors, this.freeLabeledBreakStatements.map(createError));
-    this.errors.addAll((Collection) this.freeLabeledBreakStatements.values().stream().map(createError::apply));
+    this.errors.addAll(this.freeLabeledBreakStatements.values().stream().map(createError::apply).collect(Collectors.toList()));
     this.freeLabeledBreakStatements.clear();
-    return this;
   }
 
-  public EarlyErrorContext enforceFreeContinueStatementErrors(Function<ContinueStatement, EarlyError> createError) {
+  public void enforceFreeContinueStatementErrors(Function<ContinueStatement, EarlyError> createError) {
 //    [].push.apply(this.errors, this.freeContinueStatements.map(createError));
-    this.errors.addAll((Collection) this.freeContinueStatements.stream().map(createError::apply));
+    this.errors.addAll(this.freeContinueStatements.stream().map(createError::apply).collect(Collectors.toList()));
     this.freeContinueStatements.clear();
-    return this;
   }
 
-  public EarlyErrorContext enforceFreeLabeledContinueStatementErrors(Function<ContinueStatement, EarlyError> createError) {
+  public void enforceFreeLabeledContinueStatementErrors(Function<ContinueStatement, EarlyError> createError) {
 //    [].push.apply(this.errors, this.freeLabeledContinueStatements.map(createError));
-    this.errors.addAll((Collection) this.freeLabeledContinueStatements.values().stream().map(createError::apply));
+    this.errors.addAll(this.freeLabeledContinueStatements.values().stream().map(createError::apply).collect(Collectors.toList()));
     this.freeLabeledContinueStatements.clear();
-    return this;
   }
 
 
-  public EarlyErrorContext observeIterationLabel(String s, LabeledStatement label) {
+  public void observeIterationLabel(String s, LabeledStatement label) {
     this.usedLabelNames.put(s, label);
     this.freeLabeledBreakStatements.remove(s);
     this.freeLabeledContinueStatements.remove(s);
-    return this;
   }
 
-  public EarlyErrorContext observeNonIterationLabel(String s, LabeledStatement label) {
+  public void observeNonIterationLabel(String s, LabeledStatement label) {
     this.usedLabelNames.put(s, label);
     this.freeLabeledBreakStatements.remove(s);
-    return this;
   }
 
-  public EarlyErrorContext clearUsedLabelNames() {
+  public void clearUsedLabelNames() {
     this.usedLabelNames.clear();
-    return this;
   }
 
 
-  public EarlyErrorContext observeSuperCallExpression(Super node) {
+  public void observeSuperCallExpression(Super node) {
     this.superCallExpressions.add(node);
-    return this;
   }
 
-  public EarlyErrorContext observeConstructorMethod() {
+  public void observeConstructorMethod() {
     this.superCallExpressionsInConstructorMethod.clear();
     this.superCallExpressionsInConstructorMethod.addAll(this.superCallExpressions);
     this.superCallExpressions.clear();
-    return this;
   }
 
-  public EarlyErrorContext clearSuperCallExpressionsInConstructorMethod() {
+  public void clearSuperCallExpressionsInConstructorMethod() {
     this.superCallExpressionsInConstructorMethod.clear();
-    return this;
   }
 
-  public EarlyErrorContext enforceSuperCallExpressions(Function<Super, EarlyError> createError) {
+  public void enforceSuperCallExpressions(Function<Super, EarlyError> createError) {
 //    [].push.apply(this.errors, this.superCallExpressions.map(createError));
 //    [].push.apply(this.errors, this.superCallExpressionsInConstructorMethod.map(createError));
-    this.errors.addAll((Collection) this.superCallExpressions.stream().map(createError::apply));
-    this.errors.addAll((Collection) this.superCallExpressionsInConstructorMethod.stream().map(createError::apply));
+    this.errors.addAll(this.superCallExpressions.stream().map(createError::apply).collect(Collectors.toList()));
+    this.errors.addAll(this.superCallExpressionsInConstructorMethod.stream().map(createError::apply).collect(Collectors.toList()));
     this.superCallExpressions.clear();
     this.superCallExpressionsInConstructorMethod.clear();
-    return this;
   }
 
-  public EarlyErrorContext enforceSuperCallExpressionsInConstructorMethod(Function<Super, EarlyError> createError) {
+  public void enforceSuperCallExpressionsInConstructorMethod(Function<Super, EarlyError> createError) {
 //    [].push.apply(this.errors, this.superCallExpressionsInConstructorMethod.map(createError));
-    this.errors.addAll((Collection) this.superCallExpressionsInConstructorMethod.stream().map(createError::apply));
+    this.errors.addAll(this.superCallExpressionsInConstructorMethod.stream().map(createError::apply).collect(Collectors.toList()));
     this.superCallExpressionsInConstructorMethod.clear();
-    return this;
   }
 
 
-  public EarlyErrorContext observeSuperPropertyExpression(MemberExpression node) {
+  public void observeSuperPropertyExpression(MemberExpression node) {
     this.superPropertyExpressions.add(node);
-    return this;
   }
 
-  public EarlyErrorContext clearSuperPropertyExpressions() {
+  public void clearSuperPropertyExpressions() {
     this.superPropertyExpressions.clear();
-    return this;
   }
 
-  public EarlyErrorContext enforceSuperPropertyExpressions(Function<MemberExpression, EarlyError> createError) {
+  public void enforceSuperPropertyExpressions(Function<MemberExpression, EarlyError> createError) {
 //    [].push.apply(this.errors, this.superPropertyExpressions.map(createError));
-    this.errors.addAll((Collection) this.superPropertyExpressions.stream().map(createError::apply));
+    this.superPropertyExpressions.stream().map(createError::apply).forEach(this::addError);
     this.superPropertyExpressions.clear();
-    return this;
   }
 
 
-  public EarlyErrorContext observeNewTargetExpression(NewTargetExpression node) {
+  public void observeNewTargetExpression(NewTargetExpression node) {
     this.newTargetExpressions.add(node);
-    return this;
   }
 
-  public EarlyErrorContext clearNewTargetExpressions() {
+  public void clearNewTargetExpressions() {
     this.newTargetExpressions.clear();
-    return this;
   }
 
 
-  public EarlyErrorContext bindName(String name, BindingIdentifier node) {
+  public void bindName(String name, BindingIdentifier node) {
     this.boundNames.put(name, node);
-    return this;
   }
 
-  public EarlyErrorContext clearBoundNames() {
+  public void clearBoundNames() {
     this.boundNames.clear();
-    return this;
   }
 
-  public EarlyErrorContext observeLexicalDeclaration() {
+  public void observeLexicalDeclaration() {
     this.lexicallyDeclaredNames.putAll(this.boundNames);
     this.boundNames.clear();
-    return this;
   }
 
-  public EarlyErrorContext observeLexicalBoundary() {
-    this.previousLexicallyDeclaredNames = this.lexicallyDeclaredNames;
+  public void observeLexicalBoundary() {
+//    this.previousLexicallyDeclaredNames = this.lexicallyDeclaredNames;
     this.lexicallyDeclaredNames.clear();
     this.functionDeclarationNames.clear();
-    return this;
   }
 
-  public EarlyErrorContext enforceDuplicateLexicallyDeclaredNames(Function<BindingIdentifier, EarlyError> createError) {
+  public void enforceDuplicateLexicallyDeclaredNames(Function<BindingIdentifier, EarlyError> createError) {
 //    this.lexicallyDeclaredNames.forEachEntry((nodes/*, bindingName*/) => {
 //    if (nodes.length > 1) {
 //      nodes.slice(1).forEach(dupeNode => {
@@ -348,10 +322,9 @@ public class EarlyErrorContext {
         }
       }
     }
-    return this;
   }
 
-  public EarlyErrorContext enforceConflictingLexicallyDeclaredNames(ArrayList<String> otherNames, Function<BindingIdentifier, EarlyError> createError) {
+  public void enforceConflictingLexicallyDeclaredNames(ArrayList<String> otherNames, Function<BindingIdentifier, EarlyError> createError) {
 //    this.lexicallyDeclaredNames.forEachEntry((nodes, bindingName) => {
 //      if (otherNames.has(bindingName)) {
 //        nodes.forEach(conflictingNode => {
@@ -367,85 +340,72 @@ public class EarlyErrorContext {
         this.addError(createError.apply(node));
       }
     }
-    return this;
   }
 
-  public EarlyErrorContext observeFunctionDeclaration() {
+  public void observeFunctionDeclaration() {
     this.observeVarBoundary();
     this.functionDeclarationNames.putAll(this.boundNames);
     this.boundNames.clear();
-    return this;
   }
 
-  public EarlyErrorContext functionDeclarationNamesAreLexical() {
+  public void functionDeclarationNamesAreLexical() {
     this.lexicallyDeclaredNames.putAll(this.functionDeclarationNames);
     this.functionDeclarationNames.clear();
-    return this;
   }
 
-  public EarlyErrorContext observeVarDeclaration() {
+  public void observeVarDeclaration() {
     this.varDeclaredNames.putAll(this.boundNames);
     this.boundNames.clear();
-    return this;
   }
 
-  public EarlyErrorContext recordForOfVars() {
+  public void recordForOfVars() {
 //    this.varDeclaredNames.forEach((bindingIdentifier) => {
 //      this.forOfVarDeclaredNames.push(bindingIdentifier);
 //    });
 
     this.forOfVarDeclaredNames.addAll(this.varDeclaredNames.values());
-    return this;
   }
 
-  public EarlyErrorContext observeVarBoundary() {
+  public void observeVarBoundary() {
     this.lexicallyDeclaredNames.clear();
     this.functionDeclarationNames.clear();
     this.varDeclaredNames.clear();
     this.forOfVarDeclaredNames.clear();
-    return this;
   }
 
 
-  public EarlyErrorContext exportName(String name, BindingIdentifier node) {
+  public void exportName(String name, BindingIdentifier node) {
     this.exportedNames.put(name, node);
-    return this;
   }
 
-  public EarlyErrorContext exportDeclaredNames() {
+  public void exportDeclaredNames() {
     this.exportedNames.putAll(this.lexicallyDeclaredNames);
     this.exportedNames.putAll(this.varDeclaredNames);
     this.exportedBindings.putAll(this.lexicallyDeclaredNames);
     this.exportedBindings.putAll(this.varDeclaredNames);
-    return this;
   }
 
-  public EarlyErrorContext exportBinding(String name, BindingIdentifier node) {
+  public void exportBinding(String name, BindingIdentifier node) {
     this.exportedBindings.put(name, node);
-    return this;
   }
 
-  public EarlyErrorContext clearExportedBindings() {
+  public void clearExportedBindings() {
     this.exportedBindings.clear();
-    return this;
   }
 
 
-  public EarlyErrorContext addError(EarlyError e) {
+  public void addError(EarlyError e) {
     this.errors.add(e);
-    return this;
   }
 
-  public EarlyErrorContext addStrictError(EarlyError e) {
+  public void addStrictError(EarlyError e) {
     this.strictErrors.add(e);
-    return this;
   }
 
-  public EarlyErrorContext enforceStrictErrors() {
+  public void enforceStrictErrors() {
 //    [].push.apply(this.errors, this.strictErrors);
     this.errors.addAll(this.strictErrors);
     this.strictErrors.clear();
-    return this;
   }
 
 
