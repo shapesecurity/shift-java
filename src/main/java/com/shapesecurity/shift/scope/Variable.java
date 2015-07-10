@@ -31,7 +31,7 @@ public class Variable {
   @NotNull
   public final ImmutableList<Reference> references;
   /**
-   * references of this variable *
+   * declarations of this variable *
    */
   @NotNull
   public final ImmutableList<Declaration> declarations;

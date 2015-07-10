@@ -43,7 +43,6 @@ public final class Reference {
   }
 
 
-
   @NotNull
   public final Reference withReadability() {
     return new Reference(this.node, this.accessibility.withReadability());

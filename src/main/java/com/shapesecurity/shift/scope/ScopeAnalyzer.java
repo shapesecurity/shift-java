@@ -40,8 +40,8 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
   }
 
   @NotNull
-  public static Scope analyze(@NotNull Module module) {
-      return Director.reduce(INSTANCE, module).children.maybeHead().just();
+  public static GlobalScope analyze(@NotNull Module module) {
+      return (GlobalScope) Director.reduceModule(INSTANCE, module).children.maybeHead().just();
   }
 
   @NotNull
@@ -168,18 +168,20 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
       // TODO eval scope
   }
 
+    // TODO should defining a function count as writing to its name, for symmetry with initialized variable declaration
   @NotNull
   @Override
   public State reduceFunctionDeclaration(@NotNull FunctionDeclaration node, @NotNull State name, @NotNull State params, @NotNull State body) {
-      return functionHelper(node, params, body, false).addDeclarations(Kind.FunctionName);
+      return new State(name, functionHelper(node, params, body, false)).addDeclarations(Kind.FunctionName);
   }
 
+    // TODO should defining a function count as writing to its name, for symmetry with initialized variable declaration
   @NotNull
   @Override
   public State reduceFunctionExpression(@NotNull FunctionExpression node, @NotNull Maybe<State> name, @NotNull State parameters, @NotNull State body) {
       State primary = functionHelper(node, parameters, body, false);
       if(name.isJust()) {
-          return primary.addDeclarations(Kind.FunctionName).finish(node, Scope.Type.FunctionName);
+          return new State(name.just(), primary).addDeclarations(Kind.FunctionName).finish(node, Scope.Type.FunctionName);
       }
       else {
           return primary; // per spec, no function name scope is created for unnamed expressions.
@@ -420,11 +422,11 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
         throw new RuntimeException("Not reached");
       }
 
-      // TODO create a global to contain the module's scope
-
       Scope scope = scopeType == Scope.Type.Global ?
           new GlobalScope(this.children, variables, freeIdentifiers, astNode) :
-          new Scope(this.children, variables, freeIdentifiers, scopeType, this.dynamic, astNode);
+              scopeType == Scope.Type.Module ?
+              new GlobalScope(ImmutableList.list(new Scope(this.children, variables, freeIdentifiers, scopeType, this.dynamic, astNode)), variables, freeIdentifiers, astNode)
+              : new Scope(this.children, variables, freeIdentifiers, scopeType, this.dynamic, astNode);
 
       return new State(
           freeIdentifiers, functionScope, HashTable.empty(),
@@ -449,6 +451,9 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
           ImmutableList<Declaration> decls = declMap.get(binding.name).orJust(ImmutableList.nil());
           decls = decls.cons(decl);
           declMap = declMap.put(binding.name, decls);
+
+          // TODO remove this
+          // System.out.println("Declaring" + binding.name);
       }
       return new State(
           this.freeIdentifiers,
