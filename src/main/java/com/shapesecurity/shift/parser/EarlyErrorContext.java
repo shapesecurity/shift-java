@@ -10,6 +10,7 @@ import org.jetbrains.annotations.NotNull;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Member;
 import java.util.*;
+import java.util.function.Function;
 
 public class EarlyErrorContext {
   public static final Monoid<EarlyErrorContext> MONOID = new EarlyErrorContextMonoid();
@@ -64,10 +65,10 @@ public class EarlyErrorContext {
 
   // Names that this module exports
   @NotNull
-  public final Multimap<String, Export> exportedNames;
+  public final Multimap<String, BindingIdentifier> exportedNames;
   // Locally declared names that are referenced in export declarations
   @NotNull
-  public final Multimap<String, ExportDeclaration> exportedBindings;
+  public final Multimap<String, BindingIdentifier> exportedBindings;
 
   // CallExpressions with Super callee
   @NotNull
@@ -116,8 +117,8 @@ public class EarlyErrorContext {
     @NotNull Multimap<String, BindingIdentifier> functionDeclarationNames,
     @NotNull Multimap<String, BindingIdentifier> varDeclaredNames,
     @NotNull List<BindingIdentifier> forOfVarDeclaredNames,
-    @NotNull Multimap<String, Export> exportedNames,
-    @NotNull Multimap<String, ExportDeclaration> exportedBindings,
+    @NotNull Multimap<String, BindingIdentifier> exportedNames,
+    @NotNull Multimap<String, BindingIdentifier> exportedBindings,
     @NotNull List<Super> superCallExpressions,
     @NotNull List<Super> superCallExpressionsInConstructorMethod,
     @NotNull List<MemberExpression> superPropertyExpressions
@@ -195,36 +196,30 @@ public class EarlyErrorContext {
     return this;
   }
 
-  public EarlyErrorContext enforceFreeBreakStatementErrors(java.lang.reflect.Method createError) {
+  public EarlyErrorContext enforceFreeBreakStatementErrors(Function<BreakStatement, EarlyError> createError) {
 //    [].push.apply(this.errors, this.freeBreakStatements.map(createError));
-      this.errors.addAll(this.freeBreakStatements.stream().map(x -> {
-        try {
-          return createError.invoke(x);
-        } catch (Exception e) {
-          throw new RuntimeException(e.getMessage());
-        }
-      })); // TODO trying to pass method createError as parameter
+      this.errors.addAll((Collection) this.freeBreakStatements.stream().map(createError::apply));
       this.freeBreakStatements.clear();
       return this;
   }
 
-  public EarlyErrorContext enforceFreeLabeledBreakStatementErrors(createError) {
+  public EarlyErrorContext enforceFreeLabeledBreakStatementErrors(Function<BreakStatement, EarlyError> createError) {
 //    [].push.apply(this.errors, this.freeLabeledBreakStatements.map(createError));
-    this.errors.addAll(this.freeLabeledBreakStatements.values().stream().map(x -> createError(x))); // TODO
+    this.errors.addAll((Collection) this.freeLabeledBreakStatements.values().stream().map(createError::apply));
     this.freeLabeledBreakStatements.clear();
     return this;
   }
 
-  public EarlyErrorContext enforceFreeContinueStatementErrors(createError) {
+  public EarlyErrorContext enforceFreeContinueStatementErrors(Function<ContinueStatement, EarlyError> createError) {
 //    [].push.apply(this.errors, this.freeContinueStatements.map(createError));
-    this.errors.addAll(this.freeContinueStatements.stream().map(x -> createError(x))); // TODO
+    this.errors.addAll((Collection) this.freeContinueStatements.stream().map(createError::apply));
     this.freeContinueStatements.clear();
     return this;
   }
 
-  public EarlyErrorContext enforceFreeLabeledContinueStatementErrors(createError) {
+  public EarlyErrorContext enforceFreeLabeledContinueStatementErrors(Function<ContinueStatement, EarlyError> createError) {
 //    [].push.apply(this.errors, this.freeLabeledContinueStatements.map(createError));
-    this.errors.addAll(this.freeLabeledContinueStatements.values().stream().map(x -> createError(x))); // TODO
+    this.errors.addAll((Collection) this.freeLabeledContinueStatements.values().stream().map(createError::apply));
     this.freeLabeledContinueStatements.clear();
     return this;
   }
@@ -232,14 +227,14 @@ public class EarlyErrorContext {
 
   public EarlyErrorContext observeIterationLabel(String s, LabeledStatement label) {
     this.usedLabelNames.put(s, label);
-    this.freeLabeledBreakStatements = this.freeLabeledBreakStatements.filter(s => s.label !== label);
-    this.freeLabeledContinueStatements = this.freeLabeledContinueStatements.filter(s => s.label !== label);
+    this.freeLabeledBreakStatements.remove(s);
+    this.freeLabeledContinueStatements.remove(s);
     return this;
   }
 
   public EarlyErrorContext observeNonIterationLabel(String s, LabeledStatement label) {
     this.usedLabelNames.put(s, label);
-    this.freeLabeledBreakStatements = this.freeLabeledBreakStatements.filter(s => s.label != label);
+    this.freeLabeledBreakStatements.remove(s);
     return this;
   }
 
@@ -266,19 +261,19 @@ public class EarlyErrorContext {
     return this;
   }
 
-  public EarlyErrorContext enforceSuperCallExpressions(createError) {
+  public EarlyErrorContext enforceSuperCallExpressions(Function<Super, EarlyError> createError) {
 //    [].push.apply(this.errors, this.superCallExpressions.map(createError));
 //    [].push.apply(this.errors, this.superCallExpressionsInConstructorMethod.map(createError));
-    this.errors.addAll(this.superCallExpressions.stream().map(x -> createError(x))); // TODO
-    this.errors.addAll(this.superCallExpressionsInConstructorMethod.stream().map(x -> createError(x))); // TODO
+    this.errors.addAll((Collection) this.superCallExpressions.stream().map(createError::apply));
+    this.errors.addAll((Collection) this.superCallExpressionsInConstructorMethod.stream().map(createError::apply));
     this.superCallExpressions.clear();
     this.superCallExpressionsInConstructorMethod.clear();
     return this;
   }
 
-  public EarlyErrorContext enforceSuperCallExpressionsInConstructorMethod(createError) {
+  public EarlyErrorContext enforceSuperCallExpressionsInConstructorMethod(Function<Super, EarlyError> createError) {
 //    [].push.apply(this.errors, this.superCallExpressionsInConstructorMethod.map(createError));
-    this.errors.addAll(this.superCallExpressionsInConstructorMethod.stream().map(x -> createError(x))); // TODO
+    this.errors.addAll((Collection) this.superCallExpressionsInConstructorMethod.stream().map(createError::apply));
     this.superCallExpressionsInConstructorMethod.clear();
     return this;
   }
@@ -294,9 +289,9 @@ public class EarlyErrorContext {
     return this;
   }
 
-  public EarlyErrorContext enforceSuperPropertyExpressions(createError) {
+  public EarlyErrorContext enforceSuperPropertyExpressions(Function<MemberExpression, EarlyError> createError) {
 //    [].push.apply(this.errors, this.superPropertyExpressions.map(createError));
-    this.errors.addAll(this.superPropertyExpressions.stream().map(x -> createError(x))); // TODO
+    this.errors.addAll((Collection) this.superPropertyExpressions.stream().map(createError::apply));
     this.superPropertyExpressions.clear();
     return this;
   }
@@ -336,7 +331,7 @@ public class EarlyErrorContext {
     return this;
   }
 
-  public EarlyErrorContext enforceDuplicateLexicallyDeclaredNames(createError) {
+  public EarlyErrorContext enforceDuplicateLexicallyDeclaredNames(Function<BindingIdentifier, EarlyError> createError) {
 //    this.lexicallyDeclaredNames.forEachEntry((nodes/*, bindingName*/) => {
 //    if (nodes.length > 1) {
 //      nodes.slice(1).forEach(dupeNode => {
@@ -349,14 +344,14 @@ public class EarlyErrorContext {
       Collection<BindingIdentifier> nodes = this.lexicallyDeclaredNames.get(key);
       if (nodes.size() > 1) {
         for (BindingIdentifier node : nodes) {
-          this.addError(createError(node)); // TODO
+          this.addError(createError.apply(node));
         }
       }
     }
     return this;
   }
 
-  public EarlyErrorContext enforceConflictingLexicallyDeclaredNames(ArrayList<String> otherNames, createError) {
+  public EarlyErrorContext enforceConflictingLexicallyDeclaredNames(ArrayList<String> otherNames, Function<BindingIdentifier, EarlyError> createError) {
 //    this.lexicallyDeclaredNames.forEachEntry((nodes, bindingName) => {
 //      if (otherNames.has(bindingName)) {
 //        nodes.forEach(conflictingNode => {
@@ -369,7 +364,7 @@ public class EarlyErrorContext {
       String bindingName = entry.getKey();
       BindingIdentifier node = entry.getValue();
       if (otherNames.contains(bindingName)) {
-        this.addError(createError(node)); // TODO
+        this.addError(createError.apply(node));
       }
     }
     return this;
@@ -412,18 +407,20 @@ public class EarlyErrorContext {
   }
 
 
-  public EarlyErrorContext exportName(String name, Export node) {
+  public EarlyErrorContext exportName(String name, BindingIdentifier node) {
     this.exportedNames.put(name, node);
     return this;
   }
 
   public EarlyErrorContext exportDeclaredNames() {
-    this.exportedNames.putAll(this.lexicallyDeclaredNames).addEach(this.varDeclaredNames); // TODO cannot add wrong type
-    this.exportedBindings.putAll(this.lexicallyDeclaredNames).addEach(this.varDeclaredNames); // TODO cannot add wrong type
+    this.exportedNames.putAll(this.lexicallyDeclaredNames);
+    this.exportedNames.putAll(this.varDeclaredNames);
+    this.exportedBindings.putAll(this.lexicallyDeclaredNames);
+    this.exportedBindings.putAll(this.varDeclaredNames);
     return this;
   }
 
-  public EarlyErrorContext exportBinding(String name, ExportDeclaration node) {
+  public EarlyErrorContext exportBinding(String name, BindingIdentifier node) {
     this.exportedBindings.put(name, node);
     return this;
   }
