@@ -19,6 +19,8 @@ package com.shapesecurity.shift.scope;
 import com.shapesecurity.functional.Pair;
 import com.shapesecurity.functional.data.HashTable;
 import com.shapesecurity.functional.data.ImmutableList;
+import com.shapesecurity.shift.ast.BindingIdentifier;
+import com.shapesecurity.shift.ast.IdentifierExpression;
 import com.shapesecurity.shift.ast.Node;
 import org.jetbrains.annotations.NotNull;
 
@@ -33,23 +35,13 @@ public class GlobalScope extends Scope {
       this.variables.put(var.a, new Variable(var.a, var.b, ImmutableList.nil()));
     }
   }
-/* // TODO figure out how this should work
-  @Override
-  @NotNull
-  public ImmutableList<Variable> findVariables(@NotNull final Identifier identifier) {
-    return super.findVariables(identifier);
+
+  public boolean isGlobal(IdentifierExpression identifierExpression) {
+    return findVariablesReferencedBy(identifierExpression).map(v -> v.declarations.isEmpty()).orJust(false);
   }
 
-  @Override
-  @NotNull
-  public ImmutableList<Variable> findVariablesDeclaredBy(@NotNull final Identifier identifier) {
-    return super.findVariablesDeclaredBy(identifier);
+  public boolean isGlobal(BindingIdentifier bindingIdentifier) {
+    return findVariablesReferencedBy(bindingIdentifier).map(v -> v.declarations.isEmpty()).orJust(false);
   }
 
-  @Override
-  @NotNull
-  public ImmutableList<Variable> findVariablesReferencedBy(@NotNull final Identifier identifier) {
-    return super.findVariablesReferencedBy(identifier);
-  }
-*/
 }

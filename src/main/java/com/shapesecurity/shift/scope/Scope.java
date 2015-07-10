@@ -75,7 +75,7 @@ public class Scope {
   }
 
   @NotNull
-  protected Maybe<Variable> findVariablesDeclaredBy(@NotNull final BindingIdentifier bindingIdentifier) {
+  public Maybe<Variable> findVariablesDeclaredBy(@NotNull final BindingIdentifier bindingIdentifier) {
     for (Variable v : this.variables.values()) {
       if (v.declarations.exists(d -> d.node == bindingIdentifier)) {
         return Maybe.just(v);
@@ -85,7 +85,7 @@ public class Scope {
   }
 
   @NotNull
-  protected Maybe<Variable> findVariablesReferencedBy(@NotNull final IdentifierExpression identifierExpression) {
+  public Maybe<Variable> findVariablesReferencedBy(@NotNull final IdentifierExpression identifierExpression) {
     for (Variable v : this.variables.values()) {
       if (v.references.exists(p -> p.node.mapRight(ie -> ie == identifierExpression).right().orJust(false))) {
         return Maybe.just(v);
@@ -95,7 +95,7 @@ public class Scope {
   }
 
   @NotNull
-  protected Maybe<Variable> findVariablesReferencedBy(@NotNull final BindingIdentifier bindingIdentifier) {
+  public Maybe<Variable> findVariablesReferencedBy(@NotNull final BindingIdentifier bindingIdentifier) {
     for (Variable v : this.variables.values()) {
       if (v.references.exists(p -> p.node.mapLeft(bi -> bi == bindingIdentifier).left().orJust(false))) {
         return Maybe.just(v);

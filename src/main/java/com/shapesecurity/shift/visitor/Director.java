@@ -642,6 +642,12 @@ public final class Director {
 
   @NotNull
   public static <State>
+  State reduceModule(@NotNull Reducer<State> reducer, @NotNull Module node) {
+    return reducer.reduceModule(node, reduceListDirective(reducer, node.directives), reduceListImportDeclarationExportDeclarationStatement(reducer, node.items));
+  }
+
+  @NotNull
+  public static <State>
   State reduceNamedObjectProperty(
     @NotNull Reducer<State> reducer,
     @NotNull NamedObjectProperty node) {

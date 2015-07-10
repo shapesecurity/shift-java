@@ -6,6 +6,471 @@ import com.shapesecurity.shift.ast.*;
 
 public abstract class Branch {
     abstract public Maybe<? extends Node> step(Node node);
+
+    public static ArrayBindingElements ArrayBindingElements_(int index) {
+        return new ArrayBindingElements(index);
+    }
+
+    public static ArrayBindingRestElement ArrayBindingRestElement_() {
+        return new ArrayBindingRestElement();
+    }
+
+    public static ArrayExpressionElements ArrayExpressionElements_(int index) {
+        return new ArrayExpressionElements(index);
+    }
+
+    public static ArrowExpressionFormalParameters ArrowExpressionFormalParameters_() {
+        return new ArrowExpressionFormalParameters();
+    }
+
+    public static ArrowExpressionBody ArrowExpressionBody_() {
+        return new ArrowExpressionBody();
+    }
+
+    public static AssignmentExpressionBinding AssignmentExpressionBinding_() {
+        return new AssignmentExpressionBinding();
+    }
+
+    public static AssignmentExpressionExpression AssignmentExpressionExpression_() {
+        return new AssignmentExpressionExpression();
+    }
+
+    public static BinaryExpressionLeft BinaryExpressionLeft_() {
+        return new BinaryExpressionLeft();
+    }
+
+    public static BinaryExpressionRight BinaryExpressionRight_() {
+        return new BinaryExpressionRight();
+    }
+
+    public static BindingPropertyIdentifierBinding BindingPropertyIdentifierBinding_() {
+        return new BindingPropertyIdentifierBinding();
+    }
+
+    public static BindingPropertyIdentifierInit BindingPropertyIdentifierInit_() {
+        return new BindingPropertyIdentifierInit();
+    }
+
+    public static BindingPropertyPropertyBinding BindingPropertyPropertyBinding_() {
+        return new BindingPropertyPropertyBinding();
+    }
+
+    public static BlockStatements BlockStatements_(int index) {
+        return new BlockStatements(index);
+    }
+
+    public static BlockStatementBlock BlockStatementBlock_() {
+        return new BlockStatementBlock();
+    }
+
+    public static CallExpressionCallee CallExpressionCallee_() {
+        return new CallExpressionCallee();
+    }
+
+    public static CallExpressionArguments CallExpressionArguments_(int index) {
+        return new CallExpressionArguments(index);
+    }
+
+    public static CatchClauseBinding CatchClauseBinding_() {
+        return new CatchClauseBinding();
+    }
+
+    public static CatchClauseBody CatchClauseBody_() {
+        return new CatchClauseBody();
+    }
+
+    public static ClassDeclarationName ClassDeclarationName_() {
+        return new ClassDeclarationName();
+    }
+
+    public static ClassDeclarationSuper ClassDeclarationSuper_() {
+        return new ClassDeclarationSuper();
+    }
+
+    public static ClassDeclarationElements ClassDeclarationElements_(int index) {
+        return new ClassDeclarationElements(index);
+    }
+
+    public static ClassElementMethod ClassElementMethod_() {
+        return new ClassElementMethod();
+    }
+
+    public static ClassExpressionName ClassExpressionName_() {
+        return new ClassExpressionName();
+    }
+
+    public static ClassExpressionSuper ClassExpressionSuper_() {
+        return new ClassExpressionSuper();
+    }
+
+    public static ClassExpressionElements ClassExpressionElements_(int index) {
+        return new ClassExpressionElements(index);
+    }
+
+    public static CompoundAssignmentExpressionBinding CompoundAssignmentExpressionBinding_() {
+        return new CompoundAssignmentExpressionBinding();
+    }
+
+    public static CompoundAssignmentExpressionExpression CompoundAssignmentExpressionExpression_() {
+        return new CompoundAssignmentExpressionExpression();
+    }
+
+    public static ComputedMemberExpressionExpression ComputedMemberExpressionExpression_() {
+        return new ComputedMemberExpressionExpression();
+    }
+
+    public static ComputedMemberExpressionObject ComputedMemberExpressionObject_() {
+        return new ComputedMemberExpressionObject();
+    }
+
+    public static ComputedPropertyNameExpression ComputedPropertyNameExpression_() {
+        return new ComputedPropertyNameExpression();
+    }
+
+    public static ConditionalExpressionTest ConditionalExpressionTest_() {
+        return new ConditionalExpressionTest();
+    }
+
+    public static ConditionalExpressionConsequent ConditionalExpressionConsequent_() {
+        return new ConditionalExpressionConsequent();
+    }
+
+    public static ConditionalExpressionAlternate ConditionalExpressionAlternate_() {
+        return new ConditionalExpressionAlternate();
+    }
+
+    public static DataPropertyExpression DataPropertyExpression_() {
+        return new DataPropertyExpression();
+    }
+
+    public static DataPropertyName DataPropertyName_() {
+        return new DataPropertyName();
+    }
+
+    public static DoWhileStatementTest DoWhileStatementTest_() {
+        return new DoWhileStatementTest();
+    }
+
+    public static DoWhileStatementBody DoWhileStatementBody_() {
+        return new DoWhileStatementBody();
+    }
+
+    public static ExportDeclaration ExportDeclaration_() {
+        return new ExportDeclaration();
+    }
+
+    public static ExportDefaultBody ExportDefaultBody_() {
+        return new ExportDefaultBody();
+    }
+
+    public static ExpressionStatementExpression ExpressionStatementExpression_() {
+        return new ExpressionStatementExpression();
+    }
+
+    public static ForInStatementLeft ForInStatementLeft_() {
+        return new ForInStatementLeft();
+    }
+
+    public static ForInStatementRight ForInStatementRight_() {
+        return new ForInStatementRight();
+    }
+
+    public static ForInStatementBody ForInStatementBody_() {
+        return new ForInStatementBody();
+    }
+
+    public static FormalParametersItems FormalParametersItems_(int index) {
+        return new FormalParametersItems(index);
+    }
+
+    public static FormalParametersRest FormalParametersRest_() {
+        return new FormalParametersRest();
+    }
+
+    public static ForOfStatementLeft ForOfStatementLeft_() {
+        return new ForOfStatementLeft();
+    }
+
+    public static ForOfStatementRight ForOfStatementRight_() {
+        return new ForOfStatementRight();
+    }
+
+    public static ForOfStatementBody ForOfStatementBody_() {
+        return new ForOfStatementBody();
+    }
+
+    public static ForStatementInit ForStatementInit_() {
+        return new ForStatementInit();
+    }
+
+    public static ForStatementTest ForStatementTest_() {
+        return new ForStatementTest();
+    }
+
+    public static FunctionBodyDirectives FunctionBodyDirectives_(int index) {
+        return new FunctionBodyDirectives(index);
+    }
+
+    public static FunctionBodyStatements FunctionBodyStatements_(int index) {
+        return new FunctionBodyStatements(index);
+    }
+
+    public static FunctionDeclarationName FunctionDeclarationName_() {
+        return new FunctionDeclarationName();
+    }
+
+    public static FunctionDeclarationParams FunctionDeclarationParams_() {
+        return new FunctionDeclarationParams();
+    }
+
+    public static FunctionDeclarationBody FunctionDeclarationBody_() {
+        return new FunctionDeclarationBody();
+    }
+
+    public static FunctionExpressionName FunctionExpressionName_() {
+        return new FunctionExpressionName();
+    }
+
+    public static FunctionExpressionParams FunctionExpressionParams_() {
+        return new FunctionExpressionParams();
+    }
+
+    public static FunctionExpressionBody FunctionExpressionBody_() {
+        return new FunctionExpressionBody();
+    }
+
+    public static GetterBody GetterBody_() {
+        return new GetterBody();
+    }
+
+    public static GetterName GetterName_() {
+        return new GetterName();
+    }
+
+    public static IfStatementTest IfStatementTest_() {
+        return new IfStatementTest();
+    }
+
+    public static IfStatementConsequent IfStatementConsequent_() {
+        return new IfStatementConsequent();
+    }
+
+    public static IfStatementAlternate IfStatementAlternate_() {
+        return new IfStatementAlternate();
+    }
+
+    public static ImportDefaultBinding ImportDefaultBinding_() {
+        return new ImportDefaultBinding();
+    }
+
+    public static ImportNamedImports ImportNamedImports_(int index) {
+        return new ImportNamedImports(index);
+    }
+
+    public static ImportNamespaceDefaultBinding ImportNamespaceDefaultBinding_() {
+        return new ImportNamespaceDefaultBinding();
+    }
+
+    public static ImportNamespaceNamespaceBinding ImportNamespaceNamespaceBinding_() {
+        return new ImportNamespaceNamespaceBinding();
+    }
+
+    public static ImportSpecifierBinding ImportSpecifierBinding_() {
+        return new ImportSpecifierBinding();
+    }
+
+    public static IterationStatementBody IterationStatementBody_() {
+        return new IterationStatementBody();
+    }
+
+    public static LabeledStatementBody LabeledStatementBody_() {
+        return new LabeledStatementBody();
+    }
+
+    public static MemberExpressionObject MemberExpressionObject_() {
+        return new MemberExpressionObject();
+    }
+
+    public static MethodName MethodName_() {
+        return new MethodName();
+    }
+
+    public static MethodParams MethodParams_() {
+        return new MethodParams();
+    }
+
+    public static MethodBody MethodBody_() {
+        return new MethodBody();
+    }
+
+    public static MethodDefinitionName MethodDefinitionName_() {
+        return new MethodDefinitionName();
+    }
+
+    public static MethodDefinitionBody MethodDefinitionBody_() {
+        return new MethodDefinitionBody();
+    }
+
+    public static ModuleItems ModuleItems_(int index) {
+        return new ModuleItems(index);
+    }
+
+    public static NamedObjectPropertyName NamedObjectPropertyName_() {
+        return new NamedObjectPropertyName();
+    }
+
+    public static NewExpressionCallee NewExpressionCallee_() {
+        return new NewExpressionCallee();
+    }
+
+    public static NewExpressionArguments NewExpressionArguments_(int index) {
+        return new NewExpressionArguments(index);
+    }
+
+    public static ObjectExpressionProperties ObjectExpressionProperties_(int index) {
+        return new ObjectExpressionProperties(index);
+    }
+
+    public static ReturnStatementExpression ReturnStatementExpression_() {
+        return new ReturnStatementExpression();
+    }
+
+    public static ScriptStatements ScriptStatements_(int index) {
+        return new ScriptStatements(index);
+    }
+
+    public static SetterName SetterName_() {
+        return new SetterName();
+    }
+
+    public static SetterParam SetterParam_() {
+        return new SetterParam();
+    }
+
+    public static SetterBody SetterBody_() {
+        return new SetterBody();
+    }
+
+    public static SpreadElementExpression SpreadElementExpression_() {
+        return new SpreadElementExpression();
+    }
+
+    public static StaticMemberExpressionObject StaticMemberExpressionObject_() {
+        return new StaticMemberExpressionObject();
+    }
+
+    public static SwitchCaseTest SwitchCaseTest_() {
+        return new SwitchCaseTest();
+    }
+
+    public static SwitchDefaultConsequent SwitchDefaultConsequent_(int index) {
+        return new SwitchDefaultConsequent(index);
+    }
+
+    public static SwitchStatementDiscriminant SwitchStatementDiscriminant_() {
+        return new SwitchStatementDiscriminant();
+    }
+
+    public static SwitchStatementCases SwitchStatementCases_(int index) {
+        return new SwitchStatementCases(index);
+    }
+
+    public static SwitchStatementWithDefaultDiscriminant SwitchStatementWithDefaultDiscriminant_() {
+        return new SwitchStatementWithDefaultDiscriminant();
+    }
+
+    public static SwitchStatementWithDefaultPreDefaultCases SwitchStatementWithDefaultPreDefaultCases_(int index) {
+        return new SwitchStatementWithDefaultPreDefaultCases(index);
+    }
+
+    public static SwitchStatementWithDefaultDefaultCase SwitchStatementWithDefaultDefaultCase_() {
+        return new SwitchStatementWithDefaultDefaultCase();
+    }
+
+    public static SwitchStatementWithDefaultPostDefaultCases SwitchStatementWithDefaultPostDefaultCases_(int index) {
+        return new SwitchStatementWithDefaultPostDefaultCases(index);
+    }
+
+    public static TemplateExpressionTag TemplateExpressionTag_() {
+        return new TemplateExpressionTag();
+    }
+
+    public static TemplateExpressionElements TemplateExpressionElements_(int index) {
+        return new TemplateExpressionElements(index);
+    }
+
+    public static ThrowStatementExpression ThrowStatementExpression_() {
+        return new ThrowStatementExpression();
+    }
+
+    public static TryCatchStatementBody TryCatchStatementBody_() {
+        return new TryCatchStatementBody();
+    }
+
+    public static TryCatchStatementCatchClause TryCatchStatementCatchClause_() {
+        return new TryCatchStatementCatchClause();
+    }
+
+    public static TryFinallyStatementBody TryFinallyStatementBody_() {
+        return new TryFinallyStatementBody();
+    }
+
+    public static TryFinallyStatementCatchClause TryFinallyStatementCatchClause_() {
+        return new TryFinallyStatementCatchClause();
+    }
+
+    public static TryFinallyStatementFinalizer TryFinallyStatementFinalizer_() {
+        return new TryFinallyStatementFinalizer();
+    }
+
+    public static UnaryExpressionOperand UnaryExpressionOperand_() {
+        return new UnaryExpressionOperand();
+    }
+
+    public static UpdateExpressionOperand UpdateExpressionOperand_() {
+        return new UpdateExpressionOperand();
+    }
+
+    public static VariableDeclarationDeclarators VariableDeclarationDeclarators_(int index) {
+        return new VariableDeclarationDeclarators(index);
+    }
+
+    public static VariableDeclarationStatementDeclaration VariableDeclarationStatementDeclaration_() {
+        return new VariableDeclarationStatementDeclaration();
+    }
+
+    public static VariableDeclaratorBinding VariableDeclaratorBinding_() {
+        return new VariableDeclaratorBinding();
+    }
+
+    public static VariableDeclaratorInit VariableDeclaratorInit_() {
+        return new VariableDeclaratorInit();
+    }
+
+    public static WhileStatementTest WhileStatementTest_() {
+        return new WhileStatementTest();
+    }
+
+    public static WhileStatementBody WhileStatementBody_() {
+        return new WhileStatementBody();
+    }
+
+    public static WithStatementObject WithStatementObject_() {
+        return new WithStatementObject();
+    }
+
+    public static WithStatementBody WithStatementBody_() {
+        return new WithStatementBody();
+    }
+
+    public static YieldExpressionExpression YieldExpressionExpression_() {
+        return new YieldExpressionExpression();
+    }
+
+    public static YieldGeneratorExpressionExpression YieldGeneratorExpressionExpression_() {
+        return new YieldGeneratorExpressionExpression();
+    }
+
 }
 
 abstract class IndexedBranch extends Branch {
@@ -1113,6 +1578,24 @@ class ThrowStatementExpression extends Branch {
 }
 
 @SuppressWarnings("ConstantConditions")
+class TryCatchStatementBody extends Branch {
+    @Override
+    public Maybe<? extends Node> step(Node node) {
+        if (!(node instanceof TryCatchStatement)) Maybe.nothing();
+        return Maybe.just(((TryCatchStatement) node).body);
+    }
+}
+
+@SuppressWarnings("ConstantConditions")
+class TryCatchStatementCatchClause extends Branch {
+    @Override
+    public Maybe<? extends Node> step(Node node) {
+        if (!(node instanceof TryCatchStatement)) Maybe.nothing();
+        return Maybe.just(((TryCatchStatement) node).catchClause);
+    }
+}
+
+@SuppressWarnings("ConstantConditions")
 class TryFinallyStatementBody extends Branch {
     @Override
     public Maybe<? extends Node> step(Node node) {
@@ -1136,6 +1619,15 @@ class TryFinallyStatementFinalizer extends Branch {
     public Maybe<? extends Node> step(Node node) {
         if (!(node instanceof TryFinallyStatement)) Maybe.nothing();
         return Maybe.just(((TryFinallyStatement) node).finalizer);
+    }
+}
+
+@SuppressWarnings("ConstantConditions")
+class UnaryExpressionOperand extends Branch {
+    @Override
+    public Maybe<? extends Node> step(Node node) {
+        if (!(node instanceof UnaryExpression)) Maybe.nothing();
+        return Maybe.just(((UnaryExpression) node).operand);
     }
 }
 
