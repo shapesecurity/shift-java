@@ -229,7 +229,90 @@ public class Validator extends MonoidalReducer<ValidationContext> {
     return s;
   }
 
+  @NotNull
+  @Override
+  public ValidationContext reduceTemplateExpression(@NotNull TemplateExpression node, @NotNull Maybe<ValidationContext> tag, @NotNull ImmutableList<ValidationContext> elements) {
+    ValidationContext s = super.reduceTemplateExpression(node, tag, elements);
+    if (node.elements.length % 2 == 0) {
+      s.addError(new ValidationError(node, "the elements field of template expression must be an alternating list of template element and expression, starting and ending with a template element"));
+    }
+    node.elements.mapWithIndex((i, x) -> {
+      if (i % 2 == 0) {
+        if (!(x instanceof TemplateElement)) {
+          s.addError(new ValidationError(node, "the elements field of template expression must be an alternating list of template element and expression, starting and ending with a template element"));
+        }
+      } else {
+        if (!(x instanceof Expression)) {
+          s.addError(new ValidationError(node, "the elements field of template expression must be an alternating list of template element and expression, starting and ending with a template element"));
+        }
+      }
+      return true; // todo why does lambda have to return
+    });
+    return s;
+  }
+
+  @NotNull
+  @Override
+  public ValidationContext reduceLiteralRegExpExpression(@NotNull LiteralRegExpExpression node) {
+    ValidationContext s = super.reduceLiteralRegExpExpression(node);
+    // TODO pattern
+    // TODO flag
+    return s;
+  }
+
+
+  @NotNull
+  @Override
+  public ValidationContext reduceClassDeclaration(@NotNull ClassDeclaration node, @NotNull ValidationContext name, @NotNull Maybe<ValidationContext> _super, @NotNull ImmutableList<ValidationContext> elements) {
+    ValidationContext s = super.reduceClassDeclaration(node, name, _super, elements);
+    // TODO not more than 1 constructor
+    return s;
+  }
+
+  @NotNull
+  @Override
+  public ValidationContext reduceClassExpression(@NotNull ClassExpression node, @NotNull Maybe<ValidationContext> name, @NotNull Maybe<ValidationContext> _super, @NotNull ImmutableList<ValidationContext> elements) {
+    ValidationContext s = super.reduceClassExpression(node, name, _super, elements);
+    // TODO not more than 1 constructor
+    return s;
+  }
+
+  @NotNull
+  @Override
+  public ValidationContext reduceIfStatement(@NotNull IfStatement node, @NotNull ValidationContext test, @NotNull ValidationContext consequent, @NotNull Maybe<ValidationContext> alternate) {
+    ValidationContext s = super.reduceIfStatement(node, test, consequent, alternate);
+    // TODO not non sensically nested if statement
+    return s;
+  }
+
+  @NotNull
+  @Override
+  public ValidationContext reduceDirective(@NotNull Directive node) {
+    ValidationContext s = super.reduceDirective(node);
+    // TODO rawValue
+    return s;
+  }
+
+  @NotNull
+  @Override
+  public ValidationContext reduceTemplateElement(@NotNull TemplateElement node) {
+    ValidationContext s = super.reduceTemplateElement(node);
+    // TODO rawValue
+    return s;
+  }
+
+
   private static boolean checkValidIdentifierName(String name) {
     return name.length() > 0 && Utils.isIdentifierStart(name.charAt(0)) && name.chars().allMatch(Utils::isIdentifierPart);
+  }
+
+  private static boolean checkLiteralRegExpPattern(String pattern) {
+    // TODO
+    return true;
+  }
+
+  private static boolean checkLiteralRegExpFlag(String flag) {
+    // TODO
+    return true;
   }
 }
