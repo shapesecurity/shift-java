@@ -19,14 +19,13 @@ package com.shapesecurity.shift.validator;
 import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.functional.data.Maybe;
 import com.shapesecurity.shift.ast.*;
-import com.shapesecurity.shift.parser.ErrorMessages;
-import com.shapesecurity.shift.parser.token.RegularExpressionLiteralToken;
+import com.shapesecurity.shift.parser.JsError;
+import com.shapesecurity.shift.parser.Tokenizer;
 import com.shapesecurity.shift.utils.Utils;
 import com.shapesecurity.shift.visitor.Director;
 import com.shapesecurity.shift.visitor.MonoidalReducer;
 import org.jetbrains.annotations.NotNull;
 
-import java.lang.Class;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -42,10 +41,7 @@ public class Validator extends MonoidalReducer<ValidationContext> {
 
   @NotNull
   @Override
-  public ValidationContext reduceFunctionBody(
-    @NotNull FunctionBody node,
-    @NotNull ImmutableList<ValidationContext> directives,
-    @NotNull ImmutableList<ValidationContext> statements
+  public ValidationContext reduceFunctionBody(@NotNull FunctionBody node, @NotNull ImmutableList<ValidationContext> directives, @NotNull ImmutableList<ValidationContext> statements
   ) {
     ValidationContext s = super.reduceFunctionBody(node, directives, statements);
     s.clearFreeReturnStatements();
@@ -54,9 +50,7 @@ public class Validator extends MonoidalReducer<ValidationContext> {
 
   @NotNull
   @Override
-  public ValidationContext reduceReturnStatement(
-    @NotNull ReturnStatement node,
-    @NotNull Maybe<ValidationContext> expression
+  public ValidationContext reduceReturnStatement(@NotNull ReturnStatement node, @NotNull Maybe<ValidationContext> expression
   ) {
     ValidationContext s = super.reduceReturnStatement(node, expression);
     s.addFreeReturnStatement(node);
@@ -65,10 +59,7 @@ public class Validator extends MonoidalReducer<ValidationContext> {
 
   @NotNull
   @Override
-  public ValidationContext reduceScript(
-    @NotNull Script node,
-    @NotNull ImmutableList<ValidationContext> directives,
-    @NotNull ImmutableList<ValidationContext> statements
+  public ValidationContext reduceScript(@NotNull Script node, @NotNull ImmutableList<ValidationContext> directives, @NotNull ImmutableList<ValidationContext> statements
   ) {
     ValidationContext s = super.reduceScript(node, directives, statements);
     s.enforceFreeReturnStatements(returnStatement -> new ValidationError(returnStatement, "return statements must be within a function body"));
@@ -79,7 +70,7 @@ public class Validator extends MonoidalReducer<ValidationContext> {
   @Override
   public ValidationContext reduceBindingIdentifier(@NotNull BindingIdentifier node) {
     ValidationContext s = super.reduceBindingIdentifier(node);
-    if (!checkValidIdentifierName(node.name)) {
+    if (!checkIsValidIdentifierName(node.name)) {
       s.addError(new ValidationError(node, "the name field of binding identifier must be a valid identifier name"));
     }
     return s;
@@ -89,7 +80,7 @@ public class Validator extends MonoidalReducer<ValidationContext> {
   @Override
   public ValidationContext reduceImportSpecifier(@NotNull ImportSpecifier node, @NotNull ValidationContext binding) {
     ValidationContext s = super.reduceImportSpecifier(node, binding);
-    if (node.name.isJust() && !checkValidIdentifierName(node.name.just())) {
+    if (node.name.isJust() && !checkIsValidIdentifierName(node.name.just())) {
       s.addError(new ValidationError(node, "the name field of import specifier exists and must be a valid identifier name"));
     }
     return s;
@@ -99,10 +90,10 @@ public class Validator extends MonoidalReducer<ValidationContext> {
   @Override
   public ValidationContext reduceExportSpecifier(@NotNull ExportSpecifier node) {
     ValidationContext s = super.reduceExportSpecifier(node);
-    if (node.name.isJust() && !checkValidIdentifierName(node.name.just())) {
+    if (node.name.isJust() && !checkIsValidIdentifierName(node.name.just())) {
       s.addError(new ValidationError(node, "the name field of export specifier exists and must be a valid identifier name"));
     }
-    if (!checkValidIdentifierName(node.exportedName)) {
+    if (!checkIsValidIdentifierName(node.exportedName)) {
       s.addError(new ValidationError(node, "the exported name field of export specifier must be a valid identifier name"));
     }
     return s;
@@ -128,7 +119,7 @@ public class Validator extends MonoidalReducer<ValidationContext> {
   @Override
   public ValidationContext reduceShorthandProperty(@NotNull ShorthandProperty node) {
     ValidationContext s = super.reduceShorthandProperty(node);
-    if (!checkValidIdentifierName(node.name)) {
+    if (!checkIsValidIdentifierName(node.name)) {
       s.addError(new ValidationError(node, "the name field of shorthand property must be a valid identifier name"));
     }
     return s;
@@ -138,7 +129,7 @@ public class Validator extends MonoidalReducer<ValidationContext> {
   @Override
   public ValidationContext reduceIdentifierExpression(@NotNull IdentifierExpression node) {
     ValidationContext s = super.reduceIdentifierExpression(node);
-    if (!checkValidIdentifierName(node.name)) {
+    if (!checkIsValidIdentifierName(node.name)) {
       s.addError(new ValidationError(node, "the name field of identifier expression must be a valid identifier name"));
     }
     return s;
@@ -148,7 +139,7 @@ public class Validator extends MonoidalReducer<ValidationContext> {
   @Override
   public ValidationContext reduceStaticMemberExpression(@NotNull StaticMemberExpression node, @NotNull ValidationContext object) {
     ValidationContext s = super.reduceStaticMemberExpression(node, object);
-    if (!checkValidIdentifierName(node.property)) {
+    if (!checkIsValidIdentifierName(node.property)) {
       s.addError(new ValidationError(node, "the property field of static member expression must be a valid identifier name"));
     }
     return s;
@@ -158,7 +149,7 @@ public class Validator extends MonoidalReducer<ValidationContext> {
   @Override
   public ValidationContext reduceBreakStatement(@NotNull BreakStatement node) {
     ValidationContext s = super.reduceBreakStatement(node);
-    if (node.label.isJust() && !checkValidIdentifierName(node.label.just())) {
+    if (node.label.isJust() && !checkIsValidIdentifierName(node.label.just())) {
       s.addError(new ValidationError(node, "the label field of break statement exists and must be a valid identifier name"));
     }
     return s;
@@ -168,7 +159,7 @@ public class Validator extends MonoidalReducer<ValidationContext> {
   @Override
   public ValidationContext reduceContinueStatement(@NotNull ContinueStatement node) {
     ValidationContext s = super.reduceContinueStatement(node);
-    if (node.label.isJust() && !checkValidIdentifierName(node.label.just())) {
+    if (node.label.isJust() && !checkIsValidIdentifierName(node.label.just())) {
       s.addError(new ValidationError(node, "the label field of continue statement exists and must be a valid identifier name"));
     }
     return s;
@@ -178,7 +169,7 @@ public class Validator extends MonoidalReducer<ValidationContext> {
   @Override
   public ValidationContext reduceLabeledStatement(@NotNull LabeledStatement node, @NotNull ValidationContext body) {
     ValidationContext s = super.reduceLabeledStatement(node, body);
-    if (!checkValidIdentifierName(node.label)) {
+    if (!checkIsValidIdentifierName(node.label)) {
       s.addError(new ValidationError(node, "the label field of labeled statement must be a valid identifier name"));
     }
     return s;
@@ -198,7 +189,7 @@ public class Validator extends MonoidalReducer<ValidationContext> {
   @Override
   public ValidationContext reduceFormalParameters(@NotNull FormalParameters node, @NotNull ImmutableList<ValidationContext> items, @NotNull Maybe<ValidationContext> rest) {
     ValidationContext s = super.reduceFormalParameters(node, items, rest);
-    node.items.map(x -> {
+    node.items.foreach(x -> {
       if (x instanceof Binding) {
         if (x instanceof MemberExpression) {
           s.addError(new ValidationError(node, "the items field of formal parameters must not be member expressions"));
@@ -208,7 +199,6 @@ public class Validator extends MonoidalReducer<ValidationContext> {
           s.addError(new ValidationError(node, "binding field of the items field of formal parameters must not be a member expression"));
         }
       }
-      return x; // todo how to not return things here
     });
     return s;
   }
@@ -250,7 +240,7 @@ public class Validator extends MonoidalReducer<ValidationContext> {
           s.addError(new ValidationError(node, "the elements field of template expression must be an alternating list of template element and expression, starting and ending with a template element"));
         }
       }
-      return true; // todo how to not return things here
+      return true;
     });
     return s;
   }
@@ -259,24 +249,21 @@ public class Validator extends MonoidalReducer<ValidationContext> {
   @Override
   public ValidationContext reduceLiteralRegExpExpression(@NotNull LiteralRegExpExpression node) {
     ValidationContext s = super.reduceLiteralRegExpExpression(node);
-    // TODO pattern
-    if (!checkLiteralRegExpPattern(node.pattern)) {
+    if (!checkIsLiteralRegExpPattern(node.pattern)) {
       s.addError(new ValidationError(node, "pattern field of literal regular expression expression must match the ES6 grammar production Pattern (21.2.1)"));
     }
-    // TODO flag
     boolean hasBadChars = node.flags.chars().allMatch(x -> x != 'g' || x != 'i' || x != 'm' || x != 'u' || x != 'y');
     if (hasBadChars) {
       s.addError(new ValidationError(node, "flags field of literal regular expression expression must not contain characters other than 'g', 'i', 'm', 'u', or 'y'"));
     }
 
     Map<Integer, Boolean> charMap = new HashMap<>();
-    node.flags.chars().map(x -> {
+    node.flags.chars().forEach(x -> {
       if (charMap.containsKey(x)) {
         s.addError(new ValidationError(node, "flags field of literal regular expression expression must not contain duplicate flag characters"));
       } else {
         charMap.put(x, true);
       }
-      return 0; // todo how to not return things here
     });
     return s;
   }
@@ -286,7 +273,9 @@ public class Validator extends MonoidalReducer<ValidationContext> {
   @Override
   public ValidationContext reduceClassDeclaration(@NotNull ClassDeclaration node, @NotNull ValidationContext name, @NotNull Maybe<ValidationContext> _super, @NotNull ImmutableList<ValidationContext> elements) {
     ValidationContext s = super.reduceClassDeclaration(node, name, _super, elements);
-    // TODO not more than 1 constructor
+    if (!hasOneConstructor(node.elements)) {
+      s.addError(new ValidationError(node, "classes must not have more than one non-static method named 'constructor'"));
+    }
     return s;
   }
 
@@ -294,7 +283,9 @@ public class Validator extends MonoidalReducer<ValidationContext> {
   @Override
   public ValidationContext reduceClassExpression(@NotNull ClassExpression node, @NotNull Maybe<ValidationContext> name, @NotNull Maybe<ValidationContext> _super, @NotNull ImmutableList<ValidationContext> elements) {
     ValidationContext s = super.reduceClassExpression(node, name, _super, elements);
-    // TODO not more than 1 constructor
+    if (!hasOneConstructor(node.elements)) {
+      s.addError(new ValidationError(node, "classes must not have more than one non-static method named 'constructor'"));
+    }
     return s;
   }
 
@@ -302,7 +293,7 @@ public class Validator extends MonoidalReducer<ValidationContext> {
   @Override
   public ValidationContext reduceIfStatement(@NotNull IfStatement node, @NotNull ValidationContext test, @NotNull ValidationContext consequent, @NotNull Maybe<ValidationContext> alternate) {
     ValidationContext s = super.reduceIfStatement(node, test, consequent, alternate);
-    // TODO not non sensically nested if statement
+    // TODO nonsensically nested if statement
     return s;
   }
 
@@ -310,24 +301,37 @@ public class Validator extends MonoidalReducer<ValidationContext> {
   @Override
   public ValidationContext reduceDirective(@NotNull Directive node) {
     ValidationContext s = super.reduceDirective(node);
-    // TODO rawValue
+    try {
+      Tokenizer tokenizer = new Tokenizer(node.rawValue, false);
+      tokenizer.advance(); // TODO not sure if correct method to call
+    } catch (JsError jsError) {
+      s.addError(new ValidationError(node, "the raw value field of directives must either be an empty string, or match the ES6 grammar production DoubleStringCharacter or SingleStringCharacter"));
+    }
     return s;
   }
+
 
   @NotNull
   @Override
   public ValidationContext reduceTemplateElement(@NotNull TemplateElement node) {
     ValidationContext s = super.reduceTemplateElement(node);
-    // TODO rawValue
+    try {
+      Tokenizer tokenizer = new Tokenizer(node.rawValue, false);
+      tokenizer.advance(); // TODO not sure if correct method to call
+    } catch (JsError jsError) {
+      s.addError(new ValidationError(node, "the raw value field of template element must match the ES6 grammar production TemplateCharacters"));
+    }
     return s;
   }
 
+  //----------------------------------------------------------------------------------------------------------------------------
 
-  private static boolean checkValidIdentifierName(String name) {
+  private static boolean checkIsValidIdentifierName(String name) {
     return name.length() > 0 && Utils.isIdentifierStart(name.charAt(0)) && name.chars().allMatch(Utils::isIdentifierPart);
   }
 
-  private static boolean checkLiteralRegExpPattern(String pattern) {
+  private static boolean checkIsLiteralRegExpPattern(String pattern) {
+    // copied from tokenizer for getting a regex token
     int index = 0;
     boolean terminated = false;
     boolean classMarker = false;
@@ -375,6 +379,77 @@ public class Validator extends MonoidalReducer<ValidationContext> {
       index++;
     }
     return true;
+  }
+
+  private boolean hasOneConstructor(ImmutableList<ClassElement> classElements) {
+    boolean foundConstructor = false;
+    for (ClassElement classElement : classElements) {
+      if (foundConstructor) {
+        return false;
+      }
+      if (classElement.isStatic) {
+        if (classElement.method.name instanceof StaticPropertyName) {
+          if (((StaticPropertyName)classElement.method.name).value.equals("constructor")) {
+            foundConstructor = true;
+          }
+        }
+      }
+    }
+    return true;
+  }
+
+  // trying to recreate scanstringliteral and scantemplateelement to check raw value
+
+  private boolean checkIsStringLiteral(String rawValue) {
+    int index = 0;
+    char quote = rawValue.charAt(index);
+    index++;
+    boolean octal = false;
+    while (index < rawValue.length()) {
+      char ch = rawValue.charAt(index);
+      if (ch == quote) {
+        return true;
+      } else if (ch == '\\') {
+        // TODO check valid string escape
+      } else if (Utils.isLineTerminator(ch)) {
+        return false;
+      } else {
+        index++;
+      }
+    }
+    return false;
+  }
+
+  private boolean checkIsStringEscape(String string) {
+    return true; // TODO
+  }
+
+  private boolean checkIsTemplateCharactersGrammarPattern(String rawValue) {
+    int index = 0;
+    if (rawValue.charAt(index) != 0x60) {
+      return false;
+    }
+    index++;
+    while (index < rawValue.length()) {
+      char ch = rawValue.charAt(index);
+      switch (ch) {
+        case 0x60:  // `
+          return true;
+        case 0x24:  // $
+          if (rawValue.charAt(index + 1) == 0x7B) {  // {
+            return true;
+          }
+          index++;
+          break;
+        case 0x5C:  // \\
+          // TODO check valid string escape
+          // TODO check not octal
+          break;
+        default:
+          index++;
+      }
+    }
+    return false;
   }
 
 }

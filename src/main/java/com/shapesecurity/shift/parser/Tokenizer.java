@@ -928,7 +928,7 @@ public class Tokenizer {
   }
 
   @NotNull
-  protected Token scanTemplateElement() throws JsError {
+  private Token scanTemplateElement() throws JsError {
     int start = this.index;
     this.index++;
     while (this.index < this.source.length()) {
@@ -1204,7 +1204,7 @@ public class Tokenizer {
   }
 
   @NotNull
-  private static String fromCodePoint(int cp) {
+  public static String fromCodePoint(int cp) {
     if (cp <= 0xFFFF) {
       return Character.toString((char) cp);
     }

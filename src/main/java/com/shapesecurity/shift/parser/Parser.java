@@ -302,8 +302,8 @@ public abstract class Parser extends Tokenizer {
       }
     }
     this.expect(TokenType.COLON);
-    binding = Maybe.just((Binding) this.parseBindingElement());
-    return this.markLocation(startLocation, new BindingPropertyProperty(name, binding.just()));
+    BindingBindingWithDefault fromParseBindingElement = this.parseBindingElement();
+    return this.markLocation(startLocation, new BindingPropertyProperty(name, fromParseBindingElement));
   }
 
   @NotNull
