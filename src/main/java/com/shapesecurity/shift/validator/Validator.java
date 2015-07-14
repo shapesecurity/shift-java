@@ -20,7 +20,9 @@ import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.functional.data.Maybe;
 import com.shapesecurity.shift.ast.*;
 import com.shapesecurity.shift.parser.JsError;
+import com.shapesecurity.shift.parser.Token;
 import com.shapesecurity.shift.parser.Tokenizer;
+import com.shapesecurity.shift.parser.token.StringLiteralToken;
 import com.shapesecurity.shift.utils.Utils;
 import com.shapesecurity.shift.visitor.Director;
 import com.shapesecurity.shift.visitor.MonoidalReducer;
@@ -252,7 +254,7 @@ public class Validator extends MonoidalReducer<ValidationContext> {
     if (!checkIsLiteralRegExpPattern(node.pattern)) {
       s.addError(new ValidationError(node, "pattern field of literal regular expression expression must match the ES6 grammar production Pattern (21.2.1)"));
     }
-    boolean hasBadChars = node.flags.chars().allMatch(x -> x != 'g' || x != 'i' || x != 'm' || x != 'u' || x != 'y');
+    boolean hasBadChars = node.flags.chars().allMatch(x -> x == 'g' || x == 'i' || x == 'm' || x == 'u' || x == 'y');
     if (hasBadChars) {
       s.addError(new ValidationError(node, "flags field of literal regular expression expression must not contain characters other than 'g', 'i', 'm', 'u', or 'y'"));
     }
@@ -291,40 +293,117 @@ public class Validator extends MonoidalReducer<ValidationContext> {
 
   @NotNull
   @Override
-  public ValidationContext reduceIfStatement(@NotNull IfStatement node, @NotNull ValidationContext test, @NotNull ValidationContext consequent, @NotNull Maybe<ValidationContext> alternate) {
-    ValidationContext s = super.reduceIfStatement(node, test, consequent, alternate);
-    // TODO nonsensically nested if statement
-    return s;
-  }
-
-  @NotNull
-  @Override
   public ValidationContext reduceDirective(@NotNull Directive node) {
     ValidationContext s = super.reduceDirective(node);
-    try {
-      Tokenizer tokenizer = new Tokenizer(node.rawValue, false);
-      tokenizer.advance(); // TODO not sure if correct method to call
-    } catch (JsError jsError) {
+    if (!checkIsStringLiteral(node.rawValue)) {
       s.addError(new ValidationError(node, "the raw value field of directives must either be an empty string, or match the ES6 grammar production DoubleStringCharacter or SingleStringCharacter"));
     }
     return s;
   }
 
-
   @NotNull
   @Override
   public ValidationContext reduceTemplateElement(@NotNull TemplateElement node) {
     ValidationContext s = super.reduceTemplateElement(node);
-    try {
-      Tokenizer tokenizer = new Tokenizer(node.rawValue, false);
-      tokenizer.advance(); // TODO not sure if correct method to call
-    } catch (JsError jsError) {
+    if (!checkIsStringLiteral(node.rawValue)) {
       s.addError(new ValidationError(node, "the raw value field of template element must match the ES6 grammar production TemplateCharacters"));
     }
     return s;
   }
 
+  @NotNull
+  @Override
+  public ValidationContext reduceLiteralNumericExpression(@NotNull LiteralNumericExpression node) {
+    ValidationContext s = super.reduceLiteralNumericExpression(node);
+    if (node.value.isNaN()) {
+      s.addError(new ValidationError(node, "the value field of literal numeric expression must not be NaN"));
+    }
+    if (node.value < 0) {
+      s.addError(new ValidationError(node, "the value field of literal numeric expression must be non-negative"));
+    }
+    if (node.value.isInfinite()) {
+      s.addError(new ValidationError(node, "the value field of literal numeric expression must be finite"));
+    }
+     return s;
+  }
+
+  @NotNull
+  @Override
+  public ValidationContext reduceVariableDeclarationStatement(@NotNull VariableDeclarationStatement node, @NotNull ValidationContext declaration) {
+    ValidationContext s = super.reduceVariableDeclarationStatement(node, declaration);
+    if (node.declaration.kind.equals(VariableDeclarationKind.Const)) {
+      node.declaration.declarators.foreach(x -> {
+        if (x.getInit().isNothing()) {
+          s.addError(new ValidationError(node, "VariableDeclarationStatements with a variable declaration of kind const cannot have a variable declarator with no initializer"));
+        }
+      });
+    }
+    return s;
+  }
+
+  @NotNull
+  @Override
+  public ValidationContext reduceForInStatement(@NotNull ForInStatement node, @NotNull ValidationContext left,  @NotNull ValidationContext right, @NotNull ValidationContext body) {
+    ValidationContext s = super.reduceForInStatement(node, left, right, body);
+    if (node.left instanceof VariableDeclaration) {
+      if (((VariableDeclaration) node.left).declarators.length != 1) {
+        s.addError(new ValidationError(node, "VariableDeclaration in ForInStatement can only have one VariableDeclarator"));
+      }
+    }
+    return s;
+  }
+
+  @NotNull
+  @Override
+  public ValidationContext reduceForOfStatement(@NotNull ForOfStatement node, @NotNull ValidationContext left,  @NotNull ValidationContext right, @NotNull ValidationContext body) {
+    ValidationContext s = super.reduceForOfStatement(node, left, right, body);
+    if (node.left instanceof VariableDeclaration) {
+      if (((VariableDeclaration) node.left).declarators.length != 1) {
+        s.addError(new ValidationError(node, "VariableDeclaration in ForOfStatement can only have one VariableDeclarator"));
+      }
+    }
+    return s;
+  }
+
+  @NotNull
+  @Override
+  public ValidationContext reduceIfStatement(@NotNull IfStatement node, @NotNull ValidationContext test, @NotNull ValidationContext consequent, @NotNull Maybe<ValidationContext> alternate) {
+    ValidationContext s = super.reduceIfStatement(node, test, consequent, alternate);
+    if (isProblematicIfStatement(node)) {
+      s.addError(new ValidationError(node, "IfStatement with null 'alternate' must not be the 'consequent' of an IfStatement with a non-null 'alternate'"));
+    }
+    return s;
+  }
+
   //----------------------------------------------------------------------------------------------------------------------------
+
+  @NotNull
+  private Maybe<Statement> trailingStatement(Statement node) {
+    if (node instanceof IfStatement) {
+      return Maybe.just(((IfStatement) node).alternate.orJust(((IfStatement) node).consequent));
+    } else if (node instanceof LabeledStatement) {
+      return Maybe.just(((LabeledStatement) node).body);
+    } else if (node instanceof IterationStatement) {
+      return Maybe.just(((IterationStatement) node).body);
+    }
+    return Maybe.nothing();
+  }
+
+  private boolean isProblematicIfStatement(IfStatement node) {
+    if (node.alternate.isNothing()) {
+      return false;
+    }
+    Maybe<Statement> current = Maybe.just(node.consequent);
+    do {
+      Statement currentStmt = current.just();
+      if (currentStmt instanceof IfStatement && ((IfStatement)currentStmt).alternate.isNothing()) {
+        return true;
+      }
+      current = trailingStatement(currentStmt);
+    } while(current.isJust());
+    return false;
+  }
+
 
   private static boolean checkIsValidIdentifierName(String name) {
     return name.length() > 0 && Utils.isIdentifierStart(name.charAt(0)) && name.chars().allMatch(Utils::isIdentifierPart);
@@ -398,58 +477,26 @@ public class Validator extends MonoidalReducer<ValidationContext> {
     return true;
   }
 
-  // trying to recreate scanstringliteral and scantemplateelement to check raw value
-
   private boolean checkIsStringLiteral(String rawValue) {
-    int index = 0;
-    char quote = rawValue.charAt(index);
-    index++;
-    boolean octal = false;
-    while (index < rawValue.length()) {
-      char ch = rawValue.charAt(index);
-      if (ch == quote) {
-        return true;
-      } else if (ch == '\\') {
-        // TODO check valid string escape
-      } else if (Utils.isLineTerminator(ch)) {
+    Tokenizer tokenizer ;
+    try {
+      tokenizer = new Tokenizer("'"+rawValue+"'", false);
+      Token token = tokenizer.advance();
+      if (!(token instanceof StringLiteralToken)) {
         return false;
-      } else {
-        index++;
+      }
+    } catch (JsError jsError) {
+      try {
+        tokenizer = new Tokenizer("\""+rawValue+"\"", false);
+        Token token = tokenizer.advance();
+        if (!(token instanceof StringLiteralToken)) {
+          return false;
+        }
+      } catch (JsError jsError1) {
+        return false;
       }
     }
-    return false;
-  }
-
-  private boolean checkIsStringEscape(String string) {
-    return true; // TODO
-  }
-
-  private boolean checkIsTemplateCharactersGrammarPattern(String rawValue) {
-    int index = 0;
-    if (rawValue.charAt(index) != 0x60) {
-      return false;
-    }
-    index++;
-    while (index < rawValue.length()) {
-      char ch = rawValue.charAt(index);
-      switch (ch) {
-        case 0x60:  // `
-          return true;
-        case 0x24:  // $
-          if (rawValue.charAt(index + 1) == 0x7B) {  // {
-            return true;
-          }
-          index++;
-          break;
-        case 0x5C:  // \\
-          // TODO check valid string escape
-          // TODO check not octal
-          break;
-        default:
-          index++;
-      }
-    }
-    return false;
+    return true;
   }
 
 }
