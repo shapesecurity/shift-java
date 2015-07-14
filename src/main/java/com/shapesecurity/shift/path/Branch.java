@@ -19,8 +19,8 @@ public abstract class Branch {
         return new ArrayExpressionElements(index);
     }
 
-    public static ArrowExpressionFormalParameters ArrowExpressionFormalParameters_() {
-        return new ArrowExpressionFormalParameters();
+    public static ArrowExpressionParams ArrowExpressionParams_() {
+        return new ArrowExpressionParams();
     }
 
     public static ArrowExpressionBody ArrowExpressionBody_() {
@@ -53,6 +53,14 @@ public abstract class Branch {
 
     public static BindingPropertyPropertyBinding BindingPropertyPropertyBinding_() {
         return new BindingPropertyPropertyBinding();
+    }
+
+    public static BindingWithDefaultBinding BindingWithDefaultBinding_() {
+        return new BindingWithDefaultBinding();
+    }
+
+    public static BindingWithDefaultInit BindingWithDefaultInit_() {
+        return new BindingWithDefaultInit();
     }
 
     public static BlockStatements BlockStatements_(int index) {
@@ -325,6 +333,10 @@ public abstract class Branch {
 
     public static NewExpressionArguments NewExpressionArguments_(int index) {
         return new NewExpressionArguments(index);
+    }
+
+    public static ObjectBindingProperties ObjectBindingProperties_(int index) {
+        return new ObjectBindingProperties(index);
     }
 
     public static ObjectExpressionProperties ObjectExpressionProperties_(int index) {
@@ -646,7 +658,7 @@ class ArrayExpressionElements extends IndexedBranch {
 }
 
 @SuppressWarnings("ConstantConditions")
-class ArrowExpressionFormalParameters extends Branch {
+class ArrowExpressionParams extends Branch {
     @Override
     public Maybe<? extends Node> step(Node node) {
         if (!(node instanceof ArrowExpression)) Maybe.nothing();
@@ -723,6 +735,24 @@ class BindingPropertyPropertyBinding extends Branch {
     public Maybe<? extends Node> step(Node node) {
         if (!(node instanceof BindingPropertyProperty)) Maybe.nothing();
         return Maybe.just(Coercer.coerce(((BindingPropertyProperty) node).binding));
+    }
+}
+
+@SuppressWarnings("ConstantConditions")
+class BindingWithDefaultBinding extends Branch {
+    @Override
+    public Maybe<? extends Node> step(Node node) {
+        if (!(node instanceof BindingWithDefault)) Maybe.nothing();
+        return Maybe.just(Coercer.coerce(((BindingWithDefault) node).binding));
+    }
+}
+
+@SuppressWarnings("ConstantConditions")
+class BindingWithDefaultInit extends Branch {
+    @Override
+    public Maybe<? extends Node> step(Node node) {
+        if (!(node instanceof BindingWithDefault)) Maybe.nothing();
+        return Maybe.just(((BindingWithDefault) node).init);
     }
 }
 
@@ -1375,6 +1405,19 @@ class NewExpressionArguments extends IndexedBranch {
     public Maybe<? extends Node> step(Node node) {
         if (!(node instanceof NewExpression)) Maybe.nothing();
         return ((NewExpression) node).arguments.index(this.index).map(Coercer::coerce);
+    }
+}
+
+@SuppressWarnings("ConstantConditions")
+class ObjectBindingProperties extends IndexedBranch {
+    public ObjectBindingProperties(int index) {
+        super(index);
+    }
+
+    @Override
+    public Maybe<? extends Node> step(Node node) {
+        if (!(node instanceof ObjectBinding)) Maybe.nothing();
+        return ((ObjectBinding) node).properties.index(this.index);
     }
 }
 

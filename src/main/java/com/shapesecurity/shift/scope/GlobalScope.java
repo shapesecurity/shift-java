@@ -38,7 +38,7 @@ public class GlobalScope extends Scope {
 
   public boolean isGlobal(IdentifierExpression identifierExpression) {
     return findVariablesReferencedBy(identifierExpression).map(v -> v.declarations.isEmpty()).orJust(false);
-  }
+  } // TODO these aren't quite right: top-level script var declarations are still globals.
 
   public boolean isGlobal(BindingIdentifier bindingIdentifier) {
     return findVariablesReferencedBy(bindingIdentifier).map(v -> v.declarations.isEmpty()).orJust(false);

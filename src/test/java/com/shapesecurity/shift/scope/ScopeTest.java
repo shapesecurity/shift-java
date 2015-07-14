@@ -112,7 +112,6 @@ public class ScopeTest extends TestCase {
         }
     }
 
-
     @Test
     public void testVariableDeclaration3() throws JsError {
         String js = "v1 = 'hello'; var v2 = v1 + ' world';";
@@ -228,7 +227,6 @@ public class ScopeTest extends TestCase {
             checkScope(globalScope, Scope.Type.Global, true, children, through, variables, referenceTypes);
         }
     }
-
 
     @Test
     public void testFunctionDeclarations1() throws JsError {
@@ -636,18 +634,18 @@ public class ScopeTest extends TestCase {
 
         final BindingIdentifier aNode1 = bi(new Getter().d(ScriptStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorBinding_())
                 .apply(script));
-        final BindingIdentifier bNode1 = bi( new Getter().d(ScriptStatements_(1)).d(FunctionDeclarationName_())
-                .apply(script) );
+        final BindingIdentifier bNode1 = bi(new Getter().d(ScriptStatements_(1)).d(FunctionDeclarationName_())
+                .apply(script));
         final BindingIdentifier aNode2 = bi( new Getter().d(ScriptStatements_(1)).d(FunctionDeclarationBody_()).d(FunctionBodyStatements_(0)).d(ExpressionStatementExpression_()).d(AssignmentExpressionBinding_())
                 .apply(script) );
-        final BindingIdentifier aNode3 = bi( new Getter().d(ScriptStatements_(1)).d(FunctionDeclarationBody_()).d(FunctionBodyStatements_(2)).d(FunctionDeclarationName_())
-                .apply(script) );
+        final BindingIdentifier aNode3 = bi(new Getter().d(ScriptStatements_(1)).d(FunctionDeclarationBody_()).d(FunctionBodyStatements_(2)).d(FunctionDeclarationName_())
+                .apply(script));
         final IdentifierExpression bNode2 = ie(new Getter().d(ScriptStatements_(2)).d(ExpressionStatementExpression_()).d(CallExpressionCallee_())
                 .apply(script));
         final IdentifierExpression alertNode1 = ie( new Getter().d(ScriptStatements_(3)).d(ExpressionStatementExpression_()).d(CallExpressionCallee_())
                 .apply(script) );
-        final IdentifierExpression aNode4 = ie( new Getter().d(ScriptStatements_(3)).d(ExpressionStatementExpression_()).d(CallExpressionArguments_(0))
-                .apply(script) );
+        final IdentifierExpression aNode4 = ie(new Getter().d(ScriptStatements_(3)).d(ExpressionStatementExpression_()).d(CallExpressionArguments_(0))
+                .apply(script));
 
         final Either<BindingIdentifier, IdentifierExpression> aNode1E = Either.left(aNode1);
         final Either<BindingIdentifier, IdentifierExpression> bNode1E = Either.left(bNode1);
@@ -709,8 +707,6 @@ public class ScopeTest extends TestCase {
         }
     }
 
-
-
     @Test
     public void testHoistDeclaration3() throws JsError {
         String js = "function foo() {" +
@@ -730,12 +726,12 @@ public class ScopeTest extends TestCase {
 
         final BindingIdentifier fooNode1 = bi(new Getter().d(ScriptStatements_(0)).d(FunctionDeclarationName_())
                 .apply(script));
-        final BindingIdentifier barNode1 = bi( new Getter().d(ScriptStatements_(0)).d(FunctionDeclarationBody_()).d(FunctionBodyStatements_(0)).d(FunctionDeclarationName_())
-                .apply(script) );
+        final BindingIdentifier barNode1 = bi(new Getter().d(ScriptStatements_(0)).d(FunctionDeclarationBody_()).d(FunctionBodyStatements_(0)).d(FunctionDeclarationName_())
+                .apply(script));
         final IdentifierExpression barNode2 = ie(new Getter().d(ScriptStatements_(0)).d(FunctionDeclarationBody_()).d(FunctionBodyStatements_(1)).d(ReturnStatementExpression_()).d(CallExpressionCallee_())
                 .apply(script));
-        final BindingIdentifier barNode3 = bi( new Getter().d(ScriptStatements_(0)).d(FunctionDeclarationBody_()).d(FunctionBodyStatements_(2)).d(FunctionDeclarationName_())
-                .apply(script) );
+        final BindingIdentifier barNode3 = bi(new Getter().d(ScriptStatements_(0)).d(FunctionDeclarationBody_()).d(FunctionBodyStatements_(2)).d(FunctionDeclarationName_())
+                .apply(script));
 
         final Either<BindingIdentifier, IdentifierExpression> fooNode1E = Either.left(fooNode1);
         final Either<BindingIdentifier, IdentifierExpression> barNode1E = Either.left(barNode1);
@@ -801,7 +797,6 @@ public class ScopeTest extends TestCase {
             checkScope(barScope2, Scope.Type.Function, false, children, through, variables, referenceTypes);
         }
     }
-
 
     @Test
     public void testHoistDeclaration4() throws JsError {
@@ -945,8 +940,6 @@ public class ScopeTest extends TestCase {
         }
     }
 
-
-
     @Test
     public void testClosure1() throws JsError {
         String js = "(function() {f1 = 'hello'; alert(f1);})();";
@@ -958,8 +951,8 @@ public class ScopeTest extends TestCase {
                 .apply(script));
         final IdentifierExpression alertNode1 = ie(new Getter().d(ScriptStatements_(0)).d(ExpressionStatementExpression_()).d(CallExpressionCallee_()).d(FunctionExpressionBody_()).d(FunctionBodyStatements_(1)).d(ExpressionStatementExpression_()).d(CallExpressionCallee_())
                 .apply(script));
-        final IdentifierExpression f1Node2 = ie( new Getter().d(ScriptStatements_(0)).d(ExpressionStatementExpression_()).d(CallExpressionCallee_()).d(FunctionExpressionBody_()).d(FunctionBodyStatements_(1)).d(ExpressionStatementExpression_()).d(CallExpressionArguments_(0))
-                .apply(script) );
+        final IdentifierExpression f1Node2 = ie(new Getter().d(ScriptStatements_(0)).d(ExpressionStatementExpression_()).d(CallExpressionCallee_()).d(FunctionExpressionBody_()).d(FunctionBodyStatements_(1)).d(ExpressionStatementExpression_()).d(CallExpressionArguments_(0))
+                .apply(script));
 
         final Either<BindingIdentifier, IdentifierExpression> f1Node1E = Either.left(f1Node1);
         final Either<BindingIdentifier, IdentifierExpression> alertNode1E = Either.right(alertNode1);
@@ -998,8 +991,6 @@ public class ScopeTest extends TestCase {
             checkScope(functionScope, Scope.Type.Function, false, children, through, variables, referenceTypes);
         }
     }
-
-
 
     @Test
     public void testClosure2() throws JsError {
@@ -1053,8 +1044,6 @@ public class ScopeTest extends TestCase {
         }
     }
 
-
-
     @Test
     public void testArgument1() throws JsError {
         String js = "function f(arg1, arg2) {var v1 = arg1 + arg2 + ' world';}";
@@ -1068,12 +1057,12 @@ public class ScopeTest extends TestCase {
                 .apply(script));
         final BindingIdentifier arg2Node1 = bi( new Getter().d(ScriptStatements_(0)).d(FunctionDeclarationParams_()).d(FormalParametersItems_(1))
                 .apply(script) );
-        final BindingIdentifier v1Node1 = bi( new Getter().d(ScriptStatements_(0)).d(FunctionDeclarationBody_()).d(FunctionBodyStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorBinding_())
-                .apply(script) );
+        final BindingIdentifier v1Node1 = bi(new Getter().d(ScriptStatements_(0)).d(FunctionDeclarationBody_()).d(FunctionBodyStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorBinding_())
+                .apply(script));
         final IdentifierExpression arg1Node2 = ie(new Getter().d(ScriptStatements_(0)).d(FunctionDeclarationBody_()).d(FunctionBodyStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorInit_()).d(BinaryExpressionLeft_()).d(BinaryExpressionLeft_())
                 .apply(script));
-        final IdentifierExpression arg2Node2 = ie( new Getter().d(ScriptStatements_(0)).d(FunctionDeclarationBody_()).d(FunctionBodyStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorInit_()).d(BinaryExpressionLeft_()).d(BinaryExpressionRight_())
-                .apply(script) );
+        final IdentifierExpression arg2Node2 = ie(new Getter().d(ScriptStatements_(0)).d(FunctionDeclarationBody_()).d(FunctionBodyStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorInit_()).d(BinaryExpressionLeft_()).d(BinaryExpressionRight_())
+                .apply(script));
 
 
         final Either<BindingIdentifier, IdentifierExpression> fNode1E = Either.left(fNode1);
@@ -1119,7 +1108,6 @@ public class ScopeTest extends TestCase {
         }
     }
 
-
     @Test
     public void testArgument2() throws JsError {
         String js = "function f() {var v1 = arguments[0] + ' world';}";
@@ -1129,8 +1117,8 @@ public class ScopeTest extends TestCase {
 
         final BindingIdentifier fNode1 = bi(new Getter().d(ScriptStatements_(0)).d(FunctionDeclarationName_())
                 .apply(script));
-        final BindingIdentifier v1Node1 = bi( new Getter().d(ScriptStatements_(0)).d(FunctionDeclarationBody_()).d(FunctionBodyStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorBinding_())
-                .apply(script) );
+        final BindingIdentifier v1Node1 = bi(new Getter().d(ScriptStatements_(0)).d(FunctionDeclarationBody_()).d(FunctionBodyStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorBinding_())
+                .apply(script));
         final IdentifierExpression argumentsNode1 = ie(new Getter().d(ScriptStatements_(0)).d(FunctionDeclarationBody_()).d(FunctionBodyStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorInit_()).d(BinaryExpressionLeft_()).d(ComputedMemberExpressionObject_())
                 .apply(script));
 
@@ -1185,12 +1173,12 @@ public class ScopeTest extends TestCase {
                 .apply(script));
         final IdentifierExpression cosNode1 = ie(new Getter().d(ScriptStatements_(0)).d(WithStatementBody_()).d(BlockStatementBlock_()).d(BlockStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorInit_()).d(CallExpressionCallee_())
                 .apply(script));
-        final IdentifierExpression piNode1 = ie( new Getter().d(ScriptStatements_(0)).d(WithStatementBody_()).d(BlockStatementBlock_()).d(BlockStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorInit_()).d(CallExpressionArguments_(0)).d(BinaryExpressionRight_())
-                .apply(script) );
-        final IdentifierExpression alertNode1 = ie( new Getter().d(ScriptStatements_(0)).d(WithStatementBody_()).d(BlockStatementBlock_()).d(BlockStatements_(1)).d(ExpressionStatementExpression_()).d(CallExpressionCallee_())
-                .apply(script) );
-        final IdentifierExpression xNode2 = ie( new Getter().d(ScriptStatements_(0)).d(WithStatementBody_()).d(BlockStatementBlock_()).d(BlockStatements_(1)).d(ExpressionStatementExpression_()).d(CallExpressionArguments_(0))
-                .apply(script) );
+        final IdentifierExpression piNode1 = ie(new Getter().d(ScriptStatements_(0)).d(WithStatementBody_()).d(BlockStatementBlock_()).d(BlockStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorInit_()).d(CallExpressionArguments_(0)).d(BinaryExpressionRight_())
+                .apply(script));
+        final IdentifierExpression alertNode1 = ie(new Getter().d(ScriptStatements_(0)).d(WithStatementBody_()).d(BlockStatementBlock_()).d(BlockStatements_(1)).d(ExpressionStatementExpression_()).d(CallExpressionCallee_())
+                .apply(script));
+        final IdentifierExpression xNode2 = ie(new Getter().d(ScriptStatements_(0)).d(WithStatementBody_()).d(BlockStatementBlock_()).d(BlockStatements_(1)).d(ExpressionStatementExpression_()).d(CallExpressionArguments_(0))
+                .apply(script));
 
         final Either<BindingIdentifier, IdentifierExpression> mathNode1E = Either.right(mathNode1);
         final Either<BindingIdentifier, IdentifierExpression> xNode1E = Either.left(xNode1);
@@ -1331,8 +1319,8 @@ public class ScopeTest extends TestCase {
                 .apply(script));
         final IdentifierExpression alertNode2 = ie(new Getter().d(ScriptStatements_(0)).d(TryCatchStatementCatchClause_()).d(CatchClauseBody_()).d(BlockStatements_(0)).d(ExpressionStatementExpression_()).d(CallExpressionCallee_())
                 .apply(script));
-        final IdentifierExpression errNode2 = ie( new Getter().d(ScriptStatements_(0)).d(TryCatchStatementCatchClause_()).d(CatchClauseBody_()).d(BlockStatements_(0)).d(ExpressionStatementExpression_()).d(CallExpressionArguments_(0))
-                .apply(script) );
+        final IdentifierExpression errNode2 = ie(new Getter().d(ScriptStatements_(0)).d(TryCatchStatementCatchClause_()).d(CatchClauseBody_()).d(BlockStatements_(0)).d(ExpressionStatementExpression_()).d(CallExpressionArguments_(0))
+                .apply(script));
 
         final Either<BindingIdentifier, IdentifierExpression> alertNode1E = Either.right(alertNode1);
         final Either<BindingIdentifier, IdentifierExpression> errNode1E = Either.left(errNode1);
@@ -1521,6 +1509,257 @@ public class ScopeTest extends TestCase {
             checkScope(catchScope, Scope.Type.Catch, false, children, through, variables, referenceTypes);
         }
     }
+
+    @Test
+    public void testArrow1() throws JsError {
+        String js = "var x = x => ++x";
+        Script script = parse(js);
+        GlobalScope globalScope = ScopeAnalyzer.analyze(script);
+        Scope aScope = globalScope.children.maybeHead().just();
+
+        final BindingIdentifier xNode1 = bi(new Getter().d(ScriptStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorBinding_())
+                .apply(script));
+        final BindingIdentifier xNode2 = bi( new Getter().d(ScriptStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorInit_()).d(ArrowExpressionParams_()).d(FormalParametersItems_(0))
+                .apply(script) );
+        final BindingIdentifier xNode3 = bi( new Getter().d(ScriptStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorInit_()).d(ArrowExpressionBody_()).d(UpdateExpressionOperand_())
+                .apply(script) );
+
+        final Either<BindingIdentifier, IdentifierExpression> xNode1E = Either.left(xNode1);
+        final Either<BindingIdentifier, IdentifierExpression> xNode2E = Either.left(xNode2);
+        final Either<BindingIdentifier, IdentifierExpression> xNode3E = Either.left(xNode3);
+
+        { // global scope
+
+            ImmutableList<Scope> children = ImmutableList.list(aScope);
+
+            ImmutableList<String> through = ImmutableList.nil();
+
+            // mapping of variable names from this scope object to the list of their declarations and their references
+            Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<Either<BindingIdentifier, IdentifierExpression>>>> variables = new HashMap<>();
+            variables.put("x", new Pair<>(ImmutableList.list(xNode1), ImmutableList.list(xNode1E)));
+
+            Map<Either<BindingIdentifier, IdentifierExpression>, Accessibility> referenceTypes = new HashMap<>();
+            referenceTypes.put(xNode1E, Accessibility.Write);
+
+            checkScope(globalScope, Scope.Type.Global, true, children, through, variables, referenceTypes);
+        }
+        { // arrow scope
+
+            ImmutableList<Scope> children = ImmutableList.nil();
+
+            ImmutableList<String> through = ImmutableList.nil();
+
+            // mapping of variable names from this scope object to the list of their declarations and their references
+            Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<Either<BindingIdentifier, IdentifierExpression>>>> variables = new HashMap<>();
+            variables.put("x", new Pair<>(ImmutableList.list(xNode2), ImmutableList.list(xNode2E)));
+
+            Map<Either<BindingIdentifier, IdentifierExpression>, Accessibility> referenceTypes = new HashMap<>();
+            referenceTypes.put(xNode2E, Accessibility.ReadWrite);
+
+            checkScope(aScope, Scope.Type.ArrowFunction, false, children, through, variables, referenceTypes);
+        }
+    }
+
+    @Test
+    public void testArrowArguments() throws JsError {
+        String js = "() => arguments";
+        Script script = parse(js);
+        GlobalScope globalScope = ScopeAnalyzer.analyze(script);
+        Scope aScope = globalScope.children.maybeHead().just();
+
+        final IdentifierExpression argumentsNode = ie(new Getter().d(ScriptStatements_(0)).d(ExpressionStatementExpression_()).d(ArrowExpressionBody_())
+                .apply(script));
+
+        final Either<BindingIdentifier, IdentifierExpression> argumentsNodeE = Either.right(argumentsNode);
+
+        { // global scope
+
+            ImmutableList<Scope> children = ImmutableList.list(aScope);
+
+            ImmutableList<String> through = ImmutableList.list("arguments");
+
+            // mapping of variable names from this scope object to the list of their declarations and their references
+            Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<Either<BindingIdentifier, IdentifierExpression>>>> variables = new HashMap<>();
+            variables.put("arguments", new Pair<>(NO_DECLARATIONS, ImmutableList.list(argumentsNodeE)));
+
+            Map<Either<BindingIdentifier, IdentifierExpression>, Accessibility> referenceTypes = new HashMap<>();
+            referenceTypes.put(argumentsNodeE, Accessibility.Read);
+
+            checkScope(globalScope, Scope.Type.Global, true, children, through, variables, referenceTypes);
+        }
+        { // arrow scope
+
+            ImmutableList<Scope> children = ImmutableList.nil();
+
+            ImmutableList<String> through = ImmutableList.list("arguments");
+
+            // mapping of variable names from this scope object to the list of their declarations and their references
+            Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<Either<BindingIdentifier, IdentifierExpression>>>> variables = new HashMap<>();
+
+            Map<Either<BindingIdentifier, IdentifierExpression>, Accessibility> referenceTypes = new HashMap<>();
+
+            checkScope(aScope, Scope.Type.ArrowFunction, false, children, through, variables, referenceTypes);
+        }
+    }
+
+    @Test
+    public void testGetter() throws JsError {
+        String js = "var x = {get [x]() {return x + arguments;}};";
+        Script script = parse(js);
+        GlobalScope globalScope = ScopeAnalyzer.analyze(script);
+        Scope gScope = globalScope.children.maybeHead().just();
+
+        final BindingIdentifier xNode1 = bi(new Getter().d(ScriptStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorBinding_())
+                .apply(script));
+        final IdentifierExpression xNode2 = ie(new Getter().d(ScriptStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorInit_()).d(ObjectExpressionProperties_(0)).d(GetterName_()).d(ComputedPropertyNameExpression_())
+                .apply(script));
+        final IdentifierExpression xNode3 = ie( new Getter().d(ScriptStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorInit_()).d(ObjectExpressionProperties_(0)).d(GetterBody_()).d(FunctionBodyStatements_(0)).d(ReturnStatementExpression_()).d(BinaryExpressionLeft_())
+                .apply(script) );
+        final IdentifierExpression argumentsNode1 = ie(new Getter().d(ScriptStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorInit_()).d(ObjectExpressionProperties_(0)).d(GetterBody_()).d(FunctionBodyStatements_(0)).d(ReturnStatementExpression_()).d(BinaryExpressionRight_())
+                .apply(script));
+
+        final Either<BindingIdentifier, IdentifierExpression> xNode1E = Either.left(xNode1);
+        final Either<BindingIdentifier, IdentifierExpression> xNode2E = Either.right(xNode2);
+        final Either<BindingIdentifier, IdentifierExpression> xNode3E = Either.right(xNode3);
+        final Either<BindingIdentifier, IdentifierExpression> argumentsNode1E = Either.right(argumentsNode1);
+
+        { // global scope
+
+            ImmutableList<Scope> children = ImmutableList.list(gScope);
+
+            ImmutableList<String> through = ImmutableList.nil();
+
+            // mapping of variable names from this scope object to the list of their declarations and their references
+            Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<Either<BindingIdentifier, IdentifierExpression>>>> variables = new HashMap<>();
+            variables.put("x", new Pair<>(ImmutableList.list(xNode1), ImmutableList.list(xNode1E, xNode2E, xNode3E)));
+
+            Map<Either<BindingIdentifier, IdentifierExpression>, Accessibility> referenceTypes = new HashMap<>();
+            referenceTypes.put(xNode1E, Accessibility.Write);
+            referenceTypes.put(xNode2E, Accessibility.Read);
+
+            checkScope(globalScope, Scope.Type.Global, true, children, through, variables, referenceTypes);
+        }
+        { // getter scope
+
+            ImmutableList<Scope> children = ImmutableList.nil();
+
+            ImmutableList<String> through = ImmutableList.list("x");
+
+            // mapping of variable names from this scope object to the list of their declarations and their references
+            Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<Either<BindingIdentifier, IdentifierExpression>>>> variables = new HashMap<>();
+            variables.put("arguments", new Pair<>(NO_DECLARATIONS, ImmutableList.list(argumentsNode1E)));
+
+            Map<Either<BindingIdentifier, IdentifierExpression>, Accessibility> referenceTypes = new HashMap<>();
+            referenceTypes.put(argumentsNode1E, Accessibility.Read);
+
+            checkScope(gScope, Scope.Type.Function, false, children, through, variables, referenceTypes);
+        }
+    }
+
+    @Test
+    public void testBlockDeclarations() throws JsError {
+        String js = "x; {const x = y;}; var x, y;";
+        Script script = parse(js);
+        GlobalScope globalScope = ScopeAnalyzer.analyze(script);
+        Scope blockScope = globalScope.children.maybeHead().just();
+
+        final IdentifierExpression xNode1 = ie(new Getter().d(ScriptStatements_(0)).d(ExpressionStatementExpression_())
+                .apply(script));
+        final BindingIdentifier xNode2 = bi(new Getter().d(ScriptStatements_(1)).d(BlockStatementBlock_()).d(BlockStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorBinding_())
+                .apply(script));
+        final IdentifierExpression yNode1 = ie(new Getter().d(ScriptStatements_(1)).d(BlockStatementBlock_()).d(BlockStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorInit_())
+                .apply(script));
+        final BindingIdentifier xNode3 = bi(new Getter().d(ScriptStatements_(1)).d(BlockStatementBlock_()).d(BlockStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorBinding_())
+                .apply(script));
+        final BindingIdentifier yNode2 = bi(new Getter().d(ScriptStatements_(3)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(1)).d(VariableDeclaratorBinding_())
+                .apply(script));
+
+        final Either<BindingIdentifier, IdentifierExpression> xNode1E = Either.right(xNode1);
+        final Either<BindingIdentifier, IdentifierExpression> xNode2E = Either.left(xNode2);
+        final Either<BindingIdentifier, IdentifierExpression> yNode1E = Either.right(yNode1);
+        final Either<BindingIdentifier, IdentifierExpression> xNode3E = Either.left(xNode3);
+        final Either<BindingIdentifier, IdentifierExpression> yNode2E = Either.left(yNode2);
+
+        { // global scope
+
+            ImmutableList<Scope> children = ImmutableList.list(blockScope);
+
+            ImmutableList<String> through = ImmutableList.nil();
+
+            // mapping of variable names from this scope object to the list of their declarations and their references
+            Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<Either<BindingIdentifier, IdentifierExpression>>>> variables = new HashMap<>();
+            variables.put("x", new Pair<>(ImmutableList.list(xNode3), ImmutableList.list(xNode1E)));
+            variables.put("y", new Pair<>(ImmutableList.list(yNode2), ImmutableList.list(yNode1E)));
+
+            Map<Either<BindingIdentifier, IdentifierExpression>, Accessibility> referenceTypes = new HashMap<>();
+            referenceTypes.put(xNode1E, Accessibility.Read);
+            referenceTypes.put(yNode1E, Accessibility.Read);
+
+            checkScope(globalScope, Scope.Type.Global, true, children, through, variables, referenceTypes);
+        }
+        { // block scope
+
+            ImmutableList<Scope> children = ImmutableList.nil();
+
+            ImmutableList<String> through = ImmutableList.list("y");
+
+            // mapping of variable names from this scope object to the list of their declarations and their references
+            Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<Either<BindingIdentifier, IdentifierExpression>>>> variables = new HashMap<>();
+            variables.put("x", new Pair<>(ImmutableList.list(xNode2), ImmutableList.list(xNode2E)));
+
+            Map<Either<BindingIdentifier, IdentifierExpression>, Accessibility> referenceTypes = new HashMap<>();
+            referenceTypes.put(xNode2E, Accessibility.Write);
+
+            checkScope(blockScope, Scope.Type.Block, false, children, through, variables, referenceTypes);
+        }
+    }
+/*
+    @Test
+    public void testDestructuring() throws JsError {
+        String js = "let {x, a:{b:y = z}} = null; var [z] = y;";
+        Script script = parse(js);
+        GlobalScope globalScope = ScopeAnalyzer.analyze(script);
+
+        final BindingIdentifier xNode1 = bi( new Getter().d(ScriptStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorBinding_()).d(ObjectBindingProperties_(0)).d(BindingPropertyIdentifierBinding_())
+                .apply(script) );
+        final BindingIdentifier yNode1 = bi( new Getter().d(ScriptStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorBinding_()).d(ObjectBindingProperties_(1)).d(BindingPropertyPropertyBinding_()).d(ObjectBindingProperties_(0)).d(BindingPropertyPropertyBinding_()).d(BindingWithDefaultBinding_())
+                .apply(script) );
+        final IdentifierExpression zNode1 = ie( new Getter().d(ScriptStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorBinding_()).d(ObjectBindingProperties_(1)).d(BindingPropertyPropertyBinding_()).d(ObjectBindingProperties_(0)).d(BindingPropertyPropertyBinding_()).d(BindingWithDefaultInit_())
+                .apply(script) );
+        final BindingIdentifier zNode2 = bi( new Getter().d(ScriptStatements_(1)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorBinding_()).d(ArrayBindingElements_(0))
+                .apply(script) );
+        final IdentifierExpression yNode2 = ie( new Getter().d(ScriptStatements_(1)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorInit_())
+                .apply(script) );
+
+        final Either<BindingIdentifier, IdentifierExpression> xNode1E = Either.left(xNode1);
+        final Either<BindingIdentifier, IdentifierExpression> yNode1E = Either.left(yNode1);
+        final Either<BindingIdentifier, IdentifierExpression> zNode1E = Either.right(zNode1);
+        final Either<BindingIdentifier, IdentifierExpression> zNode2E = Either.left(zNode2);
+        final Either<BindingIdentifier, IdentifierExpression> yNode2E = Either.right(yNode2);
+
+        { // global scope
+
+            ImmutableList<Scope> children = ImmutableList.nil();
+
+            ImmutableList<String> through = ImmutableList.nil();
+
+            // mapping of variable names from this scope object to the list of their declarations and their references
+            Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<Either<BindingIdentifier, IdentifierExpression>>>> variables = new HashMap<>();
+            variables.put("x", new Pair<>(ImmutableList.list(xNode1), ImmutableList.list(xNode1E)));
+            variables.put("y", new Pair<>(ImmutableList.list(yNode1), ImmutableList.list(yNode1E, yNode2E)));
+            variables.put("z", new Pair<>(ImmutableList.list(zNode2), ImmutableList.list(zNode1E, zNode2E)));
+
+            Map<Either<BindingIdentifier, IdentifierExpression>, Accessibility> referenceTypes = new HashMap<>();
+            referenceTypes.put(xNode1E, Accessibility.Write);
+            referenceTypes.put(yNode1E, Accessibility.Write);
+            referenceTypes.put(yNode2E, Accessibility.Read);
+            referenceTypes.put(zNode1E, Accessibility.Read);
+            referenceTypes.put(zNode2E, Accessibility.Write);
+
+            checkScope(globalScope, Scope.Type.Global, true, children, through, variables, referenceTypes);
+        }
+    }
+*/
 
     /**
      * Check the given scope is correct based on the information provided

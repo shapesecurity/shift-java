@@ -74,7 +74,7 @@ public class Scope {
     return this.variables.values();
   }
 
-  @NotNull
+  @NotNull // TODO it is now possible for one binding to create two variables (for function declarations in blocks)
   public Maybe<Variable> findVariablesDeclaredBy(@NotNull final BindingIdentifier bindingIdentifier) {
     for (Variable v : this.variables.values()) {
       if (v.declarations.exists(d -> d.node == bindingIdentifier)) {
