@@ -66,7 +66,7 @@ public class ScopeTest extends TestCase {
 
 
         { // global scope
-            ImmutableList<Scope> children = ImmutableList.nil();
+            ImmutableList<Scope> children = ImmutableList.list(globalScope.children.maybeHead().just());
 
             ImmutableList<String> through = ImmutableList.nil();
 
@@ -96,7 +96,7 @@ public class ScopeTest extends TestCase {
                 .apply(script) );
 
         { // global scope
-            ImmutableList<Scope> children = ImmutableList.nil();
+            ImmutableList<Scope> children = ImmutableList.list(globalScope.children.maybeHead().just());
 
             ImmutableList<String> through = ImmutableList.nil();
 
@@ -130,7 +130,7 @@ public class ScopeTest extends TestCase {
                 .apply(script) );
 
         { // global scope
-            ImmutableList<Scope> children = ImmutableList.nil();
+            ImmutableList<Scope> children = ImmutableList.list(globalScope.children.maybeHead().just());
 
             ImmutableList<String> through = ImmutableList.list("v1");
 
@@ -167,7 +167,7 @@ public class ScopeTest extends TestCase {
 
 
         { // global scope
-            ImmutableList<Scope> children = ImmutableList.nil();
+            ImmutableList<Scope> children = ImmutableList.list(globalScope.children.maybeHead().just());
 
             ImmutableList<String> through = ImmutableList.nil();
 
@@ -210,7 +210,7 @@ public class ScopeTest extends TestCase {
 
 
         { // global scope
-            ImmutableList<Scope> children = ImmutableList.nil();
+            ImmutableList<Scope> children = ImmutableList.list(globalScope.children.maybeHead().just());
 
             ImmutableList<String> through = ImmutableList.list();
 
@@ -242,8 +242,9 @@ public class ScopeTest extends TestCase {
         Script script = parse(js);
 
         GlobalScope globalScope = ScopeAnalyzer.analyze(script);
-        Scope f1Scope = globalScope.children.maybeHead().just();
-        Scope f2Scope = globalScope.children.maybeHead().just().children.maybeHead().just();
+        Scope topLevelLexicalScope = globalScope.children.maybeHead().just();
+        Scope f1Scope = topLevelLexicalScope.children.maybeHead().just();
+        Scope f2Scope = topLevelLexicalScope.children.maybeHead().just().children.maybeHead().just();
 
         final BindingIdentifier f1Binding1 = bi(new Getter().d(ScriptStatements_(0)).d(FunctionDeclarationName_())
                 .apply(script));
@@ -311,7 +312,7 @@ public class ScopeTest extends TestCase {
 
 
         { // global scope
-            ImmutableList<Scope> children = ImmutableList.list(f1Scope);
+            ImmutableList<Scope> children = ImmutableList.list(topLevelLexicalScope);
 
             ImmutableList<String> through = ImmutableList.nil();
 
@@ -369,7 +370,7 @@ public class ScopeTest extends TestCase {
         }
 
     }
-
+/*
     @Test
     public void testFunctionDeclaration2() throws JsError {
         String js = "function f() {f = 'hello';} f();";
