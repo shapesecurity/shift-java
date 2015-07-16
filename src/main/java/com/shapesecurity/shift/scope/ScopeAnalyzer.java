@@ -1,615 +1,672 @@
-///*
-// * Copyright 2014 Shape Security, Inc.
-// *
-// * Licensed under the Apache License, Version 2.0 (the "License");
-// * you may not use this file except in compliance with the License.
-// * You may obtain a copy of the License at
-// *
-// *     http://www.apache.org/licenses/LICENSE-2.0
-// *
-// * Unless required by applicable law or agreed to in writing, software
-// * distributed under the License is distributed on an "AS IS" BASIS,
-// * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// * See the License for the specific language governing permissions and
-// * limitations under the License.
-// */
-//
-//package com.shapesecurity.shift.scope;
-//
-//import com.shapesecurity.functional.Pair;
-//import com.shapesecurity.functional.data.Either;
-//import com.shapesecurity.functional.data.HashTable;
-//import com.shapesecurity.functional.data.ImmutableList;
-//import com.shapesecurity.functional.data.Maybe;
-//import com.shapesecurity.functional.data.Monoid;
-//import com.shapesecurity.functional.data.NonEmptyImmutableList;
-//import com.shapesecurity.shift.ast.Block;
-//import com.shapesecurity.shift.ast.CatchClause;
-//import com.shapesecurity.shift.ast.Identifier;
-//import com.shapesecurity.shift.ast.Node;
-//import com.shapesecurity.shift.ast.Script;
-//import com.shapesecurity.shift.ast.VariableDeclaration;
-//import com.shapesecurity.shift.ast.VariableDeclarator;
-//import com.shapesecurity.shift.ast.expression.AssignmentExpression;
-//import com.shapesecurity.shift.ast.expression.BinaryExpression;
-//import com.shapesecurity.shift.ast.expression.CallExpression;
-//import com.shapesecurity.shift.ast.expression.FunctionExpression;
-//import com.shapesecurity.shift.ast.expression.IdentifierExpression;
-//import com.shapesecurity.shift.ast.expression.PostfixExpression;
-//import com.shapesecurity.shift.ast.expression.PrefixExpression;
-//import com.shapesecurity.shift.ast.operators.AssignmentOperator;
-//import com.shapesecurity.shift.ast.operators.PrefixOperator;
-//import com.shapesecurity.shift.ast.property.Getter;
-//import com.shapesecurity.shift.ast.property.Setter;
-//import com.shapesecurity.shift.ast.statement.ForInStatement;
-//import com.shapesecurity.shift.ast.statement.FunctionDeclaration;
-//import com.shapesecurity.shift.ast.statement.WithStatement;
-//import com.shapesecurity.shift.path.Branch;
-//import com.shapesecurity.shift.scope.Declaration.Kind;
-//import com.shapesecurity.shift.visitor.MonoidalReducer;
-//
-//import java.util.HashSet;
-//import java.util.Set;
-//
-//import org.jetbrains.annotations.NotNull;
-//import org.jetbrains.annotations.Nullable;
-//
-//public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
-//  private static final ScopeAnalyzer INSTANCE = new ScopeAnalyzer();
-//
-//  private ScopeAnalyzer() {
-//    super(new StateMonoid());
-//  }
-//
-//  @NotNull
-//  public static GlobalScope analyze(@NotNull Script script) {
-//    return (GlobalScope) script.reduce(INSTANCE).children.maybeHead().just();
-//  }
-//
-//  @NotNull
-//  @Override
-//  public State reduceIdentifier(@NotNull Identifier node, @NotNull ImmutableList<Branch> path) {
-//    return new State(HashTable.empty(),
-//        HashTable.empty(),
-//        HashTable.empty(),
-//        new HashSet<>(),
-//        ImmutableList.nil(),
-//        ImmutableList.nil(),
-//        false,
-//        path,
-//        node,
-//        false);
-//  }
-//
-//  @NotNull
-//  @Override
-//  public State reduceIdentifierExpression(
-//      @NotNull IdentifierExpression node,
-//      @NotNull ImmutableList<Branch> path,
-//      @NotNull State identifier) {
-//    return identifier.addReference(Accessibility.Read);
-//  }
-//
-//  @NotNull
-//  @Override
-//  public State reduceBinaryExpression(
-//      @NotNull BinaryExpression node,
-//      @NotNull ImmutableList<Branch> path,
-//      @NotNull State left,
-//      @NotNull State right) {
-//    return super.reduceBinaryExpression(node, path, left, right);
-//  }
-//
-//  @NotNull
-//  @Override
-//  public State reduceAssignmentExpression(
-//      @NotNull AssignmentExpression node,
-//      @NotNull ImmutableList<Branch> path,
-//      @NotNull State binding,
-//      @NotNull State expression) {
-//    if (node.binding instanceof IdentifierExpression) {
-//      // TODO: Check if this is the actual intention.
-//      assert binding.lastIdentifier != null;
-//      assert binding.lastPath != null;
-//      return expression.addReference(binding.lastPath,
-//          binding.lastIdentifier,
-//          node.operator == AssignmentOperator.Assign ? Accessibility.Write : Accessibility.ReadWrite);
-//    }
-//    return super.reduceAssignmentExpression(node, path, binding, expression);
-//  }
-//
-//  @NotNull
-//  @Override
-//  public State reduceCallExpression(
-//      @NotNull CallExpression node,
-//      @NotNull ImmutableList<Branch> path,
-//      @NotNull State callee,
-//      @NotNull ImmutableList<State> arguments) {
-//    State s = super.reduceCallExpression(node, path, callee, arguments);
-//    if (node.callee instanceof IdentifierExpression &&
-//        ((IdentifierExpression) node.callee).identifier.name.equals("eval")) {
-//      return s.taint();
-//    }
-//    return s;
-//  }
-//
-//  @NotNull
-//  @Override
-//  public State reduceForInStatement(
-//      @NotNull ForInStatement node,
-//      @NotNull ImmutableList<Branch> path,
-//      @NotNull Either<State, State> left,
-//      @NotNull State right,
-//      @NotNull State body) {
-//    if (node.left.isRight() && node.left.right().just() instanceof IdentifierExpression) {
-//      left = left.map(x -> x, x -> x.addReference(Accessibility.Write));
-//    } else if (node.left.isLeft() && node.left.left().just().declarators.head.init.isNothing()) {
-//      left = left.map(x -> x.addReference(Accessibility.Write), x -> x);
-//    }
-//    return super.reduceForInStatement(node, path, left, right, body);
-//  }
-//
-//  @NotNull
-//  @Override
-//  public State reduceScript(@NotNull Script node, @NotNull ImmutableList<Branch> path, @NotNull State body) {
-//    return super.reduceScript(node, path, body).finish(node, Scope.Type.Global);
-//  }
-//
-//  @NotNull
-//  @Override
-//  public State reduceFunctionDeclaration(
-//      @NotNull FunctionDeclaration node,
-//      @NotNull ImmutableList<Branch> path,
-//      @NotNull State id,
-//      @NotNull ImmutableList<State> params,
-//      @NotNull State programBody) {
-//    params = params.map(s -> s.addDeclaration(Kind.Param));
-//    ImmutableList<Branch> lastPath = id.lastPath;
-//    Identifier lastIdentifier = id.lastIdentifier;
-//    assert lastPath != null;
-//    assert lastIdentifier != null;
-//    return super.reduceFunctionDeclaration(node, path, id, params, programBody).finish(node, Scope.Type.Function)
-//        .addDeclaration(lastPath, lastIdentifier, Kind.FunctionName);
-//  }
-//
-//  @NotNull
-//  @Override
-//  public State reduceFunctionExpression(
-//      @NotNull FunctionExpression node,
-//      @NotNull ImmutableList<Branch> path,
-//      @NotNull Maybe<State> id,
-//      @NotNull ImmutableList<State> params,
-//      @NotNull State programBody) {
-//    params = params.map(s -> s.addDeclaration(Kind.Param));
-//    State s = super.reduceFunctionExpression(node, path, id, params, programBody)
-//        .finish(node, Scope.Type.Function);
-//    if (id.isJust()) {
-//      s = s.target(id.just()).addDeclaration(Kind.FunctionName);
-//      s = s.finish(node, Scope.Type.FunctionName);
-//    }
-//    return s;
-//  }
-//
-//  @NotNull
-//  @Override
-//  public State reduceGetter(@NotNull Getter node, @NotNull ImmutableList<Branch> path, @NotNull State key, @NotNull State body) {
-//    return body.finish(node, Scope.Type.Function);
-//  }
-//
-//  @NotNull
-//  @Override
-//  public State reduceSetter(
-//      @NotNull Setter node,
-//      @NotNull ImmutableList<Branch> path,
-//      @NotNull State key,
-//      @NotNull State param,
-//      @NotNull State body) {
-//    return super.reduceSetter(node, path, key, param.addDeclaration(Kind.Param), body).finish(node,
-//        Scope.Type.Function);
-//  }
-//
-//  @NotNull
-//  @Override
-//  public State reduceWithStatement(
-//      @NotNull WithStatement node,
-//      @NotNull ImmutableList<Branch> path,
-//      @NotNull State object,
-//      @NotNull State body) {
-//    return super.reduceWithStatement(node, path, object, body.finish(node, Scope.Type.With));
-//  }
-//
-//  @NotNull
-//  @Override
-//  public State reduceCatchClause(
-//      @NotNull CatchClause node,
-//      @NotNull ImmutableList<Branch> path,
-//      @NotNull State param,
-//      @NotNull State body) {
-//    return super.reduceCatchClause(node, path, param.addDeclaration(Kind.CatchParam), body).finish(node,
-//        Scope.Type.Catch);
-//  }
-//
-//  @NotNull
-//  @Override
-//  public State reduceBlock(@NotNull Block node, @NotNull ImmutableList<Branch> path, @NotNull ImmutableList<State> statements) {
-//    State s = super.reduceBlock(node, path, statements);
-//    if (s.blockScopedDeclarations.length > 0) {
-//      s = s.finish(node, Scope.Type.Block);
-//    }
-//    return s;
-//  }
-//
-//  @NotNull
-//  @Override
-//  public State reducePostfixExpression(
-//      @NotNull PostfixExpression node,
-//      @NotNull ImmutableList<Branch> path,
-//      @NotNull State operand) {
-//    if (node.operand instanceof IdentifierExpression) {
-//      operand = operand.addReference(Accessibility.ReadWrite);
-//    }
-//    return super.reducePostfixExpression(node, path, operand);
-//  }
-//
-//  @NotNull
-//  @Override
-//  public State reducePrefixExpression(
-//      @NotNull PrefixExpression node,
-//      @NotNull ImmutableList<Branch> path,
-//      @NotNull State operand) {
-//    if ((node.operator == PrefixOperator.Decrement || node.operator == PrefixOperator.Increment) &&
-//        node.operand instanceof IdentifierExpression) {
-//      operand = operand.addReference(Accessibility.ReadWrite);
-//    }
-//    return super.reducePrefixExpression(node, path, operand);
-//  }
-//
-//  @NotNull
-//  @Override
-//  public State reduceVariableDeclaration(
-//      @NotNull VariableDeclaration node, @NotNull ImmutableList<Branch> path, @NotNull NonEmptyImmutableList<State> declarators) {
-//    Kind kind = Kind.fromVariableDeclarationKind(node.kind);
-//    ImmutableList<State> l = declarators;
-//    while (!l.isEmpty()) {
-//      l = l.maybeTail().just();
-//    }
-//    return super.reduceVariableDeclaration(
-//        node,
-//        path,
-//        declarators.map(d -> d.addDeclaration(kind, d.lastDeclaratorWasInit)))
-//        .target(declarators.head); // cached id of VariableDeclaration for ForVarInStatement where only one declarator is allowed
-//  }
-//
-//  @NotNull
-//  @Override
-//  public State reduceVariableDeclarator(
-//      @NotNull VariableDeclarator node,
-//      @NotNull ImmutableList<Branch> path,
-//      @NotNull State id,
-//      @NotNull Maybe<State> init) {
-//    if (init.isJust()) {
-//      id = id.addReference(Accessibility.Write, true);
-//    }
-//    return super.reduceVariableDeclarator(node, path, id, init).target(id);
-//  }
-//
-//  @SuppressWarnings("ProtectedInnerClass")
-//  public static final class State {
-//    public final boolean dynamic;
-//    @NotNull
-//    public final HashTable<String, HashTable<ImmutableList<Branch>, Reference>> freeIdentifiers;
-//    @NotNull
-//    public final HashTable<String, HashTable<ImmutableList<Branch>, Declaration>> functionScopedDeclarations;
-//    @NotNull
-//    public final HashTable<String, HashTable<ImmutableList<Branch>, Declaration>> blockScopedDeclarations;
-//    @NotNull
-//    public final Set<String> functionScopedInit; // function scoped variables with initializers
-//    @NotNull
-//    public final ImmutableList<Variable> blockScopedTiedVar; // function scoped init vars captured by block scope
-//    @NotNull
-//    public final ImmutableList<Scope> children;
-//    @Nullable
-//    public final ImmutableList<Branch> lastPath;
-//    @Nullable
-//    public final Identifier lastIdentifier;
-//    public final boolean lastDeclaratorWasInit;
-//    // cached status indicating that declarator below declaration was initialized
-//
-//    /*
-//     * Fully saturated constructor
-//     */
-//    private State(
-//        @NotNull HashTable<String, HashTable<ImmutableList<Branch>, Reference>> freeIdentifiers,
-//        @NotNull HashTable<String, HashTable<ImmutableList<Branch>, Declaration>> functionScopedDeclarations,
-//        @NotNull HashTable<String, HashTable<ImmutableList<Branch>, Declaration>> blockScopedDeclarations,
-//        @NotNull Set<String> functionScopedInit,
-//        @NotNull ImmutableList<Variable> blockScopedTiedVar,
-//        @NotNull ImmutableList<Scope> children,
-//        boolean dynamic,
-//        @Nullable ImmutableList<Branch> lastPath,
-//        @Nullable Identifier lastIdentifier,
-//        boolean lastDeclaratorWasInit
-//    ) {
-//      this.freeIdentifiers = freeIdentifiers;
-//      this.functionScopedDeclarations = functionScopedDeclarations;
-//      this.blockScopedDeclarations = blockScopedDeclarations;
-//      this.functionScopedInit = functionScopedInit;
-//      this.blockScopedTiedVar = blockScopedTiedVar;
-//      this.children = children;
-//      this.dynamic = dynamic;
-//      this.lastPath = lastPath;
-//      this.lastIdentifier = lastIdentifier;
-//      this.lastDeclaratorWasInit = lastDeclaratorWasInit;
-//    }
-//
-//    /*
-//     * Identity constructor
-//     */
-//    private State() {
-//      this.freeIdentifiers = HashTable.empty();
-//      this.functionScopedDeclarations = HashTable.empty();
-//      this.blockScopedDeclarations = HashTable.empty();
-//      this.functionScopedInit = new HashSet<>();
-//      this.blockScopedTiedVar = ImmutableList.nil();
-//      this.children = ImmutableList.nil();
-//      this.dynamic = false;
-//      this.lastPath = null;
-//      this.lastIdentifier = null;
-//      this.lastDeclaratorWasInit = false;
-//    }
-//
-//    /*
-//     * Monoidal append: merges the two states together
-//     */
-//    @SuppressWarnings({"AccessingNonPublicFieldOfAnotherObject", "ObjectEquality"})
-//    private State(@NotNull State a, @NotNull State b) {
-//      this.freeIdentifiers = merge(a.freeIdentifiers, b.freeIdentifiers);
-//      this.functionScopedDeclarations = merge(a.functionScopedDeclarations, b.functionScopedDeclarations);
-//      this.blockScopedDeclarations = merge(a.blockScopedDeclarations, b.blockScopedDeclarations);
-//      this.functionScopedInit = mergeSet(a.functionScopedInit, b.functionScopedInit);
-//      this.blockScopedTiedVar = a.blockScopedTiedVar.append(b.blockScopedTiedVar);
-//      this.children = a.children.append(b.children);
-//      this.dynamic = a.dynamic || b.dynamic;
-//      this.lastPath = null;
-//      this.lastIdentifier = null;
-//      this.lastDeclaratorWasInit = false;
-//    }
-//
-//    /*
-//     * Utility method to merge MultiMaps
-//     */
-//    @NotNull
-//    private static <T> HashTable<String, HashTable<ImmutableList<Branch>, T>> merge(
-//        @NotNull HashTable<String, HashTable<ImmutableList<Branch>, T>> mapA,
-//        @NotNull HashTable<String, HashTable<ImmutableList<Branch>, T>> mapB) {
-//      return mapA.merge(mapB, HashTable::merge);
-//    }
-//
-//    @NotNull
-//    private static Set<String> mergeSet(@NotNull Set<String> setA, @NotNull Set<String> setB) {
-//      if (setB.isEmpty()) {
-//        return setA;
-//      }
-//      if (setA.isEmpty()) {
-//        return setB;
-//      }
-//
-//      Set<String> setC = new HashSet<>();
-//      setC.addAll(setA);
-//      setC.addAll(setB);
-//      return setC;
-//    }
-//
-//    /*
-//     * Used when a scope boundary is encountered. It resolves the free identifiers
-//     * and declarations found into variable objects. Any free identifiers remaining
-//     * are carried forward into the new state object.
-//     */
-//    private State finish(@NotNull Node astNode, @NotNull Scope.Type scopeType) {
-//      ImmutableList<Variable> variables = ImmutableList.nil();
-//
-//      HashTable<String, HashTable<ImmutableList<Branch>, Declaration>> functionScope = HashTable.empty();
-//      HashTable<String, HashTable<ImmutableList<Branch>, Reference>> freeIdentifiers = this.freeIdentifiers;
-//      Set<String> functionScopedInit = new HashSet<>();
-//      ImmutableList<Variable> blockScopedTiedVar = ImmutableList.nil();
-//
-//      switch (scopeType) {
-//      case Block:
-//      case Catch:
-//      case With:
-//        // resolve only block-scoped free declarations
-//        ImmutableList<Variable> variables3 = variables;
-//        for (Pair<String, HashTable<ImmutableList<Branch>, Declaration>> entry2 : this.blockScopedDeclarations.entries()) {
-//          String name2 = entry2.a;
-//          HashTable<ImmutableList<Branch>, Declaration> declarations2 = entry2.b;
-//          HashTable<ImmutableList<Branch>, Reference> references2 = freeIdentifiers.get(name2).orJust(HashTable.empty());
-//          variables3 = ImmutableList.cons(new Variable(name2, references2, declarations2), variables3);
-//          freeIdentifiers = freeIdentifiers.remove(name2);
-//        }
-//        variables = variables3;
-//        functionScope = this.functionScopedDeclarations;
-//        functionScopedInit.addAll(this.functionScopedInit);
-//        ImmutableList<Variable> vptr = variables;
-//        blockScopedTiedVar = this.blockScopedTiedVar;
-//        while (!vptr.isEmpty()) {
-//          Variable v = vptr.maybeHead().just();
-//          if (functionScopedInit.contains(v.name)) {
-//            blockScopedTiedVar = blockScopedTiedVar.cons(v);
-//            functionScopedInit.remove(v.name);
-//          }
-//          vptr = vptr.maybeTail().just();
-//        }
-//        break;
-//      default:
-//        // resolve both block-scoped and function-scoped free declarations
-//        if (scopeType == Scope.Type.Function) {
-//          ImmutableList<Variable> variables1 = variables;
-//          HashTable<ImmutableList<Branch>, Reference> arguments = freeIdentifiers.get("arguments").orJust(HashTable.empty());
-//          freeIdentifiers = freeIdentifiers.remove("arguments");
-//          variables1 = ImmutableList.cons(new Variable("arguments", arguments, HashTable.empty()), variables1);
-//          variables = variables1;
-//        }
-//        ImmutableList<Variable> variables2 = variables;
-//        for (Pair<String, HashTable<ImmutableList<Branch>, Declaration>> entry1 : this.blockScopedDeclarations.entries()) {
-//          String name1 = entry1.a;
-//          HashTable<ImmutableList<Branch>, Declaration> declarations1 = entry1.b;
-//          HashTable<ImmutableList<Branch>, Reference> references1 = freeIdentifiers.get(name1).orJust(HashTable.empty());
-//          variables2 = ImmutableList.cons(new Variable(name1, references1, declarations1), variables2);
-//          freeIdentifiers = freeIdentifiers.remove(name1);
-//        }
-//        variables = variables2;
-//        ImmutableList<Variable> variables1 = variables;
-//        for (Pair<String, HashTable<ImmutableList<Branch>, Declaration>> entry : this.functionScopedDeclarations.entries()) {
-//          String name = entry.a;
-//          HashTable<ImmutableList<Branch>, Declaration> declarations = entry.b;
-//          HashTable<ImmutableList<Branch>, Reference> references =
-//              freeIdentifiers.get(name).orJust(HashTable.empty());
-//          variables1 = ImmutableList.cons(new Variable(name, references, declarations), variables1);
-//          freeIdentifiers = freeIdentifiers.remove(name);
-//        }
-//        variables = variables1;
-//        break;
-//      }
-//
-//      Scope scope = scopeType == Scope.Type.Global ?
-//          new GlobalScope(this.children, variables, blockScopedTiedVar, freeIdentifiers, astNode) :
-//          new Scope(this.children, variables, blockScopedTiedVar, freeIdentifiers, scopeType, this.dynamic, astNode);
-//
-//      return new State(
-//          freeIdentifiers, functionScope, HashTable.empty(), functionScopedInit, blockScopedTiedVar,
-//          ImmutableList.list(scope), false, this.lastPath, this.lastIdentifier, this.lastDeclaratorWasInit);
-//    }
-//
-//    /*
-//     * Observe a variable entering scope
-//     */
-//    @NotNull
-//    private State addDeclaration(@NotNull Kind kind) {
-//      return addDeclaration(kind, false);
-//    }
-//
-//    @NotNull
-//    private State addDeclaration(@NotNull Kind kind, boolean hasInit) {
-//      assert this.lastPath != null;
-//      assert this.lastIdentifier != null;
-//      return addDeclaration(this.lastPath, this.lastIdentifier, kind, this.lastDeclaratorWasInit);
-//    }
-//
-//    @NotNull
-//    private State addDeclaration(@NotNull ImmutableList<Branch> path, @NotNull Identifier id, @NotNull Kind kind) {
-//      return addDeclaration(path, id, kind, false);
-//    }
-//
-//    @NotNull
-//    private State addDeclaration(@NotNull ImmutableList<Branch> path, @NotNull Identifier id, @NotNull Kind kind,
-//                                 boolean hasInit) {
-//      Declaration decl = new Declaration(id, path, kind);
-//      HashTable<String, HashTable<ImmutableList<Branch>, Declaration>> declMap =
-//          kind.isBlockScoped ? this.blockScopedDeclarations : this.functionScopedDeclarations;
-//      HashTable<ImmutableList<Branch>, Declaration> tree = declMap.get(id.name).orJust(HashTable.empty()).put(decl.path, decl);
-//      declMap = declMap.put(id.name, tree);
-//      Set<String> functionScopedInit = this.functionScopedInit;
-//      if (hasInit && kind.isFunctionScoped) {
-//        functionScopedInit = new HashSet<>();
-//        functionScopedInit.addAll(this.functionScopedInit);
-//        functionScopedInit.add(id.name);
-//      }
-//      return new State(
-//          this.freeIdentifiers,
-//          kind.isBlockScoped ? this.functionScopedDeclarations : declMap,
-//          kind.isBlockScoped ? declMap : this.blockScopedDeclarations,
-//          functionScopedInit, this.blockScopedTiedVar, this.children,
-//          this.dynamic,
-//          this.lastPath,
-//          this.lastIdentifier,
-//          false
-//      );
-//    }
-//
-//    /*
-//     * Observe a reference to a variable
-//     */
-//    @NotNull
-//    public State addReference(@NotNull Accessibility accessibility) {
-//      return addReference(accessibility, false);
-//    }
-//
-//    @NotNull
-//    public State addReference(@NotNull Accessibility accessibility, boolean hasInit) {
-//      ImmutableList<Branch> path = this.lastPath;
-//      Identifier id = this.lastIdentifier;
-//      assert path != null;
-//      assert id != null;
-//      return addReference(path, id, accessibility, hasInit);
-//    }
-//
-//    @NotNull
-//    private State addReference(@NotNull ImmutableList<Branch> path, @NotNull Identifier id,
-//                               @NotNull Accessibility accessibility) {
-//      return addReference(path, id, accessibility, false);
-//    }
-//
-//    @NotNull
-//    private State addReference(@NotNull ImmutableList<Branch> path, @NotNull Identifier id, @NotNull Accessibility accessibility,
-//                               boolean hasInit) {
-//      Reference ref = new Reference(id, path, accessibility);
-//      HashTable<String, HashTable<ImmutableList<Branch>, Reference>> free = this.freeIdentifiers;
-//      HashTable<ImmutableList<Branch>, Reference> tree = free.get(ref.node.name).orJust(HashTable.empty()).put(ref.path, ref);
-//      free = free.put(ref.node.name, tree);
-//      return new State(
-//          free,
-//          this.functionScopedDeclarations,
-//          this.blockScopedDeclarations,
-//          this.functionScopedInit,
-//          this.blockScopedTiedVar,
-//          this.children,
-//          this.dynamic,
-//          this.lastPath,
-//          this.lastIdentifier,
-//          hasInit
-//      );
-//    }
-//
-//    @NotNull
-//    public State taint() {
-//      return new State(
-//          this.freeIdentifiers,
-//          this.functionScopedDeclarations,
-//          this.blockScopedDeclarations,
-//          this.functionScopedInit,
-//          this.blockScopedTiedVar,
-//          this.children,
-//          true,
-//          this.lastPath,
-//          this.lastIdentifier,
-//          this.lastDeclaratorWasInit
-//      );
-//    }
-//
-//    @NotNull
-//    public State target(@Nullable State id) {
-//      assert id != null;
-//      return new State(this.freeIdentifiers, this.functionScopedDeclarations, this.blockScopedDeclarations,
-//          this.functionScopedInit, this.blockScopedTiedVar, this.children, this.dynamic,
-//          id.lastPath, id.lastIdentifier, id.lastDeclaratorWasInit);
-//    }
-//  }
-//
-//  @SuppressWarnings("ProtectedInnerClass")
-//  public static final class StateMonoid implements Monoid<State> {
-//    @Override
-//    @NotNull
-//    public State identity() {
-//      return new State();
-//    }
-//
-//    @Override
-//    @NotNull
-//    public State append(State a, State b) {
-//      if (a == b) {
-//        return a;
-//      }
-//      return new State(a, b);
-//    }
-//  }
-//}
+/*
+ * Copyright 2014 Shape Security, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package com.shapesecurity.shift.scope;
+
+import com.shapesecurity.functional.Pair;
+import com.shapesecurity.functional.data.HashTable;
+import com.shapesecurity.functional.data.ImmutableList;
+import com.shapesecurity.functional.data.Maybe;
+import com.shapesecurity.functional.data.Monoid;
+import com.shapesecurity.shift.ast.*;
+import com.shapesecurity.shift.scope.Declaration.Kind;
+import com.shapesecurity.shift.visitor.Director;
+import com.shapesecurity.shift.visitor.MonoidalReducer;
+import org.jetbrains.annotations.NotNull;
+
+public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
+  private static final ScopeAnalyzer INSTANCE = new ScopeAnalyzer();
+
+  private ScopeAnalyzer() {
+    super(new StateMonoid());
+  }
+
+  @NotNull
+  public static GlobalScope analyze(@NotNull Script script) {
+    return (GlobalScope) Director.reduceScript(INSTANCE, script).children.maybeHead().just();
+  }
+
+  @NotNull
+  public static GlobalScope analyze(@NotNull Module module) {
+      return (GlobalScope) Director.reduceModule(INSTANCE, module).children.maybeHead().just();
+  }
+
+  @NotNull
+  private State functionHelper(@NotNull Node fnNode, @NotNull State params, @NotNull State body, boolean isArrowFn) {
+      Scope.Type fnType = isArrowFn ? Scope.Type.ArrowFunction : Scope.Type.Function;
+      if(params.hasParameterExpressions) {
+          params = params.withoutParameterExpressions(); // no need to pass that information on
+          return new State(params, body.finish(fnNode, fnType)).addDeclarations(Kind.Param).finish(fnNode, Scope.Type.Parameters, !isArrowFn);
+      }
+      else {
+          return new State(params.addDeclarations(Kind.Param), body).finish(fnNode, fnType, !isArrowFn);
+      }
+  }
+
+  @NotNull // TODO you'd think you'd need to do this for labelled function declarations too
+  private ImmutableList<BindingIdentifier> varScopedFunctionHelper(@NotNull ImmutableList<Statement> statements) { // get the names of functions declared in the statement list
+      ImmutableList<BindingIdentifier> potentiallyVarScopedFunctionDeclarations = ImmutableList.nil();
+      for(Statement statement: statements) { // TODO this is not a very clean way of doing this
+          if(statement instanceof FunctionDeclaration) {
+              FunctionDeclaration f = (FunctionDeclaration) statement;
+              potentiallyVarScopedFunctionDeclarations = potentiallyVarScopedFunctionDeclarations.cons(f.name);
+          }
+      }
+      return potentiallyVarScopedFunctionDeclarations;
+  }
+
+  @NotNull
+  @Override
+  public State reduceArrowExpression(@NotNull ArrowExpression node, @NotNull State params, @NotNull State body) {
+      return functionHelper(node, params, body, true);
+  }
+
+  @NotNull
+  @Override
+  public State reduceAssignmentExpression(@NotNull AssignmentExpression node, @NotNull State binding, @NotNull State expression) {
+    return super.reduceAssignmentExpression(node, binding.addReferences(Accessibility.Write), expression);
+  }
+
+  @NotNull
+  @Override
+  public State reduceBindingIdentifier(@NotNull BindingIdentifier node) {
+    return new State(
+        HashTable.empty(),
+        HashTable.empty(),
+        HashTable.empty(),
+        ImmutableList.nil(),
+        false,
+        ImmutableList.list(node),
+        HashTable.empty(),
+        false
+    );
+  }
+  @NotNull
+  @Override
+  public State reduceBindingPropertyIdentifier(@NotNull BindingPropertyIdentifier node, @NotNull State binding, @NotNull Maybe<State> init) {
+      State s = super.reduceBindingPropertyIdentifier(node, binding, init);
+      if(init.isJust()) {
+          return s.withParameterExpressions();
+      }
+      return s;
+  }
+
+  @NotNull
+  @Override
+  public State reduceBindingWithDefault(@NotNull BindingWithDefault node, @NotNull State binding, @NotNull State init) {
+      return super.reduceBindingWithDefault(node, binding, init).withParameterExpressions();
+  }
+
+    @NotNull
+  @Override
+  public State reduceBlock(@NotNull Block node, @NotNull ImmutableList<State> statements) {
+      return super.reduceBlock(node, statements).withPotentialVarFunctions(varScopedFunctionHelper(node.statements)).finish(node, Scope.Type.Block);
+  }
+
+  @NotNull
+  @Override
+  public State reduceCallExpression(@NotNull CallExpression node, @NotNull State callee, @NotNull ImmutableList<State> arguments) {
+      State s = super.reduceCallExpression(node, callee, arguments);
+      if (node.callee instanceof IdentifierExpression && ((IdentifierExpression) node.callee).name.equals("eval")) {
+          return s.taint();
+      }
+      return s;
+  }
+
+  @NotNull
+  @Override
+  public State reduceCatchClause(@NotNull CatchClause node, @NotNull State param, @NotNull State body) {
+      return super.reduceCatchClause(node, param.addDeclarations(Kind.CatchParam), body).finish(node, Scope.Type.Catch);
+  }
+
+  @NotNull
+  @Override
+  public State reduceClassDeclaration(@NotNull ClassDeclaration node, @NotNull State name, @NotNull Maybe<State> _super, @NotNull ImmutableList<State> elements) {
+      return super.reduceClassDeclaration(node, name.addDeclarations(Kind.ClassName), _super, elements);
+  }
+
+  @NotNull
+  @Override
+  public State reduceClassExpression(@NotNull ClassExpression node, @NotNull Maybe<State> name, @NotNull Maybe<State> _super, @NotNull ImmutableList<State> elements) {
+      return super.reduceClassExpression(node, name, _super, elements).addDeclarations(Kind.ClassName).finish(node, Scope.Type.FunctionName);
+  }
+
+  @NotNull
+  @Override
+  public State reduceCompoundAssignmentExpression(@NotNull CompoundAssignmentExpression node, @NotNull State binding, @NotNull State expression) {
+      return super.reduceCompoundAssignmentExpression(node, binding.addReferences(Accessibility.ReadWrite), expression);
+  }
+
+  @NotNull
+  @Override
+  public State reduceComputedMemberExpression(@NotNull ComputedMemberExpression node, @NotNull State object, @NotNull State expression) {
+      return super.reduceComputedMemberExpression(node, object, expression).withParameterExpressions();
+  }
+
+  @NotNull
+  @Override
+  public State reduceForInStatement(@NotNull ForInStatement node, @NotNull State left, @NotNull State right, @NotNull State body) {
+      return super.reduceForInStatement(node, left.addReferences(Accessibility.Write), right, body).finish(node, Scope.Type.Block);
+  }
+
+  @NotNull
+  @Override
+  public State reduceForOfStatement(@NotNull ForOfStatement node, @NotNull State left, @NotNull State right, @NotNull State body) {
+      return super.reduceForOfStatement(node, left.addReferences(Accessibility.Write), right, body).finish(node, Scope.Type.Block);
+  }
+
+  @NotNull
+  @Override
+  public State reduceForStatement(@NotNull ForStatement node, @NotNull Maybe<State> init, @NotNull Maybe<State> test, @NotNull Maybe<State> update, @NotNull State body) {
+      return super.reduceForStatement(node, init, test, update, body).finish(node, Scope.Type.Block);
+  }
+
+  @NotNull
+  @Override
+  public State reduceFormalParameters(@NotNull FormalParameters node, @NotNull ImmutableList<State> items, @NotNull Maybe<State> rest) {
+      return items.foldLeft((x, y) ->
+                      new State(x.hasParameterExpressions ? x.finish(node, Scope.Type.ParameterExpression) : x, y),
+              rest.orJust(new State()))
+              .addDeclarations(Kind.Param);
+      // TODO have the node associated with a parameter's scope be more precise than the full list of parameters
+  }
+
+    // TODO should defining a function count as writing to its name, for symmetry with initialized variable declaration
+  @NotNull
+  @Override
+  public State reduceFunctionDeclaration(@NotNull FunctionDeclaration node, @NotNull State name, @NotNull State params, @NotNull State body) {
+      return new State(name, functionHelper(node, params, body, false)).addDeclarations(Kind.FunctionName);
+  }
+
+    // TODO should defining a function count as writing to its name, for symmetry with initialized variable declaration
+  @NotNull
+  @Override
+  public State reduceFunctionExpression(@NotNull FunctionExpression node, @NotNull Maybe<State> name, @NotNull State parameters, @NotNull State body) {
+      State primary = functionHelper(node, parameters, body, false);
+      if(name.isJust()) {
+          return new State(name.just(), primary).addDeclarations(Kind.FunctionName).finish(node, Scope.Type.FunctionName);
+      }
+      else {
+          return primary; // per spec, no function name scope is created for unnamed expressions.
+      }
+  }
+
+  @NotNull
+  @Override
+  public State reduceGetter(@NotNull Getter node, @NotNull State name, @NotNull State body) {
+      return new State(name, body.finish(node, Scope.Type.Function, true));
+      // variables defined in body are not in scope when evaluating name (which may be computed)
+  }
+
+  @NotNull
+  @Override
+  public State reduceIdentifierExpression(@NotNull IdentifierExpression node) {
+      Reference ref = new Reference(node);
+      return new State(
+          HashTable.<String, ImmutableList<Reference>>empty().put(node.name, ImmutableList.list(ref)),
+          HashTable.empty(),
+          HashTable.empty(),
+          ImmutableList.nil(),
+          false,
+          ImmutableList.nil(),
+          HashTable.empty(),
+          false
+      );
+  }
+
+    @NotNull
+    @Override
+    public State reduceIfStatement(@NotNull IfStatement node, @NotNull State test, @NotNull State consequent, @NotNull Maybe<State> alternate) {
+        ImmutableList<Statement> statements = ImmutableList.list(node.consequent);
+        if(node.alternate.isJust()) {
+            statements = statements.cons(node.alternate.just());
+        }
+        return super.reduceIfStatement(node, test, consequent, alternate).withPotentialVarFunctions(varScopedFunctionHelper(statements));
+    }
+
+
+  @NotNull
+  @Override
+  public State reduceMethod(@NotNull Method node, @NotNull State params, @NotNull State body, @NotNull State name) {
+      return new State(name, functionHelper(node, params, body, false));
+  }
+
+  @NotNull
+  @Override
+  public State reduceModule(@NotNull Module node, @NotNull ImmutableList<State> directives, @NotNull ImmutableList<State> statements) {
+      return super.reduceModule(node, directives, statements).finish(node, Scope.Type.Module);
+  }
+
+  @NotNull
+  @Override
+  public State reduceScript(@NotNull Script node, @NotNull ImmutableList<State> directives, @NotNull ImmutableList<State> statements) {
+      return super.reduceScript(node, directives, statements).finish(node, Scope.Type.Global);
+  }
+
+  @NotNull
+  @Override
+  public State reduceSetter(@NotNull Setter node, @NotNull State name, @NotNull State parameter, @NotNull State body) {
+      parameter = parameter.hasParameterExpressions ? parameter.finish(node, Scope.Type.ParameterExpression) : parameter;
+      return new State(name, functionHelper(node, parameter.addDeclarations(Kind.Param), body, false));
+      // TODO have the node associated with the parameter's scope be more precise
+  }
+
+
+  @NotNull
+  @Override
+  public State reduceSwitchCase(@NotNull SwitchCase node, @NotNull State test, @NotNull ImmutableList<State> consequent) {
+      return super.reduceSwitchCase(node, test, consequent).withPotentialVarFunctions(varScopedFunctionHelper(node.consequent));
+  }
+
+  @NotNull
+  @Override
+  public State reduceSwitchDefault(@NotNull SwitchDefault node, @NotNull ImmutableList<State> consequent) {
+      return super.reduceSwitchDefault(node, consequent).withPotentialVarFunctions(varScopedFunctionHelper(node.consequent));
+  }
+
+  @NotNull
+  @Override
+  public State reduceUpdateExpression(@NotNull UpdateExpression node, @NotNull State operand) {
+      return operand.addReferences(Accessibility.ReadWrite);
+      // no-op if operand is a member expression (which will have no bindingsForParent)
+  }
+
+  @NotNull
+  @Override
+  public State reduceVariableDeclaration(@NotNull VariableDeclaration node, @NotNull ImmutableList<State> declarators) {
+      return super.reduceVariableDeclaration(node, declarators).addDeclarations(Kind.fromVariableDeclarationKind(node.kind), true);
+      // passes bindingsForParent up, for for-in and for-of to add their write-references
+  }
+
+  @NotNull
+  @Override
+  public State reduceVariableDeclarationStatement(@NotNull VariableDeclarationStatement node, @NotNull State declaration) {
+      return declaration.withoutBindingsForParent();
+  }
+
+  @NotNull
+  @Override
+  public State reduceVariableDeclarator(@NotNull VariableDeclarator node, @NotNull State binding, @NotNull Maybe<State> init) {
+      State res = super.reduceVariableDeclarator(node, binding, init);
+      if(init.isJust()) {
+          return res.addReferences(Accessibility.Write, true);
+          // passes bindingsForParent up, for variableDeclaration to add the appropriate type of declaration
+      }
+      else {
+          return res;
+      }
+  }
+
+  @NotNull
+  @Override
+  public State reduceWithStatement(@NotNull WithStatement node, @NotNull State object, @NotNull State body) {
+      return super.reduceWithStatement(node, object, body.finish(node, Scope.Type.With));
+  }
+
+
+
+
+
+
+
+  @SuppressWarnings("ProtectedInnerClass")
+  public static final class State {
+    public final boolean dynamic;
+    public final boolean hasParameterExpressions; // to decide if function parameters are in a different scope than function variables. only meaningful on `params` states and their children. true iff `params` has any default values or computed member accesses among its children.
+    @NotNull
+    public final HashTable<String, ImmutableList<Reference>> freeIdentifiers;
+    @NotNull
+    public final HashTable<String, ImmutableList<Declaration>> functionScopedDeclarations;
+    @NotNull
+    public final HashTable<String, ImmutableList<Declaration>> blockScopedDeclarations;
+    @NotNull
+    public final ImmutableList<Scope> children;
+    @NotNull
+    public final ImmutableList<BindingIdentifier> bindingsForParent; // either references bubbling up to the AssignmentExpression, ForOfStatement, or ForInStatement which writes to them or declarations bubbling up to the VariableDeclaration, FunctionDeclaration, ClassDeclaration, FormalParameters, Setter, Method, or CatchClause which declares them
+    @NotNull
+    public final HashTable<String, BindingIdentifier> potentiallyVarScopedFunctionDeclarations; // for annex B.3.3, which says (essentially) that function declarations are *also* var-scoped if doing so is not an early error (although not at the top level; only within functions).
+
+    /*
+     * Fully saturated constructor
+     */
+    private State(
+        @NotNull HashTable<String, ImmutableList<Reference>> freeIdentifiers,
+        @NotNull HashTable<String, ImmutableList<Declaration>> functionScopedDeclarations,
+        @NotNull HashTable<String, ImmutableList<Declaration>> blockScopedDeclarations,
+        @NotNull ImmutableList<Scope> children,
+        boolean dynamic,
+        @NotNull ImmutableList<BindingIdentifier> bindingsForParent,
+        @NotNull HashTable<String, BindingIdentifier> potentiallyVarScopedFunctionDeclarations,
+        boolean hasParameterExpressions
+    ) {
+      this.freeIdentifiers = freeIdentifiers;
+      this.functionScopedDeclarations = functionScopedDeclarations;
+      this.blockScopedDeclarations = blockScopedDeclarations;
+      this.children = children;
+      this.dynamic = dynamic;
+      this.bindingsForParent = bindingsForParent;
+      this.potentiallyVarScopedFunctionDeclarations = potentiallyVarScopedFunctionDeclarations;
+      this.hasParameterExpressions = hasParameterExpressions;
+    }
+
+    /*
+     * Identity constructor
+     */
+    private State() {
+      this.freeIdentifiers = HashTable.empty();
+      this.functionScopedDeclarations = HashTable.empty();
+      this.blockScopedDeclarations = HashTable.empty();
+      this.children = ImmutableList.nil();
+      this.dynamic = false;
+      this.bindingsForParent = ImmutableList.nil();
+      this.potentiallyVarScopedFunctionDeclarations = HashTable.empty();
+      this.hasParameterExpressions = false;
+    }
+
+    /*
+     * Monoidal append: merges the two states together
+     */
+    @SuppressWarnings({"AccessingNonPublicFieldOfAnotherObject", "ObjectEquality"})
+    private State(@NotNull State a, @NotNull State b) {
+      this.freeIdentifiers = merge(a.freeIdentifiers, b.freeIdentifiers);
+      this.functionScopedDeclarations = merge(a.functionScopedDeclarations, b.functionScopedDeclarations);
+      this.blockScopedDeclarations = merge(a.blockScopedDeclarations, b.blockScopedDeclarations);
+      this.children = a.children.append(b.children);
+      this.dynamic = a.dynamic || b.dynamic;
+      this.bindingsForParent = a.bindingsForParent.append(b.bindingsForParent);
+      this.potentiallyVarScopedFunctionDeclarations = a.potentiallyVarScopedFunctionDeclarations.merge(b.potentiallyVarScopedFunctionDeclarations);
+      this.hasParameterExpressions = a.hasParameterExpressions || b.hasParameterExpressions;
+    }
+
+    /*
+     * Utility method to merge MultiMaps
+     */
+    @NotNull
+    private static <T> HashTable<String, ImmutableList<T>> merge(
+        @NotNull HashTable<String, ImmutableList<T>> mapA,
+        @NotNull HashTable<String, ImmutableList<T>> mapB) {
+      return mapA.merge(mapB, ImmutableList::append);
+    }
+
+    /*
+     * Used when a scope boundary is encountered. It resolves the free identifiers
+     * and declarations found into variable objects. Any free identifiers remaining
+     * are carried forward into the new state object.
+     */
+    private State finish(@NotNull Node astNode, @NotNull Scope.Type scopeType) {
+        return finish(astNode, scopeType, false);
+    }
+
+    private State finish(@NotNull Node astNode, @NotNull Scope.Type scopeType, boolean resolveArguments) {
+      ImmutableList<Variable> variables = ImmutableList.nil();
+
+      HashTable<String, ImmutableList<Declaration>> functionScope = HashTable.empty();
+      HashTable<String, ImmutableList<Reference>> freeIdentifiers = this.freeIdentifiers;
+      HashTable<String, BindingIdentifier> potentiallyVarScopedFunctionDeclarations = this.potentiallyVarScopedFunctionDeclarations;
+
+
+      switch (scopeType) {
+      case Block:
+      case Catch:
+      case With:
+      case FunctionName:
+      case Parameters:
+      case ParameterExpression:
+        // resolve only block-scoped free declarations
+        ImmutableList<Variable> variables3 = variables;
+        for (Pair<String, ImmutableList<Declaration>> entry2 : this.blockScopedDeclarations.entries()) {
+          String name2 = entry2.a;
+          ImmutableList<Declaration> declarations2 = entry2.b;
+          ImmutableList<Reference> references2 = freeIdentifiers.get(name2).orJust(ImmutableList.nil());
+          variables3 = ImmutableList.cons(new Variable(name2, references2, declarations2), variables3);
+          freeIdentifiers = freeIdentifiers.remove(name2);
+
+          // we do not create var-scoped bindings for functions if doing so would cause an early error, ie, if a containing block has a block-scoped declaration of the same name
+          Maybe<BindingIdentifier> maybeConflict = this.potentiallyVarScopedFunctionDeclarations.get(name2);
+          if(maybeConflict.isJust()) {
+              BindingIdentifier conflict = maybeConflict.just();
+              if(declarations2.length != 1 || declarations2.maybeHead().just().node != conflict) { // don't conflict with your own lexical declaration
+                  potentiallyVarScopedFunctionDeclarations = potentiallyVarScopedFunctionDeclarations.remove(name2);
+              }
+          }
+        }
+        variables = variables3;
+        functionScope = this.functionScopedDeclarations;
+        break;
+      case Function:
+      case ArrowFunction:
+      case Global:
+      case Module:
+        // resolve both block-scoped and function-scoped free declarations
+        if (resolveArguments) {
+          ImmutableList<Variable> variables1 = variables;
+          ImmutableList<Reference> arguments = freeIdentifiers.get("arguments").orJust(ImmutableList.nil());
+          freeIdentifiers = freeIdentifiers.remove("arguments");
+          variables1 = ImmutableList.cons(new Variable("arguments", arguments, ImmutableList.nil()), variables1);
+          variables = variables1;
+        }
+        ImmutableList<Variable> variables2 = variables;
+        for (Pair<String, ImmutableList<Declaration>> entry1 : this.blockScopedDeclarations.entries()) {
+          String name1 = entry1.a;
+          ImmutableList<Declaration> declarations1 = entry1.b;
+          ImmutableList<Reference> references1 = freeIdentifiers.get(name1).orJust(ImmutableList.nil());
+          variables2 = ImmutableList.cons(new Variable(name1, references1, declarations1), variables2);
+          freeIdentifiers = freeIdentifiers.remove(name1);
+
+          // we do not create var-scoped bindings for functions if doing so would cause an early error, ie, if a containing block has a block-scoped declaration of the same name
+          Maybe<BindingIdentifier> maybeConflict = this.potentiallyVarScopedFunctionDeclarations.get(name1);
+          if(maybeConflict.isJust()) {
+              BindingIdentifier conflict = maybeConflict.just();
+              if(declarations1.length != 1 || declarations1.maybeHead().just().node != conflict) { // don't conflict with your own lexical declaration
+                  potentiallyVarScopedFunctionDeclarations = potentiallyVarScopedFunctionDeclarations.remove(name1);
+              }
+          }
+        }
+        variables = variables2;
+
+        // arguably (B.3.3) we should create at most one declaration per name, but shouldn't really matter
+        HashTable<String, ImmutableList<Declaration>> funcScopedDeclarationsOrFunctions = this.functionScopedDeclarations;
+        if(scopeType == Scope.Type.Function || scopeType == Scope.Type.ArrowFunction) {
+            for(Pair<String, BindingIdentifier> fEntry : potentiallyVarScopedFunctionDeclarations.entries()) {
+                String fName = fEntry.a;
+                BindingIdentifier fBinding = fEntry.b;
+                ImmutableList<Declaration> declarations = funcScopedDeclarationsOrFunctions.get(fName).orJust(ImmutableList.nil());
+                funcScopedDeclarationsOrFunctions = funcScopedDeclarationsOrFunctions.put(fName, declarations.cons(new Declaration(fBinding, Kind.Var))); // TODO ensure this is the correct kind.
+            }
+        }
+
+        ImmutableList<Variable> variables1 = variables;
+        for (Pair<String, ImmutableList<Declaration>> entry : funcScopedDeclarationsOrFunctions.entries()) {
+          String name = entry.a;
+          ImmutableList<Declaration> declarations = entry.b;
+          ImmutableList<Reference> references = freeIdentifiers.get(name).orJust(ImmutableList.nil());
+          variables1 = ImmutableList.cons(new Variable(name, references, declarations), variables1);
+          freeIdentifiers = freeIdentifiers.remove(name);
+        }
+        variables = variables1;
+        break;
+      default:
+        throw new RuntimeException("Not reached");
+      }
+
+
+      Scope scope = scopeType == Scope.Type.Global ?
+          new GlobalScope(this.children, variables, freeIdentifiers, astNode) :
+              scopeType == Scope.Type.Module ?
+              new GlobalScope(ImmutableList.list(new Scope(this.children, variables, freeIdentifiers, scopeType, this.dynamic, astNode)), variables, freeIdentifiers, astNode)
+              : new Scope(this.children, variables, freeIdentifiers, scopeType, this.dynamic, astNode);
+
+      return new State(
+          freeIdentifiers, functionScope, HashTable.empty(),
+          ImmutableList.list(scope), false, this.bindingsForParent, potentiallyVarScopedFunctionDeclarations, false);
+    }
+
+    /*
+     * Observe variables entering scope
+     */
+    @NotNull
+    private State addDeclarations(@NotNull Kind kind) {
+        return addDeclarations(kind, false);
+    }
+
+    @NotNull
+    private State addDeclarations(@NotNull Kind kind, boolean keepBindingsForParent) {
+      HashTable<String, ImmutableList<Declaration>> declMap =
+              kind.isBlockScoped ? this.blockScopedDeclarations : this.functionScopedDeclarations;
+
+      for(BindingIdentifier binding : this.bindingsForParent) {
+          Declaration decl = new Declaration(binding, kind);
+          ImmutableList<Declaration> decls = declMap.get(binding.name).orJust(ImmutableList.nil());
+          decls = decls.cons(decl);
+          declMap = declMap.put(binding.name, decls);
+
+          // TODO remove this
+          // System.out.println("Declaring" + binding.name);
+      }
+      return new State(
+          this.freeIdentifiers,
+          kind.isBlockScoped ? this.functionScopedDeclarations : declMap,
+          kind.isBlockScoped ? declMap : this.blockScopedDeclarations,
+          this.children,
+          this.dynamic,
+          keepBindingsForParent ? this.bindingsForParent : ImmutableList.nil(),
+          this.potentiallyVarScopedFunctionDeclarations,
+          this.hasParameterExpressions
+      );
+    }
+
+    /*
+     * Observe references
+     */
+    @NotNull
+    public State addReferences(@NotNull Accessibility accessibility) {
+      return addReferences(accessibility, false);
+    }
+
+    @NotNull
+    private State addReferences(@NotNull Accessibility accessibility, boolean keepBindingsForParent) {
+      HashTable<String, ImmutableList<Reference>> free = this.freeIdentifiers;
+      for(BindingIdentifier binding : this.bindingsForParent) {
+          Reference ref = new Reference(binding, accessibility);
+          ImmutableList<Reference> refs = free.get(binding.name).orJust(ImmutableList.nil());
+          refs = refs.cons(ref);
+          free = free.put(binding.name, refs);
+      }
+      return new State(
+          free,
+          this.functionScopedDeclarations,
+          this.blockScopedDeclarations,
+          this.children,
+          this.dynamic,
+          keepBindingsForParent ? this.bindingsForParent : ImmutableList.nil(),
+          this.potentiallyVarScopedFunctionDeclarations,
+          this.hasParameterExpressions
+      );
+    }
+
+    @NotNull
+    public State taint() {
+      return new State(
+          this.freeIdentifiers,
+          this.functionScopedDeclarations,
+          this.blockScopedDeclarations,
+          this.children,
+          true,
+          this.bindingsForParent,
+          this.potentiallyVarScopedFunctionDeclarations,
+          this.hasParameterExpressions
+      );
+    }
+
+    @NotNull
+    public State withoutBindingsForParent() {
+      return new State(
+          this.freeIdentifiers,
+          this.functionScopedDeclarations,
+          this.blockScopedDeclarations,
+          this.children,
+          this.dynamic,
+          ImmutableList.nil(),
+          this.potentiallyVarScopedFunctionDeclarations,
+          this.hasParameterExpressions
+      );
+    }
+
+    @NotNull
+    public State withParameterExpressions() {
+      return new State(
+          this.freeIdentifiers,
+          this.functionScopedDeclarations,
+          this.blockScopedDeclarations,
+          this.children,
+          this.dynamic,
+          this.bindingsForParent,
+          this.potentiallyVarScopedFunctionDeclarations,
+          true
+      );
+    }
+
+    @NotNull
+    public State withoutParameterExpressions() {
+      return new State(
+          this.freeIdentifiers,
+          this.functionScopedDeclarations,
+          this.blockScopedDeclarations,
+          this.children,
+          this.dynamic,
+          this.bindingsForParent,
+          this.potentiallyVarScopedFunctionDeclarations,
+          false
+      );
+    }
+
+    @NotNull
+    public State withPotentialVarFunctions(@NotNull ImmutableList<BindingIdentifier> funcs) {
+        HashTable<String, BindingIdentifier> potentiallyVarScopedFunctionDeclarations = this.potentiallyVarScopedFunctionDeclarations;
+        for(BindingIdentifier bi: funcs) {
+            potentiallyVarScopedFunctionDeclarations = potentiallyVarScopedFunctionDeclarations.put(bi.name, bi);
+        }
+        return new State(
+          this.freeIdentifiers,
+          this.functionScopedDeclarations,
+          this.blockScopedDeclarations,
+          this.children,
+          this.dynamic,
+          this.bindingsForParent,
+          potentiallyVarScopedFunctionDeclarations,
+          this.hasParameterExpressions
+        );
+    }
+  }
+
+  @SuppressWarnings("ProtectedInnerClass")
+  private static final class StateMonoid implements Monoid<State> {
+    @Override
+    @NotNull
+    public State identity() {
+      return new State();
+    }
+
+    @Override
+    @NotNull
+    public State append(State a, State b) {
+      if (a == b) {
+        return a;
+      }
+      return new State(a, b);
+    }
+  }
+}
