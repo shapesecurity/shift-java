@@ -168,6 +168,7 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
       return super.reduceForOfStatement(node, left.addReferences(Accessibility.Write), right, body).finish(node, Scope.Type.Block);
   }
 
+  // TODO this is not correct; there's an intermediate scope: `for (let x;;) { let x }` is fine.
   @NotNull
   @Override
   public State reduceForStatement(@NotNull ForStatement node, @NotNull Maybe<State> init, @NotNull Maybe<State> test, @NotNull Maybe<State> update, @NotNull State body) {
@@ -416,7 +417,7 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
       HashTable<String, ImmutableList<Declaration>> functionScope = HashTable.empty();
       HashTable<String, ImmutableList<Reference>> freeIdentifiers = this.freeIdentifiers;
       HashTable<String, BindingIdentifier> potentiallyVarScopedFunctionDeclarations = this.potentiallyVarScopedFunctionDeclarations;
-
+      ImmutableList<Scope> children = this.children;
 
       switch (scopeType) {
       case Block:
@@ -475,9 +476,7 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
               }
           }
         }
-        variables = variables2;
 
-        // arguably (B.3.3) we should create at most one declaration per name, but shouldn't really matter
         HashTable<String, ImmutableList<Declaration>> funcScopedDeclarationsOrFunctions = this.functionScopedDeclarations;
         if(scopeType == Scope.Type.Function || scopeType == Scope.Type.ArrowFunction) {
             for(Pair<String, BindingIdentifier> fEntry : potentiallyVarScopedFunctionDeclarations.entries()) {
@@ -486,6 +485,14 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
                 ImmutableList<Declaration> declarations = funcScopedDeclarationsOrFunctions.get(fName).orJust(ImmutableList.nil());
                 funcScopedDeclarationsOrFunctions = funcScopedDeclarationsOrFunctions.put(fName, declarations.cons(new Declaration(fBinding, Kind.Var))); // TODO ensure this is the correct kind.
             }
+        }
+
+        variables = variables2;
+        if(scopeType == Scope.Type.Global) { // top-level lexical declarations in scripts are not global
+            children = ImmutableList.list(
+                    new Scope(children, variables, freeIdentifiers, scopeType, this.dynamic, astNode)
+            );
+            variables = ImmutableList.nil();
         }
 
         ImmutableList<Variable> variables1 = variables;
@@ -497,17 +504,22 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
           freeIdentifiers = freeIdentifiers.remove(name);
         }
         variables = variables1;
+
+        if(scopeType == Scope.Type.Module) { // no declarations in a module are global
+            children = ImmutableList.list(
+                    new Scope(children, variables, freeIdentifiers, scopeType, this.dynamic, astNode)
+            );
+            variables = ImmutableList.nil();
+        }
         break;
       default:
         throw new RuntimeException("Not reached");
       }
 
+      Scope scope = (scopeType == Scope.Type.Global || scopeType == Scope.Type.Module) ?
+              new GlobalScope(children, variables, freeIdentifiers, astNode) :
+              new Scope(children, variables, freeIdentifiers, scopeType, this.dynamic, astNode);
 
-      Scope scope = scopeType == Scope.Type.Global ?
-          new GlobalScope(this.children, variables, freeIdentifiers, astNode) :
-              scopeType == Scope.Type.Module ?
-              new GlobalScope(ImmutableList.list(new Scope(this.children, variables, freeIdentifiers, scopeType, this.dynamic, astNode)), variables, freeIdentifiers, astNode)
-              : new Scope(this.children, variables, freeIdentifiers, scopeType, this.dynamic, astNode);
 
       return new State(
           freeIdentifiers, functionScope, HashTable.empty(),
