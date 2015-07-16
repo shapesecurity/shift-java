@@ -222,7 +222,7 @@ public final class Director {
         return reducer.reduceLiteralStringExpression(tNode);
       } else if (node instanceof ArrowExpression) {
         ArrowExpression tNode = (ArrowExpression) node;
-        return reducer.reduceArrowExpression(tNode, reduceFormalParameters(reducer, tNode.params), reduceFunctionBodyExpression(reducer, tNode));
+        return reducer.reduceArrowExpression(tNode, reduceFormalParameters(reducer, tNode.params), reduceFunctionBodyExpression(reducer, tNode.body));
       } else if (node instanceof ArrayExpression) {
         ArrayExpression tNode = (ArrayExpression) node;
         return reducer.reduceArrayExpression(tNode, reduceListMaybeSpreadElementExpression(reducer, tNode.elements));
@@ -628,16 +628,22 @@ public final class Director {
     @NotNull MethodDefinition node) {
     if (node instanceof Getter) {
       Getter tNode = (Getter) node;
-      return reducer.reduceGetter(tNode, reduceFunctionBody(reducer, tNode.body), reducePropertyName(reducer, tNode.name));
+      return reducer.reduceGetter(tNode, reducePropertyName(reducer, tNode.name), reduceFunctionBody(reducer, tNode.body));
     } else if (node instanceof Setter) {
       Setter tNode = (Setter) node;
-      return reducer.reduceSetter(tNode, reduceBindingBindingWithDefault(reducer, tNode.param), reduceFunctionBody(reducer, tNode.body), reducePropertyName(reducer, tNode.name));
+      return reducer.reduceSetter(tNode, reducePropertyName(reducer, tNode.name), reduceBindingBindingWithDefault(reducer, tNode.param), reduceFunctionBody(reducer, tNode.body));
     } else if (node instanceof Method) {
       Method tNode = (Method) node;
-      return reducer.reduceMethod(tNode, reduceFormalParameters(reducer, tNode.params), reduceFunctionBody(reducer, tNode.body), reducePropertyName(reducer, tNode.name));
+      return reducer.reduceMethod(tNode, reducePropertyName(reducer, tNode.name), reduceFormalParameters(reducer, tNode.params), reduceFunctionBody(reducer, tNode.body));
     } else {
       throw new RuntimeException("Not reached");
     }
+  }
+
+  @NotNull
+  public static <State>
+  State reduceModule(@NotNull Reducer<State> reducer, @NotNull Module node) {
+    return reducer.reduceModule(node, reduceListDirective(reducer, node.directives), reduceListImportDeclarationExportDeclarationStatement(reducer, node.items));
   }
 
   @NotNull

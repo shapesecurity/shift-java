@@ -409,8 +409,8 @@ public class MonoidalReducer<State> implements Reducer<State> {
 
   @NotNull
   @Override
-  public State reduceMethod(@NotNull Method node, @NotNull State params, @NotNull State body, @NotNull State name) {
-    return append(params, body, name);
+  public State reduceMethod(@NotNull Method node, @NotNull State name, @NotNull State params, @NotNull State body) {
+    return append(name, params, body);
   }
 
   @NotNull
