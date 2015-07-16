@@ -16,10 +16,12 @@
 
 package com.shapesecurity.shift.scope;
 
+import com.shapesecurity.functional.Pair;
 import com.shapesecurity.functional.data.HashTable;
 import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.functional.data.Maybe;
 import com.shapesecurity.shift.ast.BindingIdentifier;
+import com.shapesecurity.shift.ast.FunctionDeclaration;
 import com.shapesecurity.shift.ast.IdentifierExpression;
 import com.shapesecurity.shift.ast.Node;
 import org.jetbrains.annotations.NotNull;
@@ -74,7 +76,19 @@ public class Scope {
     return this.variables.values();
   }
 
-  @NotNull // TODO it is now possible for one binding to create two variables (for function declarations in blocks)
+
+  // Helper for findVariablesForFuncDecl in globalScope.
+  @NotNull
+  protected Maybe<Pair<Scope, Variable>> outermostScopeDeclaringHelper(@NotNull final BindingIdentifier bindingIdentifier) {
+    for (Variable v : this.variables.values()) {
+      if (v.declarations.exists(d -> d.node == bindingIdentifier)) {
+        return Maybe.just(new Pair<>(this, v));
+      }
+    }
+    return this.children.findMap(scope -> scope.outermostScopeDeclaringHelper(bindingIdentifier));
+  }
+
+  @NotNull // Should not be used with function declarations, which may declare two variables (sigh...)
   public Maybe<Variable> findVariablesDeclaredBy(@NotNull final BindingIdentifier bindingIdentifier) {
     for (Variable v : this.variables.values()) {
       if (v.declarations.exists(d -> d.node == bindingIdentifier)) {
@@ -104,9 +118,20 @@ public class Scope {
     return this.children.findMap(scope -> scope.findVariablesReferencedBy(bindingIdentifier));
   }
 
+  @NotNull
+  public ImmutableList<Scope> findScopesFor(@NotNull final Node node) {
+    ImmutableList<Scope> initial = this.astNode == node ? ImmutableList.list(this) : ImmutableList.nil();
+    return this.children.map(s -> s.findScopesFor(node)).foldLeft(ImmutableList::append, initial);
+  }
+
+  public boolean isDeclared(@NotNull final Variable variable) {
+    return this.variables.containsValue(variable) || this.children.find(s -> s.isDeclared(variable)).isJust();
+  }
+
   public enum Type {
     Global,
     Module,
+    Script,
     ArrowFunction,
     Function,
     FunctionName,
