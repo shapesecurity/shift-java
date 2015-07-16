@@ -15,4 +15,4 @@
 #  limitations under the License.
 #
 
-mvn compile test package assembly:single $*
+mvn compile test package $*

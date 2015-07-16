@@ -928,7 +928,7 @@ public class Tokenizer {
   }
 
   @NotNull
-  private Token scanTemplateElement() throws JsError {
+  protected Token scanTemplateElement() throws JsError {
     int start = this.index;
     this.index++;
     while (this.index < this.source.length()) {

@@ -99,7 +99,7 @@ public class Validator extends MonoidalReducer<ValidationContext> {
   private boolean checkIsStringLiteral(String rawValue) {
     Tokenizer tokenizer ;
     try {
-      tokenizer = new Tokenizer("'"+rawValue+"'", false);
+      tokenizer = new Tokenizer("\'"+rawValue+"\'", false);
       Token token = tokenizer.advance();
       if (!(token instanceof StringLiteralToken)) {
         return false;
