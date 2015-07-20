@@ -33,20 +33,6 @@ public class VariableDeclarationStatement extends Statement
     this.declaration = declaration;
   }
 
-  @Override
-  public boolean equals(Object object)
-  {
-    return object instanceof VariableDeclarationStatement && this.declaration.equals(((VariableDeclarationStatement) object).declaration);
-  }
-
-  @Override
-  public int hashCode()
-  {
-    int code = HashCodeBuilder.put(0, "VariableDeclarationStatement");
-    code = HashCodeBuilder.put(code, this.declaration);
-    return code;
-  }
-
   @NotNull
   public VariableDeclaration getDeclaration()
   {

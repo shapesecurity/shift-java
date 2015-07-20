@@ -31,19 +31,6 @@ public class LiteralInfinityExpression extends Expression
   }
 
   @Override
-  public boolean equals(Object object)
-  {
-    return object instanceof LiteralInfinityExpression;
-  }
-
-  @Override
-  public int hashCode()
-  {
-    int code = HashCodeBuilder.put(0, "LiteralInfinityExpression");
-    return code;
-  }
-
-  @Override
   @NotNull
   public Precedence getPrecedence()
   {

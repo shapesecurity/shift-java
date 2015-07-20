@@ -45,21 +45,6 @@ public class Script extends Node
     this.statements = statements;
   }
 
-  @Override
-  public boolean equals(Object object)
-  {
-    return object instanceof Script && this.directives.equals(((Script) object).directives) && this.statements.equals(((Script) object).statements);
-  }
-
-  @Override
-  public int hashCode()
-  {
-    int code = HashCodeBuilder.put(0, "Script");
-    code = HashCodeBuilder.put(code, this.directives);
-    code = HashCodeBuilder.put(code, this.statements);
-    return code;
-  }
-
   @NotNull
   public ImmutableList<Directive> getDirectives()
   {

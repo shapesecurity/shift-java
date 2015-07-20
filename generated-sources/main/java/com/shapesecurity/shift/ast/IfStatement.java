@@ -42,22 +42,6 @@ public class IfStatement extends Statement
     this.alternate = alternate;
   }
 
-  @Override
-  public boolean equals(Object object)
-  {
-    return object instanceof IfStatement && this.test.equals(((IfStatement) object).test) && this.consequent.equals(((IfStatement) object).consequent) && this.alternate.equals(((IfStatement) object).alternate);
-  }
-
-  @Override
-  public int hashCode()
-  {
-    int code = HashCodeBuilder.put(0, "IfStatement");
-    code = HashCodeBuilder.put(code, this.test);
-    code = HashCodeBuilder.put(code, this.consequent);
-    code = HashCodeBuilder.put(code, this.alternate);
-    return code;
-  }
-
   @NotNull
   public Expression getTest()
   {

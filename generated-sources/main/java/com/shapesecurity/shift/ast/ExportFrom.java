@@ -39,21 +39,6 @@ public class ExportFrom extends ExportDeclaration
     this.moduleSpecifier = moduleSpecifier;
   }
 
-  @Override
-  public boolean equals(Object object)
-  {
-    return object instanceof ExportFrom && this.namedExports.equals(((ExportFrom) object).namedExports) && this.moduleSpecifier.equals(((ExportFrom) object).moduleSpecifier);
-  }
-
-  @Override
-  public int hashCode()
-  {
-    int code = HashCodeBuilder.put(0, "ExportFrom");
-    code = HashCodeBuilder.put(code, this.namedExports);
-    code = HashCodeBuilder.put(code, this.moduleSpecifier);
-    return code;
-  }
-
   @NotNull
   public ImmutableList<ExportSpecifier> getNamedExports()
   {

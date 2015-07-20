@@ -43,22 +43,6 @@ public class UpdateExpression extends Expression
     this.operand = operand;
   }
 
-  @Override
-  public boolean equals(Object object)
-  {
-    return object instanceof UpdateExpression && this.isPrefix.equals(((UpdateExpression) object).isPrefix) && this.operator.equals(((UpdateExpression) object).operator) && this.operand.equals(((UpdateExpression) object).operand);
-  }
-
-  @Override
-  public int hashCode()
-  {
-    int code = HashCodeBuilder.put(0, "UpdateExpression");
-    code = HashCodeBuilder.put(code, this.isPrefix);
-    code = HashCodeBuilder.put(code, this.operator);
-    code = HashCodeBuilder.put(code, this.operand);
-    return code;
-  }
-
   @NotNull
   public Boolean getIsPrefix()
   {

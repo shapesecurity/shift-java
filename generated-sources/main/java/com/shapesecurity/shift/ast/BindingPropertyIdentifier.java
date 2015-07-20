@@ -38,21 +38,6 @@ public class BindingPropertyIdentifier extends BindingProperty
     this.init = init;
   }
 
-  @Override
-  public boolean equals(Object object)
-  {
-    return object instanceof BindingPropertyIdentifier && this.binding.equals(((BindingPropertyIdentifier) object).binding) && this.init.equals(((BindingPropertyIdentifier) object).init);
-  }
-
-  @Override
-  public int hashCode()
-  {
-    int code = HashCodeBuilder.put(0, "BindingPropertyIdentifier");
-    code = HashCodeBuilder.put(code, this.binding);
-    code = HashCodeBuilder.put(code, this.init);
-    return code;
-  }
-
   @NotNull
   public BindingIdentifier getBinding()
   {

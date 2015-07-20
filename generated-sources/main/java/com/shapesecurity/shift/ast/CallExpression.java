@@ -39,21 +39,6 @@ public class CallExpression extends Expression
     this.arguments = arguments;
   }
 
-  @Override
-  public boolean equals(Object object)
-  {
-    return object instanceof CallExpression && this.callee.equals(((CallExpression) object).callee) && this.arguments.equals(((CallExpression) object).arguments);
-  }
-
-  @Override
-  public int hashCode()
-  {
-    int code = HashCodeBuilder.put(0, "CallExpression");
-    code = HashCodeBuilder.put(code, this.callee);
-    code = HashCodeBuilder.put(code, this.arguments);
-    return code;
-  }
-
   @NotNull
   public ExpressionSuper getCallee()
   {

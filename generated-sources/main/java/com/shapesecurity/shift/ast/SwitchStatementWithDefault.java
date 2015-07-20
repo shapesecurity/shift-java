@@ -46,23 +46,6 @@ public class SwitchStatementWithDefault extends Statement
     this.postDefaultCases = postDefaultCases;
   }
 
-  @Override
-  public boolean equals(Object object)
-  {
-    return object instanceof SwitchStatementWithDefault && this.discriminant.equals(((SwitchStatementWithDefault) object).discriminant) && this.preDefaultCases.equals(((SwitchStatementWithDefault) object).preDefaultCases) && this.defaultCase.equals(((SwitchStatementWithDefault) object).defaultCase) && this.postDefaultCases.equals(((SwitchStatementWithDefault) object).postDefaultCases);
-  }
-
-  @Override
-  public int hashCode()
-  {
-    int code = HashCodeBuilder.put(0, "SwitchStatementWithDefault");
-    code = HashCodeBuilder.put(code, this.discriminant);
-    code = HashCodeBuilder.put(code, this.preDefaultCases);
-    code = HashCodeBuilder.put(code, this.defaultCase);
-    code = HashCodeBuilder.put(code, this.postDefaultCases);
-    return code;
-  }
-
   @NotNull
   public Expression getDiscriminant()
   {

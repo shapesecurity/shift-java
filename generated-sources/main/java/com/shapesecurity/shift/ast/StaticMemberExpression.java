@@ -38,21 +38,6 @@ public class StaticMemberExpression extends MemberExpression
     this._object = _object;
   }
 
-  @Override
-  public boolean equals(Object object)
-  {
-    return object instanceof StaticMemberExpression && this.property.equals(((StaticMemberExpression) object).property) && this._object.equals(((StaticMemberExpression) object)._object);
-  }
-
-  @Override
-  public int hashCode()
-  {
-    int code = HashCodeBuilder.put(0, "StaticMemberExpression");
-    code = HashCodeBuilder.put(code, this.property);
-    code = HashCodeBuilder.put(code, this._object);
-    return code;
-  }
-
   @NotNull
   public String getProperty()
   {

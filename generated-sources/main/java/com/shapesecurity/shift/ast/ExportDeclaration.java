@@ -34,17 +34,4 @@ public abstract class ExportDeclaration extends Node implements ImportDeclaratio
     super();
   }
 
-  @Override
-  public boolean equals(Object object)
-  {
-    return object instanceof ExportDeclaration;
-  }
-
-  @Override
-  public int hashCode()
-  {
-    int code = HashCodeBuilder.put(0, "ExportDeclaration");
-    return code;
-  }
-
 }

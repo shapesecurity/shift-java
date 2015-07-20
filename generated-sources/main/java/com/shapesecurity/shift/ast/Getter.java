@@ -37,21 +37,6 @@ public class Getter extends MethodDefinition
     this.name = name;
   }
 
-  @Override
-  public boolean equals(Object object)
-  {
-    return object instanceof Getter && this.body.equals(((Getter) object).body) && this.name.equals(((Getter) object).name);
-  }
-
-  @Override
-  public int hashCode()
-  {
-    int code = HashCodeBuilder.put(0, "Getter");
-    code = HashCodeBuilder.put(code, this.body);
-    code = HashCodeBuilder.put(code, this.name);
-    return code;
-  }
-
   @NotNull
   public FunctionBody getBody()
   {

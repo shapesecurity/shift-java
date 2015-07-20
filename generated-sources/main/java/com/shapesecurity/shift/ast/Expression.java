@@ -35,19 +35,6 @@ public abstract class Expression extends Node implements ExpressionSuper, Functi
     super();
   }
 
-  @Override
-  public boolean equals(Object object)
-  {
-    return object instanceof Expression;
-  }
-
-  @Override
-  public int hashCode()
-  {
-    int code = HashCodeBuilder.put(0, "Expression");
-    return code;
-  }
-
   @NotNull
   public abstract Precedence getPrecedence();
 

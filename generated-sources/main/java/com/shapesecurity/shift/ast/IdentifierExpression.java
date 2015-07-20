@@ -34,20 +34,6 @@ public class IdentifierExpression extends Expression
     this.name = name;
   }
 
-  @Override
-  public boolean equals(Object object)
-  {
-    return object instanceof IdentifierExpression && this.name.equals(((IdentifierExpression) object).name);
-  }
-
-  @Override
-  public int hashCode()
-  {
-    int code = HashCodeBuilder.put(0, "IdentifierExpression");
-    code = HashCodeBuilder.put(code, this.name);
-    return code;
-  }
-
   @NotNull
   public String getName()
   {

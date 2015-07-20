@@ -46,21 +46,6 @@ public class ArrayBinding extends Node implements Binding
     this.restElement = restElement;
   }
 
-  @Override
-  public boolean equals(Object object)
-  {
-    return object instanceof ArrayBinding && this.elements.equals(((ArrayBinding) object).elements) && this.restElement.equals(((ArrayBinding) object).restElement);
-  }
-
-  @Override
-  public int hashCode()
-  {
-    int code = HashCodeBuilder.put(0, "ArrayBinding");
-    code = HashCodeBuilder.put(code, this.elements);
-    code = HashCodeBuilder.put(code, this.restElement);
-    return code;
-  }
-
   @NotNull
   public ImmutableList<Maybe<BindingBindingWithDefault>> getElements()
   {

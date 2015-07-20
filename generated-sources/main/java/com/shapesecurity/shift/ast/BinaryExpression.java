@@ -43,22 +43,6 @@ public class BinaryExpression extends Expression
     this.right = right;
   }
 
-  @Override
-  public boolean equals(Object object)
-  {
-    return object instanceof BinaryExpression && this.operator.equals(((BinaryExpression) object).operator) && this.left.equals(((BinaryExpression) object).left) && this.right.equals(((BinaryExpression) object).right);
-  }
-
-  @Override
-  public int hashCode()
-  {
-    int code = HashCodeBuilder.put(0, "BinaryExpression");
-    code = HashCodeBuilder.put(code, this.operator);
-    code = HashCodeBuilder.put(code, this.left);
-    code = HashCodeBuilder.put(code, this.right);
-    return code;
-  }
-
   @NotNull
   public BinaryOperator getOperator()
   {

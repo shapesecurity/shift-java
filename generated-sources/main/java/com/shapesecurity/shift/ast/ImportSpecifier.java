@@ -45,21 +45,6 @@ public class ImportSpecifier extends Node
     this.binding = binding;
   }
 
-  @Override
-  public boolean equals(Object object)
-  {
-    return object instanceof ImportSpecifier && this.name.equals(((ImportSpecifier) object).name) && this.binding.equals(((ImportSpecifier) object).binding);
-  }
-
-  @Override
-  public int hashCode()
-  {
-    int code = HashCodeBuilder.put(0, "ImportSpecifier");
-    code = HashCodeBuilder.put(code, this.name);
-    code = HashCodeBuilder.put(code, this.binding);
-    return code;
-  }
-
   @NotNull
   public Maybe<String> getName()
   {

@@ -33,20 +33,6 @@ public class Export extends ExportDeclaration
     this.declaration = declaration;
   }
 
-  @Override
-  public boolean equals(Object object)
-  {
-    return object instanceof Export && this.declaration.equals(((Export) object).declaration);
-  }
-
-  @Override
-  public int hashCode()
-  {
-    int code = HashCodeBuilder.put(0, "Export");
-    code = HashCodeBuilder.put(code, this.declaration);
-    return code;
-  }
-
   @NotNull
   public FunctionDeclarationClassDeclarationVariableDeclaration getDeclaration()
   {

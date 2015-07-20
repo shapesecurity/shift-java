@@ -31,19 +31,6 @@ public class LiteralNullExpression extends Expression
   }
 
   @Override
-  public boolean equals(Object object)
-  {
-    return object instanceof LiteralNullExpression;
-  }
-
-  @Override
-  public int hashCode()
-  {
-    int code = HashCodeBuilder.put(0, "LiteralNullExpression");
-    return code;
-  }
-
-  @Override
   @NotNull
   public Precedence getPrecedence()
   {

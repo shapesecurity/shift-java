@@ -45,21 +45,6 @@ public class FunctionBody extends Node implements FunctionBodyExpression
     this.statements = statements;
   }
 
-  @Override
-  public boolean equals(Object object)
-  {
-    return object instanceof FunctionBody && this.directives.equals(((FunctionBody) object).directives) && this.statements.equals(((FunctionBody) object).statements);
-  }
-
-  @Override
-  public int hashCode()
-  {
-    int code = HashCodeBuilder.put(0, "FunctionBody");
-    code = HashCodeBuilder.put(code, this.directives);
-    code = HashCodeBuilder.put(code, this.statements);
-    return code;
-  }
-
   @NotNull
   public ImmutableList<Directive> getDirectives()
   {

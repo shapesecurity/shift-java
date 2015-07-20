@@ -33,20 +33,6 @@ public class StaticPropertyName extends PropertyName
     this.value = value;
   }
 
-  @Override
-  public boolean equals(Object object)
-  {
-    return object instanceof StaticPropertyName && this.value.equals(((StaticPropertyName) object).value);
-  }
-
-  @Override
-  public int hashCode()
-  {
-    int code = HashCodeBuilder.put(0, "StaticPropertyName");
-    code = HashCodeBuilder.put(code, this.value);
-    return code;
-  }
-
   @NotNull
   public String  getValue()
   {

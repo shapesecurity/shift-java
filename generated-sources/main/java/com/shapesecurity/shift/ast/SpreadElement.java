@@ -39,20 +39,6 @@ public class SpreadElement extends Node implements SpreadElementExpression
     this.expression = expression;
   }
 
-  @Override
-  public boolean equals(Object object)
-  {
-    return object instanceof SpreadElement && this.expression.equals(((SpreadElement) object).expression);
-  }
-
-  @Override
-  public int hashCode()
-  {
-    int code = HashCodeBuilder.put(0, "SpreadElement");
-    code = HashCodeBuilder.put(code, this.expression);
-    return code;
-  }
-
   @NotNull
   public Expression getExpression()
   {

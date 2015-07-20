@@ -31,19 +31,6 @@ public class NewTargetExpression extends Expression
   }
 
   @Override
-  public boolean equals(Object object)
-  {
-    return object instanceof NewTargetExpression;
-  }
-
-  @Override
-  public int hashCode()
-  {
-    int code = HashCodeBuilder.put(0, "NewTargetExpression");
-    return code;
-  }
-
-  @Override
   @NotNull
   public Precedence getPrecedence()
   {
