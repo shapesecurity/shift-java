@@ -34,20 +34,6 @@ public class LiteralNumericExpression extends Expression
     this.value = value;
   }
 
-  @Override
-  public boolean equals(Object object)
-  {
-    return object instanceof LiteralNumericExpression && this.value.equals(((LiteralNumericExpression) object).value);
-  }
-
-  @Override
-  public int hashCode()
-  {
-    int code = HashCodeBuilder.put(0, "LiteralNumericExpression");
-    code = HashCodeBuilder.put(code, this.value);
-    return code;
-  }
-
   @NotNull
   public Double getValue()
   {

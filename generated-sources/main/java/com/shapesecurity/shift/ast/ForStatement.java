@@ -46,23 +46,6 @@ public class ForStatement extends IterationStatement
     this.body = body;
   }
 
-  @Override
-  public boolean equals(Object object)
-  {
-    return object instanceof ForStatement && this.init.equals(((ForStatement) object).init) && this.test.equals(((ForStatement) object).test) && this.update.equals(((ForStatement) object).update) && this.body.equals(((ForStatement) object).body);
-  }
-
-  @Override
-  public int hashCode()
-  {
-    int code = HashCodeBuilder.put(0, "ForStatement");
-    code = HashCodeBuilder.put(code, this.init);
-    code = HashCodeBuilder.put(code, this.test);
-    code = HashCodeBuilder.put(code, this.update);
-    code = HashCodeBuilder.put(code, this.body);
-    return code;
-  }
-
   @NotNull
   public Maybe<VariableDeclarationExpression> getInit()
   {

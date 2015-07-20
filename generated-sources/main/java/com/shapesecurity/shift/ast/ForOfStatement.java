@@ -41,22 +41,6 @@ public class ForOfStatement extends IterationStatement
     this.body = body;
   }
 
-  @Override
-  public boolean equals(Object object)
-  {
-    return object instanceof ForOfStatement && this.left.equals(((ForOfStatement) object).left) && this.right.equals(((ForOfStatement) object).right) && this.body.equals(((ForOfStatement) object).body);
-  }
-
-  @Override
-  public int hashCode()
-  {
-    int code = HashCodeBuilder.put(0, "ForOfStatement");
-    code = HashCodeBuilder.put(code, this.left);
-    code = HashCodeBuilder.put(code, this.right);
-    code = HashCodeBuilder.put(code, this.body);
-    return code;
-  }
-
   @NotNull
   public VariableDeclarationBinding getLeft()
   {

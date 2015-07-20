@@ -44,21 +44,6 @@ public class BindingWithDefault extends Node implements BindingBindingWithDefaul
     this.init = init;
   }
 
-  @Override
-  public boolean equals(Object object)
-  {
-    return object instanceof BindingWithDefault && this.binding.equals(((BindingWithDefault) object).binding) && this.init.equals(((BindingWithDefault) object).init);
-  }
-
-  @Override
-  public int hashCode()
-  {
-    int code = HashCodeBuilder.put(0, "BindingWithDefault");
-    code = HashCodeBuilder.put(code, this.binding);
-    code = HashCodeBuilder.put(code, this.init);
-    return code;
-  }
-
   @NotNull
   public Binding getBinding()
   {

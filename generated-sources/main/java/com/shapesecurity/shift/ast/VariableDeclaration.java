@@ -45,21 +45,6 @@ public class VariableDeclaration extends Node implements FunctionDeclarationClas
     this.declarators = declarators;
   }
 
-  @Override
-  public boolean equals(Object object)
-  {
-    return object instanceof VariableDeclaration && this.kind.equals(((VariableDeclaration) object).kind) && this.declarators.equals(((VariableDeclaration) object).declarators);
-  }
-
-  @Override
-  public int hashCode()
-  {
-    int code = HashCodeBuilder.put(0, "VariableDeclaration");
-    code = HashCodeBuilder.put(code, this.kind);
-    code = HashCodeBuilder.put(code, this.declarators);
-    return code;
-  }
-
   @NotNull
   public VariableDeclarationKind getKind()
   {

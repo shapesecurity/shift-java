@@ -45,21 +45,6 @@ public class Module extends Node
     this.items = items;
   }
 
-  @Override
-  public boolean equals(Object object)
-  {
-    return object instanceof Module && this.directives.equals(((Module) object).directives) && this.items.equals(((Module) object).items);
-  }
-
-  @Override
-  public int hashCode()
-  {
-    int code = HashCodeBuilder.put(0, "Module");
-    code = HashCodeBuilder.put(code, this.directives);
-    code = HashCodeBuilder.put(code, this.items);
-    return code;
-  }
-
   @NotNull
   public ImmutableList<Directive> getDirectives()
   {

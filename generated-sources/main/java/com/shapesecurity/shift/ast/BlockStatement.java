@@ -33,20 +33,6 @@ public class BlockStatement extends Statement
     this.block = block;
   }
 
-  @Override
-  public boolean equals(Object object)
-  {
-    return object instanceof BlockStatement && this.block.equals(((BlockStatement) object).block);
-  }
-
-  @Override
-  public int hashCode()
-  {
-    int code = HashCodeBuilder.put(0, "BlockStatement");
-    code = HashCodeBuilder.put(code, this.block);
-    return code;
-  }
-
   @NotNull
   public Block getBlock()
   {

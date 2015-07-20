@@ -33,20 +33,6 @@ public class ExpressionStatement extends Statement
     this.expression = expression;
   }
 
-  @Override
-  public boolean equals(Object object)
-  {
-    return object instanceof ExpressionStatement && this.expression.equals(((ExpressionStatement) object).expression);
-  }
-
-  @Override
-  public int hashCode()
-  {
-    int code = HashCodeBuilder.put(0, "ExpressionStatement");
-    code = HashCodeBuilder.put(code, this.expression);
-    return code;
-  }
-
   @NotNull
   public Expression getExpression()
   {

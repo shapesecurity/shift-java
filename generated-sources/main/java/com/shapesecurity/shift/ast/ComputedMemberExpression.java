@@ -38,21 +38,6 @@ public class ComputedMemberExpression extends MemberExpression
     this._object = _object;
   }
 
-  @Override
-  public boolean equals(Object object)
-  {
-    return object instanceof ComputedMemberExpression && this.expression.equals(((ComputedMemberExpression) object).expression) && this._object.equals(((ComputedMemberExpression) object)._object);
-  }
-
-  @Override
-  public int hashCode()
-  {
-    int code = HashCodeBuilder.put(0, "ComputedMemberExpression");
-    code = HashCodeBuilder.put(code, this.expression);
-    code = HashCodeBuilder.put(code, this._object);
-    return code;
-  }
-
   @NotNull
   public Expression getExpression()
   {

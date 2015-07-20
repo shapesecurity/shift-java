@@ -36,20 +36,6 @@ public class ArrayExpression extends Expression
     this.elements = elements;
   }
 
-  @Override
-  public boolean equals(Object object)
-  {
-    return object instanceof ArrayExpression && this.elements.equals(((ArrayExpression) object).elements);
-  }
-
-  @Override
-  public int hashCode()
-  {
-    int code = HashCodeBuilder.put(0, "ArrayExpression");
-    code = HashCodeBuilder.put(code, this.elements);
-    return code;
-  }
-
   @NotNull
   public ImmutableList<Maybe<SpreadElementExpression>> getElements()
   {

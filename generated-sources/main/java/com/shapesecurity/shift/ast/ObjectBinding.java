@@ -40,20 +40,6 @@ public class ObjectBinding extends Node implements Binding
     this.properties = properties;
   }
 
-  @Override
-  public boolean equals(Object object)
-  {
-    return object instanceof ObjectBinding && this.properties.equals(((ObjectBinding) object).properties);
-  }
-
-  @Override
-  public int hashCode()
-  {
-    int code = HashCodeBuilder.put(0, "ObjectBinding");
-    code = HashCodeBuilder.put(code, this.properties);
-    return code;
-  }
-
   @NotNull
   public ImmutableList<BindingProperty> getProperties()
   {

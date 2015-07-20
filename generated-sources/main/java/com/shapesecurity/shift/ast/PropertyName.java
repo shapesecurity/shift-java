@@ -34,17 +34,4 @@ public abstract class PropertyName extends Node
     super();
   }
 
-  @Override
-  public boolean equals(Object object)
-  {
-    return object instanceof PropertyName;
-  }
-
-  @Override
-  public int hashCode()
-  {
-    int code = HashCodeBuilder.put(0, "PropertyName");
-    return code;
-  }
-
 }

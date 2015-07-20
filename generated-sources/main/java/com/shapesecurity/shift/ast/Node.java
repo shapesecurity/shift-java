@@ -42,20 +42,6 @@ public abstract class Node
     this.loc = Maybe.nothing();
   }
 
-  @Override
-  public boolean equals(Object object)
-  {
-    return object instanceof Node && this.loc.equals(((Node) object).loc);
-  }
-
-  @Override
-  public int hashCode()
-  {
-    int code = HashCodeBuilder.put(0, "Node");
-    code = HashCodeBuilder.put(code, this.loc);
-    return code;
-  }
-
   @NotNull
   public Maybe<SourceSpan> getLoc()
   {

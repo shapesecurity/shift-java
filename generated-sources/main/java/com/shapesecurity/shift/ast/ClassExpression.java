@@ -44,22 +44,6 @@ public class ClassExpression extends Expression implements Class
     this.elements = elements;
   }
 
-  @Override
-  public boolean equals(Object object)
-  {
-    return object instanceof ClassExpression && this.name.equals(((ClassExpression) object).name) && this._super.equals(((ClassExpression) object)._super) && this.elements.equals(((ClassExpression) object).elements);
-  }
-
-  @Override
-  public int hashCode()
-  {
-    int code = HashCodeBuilder.put(0, "ClassExpression");
-    code = HashCodeBuilder.put(code, this.name);
-    code = HashCodeBuilder.put(code, this._super);
-    code = HashCodeBuilder.put(code, this.elements);
-    return code;
-  }
-
   @NotNull
   public Maybe<BindingIdentifier> getName()
   {

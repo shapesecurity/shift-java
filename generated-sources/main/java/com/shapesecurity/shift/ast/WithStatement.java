@@ -37,21 +37,6 @@ public class WithStatement extends Statement
     this.body = body;
   }
 
-  @Override
-  public boolean equals(Object object)
-  {
-    return object instanceof WithStatement && this._object.equals(((WithStatement) object)._object) && this.body.equals(((WithStatement) object).body);
-  }
-
-  @Override
-  public int hashCode()
-  {
-    int code = HashCodeBuilder.put(0, "WithStatement");
-    code = HashCodeBuilder.put(code, this._object);
-    code = HashCodeBuilder.put(code, this.body);
-    return code;
-  }
-
   @NotNull
   public Expression get_object()
   {

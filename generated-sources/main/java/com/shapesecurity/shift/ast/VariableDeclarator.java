@@ -45,21 +45,6 @@ public class VariableDeclarator extends Node
     this.init = init;
   }
 
-  @Override
-  public boolean equals(Object object)
-  {
-    return object instanceof VariableDeclarator && this.binding.equals(((VariableDeclarator) object).binding) && this.init.equals(((VariableDeclarator) object).init);
-  }
-
-  @Override
-  public int hashCode()
-  {
-    int code = HashCodeBuilder.put(0, "VariableDeclarator");
-    code = HashCodeBuilder.put(code, this.binding);
-    code = HashCodeBuilder.put(code, this.init);
-    return code;
-  }
-
   @NotNull
   public Binding getBinding()
   {

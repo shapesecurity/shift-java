@@ -40,21 +40,6 @@ public class TemplateExpression extends Expression
     this.elements = elements;
   }
 
-  @Override
-  public boolean equals(Object object)
-  {
-    return object instanceof TemplateExpression && this.tag.equals(((TemplateExpression) object).tag) && this.elements.equals(((TemplateExpression) object).elements);
-  }
-
-  @Override
-  public int hashCode()
-  {
-    int code = HashCodeBuilder.put(0, "TemplateExpression");
-    code = HashCodeBuilder.put(code, this.tag);
-    code = HashCodeBuilder.put(code, this.elements);
-    return code;
-  }
-
   @NotNull
   public Maybe<Expression> getTag()
   {

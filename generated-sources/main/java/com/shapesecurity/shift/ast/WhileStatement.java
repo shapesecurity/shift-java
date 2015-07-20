@@ -37,21 +37,6 @@ public class WhileStatement extends IterationStatement
     this.body = body;
   }
 
-  @Override
-  public boolean equals(Object object)
-  {
-    return object instanceof WhileStatement && this.test.equals(((WhileStatement) object).test) && this.body.equals(((WhileStatement) object).body);
-  }
-
-  @Override
-  public int hashCode()
-  {
-    int code = HashCodeBuilder.put(0, "WhileStatement");
-    code = HashCodeBuilder.put(code, this.test);
-    code = HashCodeBuilder.put(code, this.body);
-    return code;
-  }
-
   @NotNull
   public Expression getTest()
   {

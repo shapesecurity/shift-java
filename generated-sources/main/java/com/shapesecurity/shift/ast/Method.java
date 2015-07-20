@@ -45,23 +45,6 @@ public class Method extends MethodDefinition
     this.name = name;
   }
 
-  @Override
-  public boolean equals(Object object)
-  {
-    return object instanceof Method && this.isGenerator.equals(((Method) object).isGenerator) && this.params.equals(((Method) object).params) && this.body.equals(((Method) object).body) && this.name.equals(((Method) object).name);
-  }
-
-  @Override
-  public int hashCode()
-  {
-    int code = HashCodeBuilder.put(0, "Method");
-    code = HashCodeBuilder.put(code, this.isGenerator);
-    code = HashCodeBuilder.put(code, this.params);
-    code = HashCodeBuilder.put(code, this.body);
-    code = HashCodeBuilder.put(code, this.name);
-    return code;
-  }
-
   @NotNull
   public Boolean getIsGenerator()
   {
