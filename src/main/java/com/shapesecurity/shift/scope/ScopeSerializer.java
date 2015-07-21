@@ -46,7 +46,9 @@ public class ScopeSerializer {
     for(Scope scope : scopes) {
       serialized += serializeScope(scope) + ", ";
     }
-    serialized = serialized.substring(0, serialized.length()-2);
+    if (scopes.length > 0) {
+      serialized = serialized.substring(0, serialized.length() - 2);
+    }
     serialized += "]";
     return serialized;
   }
@@ -65,7 +67,9 @@ public class ScopeSerializer {
     for(Reference reference : references) {
       serialized += serializeReference(reference) + ", ";
     }
-    serialized = serialized.substring(0, serialized.length()-2);
+    if (references.length > 0) {
+      serialized = serialized.substring(0, serialized.length() - 2);
+    }
     serialized += "]";
     return serialized;
   }
@@ -83,7 +87,9 @@ public class ScopeSerializer {
     for(Declaration declaration : declarations) {
       serialized += serializeDeclaration(declaration) + ", ";
     }
-    serialized = serialized.substring(0, serialized.length()-2);
+    if (declarations.length > 0) {
+      serialized = serialized.substring(0, serialized.length() - 2);
+    }
     serialized += "]";
     return serialized;
   }
@@ -102,7 +108,9 @@ public class ScopeSerializer {
     for(Variable variable : variables) {
       serialized += serializeVariable(variable) + ", ";
     }
-    serialized = serialized.substring(0, serialized.length()-2);
+    if (variables.size() > 0) {
+      serialized = serialized.substring(0, serialized.length() - 2);
+    }
     serialized += "]";
     return serialized;
   }
