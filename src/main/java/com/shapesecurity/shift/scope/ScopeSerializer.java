@@ -14,12 +14,12 @@ public class ScopeSerializer {
 
   public String serializeScope(Scope scope) {
     String serialized = "{";
-    serialized += "node: " + serializeNode(scope.astNode);
-    serialized += ", through: " + serializeReferenceList(collectThrough(scope.through));
-    serialized += ", children: " + serializeScopeList(scope.children);
-    serialized += ", type: " + scope.type;
-    serialized += ", isDynamic: " + scope.dynamic;
-    serialized += ", variables: " + serializeVariableList(scope.variables());
+    serialized += "\"node\": \"" + serializeNode(scope.astNode) + "\"";
+    serialized += ", \"through\": " + serializeReferenceList(collectThrough(scope.through));
+    serialized += ", \"children\": " + serializeScopeList(scope.children);
+    serialized += ", \"type\": \"" + scope.type + "\"";
+    serialized += ", \"isDynamic\": " + scope.dynamic;
+    serialized += ", \"variables\": " + serializeVariableList(scope.variables());
     return serialized + "}";
   }
 
@@ -56,8 +56,8 @@ public class ScopeSerializer {
 
   private String serializeReference(Reference reference) {
     String serialized = "{";
-    serialized += "node: " + reference.node.either(this::serializeNode, this::serializeNode);
-    serialized += ", accessibility: " + reference.accessibility;
+    serialized += "\"node\": \"" + reference.node.either(this::serializeNode, this::serializeNode) + "\"";
+    serialized += ", \"accessibility\": \"" + reference.accessibility + "\"";
     serialized += "}";
     return serialized;
   }
@@ -76,8 +76,8 @@ public class ScopeSerializer {
 
   private String serializeDeclaration(Declaration declaration) {
     String serialized = "{";
-    serialized += "node: " + serializeNode(declaration.node);
-    serialized += ", kind: " + declaration.kind;
+    serialized += "\"node\": \"" + serializeNode(declaration.node) + "\"";
+    serialized += ", \"kind\": \"" + declaration.kind + "\"";
     serialized += "}";
     return serialized;
   }
@@ -96,9 +96,9 @@ public class ScopeSerializer {
 
   private String serializeVariable(Variable variable) {
     String serialized = "{";
-    serialized += "name: " + variable.name;
-    serialized += ", references: " + serializeReferenceList(variable.references);
-    serialized += ", declarations: " + serializeDeclarationList(variable.declarations);
+    serialized += "\"name\": \"" + variable.name + "\"";
+    serialized += ", \"references\": " + serializeReferenceList(variable.references);
+    serialized += ", \"declarations\": " + serializeDeclarationList(variable.declarations);
     serialized += "}";
     return serialized;
   }
