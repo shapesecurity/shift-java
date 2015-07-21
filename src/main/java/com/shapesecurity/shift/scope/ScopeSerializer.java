@@ -53,7 +53,6 @@ public class ScopeSerializer {
     return serialized;
   }
 
-
   private String serializeReference(Reference reference) {
     String serialized = "{";
     serialized += "\"node\": \"" + reference.node.either(this::serializeNode, this::serializeNode) + "\"";
@@ -114,5 +113,4 @@ public class ScopeSerializer {
     serialized += "]";
     return serialized;
   }
-
 }
