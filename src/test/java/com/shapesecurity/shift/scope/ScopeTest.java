@@ -58,15 +58,15 @@ public class ScopeTest extends TestCase {
 
         GlobalScope globalScope = ScopeAnalyzer.analyze(script);
 
-        final BindingIdentifier v1Binding1 = bi( new Getter().d(ScriptStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorBinding_())
-                .apply(script) );
+        final BindingIdentifier v1Binding1 = bi(new Getter().d(ScriptStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorBinding_())
+                .apply(script));
 
-        final BindingIdentifier v2Binding1 = bi( new Getter().d(ScriptStatements_(1)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorBinding_())
-                .apply(script) );
+        final BindingIdentifier v2Binding1 = bi(new Getter().d(ScriptStatements_(1)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorBinding_())
+                .apply(script));
 
 
         { // global scope
-            ImmutableList<Scope> children = ImmutableList.nil();
+            ImmutableList<Scope> children = ImmutableList.list(globalScope.children.maybeHead().just());
 
             ImmutableList<String> through = ImmutableList.nil();
 
@@ -92,11 +92,11 @@ public class ScopeTest extends TestCase {
         final BindingIdentifier v1Binding1 = bi(new Getter().d(ScriptStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorBinding_())
                 .apply(script));
 
-        final BindingIdentifier v2Binding1 = bi( new Getter().d(ScriptStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(1)).d(VariableDeclaratorBinding_())
-                .apply(script) );
+        final BindingIdentifier v2Binding1 = bi(new Getter().d(ScriptStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(1)).d(VariableDeclaratorBinding_())
+                .apply(script));
 
         { // global scope
-            ImmutableList<Scope> children = ImmutableList.nil();
+            ImmutableList<Scope> children = ImmutableList.list(globalScope.children.maybeHead().just());
 
             ImmutableList<String> through = ImmutableList.nil();
 
@@ -126,11 +126,11 @@ public class ScopeTest extends TestCase {
                 .d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorInit_()).d(BinaryExpressionLeft_())
                 .apply(script));
 
-        final BindingIdentifier v2Binding1 = bi( new Getter().d(ScriptStatements_(1)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorBinding_())
-                .apply(script) );
+        final BindingIdentifier v2Binding1 = bi(new Getter().d(ScriptStatements_(1)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorBinding_())
+                .apply(script));
 
         { // global scope
-            ImmutableList<Scope> children = ImmutableList.nil();
+            ImmutableList<Scope> children = ImmutableList.list(globalScope.children.maybeHead().just());
 
             ImmutableList<String> through = ImmutableList.list("v1");
 
@@ -158,16 +158,16 @@ public class ScopeTest extends TestCase {
         final BindingIdentifier v2Binding1 = bi( new Getter().d(ScriptStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorBinding_())
                 .apply(script) );
 
-        final IdentifierExpression v1Identifier1 = ie( new Getter().d(ScriptStatements_(0)).d(VariableDeclarationStatementDeclaration_())
+        final IdentifierExpression v1Identifier1 = ie(new Getter().d(ScriptStatements_(0)).d(VariableDeclarationStatementDeclaration_())
                 .d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorInit_()).d(BinaryExpressionLeft_())
-                .apply(script) );
+                .apply(script));
 
-        final BindingIdentifier v1Binding1 = bi( new Getter().d(ScriptStatements_(1)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorBinding_())
-                .apply(script) );
+        final BindingIdentifier v1Binding1 = bi(new Getter().d(ScriptStatements_(1)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorBinding_())
+                .apply(script));
 
 
         { // global scope
-            ImmutableList<Scope> children = ImmutableList.nil();
+            ImmutableList<Scope> children = ImmutableList.list(globalScope.children.maybeHead().just());
 
             ImmutableList<String> through = ImmutableList.nil();
 
@@ -210,7 +210,7 @@ public class ScopeTest extends TestCase {
 
 
         { // global scope
-            ImmutableList<Scope> children = ImmutableList.nil();
+            ImmutableList<Scope> children = ImmutableList.list(globalScope.children.maybeHead().just());
 
             ImmutableList<String> through = ImmutableList.list();
 
@@ -242,8 +242,9 @@ public class ScopeTest extends TestCase {
         Script script = parse(js);
 
         GlobalScope globalScope = ScopeAnalyzer.analyze(script);
-        Scope f1Scope = globalScope.children.maybeHead().just();
-        Scope f2Scope = globalScope.children.maybeHead().just().children.maybeHead().just();
+        Scope topLevelLexicalScope = globalScope.children.maybeHead().just();
+        Scope f1Scope = topLevelLexicalScope.children.maybeHead().just();
+        Scope f2Scope = topLevelLexicalScope.children.maybeHead().just().children.maybeHead().just();
 
         final BindingIdentifier f1Binding1 = bi(new Getter().d(ScriptStatements_(0)).d(FunctionDeclarationName_())
                 .apply(script));
@@ -311,7 +312,7 @@ public class ScopeTest extends TestCase {
 
 
         { // global scope
-            ImmutableList<Scope> children = ImmutableList.list(f1Scope);
+            ImmutableList<Scope> children = ImmutableList.list(topLevelLexicalScope);
 
             ImmutableList<String> through = ImmutableList.nil();
 
@@ -376,7 +377,8 @@ public class ScopeTest extends TestCase {
         Script script = parse(js);
 
         GlobalScope globalScope = ScopeAnalyzer.analyze(script);
-        Scope fScope = globalScope.children.maybeHead().just();
+        Scope topLevelLexicalScope = globalScope.children.maybeHead().just();
+        Scope fScope = topLevelLexicalScope.children.maybeHead().just();
 
         final BindingIdentifier fNode1 = bi(new Getter().d(ScriptStatements_(0)).d(FunctionDeclarationName_())
                 .apply(script));
@@ -391,7 +393,7 @@ public class ScopeTest extends TestCase {
 
         { // global scope
 
-            ImmutableList<Scope> children = ImmutableList.list(fScope);
+            ImmutableList<Scope> children = ImmutableList.list(topLevelLexicalScope);
 
             ImmutableList<String> through = ImmutableList.nil();
 
@@ -426,7 +428,8 @@ public class ScopeTest extends TestCase {
         String js = "var f = function() {f = 'hello';}; f();";
         Script script = parse(js);
         GlobalScope globalScope = ScopeAnalyzer.analyze(script);
-        Scope fScope = globalScope.children.maybeHead().just();
+        Scope topLevelLexicalScope = globalScope.children.maybeHead().just();
+        Scope fScope = topLevelLexicalScope.children.maybeHead().just();
         final BindingIdentifier fNode1 = bi(new Getter().d(ScriptStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorBinding_())
                 .apply(script));
         final BindingIdentifier fNode2 = bi(new Getter().d(ScriptStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorInit_()).d(FunctionExpressionBody_()).d(FunctionBodyStatements_(0)).d(ExpressionStatementExpression_()).d(AssignmentExpressionBinding_())
@@ -440,7 +443,7 @@ public class ScopeTest extends TestCase {
 
         { // global scope
 
-            ImmutableList<Scope> children = ImmutableList.list(fScope);
+            ImmutableList<Scope> children = ImmutableList.list(topLevelLexicalScope);
 
             ImmutableList<String> through = ImmutableList.nil();
 
@@ -476,7 +479,8 @@ public class ScopeTest extends TestCase {
         String js = "var f2 = function f1() {f1 = 'hello';}; f1(); f2();";
         Script script = parse(js);
         GlobalScope globalScope = ScopeAnalyzer.analyze(script);
-        Scope functionNameScope = globalScope.children.maybeHead().just();
+        Scope topLevelLexicalScope = globalScope.children.maybeHead().just();
+        Scope functionNameScope = topLevelLexicalScope.children.maybeHead().just();
         Scope functionScope = functionNameScope.children.maybeHead().just();
 
         final BindingIdentifier f1Node1 = bi(new Getter().d(ScriptStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorInit_()).d(FunctionExpressionName_())
@@ -498,7 +502,7 @@ public class ScopeTest extends TestCase {
 
         { // global scope
 
-            ImmutableList<Scope> children = ImmutableList.list(functionNameScope);
+            ImmutableList<Scope> children = ImmutableList.list(topLevelLexicalScope);
 
             ImmutableList<String> through = ImmutableList.list("f1");
 
@@ -556,7 +560,8 @@ public class ScopeTest extends TestCase {
                 '}';
         Script script = parse(js);
         GlobalScope globalScope = ScopeAnalyzer.analyze(script);
-        Scope functionScope = globalScope.children.maybeHead().just();
+        Scope topLevelLexicalScope = globalScope.children.maybeHead().just();
+        Scope functionScope = topLevelLexicalScope.children.maybeHead().just();
         Scope ifBlockScope = functionScope.children.maybeHead().just(); // did not exist in ES5
 
         final BindingIdentifier fooNode1 = bi(new Getter().d(ScriptStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorBinding_())
@@ -581,7 +586,7 @@ public class ScopeTest extends TestCase {
 
         { // global scope
 
-            ImmutableList<Scope> children = ImmutableList.list(functionScope);
+            ImmutableList<Scope> children = ImmutableList.list(topLevelLexicalScope);
 
             ImmutableList<String> through = ImmutableList.list("alert");
 
@@ -629,21 +634,22 @@ public class ScopeTest extends TestCase {
                 "alert(a);";
         Script script = parse(js);
         GlobalScope globalScope = ScopeAnalyzer.analyze(script);
-        Scope bScope = globalScope.children.maybeHead().just();
+        Scope topLevelLexicalScope = globalScope.children.maybeHead().just();
+        Scope bScope = topLevelLexicalScope.children.maybeHead().just();
         Scope aScope = bScope.children.maybeHead().just();
 
         final BindingIdentifier aNode1 = bi(new Getter().d(ScriptStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorBinding_())
                 .apply(script));
         final BindingIdentifier bNode1 = bi(new Getter().d(ScriptStatements_(1)).d(FunctionDeclarationName_())
                 .apply(script));
-        final BindingIdentifier aNode2 = bi( new Getter().d(ScriptStatements_(1)).d(FunctionDeclarationBody_()).d(FunctionBodyStatements_(0)).d(ExpressionStatementExpression_()).d(AssignmentExpressionBinding_())
-                .apply(script) );
+        final BindingIdentifier aNode2 = bi(new Getter().d(ScriptStatements_(1)).d(FunctionDeclarationBody_()).d(FunctionBodyStatements_(0)).d(ExpressionStatementExpression_()).d(AssignmentExpressionBinding_())
+                .apply(script));
         final BindingIdentifier aNode3 = bi(new Getter().d(ScriptStatements_(1)).d(FunctionDeclarationBody_()).d(FunctionBodyStatements_(2)).d(FunctionDeclarationName_())
                 .apply(script));
         final IdentifierExpression bNode2 = ie(new Getter().d(ScriptStatements_(2)).d(ExpressionStatementExpression_()).d(CallExpressionCallee_())
                 .apply(script));
-        final IdentifierExpression alertNode1 = ie( new Getter().d(ScriptStatements_(3)).d(ExpressionStatementExpression_()).d(CallExpressionCallee_())
-                .apply(script) );
+        final IdentifierExpression alertNode1 = ie(new Getter().d(ScriptStatements_(3)).d(ExpressionStatementExpression_()).d(CallExpressionCallee_())
+                .apply(script));
         final IdentifierExpression aNode4 = ie(new Getter().d(ScriptStatements_(3)).d(ExpressionStatementExpression_()).d(CallExpressionArguments_(0))
                 .apply(script));
 
@@ -657,7 +663,7 @@ public class ScopeTest extends TestCase {
 
         { // global scope
 
-            ImmutableList<Scope> children = ImmutableList.list(bScope);
+            ImmutableList<Scope> children = ImmutableList.list(topLevelLexicalScope);
 
             ImmutableList<String> through = ImmutableList.list("alert");
 
@@ -720,7 +726,8 @@ public class ScopeTest extends TestCase {
                 '}';
         Script script = parse(js);
         GlobalScope globalScope = ScopeAnalyzer.analyze(script);
-        Scope fooScope = globalScope.children.maybeHead().just();
+        Scope topLevelLexicalScope = globalScope.children.maybeHead().just();
+        Scope fooScope = topLevelLexicalScope.children.maybeHead().just();
         Scope barScope1 = fooScope.children.maybeHead().just();
         Scope barScope2 = fooScope.children.maybeTail().just().maybeHead().just();
 
@@ -740,7 +747,7 @@ public class ScopeTest extends TestCase {
 
         { // global scope
 
-            ImmutableList<Scope> children = ImmutableList.list(fooScope);
+            ImmutableList<Scope> children = ImmutableList.list(topLevelLexicalScope);
 
             ImmutableList<String> through = ImmutableList.nil();
 
@@ -803,7 +810,8 @@ public class ScopeTest extends TestCase {
         String js = "foo(); function foo() {}";
         Script script = parse(js);
         GlobalScope globalScope = ScopeAnalyzer.analyze(script);
-        Scope fooScope = globalScope.children.maybeHead().just();
+        Scope topLevelLexicalScope = globalScope.children.maybeHead().just();
+        Scope fooScope = topLevelLexicalScope.children.maybeHead().just();
         final IdentifierExpression fooNode1 = ie(new Getter().d(ScriptStatements_(0)).d(ExpressionStatementExpression_()).d(CallExpressionCallee_())
                 .apply(script));
         final BindingIdentifier fooNode2 = bi(new Getter().d(ScriptStatements_(1)).d(FunctionDeclarationName_())
@@ -814,7 +822,7 @@ public class ScopeTest extends TestCase {
 
         { // global scope
 
-            ImmutableList<Scope> children = ImmutableList.list(fooScope);
+            ImmutableList<Scope> children = ImmutableList.list(topLevelLexicalScope);
 
             ImmutableList<String> through = ImmutableList.nil();
 
@@ -856,7 +864,8 @@ public class ScopeTest extends TestCase {
                 '}';
         Script script = parse(js);
         GlobalScope globalScope = ScopeAnalyzer.analyze(script);
-        Scope fooScope = globalScope.children.maybeHead().just();
+        Scope topLevelLexicalScope = globalScope.children.maybeHead().just();
+        Scope fooScope = topLevelLexicalScope.children.maybeHead().just();
         Scope barScope1 = fooScope.children.maybeHead().just();
         Scope barScope2 = fooScope.children.maybeTail().just().maybeHead().just();
 
@@ -866,8 +875,8 @@ public class ScopeTest extends TestCase {
                 .apply(script));
         final BindingIdentifier barNode2 = bi(new Getter().d(ScriptStatements_(0)).d(FunctionDeclarationBody_()).d(FunctionBodyStatements_(1)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorBinding_())
                 .apply(script));
-        final BindingIdentifier barNode3 = bi( new Getter().d(ScriptStatements_(0)).d(FunctionDeclarationBody_()).d(FunctionBodyStatements_(2)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorBinding_())
-                .apply(script) );
+        final BindingIdentifier barNode3 = bi(new Getter().d(ScriptStatements_(0)).d(FunctionDeclarationBody_()).d(FunctionBodyStatements_(2)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorBinding_())
+                .apply(script));
 
         final Either<BindingIdentifier, IdentifierExpression> fooNode1E = Either.left(fooNode1);
         final Either<BindingIdentifier, IdentifierExpression> barNode1E = Either.right(barNode1);
@@ -876,7 +885,7 @@ public class ScopeTest extends TestCase {
 
         { // global scope
 
-            ImmutableList<Scope> children = ImmutableList.list(fooScope);
+            ImmutableList<Scope> children = ImmutableList.list(topLevelLexicalScope);
 
             ImmutableList<String> through = ImmutableList.nil();
 
@@ -945,7 +954,8 @@ public class ScopeTest extends TestCase {
         String js = "(function() {f1 = 'hello'; alert(f1);})();";
         Script script = parse(js);
         GlobalScope globalScope = ScopeAnalyzer.analyze(script);
-        Scope functionScope = globalScope.children.maybeHead().just();
+        Scope topLevelLexicalScope = globalScope.children.maybeHead().just();
+        Scope functionScope = topLevelLexicalScope.children.maybeHead().just();
 
         final BindingIdentifier f1Node1 = bi(new Getter().d(ScriptStatements_(0)).d(ExpressionStatementExpression_()).d(CallExpressionCallee_()).d(FunctionExpressionBody_()).d(FunctionBodyStatements_(0)).d(ExpressionStatementExpression_()).d(AssignmentExpressionBinding_())
                 .apply(script));
@@ -960,7 +970,7 @@ public class ScopeTest extends TestCase {
 
         { // global scope
 
-            ImmutableList<Scope> children = ImmutableList.list(functionScope);
+            ImmutableList<Scope> children = ImmutableList.list(topLevelLexicalScope);
 
             ImmutableList<String> through = ImmutableList.list("f1", "alert");
 
@@ -997,14 +1007,15 @@ public class ScopeTest extends TestCase {
         String js = "(function() {var f1 = 'hello'; alert(f1);})();";
         Script script = parse(js);
         GlobalScope globalScope = ScopeAnalyzer.analyze(script);
-        Scope functionScope = globalScope.children.maybeHead().just();
+        Scope topLevelLexicalScope = globalScope.children.maybeHead().just();
+        Scope functionScope = topLevelLexicalScope.children.maybeHead().just();
 
         final BindingIdentifier f1Node1 = bi(new Getter().d(ScriptStatements_(0)).d(ExpressionStatementExpression_()).d(CallExpressionCallee_()).d(FunctionExpressionBody_()).d(FunctionBodyStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorBinding_())
                 .apply(script));
         final IdentifierExpression alertNode1 = ie(new Getter().d(ScriptStatements_(0)).d(ExpressionStatementExpression_()).d(CallExpressionCallee_()).d(FunctionExpressionBody_()).d(FunctionBodyStatements_(1)).d(ExpressionStatementExpression_()).d(CallExpressionCallee_())
                 .apply(script));
-        final IdentifierExpression f1Node2 = ie( new Getter().d(ScriptStatements_(0)).d(ExpressionStatementExpression_()).d(CallExpressionCallee_()).d(FunctionExpressionBody_()).d(FunctionBodyStatements_(1)).d(ExpressionStatementExpression_()).d(CallExpressionArguments_(0))
-                .apply(script) );
+        final IdentifierExpression f1Node2 = ie(new Getter().d(ScriptStatements_(0)).d(ExpressionStatementExpression_()).d(CallExpressionCallee_()).d(FunctionExpressionBody_()).d(FunctionBodyStatements_(1)).d(ExpressionStatementExpression_()).d(CallExpressionArguments_(0))
+                .apply(script));
 
         final Either<BindingIdentifier, IdentifierExpression> f1Node1E = Either.left(f1Node1);
         final Either<BindingIdentifier, IdentifierExpression> alertNode1E = Either.right(alertNode1);
@@ -1012,7 +1023,7 @@ public class ScopeTest extends TestCase {
 
         { // global scope
 
-            ImmutableList<Scope> children = ImmutableList.list(functionScope);
+            ImmutableList<Scope> children = ImmutableList.list(topLevelLexicalScope);
 
             ImmutableList<String> through = ImmutableList.list("alert");
 
@@ -1049,14 +1060,15 @@ public class ScopeTest extends TestCase {
         String js = "function f(arg1, arg2) {var v1 = arg1 + arg2 + ' world';}";
         Script script = parse(js);
         GlobalScope globalScope = ScopeAnalyzer.analyze(script);
-        Scope fScope = globalScope.children.maybeHead().just();
+        Scope topLevelLexicalScope = globalScope.children.maybeHead().just();
+        Scope fScope = topLevelLexicalScope.children.maybeHead().just();
 
         final BindingIdentifier fNode1 = bi(new Getter().d(ScriptStatements_(0)).d(FunctionDeclarationName_())
                 .apply(script));
         final BindingIdentifier arg1Node1 = bi(new Getter().d(ScriptStatements_(0)).d(FunctionDeclarationParams_()).d(FormalParametersItems_(0))
                 .apply(script));
-        final BindingIdentifier arg2Node1 = bi( new Getter().d(ScriptStatements_(0)).d(FunctionDeclarationParams_()).d(FormalParametersItems_(1))
-                .apply(script) );
+        final BindingIdentifier arg2Node1 = bi(new Getter().d(ScriptStatements_(0)).d(FunctionDeclarationParams_()).d(FormalParametersItems_(1))
+                .apply(script));
         final BindingIdentifier v1Node1 = bi(new Getter().d(ScriptStatements_(0)).d(FunctionDeclarationBody_()).d(FunctionBodyStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorBinding_())
                 .apply(script));
         final IdentifierExpression arg1Node2 = ie(new Getter().d(ScriptStatements_(0)).d(FunctionDeclarationBody_()).d(FunctionBodyStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorInit_()).d(BinaryExpressionLeft_()).d(BinaryExpressionLeft_())
@@ -1074,7 +1086,7 @@ public class ScopeTest extends TestCase {
 
         { // global scope
 
-            ImmutableList<Scope> children = ImmutableList.list(fScope);
+            ImmutableList<Scope> children = ImmutableList.list(topLevelLexicalScope);
 
             ImmutableList<String> through = ImmutableList.nil();
 
@@ -1113,7 +1125,8 @@ public class ScopeTest extends TestCase {
         String js = "function f() {var v1 = arguments[0] + ' world';}";
         Script script = parse(js);
         GlobalScope globalScope = ScopeAnalyzer.analyze(script);
-        Scope fScope = globalScope.children.maybeHead().just();
+        Scope topLevelLexicalScope = globalScope.children.maybeHead().just();
+        Scope fScope = topLevelLexicalScope.children.maybeHead().just();
 
         final BindingIdentifier fNode1 = bi(new Getter().d(ScriptStatements_(0)).d(FunctionDeclarationName_())
                 .apply(script));
@@ -1128,7 +1141,7 @@ public class ScopeTest extends TestCase {
 
         { // global scope
 
-            ImmutableList<Scope> children = ImmutableList.list(fScope);
+            ImmutableList<Scope> children = ImmutableList.list(topLevelLexicalScope);
 
             ImmutableList<String> through = ImmutableList.nil();
 
@@ -1164,7 +1177,8 @@ public class ScopeTest extends TestCase {
         String js = "with (Math) {" + "  var x = cos(3 * PI);" + "  alert(x);" + '}';
         Script script = parse(js);
         GlobalScope globalScope = ScopeAnalyzer.analyze(script);
-        Scope withScope = globalScope.children.maybeHead().just();
+        Scope topLevelLexicalScope = globalScope.children.maybeHead().just();
+        Scope withScope = topLevelLexicalScope.children.maybeHead().just();
         Scope withBlockScope = withScope.children.maybeHead().just(); // did not exist in ES5
 
         final IdentifierExpression mathNode1 = ie(new Getter().d(ScriptStatements_(0)).d(WithStatementObject_())
@@ -1189,7 +1203,7 @@ public class ScopeTest extends TestCase {
 
         { // global scope
 
-            ImmutableList<Scope> children = ImmutableList.list(withScope);
+            ImmutableList<Scope> children = ImmutableList.list(topLevelLexicalScope);
 
             ImmutableList<String> through = ImmutableList.list("Math", "cos", "PI", "alert");
 
@@ -1242,19 +1256,20 @@ public class ScopeTest extends TestCase {
                 '}';
         Script script = parse(js);
         GlobalScope globalScope = ScopeAnalyzer.analyze(script);
-        Scope withScope = globalScope.children.maybeHead().just();
+        Scope topLevelLexicalScope = globalScope.children.maybeHead().just();
+        Scope withScope = topLevelLexicalScope.children.maybeHead().just();
         Scope withBlockScope = withScope.children.maybeHead().just(); // did not exist in ES5
 
         final BindingIdentifier oNode1 = bi(new Getter().d(ScriptStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorBinding_())
                 .apply(script));
         final IdentifierExpression oNode2 = ie(new Getter().d(ScriptStatements_(1)).d(WithStatementObject_()).d(StaticMemberExpressionObject_()).d(StaticMemberExpressionObject_())
                 .apply(script));
-        final IdentifierExpression alertNode1 = ie( new Getter().d(ScriptStatements_(1)).d(WithStatementBody_()).d(BlockStatementBlock_()).d(BlockStatements_(0)).d(ExpressionStatementExpression_()).d(CallExpressionCallee_())
-                .apply(script) );
-        final IdentifierExpression fld1Node1 = ie( new Getter().d(ScriptStatements_(1)).d(WithStatementBody_()).d(BlockStatementBlock_()).d(BlockStatements_(0)).d(ExpressionStatementExpression_()).d(CallExpressionArguments_(0))
-                .apply(script) );
-        final IdentifierExpression alertNode2 = ie( new Getter().d(ScriptStatements_(1)).d(WithStatementBody_()).d(BlockStatementBlock_()).d(BlockStatements_(1)).d(ExpressionStatementExpression_()).d(CallExpressionCallee_())
-                .apply(script) );
+        final IdentifierExpression alertNode1 = ie(new Getter().d(ScriptStatements_(1)).d(WithStatementBody_()).d(BlockStatementBlock_()).d(BlockStatements_(0)).d(ExpressionStatementExpression_()).d(CallExpressionCallee_())
+                .apply(script));
+        final IdentifierExpression fld1Node1 = ie(new Getter().d(ScriptStatements_(1)).d(WithStatementBody_()).d(BlockStatementBlock_()).d(BlockStatements_(0)).d(ExpressionStatementExpression_()).d(CallExpressionArguments_(0))
+                .apply(script));
+        final IdentifierExpression alertNode2 = ie(new Getter().d(ScriptStatements_(1)).d(WithStatementBody_()).d(BlockStatementBlock_()).d(BlockStatements_(1)).d(ExpressionStatementExpression_()).d(CallExpressionCallee_())
+                .apply(script));
         final IdentifierExpression fld2Node1 = ie( new Getter().d(ScriptStatements_(1)).d(WithStatementBody_()).d(BlockStatementBlock_()).d(BlockStatements_(1)).d(ExpressionStatementExpression_()).d(CallExpressionArguments_(0))
                 .apply(script) );
 
@@ -1268,7 +1283,7 @@ public class ScopeTest extends TestCase {
 
         { // global scope
 
-            ImmutableList<Scope> children = ImmutableList.list(withScope);
+            ImmutableList<Scope> children = ImmutableList.list(topLevelLexicalScope);
 
             ImmutableList<String> through = ImmutableList.list("alert", "fld1", "fld2");
 
@@ -1309,8 +1324,9 @@ public class ScopeTest extends TestCase {
         String js = "try {" + "  alert('Welcome guest!');" + "} catch(err) {" + "  alert(err);" + '}';
         Script script = parse(js);
         GlobalScope globalScope = ScopeAnalyzer.analyze(script);
-        Scope tryBlockScope = globalScope.children.maybeHead().just(); // did not exist in ES5
-        Scope catchScope = globalScope.children.index(1).just();
+        Scope topLevelLexicalScope = globalScope.children.maybeHead().just();
+        Scope tryBlockScope = topLevelLexicalScope.children.maybeHead().just(); // did not exist in ES5
+        Scope catchScope = topLevelLexicalScope.children.index(1).just();
         Scope catchBlockScope = catchScope.children.maybeHead().just(); // did not exist in ES5
 
         final IdentifierExpression alertNode1 = ie(new Getter().d(ScriptStatements_(0)).d(TryCatchStatementBody_()).d(BlockStatements_(0)).d(ExpressionStatementExpression_()).d(CallExpressionCallee_())
@@ -1329,7 +1345,7 @@ public class ScopeTest extends TestCase {
 
         { // global scope
 
-            ImmutableList<Scope> children = ImmutableList.list(tryBlockScope, catchScope);
+            ImmutableList<Scope> children = ImmutableList.list(topLevelLexicalScope);
 
             ImmutableList<String> through = ImmutableList.list("alert");
 
@@ -1374,8 +1390,9 @@ public class ScopeTest extends TestCase {
                 '}';
         Script script = parse(js);
         GlobalScope globalScope = ScopeAnalyzer.analyze(script);
-        Scope tryBlockScope1 = globalScope.children.maybeHead().just(); // did not exist in ES5
-        Scope catchScope1 = globalScope.children.index(1).just();
+        Scope topLevelLexicalScope = globalScope.children.maybeHead().just();
+        Scope tryBlockScope1 = topLevelLexicalScope.children.maybeHead().just(); // did not exist in ES5
+        Scope catchScope1 = topLevelLexicalScope.children.index(1).just();
         Scope catchBlockScope1 = catchScope1.children.maybeHead().just(); // did not exist in ES5
         Scope tryBlockScope2 = catchBlockScope1.children.maybeHead().just(); // did not exist in ES5
         Scope catchScope2 = catchBlockScope1.children.index(1).just();
@@ -1409,7 +1426,7 @@ public class ScopeTest extends TestCase {
 
         { // global scope
 
-            ImmutableList<Scope> children = ImmutableList.list(tryBlockScope1, catchScope1);
+            ImmutableList<Scope> children = ImmutableList.list(topLevelLexicalScope);
 
             ImmutableList<String> through = ImmutableList.list("alert");
 
@@ -1462,8 +1479,9 @@ public class ScopeTest extends TestCase {
         String js = "try {" + "  alert('Welcome guest!');" + "} catch(err) {" + "  var err = 1;" + '}';
         Script script = parse(js);
         GlobalScope globalScope = ScopeAnalyzer.analyze(script);
-        Scope tryBlockScope = globalScope.children.maybeHead().just(); // did not exist in ES5
-        Scope catchScope = globalScope.children.index(1).just();
+        Scope topLevelLexicalScope = globalScope.children.maybeHead().just();
+        Scope tryBlockScope = topLevelLexicalScope.children.maybeHead().just(); // did not exist in ES5
+        Scope catchScope = topLevelLexicalScope.children.index(1).just();
         Scope catchBlockScope = catchScope.children.maybeHead().just(); // did not exist in ES5
 
         final IdentifierExpression alertNode1 = ie(new Getter().d(ScriptStatements_(0)).d(TryCatchStatementBody_()).d(BlockStatements_(0)).d(ExpressionStatementExpression_()).d(CallExpressionCallee_())
@@ -1479,7 +1497,7 @@ public class ScopeTest extends TestCase {
 
         { // global scope
 
-            ImmutableList<Scope> children = ImmutableList.list(tryBlockScope, catchScope);
+            ImmutableList<Scope> children = ImmutableList.list(topLevelLexicalScope);
 
             ImmutableList<String> through = ImmutableList.list("alert");
 
@@ -1515,7 +1533,8 @@ public class ScopeTest extends TestCase {
         String js = "var x = x => ++x";
         Script script = parse(js);
         GlobalScope globalScope = ScopeAnalyzer.analyze(script);
-        Scope aScope = globalScope.children.maybeHead().just();
+        Scope topLevelLexicalScope = globalScope.children.maybeHead().just();
+        Scope aScope = topLevelLexicalScope.children.maybeHead().just();
 
         final BindingIdentifier xNode1 = bi(new Getter().d(ScriptStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorBinding_())
                 .apply(script));
@@ -1530,7 +1549,7 @@ public class ScopeTest extends TestCase {
 
         { // global scope
 
-            ImmutableList<Scope> children = ImmutableList.list(aScope);
+            ImmutableList<Scope> children = ImmutableList.list(topLevelLexicalScope);
 
             ImmutableList<String> through = ImmutableList.nil();
 
@@ -1565,7 +1584,8 @@ public class ScopeTest extends TestCase {
         String js = "() => arguments";
         Script script = parse(js);
         GlobalScope globalScope = ScopeAnalyzer.analyze(script);
-        Scope aScope = globalScope.children.maybeHead().just();
+        Scope topLevelLexicalScope = globalScope.children.maybeHead().just();
+        Scope aScope = topLevelLexicalScope.children.maybeHead().just();
 
         final IdentifierExpression argumentsNode = ie(new Getter().d(ScriptStatements_(0)).d(ExpressionStatementExpression_()).d(ArrowExpressionBody_())
                 .apply(script));
@@ -1574,7 +1594,7 @@ public class ScopeTest extends TestCase {
 
         { // global scope
 
-            ImmutableList<Scope> children = ImmutableList.list(aScope);
+            ImmutableList<Scope> children = ImmutableList.list(topLevelLexicalScope);
 
             ImmutableList<String> through = ImmutableList.list("arguments");
 
@@ -1607,7 +1627,8 @@ public class ScopeTest extends TestCase {
         String js = "var x = {get [x]() {return x + arguments;}};";
         Script script = parse(js);
         GlobalScope globalScope = ScopeAnalyzer.analyze(script);
-        Scope gScope = globalScope.children.maybeHead().just();
+        Scope topLevelLexicalScope = globalScope.children.maybeHead().just();
+        Scope gScope = topLevelLexicalScope.children.maybeHead().just();
 
         final BindingIdentifier xNode1 = bi(new Getter().d(ScriptStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorBinding_())
                 .apply(script));
@@ -1625,7 +1646,7 @@ public class ScopeTest extends TestCase {
 
         { // global scope
 
-            ImmutableList<Scope> children = ImmutableList.list(gScope);
+            ImmutableList<Scope> children = ImmutableList.list(topLevelLexicalScope);
 
             ImmutableList<String> through = ImmutableList.nil();
 
@@ -1661,7 +1682,8 @@ public class ScopeTest extends TestCase {
         String js = "x; {const x = y;}; var x, y;";
         Script script = parse(js);
         GlobalScope globalScope = ScopeAnalyzer.analyze(script);
-        Scope blockScope = globalScope.children.maybeHead().just();
+        Scope topLevelLexicalScope = globalScope.children.maybeHead().just();
+        Scope blockScope = topLevelLexicalScope.children.maybeHead().just();
 
         final IdentifierExpression xNode1 = ie(new Getter().d(ScriptStatements_(0)).d(ExpressionStatementExpression_())
                 .apply(script));
@@ -1682,7 +1704,7 @@ public class ScopeTest extends TestCase {
 
         { // global scope
 
-            ImmutableList<Scope> children = ImmutableList.list(blockScope);
+            ImmutableList<Scope> children = ImmutableList.list(topLevelLexicalScope);
 
             ImmutableList<String> through = ImmutableList.nil();
 

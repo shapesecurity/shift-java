@@ -19,7 +19,9 @@ package com.shapesecurity.shift.scope;
 import com.shapesecurity.functional.Pair;
 import com.shapesecurity.functional.data.HashTable;
 import com.shapesecurity.functional.data.ImmutableList;
+import com.shapesecurity.functional.data.Maybe;
 import com.shapesecurity.shift.ast.BindingIdentifier;
+import com.shapesecurity.shift.ast.FunctionDeclaration;
 import com.shapesecurity.shift.ast.IdentifierExpression;
 import com.shapesecurity.shift.ast.Node;
 import org.jetbrains.annotations.NotNull;
@@ -36,12 +38,37 @@ public class GlobalScope extends Scope {
     }
   }
 
-  public boolean isGlobal(IdentifierExpression identifierExpression) {
-    return findVariablesReferencedBy(identifierExpression).map(v -> v.declarations.isEmpty()).orJust(false);
-  } // TODO these aren't quite right: top-level script var declarations are still globals.
+    // these could probably be simplified, under certain assumptions, by inspecting .variables and .through instead.
+    public boolean isGlobal(IdentifierExpression identifierExpression) {
+      return findVariablesReferencedBy(identifierExpression).map(this::isGlobal).orJust(false);
+    }
 
-  public boolean isGlobal(BindingIdentifier bindingIdentifier) {
-    return findVariablesReferencedBy(bindingIdentifier).map(v -> v.declarations.isEmpty()).orJust(false);
-  }
+    public boolean isGlobal(BindingIdentifier bindingIdentifier) {
+        return findVariablesReferencedBy(bindingIdentifier).map(this::isGlobal).orJust(false);
+    }
+
+    public boolean isGlobal(Variable variable) {
+        return variables.containsValue(variable) || !isDeclared(variable);
+    }
+
+    // Because of annex B.3.3, in addition to a lexical binding (outside of scripts, which ???), functions may create a variable
+    // binding for themselves. This helper gets both the (necessarily created) lexical binding and the (possible) variable binding.
+    // Takes a FunctionDeclaration to ensure it is not misused, but only actually needs its binding identifier.
+    // Assuming the function declaration occurs somewhere in the AST corresponding to this global scope,
+    // there always will be at least one variable declared by the given function.
+    // Returns (lexical, variable)
+    @NotNull
+    public Pair<Variable, Maybe<Variable>> findVariablesForFuncDecl(@NotNull final FunctionDeclaration func) {
+        Maybe<Pair<Scope, Variable>> outerDeclaration = outermostScopeDeclaringHelper(func.name);
+        assert outerDeclaration.isJust();
+        Variable outerVar = outerDeclaration.just().b;
+        Scope outerScope = outerDeclaration.just().a;
+        Maybe<Variable> innerDeclaration = outerScope.children.findMap(scope -> scope.findVariablesDeclaredBy(func.name));
+        if(innerDeclaration.isJust()) {
+            return new Pair<>(innerDeclaration.just(), Maybe.just(outerVar));
+        } else {
+            return new Pair<>(outerVar, Maybe.nothing());
+        }
+    }
 
 }
