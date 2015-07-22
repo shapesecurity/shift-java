@@ -1558,7 +1558,7 @@ public abstract class Parser extends Tokenizer {
   @NotNull
   private Expression parseStringLiteral() throws JsError {
     SourceLocation startLocation = this.getLocation();
-    return this.markLocation(startLocation, new LiteralStringExpression(this.lex().toString()));
+    return this.markLocation(startLocation, new LiteralStringExpression(this.lex().getValueString().toString()));
   }
 
   @NotNull
