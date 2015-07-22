@@ -969,8 +969,9 @@ public class Tokenizer {
     while (this.index < this.source.length()) {
       char ch = this.source.charAt(this.index);
       if (ch == quote) {
+        Token token = new StringLiteralToken(this.getSlice(start + 1), str, octal);
         this.index++;
-        return new StringLiteralToken(this.getSlice(start), str, octal);
+        return token;
       } else if (ch == '\\') {
         Pair<String, Boolean> info = this.scanStringEscape(str, octal);
         str = info.a;
