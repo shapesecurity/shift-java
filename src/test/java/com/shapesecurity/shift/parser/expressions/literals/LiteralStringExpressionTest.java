@@ -13,6 +13,7 @@ public class LiteralStringExpressionTest extends ParserTestCase {
     testScript("('x')", new LiteralStringExpression("x"));
     testScript("('\\\\\\'')", new LiteralStringExpression("\\'"));
     testScript("(\"x\")", new LiteralStringExpression("x"));
+
 //    testScript("(\"\\\\\\\"\")", );
 //    testScript("('\\\r')", );
 //    testScript("('\\\r\n')", );
