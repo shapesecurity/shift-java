@@ -34,6 +34,20 @@ public class LiteralStringExpression extends Expression
     this.value = value;
   }
 
+  @Override
+  public boolean equals(Object object)
+  {
+    return object instanceof LiteralStringExpression && this.value.equals(((LiteralStringExpression) object).value);
+  }
+
+  @Override
+  public int hashCode()
+  {
+    int code = HashCodeBuilder.put(0, "LiteralStringExpression");
+    code = HashCodeBuilder.put(code, this.value);
+    return code;
+  }
+
   @NotNull
   public String  getValue()
   {

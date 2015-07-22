@@ -34,6 +34,20 @@ public class BreakStatement extends Statement
     this.label = label;
   }
 
+  @Override
+  public boolean equals(Object object)
+  {
+    return object instanceof BreakStatement && this.label.equals(((BreakStatement) object).label);
+  }
+
+  @Override
+  public int hashCode()
+  {
+    int code = HashCodeBuilder.put(0, "BreakStatement");
+    code = HashCodeBuilder.put(code, this.label);
+    return code;
+  }
+
   @NotNull
   public Maybe<String> getLabel()
   {

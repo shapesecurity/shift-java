@@ -9,7 +9,7 @@ import java.util.*;
 
 public class ScopeSerializer {
 
-  private Map<Node, Integer> nodeToID = new HashMap<>();
+  private Map<Node, Integer> nodeToID = new IdentityHashMap<>();
   private int currentID = 0;
 
   public String serializeScope(Scope scope) {

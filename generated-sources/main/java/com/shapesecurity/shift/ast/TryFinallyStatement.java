@@ -42,6 +42,22 @@ public class TryFinallyStatement extends Statement
     this.finalizer = finalizer;
   }
 
+  @Override
+  public boolean equals(Object object)
+  {
+    return object instanceof TryFinallyStatement && this.body.equals(((TryFinallyStatement) object).body) && this.catchClause.equals(((TryFinallyStatement) object).catchClause) && this.finalizer.equals(((TryFinallyStatement) object).finalizer);
+  }
+
+  @Override
+  public int hashCode()
+  {
+    int code = HashCodeBuilder.put(0, "TryFinallyStatement");
+    code = HashCodeBuilder.put(code, this.body);
+    code = HashCodeBuilder.put(code, this.catchClause);
+    code = HashCodeBuilder.put(code, this.finalizer);
+    return code;
+  }
+
   @NotNull
   public Block getBody()
   {

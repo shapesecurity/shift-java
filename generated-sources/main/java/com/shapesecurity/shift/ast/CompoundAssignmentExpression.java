@@ -43,6 +43,22 @@ public class CompoundAssignmentExpression extends Expression
     this.expression = expression;
   }
 
+  @Override
+  public boolean equals(Object object)
+  {
+    return object instanceof CompoundAssignmentExpression && this.operator.equals(((CompoundAssignmentExpression) object).operator) && this.binding.equals(((CompoundAssignmentExpression) object).binding) && this.expression.equals(((CompoundAssignmentExpression) object).expression);
+  }
+
+  @Override
+  public int hashCode()
+  {
+    int code = HashCodeBuilder.put(0, "CompoundAssignmentExpression");
+    code = HashCodeBuilder.put(code, this.operator);
+    code = HashCodeBuilder.put(code, this.binding);
+    code = HashCodeBuilder.put(code, this.expression);
+    return code;
+  }
+
   @NotNull
   public CompoundAssignmentOperator getOperator()
   {

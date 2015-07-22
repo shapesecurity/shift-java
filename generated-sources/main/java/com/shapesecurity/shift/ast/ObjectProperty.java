@@ -34,4 +34,17 @@ public abstract class ObjectProperty extends Node
     super();
   }
 
+  @Override
+  public boolean equals(Object object)
+  {
+    return object instanceof ObjectProperty;
+  }
+
+  @Override
+  public int hashCode()
+  {
+    int code = HashCodeBuilder.put(0, "ObjectProperty");
+    return code;
+  }
+
 }

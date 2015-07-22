@@ -33,6 +33,20 @@ public class ExportAllFrom extends ExportDeclaration
     this.moduleSpecifier = moduleSpecifier;
   }
 
+  @Override
+  public boolean equals(Object object)
+  {
+    return object instanceof ExportAllFrom && this.moduleSpecifier.equals(((ExportAllFrom) object).moduleSpecifier);
+  }
+
+  @Override
+  public int hashCode()
+  {
+    int code = HashCodeBuilder.put(0, "ExportAllFrom");
+    code = HashCodeBuilder.put(code, this.moduleSpecifier);
+    return code;
+  }
+
   @NotNull
   public String  getModuleSpecifier()
   {

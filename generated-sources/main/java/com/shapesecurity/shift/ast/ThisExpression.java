@@ -31,6 +31,19 @@ public class ThisExpression extends Expression
   }
 
   @Override
+  public boolean equals(Object object)
+  {
+    return object instanceof ThisExpression;
+  }
+
+  @Override
+  public int hashCode()
+  {
+    int code = HashCodeBuilder.put(0, "ThisExpression");
+    return code;
+  }
+
+  @Override
   @NotNull
   public Precedence getPrecedence()
   {

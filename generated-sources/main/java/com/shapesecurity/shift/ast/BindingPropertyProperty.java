@@ -37,6 +37,21 @@ public class BindingPropertyProperty extends BindingProperty
     this.binding = binding;
   }
 
+  @Override
+  public boolean equals(Object object)
+  {
+    return object instanceof BindingPropertyProperty && this.name.equals(((BindingPropertyProperty) object).name) && this.binding.equals(((BindingPropertyProperty) object).binding);
+  }
+
+  @Override
+  public int hashCode()
+  {
+    int code = HashCodeBuilder.put(0, "BindingPropertyProperty");
+    code = HashCodeBuilder.put(code, this.name);
+    code = HashCodeBuilder.put(code, this.binding);
+    return code;
+  }
+
   @NotNull
   public PropertyName getName()
   {

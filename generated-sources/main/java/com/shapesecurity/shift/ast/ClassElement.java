@@ -44,6 +44,21 @@ public class ClassElement extends Node
     this.method = method;
   }
 
+  @Override
+  public boolean equals(Object object)
+  {
+    return object instanceof ClassElement && this.isStatic.equals(((ClassElement) object).isStatic) && this.method.equals(((ClassElement) object).method);
+  }
+
+  @Override
+  public int hashCode()
+  {
+    int code = HashCodeBuilder.put(0, "ClassElement");
+    code = HashCodeBuilder.put(code, this.isStatic);
+    code = HashCodeBuilder.put(code, this.method);
+    return code;
+  }
+
   @NotNull
   public Boolean getIsStatic()
   {

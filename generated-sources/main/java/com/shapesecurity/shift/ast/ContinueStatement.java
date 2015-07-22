@@ -34,6 +34,20 @@ public class ContinueStatement extends Statement
     this.label = label;
   }
 
+  @Override
+  public boolean equals(Object object)
+  {
+    return object instanceof ContinueStatement && this.label.equals(((ContinueStatement) object).label);
+  }
+
+  @Override
+  public int hashCode()
+  {
+    int code = HashCodeBuilder.put(0, "ContinueStatement");
+    code = HashCodeBuilder.put(code, this.label);
+    return code;
+  }
+
   @NotNull
   public Maybe<String> getLabel()
   {

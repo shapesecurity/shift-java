@@ -42,6 +42,22 @@ public class ImportNamespace extends ImportDeclaration
     this.moduleSpecifier = moduleSpecifier;
   }
 
+  @Override
+  public boolean equals(Object object)
+  {
+    return object instanceof ImportNamespace && this.defaultBinding.equals(((ImportNamespace) object).defaultBinding) && this.namespaceBinding.equals(((ImportNamespace) object).namespaceBinding) && this.moduleSpecifier.equals(((ImportNamespace) object).moduleSpecifier);
+  }
+
+  @Override
+  public int hashCode()
+  {
+    int code = HashCodeBuilder.put(0, "ImportNamespace");
+    code = HashCodeBuilder.put(code, this.defaultBinding);
+    code = HashCodeBuilder.put(code, this.namespaceBinding);
+    code = HashCodeBuilder.put(code, this.moduleSpecifier);
+    return code;
+  }
+
   @NotNull
   public Maybe<BindingIdentifier> getDefaultBinding()
   {

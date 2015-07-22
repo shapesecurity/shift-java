@@ -37,6 +37,21 @@ public class DoWhileStatement extends IterationStatement
     this.body = body;
   }
 
+  @Override
+  public boolean equals(Object object)
+  {
+    return object instanceof DoWhileStatement && this.test.equals(((DoWhileStatement) object).test) && this.body.equals(((DoWhileStatement) object).body);
+  }
+
+  @Override
+  public int hashCode()
+  {
+    int code = HashCodeBuilder.put(0, "DoWhileStatement");
+    code = HashCodeBuilder.put(code, this.test);
+    code = HashCodeBuilder.put(code, this.body);
+    return code;
+  }
+
   @NotNull
   public Expression getTest()
   {

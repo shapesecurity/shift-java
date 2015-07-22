@@ -40,6 +40,20 @@ public class SwitchDefault extends Node
     this.consequent = consequent;
   }
 
+  @Override
+  public boolean equals(Object object)
+  {
+    return object instanceof SwitchDefault && this.consequent.equals(((SwitchDefault) object).consequent);
+  }
+
+  @Override
+  public int hashCode()
+  {
+    int code = HashCodeBuilder.put(0, "SwitchDefault");
+    code = HashCodeBuilder.put(code, this.consequent);
+    return code;
+  }
+
   @NotNull
   public ImmutableList<Statement> getConsequent()
   {

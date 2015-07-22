@@ -37,6 +37,21 @@ public class TryCatchStatement extends Statement
     this.catchClause = catchClause;
   }
 
+  @Override
+  public boolean equals(Object object)
+  {
+    return object instanceof TryCatchStatement && this.body.equals(((TryCatchStatement) object).body) && this.catchClause.equals(((TryCatchStatement) object).catchClause);
+  }
+
+  @Override
+  public int hashCode()
+  {
+    int code = HashCodeBuilder.put(0, "TryCatchStatement");
+    code = HashCodeBuilder.put(code, this.body);
+    code = HashCodeBuilder.put(code, this.catchClause);
+    return code;
+  }
+
   @NotNull
   public Block getBody()
   {

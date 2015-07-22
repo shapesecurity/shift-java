@@ -39,6 +39,20 @@ public class TemplateElement extends Node implements ExpressionTemplateElement
     this.rawValue = rawValue;
   }
 
+  @Override
+  public boolean equals(Object object)
+  {
+    return object instanceof TemplateElement && this.rawValue.equals(((TemplateElement) object).rawValue);
+  }
+
+  @Override
+  public int hashCode()
+  {
+    int code = HashCodeBuilder.put(0, "TemplateElement");
+    code = HashCodeBuilder.put(code, this.rawValue);
+    return code;
+  }
+
   @NotNull
   public String  getRawValue()
   {

@@ -41,6 +41,22 @@ public class Setter extends MethodDefinition
     this.name = name;
   }
 
+  @Override
+  public boolean equals(Object object)
+  {
+    return object instanceof Setter && this.param.equals(((Setter) object).param) && this.body.equals(((Setter) object).body) && this.name.equals(((Setter) object).name);
+  }
+
+  @Override
+  public int hashCode()
+  {
+    int code = HashCodeBuilder.put(0, "Setter");
+    code = HashCodeBuilder.put(code, this.param);
+    code = HashCodeBuilder.put(code, this.body);
+    code = HashCodeBuilder.put(code, this.name);
+    return code;
+  }
+
   @NotNull
   public BindingBindingWithDefault getParam()
   {

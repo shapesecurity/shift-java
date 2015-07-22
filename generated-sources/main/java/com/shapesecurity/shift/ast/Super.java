@@ -34,4 +34,17 @@ public class Super extends Node implements ExpressionSuper
     super();
   }
 
+  @Override
+  public boolean equals(Object object)
+  {
+    return object instanceof Super;
+  }
+
+  @Override
+  public int hashCode()
+  {
+    int code = HashCodeBuilder.put(0, "Super");
+    return code;
+  }
+
 }

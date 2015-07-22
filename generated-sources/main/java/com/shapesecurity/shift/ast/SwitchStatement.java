@@ -38,6 +38,21 @@ public class SwitchStatement extends Statement
     this.cases = cases;
   }
 
+  @Override
+  public boolean equals(Object object)
+  {
+    return object instanceof SwitchStatement && this.discriminant.equals(((SwitchStatement) object).discriminant) && this.cases.equals(((SwitchStatement) object).cases);
+  }
+
+  @Override
+  public int hashCode()
+  {
+    int code = HashCodeBuilder.put(0, "SwitchStatement");
+    code = HashCodeBuilder.put(code, this.discriminant);
+    code = HashCodeBuilder.put(code, this.cases);
+    return code;
+  }
+
   @NotNull
   public Expression getDiscriminant()
   {

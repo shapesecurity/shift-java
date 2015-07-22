@@ -39,6 +39,21 @@ public class UnaryExpression extends Expression
     this.operand = operand;
   }
 
+  @Override
+  public boolean equals(Object object)
+  {
+    return object instanceof UnaryExpression && this.operator.equals(((UnaryExpression) object).operator) && this.operand.equals(((UnaryExpression) object).operand);
+  }
+
+  @Override
+  public int hashCode()
+  {
+    int code = HashCodeBuilder.put(0, "UnaryExpression");
+    code = HashCodeBuilder.put(code, this.operator);
+    code = HashCodeBuilder.put(code, this.operand);
+    return code;
+  }
+
   @NotNull
   public UnaryOperator getOperator()
   {

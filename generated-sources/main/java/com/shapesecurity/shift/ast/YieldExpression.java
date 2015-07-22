@@ -35,6 +35,20 @@ public class YieldExpression extends Expression
     this.expression = expression;
   }
 
+  @Override
+  public boolean equals(Object object)
+  {
+    return object instanceof YieldExpression && this.expression.equals(((YieldExpression) object).expression);
+  }
+
+  @Override
+  public int hashCode()
+  {
+    int code = HashCodeBuilder.put(0, "YieldExpression");
+    code = HashCodeBuilder.put(code, this.expression);
+    return code;
+  }
+
   @NotNull
   public Maybe<Expression> getExpression()
   {

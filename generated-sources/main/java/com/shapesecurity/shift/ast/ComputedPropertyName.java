@@ -33,6 +33,20 @@ public class ComputedPropertyName extends PropertyName
     this.expression = expression;
   }
 
+  @Override
+  public boolean equals(Object object)
+  {
+    return object instanceof ComputedPropertyName && this.expression.equals(((ComputedPropertyName) object).expression);
+  }
+
+  @Override
+  public int hashCode()
+  {
+    int code = HashCodeBuilder.put(0, "ComputedPropertyName");
+    code = HashCodeBuilder.put(code, this.expression);
+    return code;
+  }
+
   @NotNull
   public Expression getExpression()
   {

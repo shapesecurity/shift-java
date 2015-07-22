@@ -34,6 +34,20 @@ public class YieldGeneratorExpression extends Expression
     this.expression = expression;
   }
 
+  @Override
+  public boolean equals(Object object)
+  {
+    return object instanceof YieldGeneratorExpression && this.expression.equals(((YieldGeneratorExpression) object).expression);
+  }
+
+  @Override
+  public int hashCode()
+  {
+    int code = HashCodeBuilder.put(0, "YieldGeneratorExpression");
+    code = HashCodeBuilder.put(code, this.expression);
+    return code;
+  }
+
   @NotNull
   public Expression getExpression()
   {

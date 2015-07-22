@@ -42,6 +42,22 @@ public class ConditionalExpression extends Expression
     this.alternate = alternate;
   }
 
+  @Override
+  public boolean equals(Object object)
+  {
+    return object instanceof ConditionalExpression && this.test.equals(((ConditionalExpression) object).test) && this.consequent.equals(((ConditionalExpression) object).consequent) && this.alternate.equals(((ConditionalExpression) object).alternate);
+  }
+
+  @Override
+  public int hashCode()
+  {
+    int code = HashCodeBuilder.put(0, "ConditionalExpression");
+    code = HashCodeBuilder.put(code, this.test);
+    code = HashCodeBuilder.put(code, this.consequent);
+    code = HashCodeBuilder.put(code, this.alternate);
+    return code;
+  }
+
   @NotNull
   public Expression getTest()
   {

@@ -38,6 +38,21 @@ public class LiteralRegExpExpression extends Expression
     this.flags = flags;
   }
 
+  @Override
+  public boolean equals(Object object)
+  {
+    return object instanceof LiteralRegExpExpression && this.pattern.equals(((LiteralRegExpExpression) object).pattern) && this.flags.equals(((LiteralRegExpExpression) object).flags);
+  }
+
+  @Override
+  public int hashCode()
+  {
+    int code = HashCodeBuilder.put(0, "LiteralRegExpExpression");
+    code = HashCodeBuilder.put(code, this.pattern);
+    code = HashCodeBuilder.put(code, this.flags);
+    return code;
+  }
+
   @NotNull
   public String  getPattern()
   {

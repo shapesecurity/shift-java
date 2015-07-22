@@ -33,6 +33,20 @@ public class ShorthandProperty extends ObjectProperty
     this.name = name;
   }
 
+  @Override
+  public boolean equals(Object object)
+  {
+    return object instanceof ShorthandProperty && this.name.equals(((ShorthandProperty) object).name);
+  }
+
+  @Override
+  public int hashCode()
+  {
+    int code = HashCodeBuilder.put(0, "ShorthandProperty");
+    code = HashCodeBuilder.put(code, this.name);
+    return code;
+  }
+
   @NotNull
   public String getName()
   {

@@ -43,6 +43,22 @@ public class ClassDeclaration extends Statement implements FunctionDeclarationCl
     this.elements = elements;
   }
 
+  @Override
+  public boolean equals(Object object)
+  {
+    return object instanceof ClassDeclaration && this.name.equals(((ClassDeclaration) object).name) && this._super.equals(((ClassDeclaration) object)._super) && this.elements.equals(((ClassDeclaration) object).elements);
+  }
+
+  @Override
+  public int hashCode()
+  {
+    int code = HashCodeBuilder.put(0, "ClassDeclaration");
+    code = HashCodeBuilder.put(code, this.name);
+    code = HashCodeBuilder.put(code, this._super);
+    code = HashCodeBuilder.put(code, this.elements);
+    return code;
+  }
+
   @NotNull
   public BindingIdentifier getName()
   {

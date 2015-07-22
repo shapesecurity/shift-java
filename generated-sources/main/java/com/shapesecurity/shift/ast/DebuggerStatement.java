@@ -29,4 +29,17 @@ public class DebuggerStatement extends Statement
     super();
   }
 
+  @Override
+  public boolean equals(Object object)
+  {
+    return object instanceof DebuggerStatement;
+  }
+
+  @Override
+  public int hashCode()
+  {
+    int code = HashCodeBuilder.put(0, "DebuggerStatement");
+    return code;
+  }
+
 }

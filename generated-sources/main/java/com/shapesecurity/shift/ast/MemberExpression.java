@@ -33,6 +33,20 @@ public abstract class MemberExpression extends Expression implements BindingIden
     this._object = _object;
   }
 
+  @Override
+  public boolean equals(Object object)
+  {
+    return object instanceof MemberExpression && this._object.equals(((MemberExpression) object)._object);
+  }
+
+  @Override
+  public int hashCode()
+  {
+    int code = HashCodeBuilder.put(0, "MemberExpression");
+    code = HashCodeBuilder.put(code, this._object);
+    return code;
+  }
+
   @NotNull
   public ExpressionSuper get_object()
   {

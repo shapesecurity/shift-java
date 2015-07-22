@@ -45,6 +45,23 @@ public class FunctionDeclaration extends Statement implements FunctionDeclaratio
     this.body = body;
   }
 
+  @Override
+  public boolean equals(Object object)
+  {
+    return object instanceof FunctionDeclaration && this.name.equals(((FunctionDeclaration) object).name) && this.isGenerator.equals(((FunctionDeclaration) object).isGenerator) && this.params.equals(((FunctionDeclaration) object).params) && this.body.equals(((FunctionDeclaration) object).body);
+  }
+
+  @Override
+  public int hashCode()
+  {
+    int code = HashCodeBuilder.put(0, "FunctionDeclaration");
+    code = HashCodeBuilder.put(code, this.name);
+    code = HashCodeBuilder.put(code, this.isGenerator);
+    code = HashCodeBuilder.put(code, this.params);
+    code = HashCodeBuilder.put(code, this.body);
+    return code;
+  }
+
   @NotNull
   public BindingIdentifier getName()
   {
