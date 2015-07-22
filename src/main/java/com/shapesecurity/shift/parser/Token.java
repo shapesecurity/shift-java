@@ -42,6 +42,6 @@ public abstract class Token {
   @Override
   @NotNull
   public String toString() {
-    return String.valueOf(this.slice.getString());
+    return this.slice.getString().toString();
   }
 }
