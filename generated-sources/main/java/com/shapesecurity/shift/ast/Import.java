@@ -43,6 +43,22 @@ public class Import extends ImportDeclaration
     this.moduleSpecifier = moduleSpecifier;
   }
 
+  @Override
+  public boolean equals(Object object)
+  {
+    return object instanceof Import && this.defaultBinding.equals(((Import) object).defaultBinding) && this.namedImports.equals(((Import) object).namedImports) && this.moduleSpecifier.equals(((Import) object).moduleSpecifier);
+  }
+
+  @Override
+  public int hashCode()
+  {
+    int code = HashCodeBuilder.put(0, "Import");
+    code = HashCodeBuilder.put(code, this.defaultBinding);
+    code = HashCodeBuilder.put(code, this.namedImports);
+    code = HashCodeBuilder.put(code, this.moduleSpecifier);
+    return code;
+  }
+
   @NotNull
   public Maybe<BindingIdentifier> getDefaultBinding()
   {

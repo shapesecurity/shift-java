@@ -39,6 +39,20 @@ public class BindingIdentifier extends Node implements BindingIdentifierMemberEx
     this.name = name;
   }
 
+  @Override
+  public boolean equals(Object object)
+  {
+    return object instanceof BindingIdentifier && this.name.equals(((BindingIdentifier) object).name);
+  }
+
+  @Override
+  public int hashCode()
+  {
+    int code = HashCodeBuilder.put(0, "BindingIdentifier");
+    code = HashCodeBuilder.put(code, this.name);
+    return code;
+  }
+
   @NotNull
   public String getName()
   {

@@ -29,4 +29,17 @@ public class EmptyStatement extends Statement
     super();
   }
 
+  @Override
+  public boolean equals(Object object)
+  {
+    return object instanceof EmptyStatement;
+  }
+
+  @Override
+  public int hashCode()
+  {
+    int code = HashCodeBuilder.put(0, "EmptyStatement");
+    return code;
+  }
+
 }

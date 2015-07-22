@@ -37,6 +37,21 @@ public abstract class MethodDefinition extends NamedObjectProperty
     this.name = name;
   }
 
+  @Override
+  public boolean equals(Object object)
+  {
+    return object instanceof MethodDefinition && this.body.equals(((MethodDefinition) object).body) && this.name.equals(((MethodDefinition) object).name);
+  }
+
+  @Override
+  public int hashCode()
+  {
+    int code = HashCodeBuilder.put(0, "MethodDefinition");
+    code = HashCodeBuilder.put(code, this.body);
+    code = HashCodeBuilder.put(code, this.name);
+    return code;
+  }
+
   @NotNull
   public FunctionBody getBody()
   {

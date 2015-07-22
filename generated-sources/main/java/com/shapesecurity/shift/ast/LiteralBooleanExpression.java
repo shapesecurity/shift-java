@@ -34,6 +34,20 @@ public class LiteralBooleanExpression extends Expression
     this.value = value;
   }
 
+  @Override
+  public boolean equals(Object object)
+  {
+    return object instanceof LiteralBooleanExpression && this.value.equals(((LiteralBooleanExpression) object).value);
+  }
+
+  @Override
+  public int hashCode()
+  {
+    int code = HashCodeBuilder.put(0, "LiteralBooleanExpression");
+    code = HashCodeBuilder.put(code, this.value);
+    return code;
+  }
+
   @NotNull
   public Boolean getValue()
   {

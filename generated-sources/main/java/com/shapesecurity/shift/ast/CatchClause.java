@@ -44,6 +44,21 @@ public class CatchClause extends Node
     this.body = body;
   }
 
+  @Override
+  public boolean equals(Object object)
+  {
+    return object instanceof CatchClause && this.binding.equals(((CatchClause) object).binding) && this.body.equals(((CatchClause) object).body);
+  }
+
+  @Override
+  public int hashCode()
+  {
+    int code = HashCodeBuilder.put(0, "CatchClause");
+    code = HashCodeBuilder.put(code, this.binding);
+    code = HashCodeBuilder.put(code, this.body);
+    return code;
+  }
+
   @NotNull
   public Binding getBinding()
   {

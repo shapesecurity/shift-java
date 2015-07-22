@@ -33,6 +33,20 @@ public abstract class IterationStatement extends Statement
     this.body = body;
   }
 
+  @Override
+  public boolean equals(Object object)
+  {
+    return object instanceof IterationStatement && this.body.equals(((IterationStatement) object).body);
+  }
+
+  @Override
+  public int hashCode()
+  {
+    int code = HashCodeBuilder.put(0, "IterationStatement");
+    code = HashCodeBuilder.put(code, this.body);
+    return code;
+  }
+
   @NotNull
   public Statement getBody()
   {

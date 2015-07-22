@@ -39,6 +39,20 @@ public abstract class ImportDeclaration extends Node implements ImportDeclaratio
     this.moduleSpecifier = moduleSpecifier;
   }
 
+  @Override
+  public boolean equals(Object object)
+  {
+    return object instanceof ImportDeclaration && this.moduleSpecifier.equals(((ImportDeclaration) object).moduleSpecifier);
+  }
+
+  @Override
+  public int hashCode()
+  {
+    int code = HashCodeBuilder.put(0, "ImportDeclaration");
+    code = HashCodeBuilder.put(code, this.moduleSpecifier);
+    return code;
+  }
+
   @NotNull
   public String  getModuleSpecifier()
   {

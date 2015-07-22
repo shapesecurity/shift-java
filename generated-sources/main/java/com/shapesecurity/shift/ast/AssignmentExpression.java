@@ -38,6 +38,21 @@ public class AssignmentExpression extends Expression
     this.expression = expression;
   }
 
+  @Override
+  public boolean equals(Object object)
+  {
+    return object instanceof AssignmentExpression && this.binding.equals(((AssignmentExpression) object).binding) && this.expression.equals(((AssignmentExpression) object).expression);
+  }
+
+  @Override
+  public int hashCode()
+  {
+    int code = HashCodeBuilder.put(0, "AssignmentExpression");
+    code = HashCodeBuilder.put(code, this.binding);
+    code = HashCodeBuilder.put(code, this.expression);
+    return code;
+  }
+
   @NotNull
   public Binding getBinding()
   {

@@ -39,6 +39,21 @@ public class NewExpression extends Expression
     this.arguments = arguments;
   }
 
+  @Override
+  public boolean equals(Object object)
+  {
+    return object instanceof NewExpression && this.callee.equals(((NewExpression) object).callee) && this.arguments.equals(((NewExpression) object).arguments);
+  }
+
+  @Override
+  public int hashCode()
+  {
+    int code = HashCodeBuilder.put(0, "NewExpression");
+    code = HashCodeBuilder.put(code, this.callee);
+    code = HashCodeBuilder.put(code, this.arguments);
+    return code;
+  }
+
   @NotNull
   public Expression getCallee()
   {

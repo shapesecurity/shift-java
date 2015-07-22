@@ -37,6 +37,21 @@ public class LabeledStatement extends Statement
     this.body = body;
   }
 
+  @Override
+  public boolean equals(Object object)
+  {
+    return object instanceof LabeledStatement && this.label.equals(((LabeledStatement) object).label) && this.body.equals(((LabeledStatement) object).body);
+  }
+
+  @Override
+  public int hashCode()
+  {
+    int code = HashCodeBuilder.put(0, "LabeledStatement");
+    code = HashCodeBuilder.put(code, this.label);
+    code = HashCodeBuilder.put(code, this.body);
+    return code;
+  }
+
   @NotNull
   public String getLabel()
   {

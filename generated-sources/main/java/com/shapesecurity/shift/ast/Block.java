@@ -40,6 +40,20 @@ public class Block extends Node
     this.statements = statements;
   }
 
+  @Override
+  public boolean equals(Object object)
+  {
+    return object instanceof Block && this.statements.equals(((Block) object).statements);
+  }
+
+  @Override
+  public int hashCode()
+  {
+    int code = HashCodeBuilder.put(0, "Block");
+    code = HashCodeBuilder.put(code, this.statements);
+    return code;
+  }
+
   @NotNull
   public ImmutableList<Statement> getStatements()
   {

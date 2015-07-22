@@ -45,6 +45,21 @@ public class SwitchCase extends Node
     this.consequent = consequent;
   }
 
+  @Override
+  public boolean equals(Object object)
+  {
+    return object instanceof SwitchCase && this.test.equals(((SwitchCase) object).test) && this.consequent.equals(((SwitchCase) object).consequent);
+  }
+
+  @Override
+  public int hashCode()
+  {
+    int code = HashCodeBuilder.put(0, "SwitchCase");
+    code = HashCodeBuilder.put(code, this.test);
+    code = HashCodeBuilder.put(code, this.consequent);
+    return code;
+  }
+
   @NotNull
   public Expression getTest()
   {

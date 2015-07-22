@@ -45,6 +45,21 @@ public class ExportSpecifier extends Node
     this.exportedName = exportedName;
   }
 
+  @Override
+  public boolean equals(Object object)
+  {
+    return object instanceof ExportSpecifier && this.name.equals(((ExportSpecifier) object).name) && this.exportedName.equals(((ExportSpecifier) object).exportedName);
+  }
+
+  @Override
+  public int hashCode()
+  {
+    int code = HashCodeBuilder.put(0, "ExportSpecifier");
+    code = HashCodeBuilder.put(code, this.name);
+    code = HashCodeBuilder.put(code, this.exportedName);
+    return code;
+  }
+
   @NotNull
   public Maybe<String> getName()
   {

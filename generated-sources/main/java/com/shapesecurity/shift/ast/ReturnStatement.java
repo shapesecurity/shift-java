@@ -34,6 +34,20 @@ public class ReturnStatement extends Statement
     this.expression = expression;
   }
 
+  @Override
+  public boolean equals(Object object)
+  {
+    return object instanceof ReturnStatement && this.expression.equals(((ReturnStatement) object).expression);
+  }
+
+  @Override
+  public int hashCode()
+  {
+    int code = HashCodeBuilder.put(0, "ReturnStatement");
+    code = HashCodeBuilder.put(code, this.expression);
+    return code;
+  }
+
   @NotNull
   public Maybe<Expression> getExpression()
   {

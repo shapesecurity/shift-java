@@ -39,6 +39,20 @@ public class Directive extends Node
     this.rawValue = rawValue;
   }
 
+  @Override
+  public boolean equals(Object object)
+  {
+    return object instanceof Directive && this.rawValue.equals(((Directive) object).rawValue);
+  }
+
+  @Override
+  public int hashCode()
+  {
+    int code = HashCodeBuilder.put(0, "Directive");
+    code = HashCodeBuilder.put(code, this.rawValue);
+    return code;
+  }
+
   @NotNull
   public String  getRawValue()
   {

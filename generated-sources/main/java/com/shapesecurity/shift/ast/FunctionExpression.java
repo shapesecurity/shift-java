@@ -47,6 +47,23 @@ public class FunctionExpression extends Expression implements Function
     this.body = body;
   }
 
+  @Override
+  public boolean equals(Object object)
+  {
+    return object instanceof FunctionExpression && this.name.equals(((FunctionExpression) object).name) && this.isGenerator.equals(((FunctionExpression) object).isGenerator) && this.params.equals(((FunctionExpression) object).params) && this.body.equals(((FunctionExpression) object).body);
+  }
+
+  @Override
+  public int hashCode()
+  {
+    int code = HashCodeBuilder.put(0, "FunctionExpression");
+    code = HashCodeBuilder.put(code, this.name);
+    code = HashCodeBuilder.put(code, this.isGenerator);
+    code = HashCodeBuilder.put(code, this.params);
+    code = HashCodeBuilder.put(code, this.body);
+    return code;
+  }
+
   @NotNull
   public Maybe<BindingIdentifier> getName()
   {

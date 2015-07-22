@@ -46,6 +46,21 @@ public class FormalParameters extends Node
     this.rest = rest;
   }
 
+  @Override
+  public boolean equals(Object object)
+  {
+    return object instanceof FormalParameters && this.items.equals(((FormalParameters) object).items) && this.rest.equals(((FormalParameters) object).rest);
+  }
+
+  @Override
+  public int hashCode()
+  {
+    int code = HashCodeBuilder.put(0, "FormalParameters");
+    code = HashCodeBuilder.put(code, this.items);
+    code = HashCodeBuilder.put(code, this.rest);
+    return code;
+  }
+
   @NotNull
   public ImmutableList<BindingBindingWithDefault> getItems()
   {

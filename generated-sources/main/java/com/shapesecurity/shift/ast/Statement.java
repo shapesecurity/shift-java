@@ -34,4 +34,17 @@ public abstract class Statement extends Node implements ImportDeclarationExportD
     super();
   }
 
+  @Override
+  public boolean equals(Object object)
+  {
+    return object instanceof Statement;
+  }
+
+  @Override
+  public int hashCode()
+  {
+    int code = HashCodeBuilder.put(0, "Statement");
+    return code;
+  }
+
 }

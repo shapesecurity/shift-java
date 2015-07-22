@@ -37,6 +37,21 @@ public class DataProperty extends NamedObjectProperty
     this.name = name;
   }
 
+  @Override
+  public boolean equals(Object object)
+  {
+    return object instanceof DataProperty && this.expression.equals(((DataProperty) object).expression) && this.name.equals(((DataProperty) object).name);
+  }
+
+  @Override
+  public int hashCode()
+  {
+    int code = HashCodeBuilder.put(0, "DataProperty");
+    code = HashCodeBuilder.put(code, this.expression);
+    code = HashCodeBuilder.put(code, this.name);
+    return code;
+  }
+
   @NotNull
   public Expression getExpression()
   {

@@ -34,4 +34,17 @@ public abstract class BindingProperty extends Node
     super();
   }
 
+  @Override
+  public boolean equals(Object object)
+  {
+    return object instanceof BindingProperty;
+  }
+
+  @Override
+  public int hashCode()
+  {
+    int code = HashCodeBuilder.put(0, "BindingProperty");
+    return code;
+  }
+
 }

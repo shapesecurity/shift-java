@@ -33,6 +33,20 @@ public abstract class NamedObjectProperty extends ObjectProperty
     this.name = name;
   }
 
+  @Override
+  public boolean equals(Object object)
+  {
+    return object instanceof NamedObjectProperty && this.name.equals(((NamedObjectProperty) object).name);
+  }
+
+  @Override
+  public int hashCode()
+  {
+    int code = HashCodeBuilder.put(0, "NamedObjectProperty");
+    code = HashCodeBuilder.put(code, this.name);
+    return code;
+  }
+
   @NotNull
   public PropertyName getName()
   {

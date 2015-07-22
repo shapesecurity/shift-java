@@ -33,6 +33,20 @@ public class ThrowStatement extends Statement
     this.expression = expression;
   }
 
+  @Override
+  public boolean equals(Object object)
+  {
+    return object instanceof ThrowStatement && this.expression.equals(((ThrowStatement) object).expression);
+  }
+
+  @Override
+  public int hashCode()
+  {
+    int code = HashCodeBuilder.put(0, "ThrowStatement");
+    code = HashCodeBuilder.put(code, this.expression);
+    return code;
+  }
+
   @NotNull
   public Expression getExpression()
   {

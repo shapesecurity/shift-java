@@ -35,6 +35,20 @@ public class ObjectExpression extends Expression
     this.properties = properties;
   }
 
+  @Override
+  public boolean equals(Object object)
+  {
+    return object instanceof ObjectExpression && this.properties.equals(((ObjectExpression) object).properties);
+  }
+
+  @Override
+  public int hashCode()
+  {
+    int code = HashCodeBuilder.put(0, "ObjectExpression");
+    code = HashCodeBuilder.put(code, this.properties);
+    return code;
+  }
+
   @NotNull
   public ImmutableList<ObjectProperty> getProperties()
   {
