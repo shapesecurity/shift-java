@@ -66,8 +66,7 @@ public final class Director {
     } else if (node instanceof Module) {
       Module tNode = (Module) node;
       return reducer.reduceModule(tNode, reduceListDirective(reducer, tNode.directives), reduceListImportDeclarationExportDeclarationStatement(reducer, tNode.items));
-    }
-    else {
+    } else {
       throw new RuntimeException("Not reached");
     }
   }
