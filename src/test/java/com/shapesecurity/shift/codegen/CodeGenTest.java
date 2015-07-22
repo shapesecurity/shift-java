@@ -19,88 +19,70 @@
 //import com.shapesecurity.functional.data.Either;
 //import com.shapesecurity.functional.data.ImmutableList;
 //import com.shapesecurity.functional.data.Maybe;
-//import com.shapesecurity.shift.TestBase;
-//import com.shapesecurity.shift.ast.Directive;
-//import com.shapesecurity.shift.ast.FunctionBody;
-//import com.shapesecurity.shift.ast.Identifier;
-//import com.shapesecurity.shift.ast.Script;
-//import com.shapesecurity.shift.ast.Statement;
-//import com.shapesecurity.shift.ast.directive.UnknownDirective;
-//import com.shapesecurity.shift.ast.directive.UseStrictDirective;
-//import com.shapesecurity.shift.ast.expression.IdentifierExpression;
-//import com.shapesecurity.shift.ast.expression.LiteralStringExpression;
-//import com.shapesecurity.shift.ast.statement.EmptyStatement;
-//import com.shapesecurity.shift.ast.statement.ExpressionStatement;
-//import com.shapesecurity.shift.ast.statement.ForInStatement;
-//import com.shapesecurity.shift.ast.statement.ForStatement;
-//import com.shapesecurity.shift.ast.statement.IfStatement;
-//import com.shapesecurity.shift.ast.statement.LabeledStatement;
-//import com.shapesecurity.shift.ast.statement.WhileStatement;
-//import com.shapesecurity.shift.ast.statement.WithStatement;
+//import com.shapesecurity.shift.ast.*;
 //import com.shapesecurity.shift.parser.JsError;
 //import com.shapesecurity.shift.parser.Parser;
-//
-//import java.io.File;
-//import java.io.IOException;
-//
+//import junit.framework.TestCase;
 //import org.jetbrains.annotations.NotNull;
 //import org.junit.Test;
 //
-//public class CodeGenTest extends TestBase {
+//public class CodeGenTest extends TestCase {
 //
 //  @NotNull
 //  private static Script statement(@NotNull Statement stmt) {
-//    return new Script(new FunctionBody(ImmutableList.<Directive>nil(), ImmutableList.list(stmt)));
+//    return new Script(ImmutableList.<Directive>nil(), ImmutableList.list(stmt));
 //  }
 //
-//  private void testLibrary(String fileName) throws JsError, IOException {
-//    String source = readLibrary(fileName);
-//    Script script = Parser.parse(source);
-//    String code = CodeGen.codeGen(script);
-//    Script actual = Parser.parse(code);
-//    assertEquals(fileName, script, actual);
+////  private void testLibrary(String fileName) throws JsError, IOException {
+////    String source = readLibrary(fileName);
+////    Script script = Parser.parse(source);
+////    String code = CodeGen.codeGen(script);
+////    Script actual = Parser.parse(code);
+////    assertEquals(fileName, script, actual);
+////  }
+//
+//  private void testShift(@NotNull String expected, @NotNull Script script) {
+//    assertEquals(expected, CodeGen.codeGen(script));
 //  }
 //
-//  private void test(String expected, String source) throws JsError {
-//    Script script = Parser.parse(source);
-//    String code = CodeGen.codeGen(script);
-//    assertEquals(expected, code);
-//    assertEquals(script, Parser.parse(code));
+//  private void testShift(@NotNull String expected, @NotNull Module module) {
+//    assertEquals(expected, CodeGen.codeGen(module));
 //  }
 //
 //  private void test(String source) throws JsError {
-//    Script script = Parser.parse(source);
-//    String code = CodeGen.codeGen(script);
+//    Module module = Parser.parseModule(source);
+//    String code = CodeGen.codeGen(module);
 //    assertEquals(source, code);
-//    assertEquals(script, Parser.parse(code));
+//    assertEquals(module, Parser.parseModule(code));
 //  }
 //
-//  private void testPretty(String source) throws JsError {
-//    Script script = Parser.parse(source);
-//    String code = CodeGen.codeGen(script, true);
+//  private void testScript(String source) throws JsError {
+//    Script script = Parser.parseScript(source);
+//    String code = CodeGen.codeGen(script);
 //    assertEquals(source, code);
-//    code = CodeGen.codeGen(script, FormattedCodeRepFactory.INSTANCE);
-//    assertEquals(source, code);
+//    assertEquals(script, Parser.parseScript(code));
 //  }
 //
-//  private void testLoose(String expected, String source) throws JsError {
-//    Script script = Parser.parse(source);
-//    String code = CodeGen.codeGen(script);
+//  private void test(String expected, String source) throws JsError {
+//    Module module = Parser.parseModule(source);
+//    String code = CodeGen.codeGen(module);
 //    assertEquals(expected, code);
+//    assertEquals(module, Parser.parseModule(code));
 //  }
 //
-//  private void testAst(@NotNull String expected, @NotNull Script script) {
-//    assertEquals(expected, CodeGen.codeGen(script));
-//  }
+////  private void testPretty(String source) throws JsError {
+////    Script script = Parser.parse(source);
+////    String code = CodeGen.codeGen(script, true);
+////    assertEquals(source, code);
+////    code = CodeGen.codeGen(script, FormattedCodeRepFactory.INSTANCE);
+////    assertEquals(source, code);
+////  }
 //
 //  @Test
 //  public void testCodeGenDirectives() throws JsError {
 //    test("\"use strict\"");
 //    test("\"use\\u0020strict\"");
-//    testAst("\"use\\u0020strict\"", new Script(new FunctionBody(
-//            ImmutableList.<Directive>list(
-//                new UnknownDirective(
-//                    "use strict")), ImmutableList.<Statement>nil())));
+//    testShift("\"use\\u0020strict\"", new Script(ImmutableList.<Directive>list(new Directive("use strict")), ImmutableList.<Statement>nil()));
 //  }
 //
 //  @Test
@@ -325,8 +307,8 @@
 //    test("0");
 //    test("1");
 //    test("2");
-//    testLoose("(\"a\")", "('a')");
-//    testLoose("(\"'\")", "('\\'')");
+//    test("(\"a\")", "('a')");
+//    test("(\"'\")", "('\\'')");
 //    test(";\"a\"");
 //    test(";\"\\\"\"");
 //    test("/a/");
@@ -445,27 +427,27 @@
 //    test("if(a);else{}");
 //    test("if(a){}else{}");
 //    test("if(a)if(a){}else{}else{}");
-//    IdentifierExpression IDENT = new IdentifierExpression(new Identifier("a"));
+//    IdentifierExpression IDENT = new IdentifierExpression("a");
 //    EmptyStatement EMPTY = new EmptyStatement();
 //
 //    IfStatement MISSING_ELSE = new IfStatement(IDENT, EMPTY, Maybe.<Statement>nothing());
-//    testAst("if(a){a:if(a);}else;", statement(new IfStatement(IDENT, new LabeledStatement(new Identifier("a"),
-//        MISSING_ELSE), Maybe.<Statement>just(EMPTY))));
-//    testAst("if(a){if(a);else if(a);}else;", statement(new IfStatement(IDENT, new IfStatement(IDENT, EMPTY,
-//        Maybe.<Statement>just(MISSING_ELSE)), Maybe.<Statement>just(EMPTY))));
-//    testAst("if(a){if(a);}else;", statement(new IfStatement(IDENT, MISSING_ELSE, Maybe.<Statement>just(EMPTY))));
-//    testAst("if(a){while(a)if(a);}else;", statement(new IfStatement(IDENT, new WhileStatement(IDENT, MISSING_ELSE),
-//        Maybe.<Statement>just(EMPTY))));
-//    testAst("if(a){with(a)if(a);}else;", statement(new IfStatement(IDENT, new WithStatement(IDENT, MISSING_ELSE),
-//        Maybe.<Statement>just(EMPTY))));
-//    testAst("if(a){for(;;)if(a);}else;", statement(new IfStatement(IDENT, new ForStatement(Maybe.nothing(),
-//        Maybe.nothing(), Maybe.nothing(), MISSING_ELSE), Maybe.<Statement>just(EMPTY))));
-//    testAst("if(a){for(a in a)if(a);}else;",
-//        statement(
-//            new IfStatement(
-//                IDENT,
-//                new ForInStatement(Either.right(IDENT), IDENT, MISSING_ELSE),
-//                Maybe.<Statement>just(EMPTY))));
+//    testShift("if(a){a:if(a);}else;", statement(new IfStatement(IDENT, new LabeledStatement("a",
+//      MISSING_ELSE), Maybe.<Statement>just(EMPTY))));
+//    testShift("if(a){if(a);else if(a);}else;", statement(new IfStatement(IDENT, new IfStatement(IDENT, EMPTY,
+//      Maybe.<Statement>just(MISSING_ELSE)), Maybe.<Statement>just(EMPTY))));
+//    testShift("if(a){if(a);}else;", statement(new IfStatement(IDENT, MISSING_ELSE, Maybe.<Statement>just(EMPTY))));
+//    testShift("if(a){while(a)if(a);}else;", statement(new IfStatement(IDENT, new WhileStatement(IDENT, MISSING_ELSE),
+//      Maybe.<Statement>just(EMPTY))));
+//    testShift("if(a){with(a)if(a);}else;", statement(new IfStatement(IDENT, new WithStatement(IDENT, MISSING_ELSE),
+//      Maybe.<Statement>just(EMPTY))));
+//    testShift("if(a){for(;;)if(a);}else;", statement(new IfStatement(IDENT, new ForStatement(Maybe.nothing(),
+//      Maybe.nothing(), Maybe.nothing(), MISSING_ELSE), Maybe.<Statement>just(EMPTY))));
+//    testShift("if(a){for(a in a)if(a);}else;",
+//      statement(
+//        new IfStatement(
+//          IDENT,
+//          new ForInStatement(new BindingIdentifier("a"), IDENT, MISSING_ELSE),
+//          Maybe.<Statement>just(EMPTY))));
 //  }
 //
 //  @Test
@@ -530,68 +512,67 @@
 //    test("");
 //    test("\"use strict\"");
 //    test(";\"use strict\"");
-//    testAst("\"use strict\"", new Script(new FunctionBody(
-//        ImmutableList.list(new UseStrictDirective()), ImmutableList.nil())));
-//    testAst("(\"use strict\")", statement(new ExpressionStatement(new LiteralStringExpression("use strict"))));
-//    testAst("(\"use strict\");;", new Script(new FunctionBody(
-//        ImmutableList.nil(),
-//        ImmutableList.list(
-//            new ExpressionStatement(new LiteralStringExpression("use strict")),
-//            new EmptyStatement()
-//        )
-//    )));
-//    testAst("\"use strict\";;", new Script(new FunctionBody(
-//        ImmutableList.list(new UseStrictDirective()),
-//        ImmutableList.list(new EmptyStatement())
-//    )));
-//    testAst("\"use strict\";(\"use strict\")", new Script(new FunctionBody(
-//        ImmutableList.list(new UseStrictDirective()),
-//        ImmutableList.list(new ExpressionStatement(new LiteralStringExpression("use strict")))
-//    )));
-//    testAst("\"use strict\";;\"use strict\"", new Script(new FunctionBody(
-//        ImmutableList.list(new UseStrictDirective()),
-//        ImmutableList.list(new EmptyStatement(), new ExpressionStatement(new LiteralStringExpression("use strict")))
-//    )));
+//    testShift("\"use strict\"", new Script(ImmutableList.list(new Directive("use strict")), ImmutableList.nil()));
+//    testShift("(\"use strict\")", statement(new ExpressionStatement(new LiteralStringExpression("use strict"))));
+//    testShift("(\"use strict\");;", new Script(
+//      ImmutableList.nil(),
+//      ImmutableList.list(
+//        new ExpressionStatement(new LiteralStringExpression("use strict")),
+//        new EmptyStatement()
+//      )
+//    ));
+//    testShift("\"use strict\";;", new Script(
+//      ImmutableList.list(new Directive("use strict")),
+//      ImmutableList.list(new EmptyStatement())
+//    ));
+//    testShift("\"use strict\";(\"use strict\")", new Script(
+//      ImmutableList.list(new Directive("use strict")),
+//      ImmutableList.list(new ExpressionStatement(new LiteralStringExpression("use strict")))
+//    ));
+//    testShift("\"use strict\";;\"use strict\"", new Script(
+//      ImmutableList.list(new Directive("use strict")),
+//      ImmutableList.list(new EmptyStatement(), new ExpressionStatement(new LiteralStringExpression("use strict")))
+//    ));
 //  }
 //
-//  @Test
-//  public void testPrettyPrintSemi() throws JsError {
-//    testPretty("var a=0;\n");
-//    testPretty("var a=0;\nvar b=0;\n");
-//  }
+////  @Test
+////  public void testPrettyPrintSemi() throws JsError {
+////    testPretty("var a=0;\n");
+////    testPretty("var a=0;\nvar b=0;\n");
+////  }
+////
+////  @Test
+////  public void testPrettyPrintBracket() throws JsError {
+////    testPretty("function a(){\nreturn;\n}");
+////  }
 //
-//  @Test
-//  public void testPrettyPrintBracket() throws JsError {
-//    testPretty("function a(){\nreturn;\n}");
-//  }
-//
-//  @Test
-//  public void testLibrary() throws IOException, JsError {
-//    ImmutableList<String> jsFiles = ImmutableList.nil();
-//    setFatal(false); // Collect the failures in an ErrorCollector
-//
-//    // Get a list of the js files within the resources directory to process
-//    File[] files = new File(getPath(".").toString()).listFiles();
-//    if (files == null) {
-//      System.out.println("Error retrieving list of javascript libraries.");
-//      return;
-//    }
-//    for (File file : files) {
-//      if (file.isFile() && file.getName().endsWith(".js")) {
-//        jsFiles = ImmutableList.cons(file.getName(), jsFiles);
-//      }
-//    }
-//
-//    // Test the hell out of it... ": )
-//    long start = System.nanoTime();
-//    System.out.println("Testing " + jsFiles.length + " javascript libraries.");
-//    for (String jsLib : jsFiles) {
-//      System.out.print(".");
-//      testLibrary(jsLib);
-//    }
-//    System.out.println("");
-//    double elapsed = ((System.nanoTime() - start) * NANOS_TO_SECONDS);
-//    System.out.printf("Library testing time: %.1fsec\n", elapsed);
-//    setFatal(true); // Revert back to the default behavior
-//  }
+////  @Test
+////  public void testLibrary() throws IOException, JsError {
+////    ImmutableList<String> jsFiles = ImmutableList.nil();
+////    setFatal(false); // Collect the failures in an ErrorCollector
+////
+////    // Get a list of the js files within the resources directory to process
+////    File[] files = new File(getPath(".").toString()).listFiles();
+////    if (files == null) {
+////      System.out.println("Error retrieving list of javascript libraries.");
+////      return;
+////    }
+////    for (File file : files) {
+////      if (file.isFile() && file.getName().endsWith(".js")) {
+////        jsFiles = ImmutableList.cons(file.getName(), jsFiles);
+////      }
+////    }
+////
+////    // Test the hell out of it... ": )
+////    long start = System.nanoTime();
+////    System.out.println("Testing " + jsFiles.length + " javascript libraries.");
+////    for (String jsLib : jsFiles) {
+////      System.out.print(".");
+////      testLibrary(jsLib);
+////    }
+////    System.out.println("");
+////    double elapsed = ((System.nanoTime() - start) * NANOS_TO_SECONDS);
+////    System.out.printf("Library testing time: %.1fsec\n", elapsed);
+////    setFatal(true); // Revert back to the default behavior
+////  }
 //}
