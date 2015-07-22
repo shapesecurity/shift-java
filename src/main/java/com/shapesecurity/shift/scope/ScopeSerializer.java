@@ -3,6 +3,8 @@ package com.shapesecurity.shift.scope;
 import com.shapesecurity.functional.Pair;
 import com.shapesecurity.functional.data.HashTable;
 import com.shapesecurity.functional.data.ImmutableList;
+import com.shapesecurity.shift.ast.BindingIdentifier;
+import com.shapesecurity.shift.ast.IdentifierExpression;
 import com.shapesecurity.shift.ast.Node;
 
 import java.util.*;
@@ -15,11 +17,11 @@ public class ScopeSerializer {
   public String serializeScope(Scope scope) {
     String serialized = "{";
     serialized += "\"node\": \"" + serializeNode(scope.astNode) + "\"";
-    serialized += ", \"through\": " + serializeReferenceList(collectThrough(scope.through));
-    serialized += ", \"children\": " + serializeScopeList(scope.children);
     serialized += ", \"type\": \"" + scope.type + "\"";
     serialized += ", \"isDynamic\": " + scope.dynamic;
+    serialized += ", \"through\": " + serializeReferenceList(collectThrough(scope.through));
     serialized += ", \"variables\": " + serializeVariableList(scope.variables());
+    serialized += ", \"children\": " + serializeScopeList(scope.children);
     return serialized + "}";
   }
 
@@ -28,7 +30,13 @@ public class ScopeSerializer {
       nodeToID.put(node, currentID);
       currentID++;
     }
-    return node.getClass().getSimpleName() + "_" + nodeToID.get(node);
+    if(node instanceof IdentifierExpression) {
+      return node.getClass().getSimpleName() + "(" + ((IdentifierExpression) node).name + ")_" + nodeToID.get(node);
+    } else if(node instanceof BindingIdentifier) {
+      return node.getClass().getSimpleName() + "(" + ((BindingIdentifier) node).name + ")_" + nodeToID.get(node);
+    } else {
+      return node.getClass().getSimpleName() + "_" + nodeToID.get(node);
+    }
   }
 
   private ImmutableList<Reference> collectThrough(HashTable<String, ImmutableList<Reference>> through) {
