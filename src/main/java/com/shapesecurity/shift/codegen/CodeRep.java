@@ -21,8 +21,10 @@ import org.jetbrains.annotations.NotNull;
 public abstract class CodeRep {
   public boolean containsIn;
   public boolean containsGroup;
-  public boolean startsWithFunctionOrCurly;
+  public boolean startsWithCurly;
+  public boolean startsWithFunctionOrClass;
   public boolean endsWithMissingElse;
+  public boolean startsWithFunctionOrCurly;
 
   CodeRep() {
   }
@@ -99,6 +101,21 @@ public abstract class CodeRep {
       } else {
         this.expr.emit(ts, false);
       }
+    }
+  }
+
+  public static final class NumberCodeRep extends CodeRep {
+
+    private final double number;
+
+    public NumberCodeRep(double number) {
+      super();
+      this.number = number;
+    }
+
+    @Override
+    public void emit(@NotNull TokenStream ts, boolean noIn) {
+      ts.putNumber(this.number);
     }
   }
 
