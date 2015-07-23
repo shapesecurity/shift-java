@@ -278,7 +278,7 @@ public final class Director {
         return reducer.reduceYieldExpression(tNode, reduceMaybeExpression(reducer, tNode.expression));
       } else if (node instanceof  YieldGeneratorExpression) {
         YieldGeneratorExpression tNode = (YieldGeneratorExpression) node;
-        return reducer.reduceYieldGeneratorExpression(tNode, reduceExpression(reducer, tNode));
+        return reducer.reduceYieldGeneratorExpression(tNode, reduceExpression(reducer, tNode.expression));
       } else {
         throw new RuntimeException("Not reached");
       }
