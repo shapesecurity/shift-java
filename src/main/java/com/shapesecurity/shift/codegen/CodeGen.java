@@ -28,9 +28,7 @@ import com.shapesecurity.shift.visitor.Reducer;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @SuppressWarnings("UnqualifiedFieldAccess")
 public final class CodeGen implements Reducer<CodeRep> {
@@ -92,20 +90,21 @@ public final class CodeGen implements Reducer<CodeRep> {
     return original;
   }
 
-  @NotNull
+  //@NotNull
   @Override
   public CodeRep reduceArrayBinding(@NotNull ArrayBinding node, @NotNull ImmutableList<Maybe<CodeRep>> elements, @NotNull Maybe<CodeRep> restElement) {
-    CodeRep content;
-    if (elements.length == 0) {
-      content = restElement.maybe(factory.empty(), r -> seqVA(factory.token("..."), r));
-    } else {
-      elements.append(restElement.maybe(ImmutableList.nil(), r -> ImmutableList.list(factory.token("..."), r))); // TODO problem appending
-      content = factory.commaSep(elements.map(this::getAssignmentExpr));
-      if (elements.length > 0 && elements.maybeTail().isNothing()) {
-        content = seqVA(content, factory.token(","));
-      }
-    }
-    return factory.bracket(content);
+//    CodeRep content;
+//    if (elements.length == 0) {
+//      content = restElement.maybe(factory.empty(), r -> seqVA(factory.token("..."), r));
+//    } else {
+//      elements.append(restElement.maybe(ImmutableList.nil(), r -> ImmutableList.list(factory.token("..."), r))); // TODO problem appending
+//      content = factory.commaSep(elements.map(this::getAssignmentExpr));
+//      if (elements.length > 0 && elements.maybeTail().isNothing()) {
+//        content = seqVA(content, factory.token(","));
+//      }
+//    }
+//    return factory.bracket(content);
+    return null;
   }
 
   @Override
@@ -310,7 +309,7 @@ public final class CodeGen implements Reducer<CodeRep> {
       rightCode = factory.paren(rightCode);
       containsIn = false;
     }
-    CodeRep toReturn = seqVA(binding, factory.token(node.operator.name()), rightCode);
+    CodeRep toReturn = seqVA(binding, factory.token(node.operator.getName()), rightCode);
     toReturn.containsIn = containsIn;
     toReturn.startsWithCurly = startsWithCurly;
     toReturn.startsWithFunctionOrClass = startsWithFunctionOrClass;
@@ -678,15 +677,9 @@ public final class CodeGen implements Reducer<CodeRep> {
 
   @Override
   @NotNull
-  public CodeRep reduceNewExpression(
-      @NotNull NewExpression node,
-      @NotNull CodeRep callee,
-      @NotNull ImmutableList<CodeRep> arguments) {
-    callee = node.callee.getPrecedence() == Precedence.CALL ? factory.paren(callee) : factory.expr(
-        node.callee, node.getPrecedence(), callee);
-    return seqVA(
-        factory.token("new"), callee, arguments.isEmpty() ? factory.empty() : factory.paren(
-            factory.commaSep(arguments)));
+  public CodeRep reduceNewExpression(@NotNull NewExpression node, @NotNull CodeRep callee, @NotNull ImmutableList<CodeRep> arguments) {
+    CodeRep calleeRep = getPrecedence(node.callee) == Precedence.CALL ? factory.paren(callee) : p(node.callee, getPrecedence(node), callee);
+    return seqVA(factory.token("new"), calleeRep, arguments.length == 0 ? factory.empty() : factory.paren(factory.commaSep(arguments)));
   }
 
   @NotNull
@@ -772,7 +765,7 @@ public final class CodeGen implements Reducer<CodeRep> {
   @NotNull
   @Override
   public CodeRep reduceStaticPropertyName(@NotNull StaticPropertyName node) {
-    if (Utils.isIdentifierNameES6(node.value)) {
+    if (isIdentifierNameES6(node.value)) {
       return factory.token(node.value);
     } else {
       Double n = Double.parseDouble(node.value);
@@ -901,25 +894,26 @@ public final class CodeGen implements Reducer<CodeRep> {
   @NotNull
   @Override
   public CodeRep reduceUnaryExpression(@NotNull UnaryExpression node, @NotNull CodeRep operand) {
-    return seqVA(factory.token(node.operator.name()), p(node.operand, getPrecedence(node), operand));
+    return seqVA(factory.token(node.operator.getName()), p(node.operand, getPrecedence(node), operand));
   }
 
-  @NotNull
+  //@NotNull
   @Override
   public CodeRep reduceUpdateExpression(@NotNull UpdateExpression node, @NotNull CodeRep operand) {
-    if (node.isPrefix) {
-      return this.reduceUnaryExpression(...arguments);
-    } else {
-      CodeRep toReturn;
-      if (node.operand instanceof BindingIdentifier) {
-        toReturn = seqVA(p((BindingIdentifier) node.operand, Precedence.NEW, operand), factory.token(node.operator.name()));
-      } else {
-        toReturn = seqVA(p((MemberExpression) node.operand, Precedence.NEW, operand), factory.token(node.operator.name()));
-      }
-      toReturn.startsWithCurly = startsWithCurly;
-      toReturn.startsWithFunctionOrClass = startsWithFunctionOrClass;
-      return toReturn;
-    }
+//    if (node.isPrefix) {
+//      return this.reduceUnaryExpression(...arguments);
+//    } else {
+//      CodeRep toReturn;
+//      if (node.operand instanceof BindingIdentifier) {
+//        toReturn = seqVA(p((BindingIdentifier) node.operand, Precedence.NEW, operand), factory.token(node.operator.name()));
+//      } else {
+//        toReturn = seqVA(p((MemberExpression) node.operand, Precedence.NEW, operand), factory.token(node.operator.name()));
+//      }
+//      toReturn.startsWithCurly = startsWithCurly;
+//      toReturn.startsWithFunctionOrClass = startsWithFunctionOrClass;
+//      return toReturn;
+//    }
+    return null;
   }
 
   @NotNull
@@ -1153,6 +1147,16 @@ public final class CodeGen implements Reducer<CodeRep> {
   private CodeRep p(Node node, Precedence precedence, CodeRep a) {
     return getPrecedence(node).ordinal() < precedence.ordinal() ? factory.paren(a) : a;
   }
+
+  private boolean isIdentifierNameES6(String id) {
+    return isIdentifierNameES6(id) && !isReservedWordES6(id);
+  }
+
+
+  private boolean isReservedWordES6(String id) {
+    return isIdentifierNameES6(id) && !isReservedWordES6(id);
+  }
+
 
 }
 
