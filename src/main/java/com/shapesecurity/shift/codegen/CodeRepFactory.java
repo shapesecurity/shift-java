@@ -91,4 +91,9 @@ public class CodeRepFactory {
   public final CodeRep seq(@NotNull ImmutableList<CodeRep> reps) {
     return seq(reps.toArray(EMPTY));
   }
+
+  @NotNull
+  public final CodeRep markContainsIn(@NotNull CodeRep state) {
+    return state.containsIn ? new CodeRep.ContainsIn(state) : state;
+  }
 }
