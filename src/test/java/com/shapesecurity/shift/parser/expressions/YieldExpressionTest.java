@@ -38,7 +38,7 @@ public class YieldExpressionTest extends ParserTestCase {
 
     testScript("function *a(){yield \"a\"}", new FunctionDeclaration(new BindingIdentifier("a"),
         true, new FormalParameters(ImmutableList.nil(), Maybe.nothing()), new FunctionBody(ImmutableList.nil(),
-        ImmutableList.list(new ExpressionStatement(new YieldExpression(Maybe.just(new LiteralStringExpression("\"a\""))))))));
+        ImmutableList.list(new ExpressionStatement(new YieldExpression(Maybe.just(new LiteralStringExpression("a"))))))));
 
     testScript("function *a(){yield+0}", new FunctionDeclaration(new BindingIdentifier("a"),
         true, new FormalParameters(ImmutableList.nil(), Maybe.nothing()), new FunctionBody(ImmutableList.nil(),

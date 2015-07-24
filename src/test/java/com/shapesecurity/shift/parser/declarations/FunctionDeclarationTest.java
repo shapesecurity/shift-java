@@ -51,7 +51,7 @@ public class FunctionDeclarationTest extends ParserTestCase {
     testScript("function test() { \"use strict\"\n + 0; }", new FunctionDeclaration(new BindingIdentifier("test"), false,
         new FormalParameters(ImmutableList.nil(), Maybe.nothing()), new FunctionBody(ImmutableList.nil(),
         ImmutableList.list(new ExpressionStatement(new BinaryExpression(BinaryOperator.Plus,
-            new LiteralStringExpression("\"use strict\""), new LiteralNumericExpression(0.0)))))));
+            new LiteralStringExpression("use strict"), new LiteralNumericExpression(0.0)))))));
 
     testScript("function a() {} function a() {}", new Script(ImmutableList.nil(), ImmutableList.list(
         new FunctionDeclaration(new BindingIdentifier("a"), false, new FormalParameters(ImmutableList.nil(),

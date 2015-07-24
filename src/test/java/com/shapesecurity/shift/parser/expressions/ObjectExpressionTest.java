@@ -33,7 +33,7 @@ public class ObjectExpressionTest extends ParserTestCase {
         new StaticPropertyName("null")))));
 
     testScript("({ \"answer\": 0 })", new ObjectExpression(ImmutableList.list(new DataProperty(
-        new LiteralNumericExpression(0.0), new StaticPropertyName("\"answer\"")))));
+        new LiteralNumericExpression(0.0), new StaticPropertyName("answer")))));
 
     testScript("({ x: 1, x: 2 })", new ObjectExpression(ImmutableList.list(new DataProperty(
         new LiteralNumericExpression(1.0), new StaticPropertyName("x")), new DataProperty(
@@ -59,7 +59,7 @@ public class ObjectExpressionTest extends ParserTestCase {
         ImmutableList.nil(), ImmutableList.nil()) ,new StaticPropertyName("null")))));
 
     testScript("({ get \"undef\"() {} })", new ObjectExpression(ImmutableList.list(new Getter(new FunctionBody(
-        ImmutableList.nil(), ImmutableList.nil()) ,new StaticPropertyName("\"undef\"")))));
+        ImmutableList.nil(), ImmutableList.nil()) ,new StaticPropertyName("undef")))));
 
     testScript("({ get 10() {} })", new ObjectExpression(ImmutableList.list(new Getter(new FunctionBody(
         ImmutableList.nil(), ImmutableList.nil()) ,new StaticPropertyName("10")))));
@@ -86,7 +86,7 @@ public class ObjectExpressionTest extends ParserTestCase {
 
     testScript("({ set \"null\"(w) { w } })", new ObjectExpression(ImmutableList.list(new Setter(new BindingIdentifier("w"),
         new FunctionBody(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new IdentifierExpression("w")))),
-        new StaticPropertyName("\"null\"")))));
+        new StaticPropertyName("null")))));
 
     testScript("({ set 10(w) { w } })", new ObjectExpression(ImmutableList.list(new Setter(new BindingIdentifier("w"),
         new FunctionBody(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new IdentifierExpression("w")))),
@@ -102,7 +102,7 @@ public class ObjectExpressionTest extends ParserTestCase {
         new StaticPropertyName("__proto__")))));
 
     testScript("({ \"__proto__\": 2 })", new ObjectExpression(ImmutableList.list(new DataProperty(new LiteralNumericExpression(2.0),
-        new StaticPropertyName("\"__proto__\"")))));
+        new StaticPropertyName("__proto__")))));
 
     testScript("({ get width() { return width }, set width(width) { return width; } })", new ObjectExpression(
         ImmutableList.list(new Getter(new FunctionBody(ImmutableList.nil(), ImmutableList.list(new ReturnStatement(
@@ -112,7 +112,7 @@ public class ObjectExpressionTest extends ParserTestCase {
 
     testScript("({a:0, get 'b'(){}, set 3(d){}})", new ObjectExpression(ImmutableList.list(new DataProperty(
         new LiteralNumericExpression(0.0), new StaticPropertyName("a")), new Getter(new FunctionBody(ImmutableList.nil(),
-        ImmutableList.nil()), new StaticPropertyName("'b'")), new Setter(new BindingIdentifier("d"), new FunctionBody(
+        ImmutableList.nil()), new StaticPropertyName("b")), new Setter(new BindingIdentifier("d"), new FunctionBody(
         ImmutableList.nil(), ImmutableList.nil()), new StaticPropertyName("3")))));
 
     testScript("({a})", new ObjectExpression(ImmutableList.list(new ShorthandProperty("a"))));
