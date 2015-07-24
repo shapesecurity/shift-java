@@ -30,7 +30,7 @@ public class DirectiveTest extends ParserTestCase {
     testScript("function a() {'use strict';return 0;};", new FunctionDeclaration(new BindingIdentifier("a"), false, new FormalParameters(ImmutableList.nil(), Maybe.nothing()), new FunctionBody(ImmutableList.list(new Directive("use strict")), ImmutableList.list(new ReturnStatement(Maybe.just(new LiteralNumericExpression(0.0)))))));
     testScript("(function() {'use strict';return 0;});", new FunctionExpression(Maybe.nothing(), false, new FormalParameters(ImmutableList.nil(), Maybe.nothing()), new FunctionBody(ImmutableList.list(new Directive("use strict")), ImmutableList.list(new ReturnStatement(Maybe.just(new LiteralNumericExpression(0.0)))))));
     testScript("(function a() {'use strict';return 0;});", new FunctionExpression(Maybe.just(new BindingIdentifier("a")), false, new FormalParameters(ImmutableList.nil(), Maybe.nothing()), new FunctionBody(ImmutableList.list(new Directive("use strict")), ImmutableList.list(new ReturnStatement(Maybe.just(new LiteralNumericExpression(0.0)))))));
-    testScript("\"use strict\" + 0", new BinaryExpression(BinaryOperator.Plus, new LiteralStringExpression("\"use strict\""), new LiteralNumericExpression(0.0)));
+    testScript("\"use strict\" + 0", new BinaryExpression(BinaryOperator.Plus, new LiteralStringExpression("use strict"), new LiteralNumericExpression(0.0)));
     testModule("\"use strict\";", new Module(ImmutableList.list(new Directive("use strict")), ImmutableList.nil()));
   }
 }

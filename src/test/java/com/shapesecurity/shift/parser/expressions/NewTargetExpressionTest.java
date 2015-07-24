@@ -53,7 +53,7 @@ public class NewTargetExpressionTest extends ParserTestCase {
     testScript("function f() { new[\"target\"]; }", new FunctionDeclaration(new BindingIdentifier("f"),false,
         new FormalParameters(ImmutableList.nil(), Maybe.nothing()), new FunctionBody(ImmutableList.nil(),
         ImmutableList.list(new ExpressionStatement(new NewExpression(new ArrayExpression(ImmutableList.list(
-            Maybe.just(new LiteralStringExpression("\"target\"")))), ImmutableList.nil()))))));
+            Maybe.just(new LiteralStringExpression("target")))), ImmutableList.nil()))))));
 
     testScriptFailure("function f() { new.anythingElse; }", 31, "Unexpected identifier");
     testScriptFailure("function f() { new..target; }", 19, "Unexpected token \".\"");

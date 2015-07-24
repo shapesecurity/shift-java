@@ -26,7 +26,7 @@ public class SuperExpressionTest extends ParserTestCase {
         Maybe.just(new IdentifierExpression("B")), ImmutableList.list(new ClassElement(false, new Method(false,
         new FormalParameters(ImmutableList.nil(), Maybe.nothing()), new FunctionBody(ImmutableList.nil(),
         ImmutableList.list(new ExpressionStatement(new CallExpression(new Super(), ImmutableList.nil())))),
-        new StaticPropertyName("\"constructor\""))))));
+        new StaticPropertyName("constructor"))))));
 
     testScript("class A extends B { constructor(a = super()){} }", new ClassDeclaration(new BindingIdentifier("A"),
         Maybe.just(new IdentifierExpression("B")), ImmutableList.list(new ClassElement(false, new Method(false,
