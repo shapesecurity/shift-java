@@ -1089,10 +1089,13 @@ public class Tokenizer {
           this.index++;
           return this.scanHexLiteral(start);
         } else if (ch == 'o' || ch == 'O') {
+          this.index++;
           return this.scanOctalLiteral(start);
         } else if (ch == 'b' || ch == 'B') {
+          this.index++;
           return this.scanBinaryLiteral(start);
-        }  else if ('0' <= ch && ch <= '9') {
+        } else if ('0' <= ch && ch <= '9') {
+          this.index++;
           return this.scanLegacyOctalLiteral(start);
         }
       } else {
