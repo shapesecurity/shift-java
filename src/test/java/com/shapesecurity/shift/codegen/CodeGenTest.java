@@ -16,13 +16,11 @@
 
 package com.shapesecurity.shift.codegen;
 
-import com.shapesecurity.functional.data.Either;
 import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.functional.data.Maybe;
 import com.shapesecurity.shift.ast.*;
 import com.shapesecurity.shift.parser.JsError;
 import com.shapesecurity.shift.parser.Parser;
-import jdk.nashorn.internal.ir.annotations.Immutable;
 import junit.framework.TestCase;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
@@ -43,16 +41,12 @@ public class CodeGenTest extends TestCase {
 //  }
 
 
-
-
-
   private void test(String source) throws JsError {
     Module module = Parser.parseModule(source);
     String code = CodeGen.codeGen(module);
     assertEquals(source, code);
     assertEquals(module, Parser.parseModule(code));
   }
-
 
 
   private void test(String expected, String source) throws JsError {
@@ -69,7 +63,6 @@ public class CodeGenTest extends TestCase {
 //    code = CodeGen.codeGen(script, FormattedCodeRepFactory.INSTANCE);
 //    assertEquals(source, code);
 //  }
-
 
 
   @Test
@@ -193,7 +186,9 @@ public class CodeGenTest extends TestCase {
   @Test
   public void testDebuggerStatement() throws JsError {
     test("debugger", "debugger");
-  }  @Test
+  }
+
+  @Test
   public void testBitwiseOr() throws JsError {
     test("a|b");
   }
@@ -205,7 +200,9 @@ public class CodeGenTest extends TestCase {
     test("do debugger;while(1)");
     test("do if(3){}while(1)");
     test("do 3;while(1)", "do(3);while(1)");
-  }  @Test
+  }
+
+  @Test
   public void testBitwiseAnd() throws JsError {
     test("a&b");
   }
@@ -218,7 +215,9 @@ public class CodeGenTest extends TestCase {
     test("a!=b");
     test("a==b==c");
     test("a==(b==c)");
-  }  @Test
+  }
+
+  @Test
   public void testBitwiseXor() throws JsError {
     test("a^b");
     test("a^b&b");
@@ -269,7 +268,9 @@ public class CodeGenTest extends TestCase {
     test("export{}");
     test("let a;export{a}");
     test("let a,b;export{a,b}");
-  }  @Test
+  }
+
+  @Test
   public void testAdditive() throws JsError {
     test("a+b");
     test("a-b");
@@ -292,7 +293,7 @@ public class CodeGenTest extends TestCase {
 
   @Test
   public void testExpressionStatement() throws JsError {
-//    test("a");
+    test("a");
     test("({a:3})");
     test("do({a:3});while(1)");
     test("~{a:3}");
@@ -333,7 +334,6 @@ public class CodeGenTest extends TestCase {
     test("for(var a=1+1 in 1);");
 
     //from js
-    test("for(var a in 1);");
     testScript("for((let)in 1);");
     test("for(a in 1);");
   }
@@ -432,7 +432,9 @@ public class CodeGenTest extends TestCase {
           IDENT,
           new ForInStatement(new BindingIdentifier("a"), IDENT, MISSING_ELSE),
           Maybe.<Statement>just(EMPTY))));
-  }  @Test
+  }
+
+  @Test
   public void testArrowExpression() throws JsError {
     test("a=>a");
     test("()=>a");
@@ -745,7 +747,9 @@ public class CodeGenTest extends TestCase {
     test("function a(){return}");
     test("function a(){return 0}");
     test("function a(){return function a(){return 0}}");
-  }  @Test
+  }
+
+  @Test
   public void testBlockStatement() throws JsError {
     test("{}");
     test("{{}}");
@@ -758,7 +762,9 @@ public class CodeGenTest extends TestCase {
     String code = CodeGen.codeGen(script);
     assertEquals(source, code);
     assertEquals(script, Parser.parseScript(code));
-  }  @Test
+  }
+
+  @Test
   public void testBreakStatement() throws JsError {
     test("while(1)break", "while(1)break");
     test("while(1){break;break}", "while(1){break;break;}");
@@ -817,29 +823,29 @@ public class CodeGenTest extends TestCase {
 
   @Test
   public void testTemplateExpression() throws JsError {
-      test("``");
-      test("````");
-      test("a``");
-      test("a.b``");
-      test("a[b]``");
-      test("a()``");
-      test("(a+b)``");
-      test("(function(){}``)", "(function(){})``");
-      test("(class{}``)", "(class{})``");
-      test("({}``)", "({})``");
-      test("`a`");
-      test("a`a`");
-      test("`a${b}c`");
-      test("`${a}`");
-      test("`${a}${b}`");
-      test("` ${a} ${b} `");
-      test("` ${a} ${b} `", "` ${ a } ${ b } `");
-      test("`a\\${b}c`");
-      test("``.a");
-      test("``()");
-      test("new``");
-      test("new``", "new ``()");
-      test("new``(a)", "new ``(a)");
+    test("``");
+    test("````");
+    test("a``");
+    test("a.b``");
+    test("a[b]``");
+    test("a()``");
+    test("(a+b)``");
+    test("(function(){}``)", "(function(){})``");
+    test("(class{}``)", "(class{})``");
+    test("({}``)", "({})``");
+    test("`a`");
+    test("a`a`");
+    test("`a${b}c`");
+    test("`${a}`");
+    test("`${a}${b}`");
+    test("` ${a} ${b} `");
+    test("` ${a} ${b} `", "` ${ a } ${ b } `");
+    test("`a\\${b}c`");
+    test("``.a");
+    test("``()");
+    test("new``");
+    test("new``", "new ``()");
+    test("new``(a)", "new ``(a)");
   }
 
   @Test
