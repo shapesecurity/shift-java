@@ -2038,7 +2038,7 @@ public abstract class Parser extends Tokenizer {
 
     switch (this.lookahead.type) {
       case STRING:
-        moduleSpecifier = this.lex().toString();
+        moduleSpecifier = this.lex().getValueString().toString();
         this.consumeSemicolon();
         return this.markLocation(startLocation, new Import(defaultBinding, ImmutableList.nil(), moduleSpecifier));
       case IDENTIFIER:
@@ -2110,7 +2110,7 @@ public abstract class Parser extends Tokenizer {
   @NotNull
   private String parseFromClause() throws JsError {
     this.expectContextualKeyword("from");
-    String value = this.expect(TokenType.STRING).toString();
+    String value = this.expect(TokenType.STRING).getValueString().toString();
     this.consumeSemicolon();
     return value;
   }
