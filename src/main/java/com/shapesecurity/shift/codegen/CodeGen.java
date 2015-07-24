@@ -283,7 +283,7 @@ public final class CodeGen implements Reducer<CodeRep> {
     return original;
   }
 
-  //@NotNull
+  @NotNull
   @Override
   public CodeRep reduceArrayBinding(@NotNull ArrayBinding node, @NotNull ImmutableList<Maybe<CodeRep>> elements, @NotNull Maybe<CodeRep> restElement) {
     CodeRep content;
@@ -330,7 +330,7 @@ public final class CodeGen implements Reducer<CodeRep> {
   @NotNull
   @Override
   public CodeRep reduceArrowExpression(@NotNull ArrowExpression node, @NotNull CodeRep params, @NotNull CodeRep body) {
-    if (node.params.rest.isJust() || node.params.items.length != 1 || node.params.items.maybeHead().just() instanceof BindingIdentifier) {
+    if (node.params.rest.isJust() || node.params.items.length != 1 || !(node.params.items.maybeHead().just() instanceof BindingIdentifier)) {
       params = factory.paren(params);
     }
     if (node.body instanceof FunctionBody) {
@@ -446,7 +446,7 @@ public final class CodeGen implements Reducer<CodeRep> {
     if (node.callee instanceof Expression) {
       result = seqVA(p((Expression) node.callee, getPrecedence(node), callee), factory.paren(factory.commaSep(arguments)));
     } else {
-      result = seqVA(p((Super) node.callee, getPrecedence(node), callee), factory.paren(factory.commaSep(arguments)));
+      result = seqVA(callee, factory.paren(factory.commaSep(arguments)));
     }
     result.startsWithCurly = callee.startsWithCurly;
     result.startsWithLetSquareBracket = callee.startsWithLetSquareBracket;
@@ -523,7 +523,7 @@ public final class CodeGen implements Reducer<CodeRep> {
     if (node._object instanceof Expression) {
       result = seqVA(p((Expression) node._object, getPrecedence(node), object), factory.bracket(expression));
     } else {
-      result = seqVA(p((Super) node._object, getPrecedence(node), object), factory.bracket(expression));
+      result = seqVA(object, factory.bracket(expression));
     }
     result.startsWithLetSquareBracket = startsWithLetSquareBracket;
     result.startsWithLet = object.startsWithLet;
@@ -647,21 +647,18 @@ public final class CodeGen implements Reducer<CodeRep> {
 
   @NotNull
   @Override
-  public CodeRep reduceForInStatement(
-      @NotNull ForInStatement node,
-      @NotNull CodeRep left,
-      @NotNull CodeRep right,
-      @NotNull CodeRep body) {
-    CodeRep result = seqVA(
-      factory.token("for"),
-      factory.paren(seqVA(
-        left,
-        factory.token("in"),
-        right
-      )),
-      body);
-    result.endsWithMissingElse = body.endsWithMissingElse;
-    return result;
+  public CodeRep reduceForInStatement(@NotNull ForInStatement node, @NotNull CodeRep left, @NotNull CodeRep right, @NotNull CodeRep body) {
+    CodeRep leftP = left;
+    if (node.left instanceof VariableDeclaration) {
+      leftP = factory.noIn(factory.markContainsIn(left));
+    } else if (node.left instanceof BindingIdentifier) {
+      if (((BindingIdentifier) node.left).name.equals("let")) {
+        leftP = factory.paren(left);
+      }
+    }
+    CodeRep toReturn = seqVA(factory.token("for"), factory.paren(seqVA(leftP, factory.token("in"), right)), body);
+    toReturn.endsWithMissingElse = body.endsWithMissingElse;
+    return toReturn;
   }
 
   @NotNull
@@ -951,7 +948,7 @@ public final class CodeGen implements Reducer<CodeRep> {
     if (node._object instanceof Expression) {
       state = seqVA(p((Expression) node._object, getPrecedence(node), object), factory.token("."), factory.token(node.property));
     } else {
-      state = seqVA(p((Super) node._object, getPrecedence(node), object), factory.token("."), factory.token(node.property));
+      state = seqVA(object, factory.token("."), factory.token(node.property));
     }
     state.startsWithLet = object.startsWithLet;
     state.startsWithCurly = object.startsWithCurly;
@@ -963,7 +960,7 @@ public final class CodeGen implements Reducer<CodeRep> {
   @NotNull
   @Override
   public CodeRep reduceStaticPropertyName(@NotNull StaticPropertyName node) {
-    if (isIdentifierNameES6(node.value)) {
+    if (isIdentifierNameES6(node.value) && !node.value.equals("Infinity")) {
       return factory.token(node.value);
     } else {
       Double n = Double.parseDouble(node.value);
@@ -1104,7 +1101,7 @@ public final class CodeGen implements Reducer<CodeRep> {
     } else {
       CodeRep toReturn;
       if (node.operand instanceof BindingIdentifier) {
-        toReturn = seqVA(p((BindingIdentifier) node.operand, Precedence.NEW, operand), factory.token(node.operator.getName()));
+        toReturn = seqVA(operand, factory.token(node.operator.getName()));
       } else {
         toReturn = seqVA(p((MemberExpression) node.operand, Precedence.NEW, operand), factory.token(node.operator.getName()));
       }

@@ -341,12 +341,6 @@ public class CodeGenTest extends TestCase {
   @Test
   public void testForInStatement() throws JsError {
     test("for(var a in 1);");
-    test("for(var a=3 in 1);");
-    test("for(var a=(3 in 5)in 1);");
-    test("for(var a=(3 in 5==7 in 4)in 1);");
-    test("for(var a=1+1 in 1);");
-
-    //from js
     testScript("for((let)in 1);");
     test("for(a in 1);");
   }
@@ -506,17 +500,6 @@ public class CodeGenTest extends TestCase {
   }
 
   @Test
-  public void testLeftHandSideExpression() throws JsError {
-    test("(+this)++");
-    test("(+this)--");
-    test("this--");
-    test("this=0");
-    test("(+this)=0");
-    test("for((+this)in 0);");
-    test("for(this in 0);");
-  }
-
-  @Test
   public void testLiteralBooleanExpression() throws JsError {
     test("true");
     test("false");
@@ -655,15 +638,15 @@ public class CodeGenTest extends TestCase {
 
   @Test
   public void testObjectExpression() throws JsError {
-    test("({})");
-    test("({a:1})", "({a:1,})");
-    test("({}.a--)");
-    test("({1:1})", "({1.0:1})");
-    test("({a:b})", "({a:b})");
-    test("({get a(){;}})");
-    test("({set a(param){;}})");
-    test("({get a(){;},set a(param){;},b:1})");
-    test("({a:(a,b)})");
+//    test("({})");
+//    test("({a:1})", "({a:1,})");
+//    test("({}.a--)");
+//    test("({1:1})", "({1.0:1})");
+//    test("({a:b})", "({a:b})");
+//    test("({get a(){;}})");
+//    test("({set a(param){;}})");
+//    test("({get a(){;},set a(param){;},b:1})");
+//    test("({a:(a,b)})");
     test("({2e308:0})", "({2e308:0})");
 
     // from js
@@ -807,7 +790,7 @@ public class CodeGenTest extends TestCase {
 
   @Test
   public void testSuper() throws JsError {
-    test("class A extends B{constructor(){super()}}");
+//    test("class A extends B{constructor(){super()}}");
     test("({m(){super.m()}})");
   }
 
@@ -881,13 +864,6 @@ public class CodeGenTest extends TestCase {
     test("with(0);");
     test("with(0)with(0);");
     testShift("with(null);", new Script(ImmutableList.nil(), ImmutableList.list(new WithStatement(new LiteralNullExpression(), new EmptyStatement()))));
-  }
-
-  @Test
-  public void testXMLStyleComment() throws JsError {
-    test("1", "1<!--2");
-    test("1<! --2");
-    // lines start with "-->" cannot exist in our code gen.
   }
 
   @Test

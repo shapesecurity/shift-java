@@ -19,7 +19,6 @@ package com.shapesecurity.shift.codegen;
 import org.jetbrains.annotations.NotNull;
 
 public abstract class CodeRep {
-<<<<<<< HEAD
   public boolean containsIn = false;
   public boolean containsGroup = false;
   public boolean startsWithCurly = false;
@@ -27,14 +26,6 @@ public abstract class CodeRep {
   public boolean startsWithLet = false;
   public boolean startsWithLetSquareBracket = false;
   public boolean endsWithMissingElse = false;
-=======
-  public boolean containsIn;
-  public boolean containsGroup;
-  public boolean startsWithCurly;
-  public boolean startsWithFunctionOrClass;
-  public boolean endsWithMissingElse;
-  public boolean startsWithFunctionOrCurly;
->>>>>>> f1fee6b7c45fdec6d420d6bb69aa2af4ff1b1119
 
   CodeRep() {
   }
