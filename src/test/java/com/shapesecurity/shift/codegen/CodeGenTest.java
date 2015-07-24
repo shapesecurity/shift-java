@@ -16,6 +16,7 @@
 
 package com.shapesecurity.shift.codegen;
 
+import com.shapesecurity.functional.data.Either;
 import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.functional.data.Maybe;
 import com.shapesecurity.shift.ast.*;
@@ -40,7 +41,6 @@ public class CodeGenTest extends TestCase {
 //    assertEquals(fileName, script, actual);
 //  }
 
-
   private void test(String source) throws JsError {
     Module module = Parser.parseModule(source);
     String code = CodeGen.codeGen(module);
@@ -48,12 +48,26 @@ public class CodeGenTest extends TestCase {
     assertEquals(module, Parser.parseModule(code));
   }
 
-
   private void test(String expected, String source) throws JsError {
     Module module = Parser.parseModule(source);
     String code = CodeGen.codeGen(module);
     assertEquals(expected, code);
     assertEquals(module, Parser.parseModule(code));
+  }
+
+  private void testShift(@NotNull String expected, @NotNull Script script) {
+    assertEquals(expected, CodeGen.codeGen(script));
+  }
+
+  private void testShift(@NotNull String expected, @NotNull Module module) {
+    assertEquals(expected, CodeGen.codeGen(module));
+  }
+
+  private void testScript(String source) throws JsError {
+    Script script = Parser.parseScript(source);
+    String code = CodeGen.codeGen(script);
+    assertEquals(source, code);
+    assertEquals(script, Parser.parseScript(code));
   }
 
 //  private void testPretty(String source) throws JsError {
@@ -63,7 +77,6 @@ public class CodeGenTest extends TestCase {
 //    code = CodeGen.codeGen(script, FormattedCodeRepFactory.INSTANCE);
 //    assertEquals(source, code);
 //  }
-
 
   @Test
   public void testArrayExpression() throws JsError {
@@ -757,13 +770,6 @@ public class CodeGenTest extends TestCase {
     test("{a;b}", "{a\nb\n}");
   }
 
-  private void testScript(String source) throws JsError {
-    Script script = Parser.parseScript(source);
-    String code = CodeGen.codeGen(script);
-    assertEquals(source, code);
-    assertEquals(script, Parser.parseScript(code));
-  }
-
   @Test
   public void testBreakStatement() throws JsError {
     test("while(1)break", "while(1)break");
@@ -775,14 +781,6 @@ public class CodeGenTest extends TestCase {
   @Test
   public void testSequence() throws JsError {
     test("a,b,c,d");
-  }
-
-  private void testShift(@NotNull String expected, @NotNull Script script) {
-    assertEquals(expected, CodeGen.codeGen(script));
-  }
-
-  private void testShift(@NotNull String expected, @NotNull Module module) {
-    assertEquals(expected, CodeGen.codeGen(module));
   }
 
   @Test

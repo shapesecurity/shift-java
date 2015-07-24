@@ -655,7 +655,7 @@ public final class CodeGen implements Reducer<CodeRep> {
     CodeRep result = seqVA(
       factory.token("for"),
       factory.paren(seqVA(
-        left, // TODO: left cannot start with `let [`
+        left,
         factory.token("in"),
         right
       )),
