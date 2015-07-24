@@ -290,10 +290,12 @@ public final class CodeGen implements Reducer<CodeRep> {
     if (elements.length == 0) {
       content = restElement.maybe(factory.empty(), r -> seqVA(factory.token("..."), r));
     } else {
-      ImmutableList<Maybe<CodeRep>> elementsP = restElement.maybe(elements, r -> elements.append(ImmutableList.list(Maybe.just(factory.token("...")), Maybe.just(r))));
-      content = factory.commaSep(elementsP.map(this::getAssignmentExpr));
-      if (elementsP.length > 0 && elementsP.maybeTail().isNothing()) {
+      content = factory.commaSep(elements.map(this::getAssignmentExpr));
+      if (elements.length > 0 && elements.maybeLast().just().isNothing() && restElement.isNothing()) {
         content = seqVA(content, factory.token(","));
+      }
+      if (restElement.isJust()) {
+        content = seqVA(content, factory.token(","), factory.token("..."), restElement.just());
       }
     }
     return factory.bracket(content);
@@ -306,22 +308,8 @@ public final class CodeGen implements Reducer<CodeRep> {
       return factory.bracket(factory.empty());
     }
 
-    CodeRep empty = factory.empty();
-    CodeRep[] reps = new CodeRep[elements.length];
-    for (int i = 0; i < reps.length; i++) {
-      NonEmptyImmutableList<Maybe<CodeRep>> nel = (NonEmptyImmutableList<Maybe<CodeRep>>) elements;
-      CodeRep el = empty;
-      if (nel.head.isJust()) {
-        el = nel.head.just();
-        if (el.containsGroup) {
-          el = factory.paren(el);
-        }
-      }
-      reps[i] = el;
-      elements = nel.tail;
-    }
-    CodeRep content = factory.commaSep(reps);
-    if (reps[reps.length - 1] == empty) {
+    CodeRep content = factory.commaSep(elements.map(this::getAssignmentExpr));
+    if (elements.length > 0 && elements.maybeLast().just().isNothing()) {
       content = seqVA(content, factory.token(","));
     }
     return factory.bracket(content);

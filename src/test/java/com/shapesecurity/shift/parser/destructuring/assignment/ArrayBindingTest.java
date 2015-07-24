@@ -25,6 +25,7 @@ public class ArrayBindingTest extends ParserTestCase {
     testScript("[...[...a[x]]] = b", new AssignmentExpression(new ArrayBinding(ImmutableList.nil(), Maybe.just(new ArrayBinding(ImmutableList.nil(), Maybe.just(new ComputedMemberExpression(new IdentifierExpression("x"), new IdentifierExpression("a")))))), new IdentifierExpression("b")));
     testScript("[] = 0", new AssignmentExpression(new ArrayBinding(ImmutableList.nil(), Maybe.nothing()), new LiteralNumericExpression(0.0)));
     testScript("[{a=0},{a=0}] = 0", new AssignmentExpression(new ArrayBinding(ImmutableList.list(Maybe.just(new ObjectBinding(ImmutableList.list(new BindingPropertyIdentifier(new BindingIdentifier("a"), Maybe.just(new LiteralNumericExpression(0.0)))))), Maybe.just(new ObjectBinding(ImmutableList.list(new BindingPropertyIdentifier(new BindingIdentifier("a"), Maybe.just(new LiteralNumericExpression(0.0))))))), Maybe.nothing()), new LiteralNumericExpression(0.0)));
+    testScript("[,...a]=0", new AssignmentExpression(new ArrayBinding(ImmutableList.list(Maybe.nothing()), Maybe.just(new BindingIdentifier("a"))), new LiteralNumericExpression(0.0)));
 
     testScriptFailure("[x] += 0", 4, "Invalid left-hand side in assignment");
     testScriptFailure("[, x, ...y,] = 0", 13, "Invalid left-hand side in assignment");
