@@ -863,23 +863,22 @@ public class Tokenizer {
 
   @NotNull
   private Token scanOctalLiteral(int start) throws JsError {
-    BigInteger value = BigInteger.ZERO;
     while (this.index < this.source.length()) {
       char ch = this.source.charAt(this.index);
-      if (!('0' <= ch && ch <= '7')) {
+      if ('0' <= ch && ch <= '7') {
+        this.index++;
+      } else if (Utils.isIdentifierPart(ch)) {
+        throw this.createILLEGAL();
+      } else {
         break;
       }
-      this.index++;
-      value = value.shiftLeft(3);
-      value = value.add(BigInteger.valueOf(ch - '0'));
     }
 
-    if (this.index < this.source.length() && (Utils.isIdentifierStart(this.source.charAt(this.index)) || Utils
-        .isDecimalDigit(this.source.charAt(this.index)))) {
+    if (this.index - start == 2) {
       throw this.createILLEGAL();
     }
 
-    return new NumericLiteralToken(this.getSlice(start), value.doubleValue(), true);
+    return new NumericLiteralToken(this.getSlice(start), Integer.parseInt(this.getSlice(start).getString().toString().substring(2), 8));
   }
 
   @NotNull
@@ -1089,12 +1088,11 @@ public class Tokenizer {
           return this.scanHexLiteral(start);
         } else if (ch == 'o' || ch == 'O') {
           return this.scanOctalLiteral(start);
+        } else if (ch == 'b' || ch == 'B') {
+          return this.scanBinaryLiteral(start);
+        }  else if ('0' <= ch && ch <= '9') {
+          return this.scanLegacyOctalLiteral(start);
         }
-//        else if (ch == 'b' || ch == 'B') {
-//          // TODO: scan binary literal
-//        }  else if ('0' <= ch && ch <= '9') {
-//          // TODO: scan legacy octal literal
-//        }
       } else {
         SourceRange slice = this.getSlice(start);
         return new NumericLiteralToken(slice, Double.parseDouble(slice.toString()));
@@ -1160,6 +1158,49 @@ public class Tokenizer {
 
     SourceRange slice = this.getSlice(start);
     return new NumericLiteralToken(slice, Double.parseDouble(slice.toString()));
+  }
+
+  private NumericLiteralToken scanLegacyOctalLiteral(int start) throws JsError {
+    boolean isOctal = true;
+
+    while (this.index < this.source.length()) {
+      char ch = this.source.charAt(this.index);
+      if ('0' <= ch && ch <= '7') {
+        this.index++;
+      } else if (ch == '8' || ch == '9') {
+        isOctal = false;
+        this.index++;
+      } else if (Utils.isIdentifierPart(ch)) {
+        throw this.createILLEGAL();
+      } else {
+        break;
+      }
+    }
+
+    return new NumericLiteralToken(this.getSlice(start), Integer.parseInt(this.getSlice(start).getString().toString().substring(1), isOctal ? 8 : 10), true);
+  }
+
+  private NumericLiteralToken scanBinaryLiteral(int start) throws JsError {
+    int offset = this.index - start;
+
+    while (this.index < this.source.length()) {
+      char ch = this.source.charAt(this.index);
+      if (ch != '0' && ch != '1') {
+        break;
+      }
+      this.index++;
+    }
+
+    if (this.index - start <= offset) {
+      throw this.createILLEGAL();
+    }
+
+    if (this.index < this.source.length() && (Utils.isIdentifierStart(this.source.charAt(this.index))
+      || Utils.isDecimalDigit(this.source.charAt(this.index)))) {
+      throw this.createILLEGAL();
+    }
+
+    return new NumericLiteralToken(this.getSlice(start), Integer.parseInt(this.getSlice(start).getString().toString().substring(offset), 2));
   }
 
   protected boolean eof() {
