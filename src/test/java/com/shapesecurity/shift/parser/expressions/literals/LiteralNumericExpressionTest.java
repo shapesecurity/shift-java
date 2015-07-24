@@ -1,4 +1,6 @@
 package com.shapesecurity.shift.parser.expressions.literals;
 
-public class LiteralNumericExpressionTest {
+import com.shapesecurity.shift.parser.ParserTestCase;
+
+public class LiteralNumericExpressionTest extends ParserTestCase {
 }

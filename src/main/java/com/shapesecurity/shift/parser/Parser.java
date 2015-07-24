@@ -705,6 +705,8 @@ public abstract class Parser extends Tokenizer {
         for (Maybe<SpreadElementExpression> maybeBbwd : ((NonEmptyImmutableList<Maybe<SpreadElementExpression>>) elements).init()) {
           if (maybeBbwd.isJust()) {
             newElements.add(Maybe.just(this.transformDestructuringWithDefault((Expression) maybeBbwd.just())));
+          } else {
+            newElements.add(Maybe.nothing());
           }
         }
         return new ArrayBinding(ImmutableList.from(newElements), Maybe.just(this.transformDestructuring(spreadElement.expression)));
