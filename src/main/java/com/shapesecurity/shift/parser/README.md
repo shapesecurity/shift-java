@@ -3,7 +3,7 @@ Shift AST Parser
 
 ## Description
 
-The `Parser.parse` function takes an ECMAScript program and generates a `Script` object representing a Shift AST.
+The `Parser.parseScript` function parses a String of ECMAScript program text using `Script` as the goal symbol, and either returns a `Script` node or throws a `ParseError`. Similarly, the `Parser.parseModule` function parses a String of ECMAScript program text using `Module` as the goal symbol, and either returns a `Module` node or throws a `ParseError`.
 
 ## Usage
 
@@ -11,5 +11,6 @@ The `Parser.parse` function takes an ECMAScript program and generates a `Script`
 import com.shapesecurity.shift.parser.Parser;
 
 String js = "a; b;";
-Script p = Parser.parse(js);
+Script p = Parser.parseScript(js);
+Module m = Parser.parseModule(js);
 ```
