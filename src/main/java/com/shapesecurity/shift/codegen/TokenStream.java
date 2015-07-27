@@ -43,7 +43,7 @@ class TokenStream {
   }
 
   public void putNumber(double number) {
-    String tokenStr = D2A.d2a(number);
+    String tokenStr = D2A.shortD2a(number);
     put(tokenStr);
     this.lastNumber = tokenStr;
   }

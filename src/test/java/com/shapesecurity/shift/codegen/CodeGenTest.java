@@ -16,30 +16,22 @@
 
 package com.shapesecurity.shift.codegen;
 
-import com.shapesecurity.functional.data.Either;
 import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.functional.data.Maybe;
 import com.shapesecurity.shift.ast.*;
 import com.shapesecurity.shift.parser.JsError;
 import com.shapesecurity.shift.parser.Parser;
-import junit.framework.TestCase;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 
-public class CodeGenTest extends TestCase {
+import static org.junit.Assert.assertEquals;
+
+public class CodeGenTest {
 
   @NotNull
   private static Script statement(@NotNull Statement stmt) {
     return new Script(ImmutableList.<Directive>nil(), ImmutableList.list(stmt));
   }
-
-//  private void testLibrary(String fileName) throws JsError, IOException {
-//    String source = readLibrary(fileName);
-//    Script script = Parser.parse(source);
-//    String code = CodeGen.codeGen(script);
-//    Script actual = Parser.parse(code);
-//    assertEquals(fileName, script, actual);
-//  }
 
   private void test(String source) throws JsError {
     Module module = Parser.parseModule(source);
@@ -69,14 +61,6 @@ public class CodeGenTest extends TestCase {
     assertEquals(source, code);
     assertEquals(script, Parser.parseScript(code));
   }
-
-//  private void testPretty(String source) throws JsError {
-//    Script script = Parser.parse(source);
-//    String code = CodeGen.codeGen(script, true);
-//    assertEquals(source, code);
-//    code = CodeGen.codeGen(script, FormattedCodeRepFactory.INSTANCE);
-//    assertEquals(source, code);
-//  }
 
   @Test
   public void testArrayExpression() throws JsError {
@@ -322,12 +306,12 @@ public class CodeGenTest extends TestCase {
     test("1.1.valueOf()");
     test("15..valueOf()");
     test("1..valueOf()");
-    test("1e+300.valueOf()");
-    test("8000000000000000..valueOf()");
+    test("1e300.valueOf()");
+    test("8e15.valueOf()", "8000000000000000..valueOf()");
     test("10..valueOf()", "1e1.valueOf()");
     test("1.3754889325393114", "1.3754889325393114");
-    test("1.3754889325393114e+24", "0x0123456789abcdefABCDEF");
-    test("4.185580496821357e+298", "4.1855804968213567e298");
+    test("1.3754889325393114e24", "0x0123456789abcdefABCDEF");
+    test("4.185580496821357e298", "4.1855804968213567e298");
     test("5.562684646268003e-308", "5.5626846462680035e-308");
     test("5.562684646268003e-309", "5.5626846462680035e-309");
     test("2147483648", "2147483648.0");
@@ -526,7 +510,7 @@ public class CodeGenTest extends TestCase {
     test("0", "0b0");
     test("1");
     test("2");
-    test("0x38D7EA4C68001");
+    test("0x38D7EA4C68001", "1000000000000001");
     test("15e5", "1500000");
     test("155e3", "155000");
     test(".1");
@@ -638,16 +622,16 @@ public class CodeGenTest extends TestCase {
 
   @Test
   public void testObjectExpression() throws JsError {
-//    test("({})");
-//    test("({a:1})", "({a:1,})");
-//    test("({}.a--)");
-//    test("({1:1})", "({1.0:1})");
-//    test("({a:b})", "({a:b})");
-//    test("({get a(){;}})");
-//    test("({set a(param){;}})");
-//    test("({get a(){;},set a(param){;},b:1})");
-//    test("({a:(a,b)})");
-    test("({2e308:0})", "({2e308:0})");
+    test("({})");
+    test("({a:1})", "({a:1,})");
+    test("({}.a--)");
+    test("({1:1})", "({1.0:1})");
+    test("({a:b})", "({a:b})");
+    test("({get a(){;}})");
+    test("({set a(param){;}})");
+    test("({get a(){;},set a(param){;},b:1})");
+    test("({a:(a,b)})");
+    test("({Infinity:0})", "({2e308:0})");
 
     // from js
     test("({})");
@@ -661,6 +645,7 @@ public class CodeGenTest extends TestCase {
     test("({0:0})", "({0.:0})");
     test("({0:0})", "({.0:0})");
     test("({.1:0})", "({0.1:0})");
+    test("({1e17:0})", "({0.1e+18:0})");
     test("({[a]:b})");
     test("({a:b})", "({\"a\":b})");
     test("({\" \":b})");
@@ -705,7 +690,7 @@ public class CodeGenTest extends TestCase {
     test("(\"a\")", "('a')");
     test("(\"'\")", "('\\'')");
     test(";\"a\"");
-    test(";\"\\\"\"");
+    test(";'\"'");
     test("/a/");
     test("/a/i");
     test("/a/ig");
@@ -891,45 +876,4 @@ public class CodeGenTest extends TestCase {
     test("function*f(){f(yield*a,yield*b)}");
     test("function*f(){yield*yield*(yield)*(yield)}");
   }
-
-//  @Test
-//  public void testPrettyPrintSemi() throws JsError {
-//    testPretty("var a=0;\n");
-//    testPretty("var a=0;\nvar b=0;\n");
-//  }
-//
-//  @Test
-//  public void testPrettyPrintBracket() throws JsError {
-//    testPretty("function a(){\nreturn;\n}");
-//  }
-
-//  @Test
-//  public void testLibrary() throws IOException, JsError {
-//    ImmutableList<String> jsFiles = ImmutableList.nil();
-//    setFatal(false); // Collect the failures in an ErrorCollector
-//
-//    // Get a list of the js files within the resources directory to process
-//    File[] files = new File(getPath(".").toString()).listFiles();
-//    if (files == null) {
-//      System.out.println("Error retrieving list of javascript libraries.");
-//      return;
-//    }
-//    for (File file : files) {
-//      if (file.isFile() && file.getName().endsWith(".js")) {
-//        jsFiles = ImmutableList.cons(file.getName(), jsFiles);
-//      }
-//    }
-//
-//    // Test the hell out of it... ": )
-//    long start = System.nanoTime();
-//    System.out.println("Testing " + jsFiles.length + " javascript libraries.");
-//    for (String jsLib : jsFiles) {
-//      System.out.print(".");
-//      testLibrary(jsLib);
-//    }
-//    System.out.println("");
-//    double elapsed = ((System.nanoTime() - start) * NANOS_TO_SECONDS);
-//    System.out.printf("Library testing time: %.1fsec\n", elapsed);
-//    setFatal(true); // Revert back to the default behavior
-//  }
 }

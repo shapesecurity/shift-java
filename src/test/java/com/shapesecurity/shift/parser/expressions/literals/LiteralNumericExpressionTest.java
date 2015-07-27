@@ -46,9 +46,9 @@ public class LiteralNumericExpressionTest extends ParserTestCase {
     testScript("0o1", new LiteralNumericExpression(1.0));
     testScript("0o10", new LiteralNumericExpression(8.0));
     testScript("0O0", new LiteralNumericExpression(0.0));
-//    testScript("09", new LiteralNumericExpression(9.0));
     testScript("018", new LiteralNumericExpression(18.0));
     testScript("'use strict'; 0o0", new LiteralNumericExpression(0.0));
+    testScript("09", new LiteralNumericExpression(9.0));
 
     testScriptFailure("0b", 2, "Unexpected end of input");
     testScriptFailure("0b1a", 3, "Unexpected \"a\"");

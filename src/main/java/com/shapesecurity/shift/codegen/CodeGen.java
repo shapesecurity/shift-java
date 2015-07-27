@@ -177,6 +177,7 @@ public final class CodeGen implements Reducer<CodeRep> {
   @NotNull
   private Precedence getPrecedence(Node node) {
     if (node instanceof ArrayExpression
+      || node instanceof ClassExpression
       || node instanceof FunctionExpression
       || node instanceof IdentifierExpression
       || node instanceof LiteralBooleanExpression
@@ -951,10 +952,10 @@ public final class CodeGen implements Reducer<CodeRep> {
     if (isIdentifierNameES6(node.value) && !node.value.equals("Infinity")) {
       return factory.token(node.value);
     } else {
-      Double n = Double.parseDouble(node.value);
-      if (!n.isNaN()) {
+      try {
+        double n = Double.parseDouble(node.value);
         return new CodeRep.NumberCodeRep(n);
-      } else {
+      } catch (NumberFormatException ignored) {
         return factory.token(escapeStringLiteral(node.value));
       }
     }
@@ -1009,7 +1010,7 @@ public final class CodeGen implements Reducer<CodeRep> {
   @NotNull
   @Override
   public CodeRep reduceTemplateElement(@NotNull TemplateElement node) {
-    return factory.token(node.rawValue);
+    return factory.token("`" + node.rawValue + "`");
   }
 
   @NotNull
@@ -1027,7 +1028,9 @@ public final class CodeGen implements Reducer<CodeRep> {
         if (i < l - 1) {
           d += "${";
         }
-        state = seqVA(state, factory.token(d));
+        if (d.length() > 0) {
+          state = seqVA(state, factory.token(d));
+        }
       } else {
         state = seqVA(state, elements.index(i).just());
       }
