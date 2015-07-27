@@ -24,6 +24,7 @@ import com.shapesecurity.shift.ast.operators.*;
 import com.shapesecurity.shift.parser.token.NumericLiteralToken;
 import com.shapesecurity.shift.parser.token.RegularExpressionLiteralToken;
 import com.shapesecurity.shift.parser.token.TemplateToken;
+import com.shapesecurity.shift.utils.D2A;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -705,6 +706,8 @@ public abstract class Parser extends Tokenizer {
         for (Maybe<SpreadElementExpression> maybeBbwd : ((NonEmptyImmutableList<Maybe<SpreadElementExpression>>) elements).init()) {
           if (maybeBbwd.isJust()) {
             newElements.add(Maybe.just(this.transformDestructuringWithDefault((Expression) maybeBbwd.just())));
+          } else {
+            newElements.add(Maybe.nothing());
           }
         }
         return new ArrayBinding(ImmutableList.from(newElements), Maybe.just(this.transformDestructuring(spreadElement.expression)));
@@ -1895,7 +1898,7 @@ public abstract class Parser extends Tokenizer {
         } else {
           double value = ((LiteralNumericExpression) numLiteral).value;
 
-          return new Pair<>(this.markLocation(startLocation, new StaticPropertyName(String.valueOf(value).split("\\.")[0])), Maybe.nothing());
+          return new Pair<>(this.markLocation(startLocation, new StaticPropertyName(D2A.d2a(value))), Maybe.nothing());
         }
       case LBRACK:
         boolean previousYield = this.allowYieldExpression;

@@ -20,7 +20,7 @@ interface ErrorMessages {
 
   // error messages in error.js
   String UNEXPECTED_TOKEN = "Unexpected token \"%s\"";
-  String UNEXPECTED_ILLEGAL_TOKEN = "Unexpected \"%s\"";
+  String UNEXPECTED_ILLEGAL_TOKEN = "Unexpected %s";
   String UNEXPECTED_NUMBER = "Unexpected number";
   String UNEXPECTED_STRING = "Unexpected string";
   String UNEXPECTED_IDENTIFIER = "Unexpected identifier";

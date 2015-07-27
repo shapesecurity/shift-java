@@ -27,14 +27,10 @@ public class DataProperty extends NamedObjectProperty
   @NotNull
   public final Expression expression;
 
-  @NotNull
-  public final PropertyName name;
-
   public DataProperty (@NotNull Expression expression, @NotNull PropertyName name)
   {
     super(name);
     this.expression = expression;
-    this.name = name;
   }
 
   @Override
