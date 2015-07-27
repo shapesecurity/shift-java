@@ -23,24 +23,25 @@ public class LiteralStringExpressionTest extends ParserTestCase {
     testScript("('\\0')", new LiteralStringExpression("\0"));
     testScript("'use strict'; ('\\0')", new LiteralStringExpression("\0"));
     testScript("'use strict'; ('\\0x')", new LiteralStringExpression("\0x"));
-//    testScript("('\\01')", new LiteralStringExpression("\\x01")); // TODO: not passing
-//    testScript("('\\1')", new LiteralStringExpression("\\x01"));
     testScript("('\\11')", new LiteralStringExpression("\t"));
     testScript("('\\111')", new LiteralStringExpression("I"));
     testScript("('\\1111')", new LiteralStringExpression("I1"));
-//    testScript("('\\2111')", new LiteralStringExpression("\\x891"));
     testScript("('\\5111')", new LiteralStringExpression(")11"));
-//    testScript("('\\5a')", new LiteralStringExpression("\\x05a"));
-//    testScript("('\\7a')", new LiteralStringExpression("\\x07a"));
     testScript("('\\a')", new LiteralStringExpression("a"));
     testScript("('\\`')", new LiteralStringExpression("`"));
-//    testScript("('\\u{00F8}')", new LiteralStringExpression("\\xF8"));
     testScript("('\\u{0}')", new LiteralStringExpression("\0"));
     testScript("('\\u{10FFFF}')", new LiteralStringExpression("\uDBFF\uDFFF"));
-//    testScript("('\\u{0000000000F8}')", new LiteralStringExpression("\\xF8"));
+
+    testScript("('\\01')", new LiteralStringExpression("\\x01"));
+    testScript("('\\1')", new LiteralStringExpression("\\x01"));
+    testScript("('\\2111')", new LiteralStringExpression("\\x891"));
+    testScript("('\\5a')", new LiteralStringExpression("\\x05a"));
+    testScript("('\\7a')", new LiteralStringExpression("\\x07a"));
+    testScript("('\\u{00F8}')", new LiteralStringExpression("\\xF8"));
+    testScript("('\\u{0000000000F8}')", new LiteralStringExpression("\\xF8"));
+
 
     testScriptFailure("(')", 3, "Unexpected end of input");
-//    testScriptFailure("('\n')", 0, "Unexpected \"\\n\"");
     testScriptFailure("('\\x')", 4, "Unexpected \"'\"");
     testScriptFailure("('\\u')", 4, "Unexpected \"'\"");
     testScriptFailure("('\\8')", 3, "Unexpected \"8\"");
@@ -49,11 +50,10 @@ public class LiteralStringExpressionTest extends ParserTestCase {
     testScriptFailure("('\u2028')", 2, "Unexpected \"\u2028\"");
     testScriptFailure("('\u2029')", 2, "Unexpected \"\u2029\"");
     testScriptFailure("('\\u{2028')", 4, "Unexpected \"{\"");
-//
-//    // early grammar error: 11.8.4.1
-//    // It is a Syntax Error if the MV of HexDigits > 1114111.
     testScriptFailure("(\"\\u{110000}\")", 4, "Unexpected \"{\"");
     testScriptFailure("(\"\\u{FFFFFFF}\")", 4, "Unexpected \"{\"");
+
+//    testScriptFailure("('\n')", 0, "Unexpected \"\\n\"");
 
   }
 }

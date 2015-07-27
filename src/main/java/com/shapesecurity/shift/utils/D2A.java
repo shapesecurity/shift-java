@@ -16,9 +16,9 @@
 
 package com.shapesecurity.shift.utils;
 
-import java.math.BigInteger;
-
 import org.jetbrains.annotations.NotNull;
+
+import java.math.BigInteger;
 
 @SuppressWarnings({"checkstyle:magicnumber", "MagicNumber"})
 public final class D2A {
@@ -133,6 +133,34 @@ public final class D2A {
         info.digits = info.digits.substring(0, info.digits.length() - 1);
       }
       return "0." + info.digits;
+    }
+  }
+
+  @NotNull
+  public static String shortD2a(double n) {
+    String s = d2a(n);
+    if (n >= 1e3 && n % 10 == 0) {
+      if (s.indexOf('e') >= 0) {
+        return s.replaceAll("e\\+", "e");
+      }
+      for (int i = 0; i < s.length(); i++) {
+        if (s.charAt(s.length() - 1 - i) != '0') {
+          if (i > 0) {
+            return s.substring(0, s.length() - i) + "e" + i;
+          } else {
+            return s;
+          }
+        }
+      }
+      return "0"; // Not reached
+    } else if (n % 1 == 0) {
+      if (n > 1e15 && n < 1e20) {
+        long ln = (long) n;
+        return "0x" + Long.toHexString(ln).toUpperCase();
+      }
+      return s.replaceAll("[eE]\\+", "e");
+    } else {
+      return s.replaceAll("^0\\.", ".").replaceAll("[eE]\\+", "e");
     }
   }
 
