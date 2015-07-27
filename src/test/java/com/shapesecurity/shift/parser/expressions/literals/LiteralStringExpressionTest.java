@@ -32,13 +32,13 @@ public class LiteralStringExpressionTest extends ParserTestCase {
     testScript("('\\u{0}')", new LiteralStringExpression("\0"));
     testScript("('\\u{10FFFF}')", new LiteralStringExpression("\uDBFF\uDFFF"));
 
-    testScript("('\\01')", new LiteralStringExpression("\\x01"));
-    testScript("('\\1')", new LiteralStringExpression("\\x01"));
-    testScript("('\\2111')", new LiteralStringExpression("\\x891"));
-    testScript("('\\5a')", new LiteralStringExpression("\\x05a"));
-    testScript("('\\7a')", new LiteralStringExpression("\\x07a"));
-    testScript("('\\u{00F8}')", new LiteralStringExpression("\\xF8"));
-    testScript("('\\u{0000000000F8}')", new LiteralStringExpression("\\xF8"));
+    testScript("('\\01')", new LiteralStringExpression("\u0001"));
+    testScript("('\\1')", new LiteralStringExpression("\u0001"));
+    testScript("('\\2111')", new LiteralStringExpression("\u00891"));
+    testScript("('\\5a')", new LiteralStringExpression("\u0005a"));
+    testScript("('\\7a')", new LiteralStringExpression("\u0007a"));
+    testScript("('\\u{00F8}')", new LiteralStringExpression("\u00F8"));
+    testScript("('\\u{0000000000F8}')", new LiteralStringExpression("\u00F8"));
 
 
     testScriptFailure("(')", 3, "Unexpected end of input");
@@ -47,13 +47,12 @@ public class LiteralStringExpressionTest extends ParserTestCase {
     testScriptFailure("('\\8')", 3, "Unexpected \"8\"");
     testScriptFailure("('\\9')", 3, "Unexpected \"9\"");
     testScriptFailure("('\\x0')", 4, "Unexpected \"0\"");
-    testScriptFailure("('\u2028')", 2, "Unexpected \"\u2028\"");
-    testScriptFailure("('\u2029')", 2, "Unexpected \"\u2029\"");
+    testScriptFailure("('\u2028')", 2, "Unexpected \"\\u2028\"");
+    testScriptFailure("('\u2029')", 2, "Unexpected \"\\u2029\"");
     testScriptFailure("('\\u{2028')", 4, "Unexpected \"{\"");
     testScriptFailure("(\"\\u{110000}\")", 4, "Unexpected \"{\"");
     testScriptFailure("(\"\\u{FFFFFFF}\")", 4, "Unexpected \"{\"");
 
-//    testScriptFailure("('\n')", 0, "Unexpected \"\\n\"");
-
+    testScriptFailure("('\n')", 2, "Unexpected \"\\n\"");
   }
 }
