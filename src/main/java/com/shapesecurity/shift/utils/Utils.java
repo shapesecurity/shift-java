@@ -17,10 +17,9 @@
 package com.shapesecurity.shift.utils;
 
 import com.shapesecurity.functional.data.ImmutableList;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
-
-import org.jetbrains.annotations.NotNull;
 
 @SuppressWarnings("MagicNumber")
 public final class Utils {
@@ -57,11 +56,23 @@ public final class Utils {
     return true;
   }
 
+  public static String escapeStringLiteral(@NotNull String stringValue) {
+    int dq = 0, sq = 0;
+    for (char ch : stringValue.toCharArray()) {
+      if (ch == '\'') {
+        sq++;
+      } else if (ch == '"') {
+        dq++;
+      }
+    }
+    return escapeStringLiteral(stringValue, sq >= dq ? '"' : '\'');
+  }
+
   @NotNull
   @SuppressWarnings("checkstyle:magicnumber")
-  public static String escapeStringLiteral(@NotNull String stringValue) {
+  public static String escapeStringLiteral(@NotNull String stringValue, char quote) {
     StringBuilder result = new StringBuilder();
-    result.append('"');
+    result.append(quote);
     char[] chars = stringValue.toCharArray();
     for (char ch : chars) {
       switch (ch) {
@@ -84,7 +95,18 @@ public final class Utils {
         result.append("\\r");
         break;
       case '\"':
-        result.append("\\\"");
+        if (quote == '\"') {
+          result.append("\\\"");
+        } else {
+          result.append("\"");
+        }
+        break;
+      case '\'':
+        if (quote == '\'') {
+          result.append("\\\'");
+        } else {
+          result.append("'");
+        }
         break;
       case '\\':
         result.append("\\\\");
@@ -100,7 +122,7 @@ public final class Utils {
         break;
       }
     }
-    result.append('"');
+    result.append(quote);
     return result.toString();
   }
 

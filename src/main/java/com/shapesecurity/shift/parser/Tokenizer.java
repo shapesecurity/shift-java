@@ -16,24 +16,17 @@
 
 package com.shapesecurity.shift.parser;
 
-import static com.shapesecurity.shift.parser.ErrorMessages.STRICT_RESERVED_WORD;
-import static com.shapesecurity.shift.parser.ErrorMessages.UNEXPECTED_EOS;
-import static com.shapesecurity.shift.parser.ErrorMessages.UNEXPECTED_IDENTIFIER;
-import static com.shapesecurity.shift.parser.ErrorMessages.UNEXPECTED_NUMBER;
-import static com.shapesecurity.shift.parser.ErrorMessages.UNEXPECTED_RESERVED_WORD;
-import static com.shapesecurity.shift.parser.ErrorMessages.UNEXPECTED_STRING;
-import static com.shapesecurity.shift.parser.ErrorMessages.UNEXPECTED_TOKEN;
-
 import com.shapesecurity.functional.Pair;
 import com.shapesecurity.shift.ast.SourceLocation;
 import com.shapesecurity.shift.parser.token.*;
 import com.shapesecurity.shift.utils.Utils;
+import org.jetbrains.annotations.NotNull;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.function.Function;
 
-import org.jetbrains.annotations.NotNull;
+import static com.shapesecurity.shift.parser.ErrorMessages.*;
 
 public class Tokenizer {
   private static final TokenType[] ONE_CHAR_PUNCTUATOR =
@@ -416,7 +409,7 @@ public class Tokenizer {
     this.startLine = this.line;
     this.startLineStart = this.lineStart;
     return this.index < this.source.length()
-            ? this.createError(ErrorMessages.UNEXPECTED_ILLEGAL_TOKEN, this.source.charAt(this.index))
+            ? this.createError(ErrorMessages.UNEXPECTED_ILLEGAL_TOKEN, Utils.escapeStringLiteral(Character.toString(this.source.charAt(this.index)), '\"'))
             : this.createError(ErrorMessages.UNEXPECTED_EOS);
   }
 
@@ -451,7 +444,7 @@ public class Tokenizer {
   protected JsError createError(@NotNull String message, @NotNull Object... args) {
     ArrayList<String> escapedArgs = new ArrayList<>();
     for(Object arg : args) {
-      escapedArgs.add(arg.toString().replace("\\", "\\\\").replace("\"", "\\\""));
+      escapedArgs.add(arg.toString());
     }
     String msg = String.format(message, escapedArgs.toArray());
     return new JsError(this.startIndex, this.startLine + 1, this.startIndex - this.startLineStart, msg);
@@ -969,7 +962,7 @@ public class Tokenizer {
     while (this.index < this.source.length()) {
       char ch = this.source.charAt(this.index);
       if (ch == quote) {
-        this.index++;
+        index++;
         return new StringLiteralToken(this.getSlice(start), str, octal);
       } else if (ch == '\\') {
         Pair<String, Boolean> info = this.scanStringEscape(str, octal);
@@ -1086,10 +1079,12 @@ public class Tokenizer {
           this.index++;
           return this.scanHexLiteral(start);
         } else if (ch == 'o' || ch == 'O') {
+          this.index++;
           return this.scanOctalLiteral(start);
         } else if (ch == 'b' || ch == 'B') {
+          this.index++;
           return this.scanBinaryLiteral(start);
-        }  else if ('0' <= ch && ch <= '9') {
+        } else if ('0' <= ch && ch <= '9') {
           return this.scanLegacyOctalLiteral(start);
         }
       } else {
@@ -1249,7 +1244,7 @@ public class Tokenizer {
     if (cp <= 0xFFFF) {
       return Character.toString((char) cp);
     }
-    return String.valueOf(Character.toChars(cp));
+    return new String(new int[]{cp}, 0, 1);
   }
 
   private static int decodeUtf16(int lead, int trail) {
