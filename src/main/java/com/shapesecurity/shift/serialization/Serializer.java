@@ -22,11 +22,13 @@ import com.shapesecurity.functional.data.Maybe;
 import com.shapesecurity.functional.data.NonEmptyImmutableList;
 import com.shapesecurity.shift.ast.*;
 import com.shapesecurity.shift.utils.Utils;
+import com.shapesecurity.shift.visitor.Director;
 import com.shapesecurity.shift.visitor.Reducer;
 import org.jetbrains.annotations.NotNull;
 
 
 public class Serializer implements Reducer<StringBuilder> {
+
   public static final Serializer INSTANCE = new Serializer();
 
   protected Serializer() {
@@ -73,18 +75,14 @@ public class Serializer implements Reducer<StringBuilder> {
     return sb;
   }
 
-  // TODO
   @NotNull
   public static String serialize(@NotNull Script script) {
-//    return script.reduce(INSTANCE).toString();
-    return "";
+    return Director.reduceScript(INSTANCE, script).toString();
   }
 
-  // TODO
   @NotNull
   public static String serialize(@NotNull Module module) {
-//    return script.reduce(INSTANCE).toString();
-    return "";
+    return Director.reduceModule(INSTANCE, module).toString();
   }
 
   @NotNull
@@ -654,13 +652,13 @@ public class Serializer implements Reducer<StringBuilder> {
 
     @NotNull
     StringBuilder done(@NotNull Node node) {
-      SourceLocation loc = node.getLoc();
-      if (loc != null && loc.source != null) {
-        this.add("range",
-            list(
-                ImmutableList.list(
-                    new StringBuilder(Integer.toString(loc.offset)), new StringBuilder(
-                        Integer.toString(loc.offset + loc.source.length())))));
+      Maybe<SourceSpan> loc = node.getLoc();
+      if (loc.isJust() && loc.just().source.isJust()) {
+//        this.add("range", list(ImmutableList.list(
+//          new StringBuilder(Integer.toString(loc.just().offset)),
+//          new StringBuilder(Integer.toString(loc.just().offset + loc.just().source.just().length()))
+//        )));
+        this.add("range", "range"); // TODO add real range
       }
       this.text.append("}");
       return this.text;
