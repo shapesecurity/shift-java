@@ -327,8 +327,8 @@ public class MonoidalReducer<State> implements Reducer<State> {
 
   @NotNull
   @Override
-  public State reduceGetter(@NotNull Getter node, @NotNull State name, @NotNull State body) {
-    return append(name, body);
+  public State reduceGetter(@NotNull Getter node, @NotNull State body, @NotNull State name) {
+    return append(body, name);
   }
 
   @NotNull
@@ -409,8 +409,8 @@ public class MonoidalReducer<State> implements Reducer<State> {
 
   @NotNull
   @Override
-  public State reduceMethod(@NotNull Method node, @NotNull State name, @NotNull State params, @NotNull State body) {
-    return append(name, params, body);
+  public State reduceMethod(@NotNull Method node, @NotNull State params, @NotNull State body, @NotNull State name) {
+    return append(params, body, name);
   }
 
   @NotNull
@@ -466,10 +466,10 @@ public class MonoidalReducer<State> implements Reducer<State> {
   @Override
   public State reduceSetter(
     @NotNull Setter node,
-    @NotNull State name,
-    @NotNull State parameter,
-    @NotNull State body) {
-    return append(name, parameter, body);
+    @NotNull State params,
+    @NotNull State body,
+    @NotNull State name) {
+    return append(params, body, name);
   }
 
   @NotNull
