@@ -58,23 +58,6 @@ public final class CodeGen implements Reducer<CodeRep> {
     return sb.toString();
   }
 
-//  @NotNull
-//  public static String codeGen(@NotNull Script script, @NotNull FormattedCodeRepFactory instance) {
-//    StringBuilder sb = new StringBuilder();
-//    TokenStream ts = new TokenStream(sb);
-//    Director.reduceScript(new CodeGen(instance), script).emit(ts, false);
-//    return sb.toString();
-//  }
-//
-//  @NotNull
-//  public static String codeGenNode(@NotNull Node node) {
-//    CodeRep codeRep = Director.reduce(COMPACT, node);
-//    StringBuilder sb = new StringBuilder();
-//    TokenStream ts = new TokenStream(sb);
-//    codeRep.emit(ts, false);
-//    return sb.toString();
-//  }
-
   private char decodeUtf16(char lead, char trail) {
     return (char)((lead - 0xD800) * 0x400 + (trail - 0xDC00) + 0x10000);
   }
