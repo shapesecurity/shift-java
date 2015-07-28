@@ -76,13 +76,8 @@ public class Serializer implements Reducer<StringBuilder> {
   }
 
   @NotNull
-  public static String serialize(@NotNull Script script) {
-    return Director.reduceScript(INSTANCE, script).toString();
-  }
-
-  @NotNull
-  public static String serialize(@NotNull Module module) {
-    return Director.reduceModule(INSTANCE, module).toString();
+  public static String serialize(@NotNull Node node) {
+    return Director.reduce(INSTANCE, node).toString();
   }
 
   @NotNull

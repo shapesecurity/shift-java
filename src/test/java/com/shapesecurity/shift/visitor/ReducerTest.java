@@ -16,7 +16,6 @@
 
 package com.shapesecurity.shift.visitor;
 
-import com.shapesecurity.functional.TestBase;
 import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.functional.data.Maybe;
 import com.shapesecurity.shift.ast.IdentifierExpression;
@@ -25,7 +24,6 @@ import com.shapesecurity.shift.ast.ReturnStatement;
 import com.shapesecurity.shift.ast.Script;
 import com.shapesecurity.shift.parser.JsError;
 import com.shapesecurity.shift.parser.Parser;
-import junit.framework.TestCase;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 
