@@ -299,9 +299,9 @@ public interface Reducer<State> {
   @NotNull
   State reduceMethod(
     @NotNull Method node,
-    @NotNull State name,
     @NotNull State params,
-    @NotNull State body);
+    @NotNull State body,
+    @NotNull State name);
 
   @NotNull
   State reduceModule(
@@ -342,9 +342,9 @@ public interface Reducer<State> {
   @NotNull
   State reduceSetter(
     @NotNull Setter node,
-    @NotNull State name,
     @NotNull State params,
-    @NotNull State body);
+    @NotNull State body,
+    @NotNull State name);
 
   @NotNull
   State reduceShorthandProperty(@NotNull ShorthandProperty node);
