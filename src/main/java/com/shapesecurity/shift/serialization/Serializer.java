@@ -654,11 +654,10 @@ public class Serializer implements Reducer<StringBuilder> {
     StringBuilder done(@NotNull Node node) {
       Maybe<SourceSpan> loc = node.getLoc();
       if (loc.isJust() && loc.just().source.isJust()) {
-//        this.add("range", list(ImmutableList.list(
-//          new StringBuilder(Integer.toString(loc.just().offset)),
-//          new StringBuilder(Integer.toString(loc.just().offset + loc.just().source.just().length()))
-//        )));
-        this.add("range", "range"); // TODO add real range
+        this.add("range", list(ImmutableList.list(
+          new StringBuilder(loc.just().start.offset),
+          new StringBuilder(loc.just().end.offset),
+          new StringBuilder(loc.just().source.just()))));
       }
       this.text.append("}");
       return this.text;
