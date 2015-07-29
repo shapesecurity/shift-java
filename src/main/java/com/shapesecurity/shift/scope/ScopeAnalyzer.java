@@ -172,7 +172,7 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
   @NotNull
   @Override
   public State reduceForStatement(@NotNull ForStatement node, @NotNull Maybe<State> init, @NotNull Maybe<State> test, @NotNull Maybe<State> update, @NotNull State body) {
-      return super.reduceForStatement(node, init, test, update, body).finish(node, Scope.Type.Block);
+      return super.reduceForStatement(node, init.map(State::withoutBindingsForParent), test, update, body).finish(node, Scope.Type.Block);
   }
 
   @NotNull

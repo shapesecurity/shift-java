@@ -1634,8 +1634,8 @@ public class ScopeTest extends TestCase {
                 .apply(script));
         final IdentifierExpression xNode2 = ie(new Getter().d(ScriptStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorInit_()).d(ObjectExpressionProperties_(0)).d(GetterName_()).d(ComputedPropertyNameExpression_())
                 .apply(script));
-        final IdentifierExpression xNode3 = ie( new Getter().d(ScriptStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorInit_()).d(ObjectExpressionProperties_(0)).d(GetterBody_()).d(FunctionBodyStatements_(0)).d(ReturnStatementExpression_()).d(BinaryExpressionLeft_())
-                .apply(script) );
+        final IdentifierExpression xNode3 = ie(new Getter().d(ScriptStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorInit_()).d(ObjectExpressionProperties_(0)).d(GetterBody_()).d(FunctionBodyStatements_(0)).d(ReturnStatementExpression_()).d(BinaryExpressionLeft_())
+                .apply(script));
         final IdentifierExpression argumentsNode1 = ie(new Getter().d(ScriptStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorInit_()).d(ObjectExpressionProperties_(0)).d(GetterBody_()).d(FunctionBodyStatements_(0)).d(ReturnStatementExpression_()).d(BinaryExpressionRight_())
                 .apply(script));
 
@@ -1735,6 +1735,22 @@ public class ScopeTest extends TestCase {
             checkScope(blockScope, Scope.Type.Block, false, children, through, variables, referenceTypes);
         }
     }
+
+    @Test
+    public void testScope_binding() throws JsError {
+        // get scope tree
+        String js = "function foo(b){function r(){for(var b=0;;);}}\n";
+        Script script = Parser.parseScript(js);
+        GlobalScope globalScope = ScopeAnalyzer.analyze(script);
+
+        // get serialization of scope tree
+        ScopeSerializer serializer = new ScopeSerializer();
+        String serialized = serializer.serializeScope(globalScope);
+
+        // check
+        TestCase.assertEquals("{\"node\": \"Script_0\", \"type\": \"Global\", \"isDynamic\": true, \"through\": [], \"variables\": [{\"name\": \"foo\", \"references\": [], \"declarations\": [{\"node\": \"BindingIdentifier(foo)_1\", \"kind\": \"FunctionName\"}]}], \"children\": [{\"node\": \"Script_0\", \"type\": \"Script\", \"isDynamic\": false, \"through\": [], \"variables\": [], \"children\": [{\"node\": \"FunctionDeclaration_2\", \"type\": \"Function\", \"isDynamic\": false, \"through\": [], \"variables\": [{\"name\": \"r\", \"references\": [], \"declarations\": [{\"node\": \"BindingIdentifier(r)_3\", \"kind\": \"FunctionName\"}]}, {\"name\": \"b\", \"references\": [], \"declarations\": [{\"node\": \"BindingIdentifier(b)_4\", \"kind\": \"Param\"}]}, {\"name\": \"arguments\", \"references\": [], \"declarations\": []}], \"children\": [{\"node\": \"FunctionDeclaration_5\", \"type\": \"Function\", \"isDynamic\": false, \"through\": [], \"variables\": [{\"name\": \"b\", \"references\": [{\"node\": \"BindingIdentifier(b)_6\", \"accessibility\": \"Write\"}], \"declarations\": [{\"node\": \"BindingIdentifier(b)_6\", \"kind\": \"Var\"}]}, {\"name\": \"arguments\", \"references\": [], \"declarations\": []}], \"children\": [{\"node\": \"ForStatement_7\", \"type\": \"Block\", \"isDynamic\": false, \"through\": [{\"node\": \"BindingIdentifier(b)_6\", \"accessibility\": \"Write\"}], \"variables\": [], \"children\": []}]}]}]}]}", serialized);
+    }
+
 /*
     @Test
     public void testDestructuring() throws JsError {
