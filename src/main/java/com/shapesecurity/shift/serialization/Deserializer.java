@@ -10,6 +10,7 @@ import com.shapesecurity.shift.ast.*;
 import com.shapesecurity.shift.ast.operators.BinaryOperator;
 import com.shapesecurity.shift.ast.operators.CompoundAssignmentOperator;
 import com.shapesecurity.shift.scope.ScopeAnalyzer;
+import com.sun.java.swing.plaf.windows.TMSchema;
 import org.json.JSONException;
 
 import java.lang.reflect.InvocationTargetException;
@@ -155,31 +156,104 @@ public class Deserializer {
             Expression expression_es = (Expression)deserializeNode(jsonObject.get("expression"));
             return new ExpressionStatement(expression_es);
           case "ForInStatement":
+            VariableDeclarationBinding left_fis = separateVariableDeclarationBinding(deserializeNode(jsonObject.get("left")));
+            Expression right_fis = (Expression)deserializeNode(jsonObject.get("right"));
+            Statement body_fis = (Statement)deserializeNode(jsonObject.get("body"));
+            return new ForInStatement(left_fis, right_fis, body_fis);
           case "ForOfStatement":
+            VariableDeclarationBinding left_fos = separateVariableDeclarationBinding(deserializeNode(jsonObject.get("left")));
+            Expression right_fos = (Expression)deserializeNode(jsonObject.get("right"));
+            Statement body_fos = (Statement)deserializeNode(jsonObject.get("body"));
+            return new ForOfStatement(left_fos, right_fos, body_fos);
           case "ForStatement":
+            Maybe<VariableDeclarationExpression> init_fs = deserializeMaybeVariableDeclarationExpression(jsonObject.get("init"));
+            Maybe<Expression> test_fs = deserializeMaybeExpression(jsonObject.get("test"));
+            Maybe<Expression> update_fs = deserializeMaybeExpression(jsonObject.get("update"));
+            Statement body_fs = (Statement)deserializeNode(jsonObject.get("body"));
+            return new ForStatement(init_fs, test_fs, update_fs, body_fs);
           case "FormalParameters":
+            ImmutableList<BindingBindingWithDefault> items_fp = deserializeList(jsonObject.getAsJsonArray("items"));
+            Maybe<BindingIdentifier> rest_fp = deserializeMaybeBindingIdentifier(jsonObject.get("rest"));
+            return new FormalParameters(items_fp, rest_fp);
           case "FunctionBody":
+            ImmutableList<Directive> directives_fb = deserializeList(jsonObject.getAsJsonArray("directives"));
+            ImmutableList<Statement> statements_fb = deserializeList(jsonObject.getAsJsonArray("statements"));
+            return new FunctionBody(directives_fb, statements_fb);
           case "FunctionDeclaration":
+            BindingIdentifier name_fd = (BindingIdentifier)deserializeNode(jsonObject.get("name"));
+            boolean isGenerator_fd = jsonObject.get("isGenerator").getAsBoolean();
+            FormalParameters params_fd = (FormalParameters)deserializeNode(jsonObject.get("params"));
+            FunctionBody body_fd = (FunctionBody)deserializeNode(jsonObject.get("body"));
+            return new FunctionDeclaration(name_fd, isGenerator_fd, params_fd, body_fd);
           case "FunctionExpression":
+            Maybe<BindingIdentifier> name_fe = deserializeMaybeBindingIdentifier(jsonObject.get("name"));
+            boolean isGenerator_fe = jsonObject.get("isGenerator").getAsBoolean();
+            FormalParameters params_fe = (FormalParameters)deserializeNode(jsonObject.get("params"));
+            FunctionBody body_fe = (FunctionBody)deserializeNode(jsonObject.get("body"));
+            return new FunctionExpression(name_fe, isGenerator_fe, params_fe, body_fe);
           case "Getter":
+            FunctionBody body_g = (FunctionBody)deserializeNode(jsonObject.get("body"));;
+            PropertyName name_g = (PropertyName)deserializeNode(jsonObject.get("name"));
+            return new Getter(body_g, name_g);
           case "IdentifierExpression":
+            String name_ie = jsonObject.get("name").getAsString();
+            return new IdentifierExpression(name_ie);
           case "IfStatement":
+            Expression test_if = (Expression)deserializeNode(jsonObject.get("test"));
+            Statement consequent_if = (Statement)deserializeNode(jsonObject.get("consequent"));
+            Maybe<Statement> alternate_if = deserializeMaybeStatement(jsonObject.get("alternate"));
+            return new IfStatement(test_if, consequent_if, alternate_if);
           case "Import":
+            Maybe<BindingIdentifier> defaultBinding_i = deserializeMaybeBindingIdentifier(jsonObject.get("defaultBinding"));
+            ImmutableList<ImportSpecifier> namedImports_i = deserializeList(jsonObject.getAsJsonArray("namedImports"));
+            String moduleSpecifier_i = jsonObject.get("moduleSpecifier").getAsString();
+            return new Import(defaultBinding_i, namedImports_i, moduleSpecifier_i);
           case "ImportNamespace":
+            Maybe<BindingIdentifier> defaultBinding_in = deserializeMaybeBindingIdentifier(jsonObject.get("defaultBinding"));
+            BindingIdentifier namespaceBinding_in = (BindingIdentifier)deserializeNode(jsonObject.get("namespaceBinding"));
+            String moduleSpecifier_in = jsonObject.get("moduleSpecifier").getAsString();;
+            return new ImportNamespace(defaultBinding_in, namespaceBinding_in, moduleSpecifier_in);
           case "ImportSpecifier":
+            Maybe<String> name_is = deserializeMaybeString(jsonObject.get("name"));
+            BindingIdentifier binding_is = (BindingIdentifier)deserializeNode(jsonObject.get("binding"));
+            return new ImportSpecifier(name_is, binding_is);
           case "LabeledStatement":
+            String label_ls = jsonObject.get("label").getAsString();
+            Statement body_ls = (Statement)deserializeNode(jsonObject.get("body"));
+            return new LabeledStatement(label_ls, body_ls);
           case "LiteralBooleanExpression":
+            boolean value_lbe = jsonObject.get("value").getAsBoolean();
+            return new LiteralBooleanExpression(value_lbe);
           case "LiteralInfinityExpression":
+            return new LiteralInfinityExpression();
           case "LiteralNullExpression":
+            return new LiteralNullExpression();
           case "LiteralNumericExpression":
             double value = jsonObject.get("value").getAsDouble();
             return new LiteralNumericExpression(value);
           case "LiteralRegexExpression":
+            String pattern_lre = jsonObject.get("pattern").getAsString();
+            String flags_lre = jsonObject.get("flags").getAsString();
+            return new LiteralRegExpExpression(pattern_lre, flags_lre);
           case "LiteralStringExpression":
+            String value_lse = jsonObject.get("value").getAsString();
+            return new LiteralStringExpression(value_lse);
           case "Method":
+            boolean isGenerator_m = jsonObject.get("isGenerator").getAsBoolean();
+            FormalParameters params_m = (FormalParameters)deserializeNode(jsonObject.get("params"));
+            FunctionBody body_m = (FunctionBody)deserializeNode(jsonObject.get("body"));
+            PropertyName name_m = (PropertyName)deserializeNode(jsonObject.get("name"));
+            return new Method(isGenerator_m, params_m, body_m, name_m);
           case "Module":
+            ImmutableList<Directive> directives_m = deserializeList(jsonObject.getAsJsonArray("directives"));
+            ImmutableList<ImportDeclarationExportDeclarationStatement> items_m = deserializeList(jsonObject.getAsJsonArray("items"));
+            return new Module(directives_m, items_m);
           case "NewExpression":
+            Expression callee_ne = (Expression)deserializeNode(jsonObject.get("callee"));
+            ImmutableList<SpreadElementExpression> arguments_ne = deserializeList(jsonObject.getAsJsonArray("arguments"));
+            return new NewExpression(callee_ne, arguments_ne);
           case "NewTargetExpression":
+            return new NewTargetExpression();
           case "ObjectBinding":
           case "ObjectExpression":
           case "ReturnStatement":
@@ -222,6 +296,38 @@ public class Deserializer {
    * PRIVATE HELPER METHODS *
    **************************/
 
+  private Maybe<Statement> deserializeMaybeStatement(JsonElement jsonElement) throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
+    if (jsonElement.getAsString().equals("null")) {
+      return Maybe.nothing();
+    } else {
+      return Maybe.just((Statement) deserializeNode(jsonElement));
+    }
+  }
+
+  private Maybe<VariableDeclarationExpression> deserializeMaybeVariableDeclarationExpression(JsonElement jsonElement) throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
+    if (jsonElement.getAsString().equals("null")) {
+      return Maybe.nothing();
+    } else {
+      Node node = deserializeNode(jsonElement);
+      return Maybe.just(separateVariableDeclarationExpression(node));
+    }
+  }
+
+  private VariableDeclarationExpression separateVariableDeclarationExpression(Node node) {
+    if (node instanceof VariableDeclaration) {
+      return (VariableDeclaration) node;
+    } else {
+      return (Expression) node;
+    }
+  }
+
+  private VariableDeclarationBinding separateVariableDeclarationBinding(Node node) {
+    if (node instanceof VariableDeclaration) {
+      return (VariableDeclaration) node;
+    } else {
+      return separateBinding(node);
+    }
+  }
   private FunctionDeclarationClassDeclarationExpression separateFunctionDeclarationClassDeclarationExpression(Node node) {
     if (node instanceof FunctionDeclaration) {
       return (FunctionDeclaration) node;
