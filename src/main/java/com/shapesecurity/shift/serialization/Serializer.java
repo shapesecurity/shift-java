@@ -185,7 +185,7 @@ public class Serializer implements Reducer<StringBuilder> {
   @NotNull
   @Override
   public StringBuilder reduceCompoundAssignmentExpression(@NotNull CompoundAssignmentExpression node, @NotNull StringBuilder binding, @NotNull StringBuilder expression) {
-    return b("CompoundAssignmentExpression").add("operator", node.operator.name()).add("binding", binding).add("expression", expression).done(node);
+    return b("CompoundAssignmentExpression").add("operator", node.operator.getName()).add("binding", binding).add("expression", expression).done(node);
   }
 
   @NotNull
