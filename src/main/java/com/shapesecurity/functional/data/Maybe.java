@@ -16,6 +16,7 @@
 
 package com.shapesecurity.functional.data;
 
+import com.shapesecurity.functional.Effect;
 import com.shapesecurity.functional.F;
 import com.shapesecurity.functional.Thunk;
 import com.shapesecurity.functional.Unit;
@@ -95,7 +96,7 @@ public abstract class Maybe<A> {
   @NotNull
   public abstract <B> B maybe(@NotNull B def, @NotNull F<A, B> f);
 
-  public final void foreach(@NotNull F<A, Unit> f) {
+  public final void foreach(@NotNull Effect<A> f) {
     map(f);
   }
 
