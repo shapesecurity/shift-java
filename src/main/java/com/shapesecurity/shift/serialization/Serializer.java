@@ -317,7 +317,7 @@ public class Serializer implements Reducer<StringBuilder> {
   @NotNull
   @Override
   public StringBuilder reduceFunctionExpression(@NotNull FunctionExpression node, @NotNull Maybe<StringBuilder> name, @NotNull StringBuilder parameters, @NotNull StringBuilder body) {
-    return b("FunctionExpression").add("name", name).add("isGenerator", node.isGenerator).add("parameters", parameters).add("body", body).done(node);
+    return b("FunctionExpression").add("name", name).add("isGenerator", node.isGenerator).add("params", parameters).add("body", body).done(node);
   }
 
   @NotNull
