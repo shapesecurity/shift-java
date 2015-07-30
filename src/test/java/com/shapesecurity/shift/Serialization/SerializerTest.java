@@ -63,5 +63,4 @@ public class SerializerTest {
     String serialization5 = Serializer.serialize(randomAST5);
     assertEquals("{\"type\":\"Module\",\"directives\":[{\"type\":\"Directive\",\"rawValue\":\";f\"},{\"type\":\"Directive\",\"rawValue\":\"I\u001F\"}],\"items\":[{\"type\":\"ImportNamespace\",\"defaultBinding\":{\"type\":\"BindingIdentifier\",\"name\":\"n\"},\"namespaceBinding\":{\"type\":\"BindingIdentifier\",\"name\":\"aO2kq\"},\"moduleSpecifier\":\"Vi\"},{\"type\":\"ExportFrom\",\"namedExports\":[{\"type\":\"ExportSpecifier\",\"name\":\"null\",\"exportedName\":\"\"},{\"type\":\"ExportSpecifier\",\"name\":\"}\u001E\",\"exportedName\":\";\"}],\"moduleSpecifier\":\"\"}]}", serialization5);
   }
-
 }
