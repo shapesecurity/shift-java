@@ -81,12 +81,10 @@ public class MaybeTest extends TestBase {
   public void testForEach() {
     Maybe.fromNullable(nulled).foreach(x -> {
       fail("Maybe.forEach should not execute f on a nothing"); //should never call f
-      return Unit.unit;
     });
     final int[] effect = {0};
     Maybe.fromNullable(notNull).foreach(x -> {
       effect[0] += 1;
-      return Unit.unit;
     });
     assertEquals(1, effect[0]);//just should be side effected into incrementing once and only once
   }

@@ -16,6 +16,7 @@
 
 package com.shapesecurity.functional.data;
 
+import com.shapesecurity.functional.Effect;
 import com.shapesecurity.functional.F;
 import com.shapesecurity.functional.Thunk;
 import com.shapesecurity.functional.Unit;
@@ -95,7 +96,7 @@ public abstract class Maybe<A> {
   @NotNull
   public abstract <B> B maybe(@NotNull B def, @NotNull F<A, B> f);
 
-  public final void foreach(@NotNull F<A, Unit> f) {
+  public final void foreach(@NotNull Effect<A> f) {
     map(f);
   }
 
@@ -124,6 +125,9 @@ public abstract class Maybe<A> {
 
   @NotNull
   public abstract <B> Maybe<B> flatMap(@NotNull F<A, Maybe<B>> f);
+
+  @NotNull
+  public abstract Maybe<A> filter(@NotNull F<A, Boolean> f);
 
   private static class Just<A> extends Maybe<A> {
     @NotNull
@@ -201,6 +205,12 @@ public abstract class Maybe<A> {
     public <B> Maybe<B> flatMap(@NotNull F<A, Maybe<B>> f) {
       return f.apply(this.value);
     }
+
+    @NotNull
+    @Override
+    public Maybe<A> filter(@NotNull F<A, Boolean> f) {
+      return f.apply(this.value) ? this : Maybe.nothing();
+    }
   }
 
   private static class Nothing<A> extends Maybe<A> {
@@ -269,6 +279,12 @@ public abstract class Maybe<A> {
     @Override
     public <B> Maybe<B> flatMap(@NotNull F<A, Maybe<B>> f) {
       return (Maybe<B>) NOTHING;
+    }
+
+    @NotNull
+    @Override
+    public Maybe<A> filter(@NotNull F<A, Boolean> f) {
+      return this;
     }
   }
 }

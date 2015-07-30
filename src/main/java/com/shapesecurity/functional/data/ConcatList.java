@@ -16,6 +16,7 @@
 
 package com.shapesecurity.functional.data;
 
+import com.shapesecurity.functional.Effect;
 import com.shapesecurity.functional.F;
 import com.shapesecurity.functional.F2;
 
@@ -58,6 +59,8 @@ public abstract class ConcatList<T> {
 
   @NotNull
   public abstract <B> B foldRight(@NotNull F2<? super T, B, B> f, @NotNull B init);
+
+  public abstract void foreach(@NotNull Effect<T> f);
 
   public abstract boolean isEmpty();
 
@@ -105,6 +108,9 @@ public abstract class ConcatList<T> {
     public <B> B foldRight(@NotNull F2<? super T, B, B> f, @NotNull B init) {
       return init;
     }
+
+    @Override
+    public void foreach(@NotNull Effect<T> f) {}
 
     @Override
     public boolean isEmpty() {
@@ -173,6 +179,11 @@ public abstract class ConcatList<T> {
     @Override
     public <B> B foldRight(@NotNull F2<? super T, B, B> f, @NotNull B init) {
       return f.apply(this.data, init);
+    }
+
+    @Override
+    public void foreach(@NotNull Effect<T> f) {
+      f.apply(this.data);
     }
 
     @Override
@@ -247,6 +258,13 @@ public abstract class ConcatList<T> {
     public <B> B foldRight(@NotNull F2<? super T, B, B> f, @NotNull B init) {
       return this.left.foldRight(f, this.right.foldRight(f, init));
     }
+
+    @Override
+    public void foreach(@NotNull Effect<T> f) {
+      this.left.foreach(f);
+      this.right.foreach(f);
+    }
+
 
     @Override
     public boolean isEmpty() {

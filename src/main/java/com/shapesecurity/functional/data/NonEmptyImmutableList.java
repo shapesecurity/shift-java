@@ -71,6 +71,16 @@ public final class NonEmptyImmutableList<T> extends ImmutableList<T> {
   }
 
   @NotNull
+  public T reduceLeft(@NotNull F2<T, ? super T, T> f) {
+    return this.tail.foldLeft(f, this.head);
+  }
+
+  @NotNull
+  public T reduceRight(@NotNull F2<? super T, T, T> f) {
+    return this.init().foldRight(f, this.last());
+  }
+
+  @NotNull
   @Override
   public Maybe<T> maybeHead() {
     return Maybe.just(this.head);
