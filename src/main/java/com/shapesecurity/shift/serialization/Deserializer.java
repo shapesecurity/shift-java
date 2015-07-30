@@ -9,8 +9,9 @@ import com.shapesecurity.functional.data.Maybe;
 import com.shapesecurity.shift.ast.*;
 import com.shapesecurity.shift.ast.operators.BinaryOperator;
 import com.shapesecurity.shift.ast.operators.CompoundAssignmentOperator;
-import com.shapesecurity.shift.scope.ScopeAnalyzer;
-import com.sun.java.swing.plaf.windows.TMSchema;
+import com.shapesecurity.shift.ast.operators.UnaryOperator;
+import com.shapesecurity.shift.ast.operators.UpdateOperator;
+import com.sun.java.swing.plaf.motif.MotifBorders;
 import org.json.JSONException;
 
 import java.lang.reflect.InvocationTargetException;
@@ -255,37 +256,110 @@ public class Deserializer {
           case "NewTargetExpression":
             return new NewTargetExpression();
           case "ObjectBinding":
+            ImmutableList<BindingProperty> properties_ob = deserializeList(jsonObject.getAsJsonArray("properties"));
+            return new ObjectBinding(properties_ob);
           case "ObjectExpression":
+            ImmutableList<ObjectProperty> properties_oe = deserializeList(jsonObject.getAsJsonArray("properties"));
+            return new ObjectExpression(properties_oe);
           case "ReturnStatement":
+            Maybe<Expression> expression_rs = deserializeMaybeExpression(jsonObject.get("expression"));
+            return new ReturnStatement(expression_rs);
           case "Script":
             ImmutableList<Directive> directives = deserializeList(jsonObject.getAsJsonArray("directives"));
             ImmutableList<Statement> statements = deserializeList(jsonObject.getAsJsonArray("statements"));
             return new Script(directives, statements);
           case "Setter":
+            BindingBindingWithDefault params_s = separateBindingBindingWithDefault(deserializeNode(jsonObject.get("params")));
+            FunctionBody body_s = (FunctionBody)deserializeNode(jsonObject.get("body"));
+            PropertyName name_s = (PropertyName)deserializeNode(jsonObject.get("name"));
+            return new Setter(params_s, body_s, name_s);
           case "ShorthandProperty":
+            String name_sp = jsonObject.get("name").getAsString();
+            return new ShorthandProperty(name_sp);
           case "SpreadElement":
+            Expression expression_se = (Expression)deserializeNode(jsonObject.get("expression"));
+            return new SpreadElement(expression_se);
           case "StaticMemberExpression":
+            String property_sme = jsonObject.get("property").getAsString();
+            ExpressionSuper object_sme = separateExpressionSuper(deserializeNode(jsonObject.get("object")));
+            return new StaticMemberExpression(property_sme, object_sme);
           case "StaticPropertyName":
+            String value_spn = jsonObject.get("value").getAsString();
+            return new StaticPropertyName(value_spn);
           case "Super":
+            return new Super();
           case "SwitchCase":
+            Expression test_sc = (Expression)deserializeNode(jsonObject.get("test"));
+            ImmutableList<Statement> consequent_sc = deserializeList(jsonObject.getAsJsonArray("consequent"));
+            return new SwitchCase(test_sc, consequent_sc);
           case "SwitchDefault":
+            ImmutableList<Statement> consequent_sd = deserializeList(jsonObject.getAsJsonArray("consequent"));
+            return new SwitchDefault(consequent_sd);
           case "SwitchStatement":
+            Expression discriminant_ss = (Expression)deserializeNode(jsonObject.get("discriminant"));
+            ImmutableList<SwitchCase> cases_ss = deserializeList(jsonObject.getAsJsonArray("cases"));
+            return new SwitchStatement(discriminant_ss, cases_ss);
           case "SwitchStatementWithDefault":
+            Expression discriminant_sswd = (Expression)deserializeNode(jsonObject.get("discriminant"));
+            ImmutableList<SwitchCase> preDefaultCases_sswd = deserializeList(jsonObject.getAsJsonArray("preDefaultCases"));
+            SwitchDefault defaultCase_sswd = (SwitchDefault)deserializeNode(jsonObject.get("defaultCase"));
+            ImmutableList<SwitchCase> postDefaultCases_sswd = deserializeList(jsonObject.getAsJsonArray("postDefaultCases"));
+            return new SwitchStatementWithDefault(discriminant_sswd, preDefaultCases_sswd, defaultCase_sswd, postDefaultCases_sswd);
           case "TemplateElement":
+            String rawValue_te = jsonObject.get("rawValue").getAsString();
+            return new TemplateElement(rawValue_te);
           case "TemplateExpression":
+            Maybe<Expression> tag_te = deserializeMaybeExpression(jsonObject.get("tag"));
+            ImmutableList<ExpressionTemplateElement> elements_te = deserializeList(jsonObject.getAsJsonArray("elements"));
+            return new TemplateExpression(tag_te, elements_te);
           case "ThisExpression":
+            return new ThisExpression();
           case "ThrowStatement":
+            Expression expression_ts = (Expression)deserializeNode(jsonObject.get("expression"));
+            return new ThrowStatement(expression_ts);
           case "TryCatchStatement":
-          case "TryStatement":
+            Block body_tcs = (Block)deserializeNode(jsonObject.get("body"));
+            CatchClause catchClause_tcs = (CatchClause)deserializeNode(jsonObject.get("catchClause"));
+            return new TryCatchStatement(body_tcs, catchClause_tcs);
+          case "TryFinallyStatement":
+            Block body_tfs = (Block)deserializeNode(jsonObject.get("body"));
+            Maybe<CatchClause> catchClause_tfs = deserializeMaybeCatchClause(jsonObject.get("catchClause"));
+            Block finalizer_tfs = (Block)deserializeNode(jsonObject.get("finalizer"));
+            return new TryFinallyStatement(body_tfs, catchClause_tfs, finalizer_tfs);
           case "UnaryExpression":
+            UnaryOperator operator_ue = deserializeUnaryOperator(jsonObject.get("operator"));
+            Expression operand_ue = (Expression)deserializeNode(jsonObject.get("operand"));
+            return new UnaryExpression(operator_ue, operand_ue);
           case "UpdateExpression":
+            boolean isPrefix_upe = jsonObject.get("isPrefix").getAsBoolean();
+            UpdateOperator operator_upe = deserializeUpdateOperator(jsonObject.get("operator"));
+            BindingIdentifierMemberExpression operand_upe = separateBindingIdentifierMemberExpression(deserializeNode(jsonObject.get("operand")));
+            return new UpdateExpression(isPrefix_upe, operator_upe, operand_upe);
           case "VariableDeclaration":
+            VariableDeclarationKind kind_vd = deserializeVariableDeclarationKind(jsonObject.get("kind"));
+            ImmutableList<VariableDeclarator> declarators_vd = deserializeList(jsonObject.getAsJsonArray("declarators"));
+            return new VariableDeclaration(kind_vd, declarators_vd);
           case "VariableDeclarationStatement":
+            VariableDeclaration declaration_vds = (VariableDeclaration)deserializeNode(jsonObject.get("declaration"));
+            return new VariableDeclarationStatement(declaration_vds);
           case "VariableDeclarator":
+            Binding binding_vd = separateBinding(deserializeNode(jsonObject.get("binding")));
+            Maybe<Expression> init_vd = deserializeMaybeExpression(jsonObject.get("init"));
+            return new VariableDeclarator(binding_vd, init_vd);
           case "WhileStatement":
+            Expression test_ws = (Expression)deserializeNode(jsonObject.get("expression"));
+            Statement body_ws = (Statement)deserializeNode(jsonObject.get("body"));
+            return new WhileStatement(test_ws, body_ws);
           case "WithStatement":
+            Expression object_wis = (Expression)deserializeNode(jsonObject.get("object"));
+            Statement body_wis = (Statement)deserializeNode(jsonObject.get("body"));
+            return new WithStatement(object_wis, body_wis);
           case "YieldExpression":
+            Maybe<Expression> expression_ye = deserializeMaybeExpression(jsonObject.get("expression"));
+            return new YieldExpression(expression_ye);
           case "YieldGeneratorExpression":
+            Expression expression_yge = (Expression)deserializeNode(jsonObject.get("expression"));
+            return new YieldGeneratorExpression(expression_yge);
         }
       }
     }
@@ -296,6 +370,13 @@ public class Deserializer {
    * PRIVATE HELPER METHODS *
    **************************/
 
+  private Maybe<CatchClause> deserializeMaybeCatchClause(JsonElement jsonElement) throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
+    if (jsonElement.getAsString().equals("null")) {
+      return Maybe.nothing();
+    } else {
+      return Maybe.just((CatchClause) deserializeNode(jsonElement));
+    }
+  }
   private Maybe<Statement> deserializeMaybeStatement(JsonElement jsonElement) throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
     if (jsonElement.getAsString().equals("null")) {
       return Maybe.nothing();
@@ -527,5 +608,54 @@ public class Deserializer {
         return null;
     }
   }
+
+  private UnaryOperator deserializeUnaryOperator(JsonElement jsonElement) {
+    String operatorString = jsonElement.getAsString();
+    switch (operatorString) {
+      case "+":
+        return UnaryOperator.Plus;
+      case "-":
+        return UnaryOperator.Minus;
+      case "!":
+        return UnaryOperator.LogicalNot;
+      case "~":
+        return UnaryOperator.BitNot;
+      case "typeof":
+        return UnaryOperator.Typeof;
+      case "void":
+        return UnaryOperator.Void;
+      case "delete":
+        return UnaryOperator.Delete;
+      default:
+        return null;
+    }
+  }
+
+  private UpdateOperator deserializeUpdateOperator(JsonElement jsonElement) {
+    String operatorString = jsonElement.getAsString();
+    switch (operatorString) {
+      case "++":
+        return UpdateOperator.Increment;
+      case "":
+        return UpdateOperator.Decrement;
+      default:
+        return null;
+    }
+  }
+
+  private VariableDeclarationKind deserializeVariableDeclarationKind(JsonElement jsonElement) {
+    String kindString = jsonElement.getAsString();
+    switch (kindString) {
+      case "var":
+        return VariableDeclarationKind.Var;
+      case "const":
+        return VariableDeclarationKind.Const;
+      case "let":
+        return VariableDeclarationKind.Let;
+      default:
+        return null;
+    }
+  }
+
 
 }
