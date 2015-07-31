@@ -127,8 +127,8 @@ public interface Reducer<State> {
   @NotNull
   State reduceComputedMemberExpression(
     @NotNull ComputedMemberExpression node,
-    @NotNull State object,
-    @NotNull State expression);
+    @NotNull State expression,
+    @NotNull State object);
 
   @NotNull
   State reduceComputedPropertyName(

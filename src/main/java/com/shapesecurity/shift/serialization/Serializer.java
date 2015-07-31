@@ -451,8 +451,8 @@ public class Serializer implements Reducer<StringBuilder> {
 
   @NotNull
   @Override
-  public StringBuilder reduceSetter(@NotNull Setter node, @NotNull StringBuilder params, @NotNull StringBuilder body, @NotNull StringBuilder name) {
-    return b("Setter").add("params", params).add("body", body).add("name", name).done(node);
+  public StringBuilder reduceSetter(@NotNull Setter node, @NotNull StringBuilder param, @NotNull StringBuilder body, @NotNull StringBuilder name) {
+    return b("Setter").add("param", param).add("body", body).add("name", name).done(node);
   }
 
   @NotNull
@@ -548,7 +548,7 @@ public class Serializer implements Reducer<StringBuilder> {
   @NotNull
   @Override
   public StringBuilder reduceUnaryExpression(@NotNull UnaryExpression node, @NotNull StringBuilder operand) {
-    return b("UnaryExpression").add("operator", node.operator.name()).add("operand", operand).done(node);
+    return b("UnaryExpression").add("operator", node.operator.getName()).add("operand", operand).done(node);
   }
 
   @NotNull
@@ -560,7 +560,7 @@ public class Serializer implements Reducer<StringBuilder> {
   @NotNull
   @Override
   public StringBuilder reduceVariableDeclaration(@NotNull VariableDeclaration node, @NotNull ImmutableList<StringBuilder> declarators) {
-    return b("VariableDeclaration").add("kind", node.kind.name()).add("declarators", list(declarators)).done(node);
+    return b("VariableDeclaration").add("kind", node.kind.name).add("declarators", list(declarators)).done(node);
   }
 
   @NotNull

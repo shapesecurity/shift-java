@@ -242,7 +242,7 @@ public final class Director {
         return reducer.reduceCompoundAssignmentExpression(tNode, reduceBindingIdentifierMemberExpression(reducer, tNode.binding), reduceExpression(reducer, tNode.expression));
       } else if (node instanceof ComputedMemberExpression) {
         ComputedMemberExpression tNode = (ComputedMemberExpression) node;
-        return reducer.reduceComputedMemberExpression(tNode, reduceExpressionSuper(reducer, tNode._object), reduceExpression(reducer, tNode.expression));
+        return reducer.reduceComputedMemberExpression(tNode, reduceExpression(reducer, tNode.expression), reduceExpressionSuper(reducer, tNode._object));
       } else if (node instanceof ConditionalExpression) {
         ConditionalExpression tNode = (ConditionalExpression) node;
         return reducer.reduceConditionalExpression(tNode, reduceExpression(reducer, tNode.test), reduceExpression(reducer, tNode.consequent), reduceExpression(reducer, tNode.alternate));
@@ -627,13 +627,13 @@ public final class Director {
     @NotNull MethodDefinition node) {
     if (node instanceof Getter) {
       Getter tNode = (Getter) node;
-      return reducer.reduceGetter(tNode, reducePropertyName(reducer, tNode.name), reduceFunctionBody(reducer, tNode.body));
+      return reducer.reduceGetter(tNode, reduceFunctionBody(reducer, tNode.body), reducePropertyName(reducer, tNode.name));
     } else if (node instanceof Setter) {
       Setter tNode = (Setter) node;
-      return reducer.reduceSetter(tNode, reducePropertyName(reducer, tNode.name), reduceBindingBindingWithDefault(reducer, tNode.param), reduceFunctionBody(reducer, tNode.body));
+      return reducer.reduceSetter(tNode, reduceBindingBindingWithDefault(reducer, tNode.param), reduceFunctionBody(reducer, tNode.body), reducePropertyName(reducer, tNode.name));
     } else if (node instanceof Method) {
       Method tNode = (Method) node;
-      return reducer.reduceMethod(tNode, reducePropertyName(reducer, tNode.name), reduceFormalParameters(reducer, tNode.params), reduceFunctionBody(reducer, tNode.body));
+      return reducer.reduceMethod(tNode, reduceFormalParameters(reducer, tNode.params), reduceFunctionBody(reducer, tNode.body), reducePropertyName(reducer, tNode.name));
     } else {
       throw new RuntimeException("Not reached");
     }

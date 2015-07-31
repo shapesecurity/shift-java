@@ -10,6 +10,6 @@ public class ModuleTest extends ParserTestCase {
   @Test
   public void testModule() throws JsError {
     testModule("", new Module(ImmutableList.nil(), ImmutableList.nil()));
-//    testModuleFailure("/*", 0, "Unexpected end of input");
+    testModuleFailure("/*", 2, "Unexpected end of input");
   }
 }
