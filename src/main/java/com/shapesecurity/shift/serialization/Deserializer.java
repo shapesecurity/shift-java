@@ -456,7 +456,8 @@ public class Deserializer {
     } else {
       ArrayList<A> deserializedElements = new ArrayList<>();
       for (JsonElement jsonElement : jsonArray) {
-        deserializedElements.add((A) deserializeASTNode(jsonElement));
+        A deserializedElement = (A) deserializeASTNode(jsonElement);
+        deserializedElements.add(deserializedElement);
       }
       return ImmutableList.from(deserializedElements);
     }
@@ -562,7 +563,7 @@ public class Deserializer {
     switch (operatorString) {
       case "++":
         return UpdateOperator.Increment;
-      case "":
+      case "--":
         return UpdateOperator.Decrement;
       default:
         return null;
