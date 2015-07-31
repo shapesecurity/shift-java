@@ -751,7 +751,7 @@ public final class Director {
       return reducer.reduceDebuggerStatement(tNode);
     } else if (node instanceof DoWhileStatement) {
       DoWhileStatement tNode = (DoWhileStatement) node;
-      return reducer.reduceDoWhileStatement(tNode, reduceStatement(reducer, tNode.body), reduceExpression(reducer, tNode.test));
+      return reducer.reduceDoWhileStatement(tNode, reduceExpression(reducer, tNode.test), reduceStatement(reducer, tNode.body));
     } else if (node instanceof EmptyStatement) {
       EmptyStatement tNode = (EmptyStatement) node;
       return reducer.reduceEmptyStatement(tNode);

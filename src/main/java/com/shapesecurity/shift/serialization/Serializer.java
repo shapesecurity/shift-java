@@ -293,7 +293,7 @@ public class Serializer implements Reducer<StringBuilder> {
   @NotNull
   @Override
   public StringBuilder reduceForStatement(@NotNull ForStatement node, @NotNull Maybe<StringBuilder> init, @NotNull Maybe<StringBuilder> test, @NotNull Maybe<StringBuilder> update, @NotNull StringBuilder body) {
-    return b("ForStatement").add("init", o(init)).add("test", o(test)).add("update", o(update)).done(node);
+    return b("ForStatement").add("init", o(init)).add("test", o(test)).add("update", o(update)).add("body", body).done(node);
   }
 
   @NotNull
@@ -554,7 +554,7 @@ public class Serializer implements Reducer<StringBuilder> {
   @NotNull
   @Override
   public StringBuilder reduceUpdateExpression(@NotNull UpdateExpression node, @NotNull StringBuilder operand) {
-    return b("UpdateExpression").add("isPrefix", node.isPrefix).add("operator", node.operator.name()).add("operand", operand).done(node);
+    return b("UpdateExpression").add("isPrefix", node.isPrefix).add("operator", node.operator.getName()).add("operand", operand).done(node);
   }
 
   @NotNull
