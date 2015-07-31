@@ -775,7 +775,7 @@ public class CodeGenTest {
 
   @Test
   public void testSuper() throws JsError {
-//    test("class A extends B{constructor(){super()}}");
+    test("class A extends B{constructor(){super()}}");
     test("({m(){super.m()}})");
   }
 
