@@ -613,7 +613,7 @@ public final class Director {
     @NotNull MemberExpression node) {
     if (node instanceof ComputedMemberExpression) {
       ComputedMemberExpression computedMemberExpression = (ComputedMemberExpression) node;
-      return reducer.reduceComputedMemberExpression(computedMemberExpression, reduceExpressionSuper(reducer, computedMemberExpression._object), reduceExpression(reducer, computedMemberExpression.expression));
+      return reducer.reduceComputedMemberExpression(computedMemberExpression, reduceExpression(reducer, computedMemberExpression.expression), reduceExpressionSuper(reducer, computedMemberExpression._object));
     } else {
       StaticMemberExpression staticMemberExpression = (StaticMemberExpression) node;
       return reducer.reduceStaticMemberExpression(staticMemberExpression, reduceExpressionSuper(reducer, staticMemberExpression._object));

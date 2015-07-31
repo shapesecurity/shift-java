@@ -520,7 +520,7 @@ public class Deserializer {
   }
 
   private Maybe<String> deserializeMaybeString(JsonElement jsonElement) {
-    if (jsonElement.isJsonNull()) {
+    if (jsonElement.getAsString().equals("null")) {
       return Maybe.nothing();
     } else {
       return Maybe.just(jsonElement.getAsString());
