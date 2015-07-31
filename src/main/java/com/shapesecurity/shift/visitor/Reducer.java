@@ -160,8 +160,8 @@ public interface Reducer<State> {
   @NotNull
   State reduceDoWhileStatement(
     @NotNull DoWhileStatement node,
-    @NotNull State body,
-    @NotNull State test);
+    @NotNull State test,
+    @NotNull State body);
 
   @NotNull
   State reduceEmptyStatement(@NotNull EmptyStatement node);
