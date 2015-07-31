@@ -344,7 +344,7 @@ public class Serializer implements Reducer<StringBuilder> {
   @NotNull
   @Override
   public StringBuilder reduceImport(@NotNull Import node, @NotNull Maybe<StringBuilder> defaultBinding, @NotNull ImmutableList<StringBuilder> namedImports) {
-    return b("Import").add("defaultBinding", o(defaultBinding)).add("namedImports", list(namedImports)).done(node);
+    return b("Import").add("defaultBinding", o(defaultBinding)).add("namedImports", list(namedImports)).add("moduleSpecifier", node.moduleSpecifier).done(node);
   }
 
   @NotNull
@@ -542,7 +542,7 @@ public class Serializer implements Reducer<StringBuilder> {
   @NotNull
   @Override
   public StringBuilder reduceTryFinallyStatement(@NotNull TryFinallyStatement node, @NotNull StringBuilder body, @NotNull Maybe<StringBuilder> catchClause, @NotNull StringBuilder finalizer) {
-    return b("TryStatement").add("body", body).add("catchClause", catchClause).add("finalizer", finalizer).done(node);
+    return b("TryFinallyStatement").add("body", body).add("catchClause", catchClause).add("finalizer", finalizer).done(node);
   }
 
   @NotNull
