@@ -22,9 +22,8 @@ public class DeserializerTest {
     testHelperFromScriptCode("var [a]=[1];");
     testHelperFromScriptCode("var [,a] = 0;");
     testHelperFromScriptCode("var [a, ...a] = 0;");
-    // TODO fix issue with computed member expression
-//    testHelperFromScriptCode("[x[a]=a] = b");
-//    testHelperFromScriptCode("[...[...a[x]]] = b");
+    testHelperFromScriptCode("[x[a]=a] = b");
+    testHelperFromScriptCode("[...[...a[x]]] = b");
   }
 
   @Test
@@ -56,8 +55,7 @@ public class DeserializerTest {
     testHelperFromScriptCode("x.x *= 0");
     testHelperFromScriptCode("x *= 0");
     testHelperFromScriptCode("((((((((((((((((((((((((((((((((((((((((a)))))))))))))))))))))))))))))))))))))))) = 0");
-    // TODO fix issue with static member expression
-//    testHelperFromScriptCode("'use strict'; arguments[0] = 0");
+    testHelperFromScriptCode("'use strict'; arguments[0] = 0");
   }
 
   @Test
@@ -172,8 +170,8 @@ public class DeserializerTest {
   public void testComputedMemberExpression() throws IllegalAccessException, NoSuchMethodException, InstantiationException, JSONException, JsError, InvocationTargetException, ClassNotFoundException {
     testHelperFromScriptCode("a[b, c]");
     testHelperFromScriptCode("a[b]");
-//    testHelperFromScriptCode("a[b] = b"); // TODO: fix computed member expression
-//    testHelperFromScriptCode("(a[b]||(c[d]=e))");
+    testHelperFromScriptCode("a[b] = b");
+    testHelperFromScriptCode("(a[b]||(c[d]=e))");
     testHelperFromScriptCode("a&&(b=c)&&(d=e)");
   }
 
@@ -262,8 +260,8 @@ public class DeserializerTest {
     testHelperFromScriptCode("class A extends B { constructor() { () => { super(); } } }");
     testHelperFromScriptCode("({ *a() { super.b = 0; } });");
     testHelperFromScriptCode("({ a() { super.b(); } });");
-//    testHelperFromScriptCode("({ set a(x) { super.b[0] = 1; } });"); // TODO: fix computed member expression
     testHelperFromScriptCode("class A { a() { () => super.b; } }");
+    testHelperFromScriptCode("({ set a(x) { super.b[0] = 1; } });");
   }
 
   @Test
@@ -433,8 +431,8 @@ public class DeserializerTest {
 
   @Test
   public void testTryCatchFinallyStatement() throws IllegalAccessException, NoSuchMethodException, InstantiationException, JSONException, JsError, InvocationTargetException, ClassNotFoundException {
-//    testHelperFromScriptCode("try{ } catch (e) { }");
-//    testHelperFromScriptCode("try { doThat(); } catch (e) { say(e) }");
+    testHelperFromScriptCode("try{ } catch (e) { }");
+    testHelperFromScriptCode("try { doThat(); } catch (e) { say(e) }");
     testHelperFromScriptCode("try { } finally { cleanup(stuff) }");
     testHelperFromScriptCode("try { doThat(); } catch (e) { say(e) } finally { cleanup(stuff) }");
   }
@@ -458,7 +456,7 @@ public class DeserializerTest {
 
   @Test
   public void testWhileStatement() throws IllegalAccessException, NoSuchMethodException, InstantiationException, JSONException, JsError, InvocationTargetException, ClassNotFoundException {
-//    testHelperFromScriptCode("while(true) doSomething()");
+    testHelperFromScriptCode("while(true) doSomething()");
     testHelperFromScriptCode("while (x < 10) {x++; y--; }");
   }
 
