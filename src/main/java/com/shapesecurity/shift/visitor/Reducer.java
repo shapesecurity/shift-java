@@ -127,8 +127,8 @@ public interface Reducer<State> {
   @NotNull
   State reduceComputedMemberExpression(
     @NotNull ComputedMemberExpression node,
-    @NotNull State object,
-    @NotNull State expression);
+    @NotNull State expression,
+    @NotNull State object);
 
   @NotNull
   State reduceComputedPropertyName(
@@ -160,8 +160,8 @@ public interface Reducer<State> {
   @NotNull
   State reduceDoWhileStatement(
     @NotNull DoWhileStatement node,
-    @NotNull State body,
-    @NotNull State test);
+    @NotNull State test,
+    @NotNull State body);
 
   @NotNull
   State reduceEmptyStatement(@NotNull EmptyStatement node);
@@ -243,8 +243,8 @@ public interface Reducer<State> {
   @NotNull
   State reduceGetter(
     @NotNull Getter node,
-    @NotNull State name,
-    @NotNull State body);
+    @NotNull State body,
+    @NotNull State name);
 
   @NotNull
   State reduceIdentifierExpression(@NotNull IdentifierExpression node);
@@ -299,9 +299,9 @@ public interface Reducer<State> {
   @NotNull
   State reduceMethod(
     @NotNull Method node,
-    @NotNull State name,
     @NotNull State params,
-    @NotNull State body);
+    @NotNull State body,
+    @NotNull State name);
 
   @NotNull
   State reduceModule(
@@ -342,9 +342,9 @@ public interface Reducer<State> {
   @NotNull
   State reduceSetter(
     @NotNull Setter node,
-    @NotNull State name,
     @NotNull State params,
-    @NotNull State body);
+    @NotNull State body,
+    @NotNull State name);
 
   @NotNull
   State reduceShorthandProperty(@NotNull ShorthandProperty node);

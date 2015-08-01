@@ -58,23 +58,6 @@ public final class CodeGen implements Reducer<CodeRep> {
     return sb.toString();
   }
 
-//  @NotNull
-//  public static String codeGen(@NotNull Script script, @NotNull FormattedCodeRepFactory instance) {
-//    StringBuilder sb = new StringBuilder();
-//    TokenStream ts = new TokenStream(sb);
-//    Director.reduceScript(new CodeGen(instance), script).emit(ts, false);
-//    return sb.toString();
-//  }
-//
-//  @NotNull
-//  public static String codeGenNode(@NotNull Node node) {
-//    CodeRep codeRep = Director.reduce(COMPACT, node);
-//    StringBuilder sb = new StringBuilder();
-//    TokenStream ts = new TokenStream(sb);
-//    codeRep.emit(ts, false);
-//    return sb.toString();
-//  }
-
   private char decodeUtf16(char lead, char trail) {
     return (char)((lead - 0xD800) * 0x400 + (trail - 0xDC00) + 0x10000);
   }
@@ -506,7 +489,7 @@ public final class CodeGen implements Reducer<CodeRep> {
 
   @Override
   @NotNull
-  public CodeRep reduceComputedMemberExpression(@NotNull ComputedMemberExpression node, @NotNull CodeRep object, @NotNull CodeRep expression) {
+  public CodeRep reduceComputedMemberExpression(@NotNull ComputedMemberExpression node, @NotNull CodeRep expression, @NotNull CodeRep object) {
     boolean startsWithLetSquareBracket = object.startsWithLetSquareBracket || node._object instanceof IdentifierExpression && ((IdentifierExpression) node._object).name.equals("let");
     CodeRep result;
     if (node._object instanceof Expression) {
@@ -571,7 +554,7 @@ public final class CodeGen implements Reducer<CodeRep> {
   @Override
   @NotNull
   public CodeRep reduceDoWhileStatement(
-      @NotNull DoWhileStatement node, @NotNull CodeRep body, @NotNull CodeRep test) {
+      @NotNull DoWhileStatement node, @NotNull CodeRep test, @NotNull CodeRep body) {
     return seqVA(
         factory.token("do"), body, factory.token("while"), factory.paren(test), factory.semiOp());
   }
@@ -720,10 +703,8 @@ public final class CodeGen implements Reducer<CodeRep> {
   @Override
   @NotNull
   public CodeRep reduceGetter(
-      @NotNull Getter node, @NotNull CodeRep name, @NotNull CodeRep body) {
-    return seqVA(
-      factory.token("get"), name, factory.paren(factory.empty()), factory.brace(
-        body));
+      @NotNull Getter node, @NotNull CodeRep body, @NotNull CodeRep name) {
+    return seqVA(factory.token("get"), name, factory.paren(factory.empty()), factory.brace(body));
   }
 
   @NotNull
@@ -839,7 +820,7 @@ public final class CodeGen implements Reducer<CodeRep> {
 
   @NotNull
   @Override
-  public CodeRep reduceMethod(@NotNull Method node, @NotNull CodeRep name, @NotNull CodeRep params, @NotNull CodeRep body) {
+  public CodeRep reduceMethod(@NotNull Method node, @NotNull CodeRep params, @NotNull CodeRep body, @NotNull CodeRep name) {
     return seqVA(node.isGenerator ? factory.token("*") : factory.empty(), name, factory.paren(params), factory.brace(body));
   }
 
@@ -912,9 +893,9 @@ public final class CodeGen implements Reducer<CodeRep> {
   @NotNull
   public CodeRep reduceSetter(
       @NotNull Setter node,
-      @NotNull CodeRep name,
       @NotNull CodeRep parameter,
-      @NotNull CodeRep body) {
+      @NotNull CodeRep body,
+      @NotNull CodeRep name) {
     return (seqVA(factory.token("set"), name, factory.paren(parameter), factory.brace(body)));
   }
 

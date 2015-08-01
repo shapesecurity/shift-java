@@ -30,7 +30,6 @@ public class ObjectBindingTest extends ParserTestCase {
     testScript("({a:yield} = 0);", new AssignmentExpression(new ObjectBinding(ImmutableList.list(new BindingPropertyProperty(new StaticPropertyName("a"), new BindingIdentifier("yield")))), new LiteralNumericExpression(0.0)));
     testScript("({yield} = 0);", new AssignmentExpression(new ObjectBinding(ImmutableList.list(new BindingPropertyIdentifier(new BindingIdentifier("yield"), Maybe.nothing()))), new LiteralNumericExpression(0.0)));
     testScript("({yield = 0} = 0);", new AssignmentExpression(new ObjectBinding(ImmutableList.list(new BindingPropertyIdentifier(new BindingIdentifier("yield"), Maybe.just(new LiteralNumericExpression(0.0))))), new LiteralNumericExpression(0.0)));
-
     testScript("let {a:b=c} = 0;", new VariableDeclarationStatement(new VariableDeclaration(VariableDeclarationKind.Let, ImmutableList.list(new VariableDeclarator(new ObjectBinding(ImmutableList.list(new BindingPropertyProperty(new StaticPropertyName("a"), new BindingWithDefault(new BindingIdentifier("b"), new IdentifierExpression("c"))))), Maybe.just(new LiteralNumericExpression(0.0)))))));
 
     testScriptFailure("({a = 0});", 2, "Illegal property initializer");
