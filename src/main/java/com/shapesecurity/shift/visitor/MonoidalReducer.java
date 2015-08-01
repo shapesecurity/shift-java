@@ -181,9 +181,9 @@ public class MonoidalReducer<State> implements Reducer<State> {
   @Override
   public State reduceComputedMemberExpression(
     @NotNull ComputedMemberExpression node,
-    @NotNull State object,
-    @NotNull State expression) {
-    return append(object, expression);
+    @NotNull State expression,
+    @NotNull State object) {
+    return append(expression, object);
   }
 
   @NotNull
