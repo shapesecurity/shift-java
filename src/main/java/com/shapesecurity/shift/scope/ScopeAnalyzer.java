@@ -153,7 +153,7 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
 
   @NotNull
   @Override
-  public State reduceComputedMemberExpression(@NotNull ComputedMemberExpression node, @NotNull State object, @NotNull State expression) {
+  public State reduceComputedMemberExpression(@NotNull ComputedMemberExpression node, @NotNull State expression, @NotNull State object) {
       return super.reduceComputedMemberExpression(node, object, expression).withParameterExpressions();
   }
 
@@ -207,7 +207,7 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
 
   @NotNull
   @Override
-  public State reduceGetter(@NotNull Getter node, @NotNull State name, @NotNull State body) {
+  public State reduceGetter(@NotNull Getter node, @NotNull State body, @NotNull State name) {
       return new State(name, body.finish(node, Scope.Type.Function, true));
       // variables defined in body are not in scope when evaluating name (which may be computed)
   }
@@ -260,7 +260,7 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
 
   @NotNull
   @Override
-  public State reduceSetter(@NotNull Setter node, @NotNull State name, @NotNull State parameter, @NotNull State body) {
+  public State reduceSetter(@NotNull Setter node, @NotNull State parameter, @NotNull State body, @NotNull State name) {
       parameter = parameter.hasParameterExpressions ? parameter.finish(node, Scope.Type.ParameterExpression) : parameter;
       return new State(name, functionHelper(node, parameter.addDeclarations(Kind.Param), body, false));
       // TODO have the node associated with the parameter's scope be more precise

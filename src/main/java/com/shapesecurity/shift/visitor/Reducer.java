@@ -243,8 +243,8 @@ public interface Reducer<State> {
   @NotNull
   State reduceGetter(
     @NotNull Getter node,
-    @NotNull State name,
-    @NotNull State body);
+    @NotNull State body,
+    @NotNull State name);
 
   @NotNull
   State reduceIdentifierExpression(@NotNull IdentifierExpression node);

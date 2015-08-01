@@ -63,6 +63,11 @@ public class Serializer implements Reducer<StringBuilder> {
   }
 
   @NotNull
+  private static String oString(@NotNull Maybe<String> maybeString) {
+    return maybeString.orJust("null");
+  }
+
+  @NotNull
   private static StringBuilder olist(@NotNull ImmutableList<Maybe<StringBuilder>> values) {
     if (values.isEmpty()) {
       return new StringBuilder("[]");
@@ -149,7 +154,7 @@ public class Serializer implements Reducer<StringBuilder> {
   @NotNull
   @Override
   public StringBuilder reduceBreakStatement(@NotNull BreakStatement node) {
-    return b("BreakStatement").add("label", node.label.isJust() ? node.label.just() : "null").done(node);
+    return b("BreakStatement").add("label", oString(node.label)).done(node);
   }
 
   @NotNull
@@ -209,7 +214,7 @@ public class Serializer implements Reducer<StringBuilder> {
   @NotNull
   @Override
   public StringBuilder reduceContinueStatement(@NotNull ContinueStatement node) {
-    return b("ContinueStatement").add("label", node.label.isJust() ? node.label.just() : "null").done(node);
+    return b("ContinueStatement").add("label", oString(node.label)).done(node);
   }
 
   @NotNull
@@ -263,13 +268,13 @@ public class Serializer implements Reducer<StringBuilder> {
   @NotNull
   @Override
   public StringBuilder reduceExportFrom(@NotNull ExportFrom node, @NotNull ImmutableList<StringBuilder> namedExports) {
-    return b("ExportFrom").add("namedExports", list(namedExports)).add("moduleSpecifier", node.moduleSpecifier.isJust() ? node.moduleSpecifier.just() : "null").done(node);
+    return b("ExportFrom").add("namedExports", list(namedExports)).add("moduleSpecifier", oString(node.moduleSpecifier)).done(node);
   }
 
   @NotNull
   @Override
   public StringBuilder reduceExportSpecifier(@NotNull ExportSpecifier node) {
-    return b("ExportSpecifier").add("name", node.name.isJust() ? node.name.just() : "null").add("exportedName", node.exportedName).done(node);
+    return b("ExportSpecifier").add("name", oString(node.name)).add("exportedName", node.exportedName).done(node);
   }
 
   @NotNull
@@ -356,7 +361,7 @@ public class Serializer implements Reducer<StringBuilder> {
   @NotNull
   @Override
   public StringBuilder reduceImportSpecifier(@NotNull ImportSpecifier node, @NotNull StringBuilder binding) {
-    return b("ImportSpecifier").add("name", node.name.isJust() ? node.name.just() : "null").add("binding", binding).done(node);
+    return b("ImportSpecifier").add("name", oString(node.name)).add("binding", binding).done(node);
   }
 
   @NotNull
