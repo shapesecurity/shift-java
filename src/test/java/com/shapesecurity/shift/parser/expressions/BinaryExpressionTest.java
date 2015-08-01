@@ -1,8 +1,6 @@
 package com.shapesecurity.shift.parser.expressions;
 
-import com.shapesecurity.shift.ast.BinaryExpression;
-import com.shapesecurity.shift.ast.IdentifierExpression;
-import com.shapesecurity.shift.ast.LiteralNumericExpression;
+import com.shapesecurity.shift.ast.*;
 import com.shapesecurity.shift.ast.operators.BinaryOperator;
 import com.shapesecurity.shift.parser.ParserTestCase;
 import com.shapesecurity.shift.parser.JsError;
@@ -152,5 +150,7 @@ public class BinaryExpressionTest extends ParserTestCase {
 
     testScript("x !== y", new BinaryExpression(BinaryOperator.StrictNotEqual, new IdentifierExpression("x"),
         new IdentifierExpression("y")));
+
+    testScript("(a, e=0)", new BinaryExpression(BinaryOperator.Sequence, new IdentifierExpression("a"), new AssignmentExpression(new BindingIdentifier("e"), new LiteralNumericExpression(0.0))));
   }
 }

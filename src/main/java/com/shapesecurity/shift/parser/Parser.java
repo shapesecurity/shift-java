@@ -1741,12 +1741,11 @@ public abstract class Parser extends Tokenizer {
         Either<Expression, Binding> expr = this.inheritCoverGrammar(this::parseAssignmentExpressionOrBindingElement);
         if (this.isBindingElement) {
           if (expr.isLeft()) {
-            params.add(this.transformDestructuring(expr.left().just()));
+            params.add(this.transformDestructuringWithDefault(expr.left().just()));
           } else {
             params.add(expr.right().just());
           }
         }
-
         if (this.firstExprError == null) {
           group = Either.left(this.markLocation(startLocation, new BinaryExpression(BinaryOperator.Sequence, group.left().just(), expr.left().just())));
         } else {
