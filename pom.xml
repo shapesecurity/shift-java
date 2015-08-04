@@ -138,6 +138,11 @@
 				<configuration>
 					<source>${jdk.version}</source>
 					<target>${jdk.version}</target>
+					<generatedSourcesDirectory>generated-sources/main/java</generatedSourcesDirectory>
+					<includes>
+						<include>generated-sources/main/java/**/*.java</include>
+						<include>src/main/java/**/*.java</include>
+					</includes>
 					<excludes>
 						<exclude>**/path</exclude>
 						<exclude>**/codegen</exclude>
