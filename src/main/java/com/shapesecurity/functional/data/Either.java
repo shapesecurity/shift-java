@@ -16,6 +16,7 @@
 
 package com.shapesecurity.functional.data;
 
+import com.shapesecurity.functional.Effect;
 import com.shapesecurity.functional.F;
 
 import org.jetbrains.annotations.NotNull;
@@ -61,6 +62,15 @@ public final class Either<A, B> {
       return f1.apply((A) data);
     } else {
       return f2.apply((B) data);
+    }
+  }
+
+  @SuppressWarnings("unchecked")
+  public void foreach(@NotNull Effect<A> f1, @NotNull Effect<B> f2) {
+    if (tag == 0) {
+      f1.apply((A) data);
+    } else {
+      f2.apply((B) data);
     }
   }
 

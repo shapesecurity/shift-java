@@ -77,56 +77,6 @@ public class Scope {
   }
 
 
-  // Helper for findVariablesForFuncDecl in globalScope.
-  @NotNull
-  protected Maybe<Pair<Scope, Variable>> outermostScopeDeclaringHelper(@NotNull final BindingIdentifier bindingIdentifier) {
-    for (Variable v : this.variables.values()) {
-      if (v.declarations.exists(d -> d.node == bindingIdentifier)) {
-        return Maybe.just(new Pair<>(this, v));
-      }
-    }
-    return this.children.findMap(scope -> scope.outermostScopeDeclaringHelper(bindingIdentifier));
-  }
-
-  @NotNull // Should not be used with function declarations, which may declare two variables (sigh...)
-  public Maybe<Variable> findVariablesDeclaredBy(@NotNull final BindingIdentifier bindingIdentifier) {
-    for (Variable v : this.variables.values()) {
-      if (v.declarations.exists(d -> d.node == bindingIdentifier)) {
-        return Maybe.just(v);
-      }
-    }
-    return this.children.findMap(scope -> scope.findVariablesDeclaredBy(bindingIdentifier));
-  }
-
-  @NotNull
-  public Maybe<Variable> findVariablesReferencedBy(@NotNull final IdentifierExpression identifierExpression) {
-    for (Variable v : this.variables.values()) {
-      if (v.references.exists(p -> p.node.mapRight(ie -> ie == identifierExpression).right().orJust(false))) {
-        return Maybe.just(v);
-      }
-    }
-    return this.children.findMap(scope -> scope.findVariablesReferencedBy(identifierExpression));
-  }
-
-  @NotNull
-  public Maybe<Variable> findVariablesReferencedBy(@NotNull final BindingIdentifier bindingIdentifier) {
-    for (Variable v : this.variables.values()) {
-      if (v.references.exists(p -> p.node.mapLeft(bi -> bi == bindingIdentifier).left().orJust(false))) {
-        return Maybe.just(v);
-      }
-    }
-    return this.children.findMap(scope -> scope.findVariablesReferencedBy(bindingIdentifier));
-  }
-
-  @NotNull
-  public ImmutableList<Scope> findScopesFor(@NotNull final Node node) {
-    ImmutableList<Scope> initial = this.astNode == node ? ImmutableList.list(this) : ImmutableList.nil();
-    return this.children.map(s -> s.findScopesFor(node)).foldLeft(ImmutableList::append, initial);
-  }
-
-  public boolean isDeclared(@NotNull final Variable variable) {
-    return this.variables.containsValue(variable) || this.children.find(s -> s.isDeclared(variable)).isJust();
-  }
 
   public enum Type {
     Global,

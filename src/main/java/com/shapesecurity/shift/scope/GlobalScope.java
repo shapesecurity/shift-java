@@ -37,38 +37,4 @@ public class GlobalScope extends Scope {
       this.variables.put(var.a, new Variable(var.a, var.b, ImmutableList.nil()));
     }
   }
-
-    // these could probably be simplified, under certain assumptions, by inspecting .variables and .through instead.
-    public boolean isGlobal(IdentifierExpression identifierExpression) {
-      return findVariablesReferencedBy(identifierExpression).map(this::isGlobal).orJust(false);
-    }
-
-    public boolean isGlobal(BindingIdentifier bindingIdentifier) {
-        return findVariablesReferencedBy(bindingIdentifier).map(this::isGlobal).orJust(false);
-    }
-
-    public boolean isGlobal(Variable variable) {
-        return variables.containsValue(variable) || !isDeclared(variable);
-    }
-
-    // Because of annex B.3.3, in addition to a lexical binding (outside of scripts, which ???), functions may create a variable
-    // binding for themselves. This helper gets both the (necessarily created) lexical binding and the (possible) variable binding.
-    // Takes a FunctionDeclaration to ensure it is not misused, but only actually needs its binding identifier.
-    // Assuming the function declaration occurs somewhere in the AST corresponding to this global scope,
-    // there always will be at least one variable declared by the given function.
-    // Returns (lexical, variable)
-    @NotNull
-    public Pair<Variable, Maybe<Variable>> findVariablesForFuncDecl(@NotNull final FunctionDeclaration func) {
-        Maybe<Pair<Scope, Variable>> outerDeclaration = outermostScopeDeclaringHelper(func.name);
-        assert outerDeclaration.isJust();
-        Variable outerVar = outerDeclaration.just().b;
-        Scope outerScope = outerDeclaration.just().a;
-        Maybe<Variable> innerDeclaration = outerScope.children.findMap(scope -> scope.findVariablesDeclaredBy(func.name));
-        if(innerDeclaration.isJust()) {
-            return new Pair<>(innerDeclaration.just(), Maybe.just(outerVar));
-        } else {
-            return new Pair<>(outerVar, Maybe.nothing());
-        }
-    }
-
 }
