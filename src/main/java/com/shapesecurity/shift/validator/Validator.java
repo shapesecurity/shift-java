@@ -88,7 +88,7 @@ public class Validator extends MonoidalReducer<ValidationContext> {
     return true;
   }
 
-  private static boolean checkIsValidIdentifierName(String name) {
+  public static boolean checkIsValidIdentifierName(String name) {
     return name.length() > 0 && Utils.isIdentifierStart(name.charAt(0)) && name.chars().allMatch(Utils::isIdentifierPart);
   }
 
@@ -96,11 +96,15 @@ public class Validator extends MonoidalReducer<ValidationContext> {
     return ImmutableList.from(Director.reduceScript(new Validator(), script).errors);
   }
 
+  public static ImmutableList<ValidationError> validate(Module module) {
+    return ImmutableList.from(Director.reduceModule(new Validator(), module).errors);
+  }
+
   private boolean checkIsStringLiteral(String rawValue) {
-    Tokenizer tokenizer ;
+    Tokenizer tokenizer;
     try {
       tokenizer = new Tokenizer("\'"+rawValue+"\'", false);
-      Token token = tokenizer.advance();
+      Token token = tokenizer.lookahead;
       if (!(token instanceof StringLiteralToken)) {
         return false;
       }
@@ -155,7 +159,21 @@ public class Validator extends MonoidalReducer<ValidationContext> {
   public ValidationContext reduceBindingIdentifier(@NotNull BindingIdentifier node) {
     ValidationContext s = super.reduceBindingIdentifier(node);
     if (!checkIsValidIdentifierName(node.name)) {
-      s.addError(new ValidationError(node, "the name field of binding identifier must be a valid identifier name"));
+      if (node.name.equals("*default*") && s.bindingIdentifierNameCanBeDefault) {
+
+      } else {
+        s.addError(new ValidationError(node, "the name field of binding identifier must be a valid identifier name"));
+      }
+    }
+    return s;
+  }
+
+  @NotNull
+  @Override
+  public ValidationContext reduceExportDefault(@NotNull ExportDefault node, @NotNull ValidationContext body) {
+    ValidationContext s = super.reduceExportDefault(node, body);
+    if (node.body instanceof FunctionDeclaration) {
+      s.bindingIdentifierNameCanBeDefault = true;
     }
     return s;
   }
@@ -347,11 +365,12 @@ public class Validator extends MonoidalReducer<ValidationContext> {
     if (!checkIsLiteralRegExpPattern(node.pattern)) {
       s.addError(new ValidationError(node, "pattern field of literal regular expression expression must match the ES6 grammar production Pattern (21.2.1)"));
     }
-    boolean hasBadChars = node.flags.chars().allMatch(x -> x == 'g' || x == 'i' || x == 'm' || x == 'u' || x == 'y');
-    if (hasBadChars) {
-      s.addError(new ValidationError(node, "flags field of literal regular expression expression must not contain characters other than 'g', 'i', 'm', 'u', or 'y'"));
+    if (node.flags.length() > 0) {
+      boolean hasBadChars = node.flags.chars().allMatch(x -> x == 'g' || x == 'i' || x == 'm' || x == 'u' || x == 'y');
+      if (hasBadChars) {
+        s.addError(new ValidationError(node, "flags field of literal regular expression expression must not contain characters other than 'g', 'i', 'm', 'u', or 'y'"));
+      }
     }
-
     Map<Integer, Boolean> charMap = new HashMap<>();
     node.flags.chars().forEach(x -> {
       if (charMap.containsKey(x)) {
@@ -494,5 +513,4 @@ public class Validator extends MonoidalReducer<ValidationContext> {
     }
     return Maybe.nothing();
   }
-
 }

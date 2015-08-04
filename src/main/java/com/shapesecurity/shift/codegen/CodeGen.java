@@ -918,6 +918,7 @@ public final class CodeGen implements Reducer<CodeRep> {
     if (node._object instanceof Expression) {
       state = seqVA(p((Expression) node._object, getPrecedence(node), object), factory.token("."), factory.token(node.property));
     } else {
+      // node._object is a Super
       state = seqVA(object, factory.token("."), factory.token(node.property));
     }
     state.startsWithLet = object.startsWithLet;

@@ -25,7 +25,9 @@ import com.shapesecurity.shift.ast.operators.BinaryOperator;
 import com.shapesecurity.shift.ast.operators.CompoundAssignmentOperator;
 import com.shapesecurity.shift.ast.operators.UnaryOperator;
 import com.shapesecurity.shift.ast.operators.UpdateOperator;
+import com.shapesecurity.shift.scope.ScopeAnalyzer;
 import com.shapesecurity.shift.utils.Utils;
+import com.shapesecurity.shift.validator.Validator;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Random;
@@ -313,7 +315,7 @@ public class Fuzzer {
 
   @NotNull
   private static BindingIdentifier randomBindingIdentifier(@NotNull GenCtx ctx, int depth) {
-    return new BindingIdentifier(randomIdentifierString(ctx));
+    return new BindingIdentifier(randomIdentifierString(ctx, depth));
   }
 
   @NotNull
@@ -366,7 +368,7 @@ public class Fuzzer {
 
   @NotNull
   private static BreakStatement randomBreakStatement(@NotNull GenCtx ctx, int depth) {
-    return new BreakStatement(optional(Fuzzer::randomString).apply(ctx, depth-1));
+    return new BreakStatement(optional(Fuzzer::randomIdentifierString).apply(ctx, depth-1));
   }
 
   @NotNull
@@ -379,7 +381,7 @@ public class Fuzzer {
     Binding binding;
     do {
       binding = randomBinding(ctx, depth - 1);
-    } while (!(binding instanceof MemberExpression));
+    } while (binding instanceof MemberExpression);
     return new CatchClause(binding, randomBlock(ctx, depth - 1));
     // called randomIdentifier with false, false
   }
@@ -449,10 +451,6 @@ public class Fuzzer {
 
   @NotNull
   private static Directive randomDirective(@NotNull GenCtx ctx, int depth) {
-//    if (ctx.random.nextDouble() < STRICT_MODE_PROBABILITY) {
-//      return randomUseStrictDirective(ctx, depth - 1);
-//    }
-//    return randomUnknownDirective(ctx, depth - 1);
     String value = Utils.escapeStringLiteral(randomString(ctx, depth - 1));
     return new Directive(value.substring(1, value.length() - 1));
   }
@@ -474,7 +472,7 @@ public class Fuzzer {
 
   @NotNull
   private static ExportAllFrom randomExportAllFrom(@NotNull GenCtx ctx, int depth) {
-    return new ExportAllFrom(randomString(ctx, depth-1));
+    return new ExportAllFrom(randomIdentifierString(ctx, depth - 1));
   }
 
   @NotNull
@@ -489,12 +487,12 @@ public class Fuzzer {
 
   @NotNull
   private static ExportFrom randomExportFrom(@NotNull GenCtx ctx, int depth) {
-    return new ExportFrom(many(Fuzzer::randomExportSpecifier).apply(ctx, depth-1), optional(Fuzzer::randomString).apply(ctx, depth - 1));
+    return new ExportFrom(many(Fuzzer::randomExportSpecifier).apply(ctx, depth-1), optional(Fuzzer::randomIdentifierString).apply(ctx, depth - 1));
   }
 
   @NotNull
   private static ExportSpecifier randomExportSpecifier(@NotNull GenCtx ctx, int depth) {
-    return new ExportSpecifier(optional(Fuzzer::randomString).apply(ctx, depth - 1), randomString(ctx, depth-1));
+    return new ExportSpecifier(optional(Fuzzer::randomIdentifierString).apply(ctx, depth - 1), randomIdentifierString(ctx, depth - 1));
   }
 
   @NotNull
@@ -549,8 +547,22 @@ public class Fuzzer {
 
   @NotNull
   private static FormalParameters randomFormalParameters(@NotNull GenCtx ctx, int depth) {
-    return new FormalParameters(many(Fuzzer::randomBindingBindingWithDefault).apply(ctx, depth-1), optional(Fuzzer::randomBindingIdentifier).apply(ctx, depth-1));
+    return new FormalParameters(many(Fuzzer::randomParameters).apply(ctx, depth-1), optional(Fuzzer::randomBindingIdentifier).apply(ctx, depth-1));
   }
+
+  @NotNull
+  private static BindingBindingWithDefault randomParameters(@NotNull GenCtx ctx, int depth) {
+    double number = ctx.random.nextDouble();
+    if (number >= 0 && number < 1.0/4) {
+      return randomArrayBinding(ctx, depth);
+    } else if (number >= 1.0/3 && number < 2.0/3) {
+      return randomObjectBinding(ctx, depth);
+    } else{
+      return randomBindingIdentifier(ctx, depth);
+    }
+  }
+
+
 
   @NotNull
   private static FunctionBody randomFunctionBody(@NotNull GenCtx ctx, int depth) {
@@ -558,7 +570,7 @@ public class Fuzzer {
     if (!ctx.inStrictMode && directives.exists(dir -> dir != null)) {
       ctx = ctx.enterStrictMode();
     }
-    return new FunctionBody(directives, many(Fuzzer::randomStatement).apply(ctx, depth - 1));
+    return new FunctionBody(directives, many(Fuzzer::randomStatement).apply(ctx.allowReturn(), depth - 1));
   }
 
   private static FunctionBodyExpression randomFunctionBodyExpression(GenCtx ctx, int depth) {
@@ -637,7 +649,7 @@ public class Fuzzer {
       boolean disallow;
       do {
         disallow = false;
-        name = randomIdentifierString(ctx);
+        name = randomIdentifierString(ctx, depth-1);
         for (String reservedWord : (ctx.inStrictMode ? STRICT_MODE_RESERVED_WORDS : RESERVED_WORDS)) {
           if (reservedWord.equals(name)) {
             disallow = true;
@@ -655,7 +667,7 @@ public class Fuzzer {
   }
 
   @NotNull
-  private static String randomIdentifierString(@NotNull GenCtx ctx) {
+  private static String randomIdentifierString(@NotNull GenCtx ctx, int depth) {
     StringBuilder result = new StringBuilder();
     result.append(identifierStartArr[ctx.random.nextInt(identifierStartArr.length)]);
     int length = ctx.random.nextInt(MAX_IDENT_LENGTH);
@@ -670,21 +682,15 @@ public class Fuzzer {
     if (ctx.allowMissingElse) {
       boolean missElse = ctx.random.nextBoolean();
       if (missElse) {
-        return new IfStatement(
-            randomExpression(ctx, depth - 1),
-            randomStatement(ctx, depth - 1),
-            Maybe.nothing());
+        return new IfStatement(randomExpression(ctx, depth - 1), randomStatement(ctx, depth - 1), Maybe.nothing());
       }
     }
-    return new IfStatement(
-      randomExpression(ctx, depth - 1),
-        randomStatement(ctx.forbidMissingElse(), depth - 1),
-        Maybe.just(randomStatement(ctx, depth - 1)));
+    return new IfStatement(randomExpression(ctx, depth - 1), randomStatement(ctx.forbidMissingElse(), depth - 1), Maybe.just(randomStatement(ctx, depth - 1)));
   }
 
   @NotNull
   private static Import randomImport(@NotNull GenCtx ctx, int depth) {
-    return new Import(optional(Fuzzer::randomBindingIdentifier).apply(ctx, depth-1), many(Fuzzer::randomImportSpecifier).apply(ctx, depth-1), randomString(ctx, depth-1));
+    return new Import(optional(Fuzzer::randomBindingIdentifier).apply(ctx, depth-1), many(Fuzzer::randomImportSpecifier).apply(ctx, depth-1), randomIdentifierString(ctx, depth - 1));
   }
 
   @NotNull
@@ -711,17 +717,17 @@ public class Fuzzer {
 
   @NotNull
   private static ImportNamespace randomImportNamespace(@NotNull GenCtx ctx, int depth) {
-    return new ImportNamespace(optional(Fuzzer::randomBindingIdentifier).apply(ctx, depth-1), randomBindingIdentifier(ctx, depth-1), randomString(ctx, depth-1));
+    return new ImportNamespace(optional(Fuzzer::randomBindingIdentifier).apply(ctx, depth-1), randomBindingIdentifier(ctx, depth-1), randomIdentifierString(ctx, depth - 1));
   }
 
   @NotNull
   private static ImportSpecifier randomImportSpecifier(@NotNull GenCtx ctx, int depth) {
-    return new ImportSpecifier(optional(Fuzzer::randomString).apply(ctx, depth-1), randomBindingIdentifier(ctx, depth-1));
+    return new ImportSpecifier(optional(Fuzzer::randomIdentifierString).apply(ctx, depth-1), randomBindingIdentifier(ctx, depth-1));
   }
 
   @NotNull
   private static LabeledStatement randomLabeledStatement(@NotNull GenCtx ctx, int depth) {
-    return new LabeledStatement(randomString(ctx, depth-1), randomStatement(ctx, depth-1));
+    return new LabeledStatement(randomIdentifierString(ctx, depth-1), randomStatement(ctx, depth-1));
   }
 
   @NotNull
@@ -746,7 +752,7 @@ public class Fuzzer {
 
   @NotNull
   private static LiteralRegExpExpression randomLiteralRegExpExpression(@NotNull GenCtx ctx, int depth) {
-    return new LiteralRegExpExpression(randomRegExpString(ctx), ""); // TODO flags
+    return new LiteralRegExpExpression(randomRegExpString(ctx, depth-1), ""); // TODO flags
   }
 
   @NotNull
@@ -834,13 +840,17 @@ public class Fuzzer {
   }
 
   @NotNull
-  private static String randomRegExpString(@NotNull GenCtx ctx) {
-    return "/" + randomIdentifierString(ctx) + "/";
+  private static String randomRegExpString(@NotNull GenCtx ctx, int depth) {
+    return "/" + randomIdentifierString(ctx, depth-1) + "/";
   }
 
   @NotNull
-  private static ReturnStatement randomReturnStatement(@NotNull GenCtx ctx, int depth) {
-    return new ReturnStatement(optional(Fuzzer::randomExpression).apply(ctx, depth-1));
+  private static Statement randomReturnStatement(@NotNull GenCtx ctx, int depth) {
+    if (ctx.allowReturn) {
+      return new ReturnStatement(optional(Fuzzer::randomExpression).apply(ctx, depth - 1));
+    } else {
+      return new BreakStatement(Maybe.nothing());
+    }
   }
 
   @NotNull
@@ -930,9 +940,8 @@ public class Fuzzer {
     case kGenBreakStatement:
       if ((!ctx.inSwitch && !ctx.inIteration) || ctx.labelsInFunctionBoundary.length > 0 && ctx.random.nextBoolean()) {
         // with label
-//        Maybe<String> label = ctx.labelsInFunctionBoundary.index(
-//            ctx.random.nextInt(ctx.labelsInFunctionBoundary.length));
-        Maybe<String> label = optional(Fuzzer::randomString).apply(ctx, depth);
+//        Maybe<String> label = ctx.labelsInFunctionBoundary.index(ctx.random.nextInt(ctx.labelsInFunctionBoundary.length));
+        Maybe<String> label = optional(Fuzzer::randomIdentifierString).apply(ctx, depth);
         return new BreakStatement(label);
       } else {
         return new BreakStatement(Maybe.nothing());
@@ -950,10 +959,14 @@ public class Fuzzer {
     case kGenWithStatement:
       return new WithStatement(randomExpression(ctx, depth - 1), randomStatement(ctx, depth - 1));
     case kGenReturnStatement:
-      if (ctx.random.nextBoolean()) {
-        return new ReturnStatement(Maybe.just(randomExpression(ctx, depth - 1)));
+      if (ctx.allowReturn) {
+        if (ctx.random.nextBoolean()) {
+          return new ReturnStatement(Maybe.just(randomExpression(ctx, depth - 1)));
+        } else {
+          return new ReturnStatement(Maybe.nothing());
+        }
       } else {
-        return new ReturnStatement(Maybe.nothing());
+          return new BreakStatement(Maybe.nothing()); // TODO: maybe find better way to randomize?
       }
     case kGenLabeledStatement:
       IdentifierExpression label = randomIdentifier(ctx, depth - 1, false, true);
@@ -980,7 +993,7 @@ public class Fuzzer {
 
   @NotNull
   private static StaticMemberExpression randomStaticMemberExpression(@NotNull GenCtx ctx, int depth) {
-    return new StaticMemberExpression(randomString(ctx, depth-1), randomExpressionSuper(ctx, depth - 1));
+    return new StaticMemberExpression(randomIdentifierString(ctx, depth - 1), randomExpressionSuper(ctx, depth - 1));
   }
 
   @NotNull
@@ -1109,8 +1122,15 @@ public class Fuzzer {
 
   @NotNull
   private static VariableDeclarator randomVariableDeclarator(@NotNull GenCtx ctx, int depth) {
-    return new VariableDeclarator(randomBinding(ctx, depth - 1), // false, false
-     optional(Fuzzer::randomExpression).apply(ctx, depth - 1));
+    Binding binding;
+    do {
+      binding = randomBinding(ctx, depth - 1);
+    } while (binding instanceof MemberExpression);
+    if (binding instanceof BindingIdentifier) {
+      return new VariableDeclarator(binding, optional(Fuzzer::randomExpression).apply(ctx, depth - 1));
+    } else {
+      return new VariableDeclarator(binding, Maybe.just(randomExpression(ctx, depth - 1)));
+    }
   }
 
   @NotNull

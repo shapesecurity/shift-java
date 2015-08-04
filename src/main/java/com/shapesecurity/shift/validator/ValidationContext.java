@@ -33,6 +33,8 @@ public class ValidationContext {
   @NotNull
   private final List<ReturnStatement> freeReturnStatements;
 
+  protected boolean bindingIdentifierNameCanBeDefault;
+
   public ValidationContext() {
     this(
       new ArrayList<>(), // errors
@@ -46,6 +48,7 @@ public class ValidationContext {
   ) {
     this.errors = errors;
     this.freeReturnStatements = freeReturnStatements;
+    this.bindingIdentifierNameCanBeDefault = false;
   }
 
   public void addFreeReturnStatement(@NotNull ReturnStatement node) {
