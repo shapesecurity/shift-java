@@ -37,9 +37,11 @@ class GenCtx {
   final boolean inStrictMode;
   final boolean inFunctional;
   final boolean allowMissingElse;
+  final boolean allowReturn;
+
 
   GenCtx(@NotNull Random random) {
-    this(random, ImmutableList.nil(), ImmutableList.nil(), ImmutableList.nil(), ImmutableList.nil(), false, false, false, false, true);
+    this(random, ImmutableList.nil(), ImmutableList.nil(), ImmutableList.nil(), ImmutableList.nil(), false, false, false, false, true, false);
   }
 
   private GenCtx(@NotNull Random random,
@@ -49,7 +51,8 @@ class GenCtx {
                  @NotNull ImmutableList<IdentifierExpression> iterationLabelsInFunctionBoundary,
                  boolean inIteration, boolean inSwitch, boolean inStrictMode,
                  boolean inFunctional,
-                 boolean allowMissingElse) {
+                 boolean allowMissingElse,
+                 boolean allowReturn) {
     this.random = random;
     this.labels = labels;
     this.iterationLabels = iterationLabels;
@@ -60,6 +63,7 @@ class GenCtx {
     this.inStrictMode = inStrictMode;
     this.inFunctional = inFunctional;
     this.allowMissingElse = allowMissingElse;
+    this.allowReturn = allowReturn;
   }
 
   @NotNull
@@ -73,7 +77,8 @@ class GenCtx {
         this.inSwitch,
         this.inStrictMode,
         this.inFunctional,
-        this.allowMissingElse);
+        this.allowMissingElse,
+        this.allowReturn);
   }
 
   @NotNull
@@ -86,7 +91,8 @@ class GenCtx {
         this.inSwitch,
         this.inStrictMode,
         this.inFunctional,
-        this.allowMissingElse);
+        this.allowMissingElse,
+        this.allowReturn);
   }
 
   @NotNull
@@ -100,7 +106,8 @@ class GenCtx {
         this.inSwitch,
         this.inStrictMode,
         this.inFunctional,
-        this.allowMissingElse);
+        this.allowMissingElse,
+        this.allowReturn);
   }
 
   @NotNull
@@ -113,7 +120,8 @@ class GenCtx {
         this.inSwitch,
         true,
         this.inFunctional,
-        this.allowMissingElse);
+        this.allowMissingElse,
+        this.allowReturn);
   }
 
   @NotNull
@@ -126,7 +134,8 @@ class GenCtx {
         true,
         this.inStrictMode,
         this.inFunctional,
-        this.allowMissingElse);
+        this.allowMissingElse,
+        this.allowReturn);
   }
 
   @NotNull
@@ -141,7 +150,8 @@ class GenCtx {
         false,
         this.inStrictMode,
         true,
-        true);
+        true,
+        false);
   }
 
   @NotNull
@@ -156,7 +166,8 @@ class GenCtx {
         this.inSwitch,
         this.inStrictMode,
         this.inFunctional,
-        this.allowMissingElse);
+        this.allowMissingElse,
+        this.allowReturn);
   }
 
   @NotNull
@@ -170,7 +181,8 @@ class GenCtx {
         this.inSwitch,
         this.inStrictMode,
         this.inFunctional,
-        true);
+        true,
+        this.allowReturn);
   }
 
   @NotNull
@@ -184,6 +196,22 @@ class GenCtx {
         this.inSwitch,
         this.inStrictMode,
         this.inFunctional,
+        false,
+        this.allowReturn);
+  }
+
+  @NotNull
+  GenCtx allowReturn() {
+    return new GenCtx(this.random,
+        this.labels,
+        this.iterationLabels,
+        this.labelsInFunctionBoundary,
+        this.iterationLabelsInFunctionBoundary,
+        this.inIteration,
+        this.inSwitch,
+        this.inStrictMode,
+        this.inFunctional,
+        this.allowMissingElse,
         false);
   }
 }
