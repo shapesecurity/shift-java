@@ -5,11 +5,11 @@
 
 	<groupId>com.shapesecurity</groupId>
 	<artifactId>shift</artifactId>
-	<version>1.2.1-SNAPSHOT</version>
+	<version>2.0.0-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
 	<name>Shift AST</name>
-	<description>Shift format ECMAScript 5 AST tooling</description>
+	<description>Shift format ECMAScript 6 AST tooling</description>
 	<url>https://github.com/shapesecurity/shift-java</url>
 
 	<developers>
@@ -169,6 +169,25 @@
 						<exclude>**/BenchmarkTest.java</exclude>
 					</excludes>
 				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>build-helper-maven-plugin</artifactId>
+				<version>1.7</version>
+				<executions>
+					<execution>
+						<id>add-source</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>add-source</goal>
+						</goals>
+						<configuration>
+							<sources>
+								<source>generated-sources/main/java</source>
+							</sources>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>
