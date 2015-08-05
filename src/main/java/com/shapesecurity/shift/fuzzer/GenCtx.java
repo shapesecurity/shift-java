@@ -151,7 +151,7 @@ class GenCtx {
         this.inStrictMode,
         true,
         true,
-        false);
+        true);
   }
 
   @NotNull
@@ -198,20 +198,5 @@ class GenCtx {
         this.inFunctional,
         false,
         this.allowReturn);
-  }
-
-  @NotNull
-  GenCtx allowReturn() {
-    return new GenCtx(this.random,
-        this.labels,
-        this.iterationLabels,
-        this.labelsInFunctionBoundary,
-        this.iterationLabelsInFunctionBoundary,
-        this.inIteration,
-        this.inSwitch,
-        this.inStrictMode,
-        this.inFunctional,
-        this.allowMissingElse,
-        false);
   }
 }
