@@ -295,6 +295,9 @@ public class Fuzzer {
 
   @NotNull
   private static Binding randomBinding(@NotNull GenCtx ctx, int depth) {
+    if (ctx.inForInOfStatement) {
+      return randomBindingIdentifier(ctx, depth - 1);
+    }
     return choice(bindingGens).apply(ctx, depth).apply(ctx, depth - 1);
   }
 
@@ -486,9 +489,15 @@ public class Fuzzer {
   @NotNull
   private static Expression randomExpression(@NotNull GenCtx ctx, int depth) {
     if (depth < 0) {
-      return randomLiteralNullExpression(ctx, depth - 1);
+      return randomLiteralStringExpression(ctx, depth - 1);
     }
-    return choice(expressionGens).apply(ctx, depth - 1).apply(ctx, depth - 1);
+    Expression expression = choice(expressionGens).apply(ctx, depth - 1).apply(ctx, depth - 1);
+    if (!ctx.allowYieldExpression) {
+      while (expression instanceof YieldExpression) {
+        expression = choice(expressionGens).apply(ctx, depth - 1).apply(ctx, depth - 1);
+      }
+    }
+    return expression;
   }
 
   @NotNull
@@ -569,7 +578,11 @@ public class Fuzzer {
     if (isFunctionBodyStrict(body)) {
       ctx = ctx.enterStrictMode();
     }
-    return new FunctionDeclaration(randomBindingIdentifier(ctx, depth - 1), ctx.random.nextBoolean(), randomFormalParameters(ctx, depth - 1),body);
+    boolean isGenerator = ctx.random.nextBoolean();
+    if (isGenerator) {
+      ctx = ctx.inGeneratorFunction();
+    }
+    return new FunctionDeclaration(randomBindingIdentifier(ctx, depth - 1), isGenerator, randomFormalParameters(ctx, depth - 1),body);
   }
 
   @NotNull
@@ -602,7 +615,11 @@ public class Fuzzer {
     if (isFunctionBodyStrict(body)) {
       ctx = ctx.enterStrictMode();
     }
-    return new FunctionExpression(optional(Fuzzer::randomBindingIdentifier).apply(ctx, depth - 1), ctx.random.nextBoolean(), randomFormalParameters(ctx, depth - 1), body);
+    boolean isGenerator = ctx.random.nextBoolean();
+    if (isGenerator) {
+      ctx = ctx.inGeneratorFunction();
+    }
+    return new FunctionExpression(optional(Fuzzer::randomBindingIdentifier).apply(ctx, depth - 1), isGenerator, randomFormalParameters(ctx, depth - 1), body);
   }
 
   @NotNull
@@ -738,7 +755,7 @@ public class Fuzzer {
 
   @NotNull
   private static LiteralStringExpression randomLiteralStringExpression(@NotNull GenCtx ctx, int depth) {
-    return new LiteralStringExpression(randomString(ctx, depth - 1));
+    return new LiteralStringExpression(randomIdentifierString(ctx, depth - 1));
   }
 
   @NotNull

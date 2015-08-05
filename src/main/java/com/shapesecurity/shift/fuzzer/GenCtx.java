@@ -40,10 +40,11 @@ class GenCtx {
   final boolean allowReturn;
   final boolean inForInOfStatement;
   final boolean isVariableDeclarationKindConst;
+  final boolean allowYieldExpression;
 
 
   GenCtx(@NotNull Random random) {
-    this(random, ImmutableList.nil(), ImmutableList.nil(), ImmutableList.nil(), ImmutableList.nil(), false, false, false, false, true, false, false, false);
+    this(random, ImmutableList.nil(), ImmutableList.nil(), ImmutableList.nil(), ImmutableList.nil(), false, false, false, false, true, false, false, false, false);
   }
 
   private GenCtx(@NotNull Random random,
@@ -56,7 +57,8 @@ class GenCtx {
                  boolean allowMissingElse,
                  boolean allowReturn,
                  boolean inForInOfStatement,
-                 boolean isVariableDeclarationKindConst) {
+                 boolean isVariableDeclarationKindConst,
+                 boolean allowYieldExpression) {
     this.random = random;
     this.labels = labels;
     this.iterationLabels = iterationLabels;
@@ -70,6 +72,7 @@ class GenCtx {
     this.allowReturn = allowReturn;
     this.inForInOfStatement = inForInOfStatement;
     this.isVariableDeclarationKindConst = isVariableDeclarationKindConst;
+    this.allowYieldExpression = allowYieldExpression;
   }
 
   @NotNull
@@ -86,7 +89,8 @@ class GenCtx {
       this.allowMissingElse,
       this.allowReturn,
       this.inForInOfStatement,
-      this.isVariableDeclarationKindConst);
+      this.isVariableDeclarationKindConst,
+      this.allowYieldExpression);
   }
 
   @NotNull
@@ -102,7 +106,8 @@ class GenCtx {
       this.allowMissingElse,
       this.allowReturn,
       this.inForInOfStatement,
-      this.isVariableDeclarationKindConst);
+      this.isVariableDeclarationKindConst,
+      this.allowYieldExpression);
   }
 
   @NotNull
@@ -119,7 +124,8 @@ class GenCtx {
       this.allowMissingElse,
       this.allowReturn,
       this.inForInOfStatement,
-      this.isVariableDeclarationKindConst);
+      this.isVariableDeclarationKindConst,
+      this.allowYieldExpression);
   }
 
   @NotNull
@@ -135,7 +141,8 @@ class GenCtx {
       this.allowMissingElse,
       this.allowReturn,
       this.inForInOfStatement,
-      this.isVariableDeclarationKindConst);
+      this.isVariableDeclarationKindConst,
+      this.allowYieldExpression);
   }
 
   @NotNull
@@ -151,7 +158,8 @@ class GenCtx {
       this.allowMissingElse,
       this.allowReturn,
       this.inForInOfStatement,
-      this.isVariableDeclarationKindConst);
+      this.isVariableDeclarationKindConst,
+      this.allowYieldExpression);
   }
 
   @NotNull
@@ -169,7 +177,8 @@ class GenCtx {
       true,
       false,
       this.inForInOfStatement,
-      this.isVariableDeclarationKindConst);
+      this.isVariableDeclarationKindConst,
+      this.allowYieldExpression);
   }
 
   @NotNull
@@ -187,7 +196,8 @@ class GenCtx {
       this.allowMissingElse,
       this.allowReturn,
       this.inForInOfStatement,
-      this.isVariableDeclarationKindConst);
+      this.isVariableDeclarationKindConst,
+      this.allowYieldExpression);
   }
 
   @NotNull
@@ -204,7 +214,8 @@ class GenCtx {
       true,
       this.allowReturn,
       this.inForInOfStatement,
-      this.isVariableDeclarationKindConst);
+      this.isVariableDeclarationKindConst,
+      this.allowYieldExpression);
   }
 
   @NotNull
@@ -221,7 +232,8 @@ class GenCtx {
       false,
       this.allowReturn,
       this.inForInOfStatement,
-      this.isVariableDeclarationKindConst);
+      this.isVariableDeclarationKindConst,
+      this.allowYieldExpression);
   }
 
   @NotNull
@@ -238,7 +250,8 @@ class GenCtx {
       this.allowMissingElse,
       this.allowReturn,
       true,
-      this.isVariableDeclarationKindConst);
+      this.isVariableDeclarationKindConst,
+      this.allowYieldExpression);
   }
 
   @NotNull
@@ -255,6 +268,25 @@ class GenCtx {
       this.allowMissingElse,
       this.allowReturn,
       this.inForInOfStatement,
+      true,
+      this.allowYieldExpression);
+  }
+
+  @NotNull
+  GenCtx inGeneratorFunction() {
+    return new GenCtx(this.random,
+      this.labels,
+      this.iterationLabels,
+      this.labelsInFunctionBoundary,
+      this.iterationLabelsInFunctionBoundary,
+      this.inIteration,
+      this.inSwitch,
+      this.inStrictMode,
+      this.inFunctional,
+      this.allowMissingElse,
+      this.allowReturn,
+      this.inForInOfStatement,
+      this.isVariableDeclarationKindConst,
       true);
   }
 }
