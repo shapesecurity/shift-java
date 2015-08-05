@@ -89,7 +89,7 @@ public class ValidationContext {
   ValidationContext append(@NotNull ValidationContext other) {
     this.errors.addAll(other.errors);
     this.freeReturnStatements.addAll(other.freeReturnStatements);
-//    this.bindingIdentifiersCalledDefault.addAll(other.bindingIdentifiersCalledDefault);
+    this.bindingIdentifiersCalledDefault.addAll(other.bindingIdentifiersCalledDefault);
     return this;
   }
 

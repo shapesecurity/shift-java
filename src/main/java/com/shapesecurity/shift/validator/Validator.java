@@ -105,9 +105,9 @@ public class Validator extends MonoidalReducer<ValidationContext> {
     try {
       tokenizer = new Tokenizer("\'"+rawValue+"\'", false);
       Token token = tokenizer.lookahead;
-      if (token.getValueString().length() != 2) { // TODO: not sure if check is correct
-        return false;
-      }
+//      if (token.getValueString().length() != 2) { // TODO: not sure if check is correct
+//        return false;
+//      }
       if (!(token instanceof StringLiteralToken)) {
         return false;
       }
@@ -115,9 +115,9 @@ public class Validator extends MonoidalReducer<ValidationContext> {
       try {
         tokenizer = new Tokenizer("\""+rawValue+"\"", false);
         Token token = tokenizer.lookahead;
-        if (token.getValueString().length() != 2) { // TODO: not sure if check is correct
-          return false;
-        }
+//        if (token.getValueString().length() != 2) { // TODO: not sure if check is correct
+//          return false;
+//        }
         if (!(token instanceof StringLiteralToken)) {
           return false;
         }

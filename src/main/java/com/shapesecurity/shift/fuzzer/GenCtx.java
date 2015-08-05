@@ -151,7 +151,7 @@ class GenCtx {
         this.inStrictMode,
         true,
         true,
-        true);
+        false);
   }
 
   @NotNull
