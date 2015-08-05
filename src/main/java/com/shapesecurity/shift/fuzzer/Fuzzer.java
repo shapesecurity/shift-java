@@ -310,7 +310,7 @@ public class Fuzzer {
 
   @NotNull
   private static BindingIdentifier randomBindingIdentifier(@NotNull GenCtx ctx, int depth) {
-    return new BindingIdentifier(randomIdentifierString(ctx, depth));
+    return new BindingIdentifier(randomIdentifierString(ctx, depth - 1));
   }
 
   @NotNull
@@ -424,7 +424,7 @@ public class Fuzzer {
 
   @NotNull
   private static ContinueStatement randomContinueStatement(@NotNull GenCtx ctx, int depth) {
-    return new ContinueStatement(optional(Fuzzer::randomString).apply(ctx, depth - 1));
+    return new ContinueStatement(optional(Fuzzer::randomIdentifierString).apply(ctx, depth - 1));
   }
 
   @NotNull
@@ -485,6 +485,9 @@ public class Fuzzer {
 
   @NotNull
   private static Expression randomExpression(@NotNull GenCtx ctx, int depth) {
+    if (depth < 0) {
+      return randomLiteralNullExpression(ctx, depth - 1);
+    }
     return choice(expressionGens).apply(ctx, depth - 1).apply(ctx, depth - 1);
   }
 
@@ -504,24 +507,18 @@ public class Fuzzer {
   }
 
   @NotNull
-  private static ExpressionTemplateElement randomExpressionTemplateElement(@NotNull GenCtx ctx, int depth) {
-    int number = ctx.random.nextInt();
-    if (number % 2 == 0) {
-      return randomExpression(ctx, depth);
-    } else {
-      return randomTemplateElement(ctx, depth);
-
-    }
+  private static ImmutableList<ExpressionTemplateElement> randomAlternatingTemplateElementExpression(@NotNull GenCtx ctx, int depth) {
+    return ImmutableList.list(randomTemplateElement(ctx, depth - 1), randomExpression(ctx, depth - 1), randomTemplateElement(ctx, depth - 1));
   }
 
   @NotNull
   private static ForInStatement randomForInStatement(@NotNull GenCtx ctx, int depth) {
-    return new ForInStatement(randomVariableDeclarationBinding(ctx, depth - 1), randomExpression(ctx, depth - 1), randomStatement(ctx, depth - 1));
+    return new ForInStatement(randomVariableDeclarationBinding(ctx.inForInOfStatement(), depth - 1), randomExpression(ctx, depth - 1), randomStatement(ctx, depth - 1));
   }
 
   @NotNull
   private static ForOfStatement randomForOfStatement(@NotNull GenCtx ctx, int depth) {
-    return new ForOfStatement(randomVariableDeclarationBinding(ctx, depth - 1), randomExpression(ctx, depth - 1), randomStatement(ctx, depth - 1));
+    return new ForOfStatement(randomVariableDeclarationBinding(ctx.inForInOfStatement(), depth - 1), randomExpression(ctx, depth - 1), randomStatement(ctx, depth - 1));
   }
 
   @NotNull
@@ -577,14 +574,6 @@ public class Fuzzer {
 
   @NotNull
   private static FunctionDeclarationClassDeclarationExpression randomFunctionDeclarationClassDeclarationExpression(@NotNull GenCtx ctx, int depth) {
-//    double number = ctx.random.nextDouble();
-//    if (number >= 0 && number < 1.0/3) {
-//      return randomFunctionDeclaration(ctx, depth);
-//    } else if (number >= 1.0/3 && number < 2.0/3) {
-//      return randomClassDeclaration(ctx, depth);
-//    } else {
-//      return randomExpression(ctx, depth);
-//    }
     switch (ctx.random.nextInt(3)) {
       case 0:
         return randomFunctionDeclaration(ctx, depth);
@@ -597,14 +586,6 @@ public class Fuzzer {
 
   @NotNull
   private static FunctionDeclarationClassDeclarationVariableDeclaration randomFunctionDeclarationClassDeclarationVariableDeclaration(@NotNull GenCtx ctx, int depth) {
-//    double number = ctx.random.nextDouble();
-//    if (number >= 0 && number < 1.0/3) {
-//      return randomFunctionDeclaration(ctx, depth);
-//    } else if (number >= 1.0/3 && number < 2.0/3) {
-//      return randomClassDeclaration(ctx, depth);
-//    } else {
-//      return randomVariableDeclaration(ctx, depth);
-//    }
     switch (ctx.random.nextInt(3)) {
       case 0:
         return randomFunctionDeclaration(ctx, depth);
@@ -705,14 +686,6 @@ public class Fuzzer {
 
   @NotNull
   private static ImportDeclarationExportDeclarationStatement randomImportDeclarationExportDeclarationStatement(@NotNull GenCtx ctx, int depth) {
-//    double number = ctx.random.nextDouble();
-//    if (number >= 0 && number < 1.0/3) {
-//      return randomImportDeclaration(ctx, depth);
-//    } else if (number >= 1.0/3 && number < 2.0/3) {
-//      return randomExportDeclaration(ctx, depth);
-//    } else {
-//      return randomStatement(ctx, depth);
-//    }
     switch (ctx.random.nextInt(3)) {
       case 0:
         return randomImportDeclaration(ctx, depth);
@@ -785,14 +758,6 @@ public class Fuzzer {
 
   @NotNull
   private static MethodDefinition randomMethodDefinition(@NotNull GenCtx ctx, int depth) {
-//    double number = ctx.random.nextDouble();
-//    if (number >= 0 && number < 1.0/3) {
-//      return randomGetter(ctx, depth);
-//    } else if (number >= 1.0/3 && number < 2.0/3) {
-//      return randomSetter(ctx, depth);
-//    } else {
-//      return randomMethod(ctx, depth);
-//    }
     switch (ctx.random.nextInt(3)) {
       case 0:
         return randomGetter(ctx, depth);
@@ -835,14 +800,6 @@ public class Fuzzer {
 
   @NotNull
   private static ObjectProperty randomObjectProperty(@NotNull GenCtx ctx, int depth) {
-//    double random = ctx.random.nextDouble();
-//    if (random >= 0 && random < 0.2) {
-//      return randomDataProperty(ctx, depth);
-//    } else if (random >= 0.2 && random < 0.8) {
-//      return randomMethodDefinition(ctx, depth);
-//    } else {
-//      return randomShorthandProperty(ctx, depth);
-//    }
     switch (ctx.random.nextInt(5)) {
       case 0:
         return randomDataProperty(ctx, depth);
@@ -889,7 +846,7 @@ public class Fuzzer {
     if (isFunctionBodyStrict(body)) {
       ctx = ctx.enterStrictMode();
     }
-    return new Setter(randomBindingBindingWithDefault(ctx, depth - 1), body, randomPropertyName(ctx, depth - 1));
+    return new Setter(randomParameter(ctx, depth - 1), body, randomPropertyName(ctx, depth - 1));
   }
 
   @NotNull
@@ -1068,12 +1025,12 @@ public class Fuzzer {
 
   @NotNull
   private static TemplateElement randomTemplateElement(@NotNull GenCtx ctx, int depth) {
-    return new TemplateElement(randomString(ctx, depth - 1));
+    return new TemplateElement(randomIdentifierString(ctx, depth - 1));
   }
 
   @NotNull
   private static TemplateExpression randomTemplateExpression(@NotNull GenCtx ctx, int depth) {
-    return new TemplateExpression(optional(Fuzzer::randomExpression).apply(ctx, depth - 1), many(Fuzzer::randomExpressionTemplateElement).apply(ctx, depth - 1));
+    return new TemplateExpression(optional(Fuzzer::randomExpression).apply(ctx, depth - 1), randomAlternatingTemplateElementExpression(ctx, depth - 1));
   }
 
   @NotNull
@@ -1113,10 +1070,11 @@ public class Fuzzer {
 
   @NotNull
   private static VariableDeclaration randomVariableDeclaration(@NotNull GenCtx ctx, int depth) {
-    return new VariableDeclaration(
-        ctx.inStrictMode ? VariableDeclarationKind.Var :
-            choice(VariableDeclarationKind.values()).apply(ctx, depth - 1),
-        many1(Fuzzer::randomVariableDeclarator).apply(ctx, depth - 1));
+    VariableDeclarationKind kind = choice(VariableDeclarationKind.values()).apply(ctx, depth - 1);
+    if (kind.name.equals("const")) {
+      ctx = ctx.variableDeclarationKindIsConst();
+    }
+    return new VariableDeclaration(ctx.inStrictMode ? VariableDeclarationKind.Var : kind, ctx.inForInOfStatement ? ImmutableList.list(randomVariableDeclarator(ctx, depth - 1)): many1(Fuzzer::randomVariableDeclarator).apply(ctx, depth - 1));
   }
 
   @NotNull
@@ -1147,10 +1105,10 @@ public class Fuzzer {
   @NotNull
   private static VariableDeclarator randomVariableDeclarator(@NotNull GenCtx ctx, int depth) {
     Binding binding;
-    do { // TODO remove do while loop
+    do {
       binding = randomBinding(ctx, depth - 1);
     } while (binding instanceof MemberExpression);
-    if (binding instanceof BindingIdentifier) {
+    if (binding instanceof BindingIdentifier && !ctx.isVariableDeclarationKindConst) {
       return new VariableDeclarator(binding, optional(Fuzzer::randomExpression).apply(ctx, depth - 1));
     } else {
       return new VariableDeclarator(binding, Maybe.just(randomExpression(ctx, depth - 1)));
