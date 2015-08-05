@@ -105,13 +105,19 @@ public class Validator extends MonoidalReducer<ValidationContext> {
     try {
       tokenizer = new Tokenizer("\'"+rawValue+"\'", false);
       Token token = tokenizer.lookahead;
+      if (token.getValueString().length() != 2) { // TODO: not sure if check is correct
+        return false;
+      }
       if (!(token instanceof StringLiteralToken)) {
         return false;
       }
     } catch (JsError jsError) {
       try {
         tokenizer = new Tokenizer("\""+rawValue+"\"", false);
-        Token token = tokenizer.advance();
+        Token token = tokenizer.lookahead;
+        if (token.getValueString().length() != 2) { // TODO: not sure if check is correct
+          return false;
+        }
         if (!(token instanceof StringLiteralToken)) {
           return false;
         }
@@ -159,8 +165,8 @@ public class Validator extends MonoidalReducer<ValidationContext> {
   public ValidationContext reduceBindingIdentifier(@NotNull BindingIdentifier node) {
     ValidationContext s = super.reduceBindingIdentifier(node);
     if (!checkIsValidIdentifierName(node.name)) {
-      if (node.name.equals("*default*") && s.bindingIdentifierNameCanBeDefault) {
-
+      if (node.name.equals("*default*")) {
+        s.addBindingIdentifierCalledDefault(node);
       } else {
         s.addError(new ValidationError(node, "the name field of binding identifier must be a valid identifier name"));
       }
@@ -173,7 +179,7 @@ public class Validator extends MonoidalReducer<ValidationContext> {
   public ValidationContext reduceExportDefault(@NotNull ExportDefault node, @NotNull ValidationContext body) {
     ValidationContext s = super.reduceExportDefault(node, body);
     if (node.body instanceof FunctionDeclaration) {
-      s.bindingIdentifierNameCanBeDefault = true;
+      s.clearBindingIdentifiersCalledDefault();
     }
     return s;
   }
@@ -366,8 +372,8 @@ public class Validator extends MonoidalReducer<ValidationContext> {
       s.addError(new ValidationError(node, "pattern field of literal regular expression expression must match the ES6 grammar production Pattern (21.2.1)"));
     }
     if (node.flags.length() > 0) {
-      boolean hasBadChars = node.flags.chars().allMatch(x -> x == 'g' || x == 'i' || x == 'm' || x == 'u' || x == 'y');
-      if (hasBadChars) {
+      boolean hasValidFlags = node.flags.chars().allMatch(x -> x == 'g' || x == 'i' || x == 'm' || x == 'u' || x == 'y');
+      if (!hasValidFlags) {
         s.addError(new ValidationError(node, "flags field of literal regular expression expression must not contain characters other than 'g', 'i', 'm', 'u', or 'y'"));
       }
     }
@@ -397,6 +403,17 @@ public class Validator extends MonoidalReducer<ValidationContext> {
   ) {
     ValidationContext s = super.reduceScript(node, directives, statements);
     s.enforceFreeReturnStatements(returnStatement -> new ValidationError(returnStatement, "return statements must be within a function body"));
+    s.enforceBindingIdentifiersCalledDefault(bindingIdentifier -> new ValidationError(bindingIdentifier, "binding identifiers may only be called \"*default*\" within a function declaration"));
+    return s;
+  }
+
+  @NotNull
+  @Override
+  public ValidationContext reduceModule(@NotNull Module node, @NotNull ImmutableList<ValidationContext> directives, @NotNull ImmutableList<ValidationContext> items
+  ) {
+    ValidationContext s = super.reduceModule(node, directives, items);
+    s.enforceFreeReturnStatements(returnStatement -> new ValidationError(returnStatement, "return statements must be within a function body"));
+    s.enforceBindingIdentifiersCalledDefault(bindingIdentifier -> new ValidationError(bindingIdentifier, "binding identifiers may only be called \"*default*\" within a function declaration"));
     return s;
   }
 

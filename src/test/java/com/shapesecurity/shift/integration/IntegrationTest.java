@@ -48,6 +48,16 @@ public class IntegrationTest {
     testFuzzerToCodeGenToParserSerializationHelper((long) 5.5, 5);
   }
 
+  @Test
+  public void testFuzzerTimedFiveSeconds() {
+    // TODO
+  }
+
+  @Test
+  public void testFuzzerTimedTenSeconds() {
+    // TODO
+  }
+
   private void testFuzzerToValidatorHelper(long seed, int depth) {
     Node generated = Fuzzer.generate(new Random(seed), depth);
     if (generated instanceof Script) {
