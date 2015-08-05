@@ -851,7 +851,7 @@ public class Fuzzer {
 
   @NotNull
   private static ShorthandProperty randomShorthandProperty(@NotNull GenCtx ctx, int depth) {
-    return new ShorthandProperty(randomString(ctx, depth - 1));
+    return new ShorthandProperty(randomIdentifierString(ctx, depth - 1));
   }
 
   @NotNull
