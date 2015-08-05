@@ -28,7 +28,9 @@ import com.shapesecurity.shift.visitor.Director;
 import com.shapesecurity.shift.visitor.MonoidalReducer;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class Validator extends MonoidalReducer<ValidationContext> {
@@ -93,10 +95,14 @@ public class Validator extends MonoidalReducer<ValidationContext> {
   }
 
   public static ImmutableList<ValidationError> validate(Script script) {
+    List<ValidationError> errors = Director.reduceScript(new Validator(), script).errors;
+//    System.out.println("size of errors: " + errors.size());
     return ImmutableList.from(Director.reduceScript(new Validator(), script).errors);
   }
 
   public static ImmutableList<ValidationError> validate(Module module) {
+    List<ValidationError> errors = Director.reduceModule(new Validator(), module).errors;
+//    System.out.println("size of errors: " + errors.size());
     return ImmutableList.from(Director.reduceModule(new Validator(), module).errors);
   }
 
@@ -467,21 +473,23 @@ public class Validator extends MonoidalReducer<ValidationContext> {
   @Override
   public ValidationContext reduceTemplateExpression(@NotNull TemplateExpression node, @NotNull Maybe<ValidationContext> tag, @NotNull ImmutableList<ValidationContext> elements) {
     ValidationContext s = super.reduceTemplateExpression(node, tag, elements);
-    if (node.elements.length % 2 == 0) {
-      s.addError(new ValidationError(node, "the elements field of template expression must be an alternating list of template element and expression, starting and ending with a template element"));
-    }
-    node.elements.mapWithIndex((i, x) -> {
-      if (i % 2 == 0) {
-        if (!(x instanceof TemplateElement)) {
-          s.addError(new ValidationError(node, "the elements field of template expression must be an alternating list of template element and expression, starting and ending with a template element"));
-        }
-      } else {
-        if (!(x instanceof Expression)) {
-          s.addError(new ValidationError(node, "the elements field of template expression must be an alternating list of template element and expression, starting and ending with a template element"));
-        }
+    if (elements.length > 0) {
+      if (node.elements.length % 2 == 0) {
+        s.addError(new ValidationError(node, "the elements field of template expression must be an alternating list of template element and expression, starting and ending with a template element"));
       }
-      return true;
-    });
+      node.elements.mapWithIndex((i, x) -> {
+        if (i % 2 == 0) {
+          if (!(x instanceof TemplateElement)) {
+            s.addError(new ValidationError(node, "the elements field of template expression must be an alternating list of template element and expression, starting and ending with a template element"));
+          }
+        } else {
+          if (!(x instanceof Expression)) {
+            s.addError(new ValidationError(node, "the elements field of template expression must be an alternating list of template element and expression, starting and ending with a template element"));
+          }
+        }
+        return true;
+      });
+    }
     return s;
   }
 

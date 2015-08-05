@@ -50,20 +50,45 @@ public class IntegrationTest {
 
   @Test
   public void testFuzzerTimedFiveSeconds() {
-    // TODO
+    Random random = new Random(48957);
+    long start = System.currentTimeMillis();
+    while (System.currentTimeMillis() - start <= 5000) {
+      int seed = random.nextInt();
+      System.out.println(seed);
+      Node generated = Fuzzer.generate(new Random(seed), 5);
+      ImmutableList<ValidationError> validationErrors;
+      if (generated instanceof Script) {
+        validationErrors = Validator.validate((Script) generated);
+      } else {
+        validationErrors = Validator.validate((Module) generated);
+      }
+      if (validationErrors.length > 0) {
+        System.out.println("seed " + seed + " caused Fuzzer to generate " + validationErrors.length + " validation errors.");
+      }
+    }
   }
 
   @Test
-  public void testFuzzerTimedTenSeconds() {
-    // TODO
+  public void testFuzzer() {
+    Node generated = Fuzzer.generate(new Random(-1057332377), 5);
+    ImmutableList<ValidationError> validationErrors;
+    if (generated instanceof Script) {
+      validationErrors = Validator.validate((Script) generated);
+    } else {
+      validationErrors = Validator.validate((Module) generated);
+    }
+    assert (validationErrors.length == 0);
   }
 
   private void testFuzzerToValidatorHelper(long seed, int depth) {
     Node generated = Fuzzer.generate(new Random(seed), depth);
+    ImmutableList<ValidationError> validationErrors;
     if (generated instanceof Script) {
-      ImmutableList<ValidationError> validationErrors = Validator.validate((Script) generated);
-      assertTrue(validationErrors.length == 0);
+      validationErrors = Validator.validate((Script) generated);
+    } else {
+      validationErrors = Validator.validate((Module) generated);
     }
+    assertTrue(validationErrors.length == 0);
   }
 
   private void testFuzzerToCodeGenToParserToValidatorHelper(long seed, int depth) throws JsError {

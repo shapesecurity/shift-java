@@ -38,10 +38,12 @@ class GenCtx {
   final boolean inFunctional;
   final boolean allowMissingElse;
   final boolean allowReturn;
+  final boolean inForInOfStatement;
+  final boolean isVariableDeclarationKindConst;
 
 
   GenCtx(@NotNull Random random) {
-    this(random, ImmutableList.nil(), ImmutableList.nil(), ImmutableList.nil(), ImmutableList.nil(), false, false, false, false, true, false);
+    this(random, ImmutableList.nil(), ImmutableList.nil(), ImmutableList.nil(), ImmutableList.nil(), false, false, false, false, true, false, false, false);
   }
 
   private GenCtx(@NotNull Random random,
@@ -52,7 +54,9 @@ class GenCtx {
                  boolean inIteration, boolean inSwitch, boolean inStrictMode,
                  boolean inFunctional,
                  boolean allowMissingElse,
-                 boolean allowReturn) {
+                 boolean allowReturn,
+                 boolean inForInOfStatement,
+                 boolean isVariableDeclarationKindConst) {
     this.random = random;
     this.labels = labels;
     this.iterationLabels = iterationLabels;
@@ -64,139 +68,193 @@ class GenCtx {
     this.inFunctional = inFunctional;
     this.allowMissingElse = allowMissingElse;
     this.allowReturn = allowReturn;
+    this.inForInOfStatement = inForInOfStatement;
+    this.isVariableDeclarationKindConst = isVariableDeclarationKindConst;
   }
 
   @NotNull
   GenCtx withLabel(@NotNull IdentifierExpression identifier) {
     return new GenCtx(this.random,
-        this.labels.cons(identifier),
-        this.iterationLabels,
-        this.labelsInFunctionBoundary,
-        this.iterationLabelsInFunctionBoundary,
-        this.inIteration,
-        this.inSwitch,
-        this.inStrictMode,
-        this.inFunctional,
-        this.allowMissingElse,
-        this.allowReturn);
+      this.labels.cons(identifier),
+      this.iterationLabels,
+      this.labelsInFunctionBoundary,
+      this.iterationLabelsInFunctionBoundary,
+      this.inIteration,
+      this.inSwitch,
+      this.inStrictMode,
+      this.inFunctional,
+      this.allowMissingElse,
+      this.allowReturn,
+      this.inForInOfStatement,
+      this.isVariableDeclarationKindConst);
   }
 
   @NotNull
   GenCtx withIterationLabel(@NotNull IdentifierExpression identifier) {
     return new GenCtx(this.random,
-        this.labels.cons(identifier),
-        this.iterationLabels.cons(identifier),
-        this.labelsInFunctionBoundary,
-        this.iterationLabelsInFunctionBoundary, this.inIteration,
-        this.inSwitch,
-        this.inStrictMode,
-        this.inFunctional,
-        this.allowMissingElse,
-        this.allowReturn);
+      this.labels.cons(identifier),
+      this.iterationLabels.cons(identifier),
+      this.labelsInFunctionBoundary,
+      this.iterationLabelsInFunctionBoundary, this.inIteration,
+      this.inSwitch,
+      this.inStrictMode,
+      this.inFunctional,
+      this.allowMissingElse,
+      this.allowReturn,
+      this.inForInOfStatement,
+      this.isVariableDeclarationKindConst);
   }
 
   @NotNull
   GenCtx enterIteration() {
     return new GenCtx(
-        this.random,
-        this.labels,
-        this.iterationLabels,
-        this.labelsInFunctionBoundary,
-        this.iterationLabelsInFunctionBoundary, true,
-        this.inSwitch,
-        this.inStrictMode,
-        this.inFunctional,
-        this.allowMissingElse,
-        this.allowReturn);
+      this.random,
+      this.labels,
+      this.iterationLabels,
+      this.labelsInFunctionBoundary,
+      this.iterationLabelsInFunctionBoundary, true,
+      this.inSwitch,
+      this.inStrictMode,
+      this.inFunctional,
+      this.allowMissingElse,
+      this.allowReturn,
+      this.inForInOfStatement,
+      this.isVariableDeclarationKindConst);
   }
 
   @NotNull
   GenCtx enterStrictMode() {
     return new GenCtx(this.random,
-        this.labels,
-        this.iterationLabels,
-        this.labelsInFunctionBoundary,
-        this.iterationLabelsInFunctionBoundary, this.inIteration,
-        this.inSwitch,
-        true,
-        this.inFunctional,
-        this.allowMissingElse,
-        this.allowReturn);
+      this.labels,
+      this.iterationLabels,
+      this.labelsInFunctionBoundary,
+      this.iterationLabelsInFunctionBoundary, this.inIteration,
+      this.inSwitch,
+      true,
+      this.inFunctional,
+      this.allowMissingElse,
+      this.allowReturn,
+      this.inForInOfStatement,
+      this.isVariableDeclarationKindConst);
   }
 
   @NotNull
   GenCtx enterSwitch() {
     return new GenCtx(this.random,
-        this.labels,
-        this.iterationLabels,
-        this.labelsInFunctionBoundary,
-        this.iterationLabelsInFunctionBoundary, this.inIteration,
-        true,
-        this.inStrictMode,
-        this.inFunctional,
-        this.allowMissingElse,
-        this.allowReturn);
+      this.labels,
+      this.iterationLabels,
+      this.labelsInFunctionBoundary,
+      this.iterationLabelsInFunctionBoundary, this.inIteration,
+      true,
+      this.inStrictMode,
+      this.inFunctional,
+      this.allowMissingElse,
+      this.allowReturn,
+      this.inForInOfStatement,
+      this.isVariableDeclarationKindConst);
   }
 
   @NotNull
   GenCtx enterFunctional() {
     return new GenCtx(
-        this.random,
-        this.labels,
-        this.iterationLabels,
-        ImmutableList.nil(),
-        ImmutableList.nil(),
-        false,
-        false,
-        this.inStrictMode,
-        true,
-        true,
-        false);
+      this.random,
+      this.labels,
+      this.iterationLabels,
+      ImmutableList.nil(),
+      ImmutableList.nil(),
+      false,
+      false,
+      this.inStrictMode,
+      true,
+      true,
+      false,
+      this.inForInOfStatement,
+      this.isVariableDeclarationKindConst);
   }
 
   @NotNull
   GenCtx clearLabels() {
     return new GenCtx(
-        this.random,
-        ImmutableList.nil(),
-        ImmutableList.nil(),
-        ImmutableList.nil(),
-        ImmutableList.nil(),
-        this.inIteration,
-        this.inSwitch,
-        this.inStrictMode,
-        this.inFunctional,
-        this.allowMissingElse,
-        this.allowReturn);
+      this.random,
+      ImmutableList.nil(),
+      ImmutableList.nil(),
+      ImmutableList.nil(),
+      ImmutableList.nil(),
+      this.inIteration,
+      this.inSwitch,
+      this.inStrictMode,
+      this.inFunctional,
+      this.allowMissingElse,
+      this.allowReturn,
+      this.inForInOfStatement,
+      this.isVariableDeclarationKindConst);
   }
 
   @NotNull
   GenCtx allowMissingElse() {
     return new GenCtx(this.random,
-        this.labels,
-        this.iterationLabels,
-        this.labelsInFunctionBoundary,
-        this.iterationLabelsInFunctionBoundary,
-        this.inIteration,
-        this.inSwitch,
-        this.inStrictMode,
-        this.inFunctional,
-        true,
-        this.allowReturn);
+      this.labels,
+      this.iterationLabels,
+      this.labelsInFunctionBoundary,
+      this.iterationLabelsInFunctionBoundary,
+      this.inIteration,
+      this.inSwitch,
+      this.inStrictMode,
+      this.inFunctional,
+      true,
+      this.allowReturn,
+      this.inForInOfStatement,
+      this.isVariableDeclarationKindConst);
   }
 
   @NotNull
   GenCtx forbidMissingElse() {
     return new GenCtx(this.random,
-        this.labels,
-        this.iterationLabels,
-        this.labelsInFunctionBoundary,
-        this.iterationLabelsInFunctionBoundary,
-        this.inIteration,
-        this.inSwitch,
-        this.inStrictMode,
-        this.inFunctional,
-        false,
-        this.allowReturn);
+      this.labels,
+      this.iterationLabels,
+      this.labelsInFunctionBoundary,
+      this.iterationLabelsInFunctionBoundary,
+      this.inIteration,
+      this.inSwitch,
+      this.inStrictMode,
+      this.inFunctional,
+      false,
+      this.allowReturn,
+      this.inForInOfStatement,
+      this.isVariableDeclarationKindConst);
+  }
+
+  @NotNull
+  GenCtx inForInOfStatement() {
+    return new GenCtx(this.random,
+      this.labels,
+      this.iterationLabels,
+      this.labelsInFunctionBoundary,
+      this.iterationLabelsInFunctionBoundary,
+      this.inIteration,
+      this.inSwitch,
+      this.inStrictMode,
+      this.inFunctional,
+      this.allowMissingElse,
+      this.allowReturn,
+      true,
+      this.isVariableDeclarationKindConst);
+  }
+
+  @NotNull
+  GenCtx variableDeclarationKindIsConst() {
+    return new GenCtx(this.random,
+      this.labels,
+      this.iterationLabels,
+      this.labelsInFunctionBoundary,
+      this.iterationLabelsInFunctionBoundary,
+      this.inIteration,
+      this.inSwitch,
+      this.inStrictMode,
+      this.inFunctional,
+      this.allowMissingElse,
+      this.allowReturn,
+      this.inForInOfStatement,
+      true);
   }
 }
