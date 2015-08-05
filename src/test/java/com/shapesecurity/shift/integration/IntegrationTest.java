@@ -41,6 +41,7 @@ public class IntegrationTest {
 
   @Test
   public void testFuzzerToCodeGenToParserSerialization() throws JsError {
+//    testFuzzerToCodeGenToParserSerializationHelper((long) 0.5, 5);
     testFuzzerToCodeGenToParserSerializationHelper((long) 1.5, 5);
     testFuzzerToCodeGenToParserSerializationHelper((long) 2.5, 5);
     testFuzzerToCodeGenToParserSerializationHelper((long) 3.5, 5);
@@ -52,9 +53,9 @@ public class IntegrationTest {
   public void testFuzzerTimedFiveSeconds() {
     Random random = new Random(48957);
     long start = System.currentTimeMillis();
+    boolean hasErrors = false;
     while (System.currentTimeMillis() - start <= 5000) {
       int seed = random.nextInt();
-      System.out.println(seed);
       Node generated = Fuzzer.generate(new Random(seed), 5);
       ImmutableList<ValidationError> validationErrors;
       if (generated instanceof Script) {
@@ -63,8 +64,12 @@ public class IntegrationTest {
         validationErrors = Validator.validate((Module) generated);
       }
       if (validationErrors.length > 0) {
+        hasErrors = true;
         System.out.println("seed " + seed + " caused Fuzzer to generate " + validationErrors.length + " validation errors.");
       }
+    }
+    if (!hasErrors) {
+      System.out.println("Fuzzer ran for 5 seconds and generated all valid ASTs.");
     }
   }
 
