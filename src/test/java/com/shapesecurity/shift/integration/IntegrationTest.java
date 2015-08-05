@@ -41,7 +41,7 @@ public class IntegrationTest {
 
   @Test
   public void testFuzzerToCodeGenToParserSerialization() throws JsError {
-//    testFuzzerToCodeGenToParserSerializationHelper((long) 0.5, 5);
+    testFuzzerToCodeGenToParserSerializationHelper((long) 0.5, 5);
     testFuzzerToCodeGenToParserSerializationHelper((long) 1.5, 5);
     testFuzzerToCodeGenToParserSerializationHelper((long) 2.5, 5);
     testFuzzerToCodeGenToParserSerializationHelper((long) 3.5, 5);
