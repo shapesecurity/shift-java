@@ -80,7 +80,7 @@ public class Tokenizer {
   @NotNull
   final String source;
   @NotNull
-  protected Token lookahead;
+  public Token lookahead;
   protected boolean hasLineTerminatorBeforeNext;
   protected boolean strict;
   protected final boolean moduleIsTheGoalSymbol;
@@ -1202,7 +1202,7 @@ public class Tokenizer {
   }
 
   @NotNull
-  private Token collectToken() throws JsError {
+  public Token collectToken() throws JsError {
     this.hasLineTerminatorBeforeNext = false;
     int start = this.index;
 
@@ -1227,7 +1227,7 @@ public class Tokenizer {
   }
 
   @NotNull
-  protected Token lex() throws JsError {
+  public Token lex() throws JsError {
     if (this.lookahead.type == TokenType.EOS) {
       return this.lookahead;
     }

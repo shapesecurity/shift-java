@@ -102,6 +102,7 @@ public class CodeGenTest {
 
   @Test
   public void testClassDeclaration() throws JsError {
+    test("class A{get[[]](){}[1.5608526501574786](){}}");
     test("class A{}");
     test("class A extends B{}");
   }
