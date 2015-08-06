@@ -20,9 +20,9 @@ package com.shapesecurity.functional;
  * Represent a absence of a value.
  */
 public final class Unit {
-  public final static Unit unit = new Unit();
+    public final static Unit unit = new Unit();
 
-  private Unit() {
-  }
+    private Unit() {
+    }
 }
 

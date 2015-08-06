@@ -31,532 +31,546 @@ import com.shapesecurity.functional.Thunk;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * An immutable singly linked list implementation. None of the operations in {@link ImmutableList} changes the list itself. Therefore you can freely share the list in
- * your system.
- * <p>
- * This is a "classical" list implementation that the list is only allowed to prepend and to remove the first element efficiently.
- * Therefore it is essentially equivalent to a stack.
- * <p>
- * It is either an empty list, or a record that contains the first element (called "head") and a list that follows(called "tail").
- * With the assumption that all the elements in the list are also immutable, the sharing of the tails is possible.
- * <p>
- * For a data structure that allows O(1) concatenation, try {@link ConcatList}. A BinaryTree can be converted into a List in O(n) time.
+ * An immutable singly linked list implementation. None of the operations in {@link ImmutableList}
+ * changes the list itself. Therefore you can freely share the list in your system. <p> This is a
+ * "classical" list implementation that the list is only allowed to prepend and to remove the first
+ * element efficiently. Therefore it is essentially equivalent to a stack. <p> It is either an empty
+ * list, or a record that contains the first element (called "head") and a list that follows(called
+ * "tail"). With the assumption that all the elements in the list are also immutable, the sharing of
+ * the tails is possible. <p> For a data structure that allows O(1) concatenation, try {@link
+ * ConcatList}. A BinaryTree can be converted into a List in O(n) time.
  *
  * @param <A> The super type of all the elements.
  */
 public abstract class ImmutableList<A> implements Iterable<A> {
-  private static final ImmutableList<Object> NIL = new Nil<>();
-  @NotNull
-  private final Thunk<Integer> hashCodeThunk = Thunk.from(this::calcHashCode);
+    private static final ImmutableList<Object> NIL = new Nil<>();
+    @NotNull
+    private final Thunk<Integer> hashCodeThunk = Thunk.from(this::calcHashCode);
 
-  /**
-   * The length of the list.
-   */
-  public final int length;
+    /**
+     * The length of the list.
+     */
+    public final int length;
 
-  // package local
-  ImmutableList(int length) {
-    super();
-    this.length = length;
-  }
-
-  /**
-   * Creating List from.
-   *
-   * @param arrayList The {@link java.util.ArrayList} to construct the {@link ImmutableList} from.
-   * @param <A>       The type of the elements of the list.
-   * @return a new {@link ImmutableList} that is comprised of all the elements in the {@link java.util.ArrayList}.
-   */
-  @NotNull
-  public static <A> ImmutableList<A> from(@NotNull List<A> arrayList) {
-    // Manual expansion of tail recursion.
-    ImmutableList<A> l = nil();
-    int size = arrayList.size();
-    for (int i = size - 1; i >= 0; i--) {
-      l = cons(arrayList.get(i), l);
+    // package local
+    ImmutableList(int length) {
+        super();
+        this.length = length;
     }
-    return l;
-  }
 
-  /**
-   * Prepends "cons" an head element to a {@link ImmutableList}.
-   *
-   * @param head The head element to be prepended to the {@link ImmutableList}.
-   * @param tail The {@link ImmutableList} to be prepended to.
-   * @param <T>  The super type of both the element and the {@link ImmutableList}
-   * @return A {@link ImmutableList} that is comprised of the head then the tail.
-   */
-  public static <T> NonEmptyImmutableList<T> cons(@NotNull T head, @NotNull ImmutableList<T> tail) {
-    return new NonEmptyImmutableList<>(head, tail);
-  }
-
-  // Construction
-
-  @SuppressWarnings("unchecked")
-  public static <T> ImmutableList<T> nil() {
-    return (ImmutableList<T>) NIL;
-  }
-
-  @SuppressWarnings("unchecked")
-  public static <T> ImmutableList<T> list() {
-    return (ImmutableList<T>) NIL;
-  }
-
-  /**
-   * A helper constructor to create a {@link NonEmptyImmutableList}.
-   * @param head The first element
-   * @param el rest of the elements
-   * @param <T> The type of the element
-   * @return a <code>NonEmptyImmutableList</code> of type <code>T</code>.
-   */
-  @NotNull
-  @SafeVarargs
-  public static <T> NonEmptyImmutableList<T> list(@NotNull T head, @NotNull T... el) {
-    if (el.length == 0) {
-      return cons(head, ImmutableList.nil());
-    }
-    NonEmptyImmutableList<T> l = cons(el[el.length - 1], ImmutableList.nil());
-    for (int i = el.length - 2; i >= 0; i--) {
-      l = cons(el[i], l);
-    }
-    return cons(head, l);
-  }
-
-  /**
-   * A helper constructor to create a potentially empty {@link ImmutableList}.
-   * @param el Elements of the list
-   * @param <A> The type of elements
-   * @return a <code>ImmutableList</code> of type <code>A</code>.
-   */
-  @NotNull
-  @SafeVarargs
-  public static <A> ImmutableList<A> from(@NotNull A... el) {
-    if (el.length == 0) {
-      return nil();
-    }
-    NonEmptyImmutableList<A> l = cons(el[el.length - 1], ImmutableList.nil());
-    for (int i = el.length - 2; i >= 0; i--) {
-      l = cons(el[i], l);
-    }
-    return l;
-  }
-
-  protected abstract int calcHashCode();
-
-  @Override
-  public final int hashCode() {
-    return this.hashCodeThunk.get();
-  }
-
-  @Override
-  public Iterator<A> iterator() {
-
-    return new Iterator<A>() {
-      private ImmutableList<A> curr = ImmutableList.this;
-
-      @Override
-      public boolean hasNext() {
-        return !this.curr.isEmpty();
-      }
-
-      @Override
-      public A next() {
-        if (this.curr.isEmpty()) {
-          throw new NoSuchElementException();
+    /**
+     * Creating List from.
+     *
+     * @param arrayList The {@link java.util.ArrayList} to construct the {@link ImmutableList}
+     *                  from.
+     * @param <A>       The type of the elements of the list.
+     * @return a new {@link ImmutableList} that is comprised of all the elements in the {@link
+     * java.util.ArrayList}.
+     */
+    @NotNull
+    public static <A> ImmutableList<A> from(@NotNull List<A> arrayList) {
+        // Manual expansion of tail recursion.
+        ImmutableList<A> l = nil();
+        int size = arrayList.size();
+        for (int i = size - 1; i >= 0; i--) {
+            l = cons(arrayList.get(i), l);
         }
-        A head = this.curr.maybeHead().just();
-        this.curr = this.curr.maybeTail().just();
-        return head;
-      }
-
-      @Override
-      public void remove() {
-        throw new UnsupportedOperationException();
-      }
-    };
-  }
-
-  // Methods
-
-  /**
-   * Prepend an element to the list.
-   *
-   * @param left The element to prepend.
-   * @return A list with <code>left</code> as the first element followed by <code>this</code>.
-   */
-  @NotNull
-  public final NonEmptyImmutableList<A> cons(@NotNull A left) {
-    return cons(left, this);
-  }
-
-  /**
-   * Classic "foldl" operation on the {@link ImmutableList}.
-   *
-   * @param f    The function.
-   * @param init The initial value.
-   * @param <B>  The type of the result of the folding.
-   * @return The result of the folder.
-   * @see <a href="http://en.wikipedia.org/wiki/Fold_(higher-order_function)#Folds_as_structural_transformations">http://en.wikipedia.org/wiki/Fold_
-   * (higher-order_function)</a>
-   */
-  @NotNull
-  public abstract <B> B foldLeft(@NotNull F2<B, ? super A, B> f, @NotNull B init);
-
-  /**
-   * Classic "foldr" operation on the {@link ImmutableList}.
-   *
-   * @param f    The function.
-   * @param init The initial value.
-   * @param <B>  The type of the result of the folding.
-   * @return The result of the folder.
-   * @see <a href="http://en.wikipedia.org/wiki/Fold_(higher-order_function)#Folds_as_structural_transformations">http://en.wikipedia.org/wiki/Fold_
-   * (higher-order_function)</a>
-   */
-  @NotNull
-  public abstract <B> B foldRight(@NotNull F2<? super A, B, B> f, @NotNull B init);
-
-  /**
-   * Returns the head of the {@link ImmutableList}.
-   *
-   * @return Maybe.just(head of the list), or Maybe.nothing() if the list is empty.
-   */
-  @NotNull
-  public abstract Maybe<A> maybeHead();
-
-  /**
-   * Returns the last of the {@link ImmutableList}.
-   *
-   * @return Maybe.just(last of the list), or Maybe.nothing() if the list is empty.
-   */
-  @NotNull
-  public abstract Maybe<A> maybeLast();
-
-  /**
-   * Returns the tail of the {@link ImmutableList}.
-   *
-   * @return Maybe.just(tail of the list), or Maybe.nothing() if the list is empty.
-   */
-  @NotNull
-  public abstract Maybe<ImmutableList<A>> maybeTail();
-
-  /**
-   * Returns the init of the {@link ImmutableList}. The init of a List is defined as the rest of List removing the last element.
-   *
-   * @return Maybe.just(init of the list), or Maybe.nothing() if the list is empty.
-   */
-  @NotNull
-  public abstract Maybe<ImmutableList<A>> maybeInit();
-
-  /**
-   * Returns a new list of elements when applying <code>f</code> to an element returns true.
-   *
-   * @param f The "predicate" function.
-   * @return A new list of elements that satisfies the predicate.
-   */
-  @NotNull
-  public abstract ImmutableList<A> filter(@NotNull F<A, Boolean> f);
-
-  /**
-   * Applies the <code>f</code> function to each of the elements of the list and collect the result.
-   * It will be a new list with the same length of the original one.
-   *
-   * @param f   The function to apply.
-   * @param <B> The type of the new {@link ImmutableList}.
-   * @return The new {@link ImmutableList} containing the result.
-   */
-  @NotNull
-  public abstract <B> ImmutableList<B> map(@NotNull F<A, B> f);
-
-  /**
-   * Applies the <code>f</code> function to each of the elements of the list and collect the result.
-   * This method also provides an extra index parameter to <code>f</code> function as the first parameter.
-   *
-   * @param f   The function to apply.
-   * @param <B> The type of the new {@link ImmutableList}.
-   * @return The new {@link ImmutableList} containing the result.
-   */
-  @NotNull
-  public abstract <B> ImmutableList<B> mapWithIndex(@NotNull F2<Integer, A, B> f);
-
-  /**
-   * The the first <code>n</code> elements of the list and create a new List of them. If the original
-   * list contains less than <code>n</code> elements, returns a copy of the original List.
-   *
-   * @param n The number of elements to take.
-   * @return A new list containing at most <code>n</code> elements that are the first elements of the original list.
-   */
-  @NotNull
-  public abstract ImmutableList<A> take(int n);
-
-  /**
-   * Removes the first <code>n</code> elements of the list and return the rest of the List by reference. If the original list
-   * contains less than <code>n</code> elements, returns an empty list as if it is returned by {@link #nil}.
-   *
-   * @param n The number of elements to skip.
-   * @return A shared list containing at most <code>n</code> elements removed from the original list.
-   */
-  @NotNull
-  public abstract ImmutableList<A> drop(int n);
-
-  /**
-   * Specialize this type to be a {@link NonEmptyImmutableList} if possible.
-   *
-   * @return Returns is <code>Maybe.just(this)</code> if this is indeed non-empty. Otherwise returns <code>Maybe.nothing()</code>.
-   */
-  @NotNull
-  public abstract Maybe<NonEmptyImmutableList<A>> toNonEmptyList();
-
-  /**
-   * Deconstruct the list in to its head and tail, and feed them into another function <code>f</code>.
-   *
-   * @param f   The function to receive the head and tail if they exist.
-   * @param <B> The return type of <code>f</code>
-   * @return If the list is an non-empty list, returns <code>Maybe.just(f(head, tail))</code>; otherwise returns <code>Maybe.nothing()</code>.
-   */
-  @NotNull
-  public abstract <B> Maybe<B> decons(@NotNull F2<A, ImmutableList<A>, B> f);
-
-  /**
-   * Takes another list and feeds the elements of both lists to a function at the same pace, then collects the result and forms another list.
-   * Stops once either of the two lists came to an end.
-   * <p>
-   * Another way to visualize this operation is to imagine this operation as if it's zipping a zipper. taking two lists of things, merge them one by one,
-   * and collect the results.
-   *
-   * @param f    The function to apply
-   * @param list the other list to zip with <code>this</code>.
-   * @param <B>  The type of the element of the other list.
-   * @param <C>  The type of the result of the merging function.
-   * @return The return type of the merging function.
-   */
-  @NotNull
-  public abstract <B, C> ImmutableList<C> zipWith(@NotNull F2<A, B, C> f, @NotNull ImmutableList<B> list);
-
-  /**
-   * Converts this list into an array.
-   * <p>
-   * Due to type erasure, the type of the resulting array has to be determined at runtime. Fortunately, you can create a zero length array and this method
-   * can create an large enough array to contain all the elements. If the given array is large enough, this method will put elements in it.
-   *
-   * @param target The target array.
-   * @return The array that contains the elements. It may or may not be the same reference of <code>target</code>.
-   */
-  @SuppressWarnings("unchecked")
-  @NotNull
-  public final A[] toArray(@NotNull A[] target) {
-    int length = this.length;
-    if (target.length < length) {
-      // noinspection unchecked
-      target = (A[]) Array.newInstance(target.getClass().getComponentType(), length);
+        return l;
     }
-    ImmutableList<A> l = this;
-    for (int i = 0; i < length; i++) {
-      target[i] = l.maybeHead().just();
-      l = l.maybeTail().just();
+
+    /**
+     * Prepends "cons" an head element to a {@link ImmutableList}.
+     *
+     * @param head The head element to be prepended to the {@link ImmutableList}.
+     * @param tail The {@link ImmutableList} to be prepended to.
+     * @param <T>  The super type of both the element and the {@link ImmutableList}
+     * @return A {@link ImmutableList} that is comprised of the head then the tail.
+     */
+    public static <T> NonEmptyImmutableList<T> cons(@NotNull T head, @NotNull ImmutableList<T> tail) {
+        return new NonEmptyImmutableList<>(head, tail);
     }
-    return target;
-  }
 
-  /**
-   * Runs an effect function across all the elements.
-   *
-   * @param f The Effect function.
-   */
-  public final void foreach(@NotNull Effect<A> f) {
-    // Hand expanded recursion.
-    ImmutableList<A> list = this;
-    Maybe<A> head;
-    while ((head = list.maybeHead()).isJust()) {
-      f.e(head.just());
-      list = list.maybeTail().just();
+    // Construction
+
+    @SuppressWarnings("unchecked")
+    public static <T> ImmutableList<T> nil() {
+        return (ImmutableList<T>) NIL;
     }
-  }
 
-  public abstract boolean isEmpty();
-
-  /**
-   * Creates a list with the content of the current list followed by another list. If the current list is empty, simply return the second one.
-   *
-   * @param defaultClause The list to concatenate with. It will be reused as part of the returned list.
-   * @param <B>           The type of the resulting list.
-   * @return The concatenation of the two lists.
-   */
-  @NotNull
-  public abstract <B extends A> ImmutableList<A> append(@NotNull ImmutableList<B> defaultClause);
-
-  /**
-   * Tests all the elements in the {@link ImmutableList} with predicate <code>f</code> until it finds the element of reaches the end, then returns whether an element
-   * has been found or not.
-   *
-   * @param f The predicate.
-   * @return Whether an elements satisfies the predicate <code>f</code>.
-   */
-  public abstract boolean exists(@NotNull F<A, Boolean> f);
-
-  /**
-   * Separates the list into a pair of lists such that 1. the concatenation of the lists is equal to <code>this</code>; 2. The first list is the longest list
-   * that every element of the list fails the predicate <code>f</code>.
-   *
-   * @param f The predicate.
-   * @return The pair.
-   */
-  @NotNull
-  public abstract Pair<ImmutableList<A>, ImmutableList<A>> span(@NotNull F<A, Boolean> f);
-
-  /**
-   * A synonym of {@link #flatMap}.
-   *
-   * @param f   The function.
-   * @param <B> The type of result function.
-   * @return The result of bind.
-   */
-  @NotNull
-  public final <B> ImmutableList<B> bind(@NotNull F<A, ImmutableList<B>> f) {
-    return this.flatMap(f);
-  }
-
-  /**
-   * Apply <code>f</code> to each element of this list to get a list of lists (of not necessarily the same type), then concatenate all these lists to get a
-   * single list.
-   * <p>
-   * This operation can be thought of as a generalization of {@link #map} and {@link #filter}, which, instead of keeping the number of elements in the list,
-   * changes the number and type of the elements in an customizable way but keeps the original order.
-   * <p>
-   * This operation can also be thought of as an assembly line that takes one stream of input and returns another stream of output, but not necessarily of
-   * the
-   * same size, type or number.
-   * <p>
-   * This operation is often called "bind" or "&gt;&gt;=" of a monad in pure functional programming context.
-   *
-   * @param f   The function to expand the list element.
-   * @param <B> The type of the result list.
-   * @return The result list.
-   */
-  @NotNull
-  public abstract <B> ImmutableList<B> flatMap(@NotNull F<A, ImmutableList<B>> f);
-
-  public final boolean isNotEmpty() {
-    return !isEmpty();
-  }
-
-  /**
-   * Tests the elements of the list with a predicate <code>f</code> and returns the first one that satisfies the predicate without testing the rest of the
-   * list.
-   *
-   * @param f The predicate.
-   * @return <code>Maybe.just(the found element)</code> if an element is found or <code>Maybe.nothing()</code> if none is found.
-   */
-  @NotNull
-  public final Maybe<A> find(@NotNull F<A, Boolean> f) {
-    ImmutableList<A> self = this;
-    while (self instanceof NonEmptyImmutableList) {
-      NonEmptyImmutableList<A> selfNel = (NonEmptyImmutableList<A>) self;
-      boolean result = f.apply(selfNel.head);
-      if (result) {
-        return Maybe.just(selfNel.head);
-      }
-      self = selfNel.tail();
+    @SuppressWarnings("unchecked")
+    public static <T> ImmutableList<T> list() {
+        return (ImmutableList<T>) NIL;
     }
-    return Maybe.nothing();
-  }
 
-  /**
-   * Run <code>f</code> on each element of the list and return the result immediately if it is a
-   * <code>Maybe.just</code>. Other wise return <code>Maybe.nothing()</code>
-   *
-   * @param f The predicate.
-   * @param <B> The type of the result of the mapping function.
-   *
-   * @return <code>Maybe.just(the found element)</code> if an element is found or <code>Maybe.nothing()</code> if none is found.
-   */
-  @NotNull
-  public final <B> Maybe<B> findMap(@NotNull F<A, Maybe<B>> f) {
-    ImmutableList<A> self = this;
-    while (self instanceof NonEmptyImmutableList) {
-      NonEmptyImmutableList<A> selfNel = (NonEmptyImmutableList<A>) self;
-      Maybe<B> result = f.apply(selfNel.head);
-      if (result.isJust()) {
-        return result;
-      }
-      self = selfNel.tail();
+    /**
+     * A helper constructor to create a {@link NonEmptyImmutableList}.
+     *
+     * @param head The first element
+     * @param el   rest of the elements
+     * @param <T>  The type of the element
+     * @return a <code>NonEmptyImmutableList</code> of type <code>T</code>.
+     */
+    @NotNull
+    @SafeVarargs
+    public static <T> NonEmptyImmutableList<T> list(@NotNull T head, @NotNull T... el) {
+        if (el.length == 0) {
+            return cons(head, ImmutableList.nil());
+        }
+        NonEmptyImmutableList<T> l = cons(el[el.length - 1], ImmutableList.nil());
+        for (int i = el.length - 2; i >= 0; i--) {
+            l = cons(el[i], l);
+        }
+        return cons(head, l);
     }
-    return Maybe.nothing();
-  }
 
-  /**
-   * Creats a new list with all the elements but those satisfying the predicate.
-   *
-   * @param f The predicate.
-   * @return A new list of filtered elements.
-   */
-  @NotNull
-  public abstract ImmutableList<A> removeAll(@NotNull F<A, Boolean> f);
-
-  /**
-   * Reverses the list in linear time.
-   *
-   * @return Reversed list.
-   */
-  @NotNull
-  public abstract ImmutableList<A> reverse();
-
-  /**
-   * Patches the current list.
-   * Patching a list first takes the first <code>index</code> elements then concatenates it with <code>replacements</code> and then concatenates it with
-   * the original list dropping <code>index + patchLength</code> elements.
-   * <p>
-   * A visualization of this operation is to replace the <code>patchLength</code> elements in the list starting from <code>index</code> with a list of new
-   * elements given by <code>replacements</code>.
-   *
-   * @param index        The index to start patching.
-   * @param patchLength  The length to patch.
-   * @param replacements The replacements of the patch.
-   * @param <B>          The type of the replacements. It must be A or a subtype of A.
-   * @return The patched list.
-   */
-  @NotNull
-  public <B extends A> ImmutableList<A> patch(int index, int patchLength, @NotNull ImmutableList<B> replacements) {
-    return this.take(index).append(replacements).append(this.drop(index + patchLength));
-  }
-
-  /**
-   * <code>mapAccumL</code> performs {@link #map} and {@link #foldLeft} method at the same time. It is similar to {@link #foldLeft}, but instead of returning
-   * the
-   * new accumulation value, it also allows the user to return an extra value which will be collected and returned.
-   *
-   * @param f   The accumulation function.
-   * @param acc The initial value of the fold part.
-   * @param <B> The type of the initial value.
-   * @param <C> The type of the result of map.
-   * @return A pair of the accumulation value and a mapped list.
-   */
-  @NotNull
-  public abstract <B, C> Pair<B, ImmutableList<C>> mapAccumL(@NotNull F2<B, A, Pair<B, C>> f, @NotNull B acc);
-
-  /**
-   * Get the <code>index</code>th element of the list. It is comparable to the <code>[]</code> operator for array but instead of returning the element, it
-   * returns an <code>Maybe</code> to indicate whether the element can be found or not.
-   *
-   * @param index The index.
-   * @return <code>Maybe.just(found element)</code>if the element can be retrieved; or <code>Maybe.nothing()</code> if index out of range().
-   */
-  @NotNull
-  public final Maybe<A> index(int index) {
-    ImmutableList<A> l = this;
-    if (index < 0) {
-      return Maybe.nothing();
+    /**
+     * A helper constructor to create a potentially empty {@link ImmutableList}.
+     *
+     * @param el  Elements of the list
+     * @param <A> The type of elements
+     * @return a <code>ImmutableList</code> of type <code>A</code>.
+     */
+    @NotNull
+    @SafeVarargs
+    public static <A> ImmutableList<A> from(@NotNull A... el) {
+        if (el.length == 0) {
+            return nil();
+        }
+        NonEmptyImmutableList<A> l = cons(el[el.length - 1], ImmutableList.nil());
+        for (int i = el.length - 2; i >= 0; i--) {
+            l = cons(el[i], l);
+        }
+        return l;
     }
-    while (index > 0) {
-      if (l.isEmpty()) {
+
+    protected abstract int calcHashCode();
+
+    @Override
+    public final int hashCode() {
+        return this.hashCodeThunk.get();
+    }
+
+    @Override
+    public Iterator<A> iterator() {
+
+        return new Iterator<A>() {
+            private ImmutableList<A> curr = ImmutableList.this;
+
+            @Override
+            public boolean hasNext() {
+                return !this.curr.isEmpty();
+            }
+
+            @Override
+            public A next() {
+                if (this.curr.isEmpty()) {
+                    throw new NoSuchElementException();
+                }
+                A head = this.curr.maybeHead().just();
+                this.curr = this.curr.maybeTail().just();
+                return head;
+            }
+
+            @Override
+            public void remove() {
+                throw new UnsupportedOperationException();
+            }
+        };
+    }
+
+    // Methods
+
+    /**
+     * Prepend an element to the list.
+     *
+     * @param left The element to prepend.
+     * @return A list with <code>left</code> as the first element followed by <code>this</code>.
+     */
+    @NotNull
+    public final NonEmptyImmutableList<A> cons(@NotNull A left) {
+        return cons(left, this);
+    }
+
+    /**
+     * Classic "foldl" operation on the {@link ImmutableList}.
+     *
+     * @param f    The function.
+     * @param init The initial value.
+     * @param <B>  The type of the result of the folding.
+     * @return The result of the folder.
+     * @see <a href="http://en.wikipedia.org/wiki/Fold_(higher-order_function)#Folds_as_structural_transformations">http://en.wikipedia.org/wiki/Fold_
+     * (higher-order_function)</a>
+     */
+    @NotNull
+    public abstract <B> B foldLeft(@NotNull F2<B, ? super A, B> f, @NotNull B init);
+
+    /**
+     * Classic "foldr" operation on the {@link ImmutableList}.
+     *
+     * @param f    The function.
+     * @param init The initial value.
+     * @param <B>  The type of the result of the folding.
+     * @return The result of the folder.
+     * @see <a href="http://en.wikipedia.org/wiki/Fold_(higher-order_function)#Folds_as_structural_transformations">http://en.wikipedia.org/wiki/Fold_
+     * (higher-order_function)</a>
+     */
+    @NotNull
+    public abstract <B> B foldRight(@NotNull F2<? super A, B, B> f, @NotNull B init);
+
+    /**
+     * Returns the head of the {@link ImmutableList}.
+     *
+     * @return Maybe.just(head of the list), or Maybe.nothing() if the list is empty.
+     */
+    @NotNull
+    public abstract Maybe<A> maybeHead();
+
+    /**
+     * Returns the last of the {@link ImmutableList}.
+     *
+     * @return Maybe.just(last of the list), or Maybe.nothing() if the list is empty.
+     */
+    @NotNull
+    public abstract Maybe<A> maybeLast();
+
+    /**
+     * Returns the tail of the {@link ImmutableList}.
+     *
+     * @return Maybe.just(tail of the list), or Maybe.nothing() if the list is empty.
+     */
+    @NotNull
+    public abstract Maybe<ImmutableList<A>> maybeTail();
+
+    /**
+     * Returns the init of the {@link ImmutableList}. The init of a List is defined as the rest of
+     * List removing the last element.
+     *
+     * @return Maybe.just(init of the list), or Maybe.nothing() if the list is empty.
+     */
+    @NotNull
+    public abstract Maybe<ImmutableList<A>> maybeInit();
+
+    /**
+     * Returns a new list of elements when applying <code>f</code> to an element returns true.
+     *
+     * @param f The "predicate" function.
+     * @return A new list of elements that satisfies the predicate.
+     */
+    @NotNull
+    public abstract ImmutableList<A> filter(@NotNull F<A, Boolean> f);
+
+    /**
+     * Applies the <code>f</code> function to each of the elements of the list and collect the
+     * result. It will be a new list with the same length of the original one.
+     *
+     * @param f   The function to apply.
+     * @param <B> The type of the new {@link ImmutableList}.
+     * @return The new {@link ImmutableList} containing the result.
+     */
+    @NotNull
+    public abstract <B> ImmutableList<B> map(@NotNull F<A, B> f);
+
+    /**
+     * Applies the <code>f</code> function to each of the elements of the list and collect the
+     * result. This method also provides an extra index parameter to <code>f</code> function as the
+     * first parameter.
+     *
+     * @param f   The function to apply.
+     * @param <B> The type of the new {@link ImmutableList}.
+     * @return The new {@link ImmutableList} containing the result.
+     */
+    @NotNull
+    public abstract <B> ImmutableList<B> mapWithIndex(@NotNull F2<Integer, A, B> f);
+
+    /**
+     * The the first <code>n</code> elements of the list and create a new List of them. If the
+     * original list contains less than <code>n</code> elements, returns a copy of the original
+     * List.
+     *
+     * @param n The number of elements to take.
+     * @return A new list containing at most <code>n</code> elements that are the first elements of
+     * the original list.
+     */
+    @NotNull
+    public abstract ImmutableList<A> take(int n);
+
+    /**
+     * Removes the first <code>n</code> elements of the list and return the rest of the List by
+     * reference. If the original list contains less than <code>n</code> elements, returns an empty
+     * list as if it is returned by {@link #nil}.
+     *
+     * @param n The number of elements to skip.
+     * @return A shared list containing at most <code>n</code> elements removed from the original
+     * list.
+     */
+    @NotNull
+    public abstract ImmutableList<A> drop(int n);
+
+    /**
+     * Specialize this type to be a {@link NonEmptyImmutableList} if possible.
+     *
+     * @return Returns is <code>Maybe.just(this)</code> if this is indeed non-empty. Otherwise
+     * returns <code>Maybe.nothing()</code>.
+     */
+    @NotNull
+    public abstract Maybe<NonEmptyImmutableList<A>> toNonEmptyList();
+
+    /**
+     * Deconstruct the list in to its head and tail, and feed them into another function
+     * <code>f</code>.
+     *
+     * @param f   The function to receive the head and tail if they exist.
+     * @param <B> The return type of <code>f</code>
+     * @return If the list is an non-empty list, returns <code>Maybe.just(f(head, tail))</code>;
+     * otherwise returns <code>Maybe.nothing()</code>.
+     */
+    @NotNull
+    public abstract <B> Maybe<B> decons(@NotNull F2<A, ImmutableList<A>, B> f);
+
+    /**
+     * Takes another list and feeds the elements of both lists to a function at the same pace, then
+     * collects the result and forms another list. Stops once either of the two lists came to an
+     * end. <p> Another way to visualize this operation is to imagine this operation as if it's
+     * zipping a zipper. taking two lists of things, merge them one by one, and collect the
+     * results.
+     *
+     * @param f    The function to apply
+     * @param list the other list to zip with <code>this</code>.
+     * @param <B>  The type of the element of the other list.
+     * @param <C>  The type of the result of the merging function.
+     * @return The return type of the merging function.
+     */
+    @NotNull
+    public abstract <B, C> ImmutableList<C> zipWith(@NotNull F2<A, B, C> f, @NotNull ImmutableList<B> list);
+
+    /**
+     * Converts this list into an array. <p> Due to type erasure, the type of the resulting array
+     * has to be determined at runtime. Fortunately, you can create a zero length array and this
+     * method can create an large enough array to contain all the elements. If the given array is
+     * large enough, this method will put elements in it.
+     *
+     * @param target The target array.
+     * @return The array that contains the elements. It may or may not be the same reference of
+     * <code>target</code>.
+     */
+    @SuppressWarnings("unchecked")
+    @NotNull
+    public final A[] toArray(@NotNull A[] target) {
+        int length = this.length;
+        if (target.length < length) {
+            // noinspection unchecked
+            target = (A[]) Array.newInstance(target.getClass().getComponentType(), length);
+        }
+        ImmutableList<A> l = this;
+        for (int i = 0; i < length; i++) {
+            target[i] = l.maybeHead().just();
+            l = l.maybeTail().just();
+        }
+        return target;
+    }
+
+    /**
+     * Runs an effect function across all the elements.
+     *
+     * @param f The Effect function.
+     */
+    public final void foreach(@NotNull Effect<A> f) {
+        // Hand expanded recursion.
+        ImmutableList<A> list = this;
+        Maybe<A> head;
+        while ((head = list.maybeHead()).isJust()) {
+            f.e(head.just());
+            list = list.maybeTail().just();
+        }
+    }
+
+    public abstract boolean isEmpty();
+
+    /**
+     * Creates a list with the content of the current list followed by another list. If the current
+     * list is empty, simply return the second one.
+     *
+     * @param defaultClause The list to concatenate with. It will be reused as part of the returned
+     *                      list.
+     * @param <B>           The type of the resulting list.
+     * @return The concatenation of the two lists.
+     */
+    @NotNull
+    public abstract <B extends A> ImmutableList<A> append(@NotNull ImmutableList<B> defaultClause);
+
+    /**
+     * Tests all the elements in the {@link ImmutableList} with predicate <code>f</code> until it
+     * finds the element of reaches the end, then returns whether an element has been found or not.
+     *
+     * @param f The predicate.
+     * @return Whether an elements satisfies the predicate <code>f</code>.
+     */
+    public abstract boolean exists(@NotNull F<A, Boolean> f);
+
+    /**
+     * Separates the list into a pair of lists such that 1. the concatenation of the lists is equal
+     * to <code>this</code>; 2. The first list is the longest list that every element of the list
+     * fails the predicate <code>f</code>.
+     *
+     * @param f The predicate.
+     * @return The pair.
+     */
+    @NotNull
+    public abstract Pair<ImmutableList<A>, ImmutableList<A>> span(@NotNull F<A, Boolean> f);
+
+    /**
+     * A synonym of {@link #flatMap}.
+     *
+     * @param f   The function.
+     * @param <B> The type of result function.
+     * @return The result of bind.
+     */
+    @NotNull
+    public final <B> ImmutableList<B> bind(@NotNull F<A, ImmutableList<B>> f) {
+        return this.flatMap(f);
+    }
+
+    /**
+     * Apply <code>f</code> to each element of this list to get a list of lists (of not necessarily
+     * the same type), then concatenate all these lists to get a single list. <p> This operation can
+     * be thought of as a generalization of {@link #map} and {@link #filter}, which, instead of
+     * keeping the number of elements in the list, changes the number and type of the elements in an
+     * customizable way but keeps the original order. <p> This operation can also be thought of as
+     * an assembly line that takes one stream of input and returns another stream of output, but not
+     * necessarily of the same size, type or number. <p> This operation is often called "bind" or
+     * "&gt;&gt;=" of a monad in pure functional programming context.
+     *
+     * @param f   The function to expand the list element.
+     * @param <B> The type of the result list.
+     * @return The result list.
+     */
+    @NotNull
+    public abstract <B> ImmutableList<B> flatMap(@NotNull F<A, ImmutableList<B>> f);
+
+    public final boolean isNotEmpty() {
+        return !isEmpty();
+    }
+
+    /**
+     * Tests the elements of the list with a predicate <code>f</code> and returns the first one that
+     * satisfies the predicate without testing the rest of the list.
+     *
+     * @param f The predicate.
+     * @return <code>Maybe.just(the found element)</code> if an element is found or
+     * <code>Maybe.nothing()</code> if none is found.
+     */
+    @NotNull
+    public final Maybe<A> find(@NotNull F<A, Boolean> f) {
+        ImmutableList<A> self = this;
+        while (self instanceof NonEmptyImmutableList) {
+            NonEmptyImmutableList<A> selfNel = (NonEmptyImmutableList<A>) self;
+            boolean result = f.apply(selfNel.head);
+            if (result) {
+                return Maybe.just(selfNel.head);
+            }
+            self = selfNel.tail();
+        }
         return Maybe.nothing();
-      }
-      index--;
-      l = l.maybeTail().just();
     }
-    return l.maybeHead();
-  }
 
-  @Override
-  public abstract boolean equals(Object o);
+    /**
+     * Run <code>f</code> on each element of the list and return the result immediately if it is a
+     * <code>Maybe.just</code>. Other wise return <code>Maybe.nothing()</code>
+     *
+     * @param f   The predicate.
+     * @param <B> The type of the result of the mapping function.
+     * @return <code>Maybe.just(the found element)</code> if an element is found or
+     * <code>Maybe.nothing()</code> if none is found.
+     */
+    @NotNull
+    public final <B> Maybe<B> findMap(@NotNull F<A, Maybe<B>> f) {
+        ImmutableList<A> self = this;
+        while (self instanceof NonEmptyImmutableList) {
+            NonEmptyImmutableList<A> selfNel = (NonEmptyImmutableList<A>) self;
+            Maybe<B> result = f.apply(selfNel.head);
+            if (result.isJust()) {
+                return result;
+            }
+            self = selfNel.tail();
+        }
+        return Maybe.nothing();
+    }
+
+    /**
+     * Creats a new list with all the elements but those satisfying the predicate.
+     *
+     * @param f The predicate.
+     * @return A new list of filtered elements.
+     */
+    @NotNull
+    public abstract ImmutableList<A> removeAll(@NotNull F<A, Boolean> f);
+
+    /**
+     * Reverses the list in linear time.
+     *
+     * @return Reversed list.
+     */
+    @NotNull
+    public abstract ImmutableList<A> reverse();
+
+    /**
+     * Patches the current list. Patching a list first takes the first <code>index</code> elements
+     * then concatenates it with <code>replacements</code> and then concatenates it with the
+     * original list dropping <code>index + patchLength</code> elements. <p> A visualization of this
+     * operation is to replace the <code>patchLength</code> elements in the list starting from
+     * <code>index</code> with a list of new elements given by <code>replacements</code>.
+     *
+     * @param index        The index to start patching.
+     * @param patchLength  The length to patch.
+     * @param replacements The replacements of the patch.
+     * @param <B>          The type of the replacements. It must be A or a subtype of A.
+     * @return The patched list.
+     */
+    @NotNull
+    public <B extends A> ImmutableList<A> patch(int index, int patchLength, @NotNull ImmutableList<B> replacements) {
+        return this.take(index).append(replacements).append(this.drop(index + patchLength));
+    }
+
+    /**
+     * <code>mapAccumL</code> performs {@link #map} and {@link #foldLeft} method at the same time.
+     * It is similar to {@link #foldLeft}, but instead of returning the new accumulation value, it
+     * also allows the user to return an extra value which will be collected and returned.
+     *
+     * @param f   The accumulation function.
+     * @param acc The initial value of the fold part.
+     * @param <B> The type of the initial value.
+     * @param <C> The type of the result of map.
+     * @return A pair of the accumulation value and a mapped list.
+     */
+    @NotNull
+    public abstract <B, C> Pair<B, ImmutableList<C>> mapAccumL(@NotNull F2<B, A, Pair<B, C>> f, @NotNull B acc);
+
+    /**
+     * Get the <code>index</code>th element of the list. It is comparable to the <code>[]</code>
+     * operator for array but instead of returning the element, it returns an <code>Maybe</code> to
+     * indicate whether the element can be found or not.
+     *
+     * @param index The index.
+     * @return <code>Maybe.just(found element)</code>if the element can be retrieved; or
+     * <code>Maybe.nothing()</code> if index out of range().
+     */
+    @NotNull
+    public final Maybe<A> index(int index) {
+        ImmutableList<A> l = this;
+        if (index < 0) {
+            return Maybe.nothing();
+        }
+        while (index > 0) {
+            if (l.isEmpty()) {
+                return Maybe.nothing();
+            }
+            index--;
+            l = l.maybeTail().just();
+        }
+        return l.maybeHead();
+    }
+
+    @Override
+    public abstract boolean equals(Object o);
 }
 

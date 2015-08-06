@@ -6,6 +6,7 @@ import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.functional.data.Maybe;
 import com.shapesecurity.functional.data.Monoid;
 import com.shapesecurity.shift.ast.*;
+
 import org.jetbrains.annotations.NotNull;
 
 public class ComposedMonoidalReducer<A, B> extends MonoidalReducer<Pair<A, B>> {

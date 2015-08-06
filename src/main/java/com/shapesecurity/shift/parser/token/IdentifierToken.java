@@ -23,17 +23,17 @@ import org.jetbrains.annotations.NotNull;
 
 public class IdentifierToken extends IdentifierLikeToken {
 
-  @NotNull
-  private final CharSequence name;
+    @NotNull
+    private final CharSequence name;
 
-  public IdentifierToken(@NotNull SourceRange slice, @NotNull CharSequence name) {
-    super(TokenType.IDENTIFIER, slice);
-    this.name = name;
-  }
+    public IdentifierToken(@NotNull SourceRange slice, @NotNull CharSequence name) {
+        super(TokenType.IDENTIFIER, slice);
+        this.name = name;
+    }
 
-  @Override
-  @NotNull
-  public String toString() {
-    return String.valueOf(this.name);
-  }
+    @Override
+    @NotNull
+    public String toString() {
+        return String.valueOf(this.name);
+    }
 }

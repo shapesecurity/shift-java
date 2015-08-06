@@ -17,37 +17,37 @@
 package com.shapesecurity.shift.parser;
 
 public class JsError extends Exception {
-  private static final long serialVersionUID = -5526903161079226322L;
-  private final int index, line, column;
-  private final String description;
+    private static final long serialVersionUID = -5526903161079226322L;
+    private final int index, line, column;
+    private final String description;
 
-  public JsError(int index, int line, int column, String description) {
-    super();
-    this.index = index;
-    this.line = line;
-    this.column = column;
-    this.description = description;
-  }
+    public JsError(int index, int line, int column, String description) {
+        super();
+        this.index = index;
+        this.line = line;
+        this.column = column;
+        this.description = description;
+    }
 
-  public int getIndex() {
-    return this.index;
-  }
+    public int getIndex() {
+        return this.index;
+    }
 
-  public int getLine() {
-    return this.line;
-  }
+    public int getLine() {
+        return this.line;
+    }
 
-  public int getColumn() {
-    return this.column;
-  }
+    public int getColumn() {
+        return this.column;
+    }
 
-  public String getDescription() {
-    return this.description;
-  }
+    public String getDescription() {
+        return this.description;
+    }
 
-  @Override
-  public String getMessage() {
-    return String.format("JavaScript error: Line %d Column %d (Index = %d), %s.", this.line, this.column, this.index,
-        this.description);
-  }
+    @Override
+    public String getMessage() {
+        return String.format("JavaScript error: Line %d Column %d (Index = %d), %s.", this.line, this.column, this.index,
+                this.description);
+    }
 }

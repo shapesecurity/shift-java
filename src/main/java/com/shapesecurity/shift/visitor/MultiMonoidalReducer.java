@@ -3,6 +3,7 @@ package com.shapesecurity.shift.visitor;
 import com.shapesecurity.functional.Pair;
 import com.shapesecurity.functional.data.FreePairingMonoid;
 import com.shapesecurity.functional.data.Monoid;
+
 import org.jetbrains.annotations.NotNull;
 
 public class MultiMonoidalReducer<A, B> extends MonoidalReducer<Pair<A, B>> {

@@ -1,6 +1,7 @@
 package com.shapesecurity.functional.data;
 
 import com.shapesecurity.functional.Pair;
+
 import org.jetbrains.annotations.NotNull;
 
 public final class FreePairingMonoid<A, B> implements Monoid<Pair<A, B>> {

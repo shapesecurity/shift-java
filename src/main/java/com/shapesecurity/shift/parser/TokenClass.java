@@ -19,27 +19,27 @@ package com.shapesecurity.shift.parser;
 import org.jetbrains.annotations.NotNull;
 
 public enum TokenClass {
-  BooleanLiteral("Boolean"),
-  Eof("<End>"),
-  Ident("Identifier"),
-  Keyword("Keyword"),
-  NullLiteral("Null"),
-  NumericLiteral("Numeric"),
-  Punctuator("Punctuator"),
-  StringLiteral("String"),
-  RegularExpression("RegularExpression"),
-  LineComment("Line"),
-  BlockComment("Block"),
-  Illegal("Illegal"),
-  TemplateElement("Template");
-  private final String name;
+    BooleanLiteral("Boolean"),
+    Eof("<End>"),
+    Ident("Identifier"),
+    Keyword("Keyword"),
+    NullLiteral("Null"),
+    NumericLiteral("Numeric"),
+    Punctuator("Punctuator"),
+    StringLiteral("String"),
+    RegularExpression("RegularExpression"),
+    LineComment("Line"),
+    BlockComment("Block"),
+    Illegal("Illegal"),
+    TemplateElement("Template");
+    private final String name;
 
-  private TokenClass(String name) {
-    this.name = name;
-  }
+    private TokenClass(String name) {
+        this.name = name;
+    }
 
-  @NotNull
-  public String getName() {
-    return this.name;
-  }
+    @NotNull
+    public String getName() {
+        return this.name;
+    }
 }

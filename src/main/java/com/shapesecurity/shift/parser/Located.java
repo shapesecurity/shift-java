@@ -23,15 +23,15 @@ import org.jetbrains.annotations.Nullable;
 
 public class Located {
 
-  @Nullable
-  private SourceLocation loc;
+    @Nullable
+    private SourceLocation loc;
 
-  void setLoc(@NotNull SourceLocation loc) {
-    this.loc = loc;
-  }
+    void setLoc(@NotNull SourceLocation loc) {
+        this.loc = loc;
+    }
 
-  @Nullable
-  public SourceLocation getLoc() {
-    return loc;
-  }
+    @Nullable
+    public SourceLocation getLoc() {
+        return loc;
+    }
 }

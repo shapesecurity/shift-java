@@ -21,59 +21,59 @@ import com.shapesecurity.functional.Unit;
 import org.jetbrains.annotations.NotNull;
 
 public interface Monoid<T> extends Semigroup<T> {
-  public static final UnitIdentity UNIT = new UnitIdentity();
-  public static final IntegerAdditive INTEGER_ADDITIVE = new IntegerAdditive();
-  public static final IntegerMultiplicative INTEGER_MULTIPLICATIVE = new IntegerMultiplicative();
-  public static final StringConcat STRING_CONCAT = new StringConcat();
-
-  @NotNull
-  T identity();
-
-  public static class UnitIdentity extends Semigroup.UnitIdentity implements Monoid<Unit> {
-    protected UnitIdentity() {
-      super();
-    }
+    public static final UnitIdentity UNIT = new UnitIdentity();
+    public static final IntegerAdditive INTEGER_ADDITIVE = new IntegerAdditive();
+    public static final IntegerMultiplicative INTEGER_MULTIPLICATIVE = new IntegerMultiplicative();
+    public static final StringConcat STRING_CONCAT = new StringConcat();
 
     @NotNull
-    @Override
-    public final Unit identity() {
-      return Unit.unit;
-    }
-  }
+    T identity();
 
-  public static class IntegerAdditive extends Semigroup.IntegerAdditive implements Monoid<Integer> {
-    protected IntegerAdditive() {
-      super();
-    }
+    public static class UnitIdentity extends Semigroup.UnitIdentity implements Monoid<Unit> {
+        protected UnitIdentity() {
+            super();
+        }
 
-    @NotNull
-    @Override
-    public final Integer identity() {
-      return 0;
-    }
-  }
-
-  public static class IntegerMultiplicative extends Semigroup.IntegerMultiplicative implements Monoid<Integer> {
-    protected IntegerMultiplicative() {
-      super();
+        @NotNull
+        @Override
+        public final Unit identity() {
+            return Unit.unit;
+        }
     }
 
-    @NotNull
-    @Override
-    public final Integer identity() {
-      return 1;
-    }
-  }
+    public static class IntegerAdditive extends Semigroup.IntegerAdditive implements Monoid<Integer> {
+        protected IntegerAdditive() {
+            super();
+        }
 
-  public static class StringConcat extends Semigroup.StringConcat implements Monoid<String> {
-    protected StringConcat() {
-      super();
+        @NotNull
+        @Override
+        public final Integer identity() {
+            return 0;
+        }
     }
 
-    @NotNull
-    @Override
-    public final String identity() {
-      return "";
+    public static class IntegerMultiplicative extends Semigroup.IntegerMultiplicative implements Monoid<Integer> {
+        protected IntegerMultiplicative() {
+            super();
+        }
+
+        @NotNull
+        @Override
+        public final Integer identity() {
+            return 1;
+        }
     }
-  }
+
+    public static class StringConcat extends Semigroup.StringConcat implements Monoid<String> {
+        protected StringConcat() {
+            super();
+        }
+
+        @NotNull
+        @Override
+        public final String identity() {
+            return "";
+        }
+    }
 }

@@ -29,91 +29,91 @@ import org.junit.Test;
 import org.jetbrains.annotations.NotNull;
 
 public class NonEmptyImmutableListTest extends TestBase {
-  // Helpers
+    // Helpers
 
-  private void testWithSpecialLists(@NotNull Effect<NonEmptyImmutableList<Integer>> f) {
-    f.apply(ImmutableList.list(0));
-    f.apply(ImmutableList.list(0, 1, 2));
-    f.apply(ImmutableList.list(3, 2, 1));
-    f.apply(LONG_LIST);
-  }
+    private void testWithSpecialLists(@NotNull Effect<NonEmptyImmutableList<Integer>> f) {
+        f.apply(ImmutableList.list(0));
+        f.apply(ImmutableList.list(0, 1, 2));
+        f.apply(ImmutableList.list(3, 2, 1));
+        f.apply(LONG_LIST);
+    }
 
-  private void testLengthOneGreaterThanTail(NonEmptyImmutableList<Integer> list) {
-    assertEquals(list.length, 1 + list.tail().length);
-  }
+    private void testLengthOneGreaterThanTail(NonEmptyImmutableList<Integer> list) {
+        assertEquals(list.length, 1 + list.tail().length);
+    }
 
-  // Tests
+    // Tests
 
-  // static
+    // static
 
-  @Test
-  public void testList() {
-    int a = rand();
-    NonEmptyImmutableList<Integer> list = ImmutableList.list(a);
-    assertEquals(list.length, 1);
-    assertEquals(list.head.intValue(), a);
-    assertEquals(list.tail(), ImmutableList.<Integer>nil());
-  }
+    @Test
+    public void testList() {
+        int a = rand();
+        NonEmptyImmutableList<Integer> list = ImmutableList.list(a);
+        assertEquals(list.length, 1);
+        assertEquals(list.head.intValue(), a);
+        assertEquals(list.tail(), ImmutableList.<Integer>nil());
+    }
 
-  @Test
-  public void testExists() {
-    NonEmptyImmutableList<Integer> list = ImmutableList.list(1, 2, 3);
-    assertTrue(list.exists((x) -> x == 2));
-    assertFalse(list.exists((x) -> x == 4));
-  }
+    @Test
+    public void testExists() {
+        NonEmptyImmutableList<Integer> list = ImmutableList.list(1, 2, 3);
+        assertTrue(list.exists((x) -> x == 2));
+        assertFalse(list.exists((x) -> x == 4));
+    }
 
-  // non-static
+    // non-static
 
-  @Test
-  public void testHeadTail() {
-    testWithSpecialLists(this::testHeadTail);
-  }
+    @Test
+    public void testHeadTail() {
+        testWithSpecialLists(this::testHeadTail);
+    }
 
-  private void testHeadTail(NonEmptyImmutableList<Integer> list) {
-    int a = rand();
-    assertEquals(list.maybeHead().just(), list.head);
-    assertEquals(list.maybeTail().just(), list.tail());
-    assertEquals(ImmutableList.cons(a, list).tail(), list);
-    assertEquals(Integer.valueOf(a), ImmutableList.cons(a, list).head);
-  }
+    private void testHeadTail(NonEmptyImmutableList<Integer> list) {
+        int a = rand();
+        assertEquals(list.maybeHead().just(), list.head);
+        assertEquals(list.maybeTail().just(), list.tail());
+        assertEquals(ImmutableList.cons(a, list).tail(), list);
+        assertEquals(Integer.valueOf(a), ImmutableList.cons(a, list).head);
+    }
 
-  @Test
-  public void testLengthOneGreaterThanTail() {
-    testWithSpecialLists(this::testLengthOneGreaterThanTail);
-  }
+    @Test
+    public void testLengthOneGreaterThanTail() {
+        testWithSpecialLists(this::testLengthOneGreaterThanTail);
+    }
 
-  @Test
-  public void testEquals() {
-    testWithSpecialLists(this::testEquals);
-  }
+    @Test
+    public void testEquals() {
+        testWithSpecialLists(this::testEquals);
+    }
 
-  public void testEquals(NonEmptyImmutableList<Integer> list) {
-    assertEquals(list, list);
-    assertNotEquals(list, ImmutableList.<Integer>nil());
-  }
+    public void testEquals(NonEmptyImmutableList<Integer> list) {
+        assertEquals(list, list);
+        assertNotEquals(list, ImmutableList.<Integer>nil());
+    }
 
-  @Test
-  public void testReverse() {
-    assertEquals(ImmutableList.nil().reverse(), ImmutableList.nil());
-    assertEquals(ImmutableList.list(1).reverse(), ImmutableList.list(1));
-    assertEquals(ImmutableList.list(1, 2, 3).reverse(), ImmutableList.list(3, 2, 1));
-  }
+    @Test
+    public void testReverse() {
+        assertEquals(ImmutableList.nil().reverse(), ImmutableList.nil());
+        assertEquals(ImmutableList.list(1).reverse(), ImmutableList.list(1));
+        assertEquals(ImmutableList.list(1, 2, 3).reverse(), ImmutableList.list(3, 2, 1));
+    }
 
-  @Test
-  public void testLast() {
-    testWithSpecialLists(this::testLast);
-  }
+    @Test
+    public void testLast() {
+        testWithSpecialLists(this::testLast);
+    }
 
-  private void testLast(NonEmptyImmutableList<Integer> list) {
-    assertEquals(list.last(), list.index(list.length - 1).just());
-  }
+    private void testLast(NonEmptyImmutableList<Integer> list) {
+        assertEquals(list.last(), list.index(list.length - 1).just());
+    }
 
-  @Test
-  public void testInit() {
-    testWithSpecialLists(this::testInit);
-  }
+    @Test
+    public void testInit() {
+        testWithSpecialLists(this::testInit);
+    }
 
-  private void testInit(NonEmptyImmutableList<Integer> list) {
-    assertEquals(list.init(), list.take(list.length - 1));
-  }
+    private void testInit(NonEmptyImmutableList<Integer> list) {
+        assertEquals(list.init(), list.take(list.length - 1));
+    }
 }

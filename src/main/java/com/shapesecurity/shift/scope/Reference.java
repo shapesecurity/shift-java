@@ -19,37 +19,38 @@ package com.shapesecurity.shift.scope;
 import com.shapesecurity.functional.data.Either;
 import com.shapesecurity.shift.ast.BindingIdentifier;
 import com.shapesecurity.shift.ast.IdentifierExpression;
+
 import org.jetbrains.annotations.NotNull;
 
 public final class Reference {
-  @NotNull
-  public final Either<BindingIdentifier, IdentifierExpression> node; // TODO should be EitherNode?
-  @NotNull
-  public final Accessibility accessibility;
+    @NotNull
+    public final Either<BindingIdentifier, IdentifierExpression> node; // TODO should be EitherNode?
+    @NotNull
+    public final Accessibility accessibility;
 
-  public Reference(@NotNull Either<BindingIdentifier, IdentifierExpression> node, @NotNull Accessibility accessibility) {
-    this.node = node;
-    this.accessibility = accessibility;
-  }
+    public Reference(@NotNull Either<BindingIdentifier, IdentifierExpression> node, @NotNull Accessibility accessibility) {
+        this.node = node;
+        this.accessibility = accessibility;
+    }
 
-  public Reference(@NotNull BindingIdentifier node, @NotNull Accessibility accessibility) {
-    this.node = Either.left(node);
-    this.accessibility = accessibility;
-  }
+    public Reference(@NotNull BindingIdentifier node, @NotNull Accessibility accessibility) {
+        this.node = Either.left(node);
+        this.accessibility = accessibility;
+    }
 
-  public Reference(@NotNull IdentifierExpression node) {
-    this.node = Either.right(node);
-    this.accessibility = Accessibility.Read;
-  }
+    public Reference(@NotNull IdentifierExpression node) {
+        this.node = Either.right(node);
+        this.accessibility = Accessibility.Read;
+    }
 
 
-  @NotNull
-  public final Reference withReadability() {
-    return new Reference(this.node, this.accessibility.withReadability());
-  }
+    @NotNull
+    public final Reference withReadability() {
+        return new Reference(this.node, this.accessibility.withReadability());
+    }
 
-  @NotNull
-  public final Reference withWritability() {
-    return new Reference(this.node, this.accessibility.withWritability());
-  }
+    @NotNull
+    public final Reference withWritability() {
+        return new Reference(this.node, this.accessibility.withWritability());
+    }
 }
