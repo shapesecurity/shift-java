@@ -24,6 +24,7 @@ import com.shapesecurity.shift.ast.BindingIdentifier;
 import com.shapesecurity.shift.ast.FunctionDeclaration;
 import com.shapesecurity.shift.ast.IdentifierExpression;
 import com.shapesecurity.shift.ast.Node;
+
 import org.jetbrains.annotations.NotNull;
 
 public class GlobalScope extends Scope {

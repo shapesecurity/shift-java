@@ -2,6 +2,7 @@ package com.shapesecurity.shift.serialization;
 
 import com.shapesecurity.shift.ast.Node;
 import com.shapesecurity.shift.fuzzer.Fuzzer;
+
 import org.junit.Test;
 
 import java.util.Random;

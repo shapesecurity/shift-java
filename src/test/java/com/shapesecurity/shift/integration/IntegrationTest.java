@@ -11,6 +11,7 @@ import com.shapesecurity.shift.parser.Parser;
 import com.shapesecurity.shift.serialization.Serializer;
 import com.shapesecurity.shift.validator.ValidationError;
 import com.shapesecurity.shift.validator.Validator;
+
 import org.junit.Test;
 
 import java.util.Random;

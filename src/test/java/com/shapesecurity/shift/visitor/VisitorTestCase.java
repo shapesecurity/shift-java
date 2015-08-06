@@ -1,6 +1,7 @@
 package com.shapesecurity.shift.visitor;
 
 import junit.framework.TestCase;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;

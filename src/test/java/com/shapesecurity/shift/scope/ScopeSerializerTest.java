@@ -3,7 +3,9 @@ package com.shapesecurity.shift.scope;
 import com.shapesecurity.shift.ast.Script;
 import com.shapesecurity.shift.parser.JsError;
 import com.shapesecurity.shift.parser.Parser;
+
 import junit.framework.TestCase;
+
 import org.junit.Test;
 
 public class ScopeSerializerTest {

@@ -4,6 +4,7 @@ import com.shapesecurity.shift.ast.LiteralRegExpExpression;
 import com.shapesecurity.shift.ast.StaticMemberExpression;
 import com.shapesecurity.shift.parser.JsError;
 import com.shapesecurity.shift.parser.ParserTestCase;
+
 import org.junit.Test;
 
 public class LiteralRegExpExpressionTest extends ParserTestCase {

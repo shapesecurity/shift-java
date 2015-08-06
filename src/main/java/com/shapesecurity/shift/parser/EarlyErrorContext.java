@@ -3,8 +3,10 @@ package com.shapesecurity.shift.parser;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multiset;
+
 import com.shapesecurity.functional.data.Monoid;
 import com.shapesecurity.shift.ast.*;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.InvocationTargetException;

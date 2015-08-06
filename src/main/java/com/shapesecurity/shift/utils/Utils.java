@@ -17,6 +17,7 @@
 package com.shapesecurity.shift.utils;
 
 import com.shapesecurity.functional.data.ImmutableList;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;

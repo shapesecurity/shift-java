@@ -8,6 +8,7 @@ import com.shapesecurity.shift.ast.ImportNamespace;
 import com.shapesecurity.shift.ast.ImportSpecifier;
 import com.shapesecurity.shift.parser.ParserTestCase;
 import com.shapesecurity.shift.parser.JsError;
+
 import org.junit.Test;
 
 public class ImportTest extends ParserTestCase {

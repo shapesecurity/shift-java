@@ -19,6 +19,7 @@ package com.shapesecurity.shift.validator;
 import com.shapesecurity.functional.data.Monoid;
 import com.shapesecurity.shift.ast.BindingIdentifier;
 import com.shapesecurity.shift.ast.ReturnStatement;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;

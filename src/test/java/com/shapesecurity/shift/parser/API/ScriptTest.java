@@ -4,6 +4,7 @@ import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.shift.ast.Script;
 import com.shapesecurity.shift.parser.ParserTestCase;
 import com.shapesecurity.shift.parser.JsError;
+
 import org.junit.Test;
 
 public class ScriptTest extends ParserTestCase {

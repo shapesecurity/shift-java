@@ -6,6 +6,7 @@ import com.shapesecurity.shift.ast.IdentifierExpression;
 import com.shapesecurity.shift.ast.operators.BinaryOperator;
 import com.shapesecurity.shift.parser.ParserTestCase;
 import com.shapesecurity.shift.parser.JsError;
+
 import org.junit.Test;
 
 public class ExpressionStatementTest extends ParserTestCase {

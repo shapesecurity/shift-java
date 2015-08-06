@@ -3,6 +3,7 @@ package com.shapesecurity.shift.parser.token;
 import com.shapesecurity.shift.parser.SourceRange;
 import com.shapesecurity.shift.parser.Token;
 import com.shapesecurity.shift.parser.TokenType;
+
 import org.jetbrains.annotations.NotNull;
 
 public final class TemplateToken extends Token {

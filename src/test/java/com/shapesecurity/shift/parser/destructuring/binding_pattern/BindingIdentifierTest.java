@@ -6,6 +6,7 @@ import com.shapesecurity.shift.ast.ForInStatement;
 import com.shapesecurity.shift.ast.LiteralNumericExpression;
 import com.shapesecurity.shift.parser.ParserTestCase;
 import com.shapesecurity.shift.parser.JsError;
+
 import org.junit.Test;
 
 public class BindingIdentifierTest extends ParserTestCase {

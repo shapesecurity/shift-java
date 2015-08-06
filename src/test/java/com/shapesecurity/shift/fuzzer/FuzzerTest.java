@@ -19,7 +19,9 @@ package com.shapesecurity.shift.fuzzer;
 
 import com.shapesecurity.shift.ast.Node;
 import com.shapesecurity.shift.parser.JsError;
+
 import junit.framework.TestCase;
+
 import org.junit.Test;
 
 import java.util.Random;

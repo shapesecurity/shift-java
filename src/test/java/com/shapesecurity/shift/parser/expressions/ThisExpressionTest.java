@@ -2,6 +2,7 @@ package com.shapesecurity.shift.parser.expressions;
 
 import com.shapesecurity.shift.parser.ParserTestCase;
 import com.shapesecurity.shift.parser.JsError;
+
 import org.junit.Test;
 
 import com.shapesecurity.shift.ast.*;

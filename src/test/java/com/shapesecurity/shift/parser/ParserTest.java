@@ -20,6 +20,7 @@ import com.shapesecurity.shift.ast.ExpressionStatement;
 import com.shapesecurity.shift.ast.Script;
 import com.shapesecurity.shift.ast.Statement;
 import com.shapesecurity.shift.ast.ThisExpression;
+
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;

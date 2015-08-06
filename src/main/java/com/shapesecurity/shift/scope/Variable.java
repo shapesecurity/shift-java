@@ -17,6 +17,7 @@
 package com.shapesecurity.shift.scope;
 
 import com.shapesecurity.functional.data.ImmutableList;
+
 import org.jetbrains.annotations.NotNull;
 
 public class Variable {

@@ -4,6 +4,7 @@ import com.shapesecurity.shift.ast.IdentifierExpression;
 import com.shapesecurity.shift.ast.StaticMemberExpression;
 import com.shapesecurity.shift.parser.ParserTestCase;
 import com.shapesecurity.shift.parser.JsError;
+
 import org.junit.Test;
 
 public class StaticMemberExpressionTest extends ParserTestCase {

@@ -19,6 +19,7 @@ package com.shapesecurity.shift.visitor;
 import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.functional.data.Maybe;
 import com.shapesecurity.shift.ast.*;
+
 import org.jetbrains.annotations.NotNull;
 
 public interface Reducer<State> {

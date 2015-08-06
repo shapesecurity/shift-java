@@ -18,6 +18,7 @@ package com.shapesecurity.shift.visitor;
 
 import com.shapesecurity.functional.data.*;
 import com.shapesecurity.shift.ast.*;
+
 import org.jetbrains.annotations.NotNull;
 
 public class MonoidalReducer<State> implements Reducer<State> {

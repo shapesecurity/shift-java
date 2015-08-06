@@ -21,6 +21,7 @@ import com.shapesecurity.functional.data.ImmutableList;
 import java.util.Random;
 
 import com.shapesecurity.shift.ast.IdentifierExpression;
+
 import org.jetbrains.annotations.NotNull;
 
 class GenCtx {

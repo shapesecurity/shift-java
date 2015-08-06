@@ -21,6 +21,7 @@ import com.shapesecurity.functional.data.Maybe;
 import com.shapesecurity.shift.ast.*;
 import com.shapesecurity.shift.parser.JsError;
 import com.shapesecurity.shift.parser.Parser;
+
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 
