@@ -17,6 +17,7 @@
 package com.shapesecurity.shift.validator;
 
 import com.shapesecurity.functional.data.Monoid;
+import com.shapesecurity.shift.ast.BindingIdentifier;
 import com.shapesecurity.shift.ast.ReturnStatement;
 import org.jetbrains.annotations.NotNull;
 
@@ -33,19 +34,26 @@ public class ValidationContext {
   @NotNull
   private final List<ReturnStatement> freeReturnStatements;
 
+  @NotNull
+  private final List<BindingIdentifier> bindingIdentifiersCalledDefault;
+
+
   public ValidationContext() {
     this(
       new ArrayList<>(), // errors
-      new ArrayList<>() // freeReturnStatements
+      new ArrayList<>(), // freeReturnStatements
+      new ArrayList<>() // bindingIdentifiersCalledDefault
     );
   }
 
   private ValidationContext(
     @NotNull List<ValidationError> errors,
-    @NotNull List<ReturnStatement> freeReturnStatements
+    @NotNull List<ReturnStatement> freeReturnStatements,
+    @NotNull List<BindingIdentifier> bindingIdentifiersCalledDefault
   ) {
     this.errors = errors;
     this.freeReturnStatements = freeReturnStatements;
+    this.bindingIdentifiersCalledDefault = bindingIdentifiersCalledDefault;
   }
 
   public void addFreeReturnStatement(@NotNull ReturnStatement node) {
@@ -61,6 +69,19 @@ public class ValidationContext {
     this.freeReturnStatements.clear();
   }
 
+  public void addBindingIdentifierCalledDefault(@NotNull BindingIdentifier node) {
+    this.bindingIdentifiersCalledDefault.add(node);
+  }
+
+  public void enforceBindingIdentifiersCalledDefault(Function<BindingIdentifier, ValidationError> createError) {
+    this.bindingIdentifiersCalledDefault.stream().map(createError::apply).forEach(this::addError);
+    this.bindingIdentifiersCalledDefault.clear();
+  }
+
+  public void clearBindingIdentifiersCalledDefault() {
+    this.bindingIdentifiersCalledDefault.clear();
+  }
+
   public void addError(@NotNull ValidationError error) {
     this.errors.add(error);
   }
@@ -68,6 +89,7 @@ public class ValidationContext {
   ValidationContext append(@NotNull ValidationContext other) {
     this.errors.addAll(other.errors);
     this.freeReturnStatements.addAll(other.freeReturnStatements);
+    this.bindingIdentifiersCalledDefault.addAll(other.bindingIdentifiersCalledDefault);
     return this;
   }
 

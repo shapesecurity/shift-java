@@ -439,7 +439,7 @@ public final class CodeGen implements Reducer<CodeRep> {
     if (_super.isJust()) {
       state = seqVA(state, factory.token("extends"), _super.just());
     }
-    state = seqVA(state, factory.token("{"), factory.commaSep(elements), factory.token("}"));
+    state = seqVA(state, factory.token("{"), factory.seq(elements), factory.token("}"));
     return state;
   }
 
@@ -462,7 +462,7 @@ public final class CodeGen implements Reducer<CodeRep> {
     if (_super.isJust()) {
       state = seqVA(state, factory.token("extends"), _super.just());
     }
-    state = seqVA(state, factory.token("{"), factory.commaSep(elements), factory.token("}"));
+    state = seqVA(state, factory.token("{"), factory.seq(elements), factory.token("}"));
     state.startsWithFunctionOrClass = true;
     return state;
   }
@@ -918,6 +918,7 @@ public final class CodeGen implements Reducer<CodeRep> {
     if (node._object instanceof Expression) {
       state = seqVA(p((Expression) node._object, getPrecedence(node), object), factory.token("."), factory.token(node.property));
     } else {
+      // node._object is a Super
       state = seqVA(object, factory.token("."), factory.token(node.property));
     }
     state.startsWithLet = object.startsWithLet;
