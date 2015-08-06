@@ -7,6 +7,7 @@ import com.shapesecurity.shift.ast.UnaryExpression;
 import com.shapesecurity.shift.ast.operators.UnaryOperator;
 import com.shapesecurity.shift.parser.ParserTestCase;
 import com.shapesecurity.shift.parser.JsError;
+
 import org.junit.Test;
 
 public class UnaryExpressionTest extends ParserTestCase {

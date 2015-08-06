@@ -2,6 +2,7 @@ package com.shapesecurity.shift.parser.miscellaneous;
 
 import com.shapesecurity.shift.parser.ParserTestCase;
 import com.shapesecurity.shift.parser.JsError;
+
 import org.junit.Test;
 
 public class CommentsTest extends ParserTestCase {

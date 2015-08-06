@@ -1,8 +1,10 @@
 package com.shapesecurity.shift.scope;
 
 import org.jetbrains.annotations.NotNull;
+
 import com.shapesecurity.shift.ast.BindingIdentifier;
 import com.shapesecurity.shift.ast.VariableDeclarationKind;
+
 import org.jetbrains.annotations.NotNull;
 
 public class Declaration {

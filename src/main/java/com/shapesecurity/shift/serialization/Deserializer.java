@@ -1,6 +1,7 @@
 package com.shapesecurity.shift.serialization;
 
 import com.google.gson.*;
+
 import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.functional.data.Maybe;
 import com.shapesecurity.shift.ast.*;
@@ -8,6 +9,7 @@ import com.shapesecurity.shift.ast.operators.BinaryOperator;
 import com.shapesecurity.shift.ast.operators.CompoundAssignmentOperator;
 import com.shapesecurity.shift.ast.operators.UnaryOperator;
 import com.shapesecurity.shift.ast.operators.UpdateOperator;
+
 import org.json.JSONException;
 
 import java.lang.reflect.InvocationTargetException;

@@ -18,6 +18,7 @@ package com.shapesecurity.functional;
 
 import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.functional.data.NonEmptyImmutableList;
+
 import org.jetbrains.annotations.NotNull;
 import org.junit.Before;
 

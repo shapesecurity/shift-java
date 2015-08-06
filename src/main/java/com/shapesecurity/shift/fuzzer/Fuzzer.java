@@ -26,6 +26,7 @@ import com.shapesecurity.shift.ast.operators.CompoundAssignmentOperator;
 import com.shapesecurity.shift.ast.operators.UnaryOperator;
 import com.shapesecurity.shift.ast.operators.UpdateOperator;
 import com.shapesecurity.shift.utils.Utils;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Random;

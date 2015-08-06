@@ -19,6 +19,7 @@ package com.shapesecurity.functional.data;
 import com.shapesecurity.functional.F;
 import com.shapesecurity.functional.F2;
 import com.shapesecurity.functional.Pair;
+
 import org.jetbrains.annotations.NotNull;
 
 public final class NonEmptyImmutableList<T> extends ImmutableList<T> {

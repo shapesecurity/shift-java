@@ -24,6 +24,7 @@ import com.shapesecurity.shift.ast.*;
 import com.shapesecurity.shift.utils.Utils;
 import com.shapesecurity.shift.visitor.Director;
 import com.shapesecurity.shift.visitor.Reducer;
+
 import org.jetbrains.annotations.NotNull;
 
 

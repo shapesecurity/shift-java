@@ -31,16 +31,14 @@ import com.shapesecurity.functional.Thunk;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * An immutable singly linked list implementation. None of the operations in {@link ImmutableList} changes the list itself. Therefore you can freely share the list in
- * your system.
- * <p>
- * This is a "classical" list implementation that the list is only allowed to prepend and to remove the first element efficiently.
- * Therefore it is essentially equivalent to a stack.
- * <p>
- * It is either an empty list, or a record that contains the first element (called "head") and a list that follows(called "tail").
- * With the assumption that all the elements in the list are also immutable, the sharing of the tails is possible.
- * <p>
- * For a data structure that allows O(1) concatenation, try {@link ConcatList}. A BinaryTree can be converted into a List in O(n) time.
+ * An immutable singly linked list implementation. None of the operations in {@link ImmutableList}
+ * changes the list itself. Therefore you can freely share the list in your system. <p> This is a
+ * "classical" list implementation that the list is only allowed to prepend and to remove the first
+ * element efficiently. Therefore it is essentially equivalent to a stack. <p> It is either an empty
+ * list, or a record that contains the first element (called "head") and a list that follows(called
+ * "tail"). With the assumption that all the elements in the list are also immutable, the sharing of
+ * the tails is possible. <p> For a data structure that allows O(1) concatenation, try {@link
+ * ConcatList}. A BinaryTree can be converted into a List in O(n) time.
  *
  * @param <A> The super type of all the elements.
  */
@@ -63,9 +61,11 @@ public abstract class ImmutableList<A> implements Iterable<A> {
     /**
      * Creating List from.
      *
-     * @param arrayList The {@link java.util.ArrayList} to construct the {@link ImmutableList} from.
+     * @param arrayList The {@link java.util.ArrayList} to construct the {@link ImmutableList}
+     *                  from.
      * @param <A>       The type of the elements of the list.
-     * @return a new {@link ImmutableList} that is comprised of all the elements in the {@link java.util.ArrayList}.
+     * @return a new {@link ImmutableList} that is comprised of all the elements in the {@link
+     * java.util.ArrayList}.
      */
     @NotNull
     public static <A> ImmutableList<A> from(@NotNull List<A> arrayList) {
@@ -242,7 +242,8 @@ public abstract class ImmutableList<A> implements Iterable<A> {
     public abstract Maybe<ImmutableList<A>> maybeTail();
 
     /**
-     * Returns the init of the {@link ImmutableList}. The init of a List is defined as the rest of List removing the last element.
+     * Returns the init of the {@link ImmutableList}. The init of a List is defined as the rest of
+     * List removing the last element.
      *
      * @return Maybe.just(init of the list), or Maybe.nothing() if the list is empty.
      */
@@ -259,8 +260,8 @@ public abstract class ImmutableList<A> implements Iterable<A> {
     public abstract ImmutableList<A> filter(@NotNull F<A, Boolean> f);
 
     /**
-     * Applies the <code>f</code> function to each of the elements of the list and collect the result.
-     * It will be a new list with the same length of the original one.
+     * Applies the <code>f</code> function to each of the elements of the list and collect the
+     * result. It will be a new list with the same length of the original one.
      *
      * @param f   The function to apply.
      * @param <B> The type of the new {@link ImmutableList}.
@@ -270,8 +271,9 @@ public abstract class ImmutableList<A> implements Iterable<A> {
     public abstract <B> ImmutableList<B> map(@NotNull F<A, B> f);
 
     /**
-     * Applies the <code>f</code> function to each of the elements of the list and collect the result.
-     * This method also provides an extra index parameter to <code>f</code> function as the first parameter.
+     * Applies the <code>f</code> function to each of the elements of the list and collect the
+     * result. This method also provides an extra index parameter to <code>f</code> function as the
+     * first parameter.
      *
      * @param f   The function to apply.
      * @param <B> The type of the new {@link ImmutableList}.
@@ -281,21 +283,25 @@ public abstract class ImmutableList<A> implements Iterable<A> {
     public abstract <B> ImmutableList<B> mapWithIndex(@NotNull F2<Integer, A, B> f);
 
     /**
-     * The the first <code>n</code> elements of the list and create a new List of them. If the original
-     * list contains less than <code>n</code> elements, returns a copy of the original List.
+     * The the first <code>n</code> elements of the list and create a new List of them. If the
+     * original list contains less than <code>n</code> elements, returns a copy of the original
+     * List.
      *
      * @param n The number of elements to take.
-     * @return A new list containing at most <code>n</code> elements that are the first elements of the original list.
+     * @return A new list containing at most <code>n</code> elements that are the first elements of
+     * the original list.
      */
     @NotNull
     public abstract ImmutableList<A> take(int n);
 
     /**
-     * Removes the first <code>n</code> elements of the list and return the rest of the List by reference. If the original list
-     * contains less than <code>n</code> elements, returns an empty list as if it is returned by {@link #nil}.
+     * Removes the first <code>n</code> elements of the list and return the rest of the List by
+     * reference. If the original list contains less than <code>n</code> elements, returns an empty
+     * list as if it is returned by {@link #nil}.
      *
      * @param n The number of elements to skip.
-     * @return A shared list containing at most <code>n</code> elements removed from the original list.
+     * @return A shared list containing at most <code>n</code> elements removed from the original
+     * list.
      */
     @NotNull
     public abstract ImmutableList<A> drop(int n);
@@ -303,27 +309,30 @@ public abstract class ImmutableList<A> implements Iterable<A> {
     /**
      * Specialize this type to be a {@link NonEmptyImmutableList} if possible.
      *
-     * @return Returns is <code>Maybe.just(this)</code> if this is indeed non-empty. Otherwise returns <code>Maybe.nothing()</code>.
+     * @return Returns is <code>Maybe.just(this)</code> if this is indeed non-empty. Otherwise
+     * returns <code>Maybe.nothing()</code>.
      */
     @NotNull
     public abstract Maybe<NonEmptyImmutableList<A>> toNonEmptyList();
 
     /**
-     * Deconstruct the list in to its head and tail, and feed them into another function <code>f</code>.
+     * Deconstruct the list in to its head and tail, and feed them into another function
+     * <code>f</code>.
      *
      * @param f   The function to receive the head and tail if they exist.
      * @param <B> The return type of <code>f</code>
-     * @return If the list is an non-empty list, returns <code>Maybe.just(f(head, tail))</code>; otherwise returns <code>Maybe.nothing()</code>.
+     * @return If the list is an non-empty list, returns <code>Maybe.just(f(head, tail))</code>;
+     * otherwise returns <code>Maybe.nothing()</code>.
      */
     @NotNull
     public abstract <B> Maybe<B> decons(@NotNull F2<A, ImmutableList<A>, B> f);
 
     /**
-     * Takes another list and feeds the elements of both lists to a function at the same pace, then collects the result and forms another list.
-     * Stops once either of the two lists came to an end.
-     * <p>
-     * Another way to visualize this operation is to imagine this operation as if it's zipping a zipper. taking two lists of things, merge them one by one,
-     * and collect the results.
+     * Takes another list and feeds the elements of both lists to a function at the same pace, then
+     * collects the result and forms another list. Stops once either of the two lists came to an
+     * end. <p> Another way to visualize this operation is to imagine this operation as if it's
+     * zipping a zipper. taking two lists of things, merge them one by one, and collect the
+     * results.
      *
      * @param f    The function to apply
      * @param list the other list to zip with <code>this</code>.
@@ -335,13 +344,14 @@ public abstract class ImmutableList<A> implements Iterable<A> {
     public abstract <B, C> ImmutableList<C> zipWith(@NotNull F2<A, B, C> f, @NotNull ImmutableList<B> list);
 
     /**
-     * Converts this list into an array.
-     * <p>
-     * Due to type erasure, the type of the resulting array has to be determined at runtime. Fortunately, you can create a zero length array and this method
-     * can create an large enough array to contain all the elements. If the given array is large enough, this method will put elements in it.
+     * Converts this list into an array. <p> Due to type erasure, the type of the resulting array
+     * has to be determined at runtime. Fortunately, you can create a zero length array and this
+     * method can create an large enough array to contain all the elements. If the given array is
+     * large enough, this method will put elements in it.
      *
      * @param target The target array.
-     * @return The array that contains the elements. It may or may not be the same reference of <code>target</code>.
+     * @return The array that contains the elements. It may or may not be the same reference of
+     * <code>target</code>.
      */
     @SuppressWarnings("unchecked")
     @NotNull
@@ -377,9 +387,11 @@ public abstract class ImmutableList<A> implements Iterable<A> {
     public abstract boolean isEmpty();
 
     /**
-     * Creates a list with the content of the current list followed by another list. If the current list is empty, simply return the second one.
+     * Creates a list with the content of the current list followed by another list. If the current
+     * list is empty, simply return the second one.
      *
-     * @param defaultClause The list to concatenate with. It will be reused as part of the returned list.
+     * @param defaultClause The list to concatenate with. It will be reused as part of the returned
+     *                      list.
      * @param <B>           The type of the resulting list.
      * @return The concatenation of the two lists.
      */
@@ -387,8 +399,8 @@ public abstract class ImmutableList<A> implements Iterable<A> {
     public abstract <B extends A> ImmutableList<A> append(@NotNull ImmutableList<B> defaultClause);
 
     /**
-     * Tests all the elements in the {@link ImmutableList} with predicate <code>f</code> until it finds the element of reaches the end, then returns whether an element
-     * has been found or not.
+     * Tests all the elements in the {@link ImmutableList} with predicate <code>f</code> until it
+     * finds the element of reaches the end, then returns whether an element has been found or not.
      *
      * @param f The predicate.
      * @return Whether an elements satisfies the predicate <code>f</code>.
@@ -396,8 +408,9 @@ public abstract class ImmutableList<A> implements Iterable<A> {
     public abstract boolean exists(@NotNull F<A, Boolean> f);
 
     /**
-     * Separates the list into a pair of lists such that 1. the concatenation of the lists is equal to <code>this</code>; 2. The first list is the longest list
-     * that every element of the list fails the predicate <code>f</code>.
+     * Separates the list into a pair of lists such that 1. the concatenation of the lists is equal
+     * to <code>this</code>; 2. The first list is the longest list that every element of the list
+     * fails the predicate <code>f</code>.
      *
      * @param f The predicate.
      * @return The pair.
@@ -418,17 +431,14 @@ public abstract class ImmutableList<A> implements Iterable<A> {
     }
 
     /**
-     * Apply <code>f</code> to each element of this list to get a list of lists (of not necessarily the same type), then concatenate all these lists to get a
-     * single list.
-     * <p>
-     * This operation can be thought of as a generalization of {@link #map} and {@link #filter}, which, instead of keeping the number of elements in the list,
-     * changes the number and type of the elements in an customizable way but keeps the original order.
-     * <p>
-     * This operation can also be thought of as an assembly line that takes one stream of input and returns another stream of output, but not necessarily of
-     * the
-     * same size, type or number.
-     * <p>
-     * This operation is often called "bind" or "&gt;&gt;=" of a monad in pure functional programming context.
+     * Apply <code>f</code> to each element of this list to get a list of lists (of not necessarily
+     * the same type), then concatenate all these lists to get a single list. <p> This operation can
+     * be thought of as a generalization of {@link #map} and {@link #filter}, which, instead of
+     * keeping the number of elements in the list, changes the number and type of the elements in an
+     * customizable way but keeps the original order. <p> This operation can also be thought of as
+     * an assembly line that takes one stream of input and returns another stream of output, but not
+     * necessarily of the same size, type or number. <p> This operation is often called "bind" or
+     * "&gt;&gt;=" of a monad in pure functional programming context.
      *
      * @param f   The function to expand the list element.
      * @param <B> The type of the result list.
@@ -442,11 +452,12 @@ public abstract class ImmutableList<A> implements Iterable<A> {
     }
 
     /**
-     * Tests the elements of the list with a predicate <code>f</code> and returns the first one that satisfies the predicate without testing the rest of the
-     * list.
+     * Tests the elements of the list with a predicate <code>f</code> and returns the first one that
+     * satisfies the predicate without testing the rest of the list.
      *
      * @param f The predicate.
-     * @return <code>Maybe.just(the found element)</code> if an element is found or <code>Maybe.nothing()</code> if none is found.
+     * @return <code>Maybe.just(the found element)</code> if an element is found or
+     * <code>Maybe.nothing()</code> if none is found.
      */
     @NotNull
     public final Maybe<A> find(@NotNull F<A, Boolean> f) {
@@ -468,7 +479,8 @@ public abstract class ImmutableList<A> implements Iterable<A> {
      *
      * @param f   The predicate.
      * @param <B> The type of the result of the mapping function.
-     * @return <code>Maybe.just(the found element)</code> if an element is found or <code>Maybe.nothing()</code> if none is found.
+     * @return <code>Maybe.just(the found element)</code> if an element is found or
+     * <code>Maybe.nothing()</code> if none is found.
      */
     @NotNull
     public final <B> Maybe<B> findMap(@NotNull F<A, Maybe<B>> f) {
@@ -502,12 +514,11 @@ public abstract class ImmutableList<A> implements Iterable<A> {
     public abstract ImmutableList<A> reverse();
 
     /**
-     * Patches the current list.
-     * Patching a list first takes the first <code>index</code> elements then concatenates it with <code>replacements</code> and then concatenates it with
-     * the original list dropping <code>index + patchLength</code> elements.
-     * <p>
-     * A visualization of this operation is to replace the <code>patchLength</code> elements in the list starting from <code>index</code> with a list of new
-     * elements given by <code>replacements</code>.
+     * Patches the current list. Patching a list first takes the first <code>index</code> elements
+     * then concatenates it with <code>replacements</code> and then concatenates it with the
+     * original list dropping <code>index + patchLength</code> elements. <p> A visualization of this
+     * operation is to replace the <code>patchLength</code> elements in the list starting from
+     * <code>index</code> with a list of new elements given by <code>replacements</code>.
      *
      * @param index        The index to start patching.
      * @param patchLength  The length to patch.
@@ -521,9 +532,9 @@ public abstract class ImmutableList<A> implements Iterable<A> {
     }
 
     /**
-     * <code>mapAccumL</code> performs {@link #map} and {@link #foldLeft} method at the same time. It is similar to {@link #foldLeft}, but instead of returning
-     * the
-     * new accumulation value, it also allows the user to return an extra value which will be collected and returned.
+     * <code>mapAccumL</code> performs {@link #map} and {@link #foldLeft} method at the same time.
+     * It is similar to {@link #foldLeft}, but instead of returning the new accumulation value, it
+     * also allows the user to return an extra value which will be collected and returned.
      *
      * @param f   The accumulation function.
      * @param acc The initial value of the fold part.
@@ -535,11 +546,13 @@ public abstract class ImmutableList<A> implements Iterable<A> {
     public abstract <B, C> Pair<B, ImmutableList<C>> mapAccumL(@NotNull F2<B, A, Pair<B, C>> f, @NotNull B acc);
 
     /**
-     * Get the <code>index</code>th element of the list. It is comparable to the <code>[]</code> operator for array but instead of returning the element, it
-     * returns an <code>Maybe</code> to indicate whether the element can be found or not.
+     * Get the <code>index</code>th element of the list. It is comparable to the <code>[]</code>
+     * operator for array but instead of returning the element, it returns an <code>Maybe</code> to
+     * indicate whether the element can be found or not.
      *
      * @param index The index.
-     * @return <code>Maybe.just(found element)</code>if the element can be retrieved; or <code>Maybe.nothing()</code> if index out of range().
+     * @return <code>Maybe.just(found element)</code>if the element can be retrieved; or
+     * <code>Maybe.nothing()</code> if index out of range().
      */
     @NotNull
     public final Maybe<A> index(int index) {

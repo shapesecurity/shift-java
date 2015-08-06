@@ -9,6 +9,7 @@ import com.shapesecurity.shift.ast.FunctionDeclaration;
 import com.shapesecurity.shift.ast.Node;
 import com.shapesecurity.shift.ast.BindingIdentifier;
 import com.shapesecurity.shift.ast.IdentifierExpression;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;

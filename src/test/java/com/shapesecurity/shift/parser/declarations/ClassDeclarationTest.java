@@ -6,6 +6,7 @@ import com.shapesecurity.shift.ast.BindingIdentifier;
 import com.shapesecurity.shift.ast.ClassDeclaration;
 import com.shapesecurity.shift.parser.ParserTestCase;
 import com.shapesecurity.shift.parser.JsError;
+
 import org.junit.Test;
 
 public class ClassDeclarationTest extends ParserTestCase {

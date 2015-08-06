@@ -19,6 +19,7 @@ package com.shapesecurity.shift.scope;
 import com.shapesecurity.functional.data.Either;
 import com.shapesecurity.shift.ast.BindingIdentifier;
 import com.shapesecurity.shift.ast.IdentifierExpression;
+
 import org.jetbrains.annotations.NotNull;
 
 public final class Reference {

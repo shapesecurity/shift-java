@@ -4,6 +4,7 @@ import com.shapesecurity.shift.ast.LiteralBooleanExpression;
 import com.shapesecurity.shift.ast.LiteralNullExpression;
 import com.shapesecurity.shift.parser.JsError;
 import com.shapesecurity.shift.parser.ParserTestCase;
+
 import org.junit.Test;
 
 public class LiteralNullExpressionTest extends ParserTestCase {

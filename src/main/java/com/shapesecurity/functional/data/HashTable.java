@@ -193,7 +193,8 @@ public abstract class HashTable<K, V> {
     }
 
     /**
-     * A leaf node that contains a list of pairs where all the keys have exactly the same hash code.
+     * A leaf node that contains a list of pairs where all the keys have exactly the same hash
+     * code.
      *
      * @param <K> Key type
      * @param <V> Value type

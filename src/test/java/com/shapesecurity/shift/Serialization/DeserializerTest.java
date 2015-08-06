@@ -4,6 +4,7 @@ import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.shift.ast.*;
 import com.shapesecurity.shift.parser.JsError;
 import com.shapesecurity.shift.parser.Parser;
+
 import org.json.JSONException;
 import org.junit.Test;
 

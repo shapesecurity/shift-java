@@ -3,7 +3,9 @@ package com.shapesecurity.shift.parser;
 import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.functional.data.Maybe;
 import com.shapesecurity.shift.ast.*;
+
 import junit.framework.TestCase;
+
 import org.jetbrains.annotations.NotNull;
 
 public abstract class ParserTestCase extends TestCase {

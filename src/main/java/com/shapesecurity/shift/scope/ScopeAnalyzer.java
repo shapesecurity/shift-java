@@ -25,6 +25,7 @@ import com.shapesecurity.shift.ast.*;
 import com.shapesecurity.shift.scope.Declaration.Kind;
 import com.shapesecurity.shift.visitor.Director;
 import com.shapesecurity.shift.visitor.MonoidalReducer;
+
 import org.jetbrains.annotations.NotNull;
 
 public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {

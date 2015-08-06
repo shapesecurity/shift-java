@@ -3,6 +3,7 @@ package com.shapesecurity.shift.parser.expressions.literals;
 import com.shapesecurity.shift.ast.LiteralNumericExpression;
 import com.shapesecurity.shift.parser.JsError;
 import com.shapesecurity.shift.parser.ParserTestCase;
+
 import org.junit.Test;
 
 public class LiteralNumericExpressionTest extends ParserTestCase {

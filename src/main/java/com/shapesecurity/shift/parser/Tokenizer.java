@@ -20,6 +20,7 @@ import com.shapesecurity.functional.Pair;
 import com.shapesecurity.shift.ast.SourceLocation;
 import com.shapesecurity.shift.parser.token.*;
 import com.shapesecurity.shift.utils.Utils;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.math.BigInteger;

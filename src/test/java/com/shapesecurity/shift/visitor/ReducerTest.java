@@ -24,6 +24,7 @@ import com.shapesecurity.shift.ast.ReturnStatement;
 import com.shapesecurity.shift.ast.Script;
 import com.shapesecurity.shift.parser.JsError;
 import com.shapesecurity.shift.parser.Parser;
+
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 
