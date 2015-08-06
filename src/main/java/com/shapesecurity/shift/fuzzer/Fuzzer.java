@@ -376,10 +376,7 @@ public class Fuzzer {
 
   @NotNull
   private static CatchClause randomCatchClause(@NotNull GenCtx ctx, int depth) {
-    Binding binding;
-    do { // TODO remove do while loop
-      binding = randomBinding(ctx, depth - 1);
-    } while (binding instanceof MemberExpression);
+    Binding binding = (Binding)randomParameter(ctx, depth - 1);
     return new CatchClause(binding, randomBlock(ctx, depth - 1));
   }
 
@@ -401,7 +398,7 @@ public class Fuzzer {
   @NotNull
   private static CompoundAssignmentExpression randomCompoundAssignmentExpression(@NotNull GenCtx ctx, int depth) {
     BindingIdentifierMemberExpression lhs;
-    do { // TODO remove do while loop
+    do {
       lhs = randomBindingIdentifierMemberExpression(ctx, depth - 1);
     } while (ctx.inStrictMode && lhs instanceof IdentifierExpression && Utils.isRestrictedWord(((IdentifierExpression) lhs).name));
     return new CompoundAssignmentExpression(
@@ -493,7 +490,7 @@ public class Fuzzer {
     }
     Expression expression = choice(expressionGens).apply(ctx, depth - 1).apply(ctx, depth - 1);
     if (!ctx.allowYieldExpression) {
-      while (expression instanceof YieldExpression) {
+      while (expression instanceof YieldExpression || expression instanceof YieldGeneratorExpression) {
         expression = choice(expressionGens).apply(ctx, depth - 1).apply(ctx, depth - 1);
       }
     }
@@ -542,6 +539,7 @@ public class Fuzzer {
 
   @NotNull
   private static BindingBindingWithDefault randomParameter(@NotNull GenCtx ctx, int depth) {
+    // returns nodes that are Binding, but not Member Expression
     switch (ctx.random.nextInt(3)) {
       case 0:
         return randomArrayBinding(ctx, depth);
@@ -643,7 +641,7 @@ public class Fuzzer {
       name = choice(RESTRICTED_WORDS).apply(ctx, depth - 1);
     } else {
       boolean disallow;
-      do { // TODO remove do while loop
+      do {
         disallow = false;
         name = randomIdentifierString(ctx, depth - 1);
         for (String reservedWord : (ctx.inStrictMode ? STRICT_MODE_RESERVED_WORDS : RESERVED_WORDS)) {
@@ -905,7 +903,7 @@ public class Fuzzer {
     }
     int n;
     int total = totalStatements - (allowIteration ? 0 : iterationStatementGens.length);
-    do { // TODO remove do while loop
+    do {
       n = ctx.random.nextInt(total);
       switch (n) {
       case kGenBreakStatement:
@@ -1119,16 +1117,14 @@ public class Fuzzer {
 
   @NotNull
   private static VariableDeclarator randomVariableDeclarator(@NotNull GenCtx ctx, int depth) {
-    Binding binding;
-    do {
-      binding = randomBinding(ctx, depth - 1);
-    } while (binding instanceof MemberExpression);
+    Binding binding = (Binding)randomParameter(ctx, depth - 1);
     if (binding instanceof BindingIdentifier && !ctx.isVariableDeclarationKindConst) {
       return new VariableDeclarator(binding, optional(Fuzzer::randomExpression).apply(ctx, depth - 1));
     } else {
       return new VariableDeclarator(binding, Maybe.just(randomExpression(ctx, depth - 1)));
     }
   }
+
 
   @NotNull
   private static WhileStatement randomWhileStatement(@NotNull GenCtx ctx, int depth) {
