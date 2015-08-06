@@ -22,7 +22,9 @@ import com.shapesecurity.functional.F2;
 
 import org.jetbrains.annotations.NotNull;
 
-public abstract class ConcatList<T> {
+import java.util.Iterator;
+
+public abstract class ConcatList<T> implements Iterable<T> {
     private static final Empty<Object> EMPTY = new Empty<>();
     private static BinaryTreeMonoid<Object> MONOID = new BinaryTreeMonoid<>();
     public final int length;
@@ -153,6 +155,21 @@ public abstract class ConcatList<T> {
         public Maybe<ConcatList<T>> update(int index, @NotNull T element) {
             return Maybe.nothing();
         }
+
+        @Override
+        public Iterator<T> iterator() {
+            return new Iterator<T> () {
+                @Override
+                public boolean hasNext() {
+                    return false;
+                }
+
+                @Override
+                public T next() {
+                    return null;
+                }
+            };
+        }
     }
 
     public final static class Leaf<T> extends ConcatList<T> {
@@ -229,6 +246,27 @@ public abstract class ConcatList<T> {
         @Override
         public Maybe<ConcatList<T>> update(int index, @NotNull T element) {
             return index == 0 ? Maybe.just(single(element)) : Maybe.nothing();
+        }
+
+        @Override
+        public Iterator<T> iterator() {
+            return new Iterator<T> () {
+                private boolean used = false;
+
+                @Override
+                public boolean hasNext() {
+                    return !this.used;
+                }
+
+                @Override
+                public T next() {
+                    if (!this.used) {
+                        this.used = true;
+                        return data;
+                    }
+                    return null;
+                }
+            };
         }
     }
 
@@ -324,6 +362,33 @@ public abstract class ConcatList<T> {
                 right = right.update(index - this.left.length, element).just();
             }
             return Maybe.just(left.append(right));
+        }
+
+        @Override
+        public Iterator<T> iterator() {
+            return new Iterator<T> () {
+                private boolean isLeft = true;
+                private Iterator<T> branchIterator = left.iterator();
+
+                private void ensureCorrectBranch() {
+                    if (this.isLeft && !this.branchIterator.hasNext()) {
+                        this.isLeft = false;
+                        this.branchIterator = right.iterator();
+                    }
+                }
+
+                @Override
+                public boolean hasNext() {
+                    this.ensureCorrectBranch();
+                    return this.branchIterator.hasNext();
+                }
+
+                @Override
+                public T next() {
+                    this.ensureCorrectBranch();
+                    return this.branchIterator.next();
+                }
+            };
         }
     }
 
