@@ -23,13 +23,13 @@ import com.shapesecurity.shift.parser.TokenType;
 import org.jetbrains.annotations.NotNull;
 
 public class EOFToken extends Token {
-  public EOFToken(@NotNull SourceRange slice) {
-    super(TokenType.EOS, slice, false);
-  }
+    public EOFToken(@NotNull SourceRange slice) {
+        super(TokenType.EOS, slice, false);
+    }
 
-  @NotNull
-  @Override
-  public CharSequence getValueString() {
-    return "";
-  }
+    @NotNull
+    @Override
+    public CharSequence getValueString() {
+        return "";
+    }
 }

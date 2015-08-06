@@ -7,9 +7,9 @@ import com.shapesecurity.shift.parser.JsError;
 import org.junit.Test;
 
 public class ModuleTest extends ParserTestCase {
-  @Test
-  public void testModule() throws JsError {
-    testModule("", new Module(ImmutableList.nil(), ImmutableList.nil()));
-    testModuleFailure("/*", 2, "Unexpected end of input");
-  }
+    @Test
+    public void testModule() throws JsError {
+        testModule("", new Module(ImmutableList.nil(), ImmutableList.nil()));
+        testModuleFailure("/*", 2, "Unexpected end of input");
+    }
 }

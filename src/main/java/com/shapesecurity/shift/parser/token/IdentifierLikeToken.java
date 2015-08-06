@@ -23,13 +23,13 @@ import com.shapesecurity.shift.parser.TokenType;
 import org.jetbrains.annotations.NotNull;
 
 public abstract class IdentifierLikeToken extends Token {
-  IdentifierLikeToken(@NotNull TokenType type, @NotNull SourceRange slice) {
-    super(type, slice, false);
-  }
+    IdentifierLikeToken(@NotNull TokenType type, @NotNull SourceRange slice) {
+        super(type, slice, false);
+    }
 
-  @NotNull
-  @Override
-  public CharSequence getValueString() {
-    return this.slice;
-  }
+    @NotNull
+    @Override
+    public CharSequence getValueString() {
+        return this.slice;
+    }
 }

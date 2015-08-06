@@ -23,16 +23,16 @@ import com.shapesecurity.shift.parser.TokenType;
 import org.jetbrains.annotations.NotNull;
 
 public class StringLiteralToken extends Token {
-  private final String value;
+    private final String value;
 
-  public StringLiteralToken(@NotNull SourceRange slice, @NotNull String value, boolean octal) {
-    super(TokenType.STRING, slice, octal);
-    this.value = value;
-  }
+    public StringLiteralToken(@NotNull SourceRange slice, @NotNull String value, boolean octal) {
+        super(TokenType.STRING, slice, octal);
+        this.value = value;
+    }
 
-  @NotNull
-  @Override
-  public String getValueString() {
-    return this.value;
-  }
+    @NotNull
+    @Override
+    public String getValueString() {
+        return this.value;
+    }
 }

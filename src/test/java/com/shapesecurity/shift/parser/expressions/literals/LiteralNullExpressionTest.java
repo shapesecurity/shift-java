@@ -7,10 +7,10 @@ import com.shapesecurity.shift.parser.ParserTestCase;
 import org.junit.Test;
 
 public class LiteralNullExpressionTest extends ParserTestCase {
-  @Test
-  public void testLiteralNullExpression() throws JsError {
-    testScript("null", new LiteralNullExpression());
-    testScript("null;", new LiteralNullExpression());
-    testScript("null\n", new LiteralNullExpression());
-  }
+    @Test
+    public void testLiteralNullExpression() throws JsError {
+        testScript("null", new LiteralNullExpression());
+        testScript("null;", new LiteralNullExpression());
+        testScript("null\n", new LiteralNullExpression());
+    }
 }

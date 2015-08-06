@@ -19,33 +19,33 @@ package com.shapesecurity.shift.ast.operators;
 import org.jetbrains.annotations.NotNull;
 
 public enum CompoundAssignmentOperator implements Operator {
-  AssignPlus("+="),
-  AssignMinus("-="),
-  AssignMul("*="),
-  AssignDiv("/="),
-  AssignRem("%="),
-  AssignLeftShift("<<="),
-  AssignRightShift(">>="),
-  AssignUnsignedRightShift(">>>="),
-  AssignBitOr("|="),
-  AssignBitXor("^="),
-  AssignBitAnd("&=");
+    AssignPlus("+="),
+    AssignMinus("-="),
+    AssignMul("*="),
+    AssignDiv("/="),
+    AssignRem("%="),
+    AssignLeftShift("<<="),
+    AssignRightShift(">>="),
+    AssignUnsignedRightShift(">>>="),
+    AssignBitOr("|="),
+    AssignBitXor("^="),
+    AssignBitAnd("&=");
 
-  @NotNull
-  private final String name;
+    @NotNull
+    private final String name;
 
-  private CompoundAssignmentOperator(@NotNull String name) {
-    this.name = name;
-  }
+    private CompoundAssignmentOperator(@NotNull String name) {
+        this.name = name;
+    }
 
-  @NotNull
-  public static Precedence getPrecedence() {
-    return Precedence.ASSIGNMENT;
-  }
+    @NotNull
+    public static Precedence getPrecedence() {
+        return Precedence.ASSIGNMENT;
+    }
 
-  @Override
-  @NotNull
-  public String getName() {
-    return this.name;
-  }
+    @Override
+    @NotNull
+    public String getName() {
+        return this.name;
+    }
 }

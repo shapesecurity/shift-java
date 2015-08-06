@@ -30,95 +30,95 @@ import org.junit.Test;
 import java.io.IOException;
 
 public class ReducerTest extends VisitorTestCase {
-  private void count(String source, int expectedCount, Counter counter) throws JsError {
-    Script script = Parser.parseScript(source);
-    assertEquals(expectedCount, Director.reduceScript(counter, script).intValue());
-  }
+    private void count(String source, int expectedCount, Counter counter) throws JsError {
+        Script script = Parser.parseScript(source);
+        assertEquals(expectedCount, Director.reduceScript(counter, script).intValue());
+    }
 
-  private void countLibrary(String fileName, int expectedCount, Counter counter) throws JsError, IOException {
-    String source = readFile("libraries/" + fileName);
-    Script script = Parser.parseScript(source);
-    assertEquals(expectedCount, Director.reduceScript(counter, script).intValue());
-  }
+    private void countLibrary(String fileName, int expectedCount, Counter counter) throws JsError, IOException {
+        String source = readFile("libraries/" + fileName);
+        Script script = Parser.parseScript(source);
+        assertEquals(expectedCount, Director.reduceScript(counter, script).intValue());
+    }
 
-  @Test
-  public void testSimpleCounter() throws JsError {
-    count("({})", 1, new Counter() {
-      @NotNull
-      @Override
-      public Integer reduceObjectExpression(
-        @NotNull ObjectExpression node,
-        @NotNull ImmutableList<Integer> properties) {
-        return 1;
-      }
-    });
+    @Test
+    public void testSimpleCounter() throws JsError {
+        count("({})", 1, new Counter() {
+            @NotNull
+            @Override
+            public Integer reduceObjectExpression(
+                    @NotNull ObjectExpression node,
+                    @NotNull ImmutableList<Integer> properties) {
+                return 1;
+            }
+        });
 
-    count("({a:1,b:2})", 1, new Counter() {
-      @NotNull
-      @Override
-      public Integer reduceObjectExpression(
-        @NotNull ObjectExpression node,
-        @NotNull ImmutableList<Integer> properties) {
-        return 1;
-      }
-    });
+        count("({a:1,b:2})", 1, new Counter() {
+            @NotNull
+            @Override
+            public Integer reduceObjectExpression(
+                    @NotNull ObjectExpression node,
+                    @NotNull ImmutableList<Integer> properties) {
+                return 1;
+            }
+        });
 
-    count("{a:1,b}", 0, new Counter() {
-      @NotNull
-      @Override
-      public Integer reduceObjectExpression(
-        @NotNull ObjectExpression node,
-        @NotNull ImmutableList<Integer> properties) {
-        return 1;
-      }
-    });
+        count("{a:1,b}", 0, new Counter() {
+            @NotNull
+            @Override
+            public Integer reduceObjectExpression(
+                    @NotNull ObjectExpression node,
+                    @NotNull ImmutableList<Integer> properties) {
+                return 1;
+            }
+        });
 
-    count("{a:1,b}", 0, new Counter() {
-      @NotNull
-      @Override
-      public Integer reduceObjectExpression(
-        @NotNull ObjectExpression node,
-        @NotNull ImmutableList<Integer> properties) {
-        return 1;
-      }
-    });
+        count("{a:1,b}", 0, new Counter() {
+            @NotNull
+            @Override
+            public Integer reduceObjectExpression(
+                    @NotNull ObjectExpression node,
+                    @NotNull ImmutableList<Integer> properties) {
+                return 1;
+            }
+        });
 
-    count("+{get a() { return 0; }, set a(v) { return v; } }", 1, new Counter() {
-      @NotNull
-      @Override
-      public Integer reduceIdentifierExpression(@NotNull IdentifierExpression node) {
-        return 1;
-      }
-    });
+        count("+{get a() { return 0; }, set a(v) { return v; } }", 1, new Counter() {
+            @NotNull
+            @Override
+            public Integer reduceIdentifierExpression(@NotNull IdentifierExpression node) {
+                return 1;
+            }
+        });
 
-    count("+{get a() { return 0; }, set a(v) { return v; } }", 2, new Counter() {
-      @NotNull
-      @Override
-      public Integer reduceReturnStatement(
-        @NotNull ReturnStatement node,
-        @NotNull Maybe<Integer> expression) {
-        return expression.orJust(0) + 1;
-      }
-    });
-  }
+        count("+{get a() { return 0; }, set a(v) { return v; } }", 2, new Counter() {
+            @NotNull
+            @Override
+            public Integer reduceReturnStatement(
+                    @NotNull ReturnStatement node,
+                    @NotNull Maybe<Integer> expression) {
+                return expression.orJust(0) + 1;
+            }
+        });
+    }
 
-  @SuppressWarnings("MagicNumber")
-  @Test
-  public void testLibraryCounter() throws JsError, IOException {
-    Counter counter = new Counter() {
-      @NotNull
-      @Override
-      public Integer reduceReturnStatement(
-        @NotNull ReturnStatement node,
-        @NotNull Maybe<Integer> expression) {
-        return expression.orJust(0) + 1;
-      }
-    };
-    countLibrary("backbone-1.1.0.js", 123, counter);
-    countLibrary("underscore-1.5.2.js", 185, counter);
-    countLibrary("jquery-1.9.1.js", 568, counter);
-    countLibrary("angular-1.2.5.js", 719, counter);
-    countLibrary("mootools-1.4.5.js", 696, counter);
-    countLibrary("yui-3.12.0.js", 205, counter);
-  }
+    @SuppressWarnings("MagicNumber")
+    @Test
+    public void testLibraryCounter() throws JsError, IOException {
+        Counter counter = new Counter() {
+            @NotNull
+            @Override
+            public Integer reduceReturnStatement(
+                    @NotNull ReturnStatement node,
+                    @NotNull Maybe<Integer> expression) {
+                return expression.orJust(0) + 1;
+            }
+        };
+        countLibrary("backbone-1.1.0.js", 123, counter);
+        countLibrary("underscore-1.5.2.js", 185, counter);
+        countLibrary("jquery-1.9.1.js", 568, counter);
+        countLibrary("angular-1.2.5.js", 719, counter);
+        countLibrary("mootools-1.4.5.js", 696, counter);
+        countLibrary("yui-3.12.0.js", 205, counter);
+    }
 }

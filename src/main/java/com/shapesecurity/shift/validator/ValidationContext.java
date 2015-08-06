@@ -27,83 +27,83 @@ import java.util.function.Function;
 
 public class ValidationContext {
 
-  public static final Monoid<ValidationContext> MONOID = new ValidationContextMonoid();
-
-  @NotNull
-  public final List<ValidationError> errors;
-  @NotNull
-  private final List<ReturnStatement> freeReturnStatements;
-
-  @NotNull
-  private final List<BindingIdentifier> bindingIdentifiersCalledDefault;
-
-
-  public ValidationContext() {
-    this(
-      new ArrayList<>(), // errors
-      new ArrayList<>(), // freeReturnStatements
-      new ArrayList<>() // bindingIdentifiersCalledDefault
-    );
-  }
-
-  private ValidationContext(
-    @NotNull List<ValidationError> errors,
-    @NotNull List<ReturnStatement> freeReturnStatements,
-    @NotNull List<BindingIdentifier> bindingIdentifiersCalledDefault
-  ) {
-    this.errors = errors;
-    this.freeReturnStatements = freeReturnStatements;
-    this.bindingIdentifiersCalledDefault = bindingIdentifiersCalledDefault;
-  }
-
-  public void addFreeReturnStatement(@NotNull ReturnStatement node) {
-    this.freeReturnStatements.add(node);
-  }
-
-  public void enforceFreeReturnStatements(Function<ReturnStatement, ValidationError> createError) {
-    this.freeReturnStatements.stream().map(createError::apply).forEach(this::addError);
-    this.freeReturnStatements.clear();
-  }
-
-  public void clearFreeReturnStatements() {
-    this.freeReturnStatements.clear();
-  }
-
-  public void addBindingIdentifierCalledDefault(@NotNull BindingIdentifier node) {
-    this.bindingIdentifiersCalledDefault.add(node);
-  }
-
-  public void enforceBindingIdentifiersCalledDefault(Function<BindingIdentifier, ValidationError> createError) {
-    this.bindingIdentifiersCalledDefault.stream().map(createError::apply).forEach(this::addError);
-    this.bindingIdentifiersCalledDefault.clear();
-  }
-
-  public void clearBindingIdentifiersCalledDefault() {
-    this.bindingIdentifiersCalledDefault.clear();
-  }
-
-  public void addError(@NotNull ValidationError error) {
-    this.errors.add(error);
-  }
-
-  ValidationContext append(@NotNull ValidationContext other) {
-    this.errors.addAll(other.errors);
-    this.freeReturnStatements.addAll(other.freeReturnStatements);
-    this.bindingIdentifiersCalledDefault.addAll(other.bindingIdentifiersCalledDefault);
-    return this;
-  }
-
-  private static final class ValidationContextMonoid implements Monoid<ValidationContext> {
-    @NotNull
-    @Override
-    public ValidationContext identity() {
-      return new ValidationContext();
-    }
+    public static final Monoid<ValidationContext> MONOID = new ValidationContextMonoid();
 
     @NotNull
-    @Override
-    public ValidationContext append(ValidationContext a, ValidationContext b) {
-      return a.append(b);
+    public final List<ValidationError> errors;
+    @NotNull
+    private final List<ReturnStatement> freeReturnStatements;
+
+    @NotNull
+    private final List<BindingIdentifier> bindingIdentifiersCalledDefault;
+
+
+    public ValidationContext() {
+        this(
+                new ArrayList<>(), // errors
+                new ArrayList<>(), // freeReturnStatements
+                new ArrayList<>() // bindingIdentifiersCalledDefault
+        );
     }
-  }
+
+    private ValidationContext(
+            @NotNull List<ValidationError> errors,
+            @NotNull List<ReturnStatement> freeReturnStatements,
+            @NotNull List<BindingIdentifier> bindingIdentifiersCalledDefault
+    ) {
+        this.errors = errors;
+        this.freeReturnStatements = freeReturnStatements;
+        this.bindingIdentifiersCalledDefault = bindingIdentifiersCalledDefault;
+    }
+
+    public void addFreeReturnStatement(@NotNull ReturnStatement node) {
+        this.freeReturnStatements.add(node);
+    }
+
+    public void enforceFreeReturnStatements(Function<ReturnStatement, ValidationError> createError) {
+        this.freeReturnStatements.stream().map(createError::apply).forEach(this::addError);
+        this.freeReturnStatements.clear();
+    }
+
+    public void clearFreeReturnStatements() {
+        this.freeReturnStatements.clear();
+    }
+
+    public void addBindingIdentifierCalledDefault(@NotNull BindingIdentifier node) {
+        this.bindingIdentifiersCalledDefault.add(node);
+    }
+
+    public void enforceBindingIdentifiersCalledDefault(Function<BindingIdentifier, ValidationError> createError) {
+        this.bindingIdentifiersCalledDefault.stream().map(createError::apply).forEach(this::addError);
+        this.bindingIdentifiersCalledDefault.clear();
+    }
+
+    public void clearBindingIdentifiersCalledDefault() {
+        this.bindingIdentifiersCalledDefault.clear();
+    }
+
+    public void addError(@NotNull ValidationError error) {
+        this.errors.add(error);
+    }
+
+    ValidationContext append(@NotNull ValidationContext other) {
+        this.errors.addAll(other.errors);
+        this.freeReturnStatements.addAll(other.freeReturnStatements);
+        this.bindingIdentifiersCalledDefault.addAll(other.bindingIdentifiersCalledDefault);
+        return this;
+    }
+
+    private static final class ValidationContextMonoid implements Monoid<ValidationContext> {
+        @NotNull
+        @Override
+        public ValidationContext identity() {
+            return new ValidationContext();
+        }
+
+        @NotNull
+        @Override
+        public ValidationContext append(ValidationContext a, ValidationContext b) {
+            return a.append(b);
+        }
+    }
 }

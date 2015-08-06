@@ -25,15 +25,15 @@ import org.jetbrains.annotations.NotNull;
  * element, simply return 1 in the corresponding reduce method.
  */
 public class Counter extends MonoidalReducer<Integer> {
-  public Counter() {
-    super(Monoid.INTEGER_ADDITIVE);
-  }
-
-  public static class IdentifierCounter extends Counter {
-    @NotNull
-    @Override
-    public Integer reduceIdentifierExpression(@NotNull IdentifierExpression node) {
-      return 1;
+    public Counter() {
+        super(Monoid.INTEGER_ADDITIVE);
     }
-  }
+
+    public static class IdentifierCounter extends Counter {
+        @NotNull
+        @Override
+        public Integer reduceIdentifierExpression(@NotNull IdentifierExpression node) {
+            return 1;
+        }
+    }
 }

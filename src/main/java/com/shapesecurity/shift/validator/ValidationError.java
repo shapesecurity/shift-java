@@ -21,13 +21,13 @@ import com.shapesecurity.shift.ast.Node;
 import org.jetbrains.annotations.NotNull;
 
 public class ValidationError {
-  @NotNull
-  public final Node node;
-  @NotNull
-  public final String message;
+    @NotNull
+    public final Node node;
+    @NotNull
+    public final String message;
 
-  public ValidationError(@NotNull Node node, @NotNull String message) {
-    this.node = node;
-    this.message = message;
-  }
+    public ValidationError(@NotNull Node node, @NotNull String message) {
+        this.node = node;
+        this.message = message;
+    }
 }

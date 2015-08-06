@@ -7,16 +7,16 @@ import org.jetbrains.annotations.NotNull;
 
 public final class TemplateToken extends Token {
 
-  public final boolean tail;
+    public final boolean tail;
 
-  public TemplateToken(@NotNull SourceRange slice, boolean tail) {
-    super(TokenType.TEMPLATE, slice, false);
-    this.tail = tail;
-  }
+    public TemplateToken(@NotNull SourceRange slice, boolean tail) {
+        super(TokenType.TEMPLATE, slice, false);
+        this.tail = tail;
+    }
 
-  @NotNull
-  @Override
-  public CharSequence getValueString() {
-    return this.slice;
-  }
+    @NotNull
+    @Override
+    public CharSequence getValueString() {
+        return this.slice;
+    }
 }

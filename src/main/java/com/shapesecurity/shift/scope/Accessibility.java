@@ -17,27 +17,27 @@
 package com.shapesecurity.shift.scope;
 
 public enum Accessibility {
-  Read,
-  Write,
-  ReadWrite;
+    Read,
+    Write,
+    ReadWrite;
 
-  public final boolean isRead() {
-    return this == Read || this == ReadWrite;
-  }
+    public final boolean isRead() {
+        return this == Read || this == ReadWrite;
+    }
 
-  public final boolean isWrite() {
-    return this == Write || this == ReadWrite;
-  }
+    public final boolean isWrite() {
+        return this == Write || this == ReadWrite;
+    }
 
-  public final boolean isReadWrite() {
-    return this == ReadWrite;
-  }
+    public final boolean isReadWrite() {
+        return this == ReadWrite;
+    }
 
-  public final Accessibility withReadability() {
-    return this == Read ? this : ReadWrite;
-  }
+    public final Accessibility withReadability() {
+        return this == Read ? this : ReadWrite;
+    }
 
-  public final Accessibility withWritability() {
-    return this == Write ? this : ReadWrite;
-  }
+    public final Accessibility withWritability() {
+        return this == Write ? this : ReadWrite;
+    }
 }

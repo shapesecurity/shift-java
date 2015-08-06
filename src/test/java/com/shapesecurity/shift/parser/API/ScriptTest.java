@@ -7,10 +7,10 @@ import com.shapesecurity.shift.parser.JsError;
 import org.junit.Test;
 
 public class ScriptTest extends ParserTestCase {
-  @Test
-  public void testScript() throws JsError {
-    testScript("", new Script(ImmutableList.nil(), ImmutableList.nil()));
-    testScript(" ", new Script(ImmutableList.nil(), ImmutableList.nil()));
-    testScriptFailure("/*", 2, "Unexpected end of input");
-  }
+    @Test
+    public void testScript() throws JsError {
+        testScript("", new Script(ImmutableList.nil(), ImmutableList.nil()));
+        testScript(" ", new Script(ImmutableList.nil(), ImmutableList.nil()));
+        testScriptFailure("/*", 2, "Unexpected end of input");
+    }
 }

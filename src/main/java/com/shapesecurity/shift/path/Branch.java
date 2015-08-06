@@ -487,6 +487,7 @@ public abstract class Branch {
 
 abstract class IndexedBranch extends Branch {
     public final int index;
+
     protected IndexedBranch(int index) {
         this.index = index;
     }
@@ -613,11 +614,6 @@ class Coercer {
         return null;
     }
 }
-
-
-
-
-
 
 
 @SuppressWarnings("ConstantConditions")

@@ -19,6 +19,6 @@ package com.shapesecurity.shift.ast.operators;
 import org.jetbrains.annotations.NotNull;
 
 interface Operator {
-  @NotNull
-  String getName();
+    @NotNull
+    String getName();
 }

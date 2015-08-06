@@ -20,28 +20,28 @@ import com.shapesecurity.functional.data.ImmutableList;
 import org.jetbrains.annotations.NotNull;
 
 public class Variable {
-  /**
-   * Variable name *
-   */
-  @NotNull
-  public final String name;
-  /**
-   * references of this variable *
-   */
-  @NotNull
-  public final ImmutableList<Reference> references;
-  /**
-   * declarations of this variable *
-   */
-  @NotNull
-  public final ImmutableList<Declaration> declarations;
+    /**
+     * Variable name *
+     */
+    @NotNull
+    public final String name;
+    /**
+     * references of this variable *
+     */
+    @NotNull
+    public final ImmutableList<Reference> references;
+    /**
+     * declarations of this variable *
+     */
+    @NotNull
+    public final ImmutableList<Declaration> declarations;
 
-  public Variable(
-      @NotNull String name,
-      @NotNull ImmutableList<Reference> references,
-      @NotNull ImmutableList<Declaration> declarations) {
-    this.name = name;
-    this.references = references;
-    this.declarations = declarations;
-  }
+    public Variable(
+            @NotNull String name,
+            @NotNull ImmutableList<Reference> references,
+            @NotNull ImmutableList<Declaration> declarations) {
+        this.name = name;
+        this.references = references;
+        this.declarations = declarations;
+    }
 }

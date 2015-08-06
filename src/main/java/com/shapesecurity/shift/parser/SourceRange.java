@@ -19,43 +19,43 @@ package com.shapesecurity.shift.parser;
 import org.jetbrains.annotations.NotNull;
 
 public class SourceRange implements CharSequence {
-  public final int start;
-  public final int end;
-  @NotNull
-  private final CharSequence source;
+    public final int start;
+    public final int end;
+    @NotNull
+    private final CharSequence source;
 
-  public SourceRange(int start, int end, @NotNull CharSequence source) {
-    this.start = start;
-    this.end = end;
-    this.source = source;
-  }
-
-  @Override
-  public int length() {
-    return this.end - this.start;
-  }
-
-  @Override
-  public char charAt(int index) {
-    if (index > this.end - this.start) {
-      throw new IndexOutOfBoundsException();
+    public SourceRange(int start, int end, @NotNull CharSequence source) {
+        this.start = start;
+        this.end = end;
+        this.source = source;
     }
-    return this.source.charAt(index + this.start);
-  }
 
-  @Override
-  public CharSequence subSequence(int start, int end) {
-    return new SourceRange(this.start + start, end + this.start, this.source);
-  }
+    @Override
+    public int length() {
+        return this.end - this.start;
+    }
 
-  @NotNull
-  public CharSequence getString() {
-    return this.source.subSequence(this.start, this.end);
-  }
+    @Override
+    public char charAt(int index) {
+        if (index > this.end - this.start) {
+            throw new IndexOutOfBoundsException();
+        }
+        return this.source.charAt(index + this.start);
+    }
 
-  @NotNull
-  @Override
-  public String toString() {
-    return String.valueOf(this.getString());
-  }
+    @Override
+    public CharSequence subSequence(int start, int end) {
+        return new SourceRange(this.start + start, end + this.start, this.source);
+    }
+
+    @NotNull
+    public CharSequence getString() {
+        return this.source.subSequence(this.start, this.end);
+    }
+
+    @NotNull
+    @Override
+    public String toString() {
+        return String.valueOf(this.getString());
+    }
 }

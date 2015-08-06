@@ -20,28 +20,28 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public abstract class Token {
-  @NotNull
-  public final TokenType type;
-  @NotNull
-  public final SourceRange slice;
-  public final boolean octal;
-  @Nullable
-  public SourceRange leadingWhitespace;
+    @NotNull
+    public final TokenType type;
+    @NotNull
+    public final SourceRange slice;
+    public final boolean octal;
+    @Nullable
+    public SourceRange leadingWhitespace;
 
-  protected Token(@NotNull TokenType type,
-                  @NotNull SourceRange slice,
-                  boolean octal) {
-    this.octal = octal;
-    this.type = type;
-    this.slice = slice;
-  }
+    protected Token(@NotNull TokenType type,
+                    @NotNull SourceRange slice,
+                    boolean octal) {
+        this.octal = octal;
+        this.type = type;
+        this.slice = slice;
+    }
 
-  @NotNull
-  public abstract CharSequence getValueString();
+    @NotNull
+    public abstract CharSequence getValueString();
 
-  @Override
-  @NotNull
-  public String toString() {
-    return this.slice.getString().toString();
-  }
+    @Override
+    @NotNull
+    public String toString() {
+        return this.slice.getString().toString();
+    }
 }

@@ -27,13 +27,13 @@ import static org.junit.Assert.assertTrue;
 
 public class ParserTest {
 
-  @Test
-  public void testSimple() throws JsError {
-    Script node = Parser.parseScript("this");
-    assertEquals(1, node.statements.length);
-    Statement stmt = node.statements.maybeHead().just();
-    assertTrue(stmt instanceof ExpressionStatement);
-    assertTrue(((ExpressionStatement) stmt).expression instanceof ThisExpression);
-  }
+    @Test
+    public void testSimple() throws JsError {
+        Script node = Parser.parseScript("this");
+        assertEquals(1, node.statements.length);
+        Statement stmt = node.statements.maybeHead().just();
+        assertTrue(stmt instanceof ExpressionStatement);
+        assertTrue(((ExpressionStatement) stmt).expression instanceof ThisExpression);
+    }
 
 }
