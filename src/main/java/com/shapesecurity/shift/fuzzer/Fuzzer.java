@@ -442,7 +442,7 @@ public class Fuzzer {
 
   @NotNull
   private static Directive randomDirective(@NotNull GenCtx ctx, int depth) {
-    String value = Utils.escapeStringLiteral(randomString(ctx, depth - 1));
+    String value = Utils.escapeStringLiteral(randomIdentifierString(ctx, depth - 1));
     return new Directive(value.substring(1, value.length() - 1));
   }
 
@@ -551,8 +551,6 @@ public class Fuzzer {
         return randomBindingIdentifier(ctx, depth);
     }
   }
-
-
 
   @NotNull
   private static FunctionBody randomFunctionBody(@NotNull GenCtx ctx, int depth) {
@@ -949,7 +947,7 @@ public class Fuzzer {
         // with label
 //        Maybe<IdentifierExpression> label = ctx.iterationLabelsInFunctionBoundary.index(
 //            ctx.random.nextInt(ctx.iterationLabelsInFunctionBoundary.length));
-        Maybe<String> label = optional(Fuzzer::randomString).apply(ctx, depth);
+        Maybe<String> label = optional(Fuzzer::randomIdentifierString).apply(ctx, depth);
         return new ContinueStatement(label);
       } else {
         return new ContinueStatement(Maybe.nothing());
@@ -996,7 +994,7 @@ public class Fuzzer {
 
   @NotNull
   private static StaticPropertyName randomStaticPropertyName(@NotNull GenCtx ctx, int depth) {
-    return new StaticPropertyName(randomString(ctx, depth - 1));
+    return new StaticPropertyName(randomIdentifierString(ctx, depth - 1));
   }
 
   @NotNull

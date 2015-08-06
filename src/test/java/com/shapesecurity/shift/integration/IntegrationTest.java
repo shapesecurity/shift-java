@@ -50,7 +50,7 @@ public class IntegrationTest {
   }
 
   @Test
-  public void testFuzzerTimedFiveSeconds() {
+  public void testFuzzerToValidatorTimedFiveSeconds() {
     Random random = new Random(48957);
     long start = System.currentTimeMillis();
     boolean hasErrors = false;
@@ -71,7 +71,20 @@ public class IntegrationTest {
     if (!hasErrors) {
       System.out.println("Fuzzer ran for 5 seconds and generated all valid ASTs.");
     }
+    assertTrue(!hasErrors);
   }
+
+//  @Test
+//  public void testFuzzer() {
+//    Node generated = Fuzzer.generate(new Random(946497386), 5);
+//    ImmutableList<ValidationError> validationErrors;
+//    if (generated instanceof Script) {
+//      validationErrors = Validator.validate((Script) generated);
+//    } else {
+//      validationErrors = Validator.validate((Module) generated);
+//    }
+//    assert (validationErrors.length == 0);
+//  }
 
   private void testFuzzerToValidatorHelper(long seed, int depth) {
     Node generated = Fuzzer.generate(new Random(seed), depth);
