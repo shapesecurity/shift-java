@@ -19,39 +19,39 @@ package com.shapesecurity.shift.codegen;
 import org.jetbrains.annotations.NotNull;
 
 public abstract class FormattedCodeRep extends CodeRep {
-  private FormattedCodeRep() {
-    super();
-  }
-
-  public static final class Brace extends FormattedCodeRep {
-    @NotNull
-    private final CodeRep expr;
-
-    public Brace(@NotNull CodeRep expr) {
-      super();
-      this.expr = expr;
+    private FormattedCodeRep() {
+        super();
     }
 
-    @Override
-    public void emit(@NotNull TokenStream ts, boolean noIn) {
-      ts.put("{\n");
-      this.expr.emit(ts, false);
-      ts.put("}");
-    }
-  }
+    public static final class Brace extends FormattedCodeRep {
+        @NotNull
+        private final CodeRep expr;
 
-  public static final class Semi extends FormattedCodeRep {
-    @Override
-    public void emit(@NotNull TokenStream ts, boolean noIn) {
-      ts.put(";\n");
-    }
-  }
+        public Brace(@NotNull CodeRep expr) {
+            super();
+            this.expr = expr;
+        }
 
-  public static final class SemiOp extends FormattedCodeRep {
-    @Override
-    public void emit(@NotNull TokenStream ts, boolean noIn) {
-      ts.putOptionalSemi();
-      ts.put("\n");
+        @Override
+        public void emit(@NotNull TokenStream ts, boolean noIn) {
+            ts.put("{\n");
+            this.expr.emit(ts, false);
+            ts.put("}");
+        }
     }
-  }
+
+    public static final class Semi extends FormattedCodeRep {
+        @Override
+        public void emit(@NotNull TokenStream ts, boolean noIn) {
+            ts.put(";\n");
+        }
+    }
+
+    public static final class SemiOp extends FormattedCodeRep {
+        @Override
+        public void emit(@NotNull TokenStream ts, boolean noIn) {
+            ts.putOptionalSemi();
+            ts.put("\n");
+        }
+    }
 }

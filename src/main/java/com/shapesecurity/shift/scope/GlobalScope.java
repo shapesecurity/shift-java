@@ -24,17 +24,18 @@ import com.shapesecurity.shift.ast.BindingIdentifier;
 import com.shapesecurity.shift.ast.FunctionDeclaration;
 import com.shapesecurity.shift.ast.IdentifierExpression;
 import com.shapesecurity.shift.ast.Node;
+
 import org.jetbrains.annotations.NotNull;
 
 public class GlobalScope extends Scope {
-  GlobalScope(
-      @NotNull ImmutableList<Scope> children,
-      @NotNull ImmutableList<Variable> variables,
-      @NotNull HashTable<String, ImmutableList<Reference>> through,
-      @NotNull Node astNode) {
-    super(children, variables, through, Type.Global, true, astNode);
-    for (Pair<String, ImmutableList<Reference>> var : through.entries()) {
-      this.variables.put(var.a, new Variable(var.a, var.b, ImmutableList.nil()));
+    GlobalScope(
+            @NotNull ImmutableList<Scope> children,
+            @NotNull ImmutableList<Variable> variables,
+            @NotNull HashTable<String, ImmutableList<Reference>> through,
+            @NotNull Node astNode) {
+        super(children, variables, through, Type.Global, true, astNode);
+        for (Pair<String, ImmutableList<Reference>> var : through.entries()) {
+            this.variables.put(var.a, new Variable(var.a, var.b, ImmutableList.nil()));
+        }
     }
-  }
 }

@@ -29,6 +29,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import junit.framework.TestCase;
+
 import org.jetbrains.annotations.NotNull;
 import org.junit.Assert;
 import org.junit.Test;
@@ -155,8 +156,8 @@ public class ScopeTest extends TestCase {
 
         GlobalScope globalScope = ScopeAnalyzer.analyze(script);
 
-        final BindingIdentifier v2Binding1 = bi( new Getter().d(ScriptStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorBinding_())
-                .apply(script) );
+        final BindingIdentifier v2Binding1 = bi(new Getter().d(ScriptStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorBinding_())
+                .apply(script));
 
         final IdentifierExpression v1Identifier1 = ie(new Getter().d(ScriptStatements_(0)).d(VariableDeclarationStatementDeclaration_())
                 .d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorInit_()).d(BinaryExpressionLeft_())
@@ -1270,8 +1271,8 @@ public class ScopeTest extends TestCase {
                 .apply(script));
         final IdentifierExpression alertNode2 = ie(new Getter().d(ScriptStatements_(1)).d(WithStatementBody_()).d(BlockStatementBlock_()).d(BlockStatements_(1)).d(ExpressionStatementExpression_()).d(CallExpressionCallee_())
                 .apply(script));
-        final IdentifierExpression fld2Node1 = ie( new Getter().d(ScriptStatements_(1)).d(WithStatementBody_()).d(BlockStatementBlock_()).d(BlockStatements_(1)).d(ExpressionStatementExpression_()).d(CallExpressionArguments_(0))
-                .apply(script) );
+        final IdentifierExpression fld2Node1 = ie(new Getter().d(ScriptStatements_(1)).d(WithStatementBody_()).d(BlockStatementBlock_()).d(BlockStatements_(1)).d(ExpressionStatementExpression_()).d(CallExpressionArguments_(0))
+                .apply(script));
 
         final Either<BindingIdentifier, IdentifierExpression> oNode1E = Either.left(oNode1);
         final Either<BindingIdentifier, IdentifierExpression> oNode2E = Either.right(oNode2);
@@ -1410,10 +1411,10 @@ public class ScopeTest extends TestCase {
                 .apply(script));
         final IdentifierExpression err1Node3 = ie(new Getter().d(ScriptStatements_(0)).d(TryCatchStatementCatchClause_()).d(CatchClauseBody_()).d(BlockStatements_(0)).d(TryCatchStatementCatchClause_()).d(CatchClauseBody_()).d(BlockStatements_(0)).d(ExpressionStatementExpression_()).d(CallExpressionArguments_(0))
                 .apply(script));
-        final IdentifierExpression alertNode3 = ie( new Getter().d(ScriptStatements_(0)).d(TryCatchStatementCatchClause_()).d(CatchClauseBody_()).d(BlockStatements_(0)).d(TryCatchStatementCatchClause_()).d(CatchClauseBody_()).d(BlockStatements_(1)).d(ExpressionStatementExpression_()).d(CallExpressionCallee_())
-                .apply(script) );
-        final IdentifierExpression err2Node2 = ie( new Getter().d(ScriptStatements_(0)).d(TryCatchStatementCatchClause_()).d(CatchClauseBody_()).d(BlockStatements_(0)).d(TryCatchStatementCatchClause_()).d(CatchClauseBody_()).d(BlockStatements_(1)).d(ExpressionStatementExpression_()).d(CallExpressionArguments_(0))
-                .apply(script) );
+        final IdentifierExpression alertNode3 = ie(new Getter().d(ScriptStatements_(0)).d(TryCatchStatementCatchClause_()).d(CatchClauseBody_()).d(BlockStatements_(0)).d(TryCatchStatementCatchClause_()).d(CatchClauseBody_()).d(BlockStatements_(1)).d(ExpressionStatementExpression_()).d(CallExpressionCallee_())
+                .apply(script));
+        final IdentifierExpression err2Node2 = ie(new Getter().d(ScriptStatements_(0)).d(TryCatchStatementCatchClause_()).d(CatchClauseBody_()).d(BlockStatements_(0)).d(TryCatchStatementCatchClause_()).d(CatchClauseBody_()).d(BlockStatements_(1)).d(ExpressionStatementExpression_()).d(CallExpressionArguments_(0))
+                .apply(script));
 
         final Either<BindingIdentifier, IdentifierExpression> alertNode1E = Either.right(alertNode1);
         final Either<BindingIdentifier, IdentifierExpression> err1Node1E = Either.left(err1Node1);
@@ -1488,8 +1489,8 @@ public class ScopeTest extends TestCase {
                 .apply(script));
         final BindingIdentifier errNode1 = bi(new Getter().d(ScriptStatements_(0)).d(TryCatchStatementCatchClause_()).d(CatchClauseBinding_())
                 .apply(script));
-        final BindingIdentifier errNode2 = bi( new Getter().d(ScriptStatements_(0)).d(TryCatchStatementCatchClause_()).d(CatchClauseBody_()).d(BlockStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorBinding_())
-                .apply(script) );
+        final BindingIdentifier errNode2 = bi(new Getter().d(ScriptStatements_(0)).d(TryCatchStatementCatchClause_()).d(CatchClauseBody_()).d(BlockStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorBinding_())
+                .apply(script));
 
         final Either<BindingIdentifier, IdentifierExpression> alertNode1E = Either.right(alertNode1);
         final Either<BindingIdentifier, IdentifierExpression> errNode1E = Either.left(errNode1);
@@ -1538,10 +1539,10 @@ public class ScopeTest extends TestCase {
 
         final BindingIdentifier xNode1 = bi(new Getter().d(ScriptStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorBinding_())
                 .apply(script));
-        final BindingIdentifier xNode2 = bi( new Getter().d(ScriptStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorInit_()).d(ArrowExpressionParams_()).d(FormalParametersItems_(0))
-                .apply(script) );
-        final BindingIdentifier xNode3 = bi( new Getter().d(ScriptStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorInit_()).d(ArrowExpressionBody_()).d(UpdateExpressionOperand_())
-                .apply(script) );
+        final BindingIdentifier xNode2 = bi(new Getter().d(ScriptStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorInit_()).d(ArrowExpressionParams_()).d(FormalParametersItems_(0))
+                .apply(script));
+        final BindingIdentifier xNode3 = bi(new Getter().d(ScriptStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorInit_()).d(ArrowExpressionBody_()).d(UpdateExpressionOperand_())
+                .apply(script));
 
         final Either<BindingIdentifier, IdentifierExpression> xNode1E = Either.left(xNode1);
         final Either<BindingIdentifier, IdentifierExpression> xNode2E = Either.left(xNode2);

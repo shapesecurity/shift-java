@@ -24,6 +24,7 @@ import com.shapesecurity.shift.ast.BindingIdentifier;
 import com.shapesecurity.shift.ast.FunctionDeclaration;
 import com.shapesecurity.shift.ast.IdentifierExpression;
 import com.shapesecurity.shift.ast.Node;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
@@ -32,63 +33,62 @@ import java.util.Map;
 
 public class Scope {
 
-  @NotNull
-  public final Node astNode;
-  @NotNull
-  public final HashTable<String, ImmutableList<Reference>> through;
-  @NotNull
-  public final ImmutableList<Scope> children;
-  @NotNull
-  public final Type type;
-  public final boolean dynamic;
-  protected final Map<String, Variable> variables = new LinkedHashMap<>();
+    @NotNull
+    public final Node astNode;
+    @NotNull
+    public final HashTable<String, ImmutableList<Reference>> through;
+    @NotNull
+    public final ImmutableList<Scope> children;
+    @NotNull
+    public final Type type;
+    public final boolean dynamic;
+    protected final Map<String, Variable> variables = new LinkedHashMap<>();
 
-  Scope(
-      @NotNull ImmutableList<Scope> children,
-      @NotNull ImmutableList<Variable> variables,
-      @NotNull HashTable<String, ImmutableList<Reference>> through,
-      @NotNull Type type,
-      boolean isDynamic,
-      @NotNull Node astNode) {
-    this.children = children;
-    this.through = through;
-    this.type = type;
-    this.astNode = astNode;
+    Scope(
+            @NotNull ImmutableList<Scope> children,
+            @NotNull ImmutableList<Variable> variables,
+            @NotNull HashTable<String, ImmutableList<Reference>> through,
+            @NotNull Type type,
+            boolean isDynamic,
+            @NotNull Node astNode) {
+        this.children = children;
+        this.through = through;
+        this.type = type;
+        this.astNode = astNode;
 
-    for (Variable var : variables) {
-      this.variables.put(var.name, var);
+        for (Variable var : variables) {
+            this.variables.put(var.name, var);
+        }
+
+        this.dynamic = isDynamic || type == Type.With;
     }
 
-    this.dynamic = isDynamic || type == Type.With;
-  }
+    public boolean isGlobal() {
+        return (this.type == Type.Global);
+    }
 
-  public boolean isGlobal() {
-    return (this.type == Type.Global);
-  }
+    @NotNull
+    public final Maybe<Variable> lookupVariable(@NotNull String name) {
+        return Maybe.fromNullable(this.variables.get(name));
+    }
 
-  @NotNull
-  public final Maybe<Variable> lookupVariable(@NotNull String name) {
-    return Maybe.fromNullable(this.variables.get(name));
-  }
-
-  @NotNull
-  public final Collection<Variable> variables() {
-    return this.variables.values();
-  }
+    @NotNull
+    public final Collection<Variable> variables() {
+        return this.variables.values();
+    }
 
 
-
-  public enum Type {
-    Global,
-    Module,
-    Script,
-    ArrowFunction,
-    Function,
-    FunctionName,
-    Parameters,
-    ParameterExpression,
-    With,
-    Catch,
-    Block
-  }
+    public enum Type {
+        Global,
+        Module,
+        Script,
+        ArrowFunction,
+        Function,
+        FunctionName,
+        Parameters,
+        ParameterExpression,
+        With,
+        Catch,
+        Block
+    }
 }

@@ -19,18 +19,18 @@ package com.shapesecurity.shift.ast.operators;
 import org.jetbrains.annotations.NotNull;
 
 public enum UpdateOperator implements Operator {
-  Increment("++"),
-  Decrement("--");
-  @NotNull
-  private final String name;
+    Increment("++"),
+    Decrement("--");
+    @NotNull
+    private final String name;
 
-  private UpdateOperator(@NotNull String name) {
-    this.name = name;
-  }
+    private UpdateOperator(@NotNull String name) {
+        this.name = name;
+    }
 
-  @Override
-  @NotNull
-  public String getName() {
-    return this.name;
-  }
+    @Override
+    @NotNull
+    public String getName() {
+        return this.name;
+    }
 }

@@ -19,14 +19,16 @@ package com.shapesecurity.shift.fuzzer;
 
 import com.shapesecurity.shift.ast.Node;
 import com.shapesecurity.shift.parser.JsError;
+
 import junit.framework.TestCase;
+
 import org.junit.Test;
 
 import java.util.Random;
 
 public class FuzzerTest extends TestCase {
-  private void test(int i, int depth) throws JsError {
-    Node tree = Fuzzer.generate(new Random(i), depth);
+    private void test(int i, int depth) throws JsError {
+        Node tree = Fuzzer.generate(new Random(i), depth);
 //    String text = CodeGen.codeGen(tree, true);
 //    assertEquals("Case " + i, 0, Validator.validate(tree).length);
 //    try {
@@ -38,32 +40,32 @@ public class FuzzerTest extends TestCase {
 //      System.out.println(text);
 //      throw e;
 //    }
-  }
+    }
 
-  @Test
-  public void testFuzzer() throws JsError {
-    Random random = new Random(1);
+    @Test
+    public void testFuzzer() throws JsError {
+        Random random = new Random(1);
 //    Node script = Fuzzer.generate(random, 0);
 //    assertEquals("", CodeGen.codeGen(script));
-    Node script = Fuzzer.generate(random, 10);
-    test(10, 10);
-    long start = System.nanoTime();
-    int N = 10000;
-    for (int i = 799; i < N; i++) {
-      test(i, 10);
-      if (i % 30 == 0) {
-        printStats(start, i, N);
-      }
+        Node script = Fuzzer.generate(random, 10);
+        test(10, 10);
+        long start = System.nanoTime();
+        int N = 10000;
+        for (int i = 799; i < N; i++) {
+            test(i, 10);
+            if (i % 30 == 0) {
+                printStats(start, i, N);
+            }
+        }
+        printStats(start, N, N);
+        System.out.println();
+        System.out.println();
     }
-    printStats(start, N, N);
-    System.out.println();
-    System.out.println();
-  }
 
-  private void printStats(long start, int i, int N) {
-    long now = System.nanoTime();
-    double tpm = i / ((now - start) * 1e-6);
-    System.out.printf("[%5.1f%%] Average speed %.3f tests per milli-second. %.0f tests per min.\r",
-        i * 1e2 / N, tpm, tpm * 6e4);
-  }
+    private void printStats(long start, int i, int N) {
+        long now = System.nanoTime();
+        double tpm = i / ((now - start) * 1e-6);
+        System.out.printf("[%5.1f%%] Average speed %.3f tests per milli-second. %.0f tests per min.\r",
+                i * 1e2 / N, tpm, tpm * 6e4);
+    }
 }

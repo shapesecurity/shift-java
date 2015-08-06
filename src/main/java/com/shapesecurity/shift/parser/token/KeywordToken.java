@@ -22,7 +22,7 @@ import com.shapesecurity.shift.parser.TokenType;
 import org.jetbrains.annotations.NotNull;
 
 public class KeywordToken extends IdentifierLikeToken {
-  public KeywordToken(@NotNull TokenType type, @NotNull SourceRange slice) {
-    super(type, slice);
-  }
+    public KeywordToken(@NotNull TokenType type, @NotNull SourceRange slice) {
+        super(type, slice);
+    }
 }
