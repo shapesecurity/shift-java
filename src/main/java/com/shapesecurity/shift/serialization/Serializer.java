@@ -82,7 +82,11 @@ public class Serializer implements Reducer<StringBuilder> {
 
   @NotNull
   public static String serialize(@NotNull Node node) {
-    return Director.reduce(INSTANCE, node).toString();
+    if (node instanceof Script) {
+      return Director.reduceScript(INSTANCE, (Script)node).toString();
+    } else {
+      return Director.reduceModule(INSTANCE, (Module) node).toString();
+    }
   }
 
   @NotNull
