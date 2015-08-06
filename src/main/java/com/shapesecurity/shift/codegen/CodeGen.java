@@ -51,10 +51,18 @@ public final class CodeGen implements Reducer<CodeRep> {
   }
 
   @NotNull
-  public static String codeGen(@NotNull Node script, boolean pretty) {
+  public static String codeGen(@NotNull Script script, boolean pretty) {
     StringBuilder sb = new StringBuilder();
     TokenStream ts = new TokenStream(sb);
-    Director.reduce(pretty ? PRETTY : COMPACT, script).emit(ts, false);
+    Director.reduceScript(pretty ? PRETTY : COMPACT, script).emit(ts, false);
+    return sb.toString();
+  }
+
+  @NotNull
+  public static String codeGen(@NotNull Module module, boolean pretty) {
+    StringBuilder sb = new StringBuilder();
+    TokenStream ts = new TokenStream(sb);
+    Director.reduceModule(pretty ? PRETTY : COMPACT, module).emit(ts, false);
     return sb.toString();
   }
 

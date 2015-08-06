@@ -32,7 +32,7 @@ import java.io.IOException;
 public class ReducerTest extends VisitorTestCase {
   private void count(String source, int expectedCount, Counter counter) throws JsError {
     Script script = Parser.parseScript(source);
-    assertEquals(expectedCount, Director.reduce(counter, script).intValue());
+    assertEquals(expectedCount, Director.reduceScript(counter, script).intValue());
   }
 
   private void countLibrary(String fileName, int expectedCount, Counter counter) throws JsError, IOException {
