@@ -31,71 +31,71 @@ import java.nio.file.Paths;
 import java.util.Random;
 
 public abstract class TestBase {
-  private static final String BASE_PATH = System.getenv("CONFIG_DIR") == null ? "src/test/resources" : System.getenv(
-      "CONFIG_DIR");
+    private static final String BASE_PATH = System.getenv("CONFIG_DIR") == null ? "src/test/resources" : System.getenv(
+            "CONFIG_DIR");
 
-  private static Random rand = new Random();
+    private static Random rand = new Random();
 
-  protected static int rand(int low, int high) {
-    return rand.nextInt(Math.max(high - low, 1)) + low;
-  }
-
-  protected static int rand() {
-    return rand(-100, 101);
-  }
-
-  protected static Path getPath(String path) {
-    Path pathObj = Paths.get(BASE_PATH + '/' + path);
-    if (Files.exists(pathObj)) {
-      return pathObj;
-    } else {
-      try {
-        return Paths.get(TestBase.class.getResource("/" + path).toURI());
-      } catch (URISyntaxException e) {
-        throw new RuntimeException(e);
-      }
+    protected static int rand(int low, int high) {
+        return rand.nextInt(Math.max(high - low, 1)) + low;
     }
-  }
 
-  @NotNull
-  protected static String readFile(@NotNull String path) throws IOException {
-    byte[] encoded = Files.readAllBytes(getPath(path));
-    return StandardCharsets.UTF_8.decode(ByteBuffer.wrap(encoded)).toString();
-  }
-
-  // Tests
-
-  // static
-
-  static protected NonEmptyImmutableList<Integer> LONG_LIST = ImmutableList.list(rand());
-
-  static {
-    for (int i = 0; i < 1000; i++) {
-      LONG_LIST = LONG_LIST.cons(rand());
+    protected static int rand() {
+        return rand(-100, 101);
     }
-  }
 
-  @Before
-  public void setUp() {
-    rand = new Random(12345L);
-  }
-
-  @NotNull
-  public ImmutableList<Integer> range(final int upper) {
-    return range(0, upper);
-  }
-
-  @NotNull
-  public ImmutableList<Integer> range(final int lower, final int upper) {
-    return range(lower, upper, 1);
-  }
-
-  @NotNull
-  public ImmutableList<Integer> range(final int lower, final int upper, final int step) {
-    ImmutableList<Integer> result = ImmutableList.nil();
-    for (int i = upper - ((upper - lower + step - 1) % step + 1); i >= lower; i -= step) {
-      result = result.cons(i);
+    protected static Path getPath(String path) {
+        Path pathObj = Paths.get(BASE_PATH + '/' + path);
+        if (Files.exists(pathObj)) {
+            return pathObj;
+        } else {
+            try {
+                return Paths.get(TestBase.class.getResource("/" + path).toURI());
+            } catch (URISyntaxException e) {
+                throw new RuntimeException(e);
+            }
+        }
     }
-    return result;
-  }
+
+    @NotNull
+    protected static String readFile(@NotNull String path) throws IOException {
+        byte[] encoded = Files.readAllBytes(getPath(path));
+        return StandardCharsets.UTF_8.decode(ByteBuffer.wrap(encoded)).toString();
+    }
+
+    // Tests
+
+    // static
+
+    static protected NonEmptyImmutableList<Integer> LONG_LIST = ImmutableList.list(rand());
+
+    static {
+        for (int i = 0; i < 1000; i++) {
+            LONG_LIST = LONG_LIST.cons(rand());
+        }
+    }
+
+    @Before
+    public void setUp() {
+        rand = new Random(12345L);
+    }
+
+    @NotNull
+    public ImmutableList<Integer> range(final int upper) {
+        return range(0, upper);
+    }
+
+    @NotNull
+    public ImmutableList<Integer> range(final int lower, final int upper) {
+        return range(lower, upper, 1);
+    }
+
+    @NotNull
+    public ImmutableList<Integer> range(final int lower, final int upper, final int step) {
+        ImmutableList<Integer> result = ImmutableList.nil();
+        for (int i = upper - ((upper - lower + step - 1) % step + 1); i >= lower; i -= step) {
+            result = result.cons(i);
+        }
+        return result;
+    }
 }

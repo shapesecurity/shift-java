@@ -22,30 +22,30 @@ import org.jetbrains.annotations.NotNull;
  * HasCodeBuilder is a simple FNV hash builder for hash code generation of
  */
 public final class HashCodeBuilder {
-  //int is a 32 bit integer
-  private static final int INITIAL_VALUE = -2128831035;
-  private static final int MULT = 16777619;
+    //int is a 32 bit integer
+    private static final int INITIAL_VALUE = -2128831035;
+    private static final int MULT = 16777619;
 
-  public static int init() {
-    return INITIAL_VALUE;
-  }
+    public static int init() {
+        return INITIAL_VALUE;
+    }
 
-  public static int put(int hash, @NotNull Object os) {
-    int p = os.hashCode();
-    hash = hash * MULT ^ (p & 255);
-    p >>>= 8;
-    hash = hash * MULT ^ (p & 255);
-    p >>>= 8;
-    hash = hash * MULT ^ (p & 255);
-    p >>>= 8;
-    hash = hash * MULT ^ (p & 255);
-    return hash;
-  }
+    public static int put(int hash, @NotNull Object os) {
+        int p = os.hashCode();
+        hash = hash * MULT ^ (p & 255);
+        p >>>= 8;
+        hash = hash * MULT ^ (p & 255);
+        p >>>= 8;
+        hash = hash * MULT ^ (p & 255);
+        p >>>= 8;
+        hash = hash * MULT ^ (p & 255);
+        return hash;
+    }
 
-  public static int putChar(int hash, char p) {
-    hash = hash * MULT ^ (p & 255);
-    p >>>= 8;
-    hash = hash * MULT ^ (p & 255);
-    return hash;
-  }
+    public static int putChar(int hash, char p) {
+        hash = hash * MULT ^ (p & 255);
+        p >>>= 8;
+        hash = hash * MULT ^ (p & 255);
+        return hash;
+    }
 }

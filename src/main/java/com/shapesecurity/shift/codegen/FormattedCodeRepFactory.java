@@ -19,22 +19,22 @@ package com.shapesecurity.shift.codegen;
 import org.jetbrains.annotations.NotNull;
 
 public class FormattedCodeRepFactory extends CodeRepFactory {
-  public static final FormattedCodeRepFactory INSTANCE = new FormattedCodeRepFactory();
+    public static final FormattedCodeRepFactory INSTANCE = new FormattedCodeRepFactory();
 
-  @NotNull
-  public CodeRep semi() {
-    return new FormattedCodeRep.Semi();
-  }
+    @NotNull
+    public CodeRep semi() {
+        return new FormattedCodeRep.Semi();
+    }
 
-  @NotNull
-  @Override
-  public CodeRep brace(@NotNull CodeRep rep) {
-    return new FormattedCodeRep.Brace(rep);
-  }
+    @NotNull
+    @Override
+    public CodeRep brace(@NotNull CodeRep rep) {
+        return new FormattedCodeRep.Brace(rep);
+    }
 
-  @NotNull
-  @Override
-  public CodeRep semiOp() {
-    return new FormattedCodeRep.SemiOp();
-  }
+    @NotNull
+    @Override
+    public CodeRep semiOp() {
+        return new FormattedCodeRep.SemiOp();
+    }
 }

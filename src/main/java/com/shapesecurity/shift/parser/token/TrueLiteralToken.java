@@ -22,7 +22,7 @@ import com.shapesecurity.shift.parser.TokenType;
 import org.jetbrains.annotations.NotNull;
 
 public class TrueLiteralToken extends IdentifierLikeToken {
-  public TrueLiteralToken(@NotNull SourceRange slice) {
-    super(TokenType.TRUE_LITERAL, slice);
-  }
+    public TrueLiteralToken(@NotNull SourceRange slice) {
+        super(TokenType.TRUE_LITERAL, slice);
+    }
 }

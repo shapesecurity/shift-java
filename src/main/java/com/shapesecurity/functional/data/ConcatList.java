@@ -23,318 +23,321 @@ import com.shapesecurity.functional.F2;
 import org.jetbrains.annotations.NotNull;
 
 public abstract class ConcatList<T> {
-  private static final Empty<Object> EMPTY = new Empty<>();
-  private static BinaryTreeMonoid<Object> MONOID = new BinaryTreeMonoid<>();
-  public final int length;
+    private static final Empty<Object> EMPTY = new Empty<>();
+    private static BinaryTreeMonoid<Object> MONOID = new BinaryTreeMonoid<>();
+    public final int length;
 
-  protected ConcatList(int length) {
-    this.length = length;
-  }
-
-  @SuppressWarnings("unchecked")
-  @NotNull
-  public static <T> ConcatList<T> empty() {
-    return (ConcatList<T>) EMPTY;
-  }
-
-  @NotNull
-  public static <T> ConcatList<T> single(@NotNull T scope) {
-    return new Leaf<>(scope);
-  }
-
-  @SuppressWarnings("unchecked")
-  public static <T> Monoid<ConcatList<T>> monoid() {
-    return (BinaryTreeMonoid<T>) MONOID;
-  }
-
-  @NotNull
-  public final ImmutableList<T> toList() {
-    return this.toList(ImmutableList.nil());
-  }
-
-  protected abstract ImmutableList<T> toList(@NotNull ImmutableList<T> acc);
-
-  @NotNull
-  public abstract <B> B foldLeft(@NotNull F2<B, ? super T, B> f, @NotNull B init);
-
-  @NotNull
-  public abstract <B> B foldRight(@NotNull F2<? super T, B, B> f, @NotNull B init);
-
-  public abstract void foreach(@NotNull Effect<T> f);
-
-  public abstract boolean isEmpty();
-
-  @NotNull
-  public abstract ConcatList<T> append(@NotNull ConcatList<? extends T> rhs);
-
-  @NotNull
-  public final ConcatList<T> append1(@NotNull T element) {
-    return this.append(ConcatList.single(element));
-  }
-
-  public abstract boolean exists(@NotNull F<T, Boolean> f);
-
-  @NotNull
-  public abstract Maybe<T> find(@NotNull F<T, Boolean> f);
-
-  @NotNull
-  public abstract ConcatList<T> reverse();
-
-  @NotNull
-  public abstract Maybe<T> index(int index);
-
-  @NotNull
-  public abstract Maybe<ConcatList<T>> update(int index, @NotNull T element);
-
-  public final static class Empty<T> extends ConcatList<T> {
-    private Empty() {
-      super(0);
-    }
-
-    @NotNull
-    @Override
-    protected ImmutableList<T> toList(@NotNull ImmutableList<T> acc) {
-      return acc;
-    }
-
-    @NotNull
-    @Override
-    public <B> B foldLeft(@NotNull F2<B, ? super T, B> f, @NotNull B init) {
-      return init;
-    }
-
-    @NotNull
-    @Override
-    public <B> B foldRight(@NotNull F2<? super T, B, B> f, @NotNull B init) {
-      return init;
-    }
-
-    @Override
-    public void foreach(@NotNull Effect<T> f) {}
-
-    @Override
-    public boolean isEmpty() {
-      return true;
+    protected ConcatList(int length) {
+        this.length = length;
     }
 
     @SuppressWarnings("unchecked")
     @NotNull
-    @Override
-    public ConcatList<T> append(@NotNull ConcatList<? extends T> rhs) {
-      return (ConcatList<T>) rhs;
-    }
-
-    @Override
-    public boolean exists(@NotNull F<T, Boolean> f) {
-      return false;
+    public static <T> ConcatList<T> empty() {
+        return (ConcatList<T>) EMPTY;
     }
 
     @NotNull
-    @Override
-    public Maybe<T> find(@NotNull F<T, Boolean> f) {
-      return Maybe.nothing();
-    }
-
-    @NotNull
-    @Override
-    public ConcatList<T> reverse() {
-      return this;
-    }
-
-    @NotNull
-    @Override
-    public Maybe<T> index(int index) {
-      return Maybe.nothing();
-    }
-
-    @NotNull
-    @Override
-    public Maybe<ConcatList<T>> update(int index, @NotNull T element) {
-      return Maybe.nothing();
-    }
-  }
-
-  public final static class Leaf<T> extends ConcatList<T> {
-    @NotNull
-    public final T data;
-
-    private Leaf(@NotNull T data) {
-      super(1);
-      this.data = data;
-    }
-
-    @NotNull
-    @Override
-    protected ImmutableList<T> toList(@NotNull ImmutableList<T> acc) {
-      return acc.cons(this.data);
-    }
-
-    @NotNull
-    @Override
-    public <B> B foldLeft(@NotNull F2<B, ? super T, B> f, @NotNull B init) {
-      return f.apply(init, this.data);
-    }
-
-    @NotNull
-    @Override
-    public <B> B foldRight(@NotNull F2<? super T, B, B> f, @NotNull B init) {
-      return f.apply(this.data, init);
-    }
-
-    @Override
-    public void foreach(@NotNull Effect<T> f) {
-      f.apply(this.data);
-    }
-
-    @Override
-    public boolean isEmpty() {
-      return false;
+    public static <T> ConcatList<T> single(@NotNull T scope) {
+        return new Leaf<>(scope);
     }
 
     @SuppressWarnings("unchecked")
-    @NotNull
-    @Override
-    public ConcatList<T> append(@NotNull ConcatList<? extends T> rhs) {
-      return new Fork<>(this, (ConcatList<T>) rhs);
-    }
-
-    @Override
-    public boolean exists(@NotNull F<T, Boolean> f) {
-      return f.apply(this.data);
+    public static <T> Monoid<ConcatList<T>> monoid() {
+        return (BinaryTreeMonoid<T>) MONOID;
     }
 
     @NotNull
-    @Override
-    public Maybe<T> find(@NotNull F<T, Boolean> f) {
-      if (f.apply(this.data)) {
-        return Maybe.just(this.data);
-      }
-      return Maybe.nothing();
+    public final ImmutableList<T> toList() {
+        return this.toList(ImmutableList.nil());
     }
+
+    protected abstract ImmutableList<T> toList(@NotNull ImmutableList<T> acc);
 
     @NotNull
-    @Override
-    public ConcatList<T> reverse() {
-      return this;
-    }
+    public abstract <B> B foldLeft(@NotNull F2<B, ? super T, B> f, @NotNull B init);
 
     @NotNull
-    @Override
-    public Maybe<T> index(int index) {
-      return Maybe.iff(index == 0, this.data);
-    }
+    public abstract <B> B foldRight(@NotNull F2<? super T, B, B> f, @NotNull B init);
+
+    public abstract void foreach(@NotNull Effect<T> f);
+
+    public abstract boolean isEmpty();
 
     @NotNull
-    @Override
-    public Maybe<ConcatList<T>> update(int index, @NotNull T element) {
-      return index == 0 ? Maybe.just(single(element)) : Maybe.nothing();
-    }
-  }
-
-  public final static class Fork<T> extends ConcatList<T> {
-    @NotNull
-    public final ConcatList<T> left, right;
-
-    private Fork(@NotNull ConcatList<T> left, @NotNull ConcatList<T> right) {
-      super(left.length + right.length);
-      this.left = left;
-      this.right = right;
-    }
+    public abstract ConcatList<T> append(@NotNull ConcatList<? extends T> rhs);
 
     @NotNull
-    @Override
-    protected ImmutableList<T> toList(@NotNull ImmutableList<T> acc) {
-      return this.left.toList(this.right.toList(acc));
+    public final ConcatList<T> append1(@NotNull T element) {
+        return this.append(ConcatList.single(element));
     }
+
+    public abstract boolean exists(@NotNull F<T, Boolean> f);
 
     @NotNull
-    @Override
-    public <B> B foldLeft(@NotNull F2<B, ? super T, B> f, @NotNull B init) {
-      return this.right.foldLeft(f, this.left.foldLeft(f, init));
-    }
+    public abstract Maybe<T> find(@NotNull F<T, Boolean> f);
 
     @NotNull
-    @Override
-    public <B> B foldRight(@NotNull F2<? super T, B, B> f, @NotNull B init) {
-      return this.left.foldRight(f, this.right.foldRight(f, init));
-    }
-
-    @Override
-    public void foreach(@NotNull Effect<T> f) {
-      this.left.foreach(f);
-      this.right.foreach(f);
-    }
-
-
-    @Override
-    public boolean isEmpty() {
-      return this.left.isEmpty() || this.right.isEmpty();
-    }
-
-    @SuppressWarnings("unchecked")
-    @NotNull
-    @Override
-    public ConcatList<T> append(@NotNull ConcatList<? extends T> rhs) {
-      return new Fork<>(this, (ConcatList<T>) rhs);
-    }
-
-    @Override
-    public boolean exists(@NotNull F<T, Boolean> f) {
-      return this.left.exists(f) || this.right.exists(f);
-    }
+    public abstract ConcatList<T> reverse();
 
     @NotNull
-    @Override
-    public Maybe<T> find(@NotNull F<T, Boolean> f) {
-      Maybe<T> foundLeft = this.left.find(f);
-      if (foundLeft.isNothing()) {
-        return this.right.find(f);
-      }
-      return foundLeft;
-    }
+    public abstract Maybe<T> index(int index);
 
     @NotNull
-    @Override
-    public Fork<T> reverse() {
-      return new Fork<>(this.right.reverse(), this.left.reverse());
+    public abstract Maybe<ConcatList<T>> update(int index, @NotNull T element);
+
+    public final static class Empty<T> extends ConcatList<T> {
+        private Empty() {
+            super(0);
+        }
+
+        @NotNull
+        @Override
+        protected ImmutableList<T> toList(@NotNull ImmutableList<T> acc) {
+            return acc;
+        }
+
+        @NotNull
+        @Override
+        public <B> B foldLeft(@NotNull F2<B, ? super T, B> f, @NotNull B init) {
+            return init;
+        }
+
+        @NotNull
+        @Override
+        public <B> B foldRight(@NotNull F2<? super T, B, B> f, @NotNull B init) {
+            return init;
+        }
+
+        @Override
+        public void foreach(@NotNull Effect<T> f) {
+        }
+
+        @Override
+        public boolean isEmpty() {
+            return true;
+        }
+
+        @SuppressWarnings("unchecked")
+        @NotNull
+        @Override
+        public ConcatList<T> append(@NotNull ConcatList<? extends T> rhs) {
+            return (ConcatList<T>) rhs;
+        }
+
+        @Override
+        public boolean exists(@NotNull F<T, Boolean> f) {
+            return false;
+        }
+
+        @NotNull
+        @Override
+        public Maybe<T> find(@NotNull F<T, Boolean> f) {
+            return Maybe.nothing();
+        }
+
+        @NotNull
+        @Override
+        public ConcatList<T> reverse() {
+            return this;
+        }
+
+        @NotNull
+        @Override
+        public Maybe<T> index(int index) {
+            return Maybe.nothing();
+        }
+
+        @NotNull
+        @Override
+        public Maybe<ConcatList<T>> update(int index, @NotNull T element) {
+            return Maybe.nothing();
+        }
     }
 
-    @NotNull
-    @Override
-    public Maybe<T> index(int index) {
-      if (index >= this.length) {
-        return Maybe.nothing();
-      }
-      return index < this.left.length ? this.left.index(index) : this.right.index(index - this.left.length);
+    public final static class Leaf<T> extends ConcatList<T> {
+        @NotNull
+        public final T data;
+
+        private Leaf(@NotNull T data) {
+            super(1);
+            this.data = data;
+        }
+
+        @NotNull
+        @Override
+        protected ImmutableList<T> toList(@NotNull ImmutableList<T> acc) {
+            return acc.cons(this.data);
+        }
+
+        @NotNull
+        @Override
+        public <B> B foldLeft(@NotNull F2<B, ? super T, B> f, @NotNull B init) {
+            return f.apply(init, this.data);
+        }
+
+        @NotNull
+        @Override
+        public <B> B foldRight(@NotNull F2<? super T, B, B> f, @NotNull B init) {
+            return f.apply(this.data, init);
+        }
+
+        @Override
+        public void foreach(@NotNull Effect<T> f) {
+            f.apply(this.data);
+        }
+
+        @Override
+        public boolean isEmpty() {
+            return false;
+        }
+
+        @SuppressWarnings("unchecked")
+        @NotNull
+        @Override
+        public ConcatList<T> append(@NotNull ConcatList<? extends T> rhs) {
+            return new Fork<>(this, (ConcatList<T>) rhs);
+        }
+
+        @Override
+        public boolean exists(@NotNull F<T, Boolean> f) {
+            return f.apply(this.data);
+        }
+
+        @NotNull
+        @Override
+        public Maybe<T> find(@NotNull F<T, Boolean> f) {
+            if (f.apply(this.data)) {
+                return Maybe.just(this.data);
+            }
+            return Maybe.nothing();
+        }
+
+        @NotNull
+        @Override
+        public ConcatList<T> reverse() {
+            return this;
+        }
+
+        @NotNull
+        @Override
+        public Maybe<T> index(int index) {
+            return Maybe.iff(index == 0, this.data);
+        }
+
+        @NotNull
+        @Override
+        public Maybe<ConcatList<T>> update(int index, @NotNull T element) {
+            return index == 0 ? Maybe.just(single(element)) : Maybe.nothing();
+        }
     }
 
-    @NotNull
-    @Override
-    public Maybe<ConcatList<T>> update(int index, @NotNull T element) {
-      if (index >= this.length) { return Maybe.nothing(); }
-      ConcatList<T> left = this.left;
-      ConcatList<T> right = this.right;
+    public final static class Fork<T> extends ConcatList<T> {
+        @NotNull
+        public final ConcatList<T> left, right;
 
-      if (index < this.left.length) {
-        left = left.update(index, element).just();
-      } else {
-        right = right.update(index - this.left.length, element).just();
-      }
-      return Maybe.just(left.append(right));
-    }
-  }
+        private Fork(@NotNull ConcatList<T> left, @NotNull ConcatList<T> right) {
+            super(left.length + right.length);
+            this.left = left;
+            this.right = right;
+        }
 
-  private static class BinaryTreeMonoid<T> implements Monoid<ConcatList<T>> {
-    @NotNull
-    @Override
-    public ConcatList<T> identity() {
-      return new Empty<>();
+        @NotNull
+        @Override
+        protected ImmutableList<T> toList(@NotNull ImmutableList<T> acc) {
+            return this.left.toList(this.right.toList(acc));
+        }
+
+        @NotNull
+        @Override
+        public <B> B foldLeft(@NotNull F2<B, ? super T, B> f, @NotNull B init) {
+            return this.right.foldLeft(f, this.left.foldLeft(f, init));
+        }
+
+        @NotNull
+        @Override
+        public <B> B foldRight(@NotNull F2<? super T, B, B> f, @NotNull B init) {
+            return this.left.foldRight(f, this.right.foldRight(f, init));
+        }
+
+        @Override
+        public void foreach(@NotNull Effect<T> f) {
+            this.left.foreach(f);
+            this.right.foreach(f);
+        }
+
+
+        @Override
+        public boolean isEmpty() {
+            return this.left.isEmpty() || this.right.isEmpty();
+        }
+
+        @SuppressWarnings("unchecked")
+        @NotNull
+        @Override
+        public ConcatList<T> append(@NotNull ConcatList<? extends T> rhs) {
+            return new Fork<>(this, (ConcatList<T>) rhs);
+        }
+
+        @Override
+        public boolean exists(@NotNull F<T, Boolean> f) {
+            return this.left.exists(f) || this.right.exists(f);
+        }
+
+        @NotNull
+        @Override
+        public Maybe<T> find(@NotNull F<T, Boolean> f) {
+            Maybe<T> foundLeft = this.left.find(f);
+            if (foundLeft.isNothing()) {
+                return this.right.find(f);
+            }
+            return foundLeft;
+        }
+
+        @NotNull
+        @Override
+        public Fork<T> reverse() {
+            return new Fork<>(this.right.reverse(), this.left.reverse());
+        }
+
+        @NotNull
+        @Override
+        public Maybe<T> index(int index) {
+            if (index >= this.length) {
+                return Maybe.nothing();
+            }
+            return index < this.left.length ? this.left.index(index) : this.right.index(index - this.left.length);
+        }
+
+        @NotNull
+        @Override
+        public Maybe<ConcatList<T>> update(int index, @NotNull T element) {
+            if (index >= this.length) {
+                return Maybe.nothing();
+            }
+            ConcatList<T> left = this.left;
+            ConcatList<T> right = this.right;
+
+            if (index < this.left.length) {
+                left = left.update(index, element).just();
+            } else {
+                right = right.update(index - this.left.length, element).just();
+            }
+            return Maybe.just(left.append(right));
+        }
     }
 
-    @NotNull
-    @Override
-    public ConcatList<T> append(ConcatList<T> a, ConcatList<T> b) {
-      return a.append(b);
+    private static class BinaryTreeMonoid<T> implements Monoid<ConcatList<T>> {
+        @NotNull
+        @Override
+        public ConcatList<T> identity() {
+            return new Empty<>();
+        }
+
+        @NotNull
+        @Override
+        public ConcatList<T> append(ConcatList<T> a, ConcatList<T> b) {
+            return a.append(b);
+        }
     }
-  }
 }

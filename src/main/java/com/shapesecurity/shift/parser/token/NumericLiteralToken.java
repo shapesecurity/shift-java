@@ -24,20 +24,20 @@ import com.shapesecurity.shift.utils.D2A;
 import org.jetbrains.annotations.NotNull;
 
 public final class NumericLiteralToken extends Token {
-  public final double value;
+    public final double value;
 
-  public NumericLiteralToken(@NotNull SourceRange slice, double value) {
-    this(slice, value, false);
-  }
+    public NumericLiteralToken(@NotNull SourceRange slice, double value) {
+        this(slice, value, false);
+    }
 
-  public NumericLiteralToken(@NotNull SourceRange slice, double value, boolean octal) {
-    super(TokenType.NUMBER, slice, octal);
-    this.value = value;
-  }
+    public NumericLiteralToken(@NotNull SourceRange slice, double value, boolean octal) {
+        super(TokenType.NUMBER, slice, octal);
+        this.value = value;
+    }
 
-  @NotNull
-  @Override
-  public String getValueString() {
-    return D2A.d2a(this.value);
-  }
+    @NotNull
+    @Override
+    public String getValueString() {
+        return D2A.d2a(this.value);
+    }
 }

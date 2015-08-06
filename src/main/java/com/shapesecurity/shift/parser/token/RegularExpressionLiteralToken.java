@@ -23,17 +23,17 @@ import com.shapesecurity.shift.parser.TokenType;
 import org.jetbrains.annotations.NotNull;
 
 public class RegularExpressionLiteralToken extends Token {
-  @NotNull
-  private final String value;
+    @NotNull
+    private final String value;
 
-  public RegularExpressionLiteralToken(@NotNull SourceRange slice, @NotNull String value) {
-    super(TokenType.REGEXP, slice, false);
-    this.value = value;
-  }
+    public RegularExpressionLiteralToken(@NotNull SourceRange slice, @NotNull String value) {
+        super(TokenType.REGEXP, slice, false);
+        this.value = value;
+    }
 
-  @NotNull
-  @Override
-  public String getValueString() {
-    return this.value;
-  }
+    @NotNull
+    @Override
+    public String getValueString() {
+        return this.value;
+    }
 }

@@ -29,45 +29,45 @@ import java.util.HashMap;
 import java.util.HashSet;
 
 public class HashCodeBuilderTest extends TestBase {
-  @Test
-  public void testSimple() {
-    int i = HashCodeBuilder.init();
-    assertNotEquals(HashCodeBuilder.put(i, 3), HashCodeBuilder.put(i, 4));
-  }
-
-  @Test
-  public void testCollisionOnNumbers() throws IOException {
-    int h = HashCodeBuilder.init();
-    HashSet<Integer> hashes = new HashSet<>();
-    for (int i = 0; i < 1e6; i++) {
-      int a = HashCodeBuilder.put(h, i);
-      assertFalse(hashes.contains(a));
-      hashes.add(a);
-      i++;
+    @Test
+    public void testSimple() {
+        int i = HashCodeBuilder.init();
+        assertNotEquals(HashCodeBuilder.put(i, 3), HashCodeBuilder.put(i, 4));
     }
-  }
 
-  @Test
-  public void testCollision() throws IOException {
-    String dict = readFile("dictionary.txt");
-    String[] lines = dict.split("\n");
-    HashMap<Integer, Integer> map = new HashMap<>();
-    int max = 1;
-    for (int i = 0; i < lines.length; i++) {
-      char[] chars = lines[i].toCharArray();
-      int h = HashCodeBuilder.init();
-      for (int j = 0; j < chars.length; j++) {
-        h = HashCodeBuilder.putChar(h, chars[j]);
-      }
-      int count = 0;
-      if (map.containsKey(h)) {
-        count = map.get(h);
-      }
-      if (count == max) {
-        max = count + 1;
-      }
-      map.put(h, count + 1);
+    @Test
+    public void testCollisionOnNumbers() throws IOException {
+        int h = HashCodeBuilder.init();
+        HashSet<Integer> hashes = new HashSet<>();
+        for (int i = 0; i < 1e6; i++) {
+            int a = HashCodeBuilder.put(h, i);
+            assertFalse(hashes.contains(a));
+            hashes.add(a);
+            i++;
+        }
     }
-    assertTrue(max < 3);
-  }
+
+    @Test
+    public void testCollision() throws IOException {
+        String dict = readFile("dictionary.txt");
+        String[] lines = dict.split("\n");
+        HashMap<Integer, Integer> map = new HashMap<>();
+        int max = 1;
+        for (int i = 0; i < lines.length; i++) {
+            char[] chars = lines[i].toCharArray();
+            int h = HashCodeBuilder.init();
+            for (int j = 0; j < chars.length; j++) {
+                h = HashCodeBuilder.putChar(h, chars[j]);
+            }
+            int count = 0;
+            if (map.containsKey(h)) {
+                count = map.get(h);
+            }
+            if (count == max) {
+                max = count + 1;
+            }
+            map.put(h, count + 1);
+        }
+        assertTrue(max < 3);
+    }
 }

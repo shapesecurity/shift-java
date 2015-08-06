@@ -3,8 +3,8 @@ package com.shapesecurity.shift.parser;
 import org.junit.Test;
 
 public class FailuresTest extends ParserTestCase {
-  @Test
-  public void testFailures() throws JsError {
+    @Test
+    public void testFailures() throws JsError {
 //    testScriptFailure("/*", 0, "Unexpected end of input");
 //    testScriptFailure("/*\r", 0, "Unexpected end of input");
 //    testScriptFailure("/*\r\n", 0, "Unexpected end of input");
@@ -179,5 +179,5 @@ public class FailuresTest extends ParserTestCase {
 //    testScriptFailure("function* f() { [yield {a = 0}]; }", 0, "Illegal property initializer");
 //    testScriptFailure("function* f() { [yield* {a = 0}]; }", 0, "Illegal property initializer");
 //    testScriptFailure("1 / %", 0, "Unexpected token \"%\"");
-  }
+    }
 }

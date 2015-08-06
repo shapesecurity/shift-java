@@ -19,23 +19,23 @@ package com.shapesecurity.shift.ast.operators;
 import org.jetbrains.annotations.NotNull;
 
 public enum UnaryOperator implements Operator {
-  Plus("+"),
-  Minus("-"),
-  LogicalNot("!"),
-  BitNot("~"),
-  Typeof("typeof"),
-  Void("void"),
-  Delete("delete");
-  @NotNull
-  private final String name;
+    Plus("+"),
+    Minus("-"),
+    LogicalNot("!"),
+    BitNot("~"),
+    Typeof("typeof"),
+    Void("void"),
+    Delete("delete");
+    @NotNull
+    private final String name;
 
-  private UnaryOperator(@NotNull String name) {
-    this.name = name;
-  }
+    private UnaryOperator(@NotNull String name) {
+        this.name = name;
+    }
 
-  @Override
-  @NotNull
-  public String getName() {
-    return this.name;
-  }
+    @Override
+    @NotNull
+    public String getName() {
+        return this.name;
+    }
 }

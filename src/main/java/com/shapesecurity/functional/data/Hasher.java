@@ -19,7 +19,7 @@ package com.shapesecurity.functional.data;
 import org.jetbrains.annotations.NotNull;
 
 public interface Hasher<A> {
-  int hash(@NotNull A data);
+    int hash(@NotNull A data);
 
-  boolean eq(@NotNull A a, @NotNull A b);
+    boolean eq(@NotNull A a, @NotNull A b);
 }

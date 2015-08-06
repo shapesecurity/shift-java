@@ -6,9 +6,9 @@ import com.shapesecurity.shift.parser.JsError;
 import org.junit.Test;
 
 public class DebuggerStatementTest extends ParserTestCase {
-  @Test
-  public void testDebuggerStatement() throws JsError {
-    testScript("debugger", new DebuggerStatement());
-    testScript("debugger;", new DebuggerStatement());
-  }
+    @Test
+    public void testDebuggerStatement() throws JsError {
+        testScript("debugger", new DebuggerStatement());
+        testScript("debugger;", new DebuggerStatement());
+    }
 }

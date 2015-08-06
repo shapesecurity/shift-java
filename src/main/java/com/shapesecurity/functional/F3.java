@@ -20,21 +20,21 @@ import org.jetbrains.annotations.NotNull;
 
 @FunctionalInterface
 public interface F3<A, B, C, R> {
-  @NotNull
-  public abstract R apply(@NotNull A a, @NotNull B b, @NotNull C c);
+    @NotNull
+    public abstract R apply(@NotNull A a, @NotNull B b, @NotNull C c);
 
-  @NotNull
-  public default R applyTuple(@NotNull Tuple3<A, B, C> args) {
-    return apply(args.a, args.b, args.c);
-  }
+    @NotNull
+    public default R applyTuple(@NotNull Tuple3<A, B, C> args) {
+        return apply(args.a, args.b, args.c);
+    }
 
-  @NotNull
-  public default F2<B, C, R> curry(@NotNull final A a) {
-    return (b, c) -> apply(a, b, c);
-  }
+    @NotNull
+    public default F2<B, C, R> curry(@NotNull final A a) {
+        return (b, c) -> apply(a, b, c);
+    }
 
-  @NotNull
-  public default F<A, F<B, F<C, R>>> curry() {
-    return a -> b -> c -> apply(a, b, c);
-  }
+    @NotNull
+    public default F<A, F<B, F<C, R>>> curry() {
+        return a -> b -> c -> apply(a, b, c);
+    }
 }

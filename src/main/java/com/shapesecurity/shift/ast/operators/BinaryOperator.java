@@ -19,55 +19,55 @@ package com.shapesecurity.shift.ast.operators;
 import org.jetbrains.annotations.NotNull;
 
 public enum BinaryOperator implements Operator {
-  Sequence(",", Precedence.SEQUENCE),
-  LogicalOr("||", Precedence.LOGICAL_OR),
-  LogicalAnd("&&", Precedence.LOGICAL_AND),
-  BitwiseOr("|", Precedence.BITWISE_OR),
-  BitwiseXor("^", Precedence.BITWISE_XOR),
-  BitwiseAnd("&", Precedence.BITWISE_AND),
+    Sequence(",", Precedence.SEQUENCE),
+    LogicalOr("||", Precedence.LOGICAL_OR),
+    LogicalAnd("&&", Precedence.LOGICAL_AND),
+    BitwiseOr("|", Precedence.BITWISE_OR),
+    BitwiseXor("^", Precedence.BITWISE_XOR),
+    BitwiseAnd("&", Precedence.BITWISE_AND),
 
-  Plus("+", Precedence.ADDITIVE),
-  Minus("-", Precedence.ADDITIVE),
+    Plus("+", Precedence.ADDITIVE),
+    Minus("-", Precedence.ADDITIVE),
 
-  Equal("==", Precedence.EQUALITY),
-  NotEqual("!=", Precedence.EQUALITY),
-  StrictEqual("===", Precedence.EQUALITY),
-  StrictNotEqual("!==", Precedence.EQUALITY),
+    Equal("==", Precedence.EQUALITY),
+    NotEqual("!=", Precedence.EQUALITY),
+    StrictEqual("===", Precedence.EQUALITY),
+    StrictNotEqual("!==", Precedence.EQUALITY),
 
-  Mul("*", Precedence.MULTIPLICATIVE),
-  Div("/", Precedence.MULTIPLICATIVE),
-  Rem("%", Precedence.MULTIPLICATIVE),
+    Mul("*", Precedence.MULTIPLICATIVE),
+    Div("/", Precedence.MULTIPLICATIVE),
+    Rem("%", Precedence.MULTIPLICATIVE),
 
-  LessThan("<", Precedence.RELATIONAL),
-  LessThanEqual("<=", Precedence.RELATIONAL),
-  GreaterThan(">", Precedence.RELATIONAL),
-  GreaterThanEqual(">=", Precedence.RELATIONAL),
-  In("in", Precedence.RELATIONAL),
-  Instanceof("instanceof", Precedence.RELATIONAL),
+    LessThan("<", Precedence.RELATIONAL),
+    LessThanEqual("<=", Precedence.RELATIONAL),
+    GreaterThan(">", Precedence.RELATIONAL),
+    GreaterThanEqual(">=", Precedence.RELATIONAL),
+    In("in", Precedence.RELATIONAL),
+    Instanceof("instanceof", Precedence.RELATIONAL),
 
-  Left("<<", Precedence.SHIFT),
-  Right(">>", Precedence.SHIFT),
-  UnsignedRight(">>>", Precedence.SHIFT);
+    Left("<<", Precedence.SHIFT),
+    Right(">>", Precedence.SHIFT),
+    UnsignedRight(">>>", Precedence.SHIFT);
 
-  @NotNull
-  private final String name;
+    @NotNull
+    private final String name;
 
-  @NotNull
-  private final Precedence precedence;
+    @NotNull
+    private final Precedence precedence;
 
-  private BinaryOperator(@NotNull String name, @NotNull Precedence precedence) {
-    this.name = name;
-    this.precedence = precedence;
-  }
+    private BinaryOperator(@NotNull String name, @NotNull Precedence precedence) {
+        this.name = name;
+        this.precedence = precedence;
+    }
 
-  @NotNull
-  public Precedence getPrecedence() {
-    return this.precedence;
-  }
+    @NotNull
+    public Precedence getPrecedence() {
+        return this.precedence;
+    }
 
-  @Override
-  @NotNull
-  public String getName() {
-    return this.name;
-  }
+    @Override
+    @NotNull
+    public String getName() {
+        return this.name;
+    }
 }

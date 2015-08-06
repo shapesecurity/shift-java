@@ -22,97 +22,97 @@ import com.shapesecurity.functional.F;
 import org.jetbrains.annotations.NotNull;
 
 public final class Either<A, B> {
-  private final Object data;
+    private final Object data;
 
-  private final int tag;
+    private final int tag;
 
-  // class local
-  private Either(Object data, int tag) {
-    super();
-    this.data = data;
-    this.tag = tag;
-  }
-
-  @NotNull
-  public static <A, B> Either<A, B> left(@NotNull A a) {
-    return new Either<>(a, 0);
-  }
-
-  @NotNull
-  public static <A, B> Either<A, B> right(@NotNull B b) {
-    return new Either<>(b, 1);
-  }
-
-  @NotNull
-  public static <A, B extends A, C extends A> A extract(Either<B, C> e) {
-    return e.either(x -> x, x -> x);
-  }
-
-  public final boolean isLeft() {
-    return tag == 0;
-  }
-
-  public final boolean isRight() {
-    return tag == 1;
-  }
-
-  @SuppressWarnings("unchecked")
-  public <X> X either(F<A, X> f1, F<B, X> f2) {
-    if (tag == 0) {
-      return f1.apply((A) data);
-    } else {
-      return f2.apply((B) data);
+    // class local
+    private Either(Object data, int tag) {
+        super();
+        this.data = data;
+        this.tag = tag;
     }
-  }
 
-  @SuppressWarnings("unchecked")
-  public void foreach(@NotNull Effect<A> f1, @NotNull Effect<B> f2) {
-    if (tag == 0) {
-      f1.apply((A) data);
-    } else {
-      f2.apply((B) data);
+    @NotNull
+    public static <A, B> Either<A, B> left(@NotNull A a) {
+        return new Either<>(a, 0);
     }
-  }
 
-  @NotNull
-  public <X, Y> Either<X, Y> map(F<A, X> f1, F<B, Y> f2) {
-    return either(a -> Either.<X, Y>left(f1.apply(a)), b -> Either.<X, Y>right(f2.apply(b)));
-  }
+    @NotNull
+    public static <A, B> Either<A, B> right(@NotNull B b) {
+        return new Either<>(b, 1);
+    }
 
-  @NotNull
-  public <X> Either<X, B> mapLeft(@NotNull F<A, X> f) {
-    return map(a -> f.apply(a), b -> b);
-  }
+    @NotNull
+    public static <A, B extends A, C extends A> A extract(Either<B, C> e) {
+        return e.either(x -> x, x -> x);
+    }
 
-  @NotNull
-  public <Y> Either<A, Y> mapRight(@NotNull F<B, Y> f) {
-    return map(a -> a, b -> f.apply(b));
-  }
+    public final boolean isLeft() {
+        return tag == 0;
+    }
 
-  @SuppressWarnings("unchecked")
-  @NotNull
-  public Maybe<A> left() {
-    return tag == 0 ? Maybe.just((A) data) : Maybe.nothing();
-  }
+    public final boolean isRight() {
+        return tag == 1;
+    }
 
-  @SuppressWarnings("unchecked")
-  @NotNull
-  public Maybe<B> right() {
-    return tag == 1 ? Maybe.just((B) data) : Maybe.nothing();
-  }
+    @SuppressWarnings("unchecked")
+    public <X> X either(F<A, X> f1, F<B, X> f2) {
+        if (tag == 0) {
+            return f1.apply((A) data);
+        } else {
+            return f2.apply((B) data);
+        }
+    }
 
-  public boolean eq(Either<A, B> either) {
-    return either.tag == this.tag && either.data.equals(this.data);
-  }
+    @SuppressWarnings("unchecked")
+    public void foreach(@NotNull Effect<A> f1, @NotNull Effect<B> f2) {
+        if (tag == 0) {
+            f1.apply((A) data);
+        } else {
+            f2.apply((B) data);
+        }
+    }
 
-  @Override
-  public int hashCode() {
-    return (0b10101010 << tag) ^ this.data.hashCode();
-  }
+    @NotNull
+    public <X, Y> Either<X, Y> map(F<A, X> f1, F<B, Y> f2) {
+        return either(a -> Either.<X, Y>left(f1.apply(a)), b -> Either.<X, Y>right(f2.apply(b)));
+    }
 
-  @SuppressWarnings("unchecked")
-  @Override
-  public final boolean equals(Object object) {
-    return this == object || object instanceof Either && this.eq((Either<A, B>) object);
-  }
+    @NotNull
+    public <X> Either<X, B> mapLeft(@NotNull F<A, X> f) {
+        return map(a -> f.apply(a), b -> b);
+    }
+
+    @NotNull
+    public <Y> Either<A, Y> mapRight(@NotNull F<B, Y> f) {
+        return map(a -> a, b -> f.apply(b));
+    }
+
+    @SuppressWarnings("unchecked")
+    @NotNull
+    public Maybe<A> left() {
+        return tag == 0 ? Maybe.just((A) data) : Maybe.nothing();
+    }
+
+    @SuppressWarnings("unchecked")
+    @NotNull
+    public Maybe<B> right() {
+        return tag == 1 ? Maybe.just((B) data) : Maybe.nothing();
+    }
+
+    public boolean eq(Either<A, B> either) {
+        return either.tag == this.tag && either.data.equals(this.data);
+    }
+
+    @Override
+    public int hashCode() {
+        return (0b10101010 << tag) ^ this.data.hashCode();
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public final boolean equals(Object object) {
+        return this == object || object instanceof Either && this.eq((Either<A, B>) object);
+    }
 }

@@ -23,13 +23,13 @@ import com.shapesecurity.shift.parser.TokenType;
 import org.jetbrains.annotations.NotNull;
 
 public class PunctuatorToken extends Token {
-  public PunctuatorToken(@NotNull TokenType type, @NotNull SourceRange slice) {
-    super(type, slice, false);
-  }
+    public PunctuatorToken(@NotNull TokenType type, @NotNull SourceRange slice) {
+        super(type, slice, false);
+    }
 
-  @NotNull
-  @Override
-  public String getValueString() {
-    return this.type.name;
-  }
+    @NotNull
+    @Override
+    public String getValueString() {
+        return this.type.name;
+    }
 }

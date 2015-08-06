@@ -77,7 +77,7 @@ public class ScopeLookup {
     // there always will be at least one variable declared by the given function.
     // Returns (lexical, variable)
     public Pair<Variable, Maybe<Variable>> findVariablesForFuncDecl(@NotNull final FunctionDeclaration func) {
-        if(functionDeclarationCache.containsKey(func.name)) {
+        if (functionDeclarationCache.containsKey(func.name)) {
             return functionDeclarationCache.get(func.name);
         } else {
             return new Pair<>(bindingIdentifierDeclarationCache.get(func.name), Maybe.nothing());

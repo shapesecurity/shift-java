@@ -9,19 +9,19 @@ import com.shapesecurity.shift.parser.JsError;
 import org.junit.Test;
 
 public class ExpressionStatementTest extends ParserTestCase {
-  @Test
-  public void testExpressionStatement() throws JsError {
-    testScript("x", new ExpressionStatement(new IdentifierExpression("x")));
+    @Test
+    public void testExpressionStatement() throws JsError {
+        testScript("x", new ExpressionStatement(new IdentifierExpression("x")));
 
-    testScript("x, y", new ExpressionStatement(new BinaryExpression(BinaryOperator.Sequence,
-        new IdentifierExpression("x"),new IdentifierExpression("y"))));
+        testScript("x, y", new ExpressionStatement(new BinaryExpression(BinaryOperator.Sequence,
+                new IdentifierExpression("x"), new IdentifierExpression("y"))));
 
-    testScript("\\u0061", new ExpressionStatement(new IdentifierExpression("a")));
+        testScript("\\u0061", new ExpressionStatement(new IdentifierExpression("a")));
 
-    testScript("a\\u0061", new ExpressionStatement(new IdentifierExpression("aa")));
+        testScript("a\\u0061", new ExpressionStatement(new IdentifierExpression("aa")));
 
-    testScript("\\u0061a", new ExpressionStatement(new IdentifierExpression("aa")));
+        testScript("\\u0061a", new ExpressionStatement(new IdentifierExpression("aa")));
 
-    testScript("\\u0061a ", new ExpressionStatement(new IdentifierExpression("aa")));
-  }
+        testScript("\\u0061a ", new ExpressionStatement(new IdentifierExpression("aa")));
+    }
 }

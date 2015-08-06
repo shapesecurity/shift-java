@@ -24,44 +24,44 @@ import org.jetbrains.annotations.Nullable;
 // Used for lazy evaluation.
 // @FunctionalInterface
 public final class Thunk<A> {
-  @NotNull
-  private final Supplier<A> supplier;
-  // Exception on style: private nullable.
-  @Nullable
-  private volatile A value = null;
+    @NotNull
+    private final Supplier<A> supplier;
+    // Exception on style: private nullable.
+    @Nullable
+    private volatile A value = null;
 
-  private Thunk(@NotNull Supplier<A> supplier) {
-    this.supplier = supplier;
-  }
-
-  @NotNull
-  public static <A> Thunk<A> constant(@NotNull final A value) {
-    Thunk<A> t = new Thunk<>(() -> value);
-    t.value = value;
-    return t;
-  }
-
-  @NotNull
-  public static <A> Thunk<A> from(@NotNull Supplier<A> supplier) {
-    return new Thunk<>(supplier);
-  }
-
-  @NotNull
-  public final A get() {
-    // Double locked.
-    if (this.value == null) {
-      synchronized (this) {
-        if (this.value == null) {
-          A v = supplier.get();
-          this.value = v;
-          return v;
-        } else {
-          return this.value;
-        }
-      }
-    } else {
-      return this.value;
+    private Thunk(@NotNull Supplier<A> supplier) {
+        this.supplier = supplier;
     }
-  }
+
+    @NotNull
+    public static <A> Thunk<A> constant(@NotNull final A value) {
+        Thunk<A> t = new Thunk<>(() -> value);
+        t.value = value;
+        return t;
+    }
+
+    @NotNull
+    public static <A> Thunk<A> from(@NotNull Supplier<A> supplier) {
+        return new Thunk<>(supplier);
+    }
+
+    @NotNull
+    public final A get() {
+        // Double locked.
+        if (this.value == null) {
+            synchronized (this) {
+                if (this.value == null) {
+                    A v = supplier.get();
+                    this.value = v;
+                    return v;
+                } else {
+                    return this.value;
+                }
+            }
+        } else {
+            return this.value;
+        }
+    }
 }
 

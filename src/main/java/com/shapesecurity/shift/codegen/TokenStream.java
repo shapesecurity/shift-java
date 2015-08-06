@@ -23,65 +23,65 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 class TokenStream {
-  @NotNull
-  private final StringBuilder writer;
-  private char lastChar = (char) -1;
-  @Nullable
-  private String lastNumber;
-  private boolean optionalSemi;
+    @NotNull
+    private final StringBuilder writer;
+    private char lastChar = (char) -1;
+    @Nullable
+    private String lastNumber;
+    private boolean optionalSemi;
 
-  public TokenStream(@NotNull StringBuilder writer) {
-    this.writer = writer;
-  }
-
-  @NotNull
-  private static String numberDot(@NotNull String fragment) {
-    if (fragment.indexOf('.') < 0 && fragment.indexOf('e') < 0) {
-      return "..";
+    public TokenStream(@NotNull StringBuilder writer) {
+        this.writer = writer;
     }
-    return ".";
-  }
 
-  public void putNumber(double number) {
-    String tokenStr = D2A.shortD2a(number);
-    put(tokenStr);
-    this.lastNumber = tokenStr;
-  }
-
-  public void putOptionalSemi() {
-    this.optionalSemi = true;
-  }
-
-  @SuppressWarnings("LiteralAsArgToStringEquals")
-  public void put(@NotNull String tokenStr) {
-    if (this.optionalSemi) {
-      this.optionalSemi = false;
-      if (!tokenStr.equals("}")) {
-        this.put(";");
-      }
+    @NotNull
+    private static String numberDot(@NotNull String fragment) {
+        if (fragment.indexOf('.') < 0 && fragment.indexOf('e') < 0) {
+            return "..";
+        }
+        return ".";
     }
-    if (this.lastNumber != null && tokenStr.length() == 1) {
-      if (String.valueOf(tokenStr).equals(".")) {
-        this.writer.append(numberDot(this.lastNumber));
+
+    public void putNumber(double number) {
+        String tokenStr = D2A.shortD2a(number);
+        put(tokenStr);
+        this.lastNumber = tokenStr;
+    }
+
+    public void putOptionalSemi() {
+        this.optionalSemi = true;
+    }
+
+    @SuppressWarnings("LiteralAsArgToStringEquals")
+    public void put(@NotNull String tokenStr) {
+        if (this.optionalSemi) {
+            this.optionalSemi = false;
+            if (!tokenStr.equals("}")) {
+                this.put(";");
+            }
+        }
+        if (this.lastNumber != null && tokenStr.length() == 1) {
+            if (String.valueOf(tokenStr).equals(".")) {
+                this.writer.append(numberDot(this.lastNumber));
+                this.lastNumber = null;
+                this.lastChar = '.';
+                return;
+            }
+        }
         this.lastNumber = null;
-        this.lastChar = '.';
-        return;
-      }
-    }
-    this.lastNumber = null;
-    char rightChar = tokenStr.charAt(0);
-    char lastChar = this.lastChar;
-    this.lastChar = tokenStr.charAt(tokenStr.length() - 1);
-    if ((lastChar == '+' || lastChar == '-') && lastChar == rightChar ||
-        Utils.isIdentifierPart(lastChar) && Utils.isIdentifierPart(rightChar) ||
-        lastChar == '/' && (rightChar == 'i' || rightChar == '/')) {
-      this.writer.append(' ');
-    }
-    if (this.writer.length() >= 2 && tokenStr.equals("--") && this.writer.substring(this.writer.length() - 2,
-        this.writer.length()).equals("<!")) {
-      this.writer.append(' ');
-    }
+        char rightChar = tokenStr.charAt(0);
+        char lastChar = this.lastChar;
+        this.lastChar = tokenStr.charAt(tokenStr.length() - 1);
+        if ((lastChar == '+' || lastChar == '-') && lastChar == rightChar ||
+                Utils.isIdentifierPart(lastChar) && Utils.isIdentifierPart(rightChar) ||
+                lastChar == '/' && (rightChar == 'i' || rightChar == '/')) {
+            this.writer.append(' ');
+        }
+        if (this.writer.length() >= 2 && tokenStr.equals("--") && this.writer.substring(this.writer.length() - 2,
+                this.writer.length()).equals("<!")) {
+            this.writer.append(' ');
+        }
 
-    this.writer.append(tokenStr);
-  }
+        this.writer.append(tokenStr);
+    }
 }

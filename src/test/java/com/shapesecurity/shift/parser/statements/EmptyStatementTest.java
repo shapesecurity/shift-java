@@ -6,8 +6,8 @@ import com.shapesecurity.shift.parser.JsError;
 import org.junit.Test;
 
 public class EmptyStatementTest extends ParserTestCase {
-  @Test
-  public void testEmptyStatement() throws JsError {
-    testScript(";", new EmptyStatement());
-  }
+    @Test
+    public void testEmptyStatement() throws JsError {
+        testScript(";", new EmptyStatement());
+    }
 }

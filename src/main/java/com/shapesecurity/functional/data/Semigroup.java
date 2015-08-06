@@ -21,56 +21,56 @@ import com.shapesecurity.functional.Unit;
 import org.jetbrains.annotations.NotNull;
 
 public interface Semigroup<T> {
-  public static final UnitIdentity UNIT_IDENTITY = new UnitIdentity();
-  public static final IntegerAdditive INTEGER_ADDITIVE = new IntegerAdditive();
-  public static final IntegerMultiplicative INTEGER_MULTIPLICATIVE = new IntegerMultiplicative();
-  public static final StringConcat STRING_CONCAT = new StringConcat();
-
-  @NotNull
-  T append(T a, T b);
-
-  public static class UnitIdentity implements Semigroup<Unit> {
-    protected UnitIdentity() {
-    }
+    public static final UnitIdentity UNIT_IDENTITY = new UnitIdentity();
+    public static final IntegerAdditive INTEGER_ADDITIVE = new IntegerAdditive();
+    public static final IntegerMultiplicative INTEGER_MULTIPLICATIVE = new IntegerMultiplicative();
+    public static final StringConcat STRING_CONCAT = new StringConcat();
 
     @NotNull
-    @Override
-    public final Unit append(Unit a, Unit b) {
-      return Unit.unit;
-    }
-  }
+    T append(T a, T b);
 
-  public static class IntegerAdditive implements Semigroup<Integer> {
-    protected IntegerAdditive() {
-    }
+    public static class UnitIdentity implements Semigroup<Unit> {
+        protected UnitIdentity() {
+        }
 
-    @NotNull
-    @Override
-    public final Integer append(Integer a, Integer b) {
-      return a + b;
-    }
-  }
-
-  public static class IntegerMultiplicative implements Semigroup<Integer> {
-    protected IntegerMultiplicative() {
+        @NotNull
+        @Override
+        public final Unit append(Unit a, Unit b) {
+            return Unit.unit;
+        }
     }
 
-    @NotNull
-    @Override
-    public final Integer append(Integer a, Integer b) {
-      return a * b;
-    }
-  }
+    public static class IntegerAdditive implements Semigroup<Integer> {
+        protected IntegerAdditive() {
+        }
 
-  public static class StringConcat implements Semigroup<String> {
-    protected StringConcat() {
+        @NotNull
+        @Override
+        public final Integer append(Integer a, Integer b) {
+            return a + b;
+        }
     }
 
-    @NotNull
-    @Override
-    public final String append(String a, String b) {
-      return a + b;
+    public static class IntegerMultiplicative implements Semigroup<Integer> {
+        protected IntegerMultiplicative() {
+        }
+
+        @NotNull
+        @Override
+        public final Integer append(Integer a, Integer b) {
+            return a * b;
+        }
     }
-  }
+
+    public static class StringConcat implements Semigroup<String> {
+        protected StringConcat() {
+        }
+
+        @NotNull
+        @Override
+        public final String append(String a, String b) {
+            return a + b;
+        }
+    }
 }
 
