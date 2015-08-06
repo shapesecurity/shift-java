@@ -25,53 +25,6 @@ import org.jetbrains.annotations.NotNull;
 public final class Director {
 
   @NotNull
-  public static <State> State reduce(@NotNull Reducer<State> reducer, @NotNull Node node) {
-    if (node instanceof Script) {
-      return reduceScript(reducer, (Script) node);
-    } else if (node instanceof FunctionBody) {
-      return reduceFunctionBody(reducer, (FunctionBody) node);
-    } else if (node instanceof BindingIdentifier) {
-      return reduceBindingIdentifier(reducer, (BindingIdentifier) node);
-    } else if (node instanceof ObjectProperty) {
-      return reduceObjectProperty(reducer, (ObjectProperty) node);
-    } else if (node instanceof PropertyName) {
-      return reducePropertyName(reducer, (PropertyName) node);
-    } else if (node instanceof Expression) {
-      return reduceExpression(reducer, (Expression) node);
-    } else if (node instanceof Directive) {
-      return reduceDirective(reducer, (Directive) node);
-    } else if (node instanceof Statement) {
-      return reduceStatement(reducer, (Statement) node);
-    } else if (node instanceof Block) {
-      return reduceBlock(reducer, (Block) node);
-    } else if (node instanceof VariableDeclarator) {
-      return reduceVariableDeclarator(reducer, (VariableDeclarator) node);
-    } else if (node instanceof VariableDeclaration) {
-      return reduceVariableDeclaration(reducer, (VariableDeclaration) node);
-    } else if (node instanceof SwitchCase) {
-      return reduceSwitchCase(reducer, (SwitchCase) node);
-    } else if (node instanceof SwitchDefault) {
-      return reduceSwitchDefault(reducer, (SwitchDefault) node);
-    } else if (node instanceof CatchClause) {
-      return reduceCatchClause(reducer, (CatchClause) node);
-    } else if (node instanceof ExportDeclaration) {
-      return reduceExportDeclaration(reducer, (ExportDeclaration) node);
-    } else if (node instanceof ExportSpecifier) {
-      return reducer.reduceExportSpecifier((ExportSpecifier) node);
-    } else if (node instanceof ImportDeclaration) {
-      return reduceImportDeclaration(reducer, (ImportDeclaration) node);
-    } else if (node instanceof ImportSpecifier) {
-      ImportSpecifier tNode = (ImportSpecifier) node;
-      return reducer.reduceImportSpecifier(tNode, reduceBindingIdentifier(reducer, tNode.binding));
-    } else if (node instanceof Module) {
-      Module tNode = (Module) node;
-      return reducer.reduceModule(tNode, reduceListDirective(reducer, tNode.directives), reduceListImportDeclarationExportDeclarationStatement(reducer, tNode.items));
-    } else {
-      throw new RuntimeException("Not reached");
-    }
-  }
-
-  @NotNull
   public static <State>
   State reduceArrayBinding (
     @NotNull Reducer<State> reducer,
@@ -183,6 +136,23 @@ public final class Director {
     @NotNull Reducer<State> reducer,
     @NotNull Directive node) {
     return reducer.reduceDirective(node);
+  }
+
+  private static <State> State reduceExportDeclaration(Reducer<State> reducer, ExportDeclaration node) {
+    if (node instanceof Export) {
+      Export tNode = (Export) node;
+      return reducer.reduceExport(tNode, reduceFunctionDeclarationClassDeclarationVariableDeclaration(reducer, tNode.declaration));
+    } else if (node instanceof ExportAllFrom) {
+      return reducer.reduceExportAllFrom((ExportAllFrom) node);
+    } else if (node instanceof ExportDefault) {
+      ExportDefault tNode = (ExportDefault) node;
+      return reducer.reduceExportDefault(tNode, reduceFunctionDeclarationClassDeclarationExpression(reducer, tNode.body));
+    } else if (node instanceof ExportFrom) {
+      ExportFrom tNode = (ExportFrom) node;
+      return reducer.reduceExportFrom(tNode, reduceListExportSpecifier(reducer, tNode.namedExports));
+    } else {
+      throw new RuntimeException("Not reached");
+    }
   }
 
   @NotNull
@@ -377,6 +347,18 @@ public final class Director {
     }
   }
 
+  private static <State> State reduceImportDeclaration(Reducer<State> reducer, ImportDeclaration node) {
+    if (node instanceof Import) {
+      Import tNode = (Import) node;
+      return reducer.reduceImport(tNode, reduceMaybeBindingIdentifier(reducer, tNode.defaultBinding), reduceListImportSpecifier(reducer, tNode.namedImports));
+    } else if (node instanceof ImportNamespace) {
+      ImportNamespace tNode = (ImportNamespace) node;
+      return reducer.reduceImportNamespace(tNode, reduceMaybeBindingIdentifier(reducer, tNode.defaultBinding), reduceBindingIdentifier(reducer, tNode.namespaceBinding));
+    } else {
+      throw new RuntimeException("Not reached");
+    }
+  }
+
   @NotNull
   public static <State>
   State reduceImportDeclarationExportDeclarationStatement(
@@ -388,35 +370,6 @@ public final class Director {
       return reduceExportDeclaration(reducer, (ExportDeclaration) node);
     } else if (node instanceof Statement) {
       return reduceStatement(reducer, (Statement) node);
-    } else {
-      throw new RuntimeException("Not reached");
-    }
-  }
-
-  private static <State> State reduceExportDeclaration(Reducer<State> reducer, ExportDeclaration node) {
-    if (node instanceof Export) {
-      Export tNode = (Export) node;
-      return reducer.reduceExport(tNode, reduceFunctionDeclarationClassDeclarationVariableDeclaration(reducer, tNode.declaration));
-    } else if (node instanceof ExportAllFrom) {
-      return reducer.reduceExportAllFrom((ExportAllFrom) node);
-    } else if (node instanceof ExportDefault) {
-      ExportDefault tNode = (ExportDefault) node;
-      return reducer.reduceExportDefault(tNode, reduceFunctionDeclarationClassDeclarationExpression(reducer, tNode.body));
-    } else if (node instanceof ExportFrom) {
-      ExportFrom tNode = (ExportFrom) node;
-      return reducer.reduceExportFrom(tNode, reduceListExportSpecifier(reducer, tNode.namedExports));
-    } else {
-      throw new RuntimeException("Not reached");
-    }
-  }
-
-  private static <State> State reduceImportDeclaration(Reducer<State> reducer, ImportDeclaration node) {
-    if (node instanceof Import) {
-      Import tNode = (Import) node;
-      return reducer.reduceImport(tNode, reduceMaybeBindingIdentifier(reducer, tNode.defaultBinding), reduceListImportSpecifier(reducer, tNode.namedImports));
-    } else if (node instanceof ImportNamespace) {
-      ImportNamespace tNode = (ImportNamespace) node;
-      return reducer.reduceImportNamespace(tNode, reduceMaybeBindingIdentifier(reducer, tNode.defaultBinding), reduceBindingIdentifier(reducer, tNode.namespaceBinding));
     } else {
       throw new RuntimeException("Not reached");
     }
