@@ -22,6 +22,7 @@ import com.shapesecurity.shift.ast.*;
 import com.shapesecurity.shift.parser.JsError;
 import com.shapesecurity.shift.parser.Token;
 import com.shapesecurity.shift.parser.Tokenizer;
+import com.shapesecurity.shift.parser.token.EOFToken;
 import com.shapesecurity.shift.parser.token.StringLiteralToken;
 import com.shapesecurity.shift.utils.Utils;
 import com.shapesecurity.shift.visitor.Director;
@@ -111,20 +112,24 @@ public class Validator extends MonoidalReducer<ValidationContext> {
     try {
       tokenizer = new Tokenizer("\'"+rawValue+"\'", false);
       Token token = tokenizer.lookahead;
-//      if (token.getValueString().length() != 2) { // TODO: not sure if check is correct
-//        return false;
-//      }
       if (!(token instanceof StringLiteralToken)) {
+        System.out.println("NOT STRING LITERAL");
+        return false;
+      }
+      token = tokenizer.collectToken();
+      if (!(token instanceof EOFToken)) {
         return false;
       }
     } catch (JsError jsError) {
       try {
         tokenizer = new Tokenizer("\""+rawValue+"\"", false);
         Token token = tokenizer.lookahead;
-//        if (token.getValueString().length() != 2) { // TODO: not sure if check is correct
-//          return false;
-//        }
         if (!(token instanceof StringLiteralToken)) {
+          System.out.println("NOT STRING LITERAL");
+          return false;
+        }
+        token = tokenizer.collectToken();
+        if (!(token instanceof EOFToken)) {
           return false;
         }
       } catch (JsError jsError1) {
