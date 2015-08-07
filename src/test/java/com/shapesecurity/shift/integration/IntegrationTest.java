@@ -75,18 +75,6 @@ public class IntegrationTest {
         assertTrue(!hasErrors);
     }
 
-//  @Test
-//  public void testFuzzer() {
-//    Node generated = Fuzzer.generate(new Random(946497386), 5);
-//    ImmutableList<ValidationError> validationErrors;
-//    if (generated instanceof Script) {
-//      validationErrors = Validator.validate((Script) generated);
-//    } else {
-//      validationErrors = Validator.validate((Module) generated);
-//    }
-//    assert (validationErrors.length == 0);
-//  }
-
     private void testFuzzerToValidatorHelper(long seed, int depth) {
         Node generated = Fuzzer.generate(new Random(seed), depth);
         ImmutableList<ValidationError> validationErrors;

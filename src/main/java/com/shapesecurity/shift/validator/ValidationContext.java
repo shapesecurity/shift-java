@@ -20,6 +20,8 @@ import com.shapesecurity.functional.data.Monoid;
 import com.shapesecurity.shift.ast.BindingIdentifier;
 import com.shapesecurity.shift.ast.ReturnStatement;
 
+import com.shapesecurity.shift.ast.YieldExpression;
+import com.shapesecurity.shift.ast.YieldGeneratorExpression;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -34,27 +36,36 @@ public class ValidationContext {
     public final List<ValidationError> errors;
     @NotNull
     private final List<ReturnStatement> freeReturnStatements;
-
     @NotNull
     private final List<BindingIdentifier> bindingIdentifiersCalledDefault;
+    @NotNull
+    private final List<YieldExpression> yieldExpressionsNotInGeneratorContext;
+    @NotNull
+    private final List<YieldGeneratorExpression> yieldGeneratorExpressionsNotInGeneratorContext;
 
 
     public ValidationContext() {
         this(
-                new ArrayList<>(), // errors
-                new ArrayList<>(), // freeReturnStatements
-                new ArrayList<>() // bindingIdentifiersCalledDefault
+          new ArrayList<>(), // errors
+          new ArrayList<>(), // freeReturnStatements
+          new ArrayList<>(), // bindingIdentifiersCalledDefault
+          new ArrayList<>(), // yieldExpressionsNotInGeneratorContext
+          new ArrayList<>()  // yieldGeneratorExpressionsNotInGeneratorContext
         );
     }
 
     private ValidationContext(
-            @NotNull List<ValidationError> errors,
-            @NotNull List<ReturnStatement> freeReturnStatements,
-            @NotNull List<BindingIdentifier> bindingIdentifiersCalledDefault
+      @NotNull List<ValidationError> errors,
+      @NotNull List<ReturnStatement> freeReturnStatements,
+      @NotNull List<BindingIdentifier> bindingIdentifiersCalledDefault,
+      @NotNull List<YieldExpression> yieldExpressionsNotInGeneratorContext,
+      @NotNull List<YieldGeneratorExpression> yieldGeneratorExpressionsNotInGeneratorContext
     ) {
         this.errors = errors;
         this.freeReturnStatements = freeReturnStatements;
         this.bindingIdentifiersCalledDefault = bindingIdentifiersCalledDefault;
+        this.yieldExpressionsNotInGeneratorContext = yieldExpressionsNotInGeneratorContext;
+        this.yieldGeneratorExpressionsNotInGeneratorContext = yieldGeneratorExpressionsNotInGeneratorContext;
     }
 
     public void addFreeReturnStatement(@NotNull ReturnStatement node) {
@@ -83,6 +94,32 @@ public class ValidationContext {
         this.bindingIdentifiersCalledDefault.clear();
     }
 
+    public void addYieldExpressionsNotInGeneratorContext(@NotNull YieldExpression node) {
+        this.yieldExpressionsNotInGeneratorContext.add(node);
+    }
+
+    public void enforceYieldExpressionsNotInGeneratorContext(Function<YieldExpression, ValidationError> createError) {
+        this.yieldExpressionsNotInGeneratorContext.stream().map(createError::apply).forEach(this::addError);
+        this.yieldExpressionsNotInGeneratorContext.clear();
+    }
+
+    public void clearYieldExpressionsNotInGeneratorContext() {
+        this.yieldExpressionsNotInGeneratorContext.clear();
+    }
+
+    public void addYieldGeneratorExpressionsNotInGeneratorContext(@NotNull YieldGeneratorExpression node) {
+        this.yieldGeneratorExpressionsNotInGeneratorContext.add(node);
+    }
+
+    public void enforceYieldGeneratorExpressionsNotInGeneratorContext(Function<YieldGeneratorExpression, ValidationError> createError) {
+        this.yieldGeneratorExpressionsNotInGeneratorContext.stream().map(createError::apply).forEach(this::addError);
+        this.yieldGeneratorExpressionsNotInGeneratorContext.clear();
+    }
+
+    public void clearYieldGeneratorExpressionsNotInGeneratorContext() {
+        this.yieldGeneratorExpressionsNotInGeneratorContext.clear();
+    }
+
     public void addError(@NotNull ValidationError error) {
         this.errors.add(error);
     }
@@ -91,6 +128,8 @@ public class ValidationContext {
         this.errors.addAll(other.errors);
         this.freeReturnStatements.addAll(other.freeReturnStatements);
         this.bindingIdentifiersCalledDefault.addAll(other.bindingIdentifiersCalledDefault);
+        this.yieldExpressionsNotInGeneratorContext.addAll(other.yieldExpressionsNotInGeneratorContext);
+        this.yieldGeneratorExpressionsNotInGeneratorContext.addAll(other.yieldGeneratorExpressionsNotInGeneratorContext);
         return this;
     }
 

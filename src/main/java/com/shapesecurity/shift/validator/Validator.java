@@ -27,10 +27,8 @@ import com.shapesecurity.shift.parser.token.StringLiteralToken;
 import com.shapesecurity.shift.utils.Utils;
 import com.shapesecurity.shift.visitor.Director;
 import com.shapesecurity.shift.visitor.MonoidalReducer;
-
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -416,6 +414,8 @@ public class Validator extends MonoidalReducer<ValidationContext> {
         ValidationContext s = super.reduceScript(node, directives, statements);
         s.enforceFreeReturnStatements(returnStatement -> new ValidationError(returnStatement, "return statements must be within a function body"));
         s.enforceBindingIdentifiersCalledDefault(bindingIdentifier -> new ValidationError(bindingIdentifier, "binding identifiers may only be called \"*default*\" within a function declaration"));
+        s.enforceYieldExpressionsNotInGeneratorContext(yieldExpression -> new ValidationError(yieldExpression, "yield expressions are only allowed within function declarations or function expressions that are generators"));
+        s.enforceYieldGeneratorExpressionsNotInGeneratorContext(yieldGeneratorExpression -> new ValidationError(yieldGeneratorExpression, "yield generator expressions are only allowed within function declarations or function expressions that are generators"));
         return s;
     }
 
@@ -426,6 +426,8 @@ public class Validator extends MonoidalReducer<ValidationContext> {
         ValidationContext s = super.reduceModule(node, directives, items);
         s.enforceFreeReturnStatements(returnStatement -> new ValidationError(returnStatement, "return statements must be within a function body"));
         s.enforceBindingIdentifiersCalledDefault(bindingIdentifier -> new ValidationError(bindingIdentifier, "binding identifiers may only be called \"*default*\" within a function declaration"));
+        s.enforceYieldExpressionsNotInGeneratorContext(yieldExpression -> new ValidationError(yieldExpression, "yield expressions are only allowed within function declarations or function expressions that are generators"));
+        s.enforceYieldGeneratorExpressionsNotInGeneratorContext(yieldGeneratorExpression -> new ValidationError(yieldGeneratorExpression, "yield generator expressions are only allowed within function declarations or function expressions that are generators"));
         return s;
     }
 
@@ -530,6 +532,45 @@ public class Validator extends MonoidalReducer<ValidationContext> {
         if (node.binding instanceof MemberExpression) {
             s.addError(new ValidationError(node, "the binding field of variable declarator must not be a member expression"));
         }
+        return s;
+    }
+
+    @NotNull
+    @Override
+    public ValidationContext reduceFunctionDeclaration(@NotNull FunctionDeclaration node, @NotNull ValidationContext name, @NotNull ValidationContext params, @NotNull ValidationContext body) {
+        ValidationContext s = super.reduceFunctionDeclaration(node, name, params, body);
+        if (node.isGenerator) {
+            s.clearYieldExpressionsNotInGeneratorContext();
+            s.clearYieldGeneratorExpressionsNotInGeneratorContext();
+        }
+        return s;
+    }
+
+    @NotNull
+    @Override
+    public ValidationContext reduceFunctionExpression(@NotNull FunctionExpression node, @NotNull Maybe<ValidationContext> name, @NotNull ValidationContext params, @NotNull ValidationContext body) {
+        ValidationContext s = super.reduceFunctionExpression(node, name, params, body);
+        if (node.isGenerator) {
+            s.clearYieldExpressionsNotInGeneratorContext();
+            s.clearYieldGeneratorExpressionsNotInGeneratorContext();
+        }
+        return s;
+    }
+
+
+    @NotNull
+    @Override
+    public ValidationContext reduceYieldExpression(@NotNull YieldExpression node, @NotNull Maybe<ValidationContext> expression) {
+        ValidationContext s = super.reduceYieldExpression(node, expression);
+        s.addYieldExpressionsNotInGeneratorContext(node);
+        return s;
+    }
+
+    @NotNull
+    @Override
+    public ValidationContext reduceYieldGeneratorExpression(@NotNull YieldGeneratorExpression node, ValidationContext expression) {
+        ValidationContext s = super.reduceYieldGeneratorExpression(node, expression);
+        s.addYieldGeneratorExpressionsNotInGeneratorContext(node);
         return s;
     }
 
