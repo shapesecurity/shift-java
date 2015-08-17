@@ -96,13 +96,11 @@ public class Validator extends MonoidalReducer<ValidationContext> {
 
     public static ImmutableList<ValidationError> validate(Script script) {
         List<ValidationError> errors = Director.reduceScript(new Validator(), script).errors;
-//    System.out.println("size of errors: " + errors.size());
         return ImmutableList.from(Director.reduceScript(new Validator(), script).errors);
     }
 
     public static ImmutableList<ValidationError> validate(Module module) {
         List<ValidationError> errors = Director.reduceModule(new Validator(), module).errors;
-//    System.out.println("size of errors: " + errors.size());
         return ImmutableList.from(Director.reduceModule(new Validator(), module).errors);
     }
 
@@ -186,16 +184,6 @@ public class Validator extends MonoidalReducer<ValidationContext> {
 
     @NotNull
     @Override
-    public ValidationContext reduceExportDefault(@NotNull ExportDefault node, @NotNull ValidationContext body) {
-        ValidationContext s = super.reduceExportDefault(node, body);
-        if (node.body instanceof FunctionDeclaration) {
-            s.clearBindingIdentifiersCalledDefault();
-        }
-        return s;
-    }
-
-    @NotNull
-    @Override
     public ValidationContext reduceBreakStatement(@NotNull BreakStatement node) {
         ValidationContext s = super.reduceBreakStatement(node);
         if (node.label.isJust() && !checkIsValidIdentifierName(node.label.just())) {
@@ -256,6 +244,16 @@ public class Validator extends MonoidalReducer<ValidationContext> {
 
     @NotNull
     @Override
+    public ValidationContext reduceExportDefault(@NotNull ExportDefault node, @NotNull ValidationContext body) {
+        ValidationContext s = super.reduceExportDefault(node, body);
+        if (node.body instanceof FunctionDeclaration) {
+            s.clearBindingIdentifiersCalledDefault();
+        }
+        return s;
+    }
+
+    @NotNull
+    @Override
     public ValidationContext reduceExportSpecifier(@NotNull ExportSpecifier node) {
         ValidationContext s = super.reduceExportSpecifier(node);
         if (node.name.isJust() && !checkIsValidIdentifierName(node.name.just())) {
@@ -272,8 +270,12 @@ public class Validator extends MonoidalReducer<ValidationContext> {
     public ValidationContext reduceForInStatement(@NotNull ForInStatement node, @NotNull ValidationContext left, @NotNull ValidationContext right, @NotNull ValidationContext body) {
         ValidationContext s = super.reduceForInStatement(node, left, right, body);
         if (node.left instanceof VariableDeclaration) {
-            if (((VariableDeclaration) node.left).declarators.length != 1) {
+            VariableDeclaration varDec = (VariableDeclaration) node.left;
+            if (varDec.declarators.length != 1) {
                 s.addError(new ValidationError(node, "VariableDeclaration in ForInStatement can only have one VariableDeclarator"));
+            }
+            if (varDec.declarators.maybeHead().just().init.isJust()) {
+                s.addError(new ValidationError(node, "The VariableDeclarator in ForInStatement should not have an initializer"));
             }
         }
         return s;
@@ -284,8 +286,12 @@ public class Validator extends MonoidalReducer<ValidationContext> {
     public ValidationContext reduceForOfStatement(@NotNull ForOfStatement node, @NotNull ValidationContext left, @NotNull ValidationContext right, @NotNull ValidationContext body) {
         ValidationContext s = super.reduceForOfStatement(node, left, right, body);
         if (node.left instanceof VariableDeclaration) {
-            if (((VariableDeclaration) node.left).declarators.length != 1) {
+            VariableDeclaration varDec = (VariableDeclaration) node.left;
+            if (varDec.declarators.length != 1) {
                 s.addError(new ValidationError(node, "VariableDeclaration in ForOfStatement can only have one VariableDeclarator"));
+            }
+            if (varDec.declarators.maybeHead().just().init.isJust()) {
+                s.addError(new ValidationError(node, "The VariableDeclarator in ForOfStatement should not have an initializer"));
             }
         }
         return s;
@@ -315,6 +321,28 @@ public class Validator extends MonoidalReducer<ValidationContext> {
     ) {
         ValidationContext s = super.reduceFunctionBody(node, directives, statements);
         s.clearFreeReturnStatements();
+        return s;
+    }
+
+    @NotNull
+    @Override
+    public ValidationContext reduceFunctionDeclaration(@NotNull FunctionDeclaration node, @NotNull ValidationContext name, @NotNull ValidationContext params, @NotNull ValidationContext body) {
+        ValidationContext s = super.reduceFunctionDeclaration(node, name, params, body);
+        if (node.isGenerator) {
+            s.clearYieldExpressionsNotInGeneratorContext();
+            s.clearYieldGeneratorExpressionsNotInGeneratorContext();
+        }
+        return s;
+    }
+
+    @NotNull
+    @Override
+    public ValidationContext reduceFunctionExpression(@NotNull FunctionExpression node, @NotNull Maybe<ValidationContext> name, @NotNull ValidationContext params, @NotNull ValidationContext body) {
+        ValidationContext s = super.reduceFunctionExpression(node, name, params, body);
+        if (node.isGenerator) {
+            s.clearYieldExpressionsNotInGeneratorContext();
+            s.clearYieldGeneratorExpressionsNotInGeneratorContext();
+        }
         return s;
     }
 
@@ -400,6 +428,18 @@ public class Validator extends MonoidalReducer<ValidationContext> {
 
     @NotNull
     @Override
+    public ValidationContext reduceModule(@NotNull Module node, @NotNull ImmutableList<ValidationContext> directives, @NotNull ImmutableList<ValidationContext> items
+    ) {
+        ValidationContext s = super.reduceModule(node, directives, items);
+        s.enforceFreeReturnStatements(returnStatement -> new ValidationError(returnStatement, "return statements must be within a function body"));
+        s.enforceBindingIdentifiersCalledDefault(bindingIdentifier -> new ValidationError(bindingIdentifier, "binding identifiers may only be called \"*default*\" within a function declaration"));
+        s.enforceYieldExpressionsNotInGeneratorContext(yieldExpression -> new ValidationError(yieldExpression, "yield expressions are only allowed within function declarations or function expressions that are generators"));
+        s.enforceYieldGeneratorExpressionsNotInGeneratorContext(yieldGeneratorExpression -> new ValidationError(yieldGeneratorExpression, "yield generator expressions are only allowed within function declarations or function expressions that are generators"));
+        return s;
+    }
+
+    @NotNull
+    @Override
     public ValidationContext reduceReturnStatement(@NotNull ReturnStatement node, @NotNull Maybe<ValidationContext> expression
     ) {
         ValidationContext s = super.reduceReturnStatement(node, expression);
@@ -412,18 +452,6 @@ public class Validator extends MonoidalReducer<ValidationContext> {
     public ValidationContext reduceScript(@NotNull Script node, @NotNull ImmutableList<ValidationContext> directives, @NotNull ImmutableList<ValidationContext> statements
     ) {
         ValidationContext s = super.reduceScript(node, directives, statements);
-        s.enforceFreeReturnStatements(returnStatement -> new ValidationError(returnStatement, "return statements must be within a function body"));
-        s.enforceBindingIdentifiersCalledDefault(bindingIdentifier -> new ValidationError(bindingIdentifier, "binding identifiers may only be called \"*default*\" within a function declaration"));
-        s.enforceYieldExpressionsNotInGeneratorContext(yieldExpression -> new ValidationError(yieldExpression, "yield expressions are only allowed within function declarations or function expressions that are generators"));
-        s.enforceYieldGeneratorExpressionsNotInGeneratorContext(yieldGeneratorExpression -> new ValidationError(yieldGeneratorExpression, "yield generator expressions are only allowed within function declarations or function expressions that are generators"));
-        return s;
-    }
-
-    @NotNull
-    @Override
-    public ValidationContext reduceModule(@NotNull Module node, @NotNull ImmutableList<ValidationContext> directives, @NotNull ImmutableList<ValidationContext> items
-    ) {
-        ValidationContext s = super.reduceModule(node, directives, items);
         s.enforceFreeReturnStatements(returnStatement -> new ValidationError(returnStatement, "return statements must be within a function body"));
         s.enforceBindingIdentifiersCalledDefault(bindingIdentifier -> new ValidationError(bindingIdentifier, "binding identifiers may only be called \"*default*\" within a function declaration"));
         s.enforceYieldExpressionsNotInGeneratorContext(yieldExpression -> new ValidationError(yieldExpression, "yield expressions are only allowed within function declarations or function expressions that are generators"));
@@ -534,29 +562,6 @@ public class Validator extends MonoidalReducer<ValidationContext> {
         }
         return s;
     }
-
-    @NotNull
-    @Override
-    public ValidationContext reduceFunctionDeclaration(@NotNull FunctionDeclaration node, @NotNull ValidationContext name, @NotNull ValidationContext params, @NotNull ValidationContext body) {
-        ValidationContext s = super.reduceFunctionDeclaration(node, name, params, body);
-        if (node.isGenerator) {
-            s.clearYieldExpressionsNotInGeneratorContext();
-            s.clearYieldGeneratorExpressionsNotInGeneratorContext();
-        }
-        return s;
-    }
-
-    @NotNull
-    @Override
-    public ValidationContext reduceFunctionExpression(@NotNull FunctionExpression node, @NotNull Maybe<ValidationContext> name, @NotNull ValidationContext params, @NotNull ValidationContext body) {
-        ValidationContext s = super.reduceFunctionExpression(node, name, params, body);
-        if (node.isGenerator) {
-            s.clearYieldExpressionsNotInGeneratorContext();
-            s.clearYieldGeneratorExpressionsNotInGeneratorContext();
-        }
-        return s;
-    }
-
 
     @NotNull
     @Override
