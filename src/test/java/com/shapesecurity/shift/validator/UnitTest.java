@@ -95,6 +95,9 @@ public class UnitTest {
     Script test0 = new Script(ImmutableList.list(new Directive("use strict;"), new Directive("linda;"), new Directive(".-#($*&#")), ImmutableList.nil());
     assertCorrectFailures(test0, 0, "");
 
+    Script test1 = new Script(ImmutableList.list(new Directive("use strict;"), new Directive("linda;"), new Directive(".-#($*&#")), ImmutableList.nil());
+    assertCorrectFailures(test1, 0, "");
+
     // TODO java will not allow not string literals, so can't test those...
   }
 
@@ -108,7 +111,14 @@ public class UnitTest {
     Module test0 = Parser.parseModule("export * from 'a';");
     assertCorrectFailures(test0, 0, "");
 
-    // TODO doesn't fail ever
+    Module test1 = new Module(ImmutableList.nil(), ImmutableList.list(new ExportFrom(ImmutableList.list(new ExportSpecifier(Maybe.just("2a_"), "b")), Maybe.just("a"))));
+    assertCorrectFailures(test1, 1, "the name field of export specifier exists and must be a valid identifier name");
+
+    Module test2 = new Module(ImmutableList.nil(), ImmutableList.list(new ExportFrom(ImmutableList.list(new ExportSpecifier(Maybe.just("b"), "%dlk45")), Maybe.just("a"))));
+    assertCorrectFailures(test2, 1, "the exported name field of export specifier must be a valid identifier name");
+
+    Module test3 = new Module(ImmutableList.nil(), ImmutableList.list(new ExportFrom(ImmutableList.list(new ExportSpecifier(Maybe.nothing(), "a")), Maybe.just("a"))));
+    assertCorrectFailures(test3, 0, "");
   }
 
   @Test
@@ -133,7 +143,26 @@ public class UnitTest {
 
   @Test
   public void testFormalParameters() {
+    Script test0 = new Script(ImmutableList.nil(), ImmutableList.list(new FunctionDeclaration(new BindingIdentifier("hello"), false, new FormalParameters(ImmutableList.list(new BindingIdentifier("a")), Maybe.nothing()), new FunctionBody(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new CallExpression(new IdentifierExpression("z"), ImmutableList.nil())))))));
+    assertCorrectFailures(test0, 0, "");
 
+    Script test1 = new Script(ImmutableList.nil(), ImmutableList.list(new FunctionDeclaration(new BindingIdentifier("hello"), false, new FormalParameters(ImmutableList.nil(), Maybe.nothing()), new FunctionBody(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new CallExpression(new IdentifierExpression("z"), ImmutableList.nil())))))));
+    assertCorrectFailures(test1, 0, "");
+
+    Script test2 = new Script(ImmutableList.nil(), ImmutableList.list(new FunctionDeclaration(new BindingIdentifier("hello"), false, new FormalParameters(ImmutableList.list(new ComputedMemberExpression(new IdentifierExpression("a"), new IdentifierExpression("b"))), Maybe.nothing()), new FunctionBody(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new CallExpression(new IdentifierExpression("z"), ImmutableList.nil())))))));
+    assertCorrectFailures(test2, 1, "the items field of formal parameters must not be member expressions");
+
+    Script test3 = new Script(ImmutableList.nil(), ImmutableList.list(new FunctionDeclaration(new BindingIdentifier("hello"), false, new FormalParameters(ImmutableList.list(new StaticMemberExpression("a", new IdentifierExpression("b"))), Maybe.nothing()), new FunctionBody(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new CallExpression(new IdentifierExpression("z"), ImmutableList.nil())))))));
+    assertCorrectFailures(test3, 1, "the items field of formal parameters must not be member expressions");
+
+    Script test4 = new Script(ImmutableList.nil(), ImmutableList.list(new FunctionDeclaration(new BindingIdentifier("hello"), false, new FormalParameters(ImmutableList.list(new BindingWithDefault(new BindingIdentifier("a"), new IdentifierExpression("b"))), Maybe.nothing()), new FunctionBody(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new CallExpression(new IdentifierExpression("z"), ImmutableList.nil())))))));
+    assertCorrectFailures(test4, 0, "");
+
+    Script test5 = new Script(ImmutableList.nil(), ImmutableList.list(new FunctionDeclaration(new BindingIdentifier("hello"), false, new FormalParameters(ImmutableList.list(new BindingWithDefault(new ComputedMemberExpression(new IdentifierExpression("a"), new IdentifierExpression("b")), new IdentifierExpression("b"))), Maybe.nothing()), new FunctionBody(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new CallExpression(new IdentifierExpression("z"), ImmutableList.nil())))))));
+    assertCorrectFailures(test5, 1, "binding field of the items field of formal parameters must not be a member expression");
+
+    Script test6 = new Script(ImmutableList.nil(), ImmutableList.list(new FunctionDeclaration(new BindingIdentifier("hello"), false, new FormalParameters(ImmutableList.list(new BindingWithDefault(new StaticMemberExpression("a", new IdentifierExpression("b")), new IdentifierExpression("b"))), Maybe.nothing()), new FunctionBody(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new CallExpression(new IdentifierExpression("z"), ImmutableList.nil())))))));
+    assertCorrectFailures(test6, 1, "binding field of the items field of formal parameters must not be a member expression");
   }
 
   @Test
@@ -168,16 +197,31 @@ public class UnitTest {
 
   @Test
   public void testIfStatement() {
-
+    
   }
 
   @Test
   public void testImportSpecifier() {
+    Module test0 = new Module(ImmutableList.nil(), ImmutableList.list(new Import(Maybe.just(new BindingIdentifier("a")), ImmutableList.list(new ImportSpecifier(Maybe.nothing(), new BindingIdentifier("b"))), "c")));
+    assertCorrectFailures(test0, 0, "");
 
+    Module test1 = new Module(ImmutableList.nil(), ImmutableList.list(new Import(Maybe.just(new BindingIdentifier("a")), ImmutableList.list(new ImportSpecifier(Maybe.just("a"), new BindingIdentifier("b"))), "c")));
+    assertCorrectFailures(test1, 0, "");
+
+    Module test2 = new Module(ImmutableList.nil(), ImmutableList.list(new Import(Maybe.just(new BindingIdentifier("a")), ImmutableList.list(new ImportSpecifier(Maybe.just("2d849"), new BindingIdentifier("b"))), "c")));
+    assertCorrectFailures(test2, 1, "the name field of import specifier exists and must be a valid identifier name");
   }
 
   @Test
   public void testLabeledStatement() {
+    Script test0 = new Script(ImmutableList.nil(), ImmutableList.list(new LabeledStatement("done", new WhileStatement(new LiteralBooleanExpression(true), new BlockStatement(new Block(ImmutableList.list(new BreakStatement(Maybe.just("done")))))))));
+    assertCorrectFailures(test0, 0, "");
+
+    Script test1 = new Script(ImmutableList.nil(), ImmutableList.list(new LabeledStatement("5346done", new WhileStatement(new LiteralBooleanExpression(true), new BlockStatement(new Block(ImmutableList.list(new BreakStatement(Maybe.just("done")))))))));
+    assertCorrectFailures(test1, 1, "the label field of labeled statement must be a valid identifier name");
+
+    Script test2 = new Script(ImmutableList.nil(), ImmutableList.list(new LabeledStatement("#das*($839da", new WhileStatement(new LiteralBooleanExpression(true), new BlockStatement(new Block(ImmutableList.list(new ContinueStatement(Maybe.just("done")))))))));
+    assertCorrectFailures(test2, 1, "the label field of labeled statement must be a valid identifier name");
 
   }
 
@@ -192,7 +236,8 @@ public class UnitTest {
     Script test2 = new Script(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new LiteralNumericExpression(1.0/0))));
     assertCorrectFailures(test2, 1, "the value field of literal numeric expression must be finite");
 
-    // TODO test that it fails when not a number
+    Script test3 = new Script(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new LiteralNumericExpression(Double.NaN))));
+    assertCorrectFailures(test3, 1, "the value field of literal numeric expression must not be NaN");
 
   }
 
@@ -209,18 +254,46 @@ public class UnitTest {
   }
 
   @Test
+  public void testMethod() {
+
+  }
+
+  @Test
   public void testReturnStatement() {
 
   }
 
   @Test
   public void testSetter() {
+    Script test0 = new Script(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new ObjectExpression(ImmutableList.list(new Setter(new BindingIdentifier("w"), new FunctionBody(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new IdentifierExpression("w")))), new StaticPropertyName("width")))))));
+    assertCorrectFailures(test0, 0, "");
 
+    Script test1 = new Script(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new ObjectExpression(ImmutableList.list(new Setter(new ComputedMemberExpression(new IdentifierExpression("a"), new IdentifierExpression("b")), new FunctionBody(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new IdentifierExpression("w")))), new StaticPropertyName("width")))))));
+    assertCorrectFailures(test1, 1, "the param field of setter must not be a member expression");
+
+    Script test2 = new Script(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new ObjectExpression(ImmutableList.list(new Setter(new StaticMemberExpression("a", new IdentifierExpression("b")), new FunctionBody(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new IdentifierExpression("w")))), new StaticPropertyName("width")))))));
+    assertCorrectFailures(test2, 1, "the param field of setter must not be a member expression");
+
+    Script test3 = new Script(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new ObjectExpression(ImmutableList.list(new Setter(new BindingWithDefault(new BindingIdentifier("a"), new LiteralNumericExpression(0.0)), new FunctionBody(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new IdentifierExpression("w")))), new StaticPropertyName("width")))))));
+    assertCorrectFailures(test3, 0, "");
+
+    Script test4 = new Script(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new ObjectExpression(ImmutableList.list(new Setter(new BindingWithDefault(new ComputedMemberExpression(new IdentifierExpression("a"), new IdentifierExpression("b")), new LiteralNumericExpression(0.0)), new FunctionBody(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new IdentifierExpression("w")))), new StaticPropertyName("width")))))));
+    assertCorrectFailures(test4, 1, "the binding field of the param field of setter must not be a member expression");
+
+    Script test5 = new Script(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new ObjectExpression(ImmutableList.list(new Setter(new BindingWithDefault(new StaticMemberExpression("a", new IdentifierExpression("b")), new LiteralNumericExpression(0.0)), new FunctionBody(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new IdentifierExpression("w")))), new StaticPropertyName("width")))))));
+    assertCorrectFailures(test5, 1, "the binding field of the param field of setter must not be a member expression");
   }
 
   @Test
   public void testShorthandProperty() {
+    Script test0 = new Script(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new ObjectExpression(ImmutableList.list(new ShorthandProperty("a"), new ShorthandProperty("asajd_nk"))))));
+    assertCorrectFailures(test0, 0, "");
 
+    Script test1 = new Script(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new ObjectExpression(ImmutableList.list(new ShorthandProperty("429adk"), new ShorthandProperty("asajd_nk"))))));
+    assertCorrectFailures(test1, 1, "the name field of shorthand property must be a valid identifier name");
+
+    Script test2 = new Script(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new ObjectExpression(ImmutableList.list(new ShorthandProperty("a"), new ShorthandProperty("^34d9"))))));
+    assertCorrectFailures(test2, 1, "the name field of shorthand property must be a valid identifier name");
   }
 
   @Test
@@ -234,6 +307,18 @@ public class UnitTest {
 
   @Test
   public void testTemplateElement() {
+    Script test0 = new Script(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new TemplateExpression(Maybe.nothing(), ImmutableList.list(new TemplateElement("abc"))))));
+    assertCorrectFailures(test0, 0, "");
+
+    Script test1 = new Script(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new TemplateExpression(Maybe.nothing(), ImmutableList.list(new TemplateElement("\"abc'"))))));
+    assertCorrectFailures(test1, 1, "the raw value field of template element must match the ES6 grammar production TemplateCharacters");
+
+    Script test2 = new Script(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new TemplateExpression(Maybe.nothing(), ImmutableList.list(new TemplateElement("'abc\""))))));
+    assertCorrectFailures(test2, 1, "the raw value field of template element must match the ES6 grammar production TemplateCharacters");
+  }
+
+  @Test
+  public void testTemplateExpression() {
     Script test0 = new Script(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new TemplateExpression(Maybe.nothing(), ImmutableList.list(new TemplateElement("a"), new IdentifierExpression("b"), new TemplateElement("c"))))));
     assertCorrectFailures(test0, 0, "");
 
@@ -248,23 +333,84 @@ public class UnitTest {
   }
 
   @Test
-  public void testTemplateExpression() {
-
-  }
-
-  @Test
   public void testVariableDeclaration() {
+    Script test0 = new Script(ImmutableList.nil(), ImmutableList.list(new VariableDeclarationStatement(new VariableDeclaration(VariableDeclarationKind.Var, ImmutableList.list(new VariableDeclarator(new BindingIdentifier("a"), Maybe.just(new LiteralNumericExpression(0.0))))))));
+    assertCorrectFailures(test0, 0, "");
 
+    Script test1 = new Script(ImmutableList.nil(), ImmutableList.list(new VariableDeclarationStatement(new VariableDeclaration(VariableDeclarationKind.Let, ImmutableList.list(new VariableDeclarator(new BindingIdentifier("a"), Maybe.just(new LiteralNumericExpression(0.0))))))));
+    assertCorrectFailures(test1, 0, "");
+
+    Script test2 = new Script(ImmutableList.nil(), ImmutableList.list(new VariableDeclarationStatement(new VariableDeclaration(VariableDeclarationKind.Const, ImmutableList.list(new VariableDeclarator(new BindingIdentifier("a"), Maybe.just(new LiteralNumericExpression(0.0))))))));
+    assertCorrectFailures(test2, 0, "");
+
+    Script test3 = new Script(ImmutableList.nil(), ImmutableList.list(new VariableDeclarationStatement(new VariableDeclaration(VariableDeclarationKind.Var, ImmutableList.list()))));
+    assertCorrectFailures(test3, 1, "the declarators field in variable declaration must not be an empty list");
+
+    Script test4 = new Script(ImmutableList.nil(), ImmutableList.list(new VariableDeclarationStatement(new VariableDeclaration(VariableDeclarationKind.Let, ImmutableList.list()))));
+    assertCorrectFailures(test4, 1, "the declarators field in variable declaration must not be an empty list");
+
+    Script test5 = new Script(ImmutableList.nil(), ImmutableList.list(new VariableDeclarationStatement(new VariableDeclaration(VariableDeclarationKind.Const, ImmutableList.list()))));
+    assertCorrectFailures(test5, 1, "the declarators field in variable declaration must not be an empty list");
+
+    Script test6 = new Script(ImmutableList.nil(), ImmutableList.list(new VariableDeclarationStatement(new VariableDeclaration(VariableDeclarationKind.Var, ImmutableList.nil()))));
+    assertCorrectFailures(test6, 1, "the declarators field in variable declaration must not be an empty list");
+
+    Script test7 = new Script(ImmutableList.nil(), ImmutableList.list(new VariableDeclarationStatement(new VariableDeclaration(VariableDeclarationKind.Let, ImmutableList.nil()))));
+    assertCorrectFailures(test7, 1, "the declarators field in variable declaration must not be an empty list");
+
+    Script test8 = new Script(ImmutableList.nil(), ImmutableList.list(new VariableDeclarationStatement(new VariableDeclaration(VariableDeclarationKind.Const, ImmutableList.nil()))));
+    assertCorrectFailures(test8, 1, "the declarators field in variable declaration must not be an empty list");
   }
 
   @Test
   public void testVariableDeclarationStatement() {
+    Script test0 = new Script(ImmutableList.nil(), ImmutableList.list(new VariableDeclarationStatement(new VariableDeclaration(VariableDeclarationKind.Var, ImmutableList.list(new VariableDeclarator(new BindingIdentifier("a"), Maybe.just(new LiteralNumericExpression(0.0))))))));
+    assertCorrectFailures(test0, 0, "");
 
+    Script test1 = new Script(ImmutableList.nil(), ImmutableList.list(new VariableDeclarationStatement(new VariableDeclaration(VariableDeclarationKind.Let, ImmutableList.list(new VariableDeclarator(new BindingIdentifier("a"), Maybe.just(new LiteralNumericExpression(0.0))))))));
+    assertCorrectFailures(test1, 0, "");
+
+    Script test2 = new Script(ImmutableList.nil(), ImmutableList.list(new VariableDeclarationStatement(new VariableDeclaration(VariableDeclarationKind.Const, ImmutableList.list(new VariableDeclarator(new BindingIdentifier("a"), Maybe.just(new LiteralNumericExpression(0.0))))))));
+    assertCorrectFailures(test2, 0, "");
+
+    Script test3 = new Script(ImmutableList.nil(), ImmutableList.list(new VariableDeclarationStatement(new VariableDeclaration(VariableDeclarationKind.Var, ImmutableList.list(new VariableDeclarator(new BindingIdentifier("a"), Maybe.nothing()))))));
+    assertCorrectFailures(test3, 0, "");
+
+    Script test4 = new Script(ImmutableList.nil(), ImmutableList.list(new VariableDeclarationStatement(new VariableDeclaration(VariableDeclarationKind.Let, ImmutableList.list(new VariableDeclarator(new BindingIdentifier("a"), Maybe.nothing()))))));
+    assertCorrectFailures(test4, 0, "");
+
+    Script test5 = new Script(ImmutableList.nil(), ImmutableList.list(new VariableDeclarationStatement(new VariableDeclaration(VariableDeclarationKind.Const, ImmutableList.list(new VariableDeclarator(new BindingIdentifier("a"), Maybe.nothing()))))));
+    assertCorrectFailures(test5, 1, "VariableDeclarationStatements with a variable declaration of kind const cannot have a variable declarator with no initializer");
   }
 
   @Test
   public void testVariableDeclarator() {
+    Script test0 = new Script(ImmutableList.nil(), ImmutableList.list(new VariableDeclarationStatement(new VariableDeclaration(VariableDeclarationKind.Var, ImmutableList.list(new VariableDeclarator(new BindingIdentifier("a"), Maybe.just(new LiteralNumericExpression(0.0))))))));
+    assertCorrectFailures(test0, 0, "");
 
+    Script test1 = new Script(ImmutableList.nil(), ImmutableList.list(new VariableDeclarationStatement(new VariableDeclaration(VariableDeclarationKind.Let, ImmutableList.list(new VariableDeclarator(new BindingIdentifier("a"), Maybe.just(new LiteralNumericExpression(0.0))))))));
+    assertCorrectFailures(test1, 0, "");
+
+    Script test2 = new Script(ImmutableList.nil(), ImmutableList.list(new VariableDeclarationStatement(new VariableDeclaration(VariableDeclarationKind.Const, ImmutableList.list(new VariableDeclarator(new BindingIdentifier("a"), Maybe.just(new LiteralNumericExpression(0.0))))))));
+    assertCorrectFailures(test2, 0, "");
+
+    Script test3 = new Script(ImmutableList.nil(), ImmutableList.list(new VariableDeclarationStatement(new VariableDeclaration(VariableDeclarationKind.Var, ImmutableList.list(new VariableDeclarator(new ComputedMemberExpression(new IdentifierExpression("a"), new IdentifierExpression("b")), Maybe.just(new LiteralNumericExpression(0.0))))))));
+    assertCorrectFailures(test3, 1, "the binding field of variable declarator must not be a member expression");
+
+    Script test4 = new Script(ImmutableList.nil(), ImmutableList.list(new VariableDeclarationStatement(new VariableDeclaration(VariableDeclarationKind.Var, ImmutableList.list(new VariableDeclarator(new StaticMemberExpression("a", new IdentifierExpression("b")), Maybe.just(new LiteralNumericExpression(0.0))))))));
+    assertCorrectFailures(test4, 1, "the binding field of variable declarator must not be a member expression");
+
+    Script test5 = new Script(ImmutableList.nil(), ImmutableList.list(new VariableDeclarationStatement(new VariableDeclaration(VariableDeclarationKind.Let, ImmutableList.list(new VariableDeclarator(new ComputedMemberExpression(new IdentifierExpression("a"), new IdentifierExpression("b")), Maybe.just(new LiteralNumericExpression(0.0))))))));
+    assertCorrectFailures(test5, 1, "the binding field of variable declarator must not be a member expression");
+
+    Script test6 = new Script(ImmutableList.nil(), ImmutableList.list(new VariableDeclarationStatement(new VariableDeclaration(VariableDeclarationKind.Let, ImmutableList.list(new VariableDeclarator(new StaticMemberExpression("a", new IdentifierExpression("b")), Maybe.just(new LiteralNumericExpression(0.0))))))));
+    assertCorrectFailures(test6, 1, "the binding field of variable declarator must not be a member expression");
+
+    Script test7 = new Script(ImmutableList.nil(), ImmutableList.list(new VariableDeclarationStatement(new VariableDeclaration(VariableDeclarationKind.Const, ImmutableList.list(new VariableDeclarator(new ComputedMemberExpression(new IdentifierExpression("a"), new IdentifierExpression("b")), Maybe.just(new LiteralNumericExpression(0.0))))))));
+    assertCorrectFailures(test7, 1, "the binding field of variable declarator must not be a member expression");
+
+    Script test8 = new Script(ImmutableList.nil(), ImmutableList.list(new VariableDeclarationStatement(new VariableDeclaration(VariableDeclarationKind.Const, ImmutableList.list(new VariableDeclarator(new StaticMemberExpression("a", new IdentifierExpression("b")), Maybe.just(new LiteralNumericExpression(0.0))))))));
+    assertCorrectFailures(test8, 1, "the binding field of variable declarator must not be a member expression");
   }
 
   @Test
