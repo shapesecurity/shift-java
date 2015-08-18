@@ -42,6 +42,17 @@ public abstract class HashTable<K, V> {
             return o.equals(b);
         }
     };
+    public final static Hasher<Object> EQUALITY_HASHER = new Hasher<Object>() {
+        @Override
+        public int hash(@NotNull Object data) {
+            return System.identityHashCode(data);
+        }
+
+        @Override
+        public boolean eq(@NotNull Object o, @NotNull Object b) {
+            return o == b;
+        }
+    };
     @NotNull
     public final Hasher<K> hasher;
     public final int length;
@@ -58,6 +69,12 @@ public abstract class HashTable<K, V> {
         return (Hasher<K>) DEFAULT_HASHER;
     }
 
+    @SuppressWarnings("unchecked")
+    @NotNull
+    public static <K> Hasher<K> equalityHasher() {
+        return (Hasher<K>) EQUALITY_HASHER;
+    }
+
     @NotNull
     public static <K, V> HashTable<K, V> empty(@NotNull Hasher<K> hasher) {
         return new Empty<>(hasher);
@@ -66,6 +83,11 @@ public abstract class HashTable<K, V> {
     @NotNull
     public static <K, V> HashTable<K, V> empty() {
         return empty(HashTable.defaultHasher());
+    }
+
+    @NotNull
+    public static <K, V> HashTable<K, V> emptyP() {
+        return empty(HashTable.equalityHasher());
     }
 
     @NotNull

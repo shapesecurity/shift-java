@@ -17,6 +17,8 @@
 package com.shapesecurity.shift.scope;
 
 import com.shapesecurity.functional.Pair;
+import com.shapesecurity.functional.Unit;
+import com.shapesecurity.functional.data.Either;
 import com.shapesecurity.functional.data.HashTable;
 import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.functional.data.Maybe;
@@ -336,7 +338,7 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
         @NotNull
         public final ImmutableList<BindingIdentifier> bindingsForParent; // either references bubbling up to the AssignmentExpression, ForOfStatement, or ForInStatement which writes to them or declarations bubbling up to the VariableDeclaration, FunctionDeclaration, ClassDeclaration, FormalParameters, Setter, Method, or CatchClause which declares them
         @NotNull
-        public final HashTable<String, BindingIdentifier> potentiallyVarScopedFunctionDeclarations; // for annex B.3.3, which says (essentially) that function declarations are *also* var-scoped if doing so is not an early error (although not at the top level; only within functions).
+        public final HashTable<String, Either<BindingIdentifier, Unit>> potentiallyVarScopedFunctionDeclarations; // for annex B.3.3, which says (essentially) that function declarations are *also* var-scoped if doing so is not an early error (although not at the top level; only within functions). Unit: there are at least two of this name, and so none can be created.
 
         /*
          * Fully saturated constructor
@@ -349,7 +351,7 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
                 @NotNull ImmutableList<Scope> children,
                 boolean dynamic,
                 @NotNull ImmutableList<BindingIdentifier> bindingsForParent,
-                @NotNull HashTable<String, BindingIdentifier> potentiallyVarScopedFunctionDeclarations,
+                @NotNull HashTable<String, Either<BindingIdentifier, Unit>> potentiallyVarScopedFunctionDeclarations,
                 boolean hasParameterExpressions
         ) {
             this.freeIdentifiers = freeIdentifiers;
@@ -390,7 +392,7 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
             this.children = a.children.append(b.children);
             this.dynamic = a.dynamic || b.dynamic;
             this.bindingsForParent = a.bindingsForParent.append(b.bindingsForParent);
-            this.potentiallyVarScopedFunctionDeclarations = a.potentiallyVarScopedFunctionDeclarations.merge(b.potentiallyVarScopedFunctionDeclarations);
+            this.potentiallyVarScopedFunctionDeclarations = a.potentiallyVarScopedFunctionDeclarations.merge(b.potentiallyVarScopedFunctionDeclarations, (l, r) -> Either.right(Unit.unit)); // "A var binding for F is only instantiated here if it is neither [..., nor] another FunctionDeclaration"
             this.hasParameterExpressions = a.hasParameterExpressions || b.hasParameterExpressions;
         }
 
@@ -409,7 +411,7 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
 
             HashTable<String, ImmutableList<Declaration>> functionScope = HashTable.empty();
             HashTable<String, ImmutableList<Reference>> freeIdentifiers = this.freeIdentifiers;
-            HashTable<String, BindingIdentifier> potentiallyVarScopedFunctionDeclarations = this.potentiallyVarScopedFunctionDeclarations;
+            HashTable<String, Either<BindingIdentifier, Unit>> potentiallyVarScopedFunctionDeclarations = this.potentiallyVarScopedFunctionDeclarations;
             ImmutableList<Scope> children = this.children;
 
             switch (scopeType) {
@@ -421,7 +423,7 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
                 case ParameterExpression:
                     // resolve only block-scoped free declarations
                     ImmutableList<Variable> variables3 = variables;
-                    for (Pair<String, ImmutableList<Declaration>> entry2 : this.blockScopedDeclarations.entries().append(this.functionDeclarations.entries())) {
+                    for (Pair<String, ImmutableList<Declaration>> entry2 : this.blockScopedDeclarations.merge(this.functionDeclarations, ImmutableList::append).entries()) {
                         String name2 = entry2.a;
                         ImmutableList<Declaration> declarations2 = entry2.b;
                         ImmutableList<Reference> references2 = freeIdentifiers.get(name2).orJust(ImmutableList.nil());
@@ -429,72 +431,72 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
                         freeIdentifiers = freeIdentifiers.remove(name2);
 
                         // we do not create var-scoped bindings for functions if doing so would cause an early error, ie, if a containing block has a block-scoped declaration of the same name
-                        Maybe<BindingIdentifier> maybeConflict = this.potentiallyVarScopedFunctionDeclarations.get(name2);
-                        if (maybeConflict.isJust()) {
-                            BindingIdentifier conflict = maybeConflict.just();
+                        Maybe<Either<BindingIdentifier, Unit>> maybeConflict = this.potentiallyVarScopedFunctionDeclarations.get(name2);
+                        if (maybeConflict.isJust() && maybeConflict.just().isLeft()) {
+                            BindingIdentifier conflict = maybeConflict.just().left().just();
                             if (declarations2.length != 1 || declarations2.maybeHead().just().node != conflict) { // don't conflict with your own lexical declaration
-                                potentiallyVarScopedFunctionDeclarations = potentiallyVarScopedFunctionDeclarations.remove(name2);
+                                potentiallyVarScopedFunctionDeclarations = potentiallyVarScopedFunctionDeclarations.put(name2, Either.right(Unit.unit)); // mark as do-not-create-binding
                             }
                         }
                     }
                     variables = variables3;
                     functionScope = this.functionScopedDeclarations;
+                    potentiallyVarScopedFunctionDeclarations = potentiallyVarScopedFunctionDeclarations.foldLeft((acc, p) -> p.b.either(bi -> acc.put(p.a, p.b), u -> acc), HashTable.empty()); // ie, filter out those marked as do-not-create-binding, since that will no longer apply. Why HashTables do not have a filter, I do not know.
                     break;
                 case ArrowFunction:
                 case Function:
                 case Module:
                 case Script:
                     // resolve both block-scoped and function-scoped free declarations
-                    if (resolveArguments) {
-                        ImmutableList<Variable> variables1 = variables;
-                        ImmutableList<Reference> arguments = freeIdentifiers.get("arguments").orJust(ImmutableList.nil());
-                        freeIdentifiers = freeIdentifiers.remove("arguments");
-                        variables1 = ImmutableList.cons(new Variable("arguments", arguments, ImmutableList.nil()), variables1);
-                        variables = variables1;
-                    }
-                    ImmutableList<Variable> variables2 = variables;
-                    for (Pair<String, ImmutableList<Declaration>> entry1 : this.blockScopedDeclarations.entries()) {
-                        String name1 = entry1.a;
-                        ImmutableList<Declaration> declarations1 = entry1.b;
-                        ImmutableList<Reference> references1 = freeIdentifiers.get(name1).orJust(ImmutableList.nil());
-                        variables2 = ImmutableList.cons(new Variable(name1, references1, declarations1), variables2);
-                        freeIdentifiers = freeIdentifiers.remove(name1);
 
-                        // we do not create var-scoped bindings for functions if doing so would cause an early error, ie, if a containing block has a block-scoped declaration of the same name
-                        potentiallyVarScopedFunctionDeclarations = potentiallyVarScopedFunctionDeclarations.remove(name1);
-                    }
+                    // first, block-scope declarations
+                    HashTable<String, ImmutableList<Declaration>> newDeclarations = this.blockScopedDeclarations;
 
-                    // B.3.3: create an additional var-scoped binding for functions in blocks
-                    // TODO this doesn't necessarily happen in the right order (but may not matter...?)
-                    HashTable<String, ImmutableList<Declaration>> funcScopedDeclarationsOrFunctions = this.functionScopedDeclarations;
-                    if (scopeType == Scope.Type.Function || scopeType == Scope.Type.ArrowFunction) {
-                        for (Pair<String, BindingIdentifier> fEntry : potentiallyVarScopedFunctionDeclarations.entries()) {
-                            String fName = fEntry.a;
-                            BindingIdentifier fBinding = fEntry.b;
-                            ImmutableList<Declaration> declarations = funcScopedDeclarationsOrFunctions.get(fName).orJust(ImmutableList.nil());
-                            if (declarations.isEmpty()) { // do not create bindings for already-instantiated names
-                                funcScopedDeclarationsOrFunctions = funcScopedDeclarationsOrFunctions.put(fName, declarations.cons(new Declaration(fBinding, Kind.Var))); // TODO ensure this is the correct kind.
-                            }
+                    // top-level lexical declarations in scripts are not globals, so create a separate scope for them
+                    if (scopeType == Scope.Type.Script) {
+                        for (Pair<String, ImmutableList<Declaration>> entry : newDeclarations.entries()) {
+                            String name = entry.a;
+                            ImmutableList<Declaration> declarations = entry.b;
+                            ImmutableList<Reference> references = freeIdentifiers.get(name).orJust(ImmutableList.nil());
+                            variables = ImmutableList.cons(new Variable(name, references, declarations), variables);
+                            freeIdentifiers = freeIdentifiers.remove(name);
                         }
-                    }
-
-                    variables = variables2;
-                    if (scopeType == Scope.Type.Script) { // top-level lexical declarations in scripts are not globals
                         children = ImmutableList.list(
                                 new Scope(children, variables, freeIdentifiers, scopeType, this.dynamic, astNode)
                         );
                         variables = ImmutableList.nil();
+                        newDeclarations = HashTable.empty();
                     }
 
-                    ImmutableList<Variable> variables1 = variables;
-                    for (Pair<String, ImmutableList<Declaration>> entry : funcScopedDeclarationsOrFunctions.entries().append(this.functionDeclarations.entries())) {
+
+                    // then, var-scope declarations
+                    if (resolveArguments) {
+                        newDeclarations = newDeclarations.merge(HashTable.<String, ImmutableList<Declaration>>empty().put("arguments", ImmutableList.nil()));
+                    }
+                    newDeclarations = newDeclarations.merge(this.functionScopedDeclarations, ImmutableList::append).merge(this.functionDeclarations, ImmutableList::append);
+
+
+                    // B.3.3: create an additional var-scoped binding for functions in blocks
+                    if (scopeType == Scope.Type.Function || scopeType == Scope.Type.ArrowFunction) { // todo maybe also script? check bugzilla.
+                        // Ensure that we do not create var-scoped bindings for nested functions if doing so would cause an early error, ie, if a containing block has a block-scoped declaration of the same name
+                        // todo check catch-block interaction
+                        for (Pair<String, ImmutableList<Declaration>> entry1 : this.blockScopedDeclarations.entries()) {
+                            potentiallyVarScopedFunctionDeclarations = potentiallyVarScopedFunctionDeclarations.remove(entry1.a);
+                        }
+                        HashTable<String, BindingIdentifier> varFuncDecls = potentiallyVarScopedFunctionDeclarations.foldLeft((acc, p) -> p.b.either(bi -> acc.put(p.a, bi), u -> acc), HashTable.empty());
+                        newDeclarations = newDeclarations.merge(
+                                varFuncDecls.map(bi -> ImmutableList.list(new Declaration(bi, Kind.Var))),
+                                ImmutableList::append
+                        );
+                    }
+
+                    for (Pair<String, ImmutableList<Declaration>> entry : newDeclarations.entries()) {
                         String name = entry.a;
                         ImmutableList<Declaration> declarations = entry.b;
                         ImmutableList<Reference> references = freeIdentifiers.get(name).orJust(ImmutableList.nil());
-                        variables1 = ImmutableList.cons(new Variable(name, references, declarations), variables1);
+                        variables = ImmutableList.cons(new Variable(name, references, declarations), variables);
                         freeIdentifiers = freeIdentifiers.remove(name);
                     }
-                    variables = variables1;
 
                     if (scopeType == Scope.Type.Module) { // no declarations in a module are global
                         children = ImmutableList.list(
@@ -502,6 +504,8 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
                         );
                         variables = ImmutableList.nil();
                     }
+
+                    potentiallyVarScopedFunctionDeclarations = HashTable.empty();
                     break;
                 default:
                     throw new RuntimeException("Not reached");
@@ -658,9 +662,13 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
 
         @NotNull
         public State withPotentialVarFunctions(@NotNull ImmutableList<BindingIdentifier> funcs) {
-            HashTable<String, BindingIdentifier> potentiallyVarScopedFunctionDeclarations = this.potentiallyVarScopedFunctionDeclarations;
+            HashTable<String, Either<BindingIdentifier, Unit>> potentiallyVarScopedFunctionDeclarations = this.potentiallyVarScopedFunctionDeclarations;
             for (BindingIdentifier bi : funcs) {
-                potentiallyVarScopedFunctionDeclarations = potentiallyVarScopedFunctionDeclarations.put(bi.name, bi);
+                if (potentiallyVarScopedFunctionDeclarations.get(bi.name).isJust()) {
+                    potentiallyVarScopedFunctionDeclarations = potentiallyVarScopedFunctionDeclarations.put(bi.name, Either.right(Unit.unit));
+                } else {
+                    potentiallyVarScopedFunctionDeclarations = potentiallyVarScopedFunctionDeclarations.put(bi.name, Either.left(bi));
+                }
             }
             return new State(
                     this.freeIdentifiers,

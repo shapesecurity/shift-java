@@ -76,6 +76,14 @@ public abstract class ImmutableList<A> implements Iterable<A> {
             l = cons(arrayList.get(i), l);
         }
         return l;
+    /* TODO: use Collection here if it doesn't incur performance penalties
+    ImmutableList<A> list = nil();
+    int size = collection.size();
+    for (A element : collection) {
+      list = cons(element, list);
+    }
+    return list;
+     */
     }
 
     /**

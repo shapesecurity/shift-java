@@ -1162,6 +1162,7 @@ public abstract class Parser extends Tokenizer {
             case NUMBER:
             case STRING:
             case SUB:
+            case SUPER:
             case THIS:
             case TRUE_LITERAL:
             case YIELD:
