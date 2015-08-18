@@ -71,7 +71,7 @@ public final class CodeGen implements Reducer<CodeRep> {
         return (char) ((lead - 0xD800) * 0x400 + (trail - 0xDC00) + 0x10000);
     }
 
-    private String escapeStringLiteral(String stringValue) {
+    public static String escapeStringLiteral(String stringValue) {
         String result = "";
         int nSingle = 0;
         int nDouble = 0;

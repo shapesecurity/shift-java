@@ -1749,7 +1749,45 @@ public class ScopeTest extends TestCase {
         String serialized = serializer.serializeScope(globalScope);
 
         // check
-        TestCase.assertEquals("{\"node\": \"Script_0\", \"type\": \"Global\", \"isDynamic\": true, \"through\": [], \"variables\": [{\"name\": \"foo\", \"references\": [], \"declarations\": [{\"node\": \"BindingIdentifier(foo)_1\", \"kind\": \"FunctionName\"}]}], \"children\": [{\"node\": \"Script_0\", \"type\": \"Script\", \"isDynamic\": false, \"through\": [], \"variables\": [], \"children\": [{\"node\": \"FunctionDeclaration_2\", \"type\": \"Function\", \"isDynamic\": false, \"through\": [], \"variables\": [{\"name\": \"r\", \"references\": [], \"declarations\": [{\"node\": \"BindingIdentifier(r)_3\", \"kind\": \"FunctionName\"}]}, {\"name\": \"b\", \"references\": [], \"declarations\": [{\"node\": \"BindingIdentifier(b)_4\", \"kind\": \"Param\"}]}, {\"name\": \"arguments\", \"references\": [], \"declarations\": []}], \"children\": [{\"node\": \"FunctionDeclaration_5\", \"type\": \"Function\", \"isDynamic\": false, \"through\": [], \"variables\": [{\"name\": \"b\", \"references\": [{\"node\": \"BindingIdentifier(b)_6\", \"accessibility\": \"Write\"}], \"declarations\": [{\"node\": \"BindingIdentifier(b)_6\", \"kind\": \"Var\"}]}, {\"name\": \"arguments\", \"references\": [], \"declarations\": []}], \"children\": [{\"node\": \"ForStatement_7\", \"type\": \"Block\", \"isDynamic\": false, \"through\": [{\"node\": \"BindingIdentifier(b)_6\", \"accessibility\": \"Write\"}], \"variables\": [], \"children\": []}]}]}]}]}", serialized);
+        TestCase.assertEquals("{\"node\": \"Script_0\", \"type\": \"Global\", \"isDynamic\": true, \"through\": [], \"variables\": [{\"name\": \"foo\", \"references\": [], \"declarations\": [{\"node\": \"BindingIdentifier(foo)_1\", \"kind\": \"FunctionName\"}]}], \"children\": [{\"node\": \"Script_0\", \"type\": \"Script\", \"isDynamic\": false, \"through\": [], \"variables\": [], \"children\": [{\"node\": \"FunctionDeclaration_2\", \"type\": \"Function\", \"isDynamic\": false, \"through\": [], \"variables\": [{\"name\": \"arguments\", \"references\": [], \"declarations\": []}, {\"name\": \"r\", \"references\": [], \"declarations\": [{\"node\": \"BindingIdentifier(r)_3\", \"kind\": \"FunctionName\"}]}, {\"name\": \"b\", \"references\": [], \"declarations\": [{\"node\": \"BindingIdentifier(b)_4\", \"kind\": \"Param\"}]}], \"children\": [{\"node\": \"FunctionDeclaration_5\", \"type\": \"Function\", \"isDynamic\": false, \"through\": [], \"variables\": [{\"name\": \"arguments\", \"references\": [], \"declarations\": []}, {\"name\": \"b\", \"references\": [{\"node\": \"BindingIdentifier(b)_6\", \"accessibility\": \"Write\"}], \"declarations\": [{\"node\": \"BindingIdentifier(b)_6\", \"kind\": \"Var\"}]}], \"children\": [{\"node\": \"ForStatement_7\", \"type\": \"Block\", \"isDynamic\": false, \"through\": [{\"node\": \"BindingIdentifier(b)_6\", \"accessibility\": \"Write\"}], \"variables\": [], \"children\": []}]}]}]}]}", serialized);
+    }
+
+    @Test
+    public void testFunctionDoubleDeclaration() throws JsError{
+        String js = "{let x; function x(){}}";
+        Script script = Parser.parseScript(js);
+        GlobalScope globalScope = ScopeAnalyzer.analyze(script);
+        ScopeSerializer serializer = new ScopeSerializer();
+        String serialized = serializer.serializeScope(globalScope);
+
+        TestCase.assertEquals("{\"node\": \"Script_0\", \"type\": \"Global\", \"isDynamic\": true, \"through\": [], \"variables\": [], \"children\": [{\"node\": \"Script_0\", \"type\": \"Script\", \"isDynamic\": false, \"through\": [], \"variables\": [], \"children\": [{\"node\": \"Block_1\", \"type\": \"Block\", \"isDynamic\": false, \"through\": [], \"variables\": [{\"name\": \"x\", \"references\": [], \"declarations\": [{\"node\": \"BindingIdentifier(x)_2\", \"kind\": \"Let\"}, {\"node\": \"BindingIdentifier(x)_3\", \"kind\": \"FunctionName\"}]}], \"children\": [{\"node\": \"FunctionDeclaration_4\", \"type\": \"Function\", \"isDynamic\": false, \"through\": [], \"variables\": [{\"name\": \"arguments\", \"references\": [], \"declarations\": []}], \"children\": []}]}]}]}", serialized);
+
+
+        js = "function f1(x){return x; function x(){}}";
+        script = Parser.parseScript(js);
+        globalScope = ScopeAnalyzer.analyze(script);
+        serializer = new ScopeSerializer();
+        serialized = serializer.serializeScope(globalScope);
+
+        TestCase.assertEquals("{\"node\": \"Script_0\", \"type\": \"Global\", \"isDynamic\": true, \"through\": [], \"variables\": [{\"name\": \"f1\", \"references\": [], \"declarations\": [{\"node\": \"BindingIdentifier(f1)_1\", \"kind\": \"FunctionName\"}]}], \"children\": [{\"node\": \"Script_0\", \"type\": \"Script\", \"isDynamic\": false, \"through\": [], \"variables\": [], \"children\": [{\"node\": \"FunctionDeclaration_2\", \"type\": \"Function\", \"isDynamic\": false, \"through\": [], \"variables\": [{\"name\": \"x\", \"references\": [{\"node\": \"IdentifierExpression(x)_3\", \"accessibility\": \"Read\"}], \"declarations\": [{\"node\": \"BindingIdentifier(x)_4\", \"kind\": \"Param\"}, {\"node\": \"BindingIdentifier(x)_5\", \"kind\": \"FunctionName\"}]}, {\"name\": \"arguments\", \"references\": [], \"declarations\": []}], \"children\": [{\"node\": \"FunctionDeclaration_6\", \"type\": \"Function\", \"isDynamic\": false, \"through\": [], \"variables\": [{\"name\": \"arguments\", \"references\": [], \"declarations\": []}], \"children\": []}]}]}]}", serialized);
+
+
+        js = "function x(){}; var x = 1; function x(){}";
+        script = Parser.parseScript(js);
+        globalScope = ScopeAnalyzer.analyze(script);
+        serializer = new ScopeSerializer();
+        serialized = serializer.serializeScope(globalScope);
+
+        TestCase.assertEquals("{\"node\": \"Script_0\", \"type\": \"Global\", \"isDynamic\": true, \"through\": [], \"variables\": [{\"name\": \"x\", \"references\": [{\"node\": \"BindingIdentifier(x)_1\", \"accessibility\": \"Write\"}], \"declarations\": [{\"node\": \"BindingIdentifier(x)_1\", \"kind\": \"Var\"}, {\"node\": \"BindingIdentifier(x)_2\", \"kind\": \"FunctionName\"}, {\"node\": \"BindingIdentifier(x)_3\", \"kind\": \"FunctionName\"}]}], \"children\": [{\"node\": \"Script_0\", \"type\": \"Script\", \"isDynamic\": false, \"through\": [{\"node\": \"BindingIdentifier(x)_1\", \"accessibility\": \"Write\"}], \"variables\": [], \"children\": [{\"node\": \"FunctionDeclaration_4\", \"type\": \"Function\", \"isDynamic\": false, \"through\": [], \"variables\": [{\"name\": \"arguments\", \"references\": [], \"declarations\": []}], \"children\": []}, {\"node\": \"FunctionDeclaration_5\", \"type\": \"Function\", \"isDynamic\": false, \"through\": [], \"variables\": [{\"name\": \"arguments\", \"references\": [], \"declarations\": []}], \"children\": []}]}]}", serialized);
+
+
+        js = "function f3() {return arguments; function arguments(){}}";
+        script = Parser.parseScript(js);
+        globalScope = ScopeAnalyzer.analyze(script);
+        serializer = new ScopeSerializer();
+        serialized = serializer.serializeScope(globalScope);
+
+        TestCase.assertEquals("{\"node\": \"Script_0\", \"type\": \"Global\", \"isDynamic\": true, \"through\": [], \"variables\": [{\"name\": \"f3\", \"references\": [], \"declarations\": [{\"node\": \"BindingIdentifier(f3)_1\", \"kind\": \"FunctionName\"}]}], \"children\": [{\"node\": \"Script_0\", \"type\": \"Script\", \"isDynamic\": false, \"through\": [], \"variables\": [], \"children\": [{\"node\": \"FunctionDeclaration_2\", \"type\": \"Function\", \"isDynamic\": false, \"through\": [], \"variables\": [{\"name\": \"arguments\", \"references\": [{\"node\": \"IdentifierExpression(arguments)_3\", \"accessibility\": \"Read\"}], \"declarations\": [{\"node\": \"BindingIdentifier(arguments)_4\", \"kind\": \"FunctionName\"}]}], \"children\": [{\"node\": \"FunctionDeclaration_5\", \"type\": \"Function\", \"isDynamic\": false, \"through\": [], \"variables\": [{\"name\": \"arguments\", \"references\": [], \"declarations\": []}], \"children\": []}]}]}]}", serialized);
     }
 
 /*

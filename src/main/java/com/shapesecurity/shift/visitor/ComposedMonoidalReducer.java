@@ -182,9 +182,9 @@ public class ComposedMonoidalReducer<A, B> extends MonoidalReducer<Pair<A, B>> {
     @Override
     public Pair<A, B> reduceComputedMemberExpression(
             @NotNull ComputedMemberExpression node,
-            @NotNull Pair<A, B> object,
-            @NotNull Pair<A, B> expression) {
-        return new Pair<>(reducerA.reduceComputedMemberExpression(node, a(object), a(expression)), reducerB.reduceComputedMemberExpression(node, b(object), b(expression)));
+            @NotNull Pair<A, B> expression,
+            @NotNull Pair<A, B> object) {
+        return new Pair<>(reducerA.reduceComputedMemberExpression(node, a(expression), a(object)), reducerB.reduceComputedMemberExpression(node, b(expression), b(object)));
     }
 
     @NotNull
