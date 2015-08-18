@@ -475,19 +475,20 @@ public class Validator extends MonoidalReducer<ValidationContext> {
         if (elements.length > 0) {
             if (node.elements.length % 2 == 0) {
                 s.addError(new ValidationError(node, "the elements field of template expression must be an alternating list of template element and expression, starting and ending with a template element"));
+            } else {
+                node.elements.mapWithIndex((i, x) -> {
+                    if (i % 2 == 0) {
+                        if (!(x instanceof TemplateElement)) {
+                            s.addError(new ValidationError(node, "the elements field of template expression must be an alternating list of template element and expression, starting and ending with a template element"));
+                        }
+                    } else {
+                        if (!(x instanceof Expression)) {
+                            s.addError(new ValidationError(node, "the elements field of template expression must be an alternating list of template element and expression, starting and ending with a template element"));
+                        }
+                    }
+                    return true;
+                });
             }
-            node.elements.mapWithIndex((i, x) -> {
-                if (i % 2 == 0) {
-                    if (!(x instanceof TemplateElement)) {
-                        s.addError(new ValidationError(node, "the elements field of template expression must be an alternating list of template element and expression, starting and ending with a template element"));
-                    }
-                } else {
-                    if (!(x instanceof Expression)) {
-                        s.addError(new ValidationError(node, "the elements field of template expression must be an alternating list of template element and expression, starting and ending with a template element"));
-                    }
-                }
-                return true;
-            });
         }
         return s;
     }

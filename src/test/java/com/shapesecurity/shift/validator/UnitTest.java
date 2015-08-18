@@ -153,7 +153,17 @@ public class UnitTest {
 
   @Test
   public void testIdentifierExpression() {
+    Script test0 = new Script(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new IdentifierExpression("linda"))));
+    assertCorrectFailures(test0, 0, "");
 
+    Script test1 = new Script(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new IdentifierExpression("9458723"))));
+    assertCorrectFailures(test1, 1, "the name field of identifier expression must be a valid identifier name");
+
+    Script test2 = new Script(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new IdentifierExpression("A*9458723"))));
+    assertCorrectFailures(test2, 1, "the name field of identifier expression must be a valid identifier name");
+
+    Script test3 = new Script(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new IdentifierExpression("0lkdjaf"))));
+    assertCorrectFailures(test3, 1, "the name field of identifier expression must be a valid identifier name");
   }
 
   @Test
@@ -162,7 +172,7 @@ public class UnitTest {
   }
 
   @Test
-  public void testImportSpcifier() {
+  public void testImportSpecifier() {
 
   }
 
@@ -172,27 +182,34 @@ public class UnitTest {
   }
 
   @Test
-  public void testLiteralNumericExpression() {
+  public void testLiteralNumericExpression() throws JsError {
+    Script test0 = Parser.parseScript("1.0");
+    assertCorrectFailures(test0, 0, "");
+
+    Script test1 = new Script(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new LiteralNumericExpression(-1.0))));
+    assertCorrectFailures(test1, 1, "the value field of literal numeric expression must be non-negative");
+
+    Script test2 = new Script(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new LiteralNumericExpression(1.0/0))));
+    assertCorrectFailures(test2, 1, "the value field of literal numeric expression must be finite");
+
+    // TODO test that it fails when not a number
 
   }
 
   @Test
   public void testLiteralRegExpExpression() {
+    Script test0 = new Script(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new LiteralRegExpExpression("@", ""))));
+    assertCorrectFailures(test0, 1, "pattern field of literal regular expression expression must match the ES6 grammar production Pattern (21.2.1)");
 
-  }
+    Script test1 = new Script(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new LiteralRegExpExpression("/a/", "j"))));
+    assertCorrectFailures(test1, 1, "flags field of literal regular expression expression must not contain characters other than 'g', 'i', 'm', 'u', or 'y'");
 
-  @Test
-  public void testModule() {
-
+    Script test2 = new Script(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new LiteralRegExpExpression("/a/", "gg"))));
+    assertCorrectFailures(test2, 1, "flags field of literal regular expression expression must not contain duplicate flag characters");
   }
 
   @Test
   public void testReturnStatement() {
-
-  }
-
-  @Test
-  public void testScript() {
 
   }
 
@@ -207,13 +224,27 @@ public class UnitTest {
   }
 
   @Test
-  public void testStaticMemberExpression() {
+  public void testStaticMemberExpression() throws JsError {
+    Script test0 = new Script(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new StaticMemberExpression("b", new IdentifierExpression("a")))));
+    assertCorrectFailures(test0, 0, "");
 
+    Script test1 = new Script(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new StaticMemberExpression("45829", new IdentifierExpression("a")))));
+    assertCorrectFailures(test1, 1, "the property field of static member expression must be a valid identifier name");
   }
 
   @Test
   public void testTemplateElement() {
+    Script test0 = new Script(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new TemplateExpression(Maybe.nothing(), ImmutableList.list(new TemplateElement("a"), new IdentifierExpression("b"), new TemplateElement("c"))))));
+    assertCorrectFailures(test0, 0, "");
 
+    Script test1 = new Script(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new TemplateExpression(Maybe.nothing(), ImmutableList.list(new IdentifierExpression("b"), new TemplateElement("c"))))));
+    assertCorrectFailures(test1, 1, "the elements field of template expression must be an alternating list of template element and expression, starting and ending with a template element");
+
+    Script test2 = new Script(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new TemplateExpression(Maybe.nothing(), ImmutableList.list(new TemplateElement("a"), new IdentifierExpression("b"), new TemplateElement("c"), new TemplateElement("c"), new TemplateElement("c"))))));
+    assertCorrectFailures(test2, 1, "the elements field of template expression must be an alternating list of template element and expression, starting and ending with a template element");
+
+    Script test3 = new Script(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new TemplateExpression(Maybe.nothing(), ImmutableList.list(new IdentifierExpression("b"), new TemplateElement("c"), new IdentifierExpression("b"))))));
+    assertCorrectFailures(test3, 3, "the elements field of template expression must be an alternating list of template element and expression, starting and ending with a template element");
   }
 
   @Test
