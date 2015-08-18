@@ -136,23 +136,6 @@ public class Validator extends MonoidalReducer<ValidationContext> {
         return true;
     }
 
-    private boolean hasOneConstructor(ImmutableList<ClassElement> classElements) {
-        boolean foundConstructor = false;
-        for (ClassElement classElement : classElements) {
-            if (foundConstructor) {
-                return false;
-            }
-            if (classElement.isStatic) {
-                if (classElement.method.name instanceof StaticPropertyName) {
-                    if (((StaticPropertyName) classElement.method.name).value.equals("constructor")) {
-                        foundConstructor = true;
-                    }
-                }
-            }
-        }
-        return true;
-    }
-
     private boolean isProblematicIfStatement(IfStatement node) {
         if (node.alternate.isNothing()) {
             return false;
@@ -198,26 +181,6 @@ public class Validator extends MonoidalReducer<ValidationContext> {
         ValidationContext s = super.reduceCatchClause(node, binding, body);
         if (node.binding instanceof MemberExpression) {
             s.addError(new ValidationError(node, "the binding field of CatchClause must not be a member expression"));
-        }
-        return s;
-    }
-
-    @NotNull
-    @Override
-    public ValidationContext reduceClassDeclaration(@NotNull ClassDeclaration node, @NotNull ValidationContext name, @NotNull Maybe<ValidationContext> _super, @NotNull ImmutableList<ValidationContext> elements) {
-        ValidationContext s = super.reduceClassDeclaration(node, name, _super, elements);
-        if (!hasOneConstructor(node.elements)) {
-            s.addError(new ValidationError(node, "classes must not have more than one non-static method named 'constructor'"));
-        }
-        return s;
-    }
-
-    @NotNull
-    @Override
-    public ValidationContext reduceClassExpression(@NotNull ClassExpression node, @NotNull Maybe<ValidationContext> name, @NotNull Maybe<ValidationContext> _super, @NotNull ImmutableList<ValidationContext> elements) {
-        ValidationContext s = super.reduceClassExpression(node, name, _super, elements);
-        if (!hasOneConstructor(node.elements)) {
-            s.addError(new ValidationError(node, "classes must not have more than one non-static method named 'constructor'"));
         }
         return s;
     }
