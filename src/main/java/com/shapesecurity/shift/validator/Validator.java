@@ -391,6 +391,17 @@ public class Validator extends MonoidalReducer<ValidationContext> {
 
     @NotNull
     @Override
+    public ValidationContext reduceMethod(@NotNull Method node, @NotNull ValidationContext params, @NotNull ValidationContext body, @NotNull ValidationContext name) {
+        ValidationContext s = super.reduceMethod(node, params, body, name);
+        if (node.isGenerator) {
+            s.clearYieldExpressionsNotInGeneratorContext();
+            s.clearYieldGeneratorExpressionsNotInGeneratorContext();
+        }
+        return s;
+    }
+
+    @NotNull
+    @Override
     public ValidationContext reduceModule(@NotNull Module node, @NotNull ImmutableList<ValidationContext> directives, @NotNull ImmutableList<ValidationContext> items
     ) {
         ValidationContext s = super.reduceModule(node, directives, items);
