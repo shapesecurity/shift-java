@@ -1049,7 +1049,7 @@ public abstract class Parser extends Tokenizer {
         }
 
         Either<Expression, Binding> expr;
-        if (this.match(TokenType.IDENTIFIER)) {
+        if (this.match(TokenType.IDENTIFIER) || this.match(TokenType.YIELD) || this.match(TokenType.LET)) {
             expr = this.parseConditionalExpression();
             if (!this.hasLineTerminatorBeforeNext && this.match(TokenType.ARROW)) {
                 this.isBindingElement = this.isAssignmentTarget = false;
@@ -1124,8 +1124,8 @@ public abstract class Parser extends Tokenizer {
     @NotNull
     private Expression parseYieldExpression() throws JsError {
         SourceLocation startLocation = this.getLocation();
-
         this.lex();
+
         if (this.hasLineTerminatorBeforeNext) {
             return this.markLocation(startLocation, new YieldExpression(Maybe.nothing()));
         }
