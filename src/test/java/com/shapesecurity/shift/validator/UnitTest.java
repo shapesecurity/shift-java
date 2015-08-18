@@ -50,8 +50,6 @@ public class UnitTest {
 
     Script test1 = new Script(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new AssignmentExpression(new BindingIdentifier("1"), new LiteralNumericExpression(0.0)))));
     assertCorrectFailures(test1, 1, "the name field of binding identifier must be a valid identifier name");
-
-    // TODO test for *default*
   }
 
   @Test
@@ -95,15 +93,23 @@ public class UnitTest {
     Script test0 = new Script(ImmutableList.list(new Directive("use strict;"), new Directive("linda;"), new Directive(".-#($*&#")), ImmutableList.nil());
     assertCorrectFailures(test0, 0, "");
 
-    Script test1 = new Script(ImmutableList.list(new Directive("use strict;"), new Directive("linda;"), new Directive(".-#($*&#")), ImmutableList.nil());
-    assertCorrectFailures(test1, 0, "");
+    Script test1 = new Script(ImmutableList.list(new Directive("'use strict;")), ImmutableList.nil());
+    assertCorrectFailures(test1, 1, "the raw value field of directives must either be an empty string, or match the ES6 grammar production DoubleStringCharacter or SingleStringCharacter");
 
-    // TODO java will not allow not string literals, so can't test those...
-  }
+    Script test2 = new Script(ImmutableList.list(new Directive("'use strict;"), new Directive("linda';"), new Directive("'.-#($*&#")), ImmutableList.nil());
+    assertCorrectFailures(test2, 3, "the raw value field of directives must either be an empty string, or match the ES6 grammar production DoubleStringCharacter or SingleStringCharacter");
 
-  @Test
-  public void testExportDefault() {
-    // TODO test interaction with binding identifiers called default
+    Script test3 = new Script(ImmutableList.list(new Directive("'use stri\"ct;"), new Directive("li\"nda;'"), new Directive(".-\"#'($*&#")), ImmutableList.nil());
+    assertCorrectFailures(test3, 3, "the raw value field of directives must either be an empty string, or match the ES6 grammar production DoubleStringCharacter or SingleStringCharacter");
+
+    Script test4 = new Script(ImmutableList.list(new Directive("'use s\ntrict;"), new Directive("lind\na;'"), new Directive(".-#'($\n*&#")), ImmutableList.nil());
+    assertCorrectFailures(test4, 3, "the raw value field of directives must either be an empty string, or match the ES6 grammar production DoubleStringCharacter or SingleStringCharacter");
+
+    Script test5 = new Script(ImmutableList.list(new Directive("'use s\rtrict;"), new Directive("lind\ra;'"), new Directive(".-#'($\r*&#")), ImmutableList.nil());
+    assertCorrectFailures(test5, 3, "the raw value field of directives must either be an empty string, or match the ES6 grammar production DoubleStringCharacter or SingleStringCharacter");
+
+    Script test6 = new Script(ImmutableList.list(new Directive("('\\x0');"), new Directive("('\u2028')"), new Directive("(\\u{110000}\\\")")), ImmutableList.nil());
+    assertCorrectFailures(test6, 3, "the raw value field of directives must either be an empty string, or match the ES6 grammar production DoubleStringCharacter or SingleStringCharacter");
   }
 
   @Test
@@ -126,9 +132,23 @@ public class UnitTest {
     Script test0 = Parser.parseScript("for (var x in [1,2,3]){}");
     assertCorrectFailures(test0, 0, "");
 
-    // TODO fail with more than 1 variable declarator
+    Script test1 = new Script(ImmutableList.nil(), ImmutableList.list(new ForInStatement(new VariableDeclaration(VariableDeclarationKind.Var, ImmutableList.list(new VariableDeclarator(new BindingIdentifier("a"), Maybe.nothing()), new VariableDeclarator(new BindingIdentifier("b"), Maybe.nothing()))), new ArrayExpression(ImmutableList.list(Maybe.just(new LiteralNumericExpression(0.0)), Maybe.just(new LiteralNumericExpression(1.0)))), new EmptyStatement())));
+    assertCorrectFailures(test1, 1, "VariableDeclaration in ForInStatement can only have one VariableDeclarator");
 
-    // TODO fail with initializer in variable declarator
+    Script test2 = new Script(ImmutableList.nil(), ImmutableList.list(new ForInStatement(new VariableDeclaration(VariableDeclarationKind.Let, ImmutableList.list(new VariableDeclarator(new BindingIdentifier("a"), Maybe.nothing()), new VariableDeclarator(new BindingIdentifier("b"), Maybe.nothing()))), new ArrayExpression(ImmutableList.list(Maybe.just(new LiteralNumericExpression(0.0)), Maybe.just(new LiteralNumericExpression(1.0)))), new EmptyStatement())));
+    assertCorrectFailures(test2, 1, "VariableDeclaration in ForInStatement can only have one VariableDeclarator");
+
+    Script test3 = new Script(ImmutableList.nil(), ImmutableList.list(new ForInStatement(new VariableDeclaration(VariableDeclarationKind.Const, ImmutableList.list(new VariableDeclarator(new BindingIdentifier("a"), Maybe.nothing()), new VariableDeclarator(new BindingIdentifier("b"), Maybe.nothing()))), new ArrayExpression(ImmutableList.list(Maybe.just(new LiteralNumericExpression(0.0)), Maybe.just(new LiteralNumericExpression(1.0)))), new EmptyStatement())));
+    assertCorrectFailures(test3, 1, "VariableDeclaration in ForInStatement can only have one VariableDeclarator");
+
+    Script test4 = new Script(ImmutableList.nil(), ImmutableList.list(new ForInStatement(new VariableDeclaration(VariableDeclarationKind.Var, ImmutableList.list(new VariableDeclarator(new BindingIdentifier("a"), Maybe.just(new LiteralNumericExpression(0.0))))), new ArrayExpression(ImmutableList.list(Maybe.just(new LiteralNumericExpression(0.0)), Maybe.just(new LiteralNumericExpression(1.0)))), new EmptyStatement())));
+    assertCorrectFailures(test4, 1, "The VariableDeclarator in ForInStatement should not have an initializer");
+
+    Script test5 = new Script(ImmutableList.nil(), ImmutableList.list(new ForInStatement(new VariableDeclaration(VariableDeclarationKind.Let, ImmutableList.list(new VariableDeclarator(new BindingIdentifier("a"), Maybe.just(new LiteralNumericExpression(0.0))))), new ArrayExpression(ImmutableList.list(Maybe.just(new LiteralNumericExpression(0.0)), Maybe.just(new LiteralNumericExpression(1.0)))), new EmptyStatement())));
+    assertCorrectFailures(test5, 1, "The VariableDeclarator in ForInStatement should not have an initializer");
+
+    Script test6 = new Script(ImmutableList.nil(), ImmutableList.list(new ForInStatement(new VariableDeclaration(VariableDeclarationKind.Const, ImmutableList.list(new VariableDeclarator(new BindingIdentifier("a"), Maybe.just(new LiteralNumericExpression(0.0))))), new ArrayExpression(ImmutableList.list(Maybe.just(new LiteralNumericExpression(0.0)), Maybe.just(new LiteralNumericExpression(1.0)))), new EmptyStatement())));
+    assertCorrectFailures(test6, 1, "The VariableDeclarator in ForInStatement should not have an initializer");
   }
 
   @Test
@@ -136,9 +156,23 @@ public class UnitTest {
     Script test0 = Parser.parseScript("for (var x of [1,2,3]){}");
     assertCorrectFailures(test0, 0, "");
 
-    // TODO fail with more than 1 variable declarator
+    Script test1 = new Script(ImmutableList.nil(), ImmutableList.list(new ForOfStatement(new VariableDeclaration(VariableDeclarationKind.Var, ImmutableList.list(new VariableDeclarator(new BindingIdentifier("a"), Maybe.nothing()), new VariableDeclarator(new BindingIdentifier("b"), Maybe.nothing()))), new ArrayExpression(ImmutableList.list(Maybe.just(new LiteralNumericExpression(0.0)), Maybe.just(new LiteralNumericExpression(1.0)))), new EmptyStatement())));
+    assertCorrectFailures(test1, 1, "VariableDeclaration in ForOfStatement can only have one VariableDeclarator");
 
-    // TODO fail with initializer in variable declarator
+    Script test2 = new Script(ImmutableList.nil(), ImmutableList.list(new ForOfStatement(new VariableDeclaration(VariableDeclarationKind.Let, ImmutableList.list(new VariableDeclarator(new BindingIdentifier("a"), Maybe.nothing()), new VariableDeclarator(new BindingIdentifier("b"), Maybe.nothing()))), new ArrayExpression(ImmutableList.list(Maybe.just(new LiteralNumericExpression(0.0)), Maybe.just(new LiteralNumericExpression(1.0)))), new EmptyStatement())));
+    assertCorrectFailures(test2, 1, "VariableDeclaration in ForOfStatement can only have one VariableDeclarator");
+
+    Script test3 = new Script(ImmutableList.nil(), ImmutableList.list(new ForOfStatement(new VariableDeclaration(VariableDeclarationKind.Const, ImmutableList.list(new VariableDeclarator(new BindingIdentifier("a"), Maybe.nothing()), new VariableDeclarator(new BindingIdentifier("b"), Maybe.nothing()))), new ArrayExpression(ImmutableList.list(Maybe.just(new LiteralNumericExpression(0.0)), Maybe.just(new LiteralNumericExpression(1.0)))), new EmptyStatement())));
+    assertCorrectFailures(test3, 1, "VariableDeclaration in ForOfStatement can only have one VariableDeclarator");
+
+    Script test4 = new Script(ImmutableList.nil(), ImmutableList.list(new ForOfStatement(new VariableDeclaration(VariableDeclarationKind.Var, ImmutableList.list(new VariableDeclarator(new BindingIdentifier("a"), Maybe.just(new LiteralNumericExpression(0.0))))), new ArrayExpression(ImmutableList.list(Maybe.just(new LiteralNumericExpression(0.0)), Maybe.just(new LiteralNumericExpression(1.0)))), new EmptyStatement())));
+    assertCorrectFailures(test4, 1, "The VariableDeclarator in ForOfStatement should not have an initializer");
+
+    Script test5 = new Script(ImmutableList.nil(), ImmutableList.list(new ForOfStatement(new VariableDeclaration(VariableDeclarationKind.Let, ImmutableList.list(new VariableDeclarator(new BindingIdentifier("a"), Maybe.just(new LiteralNumericExpression(0.0))))), new ArrayExpression(ImmutableList.list(Maybe.just(new LiteralNumericExpression(0.0)), Maybe.just(new LiteralNumericExpression(1.0)))), new EmptyStatement())));
+    assertCorrectFailures(test5, 1, "The VariableDeclarator in ForOfStatement should not have an initializer");
+
+    Script test6 = new Script(ImmutableList.nil(), ImmutableList.list(new ForOfStatement(new VariableDeclaration(VariableDeclarationKind.Const, ImmutableList.list(new VariableDeclarator(new BindingIdentifier("a"), Maybe.just(new LiteralNumericExpression(0.0))))), new ArrayExpression(ImmutableList.list(Maybe.just(new LiteralNumericExpression(0.0)), Maybe.just(new LiteralNumericExpression(1.0)))), new EmptyStatement())));
+    assertCorrectFailures(test6, 1, "The VariableDeclarator in ForOfStatement should not have an initializer");
   }
 
   @Test
@@ -166,21 +200,6 @@ public class UnitTest {
   }
 
   @Test
-  public void testFunctionBody() {
-
-  }
-
-  @Test
-  public void testFunctionDeclaration() {
-
-  }
-
-  @Test
-  public void testFunctionExpression() {
-
-  }
-
-  @Test
   public void testIdentifierExpression() {
     Script test0 = new Script(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new IdentifierExpression("linda"))));
     assertCorrectFailures(test0, 0, "");
@@ -197,7 +216,17 @@ public class UnitTest {
 
   @Test
   public void testIfStatement() {
-    
+    Script test0 = new Script(ImmutableList.nil(), ImmutableList.list(new IfStatement(new ThisExpression(), new ExpressionStatement(new ThisExpression()), Maybe.just(new ExpressionStatement(new ThisExpression())))));
+    assertCorrectFailures(test0, 0, "");
+
+    Script test1 = new Script(ImmutableList.nil(), ImmutableList.list(new IfStatement(new IdentifierExpression("a"), new ExpressionStatement(new IdentifierExpression("b")), Maybe.nothing())));
+    assertCorrectFailures(test1, 0, "");
+
+    Script test2 = new Script(ImmutableList.nil(), ImmutableList.list(new IfStatement(new IdentifierExpression("a"), new IfStatement(new ThisExpression(), new ExpressionStatement(new ThisExpression()), Maybe.nothing()), Maybe.just(new ExpressionStatement(new ThisExpression())))));
+    assertCorrectFailures(test2, 0, "");
+
+    Script test3 = new Script(ImmutableList.nil(), ImmutableList.list(new IfStatement(new IdentifierExpression("a"), new IfStatement(new ThisExpression(), new ExpressionStatement(new ThisExpression()), Maybe.nothing()), Maybe.just(new ExpressionStatement(new ThisExpression())))));
+    assertCorrectFailures(test3, 1, "IfStatement with null 'alternate' must not be the 'consequent' of an IfStatement with a non-null 'alternate'");
   }
 
   @Test
@@ -251,16 +280,6 @@ public class UnitTest {
 
     Script test2 = new Script(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new LiteralRegExpExpression("/a/", "gg"))));
     assertCorrectFailures(test2, 1, "flags field of literal regular expression expression must not contain duplicate flag characters");
-  }
-
-  @Test
-  public void testMethod() {
-
-  }
-
-  @Test
-  public void testReturnStatement() {
-
   }
 
   @Test
@@ -414,12 +433,22 @@ public class UnitTest {
   }
 
   @Test
-  public void testYieldExpression() {
+  public void testBindingIdentifierCalledDefaultAndExportDefaultInteraction() {
 
   }
 
   @Test
-  public void testYieldGeneratorExpression() {
+  public void testReturnStatementAndFunctionBodyInteraction() {
+
+  }
+
+  @Test
+  public void testYieldExpressionAndFunctionDeclarationFunctionExpressionMethodInteraction() {
+
+  }
+
+  @Test
+  public void testYieldGeneratorExpressionAndFunctionDeclarationFunctionExpressionMethodInteraction() {
 
   }
 }
