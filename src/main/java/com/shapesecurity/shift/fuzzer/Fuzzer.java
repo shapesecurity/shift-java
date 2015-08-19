@@ -1089,7 +1089,7 @@ public class Fuzzer {
         if (kind.name.equals("const")) {
             ctx = ctx.variableDeclarationKindIsConst();
         }
-        return new VariableDeclaration(ctx.inStrictMode ? VariableDeclarationKind.Var : kind, ctx.inForInOfStatement ? ImmutableList.list(randomVariableDeclarator(ctx, depth - 1)) : many1(Fuzzer::randomVariableDeclarator).apply(ctx, depth - 1));
+        return new VariableDeclaration(ctx.inStrictMode ? VariableDeclarationKind.Var : kind, ctx.inForInOfStatement ? ImmutableList.list(randomVariableDeclaratorWithoutInit(ctx, depth - 1)) : many1(Fuzzer::randomVariableDeclarator).apply(ctx, depth - 1));
     }
 
     @NotNull
@@ -1097,9 +1097,16 @@ public class Fuzzer {
         int number = ctx.random.nextInt();
         if (number % 2 == 0) {
             return randomVariableDeclaration(ctx, depth);
+//            return randomVariableDeclarationWithoutInit(ctx, depth);
         } else {
             return randomBinding(ctx, depth);
         }
+    }
+
+    @NotNull
+    private static VariableDeclarator randomVariableDeclaratorWithoutInit(@NotNull GenCtx ctx, int depth) {
+      Binding binding = (Binding) randomParameter(ctx, depth - 1);
+      return new VariableDeclarator(binding, Maybe.nothing());
     }
 
     @NotNull
