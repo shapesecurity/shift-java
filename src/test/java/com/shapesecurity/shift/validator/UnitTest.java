@@ -223,10 +223,7 @@ public class UnitTest {
     assertCorrectFailures(test1, 0, "");
 
     Script test2 = new Script(ImmutableList.nil(), ImmutableList.list(new IfStatement(new IdentifierExpression("a"), new IfStatement(new ThisExpression(), new ExpressionStatement(new ThisExpression()), Maybe.nothing()), Maybe.just(new ExpressionStatement(new ThisExpression())))));
-    assertCorrectFailures(test2, 0, "");
-
-    Script test3 = new Script(ImmutableList.nil(), ImmutableList.list(new IfStatement(new IdentifierExpression("a"), new IfStatement(new ThisExpression(), new ExpressionStatement(new ThisExpression()), Maybe.nothing()), Maybe.just(new ExpressionStatement(new ThisExpression())))));
-    assertCorrectFailures(test3, 1, "IfStatement with null 'alternate' must not be the 'consequent' of an IfStatement with a non-null 'alternate'");
+    assertCorrectFailures(test2, 1, "IfStatement with null 'alternate' must not be the 'consequent' of an IfStatement with a non-null 'alternate'");
   }
 
   @Test
@@ -438,13 +435,13 @@ public class UnitTest {
     assertCorrectFailures(test0, 0, "");
 
     Module test1 = new Module(ImmutableList.nil(), ImmutableList.list(new ExportDefault(new FunctionExpression(Maybe.just(new BindingIdentifier("*default*")), false, new FormalParameters(ImmutableList.nil(), Maybe.nothing()), new FunctionBody(ImmutableList.nil(), ImmutableList.nil())))));
-    assertCorrectFailures(test1, 1, "binding identifiers may only be called \"*default*\" within a function declaration");
+    assertCorrectFailures(test1, 1, "binding identifiers may only be called \"*default*\" within a function declaration or class declaration");
 
-//    Module test1 = new Module(ImmutableList.nil(), ImmutableList.list(new ExportDefault(new ClassDeclaration(new BindingIdentifier("*default*"), Maybe.nothing(), ImmutableList.nil()))));
-//    assertCorrectFailures(test1, 0, ""); // TODO check if default is allowed in class declaration
+    Module test2 = new Module(ImmutableList.nil(), ImmutableList.list(new ExportDefault(new ClassDeclaration(new BindingIdentifier("*default*"), Maybe.nothing(), ImmutableList.nil()))));
+    assertCorrectFailures(test2, 0, "");
 
-    //    Module test1 = new Module(ImmutableList.nil(), ImmutableList.list(new ExportDefault(new ClassExpression(new BindingIdentifier("*default*"), Maybe.nothing(), ImmutableList.nil()))));
-//    assertCorrectFailures(test1, 1, ""); //
+    Module test3 = new Module(ImmutableList.nil(), ImmutableList.list(new ExportDefault(new ClassExpression(Maybe.just(new BindingIdentifier("*default*")), Maybe.nothing(), ImmutableList.nil()))));
+    assertCorrectFailures(test3, 1, "binding identifiers may only be called \"*default*\" within a function declaration or class declaration");
   }
 
   @Test

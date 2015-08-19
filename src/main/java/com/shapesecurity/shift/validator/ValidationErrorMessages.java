@@ -1,0 +1,40 @@
+package com.shapesecurity.shift.validator;
+
+public interface ValidationErrorMessages {
+  String VALID_BINDING_IDENTIFIER_NAME = "the name field of binding identifier must be a valid identifier name";
+  String VALID_BREAK_STATEMENT_LABEL = "the label field of break statement exists and must be a valid identifier name";
+  String CATCH_CLAUSE_BINDING_NOT_MEMBER_EXPRESSION = "the binding field of CatchClause must not be a member expression";
+  String VALID_CONTINUE_STATEMENT_LABEL = "the label field of continue statement exists and must be a valid identifier name";
+  String VALID_DIRECTIVE = "the raw value field of directives must either be an empty string, or match the ES6 grammar production DoubleStringCharacter or SingleStringCharacter";
+  String VALID_EXPORT_SPECIFIER_NAME = "the name field of export specifier exists and must be a valid identifier name";
+  String VALID_EXPORTED_NAME = "the exported name field of export specifier must be a valid identifier name";
+  String ONE_VARIABLE_DECLARATOR_IN_FOR_IN = "VariableDeclaration in ForInStatement can only have one VariableDeclarator";
+  String NO_INIT_IN_VARIABLE_DECLARATOR_IN_FOR_IN = "The VariableDeclarator in ForInStatement should not have an initializer";
+  String ONE_VARIABLE_DECLARATOR_IN_FOR_OF = "VariableDeclaration in ForOfStatement can only have one VariableDeclarator";
+  String NO_INIT_IN_VARIABLE_DECLARATOR_IN_FOR_OF = "The VariableDeclarator in ForOfStatement should not have an initializer";
+  String FORMAL_PARAMETER_ITEMS_NOT_MEMBER_EXPRESSION = "the items field of formal parameters must not be member expressions";
+  String FORMAL_PARAMETER_ITEMS_BINDING_NOT_MEMBER_EXPRESSION = "binding field of the items field of formal parameters must not be a member expression";
+  String VALID_IDENTIFIER_NAME = "the name field of identifier expression must be a valid identifier name";
+  String VALID_IF_STATEMENT = "IfStatement with null 'alternate' must not be the 'consequent' of an IfStatement with a non-null 'alternate'";
+  String VALID_IMPORT_SPECIFIER_NAME = "the name field of import specifier exists and must be a valid identifier name";
+  String VALID_LABEL = "the label field of labeled statement must be a valid identifier name";
+  String LITERAL_NUMERIC_VALUE_NOT_NAN = "the value field of literal numeric expression must not be NaN";
+  String LITERAL_NUMERIC_VALUE_NOT_NEGATIVE = "the value field of literal numeric expression must be non-negative";
+  String LITERAL_NUMERIC_VALUE_NOT_INFINITE = "the value field of literal numeric expression must be finite";
+  String VALID_REG_EX_PATTERN = "pattern field of literal regular expression expression must match the ES6 grammar production Pattern (21.2.1)";
+  String VALID_REG_EX_FLAG = "flags field of literal regular expression expression must not contain characters other than 'g', 'i', 'm', 'u', or 'y'";
+  String NO_DUPLICATE_REG_EX_FLAG = "flags field of literal regular expression expression must not contain duplicate flag characters";
+  String RETURN_STATEMENT_IN_FUNCTION_BODY = "return statements must be within a function body";
+  String BINDING_IDENTIFIERS_CALLED_DEFAULT = "binding identifiers may only be called \"*default*\" within a function declaration or class declaration";
+  String VALID_YIELD_EXPRESSION_POSITION = "yield expressions are only allowed within function declarations or function expressions that are generators";
+  String VALID_YIELD_GENERATOR_EXPRESSION_POSITION = "yield generator expressions are only allowed within function declarations or function expressions that are generators";
+  String SETTER_PARAM_NOT_MEMBER_EXPRESSION = "the param field of setter must not be a member expression";
+  String SETTER_PARAM_BINDING_NOT_MEMBER_EXPRESSION = "the binding field of the param field of setter must not be a member expression";
+  String VALID_SHORTHAND_PROPERTY_NAME = "the name field of shorthand property must be a valid identifier name";
+  String VALID_STATIC_MEMBER_EXPRESSION_PROPERTY_NAME = "the property field of static member expression must be a valid identifier name";
+  String VALID_TEMPLATE_ELEMENT_VALUE = "the raw value field of template element must match the ES6 grammar production TemplateCharacters";
+  String ALTERNATING_TEMPLATE_EXPRESSION_ELEMENTS = "the elements field of template expression must be an alternating list of template element and expression, starting and ending with a template element";
+  String NOT_EMPTY_VARIABLE_DECLARATORS_LIST = "the declarators field in variable declaration must not be an empty list";
+  String CONST_VARIABLE_DECLARATION_MUST_HAVE_INIT = "VariableDeclarationStatements with a variable declaration of kind const cannot have a variable declarator with no initializer";
+  String VARIABLE_DECLARATION_BINDING_NOT_MEMBER_EXPRESSION = "the binding field of variable declarator must not be a member expression";
+}
