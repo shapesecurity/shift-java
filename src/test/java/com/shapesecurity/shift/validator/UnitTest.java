@@ -49,7 +49,7 @@ public class UnitTest {
     assertCorrectFailures(test0, 0, "");
 
     Script test1 = new Script(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new AssignmentExpression(new BindingIdentifier("1"), new LiteralNumericExpression(0.0)))));
-    assertCorrectFailures(test1, 1, "the name field of binding identifier must be a valid identifier name");
+    assertCorrectFailures(test1, 1, ValidationErrorMessages.VALID_BINDING_IDENTIFIER_NAME);
   }
 
   @Test
@@ -61,7 +61,7 @@ public class UnitTest {
     assertCorrectFailures(test1, 0, "");
 
     Script test2 = new Script(ImmutableList.nil(), ImmutableList.list(new LabeledStatement("done", new WhileStatement(new LiteralBooleanExpression(true), new BlockStatement(new Block(ImmutableList.list(new BreakStatement(Maybe.just("1done")))))))));
-    assertCorrectFailures(test2, 1, "the label field of break statement exists and must be a valid identifier name");
+    assertCorrectFailures(test2, 1, ValidationErrorMessages.VALID_BREAK_STATEMENT_LABEL);
   }
 
   @Test
@@ -70,10 +70,10 @@ public class UnitTest {
     assertCorrectFailures(test0, 0, "");
 
     Script test1 = new Script(ImmutableList.nil(), ImmutableList.list(new TryFinallyStatement(new Block(ImmutableList.nil()), Maybe.just(new CatchClause(new ComputedMemberExpression(new IdentifierExpression("a"), new IdentifierExpression("b")), new Block(ImmutableList.nil()))), new Block(ImmutableList.nil()))));
-    assertCorrectFailures(test1, 1, "the binding field of CatchClause must not be a member expression");
+    assertCorrectFailures(test1, 1, ValidationErrorMessages.CATCH_CLAUSE_BINDING_NOT_MEMBER_EXPRESSION);
 
     Script test2 = new Script(ImmutableList.nil(), ImmutableList.list(new TryFinallyStatement(new Block(ImmutableList.nil()), Maybe.just(new CatchClause(new StaticMemberExpression("a", new IdentifierExpression("b")), new Block(ImmutableList.nil()))), new Block(ImmutableList.nil()))));
-    assertCorrectFailures(test2, 1, "the binding field of CatchClause must not be a member expression");
+    assertCorrectFailures(test2, 1, ValidationErrorMessages.CATCH_CLAUSE_BINDING_NOT_MEMBER_EXPRESSION);
   }
 
   @Test
@@ -85,7 +85,7 @@ public class UnitTest {
     assertCorrectFailures(test1, 0, "");
 
     Script test2 = new Script(ImmutableList.nil(), ImmutableList.list(new LabeledStatement("done", new WhileStatement(new LiteralBooleanExpression(true), new BlockStatement(new Block(ImmutableList.list(new ContinueStatement(Maybe.just("1done")))))))));
-    assertCorrectFailures(test2, 1, "the label field of continue statement exists and must be a valid identifier name");
+    assertCorrectFailures(test2, 1, ValidationErrorMessages.VALID_CONTINUE_STATEMENT_LABEL);
   }
 
   @Test
@@ -94,22 +94,22 @@ public class UnitTest {
     assertCorrectFailures(test0, 0, "");
 
     Script test1 = new Script(ImmutableList.list(new Directive("'use strict;")), ImmutableList.nil());
-    assertCorrectFailures(test1, 1, "the raw value field of directives must either be an empty string, or match the ES6 grammar production DoubleStringCharacter or SingleStringCharacter");
+    assertCorrectFailures(test1, 1, ValidationErrorMessages.VALID_DIRECTIVE);
 
     Script test2 = new Script(ImmutableList.list(new Directive("'use strict;"), new Directive("linda';"), new Directive("'.-#($*&#")), ImmutableList.nil());
-    assertCorrectFailures(test2, 3, "the raw value field of directives must either be an empty string, or match the ES6 grammar production DoubleStringCharacter or SingleStringCharacter");
+    assertCorrectFailures(test2, 3, ValidationErrorMessages.VALID_DIRECTIVE);
 
     Script test3 = new Script(ImmutableList.list(new Directive("'use stri\"ct;"), new Directive("li\"nda;'"), new Directive(".-\"#'($*&#")), ImmutableList.nil());
-    assertCorrectFailures(test3, 3, "the raw value field of directives must either be an empty string, or match the ES6 grammar production DoubleStringCharacter or SingleStringCharacter");
+    assertCorrectFailures(test3, 3, ValidationErrorMessages.VALID_DIRECTIVE);
 
     Script test4 = new Script(ImmutableList.list(new Directive("'use s\ntrict;"), new Directive("lind\na;'"), new Directive(".-#'($\n*&#")), ImmutableList.nil());
-    assertCorrectFailures(test4, 3, "the raw value field of directives must either be an empty string, or match the ES6 grammar production DoubleStringCharacter or SingleStringCharacter");
+    assertCorrectFailures(test4, 3, ValidationErrorMessages.VALID_DIRECTIVE);
 
     Script test5 = new Script(ImmutableList.list(new Directive("'use s\rtrict;"), new Directive("lind\ra;'"), new Directive(".-#'($\r*&#")), ImmutableList.nil());
-    assertCorrectFailures(test5, 3, "the raw value field of directives must either be an empty string, or match the ES6 grammar production DoubleStringCharacter or SingleStringCharacter");
+    assertCorrectFailures(test5, 3, ValidationErrorMessages.VALID_DIRECTIVE);
 
     Script test6 = new Script(ImmutableList.list(new Directive("('\\x0');"), new Directive("('\u2028')"), new Directive("(\\u{110000}\\\")")), ImmutableList.nil());
-    assertCorrectFailures(test6, 3, "the raw value field of directives must either be an empty string, or match the ES6 grammar production DoubleStringCharacter or SingleStringCharacter");
+    assertCorrectFailures(test6, 3, ValidationErrorMessages.VALID_DIRECTIVE);
   }
 
   @Test
@@ -118,10 +118,10 @@ public class UnitTest {
     assertCorrectFailures(test0, 0, "");
 
     Module test1 = new Module(ImmutableList.nil(), ImmutableList.list(new ExportFrom(ImmutableList.list(new ExportSpecifier(Maybe.just("2a_"), "b")), Maybe.just("a"))));
-    assertCorrectFailures(test1, 1, "the name field of export specifier exists and must be a valid identifier name");
+    assertCorrectFailures(test1, 1, ValidationErrorMessages.VALID_EXPORT_SPECIFIER_NAME);
 
     Module test2 = new Module(ImmutableList.nil(), ImmutableList.list(new ExportFrom(ImmutableList.list(new ExportSpecifier(Maybe.just("b"), "%dlk45")), Maybe.just("a"))));
-    assertCorrectFailures(test2, 1, "the exported name field of export specifier must be a valid identifier name");
+    assertCorrectFailures(test2, 1, ValidationErrorMessages.VALID_EXPORTED_NAME);
 
     Module test3 = new Module(ImmutableList.nil(), ImmutableList.list(new ExportFrom(ImmutableList.list(new ExportSpecifier(Maybe.nothing(), "a")), Maybe.just("a"))));
     assertCorrectFailures(test3, 0, "");
@@ -133,22 +133,22 @@ public class UnitTest {
     assertCorrectFailures(test0, 0, "");
 
     Script test1 = new Script(ImmutableList.nil(), ImmutableList.list(new ForInStatement(new VariableDeclaration(VariableDeclarationKind.Var, ImmutableList.list(new VariableDeclarator(new BindingIdentifier("a"), Maybe.nothing()), new VariableDeclarator(new BindingIdentifier("b"), Maybe.nothing()))), new ArrayExpression(ImmutableList.list(Maybe.just(new LiteralNumericExpression(0.0)), Maybe.just(new LiteralNumericExpression(1.0)))), new EmptyStatement())));
-    assertCorrectFailures(test1, 1, "VariableDeclaration in ForInStatement can only have one VariableDeclarator");
+    assertCorrectFailures(test1, 1, ValidationErrorMessages.ONE_VARIABLE_DECLARATOR_IN_FOR_IN);
 
     Script test2 = new Script(ImmutableList.nil(), ImmutableList.list(new ForInStatement(new VariableDeclaration(VariableDeclarationKind.Let, ImmutableList.list(new VariableDeclarator(new BindingIdentifier("a"), Maybe.nothing()), new VariableDeclarator(new BindingIdentifier("b"), Maybe.nothing()))), new ArrayExpression(ImmutableList.list(Maybe.just(new LiteralNumericExpression(0.0)), Maybe.just(new LiteralNumericExpression(1.0)))), new EmptyStatement())));
-    assertCorrectFailures(test2, 1, "VariableDeclaration in ForInStatement can only have one VariableDeclarator");
+    assertCorrectFailures(test2, 1, ValidationErrorMessages.ONE_VARIABLE_DECLARATOR_IN_FOR_IN);
 
     Script test3 = new Script(ImmutableList.nil(), ImmutableList.list(new ForInStatement(new VariableDeclaration(VariableDeclarationKind.Const, ImmutableList.list(new VariableDeclarator(new BindingIdentifier("a"), Maybe.nothing()), new VariableDeclarator(new BindingIdentifier("b"), Maybe.nothing()))), new ArrayExpression(ImmutableList.list(Maybe.just(new LiteralNumericExpression(0.0)), Maybe.just(new LiteralNumericExpression(1.0)))), new EmptyStatement())));
-    assertCorrectFailures(test3, 1, "VariableDeclaration in ForInStatement can only have one VariableDeclarator");
+    assertCorrectFailures(test3, 1, ValidationErrorMessages.ONE_VARIABLE_DECLARATOR_IN_FOR_IN);
 
     Script test4 = new Script(ImmutableList.nil(), ImmutableList.list(new ForInStatement(new VariableDeclaration(VariableDeclarationKind.Var, ImmutableList.list(new VariableDeclarator(new BindingIdentifier("a"), Maybe.just(new LiteralNumericExpression(0.0))))), new ArrayExpression(ImmutableList.list(Maybe.just(new LiteralNumericExpression(0.0)), Maybe.just(new LiteralNumericExpression(1.0)))), new EmptyStatement())));
-    assertCorrectFailures(test4, 1, "The VariableDeclarator in ForInStatement should not have an initializer");
+    assertCorrectFailures(test4, 1, ValidationErrorMessages.NO_INIT_IN_VARIABLE_DECLARATOR_IN_FOR_IN);
 
     Script test5 = new Script(ImmutableList.nil(), ImmutableList.list(new ForInStatement(new VariableDeclaration(VariableDeclarationKind.Let, ImmutableList.list(new VariableDeclarator(new BindingIdentifier("a"), Maybe.just(new LiteralNumericExpression(0.0))))), new ArrayExpression(ImmutableList.list(Maybe.just(new LiteralNumericExpression(0.0)), Maybe.just(new LiteralNumericExpression(1.0)))), new EmptyStatement())));
-    assertCorrectFailures(test5, 1, "The VariableDeclarator in ForInStatement should not have an initializer");
+    assertCorrectFailures(test5, 1, ValidationErrorMessages.NO_INIT_IN_VARIABLE_DECLARATOR_IN_FOR_IN);
 
     Script test6 = new Script(ImmutableList.nil(), ImmutableList.list(new ForInStatement(new VariableDeclaration(VariableDeclarationKind.Const, ImmutableList.list(new VariableDeclarator(new BindingIdentifier("a"), Maybe.just(new LiteralNumericExpression(0.0))))), new ArrayExpression(ImmutableList.list(Maybe.just(new LiteralNumericExpression(0.0)), Maybe.just(new LiteralNumericExpression(1.0)))), new EmptyStatement())));
-    assertCorrectFailures(test6, 1, "The VariableDeclarator in ForInStatement should not have an initializer");
+    assertCorrectFailures(test6, 1, ValidationErrorMessages.NO_INIT_IN_VARIABLE_DECLARATOR_IN_FOR_IN);
   }
 
   @Test
@@ -157,22 +157,22 @@ public class UnitTest {
     assertCorrectFailures(test0, 0, "");
 
     Script test1 = new Script(ImmutableList.nil(), ImmutableList.list(new ForOfStatement(new VariableDeclaration(VariableDeclarationKind.Var, ImmutableList.list(new VariableDeclarator(new BindingIdentifier("a"), Maybe.nothing()), new VariableDeclarator(new BindingIdentifier("b"), Maybe.nothing()))), new ArrayExpression(ImmutableList.list(Maybe.just(new LiteralNumericExpression(0.0)), Maybe.just(new LiteralNumericExpression(1.0)))), new EmptyStatement())));
-    assertCorrectFailures(test1, 1, "VariableDeclaration in ForOfStatement can only have one VariableDeclarator");
+    assertCorrectFailures(test1, 1, ValidationErrorMessages.ONE_VARIABLE_DECLARATOR_IN_FOR_OF);
 
     Script test2 = new Script(ImmutableList.nil(), ImmutableList.list(new ForOfStatement(new VariableDeclaration(VariableDeclarationKind.Let, ImmutableList.list(new VariableDeclarator(new BindingIdentifier("a"), Maybe.nothing()), new VariableDeclarator(new BindingIdentifier("b"), Maybe.nothing()))), new ArrayExpression(ImmutableList.list(Maybe.just(new LiteralNumericExpression(0.0)), Maybe.just(new LiteralNumericExpression(1.0)))), new EmptyStatement())));
-    assertCorrectFailures(test2, 1, "VariableDeclaration in ForOfStatement can only have one VariableDeclarator");
+    assertCorrectFailures(test2, 1, ValidationErrorMessages.ONE_VARIABLE_DECLARATOR_IN_FOR_OF);
 
     Script test3 = new Script(ImmutableList.nil(), ImmutableList.list(new ForOfStatement(new VariableDeclaration(VariableDeclarationKind.Const, ImmutableList.list(new VariableDeclarator(new BindingIdentifier("a"), Maybe.nothing()), new VariableDeclarator(new BindingIdentifier("b"), Maybe.nothing()))), new ArrayExpression(ImmutableList.list(Maybe.just(new LiteralNumericExpression(0.0)), Maybe.just(new LiteralNumericExpression(1.0)))), new EmptyStatement())));
-    assertCorrectFailures(test3, 1, "VariableDeclaration in ForOfStatement can only have one VariableDeclarator");
+    assertCorrectFailures(test3, 1, ValidationErrorMessages.ONE_VARIABLE_DECLARATOR_IN_FOR_OF);
 
     Script test4 = new Script(ImmutableList.nil(), ImmutableList.list(new ForOfStatement(new VariableDeclaration(VariableDeclarationKind.Var, ImmutableList.list(new VariableDeclarator(new BindingIdentifier("a"), Maybe.just(new LiteralNumericExpression(0.0))))), new ArrayExpression(ImmutableList.list(Maybe.just(new LiteralNumericExpression(0.0)), Maybe.just(new LiteralNumericExpression(1.0)))), new EmptyStatement())));
-    assertCorrectFailures(test4, 1, "The VariableDeclarator in ForOfStatement should not have an initializer");
+    assertCorrectFailures(test4, 1, ValidationErrorMessages.NO_INIT_IN_VARIABLE_DECLARATOR_IN_FOR_OF);
 
     Script test5 = new Script(ImmutableList.nil(), ImmutableList.list(new ForOfStatement(new VariableDeclaration(VariableDeclarationKind.Let, ImmutableList.list(new VariableDeclarator(new BindingIdentifier("a"), Maybe.just(new LiteralNumericExpression(0.0))))), new ArrayExpression(ImmutableList.list(Maybe.just(new LiteralNumericExpression(0.0)), Maybe.just(new LiteralNumericExpression(1.0)))), new EmptyStatement())));
-    assertCorrectFailures(test5, 1, "The VariableDeclarator in ForOfStatement should not have an initializer");
+    assertCorrectFailures(test5, 1, ValidationErrorMessages.NO_INIT_IN_VARIABLE_DECLARATOR_IN_FOR_OF);
 
     Script test6 = new Script(ImmutableList.nil(), ImmutableList.list(new ForOfStatement(new VariableDeclaration(VariableDeclarationKind.Const, ImmutableList.list(new VariableDeclarator(new BindingIdentifier("a"), Maybe.just(new LiteralNumericExpression(0.0))))), new ArrayExpression(ImmutableList.list(Maybe.just(new LiteralNumericExpression(0.0)), Maybe.just(new LiteralNumericExpression(1.0)))), new EmptyStatement())));
-    assertCorrectFailures(test6, 1, "The VariableDeclarator in ForOfStatement should not have an initializer");
+    assertCorrectFailures(test6, 1, ValidationErrorMessages.NO_INIT_IN_VARIABLE_DECLARATOR_IN_FOR_OF);
   }
 
   @Test
@@ -184,19 +184,19 @@ public class UnitTest {
     assertCorrectFailures(test1, 0, "");
 
     Script test2 = new Script(ImmutableList.nil(), ImmutableList.list(new FunctionDeclaration(new BindingIdentifier("hello"), false, new FormalParameters(ImmutableList.list(new ComputedMemberExpression(new IdentifierExpression("a"), new IdentifierExpression("b"))), Maybe.nothing()), new FunctionBody(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new CallExpression(new IdentifierExpression("z"), ImmutableList.nil())))))));
-    assertCorrectFailures(test2, 1, "the items field of formal parameters must not be member expressions");
+    assertCorrectFailures(test2, 1, ValidationErrorMessages.FORMAL_PARAMETER_ITEMS_NOT_MEMBER_EXPRESSION);
 
     Script test3 = new Script(ImmutableList.nil(), ImmutableList.list(new FunctionDeclaration(new BindingIdentifier("hello"), false, new FormalParameters(ImmutableList.list(new StaticMemberExpression("a", new IdentifierExpression("b"))), Maybe.nothing()), new FunctionBody(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new CallExpression(new IdentifierExpression("z"), ImmutableList.nil())))))));
-    assertCorrectFailures(test3, 1, "the items field of formal parameters must not be member expressions");
+    assertCorrectFailures(test3, 1, ValidationErrorMessages.FORMAL_PARAMETER_ITEMS_NOT_MEMBER_EXPRESSION);
 
     Script test4 = new Script(ImmutableList.nil(), ImmutableList.list(new FunctionDeclaration(new BindingIdentifier("hello"), false, new FormalParameters(ImmutableList.list(new BindingWithDefault(new BindingIdentifier("a"), new IdentifierExpression("b"))), Maybe.nothing()), new FunctionBody(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new CallExpression(new IdentifierExpression("z"), ImmutableList.nil())))))));
     assertCorrectFailures(test4, 0, "");
 
     Script test5 = new Script(ImmutableList.nil(), ImmutableList.list(new FunctionDeclaration(new BindingIdentifier("hello"), false, new FormalParameters(ImmutableList.list(new BindingWithDefault(new ComputedMemberExpression(new IdentifierExpression("a"), new IdentifierExpression("b")), new IdentifierExpression("b"))), Maybe.nothing()), new FunctionBody(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new CallExpression(new IdentifierExpression("z"), ImmutableList.nil())))))));
-    assertCorrectFailures(test5, 1, "binding field of the items field of formal parameters must not be a member expression");
+    assertCorrectFailures(test5, 1, ValidationErrorMessages.FORMAL_PARAMETER_ITEMS_BINDING_NOT_MEMBER_EXPRESSION);
 
     Script test6 = new Script(ImmutableList.nil(), ImmutableList.list(new FunctionDeclaration(new BindingIdentifier("hello"), false, new FormalParameters(ImmutableList.list(new BindingWithDefault(new StaticMemberExpression("a", new IdentifierExpression("b")), new IdentifierExpression("b"))), Maybe.nothing()), new FunctionBody(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new CallExpression(new IdentifierExpression("z"), ImmutableList.nil())))))));
-    assertCorrectFailures(test6, 1, "binding field of the items field of formal parameters must not be a member expression");
+    assertCorrectFailures(test6, 1, ValidationErrorMessages.FORMAL_PARAMETER_ITEMS_BINDING_NOT_MEMBER_EXPRESSION);
   }
 
   @Test
@@ -205,13 +205,13 @@ public class UnitTest {
     assertCorrectFailures(test0, 0, "");
 
     Script test1 = new Script(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new IdentifierExpression("9458723"))));
-    assertCorrectFailures(test1, 1, "the name field of identifier expression must be a valid identifier name");
+    assertCorrectFailures(test1, 1, ValidationErrorMessages.VALID_IDENTIFIER_NAME);
 
     Script test2 = new Script(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new IdentifierExpression("A*9458723"))));
-    assertCorrectFailures(test2, 1, "the name field of identifier expression must be a valid identifier name");
+    assertCorrectFailures(test2, 1, ValidationErrorMessages.VALID_IDENTIFIER_NAME);
 
     Script test3 = new Script(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new IdentifierExpression("0lkdjaf"))));
-    assertCorrectFailures(test3, 1, "the name field of identifier expression must be a valid identifier name");
+    assertCorrectFailures(test3, 1, ValidationErrorMessages.VALID_IDENTIFIER_NAME);
   }
 
   @Test
@@ -223,7 +223,7 @@ public class UnitTest {
     assertCorrectFailures(test1, 0, "");
 
     Script test2 = new Script(ImmutableList.nil(), ImmutableList.list(new IfStatement(new IdentifierExpression("a"), new IfStatement(new ThisExpression(), new ExpressionStatement(new ThisExpression()), Maybe.nothing()), Maybe.just(new ExpressionStatement(new ThisExpression())))));
-    assertCorrectFailures(test2, 1, "IfStatement with null 'alternate' must not be the 'consequent' of an IfStatement with a non-null 'alternate'");
+    assertCorrectFailures(test2, 1, ValidationErrorMessages.VALID_IF_STATEMENT);
   }
 
   @Test
@@ -235,7 +235,7 @@ public class UnitTest {
     assertCorrectFailures(test1, 0, "");
 
     Module test2 = new Module(ImmutableList.nil(), ImmutableList.list(new Import(Maybe.just(new BindingIdentifier("a")), ImmutableList.list(new ImportSpecifier(Maybe.just("2d849"), new BindingIdentifier("b"))), "c")));
-    assertCorrectFailures(test2, 1, "the name field of import specifier exists and must be a valid identifier name");
+    assertCorrectFailures(test2, 1, ValidationErrorMessages.VALID_IMPORT_SPECIFIER_NAME);
   }
 
   @Test
@@ -244,10 +244,10 @@ public class UnitTest {
     assertCorrectFailures(test0, 0, "");
 
     Script test1 = new Script(ImmutableList.nil(), ImmutableList.list(new LabeledStatement("5346done", new WhileStatement(new LiteralBooleanExpression(true), new BlockStatement(new Block(ImmutableList.list(new BreakStatement(Maybe.just("done")))))))));
-    assertCorrectFailures(test1, 1, "the label field of labeled statement must be a valid identifier name");
+    assertCorrectFailures(test1, 1, ValidationErrorMessages.VALID_LABEL);
 
     Script test2 = new Script(ImmutableList.nil(), ImmutableList.list(new LabeledStatement("#das*($839da", new WhileStatement(new LiteralBooleanExpression(true), new BlockStatement(new Block(ImmutableList.list(new ContinueStatement(Maybe.just("done")))))))));
-    assertCorrectFailures(test2, 1, "the label field of labeled statement must be a valid identifier name");
+    assertCorrectFailures(test2, 1, ValidationErrorMessages.VALID_LABEL);
 
   }
 
@@ -257,26 +257,26 @@ public class UnitTest {
     assertCorrectFailures(test0, 0, "");
 
     Script test1 = new Script(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new LiteralNumericExpression(-1.0))));
-    assertCorrectFailures(test1, 1, "the value field of literal numeric expression must be non-negative");
+    assertCorrectFailures(test1, 1, ValidationErrorMessages.LITERAL_NUMERIC_VALUE_NOT_NEGATIVE);
 
     Script test2 = new Script(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new LiteralNumericExpression(1.0/0))));
-    assertCorrectFailures(test2, 1, "the value field of literal numeric expression must be finite");
+    assertCorrectFailures(test2, 1, ValidationErrorMessages.LITERAL_NUMERIC_VALUE_NOT_INFINITE);
 
     Script test3 = new Script(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new LiteralNumericExpression(Double.NaN))));
-    assertCorrectFailures(test3, 1, "the value field of literal numeric expression must not be NaN");
+    assertCorrectFailures(test3, 1, ValidationErrorMessages.LITERAL_NUMERIC_VALUE_NOT_NAN);
 
   }
 
   @Test
   public void testLiteralRegExpExpression() {
     Script test0 = new Script(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new LiteralRegExpExpression("@", ""))));
-    assertCorrectFailures(test0, 1, "pattern field of literal regular expression expression must match the ES6 grammar production Pattern (21.2.1)");
+    assertCorrectFailures(test0, 1, ValidationErrorMessages.VALID_REG_EX_PATTERN);
 
     Script test1 = new Script(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new LiteralRegExpExpression("/a/", "j"))));
-    assertCorrectFailures(test1, 1, "flags field of literal regular expression expression must not contain characters other than 'g', 'i', 'm', 'u', or 'y'");
+    assertCorrectFailures(test1, 1, ValidationErrorMessages.VALID_REG_EX_FLAG);
 
     Script test2 = new Script(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new LiteralRegExpExpression("/a/", "gg"))));
-    assertCorrectFailures(test2, 1, "flags field of literal regular expression expression must not contain duplicate flag characters");
+    assertCorrectFailures(test2, 1, ValidationErrorMessages.NO_DUPLICATE_REG_EX_FLAG);
   }
 
   @Test
@@ -285,19 +285,19 @@ public class UnitTest {
     assertCorrectFailures(test0, 0, "");
 
     Script test1 = new Script(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new ObjectExpression(ImmutableList.list(new Setter(new ComputedMemberExpression(new IdentifierExpression("a"), new IdentifierExpression("b")), new FunctionBody(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new IdentifierExpression("w")))), new StaticPropertyName("width")))))));
-    assertCorrectFailures(test1, 1, "the param field of setter must not be a member expression");
+    assertCorrectFailures(test1, 1, ValidationErrorMessages.SETTER_PARAM_NOT_MEMBER_EXPRESSION);
 
     Script test2 = new Script(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new ObjectExpression(ImmutableList.list(new Setter(new StaticMemberExpression("a", new IdentifierExpression("b")), new FunctionBody(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new IdentifierExpression("w")))), new StaticPropertyName("width")))))));
-    assertCorrectFailures(test2, 1, "the param field of setter must not be a member expression");
+    assertCorrectFailures(test2, 1, ValidationErrorMessages.SETTER_PARAM_NOT_MEMBER_EXPRESSION);
 
     Script test3 = new Script(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new ObjectExpression(ImmutableList.list(new Setter(new BindingWithDefault(new BindingIdentifier("a"), new LiteralNumericExpression(0.0)), new FunctionBody(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new IdentifierExpression("w")))), new StaticPropertyName("width")))))));
     assertCorrectFailures(test3, 0, "");
 
     Script test4 = new Script(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new ObjectExpression(ImmutableList.list(new Setter(new BindingWithDefault(new ComputedMemberExpression(new IdentifierExpression("a"), new IdentifierExpression("b")), new LiteralNumericExpression(0.0)), new FunctionBody(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new IdentifierExpression("w")))), new StaticPropertyName("width")))))));
-    assertCorrectFailures(test4, 1, "the binding field of the param field of setter must not be a member expression");
+    assertCorrectFailures(test4, 1, ValidationErrorMessages.SETTER_PARAM_BINDING_NOT_MEMBER_EXPRESSION);
 
     Script test5 = new Script(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new ObjectExpression(ImmutableList.list(new Setter(new BindingWithDefault(new StaticMemberExpression("a", new IdentifierExpression("b")), new LiteralNumericExpression(0.0)), new FunctionBody(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new IdentifierExpression("w")))), new StaticPropertyName("width")))))));
-    assertCorrectFailures(test5, 1, "the binding field of the param field of setter must not be a member expression");
+    assertCorrectFailures(test5, 1, ValidationErrorMessages.SETTER_PARAM_BINDING_NOT_MEMBER_EXPRESSION);
   }
 
   @Test
@@ -306,10 +306,10 @@ public class UnitTest {
     assertCorrectFailures(test0, 0, "");
 
     Script test1 = new Script(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new ObjectExpression(ImmutableList.list(new ShorthandProperty("429adk"), new ShorthandProperty("asajd_nk"))))));
-    assertCorrectFailures(test1, 1, "the name field of shorthand property must be a valid identifier name");
+    assertCorrectFailures(test1, 1, ValidationErrorMessages.VALID_SHORTHAND_PROPERTY_NAME);
 
     Script test2 = new Script(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new ObjectExpression(ImmutableList.list(new ShorthandProperty("a"), new ShorthandProperty("^34d9"))))));
-    assertCorrectFailures(test2, 1, "the name field of shorthand property must be a valid identifier name");
+    assertCorrectFailures(test2, 1, ValidationErrorMessages.VALID_SHORTHAND_PROPERTY_NAME);
   }
 
   @Test
@@ -318,7 +318,7 @@ public class UnitTest {
     assertCorrectFailures(test0, 0, "");
 
     Script test1 = new Script(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new StaticMemberExpression("45829", new IdentifierExpression("a")))));
-    assertCorrectFailures(test1, 1, "the property field of static member expression must be a valid identifier name");
+    assertCorrectFailures(test1, 1, ValidationErrorMessages.VALID_STATIC_MEMBER_EXPRESSION_PROPERTY_NAME);
   }
 
   @Test
@@ -327,10 +327,10 @@ public class UnitTest {
     assertCorrectFailures(test0, 0, "");
 
     Script test1 = new Script(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new TemplateExpression(Maybe.nothing(), ImmutableList.list(new TemplateElement("\"abc'"))))));
-    assertCorrectFailures(test1, 1, "the raw value field of template element must match the ES6 grammar production TemplateCharacters");
+    assertCorrectFailures(test1, 1, ValidationErrorMessages.VALID_TEMPLATE_ELEMENT_VALUE);
 
     Script test2 = new Script(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new TemplateExpression(Maybe.nothing(), ImmutableList.list(new TemplateElement("'abc\""))))));
-    assertCorrectFailures(test2, 1, "the raw value field of template element must match the ES6 grammar production TemplateCharacters");
+    assertCorrectFailures(test2, 1, ValidationErrorMessages.VALID_TEMPLATE_ELEMENT_VALUE);
   }
 
   @Test
@@ -339,13 +339,13 @@ public class UnitTest {
     assertCorrectFailures(test0, 0, "");
 
     Script test1 = new Script(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new TemplateExpression(Maybe.nothing(), ImmutableList.list(new IdentifierExpression("b"), new TemplateElement("c"))))));
-    assertCorrectFailures(test1, 1, "the elements field of template expression must be an alternating list of template element and expression, starting and ending with a template element");
+    assertCorrectFailures(test1, 1, ValidationErrorMessages.ALTERNATING_TEMPLATE_EXPRESSION_ELEMENTS);
 
     Script test2 = new Script(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new TemplateExpression(Maybe.nothing(), ImmutableList.list(new TemplateElement("a"), new IdentifierExpression("b"), new TemplateElement("c"), new TemplateElement("c"), new TemplateElement("c"))))));
-    assertCorrectFailures(test2, 1, "the elements field of template expression must be an alternating list of template element and expression, starting and ending with a template element");
+    assertCorrectFailures(test2, 1, ValidationErrorMessages.ALTERNATING_TEMPLATE_EXPRESSION_ELEMENTS);
 
     Script test3 = new Script(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new TemplateExpression(Maybe.nothing(), ImmutableList.list(new IdentifierExpression("b"), new TemplateElement("c"), new IdentifierExpression("b"))))));
-    assertCorrectFailures(test3, 3, "the elements field of template expression must be an alternating list of template element and expression, starting and ending with a template element");
+    assertCorrectFailures(test3, 3, ValidationErrorMessages.ALTERNATING_TEMPLATE_EXPRESSION_ELEMENTS);
   }
 
   @Test
@@ -360,22 +360,22 @@ public class UnitTest {
     assertCorrectFailures(test2, 0, "");
 
     Script test3 = new Script(ImmutableList.nil(), ImmutableList.list(new VariableDeclarationStatement(new VariableDeclaration(VariableDeclarationKind.Var, ImmutableList.list()))));
-    assertCorrectFailures(test3, 1, "the declarators field in variable declaration must not be an empty list");
+    assertCorrectFailures(test3, 1, ValidationErrorMessages.NOT_EMPTY_VARIABLE_DECLARATORS_LIST);
 
     Script test4 = new Script(ImmutableList.nil(), ImmutableList.list(new VariableDeclarationStatement(new VariableDeclaration(VariableDeclarationKind.Let, ImmutableList.list()))));
-    assertCorrectFailures(test4, 1, "the declarators field in variable declaration must not be an empty list");
+    assertCorrectFailures(test4, 1, ValidationErrorMessages.NOT_EMPTY_VARIABLE_DECLARATORS_LIST);
 
     Script test5 = new Script(ImmutableList.nil(), ImmutableList.list(new VariableDeclarationStatement(new VariableDeclaration(VariableDeclarationKind.Const, ImmutableList.list()))));
-    assertCorrectFailures(test5, 1, "the declarators field in variable declaration must not be an empty list");
+    assertCorrectFailures(test5, 1, ValidationErrorMessages.NOT_EMPTY_VARIABLE_DECLARATORS_LIST);
 
     Script test6 = new Script(ImmutableList.nil(), ImmutableList.list(new VariableDeclarationStatement(new VariableDeclaration(VariableDeclarationKind.Var, ImmutableList.nil()))));
-    assertCorrectFailures(test6, 1, "the declarators field in variable declaration must not be an empty list");
+    assertCorrectFailures(test6, 1, ValidationErrorMessages.NOT_EMPTY_VARIABLE_DECLARATORS_LIST);
 
     Script test7 = new Script(ImmutableList.nil(), ImmutableList.list(new VariableDeclarationStatement(new VariableDeclaration(VariableDeclarationKind.Let, ImmutableList.nil()))));
-    assertCorrectFailures(test7, 1, "the declarators field in variable declaration must not be an empty list");
+    assertCorrectFailures(test7, 1, ValidationErrorMessages.NOT_EMPTY_VARIABLE_DECLARATORS_LIST);
 
     Script test8 = new Script(ImmutableList.nil(), ImmutableList.list(new VariableDeclarationStatement(new VariableDeclaration(VariableDeclarationKind.Const, ImmutableList.nil()))));
-    assertCorrectFailures(test8, 1, "the declarators field in variable declaration must not be an empty list");
+    assertCorrectFailures(test8, 1, ValidationErrorMessages.NOT_EMPTY_VARIABLE_DECLARATORS_LIST);
   }
 
   @Test
@@ -396,7 +396,7 @@ public class UnitTest {
     assertCorrectFailures(test4, 0, "");
 
     Script test5 = new Script(ImmutableList.nil(), ImmutableList.list(new VariableDeclarationStatement(new VariableDeclaration(VariableDeclarationKind.Const, ImmutableList.list(new VariableDeclarator(new BindingIdentifier("a"), Maybe.nothing()))))));
-    assertCorrectFailures(test5, 1, "VariableDeclarationStatements with a variable declaration of kind const cannot have a variable declarator with no initializer");
+    assertCorrectFailures(test5, 1, ValidationErrorMessages.CONST_VARIABLE_DECLARATION_MUST_HAVE_INIT);
   }
 
   @Test
@@ -411,22 +411,22 @@ public class UnitTest {
     assertCorrectFailures(test2, 0, "");
 
     Script test3 = new Script(ImmutableList.nil(), ImmutableList.list(new VariableDeclarationStatement(new VariableDeclaration(VariableDeclarationKind.Var, ImmutableList.list(new VariableDeclarator(new ComputedMemberExpression(new IdentifierExpression("a"), new IdentifierExpression("b")), Maybe.just(new LiteralNumericExpression(0.0))))))));
-    assertCorrectFailures(test3, 1, "the binding field of variable declarator must not be a member expression");
+    assertCorrectFailures(test3, 1, ValidationErrorMessages.VARIABLE_DECLARATION_BINDING_NOT_MEMBER_EXPRESSION);
 
     Script test4 = new Script(ImmutableList.nil(), ImmutableList.list(new VariableDeclarationStatement(new VariableDeclaration(VariableDeclarationKind.Var, ImmutableList.list(new VariableDeclarator(new StaticMemberExpression("a", new IdentifierExpression("b")), Maybe.just(new LiteralNumericExpression(0.0))))))));
-    assertCorrectFailures(test4, 1, "the binding field of variable declarator must not be a member expression");
+    assertCorrectFailures(test4, 1, ValidationErrorMessages.VARIABLE_DECLARATION_BINDING_NOT_MEMBER_EXPRESSION);
 
     Script test5 = new Script(ImmutableList.nil(), ImmutableList.list(new VariableDeclarationStatement(new VariableDeclaration(VariableDeclarationKind.Let, ImmutableList.list(new VariableDeclarator(new ComputedMemberExpression(new IdentifierExpression("a"), new IdentifierExpression("b")), Maybe.just(new LiteralNumericExpression(0.0))))))));
-    assertCorrectFailures(test5, 1, "the binding field of variable declarator must not be a member expression");
+    assertCorrectFailures(test5, 1, ValidationErrorMessages.VARIABLE_DECLARATION_BINDING_NOT_MEMBER_EXPRESSION);
 
     Script test6 = new Script(ImmutableList.nil(), ImmutableList.list(new VariableDeclarationStatement(new VariableDeclaration(VariableDeclarationKind.Let, ImmutableList.list(new VariableDeclarator(new StaticMemberExpression("a", new IdentifierExpression("b")), Maybe.just(new LiteralNumericExpression(0.0))))))));
-    assertCorrectFailures(test6, 1, "the binding field of variable declarator must not be a member expression");
+    assertCorrectFailures(test6, 1, ValidationErrorMessages.VARIABLE_DECLARATION_BINDING_NOT_MEMBER_EXPRESSION);
 
     Script test7 = new Script(ImmutableList.nil(), ImmutableList.list(new VariableDeclarationStatement(new VariableDeclaration(VariableDeclarationKind.Const, ImmutableList.list(new VariableDeclarator(new ComputedMemberExpression(new IdentifierExpression("a"), new IdentifierExpression("b")), Maybe.just(new LiteralNumericExpression(0.0))))))));
-    assertCorrectFailures(test7, 1, "the binding field of variable declarator must not be a member expression");
+    assertCorrectFailures(test7, 1, ValidationErrorMessages.VARIABLE_DECLARATION_BINDING_NOT_MEMBER_EXPRESSION);
 
     Script test8 = new Script(ImmutableList.nil(), ImmutableList.list(new VariableDeclarationStatement(new VariableDeclaration(VariableDeclarationKind.Const, ImmutableList.list(new VariableDeclarator(new StaticMemberExpression("a", new IdentifierExpression("b")), Maybe.just(new LiteralNumericExpression(0.0))))))));
-    assertCorrectFailures(test8, 1, "the binding field of variable declarator must not be a member expression");
+    assertCorrectFailures(test8, 1, ValidationErrorMessages.VARIABLE_DECLARATION_BINDING_NOT_MEMBER_EXPRESSION);
   }
 
   @Test
@@ -435,22 +435,22 @@ public class UnitTest {
     assertCorrectFailures(test0, 0, "");
 
     Module test1 = new Module(ImmutableList.nil(), ImmutableList.list(new ExportDefault(new FunctionExpression(Maybe.just(new BindingIdentifier("*default*")), false, new FormalParameters(ImmutableList.nil(), Maybe.nothing()), new FunctionBody(ImmutableList.nil(), ImmutableList.nil())))));
-    assertCorrectFailures(test1, 1, "binding identifiers may only be called \"*default*\" within a function declaration or class declaration");
+    assertCorrectFailures(test1, 1, ValidationErrorMessages.BINDING_IDENTIFIERS_CALLED_DEFAULT);
 
     Module test2 = new Module(ImmutableList.nil(), ImmutableList.list(new ExportDefault(new ClassDeclaration(new BindingIdentifier("*default*"), Maybe.nothing(), ImmutableList.nil()))));
     assertCorrectFailures(test2, 0, "");
 
     Module test3 = new Module(ImmutableList.nil(), ImmutableList.list(new ExportDefault(new ClassExpression(Maybe.just(new BindingIdentifier("*default*")), Maybe.nothing(), ImmutableList.nil()))));
-    assertCorrectFailures(test3, 1, "binding identifiers may only be called \"*default*\" within a function declaration or class declaration");
+    assertCorrectFailures(test3, 1, ValidationErrorMessages.BINDING_IDENTIFIERS_CALLED_DEFAULT);
   }
 
   @Test
   public void testReturnStatementAndFunctionBodyInteraction() {
     Script test0 = new Script(ImmutableList.nil(), ImmutableList.list(new ReturnStatement(Maybe.nothing())));
-    assertCorrectFailures(test0, 1, "return statements must be within a function body");
+    assertCorrectFailures(test0, 1, ValidationErrorMessages.RETURN_STATEMENT_IN_FUNCTION_BODY);
 
     Script test1 = new Script(ImmutableList.nil(), ImmutableList.list(new ReturnStatement(Maybe.just(new IdentifierExpression("a")))));
-    assertCorrectFailures(test1, 1, "return statements must be within a function body");
+    assertCorrectFailures(test1, 1, ValidationErrorMessages.RETURN_STATEMENT_IN_FUNCTION_BODY);
 
     Script test2 = new Script(ImmutableList.nil(), ImmutableList.list(new FunctionDeclaration(new BindingIdentifier("a"), false, new FormalParameters(ImmutableList.nil(), Maybe.nothing()), new FunctionBody(ImmutableList.nil(), ImmutableList.list(new ReturnStatement(Maybe.nothing()))))));
     assertCorrectFailures(test2, 0 , "");
@@ -468,28 +468,28 @@ public class UnitTest {
   @Test
   public void testYieldExpressionAndFunctionDeclarationFunctionExpressionMethodInteraction() {
     Script test0 = new Script(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new YieldExpression(Maybe.just(new IdentifierExpression("a"))))));
-    assertCorrectFailures(test0, 1, "yield expressions are only allowed within function declarations or function expressions that are generators");
+    assertCorrectFailures(test0, 1, ValidationErrorMessages.VALID_YIELD_EXPRESSION_POSITION);
 
     Script test1 = new Script(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new YieldExpression(Maybe.nothing()))));
-    assertCorrectFailures(test1, 1, "yield expressions are only allowed within function declarations or function expressions that are generators");
+    assertCorrectFailures(test1, 1, ValidationErrorMessages.VALID_YIELD_EXPRESSION_POSITION);
 
     Script test2 = new Script(ImmutableList.nil(), ImmutableList.list(new FunctionDeclaration(new BindingIdentifier("a"), false, new FormalParameters(ImmutableList.nil(), Maybe.nothing()), new FunctionBody(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new YieldExpression(Maybe.nothing())))))));
-    assertCorrectFailures(test2, 1, "yield expressions are only allowed within function declarations or function expressions that are generators");
+    assertCorrectFailures(test2, 1, ValidationErrorMessages.VALID_YIELD_EXPRESSION_POSITION);
 
     Script test3 = new Script(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new FunctionExpression(Maybe.just(new BindingIdentifier("a")), false, new FormalParameters(ImmutableList.nil(), Maybe.nothing()), new FunctionBody(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new YieldExpression(Maybe.nothing()))))))));
-    assertCorrectFailures(test3, 1, "yield expressions are only allowed within function declarations or function expressions that are generators");
+    assertCorrectFailures(test3, 1, ValidationErrorMessages.VALID_YIELD_EXPRESSION_POSITION);
 
     Script test4 = new Script(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new ObjectExpression(ImmutableList.list(new Method(false, new FormalParameters(ImmutableList.nil(), Maybe.nothing()), new FunctionBody(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new YieldExpression(Maybe.nothing())))), new StaticPropertyName("a")))))));
-    assertCorrectFailures(test4, 1, "yield expressions are only allowed within function declarations or function expressions that are generators");
+    assertCorrectFailures(test4, 1, ValidationErrorMessages.VALID_YIELD_EXPRESSION_POSITION);
 
     Script test5 = new Script(ImmutableList.nil(), ImmutableList.list(new FunctionDeclaration(new BindingIdentifier("a"), false, new FormalParameters(ImmutableList.nil(), Maybe.nothing()), new FunctionBody(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new YieldExpression(Maybe.just(new ThisExpression()))))))));
-    assertCorrectFailures(test5, 1, "yield expressions are only allowed within function declarations or function expressions that are generators");
+    assertCorrectFailures(test5, 1, ValidationErrorMessages.VALID_YIELD_EXPRESSION_POSITION);
 
     Script test6 = new Script(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new FunctionExpression(Maybe.just(new BindingIdentifier("a")), false, new FormalParameters(ImmutableList.nil(), Maybe.nothing()), new FunctionBody(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new YieldExpression(Maybe.just(new ThisExpression())))))))));
-    assertCorrectFailures(test6, 1, "yield expressions are only allowed within function declarations or function expressions that are generators");
+    assertCorrectFailures(test6, 1, ValidationErrorMessages.VALID_YIELD_EXPRESSION_POSITION);
 
     Script test7 = new Script(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new ObjectExpression(ImmutableList.list(new Method(false, new FormalParameters(ImmutableList.nil(), Maybe.nothing()), new FunctionBody(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new YieldExpression(Maybe.just(new ThisExpression()))))), new StaticPropertyName("a")))))));
-    assertCorrectFailures(test7, 1, "yield expressions are only allowed within function declarations or function expressions that are generators");
+    assertCorrectFailures(test7, 1, ValidationErrorMessages.VALID_YIELD_EXPRESSION_POSITION);
 
     Script test8 = new Script(ImmutableList.nil(), ImmutableList.list(new FunctionDeclaration(new BindingIdentifier("a"), true, new FormalParameters(ImmutableList.nil(), Maybe.nothing()), new FunctionBody(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new YieldExpression(Maybe.nothing())))))));
     assertCorrectFailures(test8, 0, "");
@@ -513,16 +513,16 @@ public class UnitTest {
   @Test
   public void testYieldGeneratorExpressionAndFunctionDeclarationFunctionExpressionMethodInteraction() {
     Script test0 = new Script(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new YieldGeneratorExpression(new IdentifierExpression("a")))));
-    assertCorrectFailures(test0, 1, "yield generator expressions are only allowed within function declarations or function expressions that are generators");
+    assertCorrectFailures(test0, 1, ValidationErrorMessages.VALID_YIELD_GENERATOR_EXPRESSION_POSITION);
 
     Script test1 = new Script(ImmutableList.nil(), ImmutableList.list(new FunctionDeclaration(new BindingIdentifier("a"), false, new FormalParameters(ImmutableList.nil(), Maybe.nothing()), new FunctionBody(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new YieldGeneratorExpression(new ThisExpression())))))));
-    assertCorrectFailures(test1, 1, "yield generator expressions are only allowed within function declarations or function expressions that are generators");
+    assertCorrectFailures(test1, 1, ValidationErrorMessages.VALID_YIELD_GENERATOR_EXPRESSION_POSITION);
 
     Script test2 = new Script(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new FunctionExpression(Maybe.just(new BindingIdentifier("a")), false, new FormalParameters(ImmutableList.nil(), Maybe.nothing()), new FunctionBody(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new YieldGeneratorExpression(new ThisExpression()))))))));
-    assertCorrectFailures(test2, 1, "yield generator expressions are only allowed within function declarations or function expressions that are generators");
+    assertCorrectFailures(test2, 1, ValidationErrorMessages.VALID_YIELD_GENERATOR_EXPRESSION_POSITION);
 
     Script test3 = new Script(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new ObjectExpression(ImmutableList.list(new Method(false, new FormalParameters(ImmutableList.nil(), Maybe.nothing()), new FunctionBody(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new YieldGeneratorExpression(new ThisExpression())))), new StaticPropertyName("a")))))));
-    assertCorrectFailures(test3, 1, "yield generator expressions are only allowed within function declarations or function expressions that are generators");
+    assertCorrectFailures(test3, 1, ValidationErrorMessages.VALID_YIELD_GENERATOR_EXPRESSION_POSITION);
 
     Script test4 = new Script(ImmutableList.nil(), ImmutableList.list(new FunctionDeclaration(new BindingIdentifier("a"), true, new FormalParameters(ImmutableList.nil(), Maybe.nothing()), new FunctionBody(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new YieldGeneratorExpression(new ThisExpression())))))));
     assertCorrectFailures(test4, 0, "");
