@@ -24,11 +24,13 @@ import org.jetbrains.annotations.NotNull;
 public class MonoidalReducer<State> implements Reducer<State> {
     @NotNull
     protected final Monoid<State> monoidClass;
-    private final State identity;
 
     protected MonoidalReducer(@NotNull Monoid<State> monoidClass) {
         this.monoidClass = monoidClass;
-        this.identity = this.monoidClass.identity();
+    }
+    
+    private State identity() {
+        return this.monoidClass.identity();
     }
 
     private State append(State a, State b) {
@@ -44,7 +46,7 @@ public class MonoidalReducer<State> implements Reducer<State> {
     }
 
     private State fold(ImmutableList<State> as) {
-        return as.foldLeft(this::append, this.identity);
+        return as.foldLeft(this::append, this.identity());
     }
 
     private State fold1(ImmutableList<State> as, State a) {
@@ -53,7 +55,7 @@ public class MonoidalReducer<State> implements Reducer<State> {
 
     @NotNull
     private State o(@NotNull Maybe<State> s) {
-        return s.orJust(this.identity);
+        return s.orJust(this.identity());
     }
 
     @NotNull
@@ -97,7 +99,7 @@ public class MonoidalReducer<State> implements Reducer<State> {
     @NotNull
     @Override
     public State reduceBindingIdentifier(@NotNull BindingIdentifier node) {
-        return this.identity;
+        return this.identity();
     }
 
     @NotNull
@@ -133,7 +135,7 @@ public class MonoidalReducer<State> implements Reducer<State> {
     @NotNull
     @Override
     public State reduceBreakStatement(@NotNull BreakStatement node) {
-        return this.identity;
+        return this.identity();
     }
 
     @NotNull
@@ -206,7 +208,7 @@ public class MonoidalReducer<State> implements Reducer<State> {
     @NotNull
     @Override
     public State reduceContinueStatement(@NotNull ContinueStatement node) {
-        return this.identity;
+        return this.identity();
     }
 
     @NotNull
@@ -221,13 +223,13 @@ public class MonoidalReducer<State> implements Reducer<State> {
     @NotNull
     @Override
     public State reduceDebuggerStatement(@NotNull DebuggerStatement node) {
-        return this.identity;
+        return this.identity();
     }
 
     @NotNull
     @Override
     public State reduceDirective(@NotNull Directive node) {
-        return this.identity;
+        return this.identity();
     }
 
     @NotNull
@@ -242,7 +244,7 @@ public class MonoidalReducer<State> implements Reducer<State> {
     @NotNull
     @Override
     public State reduceEmptyStatement(@NotNull EmptyStatement node) {
-        return this.identity;
+        return this.identity();
     }
 
     @NotNull
@@ -254,7 +256,7 @@ public class MonoidalReducer<State> implements Reducer<State> {
     @NotNull
     @Override
     public State reduceExportAllFrom(@NotNull ExportAllFrom node) {
-        return this.identity;
+        return this.identity();
     }
 
     @NotNull
@@ -272,7 +274,7 @@ public class MonoidalReducer<State> implements Reducer<State> {
     @NotNull
     @Override
     public State reduceExportSpecifier(@NotNull ExportSpecifier node) {
-        return this.identity;
+        return this.identity();
     }
 
     @NotNull
@@ -335,7 +337,7 @@ public class MonoidalReducer<State> implements Reducer<State> {
     @NotNull
     @Override
     public State reduceIdentifierExpression(@NotNull IdentifierExpression node) {
-        return this.identity;
+        return this.identity();
     }
 
     @NotNull
@@ -375,37 +377,37 @@ public class MonoidalReducer<State> implements Reducer<State> {
     @NotNull
     @Override
     public State reduceLiteralBooleanExpression(@NotNull LiteralBooleanExpression node) {
-        return this.identity;
+        return this.identity();
     }
 
     @NotNull
     @Override
     public State reduceLiteralInfinityExpression(@NotNull LiteralInfinityExpression node) {
-        return this.identity;
+        return this.identity();
     }
 
     @NotNull
     @Override
     public State reduceLiteralNullExpression(@NotNull LiteralNullExpression node) {
-        return this.identity;
+        return this.identity();
     }
 
     @NotNull
     @Override
     public State reduceLiteralNumericExpression(@NotNull LiteralNumericExpression node) {
-        return this.identity;
+        return this.identity();
     }
 
     @NotNull
     @Override
     public State reduceLiteralRegExpExpression(@NotNull LiteralRegExpExpression node) {
-        return this.identity;
+        return this.identity();
     }
 
     @NotNull
     @Override
     public State reduceLiteralStringExpression(@NotNull LiteralStringExpression node) {
-        return this.identity;
+        return this.identity();
     }
 
     @NotNull
@@ -432,7 +434,7 @@ public class MonoidalReducer<State> implements Reducer<State> {
     @NotNull
     @Override
     public State reduceNewTargetExpression(@NotNull NewTargetExpression node) {
-        return this.identity;
+        return this.identity();
     }
 
     @NotNull
@@ -476,7 +478,7 @@ public class MonoidalReducer<State> implements Reducer<State> {
     @NotNull
     @Override
     public State reduceShorthandProperty(@NotNull ShorthandProperty node) {
-        return this.identity;
+        return this.identity();
     }
 
     @NotNull
@@ -494,13 +496,13 @@ public class MonoidalReducer<State> implements Reducer<State> {
     @NotNull
     @Override
     public State reduceStaticPropertyName(@NotNull StaticPropertyName node) {
-        return this.identity;
+        return this.identity();
     }
 
     @NotNull
     @Override
     public State reduceSuper(@NotNull Super node) {
-        return this.identity;
+        return this.identity();
     }
 
     @NotNull
@@ -543,7 +545,7 @@ public class MonoidalReducer<State> implements Reducer<State> {
     @NotNull
     @Override
     public State reduceTemplateElement(@NotNull TemplateElement node) {
-        return this.identity;
+        return this.identity();
     }
 
     @NotNull
@@ -555,7 +557,7 @@ public class MonoidalReducer<State> implements Reducer<State> {
     @NotNull
     @Override
     public State reduceThisExpression(@NotNull ThisExpression node) {
-        return this.identity;
+        return this.identity();
     }
 
     @NotNull
