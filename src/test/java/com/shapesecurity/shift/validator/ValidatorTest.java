@@ -25,7 +25,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
-public class UnitTest {
+public class ValidatorTest {
 
   private void assertCorrectFailures(Script script, int expectedNumErrors, String expectedErrorMsg) {
     ImmutableList<ValidationError> errors = Validator.validate(script);
