@@ -159,7 +159,7 @@ public class Validator extends MonoidalReducer<ValidationContext> {
             if (node.name.equals("*default*")) {
                 s.addBindingIdentifierCalledDefault(node);
             } else {
-                s.addError(new ValidationError(node, "the name field of binding identifier must be a valid identifier name"));
+                s.addError(new ValidationError(node, ValidationErrorMessages.VALID_BINDING_IDENTIFIER_NAME));
             }
         }
         return s;
@@ -170,7 +170,7 @@ public class Validator extends MonoidalReducer<ValidationContext> {
     public ValidationContext reduceBreakStatement(@NotNull BreakStatement node) {
         ValidationContext s = super.reduceBreakStatement(node);
         if (node.label.isJust() && !checkIsValidIdentifierName(node.label.just())) {
-            s.addError(new ValidationError(node, "the label field of break statement exists and must be a valid identifier name"));
+            s.addError(new ValidationError(node, ValidationErrorMessages.VALID_BREAK_STATEMENT_LABEL));
         }
         return s;
     }
@@ -180,7 +180,7 @@ public class Validator extends MonoidalReducer<ValidationContext> {
     public ValidationContext reduceCatchClause(@NotNull CatchClause node, @NotNull ValidationContext binding, @NotNull ValidationContext body) {
         ValidationContext s = super.reduceCatchClause(node, binding, body);
         if (node.binding instanceof MemberExpression) {
-            s.addError(new ValidationError(node, "the binding field of CatchClause must not be a member expression"));
+            s.addError(new ValidationError(node, ValidationErrorMessages.CATCH_CLAUSE_BINDING_NOT_MEMBER_EXPRESSION));
         }
         return s;
     }
@@ -190,7 +190,7 @@ public class Validator extends MonoidalReducer<ValidationContext> {
     public ValidationContext reduceContinueStatement(@NotNull ContinueStatement node) {
         ValidationContext s = super.reduceContinueStatement(node);
         if (node.label.isJust() && !checkIsValidIdentifierName(node.label.just())) {
-            s.addError(new ValidationError(node, "the label field of continue statement exists and must be a valid identifier name"));
+            s.addError(new ValidationError(node, ValidationErrorMessages.VALID_CONTINUE_STATEMENT_LABEL));
         }
         return s;
     }
@@ -200,7 +200,7 @@ public class Validator extends MonoidalReducer<ValidationContext> {
     public ValidationContext reduceDirective(@NotNull Directive node) {
         ValidationContext s = super.reduceDirective(node);
         if (!checkIsStringLiteral(node.rawValue)) {
-            s.addError(new ValidationError(node, "the raw value field of directives must either be an empty string, or match the ES6 grammar production DoubleStringCharacter or SingleStringCharacter"));
+            s.addError(new ValidationError(node, ValidationErrorMessages.VALID_DIRECTIVE));
         }
         return s;
     }
@@ -209,7 +209,7 @@ public class Validator extends MonoidalReducer<ValidationContext> {
     @Override
     public ValidationContext reduceExportDefault(@NotNull ExportDefault node, @NotNull ValidationContext body) {
         ValidationContext s = super.reduceExportDefault(node, body);
-        if (node.body instanceof FunctionDeclaration) {
+        if (node.body instanceof FunctionDeclaration || node.body instanceof ClassDeclaration) {
             s.clearBindingIdentifiersCalledDefault();
         }
         return s;
@@ -220,10 +220,10 @@ public class Validator extends MonoidalReducer<ValidationContext> {
     public ValidationContext reduceExportSpecifier(@NotNull ExportSpecifier node) {
         ValidationContext s = super.reduceExportSpecifier(node);
         if (node.name.isJust() && !checkIsValidIdentifierName(node.name.just())) {
-            s.addError(new ValidationError(node, "the name field of export specifier exists and must be a valid identifier name"));
+            s.addError(new ValidationError(node, ValidationErrorMessages.VALID_EXPORT_SPECIFIER_NAME));
         }
         if (!checkIsValidIdentifierName(node.exportedName)) {
-            s.addError(new ValidationError(node, "the exported name field of export specifier must be a valid identifier name"));
+            s.addError(new ValidationError(node, ValidationErrorMessages.VALID_EXPORTED_NAME));
         }
         return s;
     }
@@ -235,10 +235,10 @@ public class Validator extends MonoidalReducer<ValidationContext> {
         if (node.left instanceof VariableDeclaration) {
             VariableDeclaration varDec = (VariableDeclaration) node.left;
             if (varDec.declarators.length != 1) {
-                s.addError(new ValidationError(node, "VariableDeclaration in ForInStatement can only have one VariableDeclarator"));
+                s.addError(new ValidationError(node, ValidationErrorMessages.ONE_VARIABLE_DECLARATOR_IN_FOR_IN));
             }
             if (varDec.declarators.maybeHead().just().init.isJust()) {
-                s.addError(new ValidationError(node, "The VariableDeclarator in ForInStatement should not have an initializer"));
+                s.addError(new ValidationError(node, ValidationErrorMessages.NO_INIT_IN_VARIABLE_DECLARATOR_IN_FOR_IN));
             }
         }
         return s;
@@ -251,10 +251,10 @@ public class Validator extends MonoidalReducer<ValidationContext> {
         if (node.left instanceof VariableDeclaration) {
             VariableDeclaration varDec = (VariableDeclaration) node.left;
             if (varDec.declarators.length != 1) {
-                s.addError(new ValidationError(node, "VariableDeclaration in ForOfStatement can only have one VariableDeclarator"));
+                s.addError(new ValidationError(node, ValidationErrorMessages.ONE_VARIABLE_DECLARATOR_IN_FOR_OF));
             }
             if (varDec.declarators.maybeHead().just().init.isJust()) {
-                s.addError(new ValidationError(node, "The VariableDeclarator in ForOfStatement should not have an initializer"));
+                s.addError(new ValidationError(node, ValidationErrorMessages.NO_INIT_IN_VARIABLE_DECLARATOR_IN_FOR_OF));
             }
         }
         return s;
@@ -267,11 +267,11 @@ public class Validator extends MonoidalReducer<ValidationContext> {
         node.items.foreach(x -> {
             if (x instanceof Binding) {
                 if (x instanceof MemberExpression) {
-                    s.addError(new ValidationError(node, "the items field of formal parameters must not be member expressions"));
+                    s.addError(new ValidationError(node, ValidationErrorMessages.FORMAL_PARAMETER_ITEMS_NOT_MEMBER_EXPRESSION));
                 }
             } else if (x instanceof BindingWithDefault) {
                 if (((BindingWithDefault) x).binding instanceof MemberExpression) {
-                    s.addError(new ValidationError(node, "binding field of the items field of formal parameters must not be a member expression"));
+                    s.addError(new ValidationError(node, ValidationErrorMessages.FORMAL_PARAMETER_ITEMS_BINDING_NOT_MEMBER_EXPRESSION));
                 }
             }
         });
@@ -314,7 +314,7 @@ public class Validator extends MonoidalReducer<ValidationContext> {
     public ValidationContext reduceIdentifierExpression(@NotNull IdentifierExpression node) {
         ValidationContext s = super.reduceIdentifierExpression(node);
         if (!checkIsValidIdentifierName(node.name)) {
-            s.addError(new ValidationError(node, "the name field of identifier expression must be a valid identifier name"));
+            s.addError(new ValidationError(node, ValidationErrorMessages.VALID_IDENTIFIER_NAME));
         }
         return s;
     }
@@ -324,7 +324,7 @@ public class Validator extends MonoidalReducer<ValidationContext> {
     public ValidationContext reduceIfStatement(@NotNull IfStatement node, @NotNull ValidationContext test, @NotNull ValidationContext consequent, @NotNull Maybe<ValidationContext> alternate) {
         ValidationContext s = super.reduceIfStatement(node, test, consequent, alternate);
         if (isProblematicIfStatement(node)) {
-            s.addError(new ValidationError(node, "IfStatement with null 'alternate' must not be the 'consequent' of an IfStatement with a non-null 'alternate'"));
+            s.addError(new ValidationError(node, ValidationErrorMessages.VALID_IF_STATEMENT));
         }
         return s;
     }
@@ -334,7 +334,7 @@ public class Validator extends MonoidalReducer<ValidationContext> {
     public ValidationContext reduceImportSpecifier(@NotNull ImportSpecifier node, @NotNull ValidationContext binding) {
         ValidationContext s = super.reduceImportSpecifier(node, binding);
         if (node.name.isJust() && !checkIsValidIdentifierName(node.name.just())) {
-            s.addError(new ValidationError(node, "the name field of import specifier exists and must be a valid identifier name"));
+            s.addError(new ValidationError(node, ValidationErrorMessages.VALID_IMPORT_SPECIFIER_NAME));
         }
         return s;
     }
@@ -344,7 +344,7 @@ public class Validator extends MonoidalReducer<ValidationContext> {
     public ValidationContext reduceLabeledStatement(@NotNull LabeledStatement node, @NotNull ValidationContext body) {
         ValidationContext s = super.reduceLabeledStatement(node, body);
         if (!checkIsValidIdentifierName(node.label)) {
-            s.addError(new ValidationError(node, "the label field of labeled statement must be a valid identifier name"));
+            s.addError(new ValidationError(node, ValidationErrorMessages.VALID_LABEL));
         }
         return s;
     }
@@ -354,13 +354,13 @@ public class Validator extends MonoidalReducer<ValidationContext> {
     public ValidationContext reduceLiteralNumericExpression(@NotNull LiteralNumericExpression node) {
         ValidationContext s = super.reduceLiteralNumericExpression(node);
         if (node.value.isNaN()) {
-            s.addError(new ValidationError(node, "the value field of literal numeric expression must not be NaN"));
+            s.addError(new ValidationError(node, ValidationErrorMessages.LITERAL_NUMERIC_VALUE_NOT_NAN));
         }
         if (node.value < 0) {
-            s.addError(new ValidationError(node, "the value field of literal numeric expression must be non-negative"));
+            s.addError(new ValidationError(node, ValidationErrorMessages.LITERAL_NUMERIC_VALUE_NOT_NEGATIVE));
         }
         if (node.value.isInfinite()) {
-            s.addError(new ValidationError(node, "the value field of literal numeric expression must be finite"));
+            s.addError(new ValidationError(node, ValidationErrorMessages.LITERAL_NUMERIC_VALUE_NOT_INFINITE));
         }
         return s;
     }
@@ -370,18 +370,18 @@ public class Validator extends MonoidalReducer<ValidationContext> {
     public ValidationContext reduceLiteralRegExpExpression(@NotNull LiteralRegExpExpression node) {
         ValidationContext s = super.reduceLiteralRegExpExpression(node);
         if (!checkIsLiteralRegExpPattern(node.pattern)) {
-            s.addError(new ValidationError(node, "pattern field of literal regular expression expression must match the ES6 grammar production Pattern (21.2.1)"));
+            s.addError(new ValidationError(node, ValidationErrorMessages.VALID_REG_EX_PATTERN));
         }
         if (node.flags.length() > 0) {
             boolean hasValidFlags = node.flags.chars().allMatch(x -> x == 'g' || x == 'i' || x == 'm' || x == 'u' || x == 'y');
             if (!hasValidFlags) {
-                s.addError(new ValidationError(node, "flags field of literal regular expression expression must not contain characters other than 'g', 'i', 'm', 'u', or 'y'"));
+                s.addError(new ValidationError(node, ValidationErrorMessages.VALID_REG_EX_FLAG));
             }
         }
         Map<Integer, Boolean> charMap = new HashMap<>();
         node.flags.chars().forEach(x -> {
             if (charMap.containsKey(x)) {
-                s.addError(new ValidationError(node, "flags field of literal regular expression expression must not contain duplicate flag characters"));
+                s.addError(new ValidationError(node, ValidationErrorMessages.NO_DUPLICATE_REG_EX_FLAG));
             } else {
                 charMap.put(x, true);
             }
@@ -405,10 +405,10 @@ public class Validator extends MonoidalReducer<ValidationContext> {
     public ValidationContext reduceModule(@NotNull Module node, @NotNull ImmutableList<ValidationContext> directives, @NotNull ImmutableList<ValidationContext> items
     ) {
         ValidationContext s = super.reduceModule(node, directives, items);
-        s.enforceFreeReturnStatements(returnStatement -> new ValidationError(returnStatement, "return statements must be within a function body"));
-        s.enforceBindingIdentifiersCalledDefault(bindingIdentifier -> new ValidationError(bindingIdentifier, "binding identifiers may only be called \"*default*\" within a function declaration"));
-        s.enforceYieldExpressionsNotInGeneratorContext(yieldExpression -> new ValidationError(yieldExpression, "yield expressions are only allowed within function declarations or function expressions that are generators"));
-        s.enforceYieldGeneratorExpressionsNotInGeneratorContext(yieldGeneratorExpression -> new ValidationError(yieldGeneratorExpression, "yield generator expressions are only allowed within function declarations or function expressions that are generators"));
+        s.enforceFreeReturnStatements(returnStatement -> new ValidationError(returnStatement, ValidationErrorMessages.RETURN_STATEMENT_IN_FUNCTION_BODY));
+        s.enforceBindingIdentifiersCalledDefault(bindingIdentifier -> new ValidationError(bindingIdentifier, ValidationErrorMessages.BINDING_IDENTIFIERS_CALLED_DEFAULT));
+        s.enforceYieldExpressionsNotInGeneratorContext(yieldExpression -> new ValidationError(yieldExpression, ValidationErrorMessages.VALID_YIELD_EXPRESSION_POSITION));
+        s.enforceYieldGeneratorExpressionsNotInGeneratorContext(yieldGeneratorExpression -> new ValidationError(yieldGeneratorExpression, ValidationErrorMessages.VALID_YIELD_GENERATOR_EXPRESSION_POSITION));
         return s;
     }
 
@@ -426,10 +426,10 @@ public class Validator extends MonoidalReducer<ValidationContext> {
     public ValidationContext reduceScript(@NotNull Script node, @NotNull ImmutableList<ValidationContext> directives, @NotNull ImmutableList<ValidationContext> statements
     ) {
         ValidationContext s = super.reduceScript(node, directives, statements);
-        s.enforceFreeReturnStatements(returnStatement -> new ValidationError(returnStatement, "return statements must be within a function body"));
-        s.enforceBindingIdentifiersCalledDefault(bindingIdentifier -> new ValidationError(bindingIdentifier, "binding identifiers may only be called \"*default*\" within a function declaration"));
-        s.enforceYieldExpressionsNotInGeneratorContext(yieldExpression -> new ValidationError(yieldExpression, "yield expressions are only allowed within function declarations or function expressions that are generators"));
-        s.enforceYieldGeneratorExpressionsNotInGeneratorContext(yieldGeneratorExpression -> new ValidationError(yieldGeneratorExpression, "yield generator expressions are only allowed within function declarations or function expressions that are generators"));
+        s.enforceFreeReturnStatements(returnStatement -> new ValidationError(returnStatement, ValidationErrorMessages.RETURN_STATEMENT_IN_FUNCTION_BODY));
+        s.enforceBindingIdentifiersCalledDefault(bindingIdentifier -> new ValidationError(bindingIdentifier, ValidationErrorMessages.BINDING_IDENTIFIERS_CALLED_DEFAULT));
+        s.enforceYieldExpressionsNotInGeneratorContext(yieldExpression -> new ValidationError(yieldExpression, ValidationErrorMessages.VALID_YIELD_EXPRESSION_POSITION));
+        s.enforceYieldGeneratorExpressionsNotInGeneratorContext(yieldGeneratorExpression -> new ValidationError(yieldGeneratorExpression, ValidationErrorMessages.VALID_YIELD_GENERATOR_EXPRESSION_POSITION));
         return s;
     }
 
@@ -439,11 +439,11 @@ public class Validator extends MonoidalReducer<ValidationContext> {
         ValidationContext s = super.reduceSetter(node, name, parameter, body);
         if (node.param instanceof Binding) {
             if (node.param instanceof MemberExpression) {
-                s.addError(new ValidationError(node, "the param field of setter must not be a member expression"));
+                s.addError(new ValidationError(node, ValidationErrorMessages.SETTER_PARAM_NOT_MEMBER_EXPRESSION));
             }
         } else if (node.param instanceof BindingWithDefault) {
             if (((BindingWithDefault) node.param).binding instanceof MemberExpression) {
-                s.addError(new ValidationError(node, "the binding field of the param field of setter must not be a member expression"));
+                s.addError(new ValidationError(node, ValidationErrorMessages.SETTER_PARAM_BINDING_NOT_MEMBER_EXPRESSION));
             }
         }
         return s;
@@ -454,7 +454,7 @@ public class Validator extends MonoidalReducer<ValidationContext> {
     public ValidationContext reduceShorthandProperty(@NotNull ShorthandProperty node) {
         ValidationContext s = super.reduceShorthandProperty(node);
         if (!checkIsValidIdentifierName(node.name)) {
-            s.addError(new ValidationError(node, "the name field of shorthand property must be a valid identifier name"));
+            s.addError(new ValidationError(node, ValidationErrorMessages.VALID_SHORTHAND_PROPERTY_NAME));
         }
         return s;
     }
@@ -464,7 +464,7 @@ public class Validator extends MonoidalReducer<ValidationContext> {
     public ValidationContext reduceStaticMemberExpression(@NotNull StaticMemberExpression node, @NotNull ValidationContext object) {
         ValidationContext s = super.reduceStaticMemberExpression(node, object);
         if (!checkIsValidIdentifierName(node.property)) {
-            s.addError(new ValidationError(node, "the property field of static member expression must be a valid identifier name"));
+            s.addError(new ValidationError(node, ValidationErrorMessages.VALID_STATIC_MEMBER_EXPRESSION_PROPERTY_NAME));
         }
         return s;
     }
@@ -474,7 +474,7 @@ public class Validator extends MonoidalReducer<ValidationContext> {
     public ValidationContext reduceTemplateElement(@NotNull TemplateElement node) {
         ValidationContext s = super.reduceTemplateElement(node);
         if (!checkIsStringLiteral(node.rawValue)) {
-            s.addError(new ValidationError(node, "the raw value field of template element must match the ES6 grammar production TemplateCharacters"));
+            s.addError(new ValidationError(node, ValidationErrorMessages.VALID_TEMPLATE_ELEMENT_VALUE));
         }
         return s;
     }
@@ -485,16 +485,16 @@ public class Validator extends MonoidalReducer<ValidationContext> {
         ValidationContext s = super.reduceTemplateExpression(node, tag, elements);
         if (elements.length > 0) {
             if (node.elements.length % 2 == 0) {
-                s.addError(new ValidationError(node, "the elements field of template expression must be an alternating list of template element and expression, starting and ending with a template element"));
+                s.addError(new ValidationError(node, ValidationErrorMessages.ALTERNATING_TEMPLATE_EXPRESSION_ELEMENTS));
             } else {
                 node.elements.mapWithIndex((i, x) -> {
                     if (i % 2 == 0) {
                         if (!(x instanceof TemplateElement)) {
-                            s.addError(new ValidationError(node, "the elements field of template expression must be an alternating list of template element and expression, starting and ending with a template element"));
+                            s.addError(new ValidationError(node, ValidationErrorMessages.ALTERNATING_TEMPLATE_EXPRESSION_ELEMENTS));
                         }
                     } else {
                         if (!(x instanceof Expression)) {
-                            s.addError(new ValidationError(node, "the elements field of template expression must be an alternating list of template element and expression, starting and ending with a template element"));
+                            s.addError(new ValidationError(node, ValidationErrorMessages.ALTERNATING_TEMPLATE_EXPRESSION_ELEMENTS));
                         }
                     }
                     return true;
@@ -509,7 +509,7 @@ public class Validator extends MonoidalReducer<ValidationContext> {
     public ValidationContext reduceVariableDeclaration(@NotNull VariableDeclaration node, @NotNull ImmutableList<ValidationContext> declarators) {
         ValidationContext s = super.reduceVariableDeclaration(node, declarators);
         if (node.declarators.length == 0) {
-            s.addError(new ValidationError(node, "the declarators field in variable declaration must not be an empty list"));
+            s.addError(new ValidationError(node, ValidationErrorMessages.NOT_EMPTY_VARIABLE_DECLARATORS_LIST));
         }
         return s;
     }
@@ -521,7 +521,7 @@ public class Validator extends MonoidalReducer<ValidationContext> {
         if (node.declaration.kind.equals(VariableDeclarationKind.Const)) {
             node.declaration.declarators.foreach(x -> {
                 if (x.getInit().isNothing()) {
-                    s.addError(new ValidationError(node, "VariableDeclarationStatements with a variable declaration of kind const cannot have a variable declarator with no initializer"));
+                    s.addError(new ValidationError(node, ValidationErrorMessages.CONST_VARIABLE_DECLARATION_MUST_HAVE_INIT));
                 }
             });
         }
@@ -533,7 +533,7 @@ public class Validator extends MonoidalReducer<ValidationContext> {
     public ValidationContext reduceVariableDeclarator(@NotNull VariableDeclarator node, @NotNull ValidationContext binding, @NotNull Maybe<ValidationContext> init) {
         ValidationContext s = super.reduceVariableDeclarator(node, binding, init);
         if (node.binding instanceof MemberExpression) {
-            s.addError(new ValidationError(node, "the binding field of variable declarator must not be a member expression"));
+            s.addError(new ValidationError(node, ValidationErrorMessages.VARIABLE_DECLARATION_BINDING_NOT_MEMBER_EXPRESSION));
         }
         return s;
     }
@@ -548,7 +548,7 @@ public class Validator extends MonoidalReducer<ValidationContext> {
 
     @NotNull
     @Override
-    public ValidationContext reduceYieldGeneratorExpression(@NotNull YieldGeneratorExpression node, ValidationContext expression) {
+    public ValidationContext reduceYieldGeneratorExpression(@NotNull YieldGeneratorExpression node, @NotNull ValidationContext expression) {
         ValidationContext s = super.reduceYieldGeneratorExpression(node, expression);
         s.addYieldGeneratorExpressionsNotInGeneratorContext(node);
         return s;
