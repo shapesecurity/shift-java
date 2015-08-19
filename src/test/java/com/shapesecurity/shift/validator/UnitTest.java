@@ -434,21 +434,106 @@ public class UnitTest {
 
   @Test
   public void testBindingIdentifierCalledDefaultAndExportDefaultInteraction() {
+    Module test0 = new Module(ImmutableList.nil(), ImmutableList.list(new ExportDefault(new FunctionDeclaration(new BindingIdentifier("*default*"), false, new FormalParameters(ImmutableList.nil(), Maybe.nothing()), new FunctionBody(ImmutableList.nil(), ImmutableList.nil())))));
+    assertCorrectFailures(test0, 0, "");
 
+    Module test1 = new Module(ImmutableList.nil(), ImmutableList.list(new ExportDefault(new FunctionExpression(Maybe.just(new BindingIdentifier("*default*")), false, new FormalParameters(ImmutableList.nil(), Maybe.nothing()), new FunctionBody(ImmutableList.nil(), ImmutableList.nil())))));
+    assertCorrectFailures(test1, 1, "binding identifiers may only be called \"*default*\" within a function declaration");
+
+//    Module test1 = new Module(ImmutableList.nil(), ImmutableList.list(new ExportDefault(new ClassDeclaration(new BindingIdentifier("*default*"), Maybe.nothing(), ImmutableList.nil()))));
+//    assertCorrectFailures(test1, 0, ""); // TODO check if default is allowed in class declaration
+
+    //    Module test1 = new Module(ImmutableList.nil(), ImmutableList.list(new ExportDefault(new ClassExpression(new BindingIdentifier("*default*"), Maybe.nothing(), ImmutableList.nil()))));
+//    assertCorrectFailures(test1, 1, ""); //
   }
 
   @Test
   public void testReturnStatementAndFunctionBodyInteraction() {
+    Script test0 = new Script(ImmutableList.nil(), ImmutableList.list(new ReturnStatement(Maybe.nothing())));
+    assertCorrectFailures(test0, 1, "return statements must be within a function body");
 
+    Script test1 = new Script(ImmutableList.nil(), ImmutableList.list(new ReturnStatement(Maybe.just(new IdentifierExpression("a")))));
+    assertCorrectFailures(test1, 1, "return statements must be within a function body");
+
+    Script test2 = new Script(ImmutableList.nil(), ImmutableList.list(new FunctionDeclaration(new BindingIdentifier("a"), false, new FormalParameters(ImmutableList.nil(), Maybe.nothing()), new FunctionBody(ImmutableList.nil(), ImmutableList.list(new ReturnStatement(Maybe.nothing()))))));
+    assertCorrectFailures(test2, 0 , "");
+
+    Script test3 = new Script(ImmutableList.nil(), ImmutableList.list(new FunctionDeclaration(new BindingIdentifier("a"), false, new FormalParameters(ImmutableList.nil(), Maybe.nothing()), new FunctionBody(ImmutableList.nil(), ImmutableList.list(new ReturnStatement(Maybe.just(new ThisExpression())))))));
+    assertCorrectFailures(test3, 0 , "");
+
+    Script test4 = new Script(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new FunctionExpression(Maybe.just(new BindingIdentifier("a")), false, new FormalParameters(ImmutableList.nil(), Maybe.nothing()), new FunctionBody(ImmutableList.nil(), ImmutableList.list(new ReturnStatement(Maybe.nothing())))))));
+    assertCorrectFailures(test4, 0 , "");
+
+    Script test5 = new Script(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new FunctionExpression(Maybe.just(new BindingIdentifier("a")), false, new FormalParameters(ImmutableList.nil(), Maybe.nothing()), new FunctionBody(ImmutableList.nil(), ImmutableList.list(new ReturnStatement(Maybe.just(new ThisExpression()))))))));
+    assertCorrectFailures(test5, 0 , "");
   }
 
   @Test
   public void testYieldExpressionAndFunctionDeclarationFunctionExpressionMethodInteraction() {
+    Script test0 = new Script(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new YieldExpression(Maybe.just(new IdentifierExpression("a"))))));
+    assertCorrectFailures(test0, 1, "yield expressions are only allowed within function declarations or function expressions that are generators");
 
+    Script test1 = new Script(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new YieldExpression(Maybe.nothing()))));
+    assertCorrectFailures(test1, 1, "yield expressions are only allowed within function declarations or function expressions that are generators");
+
+    Script test2 = new Script(ImmutableList.nil(), ImmutableList.list(new FunctionDeclaration(new BindingIdentifier("a"), false, new FormalParameters(ImmutableList.nil(), Maybe.nothing()), new FunctionBody(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new YieldExpression(Maybe.nothing())))))));
+    assertCorrectFailures(test2, 1, "yield expressions are only allowed within function declarations or function expressions that are generators");
+
+    Script test3 = new Script(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new FunctionExpression(Maybe.just(new BindingIdentifier("a")), false, new FormalParameters(ImmutableList.nil(), Maybe.nothing()), new FunctionBody(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new YieldExpression(Maybe.nothing()))))))));
+    assertCorrectFailures(test3, 1, "yield expressions are only allowed within function declarations or function expressions that are generators");
+
+    Script test4 = new Script(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new ObjectExpression(ImmutableList.list(new Method(false, new FormalParameters(ImmutableList.nil(), Maybe.nothing()), new FunctionBody(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new YieldExpression(Maybe.nothing())))), new StaticPropertyName("a")))))));
+    assertCorrectFailures(test4, 1, "yield expressions are only allowed within function declarations or function expressions that are generators");
+
+    Script test5 = new Script(ImmutableList.nil(), ImmutableList.list(new FunctionDeclaration(new BindingIdentifier("a"), false, new FormalParameters(ImmutableList.nil(), Maybe.nothing()), new FunctionBody(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new YieldExpression(Maybe.just(new ThisExpression()))))))));
+    assertCorrectFailures(test5, 1, "yield expressions are only allowed within function declarations or function expressions that are generators");
+
+    Script test6 = new Script(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new FunctionExpression(Maybe.just(new BindingIdentifier("a")), false, new FormalParameters(ImmutableList.nil(), Maybe.nothing()), new FunctionBody(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new YieldExpression(Maybe.just(new ThisExpression())))))))));
+    assertCorrectFailures(test6, 1, "yield expressions are only allowed within function declarations or function expressions that are generators");
+
+    Script test7 = new Script(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new ObjectExpression(ImmutableList.list(new Method(false, new FormalParameters(ImmutableList.nil(), Maybe.nothing()), new FunctionBody(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new YieldExpression(Maybe.just(new ThisExpression()))))), new StaticPropertyName("a")))))));
+    assertCorrectFailures(test7, 1, "yield expressions are only allowed within function declarations or function expressions that are generators");
+
+    Script test8 = new Script(ImmutableList.nil(), ImmutableList.list(new FunctionDeclaration(new BindingIdentifier("a"), true, new FormalParameters(ImmutableList.nil(), Maybe.nothing()), new FunctionBody(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new YieldExpression(Maybe.nothing())))))));
+    assertCorrectFailures(test8, 0, "");
+
+    Script test9 = new Script(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new FunctionExpression(Maybe.just(new BindingIdentifier("a")), true, new FormalParameters(ImmutableList.nil(), Maybe.nothing()), new FunctionBody(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new YieldExpression(Maybe.nothing()))))))));
+    assertCorrectFailures(test9, 0, "");
+
+    Script test10 = new Script(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new ObjectExpression(ImmutableList.list(new Method(true, new FormalParameters(ImmutableList.nil(), Maybe.nothing()), new FunctionBody(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new YieldExpression(Maybe.nothing())))), new StaticPropertyName("a")))))));
+    assertCorrectFailures(test10, 0, "");
+
+    Script test11 = new Script(ImmutableList.nil(), ImmutableList.list(new FunctionDeclaration(new BindingIdentifier("a"), true, new FormalParameters(ImmutableList.nil(), Maybe.nothing()), new FunctionBody(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new YieldExpression(Maybe.just(new ThisExpression()))))))));
+    assertCorrectFailures(test11, 0, "");
+
+    Script test12 = new Script(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new FunctionExpression(Maybe.just(new BindingIdentifier("a")), true, new FormalParameters(ImmutableList.nil(), Maybe.nothing()), new FunctionBody(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new YieldExpression(Maybe.just(new ThisExpression())))))))));
+    assertCorrectFailures(test12, 0, "");
+
+    Script test13 = new Script(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new ObjectExpression(ImmutableList.list(new Method(true, new FormalParameters(ImmutableList.nil(), Maybe.nothing()), new FunctionBody(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new YieldExpression(Maybe.just(new ThisExpression()))))), new StaticPropertyName("a")))))));
+    assertCorrectFailures(test13, 0, "");
   }
 
   @Test
   public void testYieldGeneratorExpressionAndFunctionDeclarationFunctionExpressionMethodInteraction() {
+    Script test0 = new Script(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new YieldGeneratorExpression(new IdentifierExpression("a")))));
+    assertCorrectFailures(test0, 1, "yield generator expressions are only allowed within function declarations or function expressions that are generators");
 
+    Script test1 = new Script(ImmutableList.nil(), ImmutableList.list(new FunctionDeclaration(new BindingIdentifier("a"), false, new FormalParameters(ImmutableList.nil(), Maybe.nothing()), new FunctionBody(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new YieldGeneratorExpression(new ThisExpression())))))));
+    assertCorrectFailures(test1, 1, "yield generator expressions are only allowed within function declarations or function expressions that are generators");
+
+    Script test2 = new Script(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new FunctionExpression(Maybe.just(new BindingIdentifier("a")), false, new FormalParameters(ImmutableList.nil(), Maybe.nothing()), new FunctionBody(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new YieldGeneratorExpression(new ThisExpression()))))))));
+    assertCorrectFailures(test2, 1, "yield generator expressions are only allowed within function declarations or function expressions that are generators");
+
+    Script test3 = new Script(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new ObjectExpression(ImmutableList.list(new Method(false, new FormalParameters(ImmutableList.nil(), Maybe.nothing()), new FunctionBody(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new YieldGeneratorExpression(new ThisExpression())))), new StaticPropertyName("a")))))));
+    assertCorrectFailures(test3, 1, "yield generator expressions are only allowed within function declarations or function expressions that are generators");
+
+    Script test4 = new Script(ImmutableList.nil(), ImmutableList.list(new FunctionDeclaration(new BindingIdentifier("a"), true, new FormalParameters(ImmutableList.nil(), Maybe.nothing()), new FunctionBody(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new YieldGeneratorExpression(new ThisExpression())))))));
+    assertCorrectFailures(test4, 0, "");
+
+    Script test5 = new Script(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new FunctionExpression(Maybe.just(new BindingIdentifier("a")), true, new FormalParameters(ImmutableList.nil(), Maybe.nothing()), new FunctionBody(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new YieldGeneratorExpression(new ThisExpression()))))))));
+    assertCorrectFailures(test5, 0, "");
+
+    Script test6 = new Script(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new ObjectExpression(ImmutableList.list(new Method(true, new FormalParameters(ImmutableList.nil(), Maybe.nothing()), new FunctionBody(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new YieldGeneratorExpression(new ThisExpression())))), new StaticPropertyName("a")))))));
+    assertCorrectFailures(test6, 0, "");
   }
 }
