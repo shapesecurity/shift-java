@@ -8,83 +8,83 @@ public class EarlyErrorsTest extends ParserTestCase {
 
         // 12.2.5.1
         // Always throw a Syntax Error if code matches this production.
-        testScriptFailure("({ a = 0 });", 0, "Illegal property initializer");
+        testScriptFailure("({ a = 0 });", 3, "Illegal property initializer");
 
         // 12.2.9.1
         // It is a Syntax Error if the lexical token sequence matched by CoverParenthesizedExpressionAndArrowParameterList cannot be parsed with no tokens left over using ParenthesizedExpression as the goal symbol.
-        testScriptFailure("(...a)", 0, "Unexpected end of input");
-        testScriptFailure("(a, ...b)", 0, "Unexpected end of input");
+        testScriptFailure("(...a)", 6, "Unexpected end of input");
+        testScriptFailure("(a, ...b)", 9, "Unexpected end of input");
         // All Early Errors rules for ParenthesizedExpression and its derived productions also apply to CoveredParenthesizedExpression of CoverParenthesizedExpressionAndArrowParameterList.
-        testScriptFailure("(((...a)))", 0, "Unexpected token \")\"");
-        testScriptFailure("(((a, ...b)))", 0, "Unexpected token \")\"");
+        testScriptFailure("(((...a)))", 8, "Unexpected token \")\"");
+        testScriptFailure("(((a, ...b)))", 11, "Unexpected token \")\"");
 
         // 12.4.1
         // It is an early Reference Error if IsValidSimpleAssignmentTarget of LeftHandSideExpression is false.
-        testScriptFailure("0++", 0, "Increment/decrement target must be an identifier or member expression");
-        testScriptFailure("0--", 0, "Increment/decrement target must be an identifier or member expression");
+        testScriptFailure("0++", 3, "Increment/decrement target must be an identifier or member expression");
+        testScriptFailure("0--", 3, "Increment/decrement target must be an identifier or member expression");
 
         // 12.5.1
         // It is an early Reference Error if IsValidSimpleAssignmentTarget of UnaryExpression is false.
-        testScriptFailure("++0", 0, "Increment/decrement target must be an identifier or member expression");
-        testScriptFailure("--0", 0, "Increment/decrement target must be an identifier or member expression");
+        testScriptFailure("++0", 3, "Increment/decrement target must be an identifier or member expression");
+        testScriptFailure("--0", 3, "Increment/decrement target must be an identifier or member expression");
 
         // 12.14.1
         // It is a Syntax Error if LeftHandSideExpression is either an ObjectLiteral or an ArrayLiteral and the lexical token sequence matched by LeftHandSideExpression cannot be parsed with no tokens left over using AssignmentPattern as the goal symbol.
-        testScriptFailure("({a: 0} = 0);", 0, "Invalid left-hand side in assignment");
-        testScriptFailure("({get a(){}} = 0)", 0, "Invalid left-hand side in assignment");
-        testScriptFailure("({set a(b){}} = 0)", 0, "Invalid left-hand side in assignment");
-        testScriptFailure("({a(b){}} = 0)", 0, "Invalid left-hand side in assignment");
-        testScriptFailure("[0] = 0;", 0, "Invalid left-hand side in assignment");
+        testScriptFailure("({a: 0} = 0);", 8, "Invalid left-hand side in assignment");
+        testScriptFailure("({get a(){}} = 0)", 13, "Invalid left-hand side in assignment");
+        testScriptFailure("({set a(b){}} = 0)", 14, "Invalid left-hand side in assignment");
+        testScriptFailure("({a(b){}} = 0)", 10, "Invalid left-hand side in assignment");
+        testScriptFailure("[0] = 0;", 4, "Invalid left-hand side in assignment");
         // It is an early Reference Error if LeftHandSideExpression is neither an ObjectLiteral nor an ArrayLiteral and IsValidSimpleAssignmentTarget of LeftHandSideExpression is false.
-        testScriptFailure("0 = 0;", 0, "Invalid left-hand side in assignment");
+        testScriptFailure("0 = 0;", 2, "Invalid left-hand side in assignment");
         // TODO:
         //testScriptFailure("({a}) = 0;", "Invalid left-hand side in assignment");
         //testScriptFailure("([a]) = 0;", "Invalid left-hand side in assignment");
         // It is an early Reference Error if IsValidSimpleAssignmentTarget of LeftHandSideExpression is false.
-        testScriptFailure("({a} += 0);", 0, "Invalid left-hand side in assignment");
-        testScriptFailure("[a] *= 0;", 0, "Invalid left-hand side in assignment");
-        testScriptFailure("0 /= 0;", 0, "Invalid left-hand side in assignment");
+        testScriptFailure("({a} += 0);", 5, "Invalid left-hand side in assignment");
+        testScriptFailure("[a] *= 0;", 4, "Invalid left-hand side in assignment");
+        testScriptFailure("0 /= 0;", 2, "Invalid left-hand side in assignment");
 
         // 12.14.5.1
         // It is a Syntax Error if LeftHandSideExpression is either an ObjectLiteral or an ArrayLiteral and if the lexical token sequence matched by LeftHandSideExpression cannot be parsed with no tokens left over using AssignmentPattern as the goal symbol.
-        testScriptFailure("[...{a: 0}] = 0;", 0, "Invalid left-hand side in assignment");
-        testScriptFailure("[...[0]] = 0;", 0, "Invalid left-hand side in assignment");
+        testScriptFailure("[...{a: 0}] = 0;", 12, "Invalid left-hand side in assignment");
+        testScriptFailure("[...[0]] = 0;", 9, "Invalid left-hand side in assignment");
         // It is a Syntax Error if LeftHandSideExpression is neither an ObjectLiteral nor an ArrayLiteral and IsValidSimpleAssignmentTarget(LeftHandSideExpression) is false.
-        testScriptFailure("[...0] = 0;", 0, "Invalid left-hand side in assignment");
-        testScriptFailure("[...new a] = 0;", 0, "Invalid left-hand side in assignment");
+        testScriptFailure("[...0] = 0;", 7, "Invalid left-hand side in assignment");
+        testScriptFailure("[...new a] = 0;", 11, "Invalid left-hand side in assignment");
 
         // 13.6.4.1
         // It is a Syntax Error if LeftHandSideExpression is either an ObjectLiteral or an ArrayLiteral and if the lexical token sequence matched by LeftHandSideExpression cannot be parsed with no tokens left over using AssignmentPattern as the goal symbol.
-        testScriptFailure("for({a: 0} in 0);", 0, "Invalid left-hand side in for-in");
-        testScriptFailure("for([0] in 0);", 0, "Invalid left-hand side in for-in");
-        testScriptFailure("for({a: 0} of 0);", 0, "Invalid left-hand side in for-of");
-        testScriptFailure("for([0] of 0);", 0, "Invalid left-hand side in for-of");
+        testScriptFailure("for({a: 0} in 0);", 11, "Invalid left-hand side in for-in");
+        testScriptFailure("for([0] in 0);", 8, "Invalid left-hand side in for-in");
+        testScriptFailure("for({a: 0} of 0);", 11, "Invalid left-hand side in for-of");
+        testScriptFailure("for([0] of 0);", 8, "Invalid left-hand side in for-of");
         // It is a Syntax Error if IsValidSimpleAssignmentTarget of LeftHandSideExpression is false.
-        testScriptFailure("for(0 in 0);", 0, "Invalid left-hand side in for-in");
-        testScriptFailure("for(0 of 0);", 0, "Invalid left-hand side in for-of");
+        testScriptFailure("for(0 in 0);", 6, "Invalid left-hand side in for-in");
+        testScriptFailure("for(0 of 0);", 6, "Invalid left-hand side in for-of");
         // It is a Syntax Error if the LeftHandSideExpression is CoverParenthesizedExpressionAndArrowParameterList : ( Expression ) and Expression derives a production that would produce a Syntax Error according to these rules if that production is substituted for LeftHandSideExpression. This rule is recursively applied.
-        testScriptFailure("for(({a: 0}) in 0);", 0, "Invalid left-hand side in for-in");
-        testScriptFailure("for(([0]) in 0);", 0, "Invalid left-hand side in for-in");
-        testScriptFailure("for(({a: 0}) of 0);", 0, "Invalid left-hand side in for-of");
-        testScriptFailure("for(([0]) of 0);", 0, "Invalid left-hand side in for-of");
-        testScriptFailure("for((0) in 0);", 0, "Invalid left-hand side in for-in");
-        testScriptFailure("for((0) of 0);", 0, "Invalid left-hand side in for-of");
+        testScriptFailure("for(({a: 0}) in 0);", 13, "Invalid left-hand side in for-in");
+        testScriptFailure("for(([0]) in 0);", 10, "Invalid left-hand side in for-in");
+        testScriptFailure("for(({a: 0}) of 0);", 13, "Invalid left-hand side in for-of");
+        testScriptFailure("for(([0]) of 0);", 10, "Invalid left-hand side in for-of");
+        testScriptFailure("for((0) in 0);", 8, "Invalid left-hand side in for-in");
+        testScriptFailure("for((0) of 0);", 8, "Invalid left-hand side in for-of");
     }
 
     @Test
     public void testEarlyTokenizationErrors() throws JsError {
         // 11.6.1.1
         // It is a Syntax Error if SV(UnicodeEscapeSequence) is neither the UTF16Encoding (10.1.1) of a single Unicode code point with the Unicode property “ID_Start” nor "$" or "_".
-        testScriptFailure("\\u0000", 0, "Unexpected end of input");
-        testScriptFailure("\\u{0}", 0, "Unexpected end of input");
+        testScriptFailure("\\u0000", 6, "Unexpected end of input");
+        testScriptFailure("\\u{0}", 5, "Unexpected end of input");
         // It is a Syntax Error if SV(UnicodeEscapeSequence) is neither the UTF16Encoding (10.1.1) of a single Unicode code point with the Unicode property “ID_Continue” nor "$" or "_" nor the UTF16Encoding of either <ZWNJ> or <ZWJ>.
-        testScriptFailure("a\\u0000", 0, "Unexpected end of input");
-        testScriptFailure("a\\u{0}", 0, "Unexpected end of input");
+        testScriptFailure("a\\u0000", 0, "Unexpected end of input"); // TODO this should error
+        testScriptFailure("a\\u{0}", 0, "Unexpected end of input"); // TODO this should error
 
         // 11.8.4.1
         // It is a Syntax Error if the MV of HexDigits > 1114111.
-        testScriptFailure("(\"\\u{110000}\")", 0, "Unexpected \"{\"");
-        testScriptFailure("(\"\\u{FFFFFFF}\")", 0, "Unexpected \"{\"");
+        testScriptFailure("(\"\\u{110000}\")", 4, "Unexpected \"{\"");
+        testScriptFailure("(\"\\u{FFFFFFF}\")", 4, "Unexpected \"{\"");
 
         // 11.8.5.1
         // It is a Syntax Error if IdentifierPart contains a Unicode escape sequence.
@@ -94,7 +94,7 @@ public class EarlyErrorsTest extends ParserTestCase {
     }
 
     @Test
-    public void testEarlyErrors() throws JsError {
+    public void testEarlyErrors() throws JsError { // TODO these should also have indices
 
         // 12.1.1
         // It is a Syntax Error if the code matched by this production is contained in strict code and the StringValue of Identifier is "arguments" or "eval".
