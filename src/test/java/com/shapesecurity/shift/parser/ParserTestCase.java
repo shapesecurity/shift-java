@@ -3,6 +3,7 @@ package com.shapesecurity.shift.parser;
 import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.functional.data.Maybe;
 import com.shapesecurity.shift.ast.*;
+import com.shapesecurity.shift.serialization.Serializer;
 
 import junit.framework.TestCase;
 
@@ -95,5 +96,22 @@ public abstract class ParserTestCase extends TestCase {
 
     public static void testModuleFailure(@NotNull String source, int index, @NotNull String error) {
         testModuleFailureML(source, 1, index, index, error);
+    }
+
+
+    public static void testScriptEarlyError(@NotNull String source, @NotNull String error) throws JsError {
+        Script script = Parser.parseScript(source);
+        //System.out.println(Serializer.serialize(script));
+        ImmutableList<EarlyError> errors = EarlyErrorChecker.validate(script);
+        assertEquals(1, errors.length);
+        assertEquals(error, errors.maybeHead().just().message);
+    }
+
+
+    public static void testModuleEarlyError(@NotNull String source, @NotNull String error) throws JsError {
+        Module module = Parser.parseModule(source);
+        ImmutableList<EarlyError> errors = EarlyErrorChecker.validate(module);
+        assertEquals(1, errors.length);
+        assertEquals(error, errors.maybeHead().just().message);
     }
 }

@@ -62,7 +62,6 @@ import com.shapesecurity.shift.ast.VariableDeclarationStatement;
 import com.shapesecurity.shift.ast.WhileStatement;
 import com.shapesecurity.shift.ast.WithStatement;
 import com.shapesecurity.shift.ast.operators.UnaryOperator;
-import com.shapesecurity.shift.codegen.CodeGen;
 import com.shapesecurity.shift.utils.Utils;
 import com.shapesecurity.shift.visitor.Director;
 import com.shapesecurity.shift.visitor.MonoidalReducer;
@@ -84,6 +83,9 @@ public class EarlyErrorChecker extends MonoidalReducer<EarlyErrorState> {
         return EarlyErrorChecker.extract(Director.reduceScript(new EarlyErrorChecker(), script));
     }
 
+    public static ImmutableList<EarlyError> validate(Module module) {
+        return EarlyErrorChecker.extract(Director.reduceModule(new EarlyErrorChecker(), module));
+    }
 
     private boolean isStrictFunctionBody(@NotNull FunctionBody functionBody) {
         return isStrictDirectives(functionBody.directives);
@@ -93,13 +95,13 @@ public class EarlyErrorChecker extends MonoidalReducer<EarlyErrorState> {
         return directives.exists(d -> d.rawValue.equals("use strict"));
     }
 
-    private <T> boolean containsDuplicates(@NotNull Iterable<T> list) { // TODO maybe should go elsewhere
-        HashTable<T, Unit> seen = HashTable.empty(); // aka set
-        for (T item : list) {
-            if (seen.get(item).isJust()) {
+    private boolean containsDuplicates(@NotNull String arr) { // TODO maybe should go elsewhere
+        HashTable<Character, Unit> seen = HashTable.empty(); // aka set
+        for (int i = 0, l = arr.length(); i<l; ++i) {
+            if (seen.get(arr.charAt(i)).isJust()) {
                 return true;
             }
-            seen = seen.put(item, Unit.unit);
+            seen = seen.put(arr.charAt(i), Unit.unit);
         }
         return false;
     }
@@ -147,7 +149,7 @@ public class EarlyErrorChecker extends MonoidalReducer<EarlyErrorState> {
                                 && ((StaticPropertyName) e.method.name).value.equals("constructor")
         );
 
-        ImmutableList<EarlyError> errors = elements.length > 1 ? elements.maybeTail().just().map(e -> new EarlyError(e, "Duplicate constructor method in class")) : ImmutableList.nil(); // todo message lives elsewhere
+        ImmutableList<EarlyError> errors = elements.length > 1 ? elements.maybeTail().just().map(ErrorMessages.DUPLICATE_CTOR::apply) : ImmutableList.nil();
         return s.addErrors(errors);
     }
 
@@ -182,7 +184,7 @@ public class EarlyErrorChecker extends MonoidalReducer<EarlyErrorState> {
     public EarlyErrorState reduceBindingIdentifier(@NotNull BindingIdentifier node) {
         EarlyErrorState s = new EarlyErrorState();
         if (Utils.isRestrictedWord(node.name) || Utils.isStrictModeReservedWord(node.name)) {
-            s = s.addStrictError(new EarlyError(node, "The identifier " + CodeGen.escapeStringLiteral(node.name) + " must not be in binding position in strict mode")); // TODO message lives elsewhere
+            s = s.addStrictError(ErrorMessages.BINDING_IDENTIFIER_STRICT.apply(node));
         }
         return s.bindName(node);
     }
@@ -229,9 +231,10 @@ public class EarlyErrorChecker extends MonoidalReducer<EarlyErrorState> {
         binding = binding.enforceDuplicateLexicallyDeclaredNames();
         final EarlyErrorState finalBinding = binding.enforceConflictingLexicallyDeclaredNames(body.previousLexicallyDeclaredNames);
         ImmutableList<EarlyError> errors = binding.lexicallyDeclaredNames.gatherValues().flatMap(bi ->
-                        finalBinding.forOfVarDeclaredNames.get(bi.name).map(EarlyErrorState.DUPLICATE_BINDING)
+                        body.forOfVarDeclaredNames.get(bi.name).map(ErrorMessages.DUPLICATE_BINDING)
         ); // TODO not quite the same as in JS, but should be correct
         EarlyErrorState s = super.reduceCatchClause(node, finalBinding, body);
+        s = s.addErrors(errors);
         return s.observeLexicalBoundary();
     }
 
@@ -256,10 +259,10 @@ public class EarlyErrorChecker extends MonoidalReducer<EarlyErrorState> {
     public EarlyErrorState reduceClassElement(@NotNull ClassElement node, @NotNull EarlyErrorState method) {
         EarlyErrorState s = super.reduceClassElement(node, method);
         if (!node.isStatic && isSpecialMethod(node.method)) {
-            s = s.addError(new EarlyError(node, "Constructors cannot be generators, getters or setters"));
+            s = s.addError(ErrorMessages.CTOR_SPECIAL.apply(node));
         }
         if (node.isStatic && node.method.name instanceof StaticPropertyName && ((StaticPropertyName) node.method.name).value.equals("prototype")) {
-            s = s.addError(new EarlyError(node, "Static class methods cannot be named \"prototype\""));
+            s = s.addError(ErrorMessages.PROTOTYPE_METHOD.apply(node));
         }
         return s;
     }
@@ -315,7 +318,7 @@ public class EarlyErrorChecker extends MonoidalReducer<EarlyErrorState> {
             @NotNull EarlyErrorState test) {
         EarlyErrorState s = super.reduceDoWhileStatement(node, body, test);
         if (isLabeledFunction(node.body)) {
-            s = s.addError(new EarlyError(node.body, "The body of a do-while statement must not be a labeled function declaration"));
+            s = s.addError(ErrorMessages.DO_WHILE_LABELED_FN.apply(node.body));
         }
         s = s.clearFreeContinueStatements();
         s = s.clearFreeBreakStatements();
@@ -371,7 +374,7 @@ public class EarlyErrorChecker extends MonoidalReducer<EarlyErrorState> {
         left = left.enforceConflictingLexicallyDeclaredNames(body.varDeclaredNames);
         EarlyErrorState s = super.reduceForInStatement(node, left, right, body);
         if (isLabeledFunction(node.body)) {
-            s = s.addError(new EarlyError(node.body, "The body of a for-in statement must not be a labeled function declaration"));
+            s = s.addError(ErrorMessages.FOR_IN_LABELED_FN.apply(node.body));
         }
         s = s.clearFreeContinueStatements();
         s = s.clearFreeBreakStatements();
@@ -387,7 +390,7 @@ public class EarlyErrorChecker extends MonoidalReducer<EarlyErrorState> {
         left = left.enforceConflictingLexicallyDeclaredNames(body.varDeclaredNames);
         EarlyErrorState s = super.reduceForOfStatement(node, left, right, body);
         if (isLabeledFunction(node.body)) {
-            s = s.addError(new EarlyError(node.body, "The body of a for-of statement must not be a labeled function declaration"));
+            s = s.addError(ErrorMessages.FOR_OF_LABELED_FN.apply(node.body));
         }
         s = s.clearFreeContinueStatements();
         s = s.clearFreeBreakStatements();
@@ -411,13 +414,13 @@ public class EarlyErrorChecker extends MonoidalReducer<EarlyErrorState> {
                 if (i2.kind.equals(VariableDeclarationKind.Const)) {
                     constErrors = i2.declarators
                             .filter(d -> d.init.isNothing())
-                            .map(d -> new EarlyError(d, "Constant lexical declarations must have an initialiser"));
+                            .map(ErrorMessages.CONST_WITHOUT_INIT::apply);
                 }
             }
         }
         s = s.addErrors(constErrors);
         if (isLabeledFunction(node.body)) {
-            s = s.addError(new EarlyError(node.body, "The body of a for statement must not be a labeled function declaration"));
+            s = s.addError(ErrorMessages.FOR_LABELED_FN.apply(node.body));
         }
         s = s.clearFreeContinueStatements();
         s = s.clearFreeBreakStatements();
@@ -460,7 +463,7 @@ public class EarlyErrorChecker extends MonoidalReducer<EarlyErrorState> {
 
         ImmutableList<EarlyError> errors = params.lexicallyDeclaredNames.values().flatMap(nodes ->
                         nodes.length > 1 ?
-                                nodes.maybeTail().just().map(EarlyErrorState.DUPLICATE_BINDING::apply)
+                                nodes.maybeTail().just().map(ErrorMessages.DUPLICATE_BINDING::apply)
                                 : ImmutableList.nil()
         );
         params = dupParamIsNonstrictError ? params.addErrors(errors) : params.addStrictErrors(errors);
@@ -488,7 +491,7 @@ public class EarlyErrorChecker extends MonoidalReducer<EarlyErrorState> {
 
         ImmutableList<EarlyError> errors = params.lexicallyDeclaredNames.values().flatMap(nodes ->
                         nodes.length > 1 ?
-                                nodes.maybeTail().just().map(EarlyErrorState.DUPLICATE_BINDING::apply)
+                                nodes.maybeTail().just().map(ErrorMessages.DUPLICATE_BINDING::apply)
                                 : ImmutableList.nil()
         );
         params = dupParamIsNonstrictError ? params.addErrors(errors) : params.addStrictErrors(errors);
@@ -528,7 +531,7 @@ public class EarlyErrorChecker extends MonoidalReducer<EarlyErrorState> {
     public EarlyErrorState reduceIdentifierExpression(@NotNull IdentifierExpression node) {
         EarlyErrorState s = new EarlyErrorState(); // todo maybe should be `identity`
         if (Utils.isStrictModeReservedWord(node.name)) {
-            s = s.addStrictError(new EarlyError(node, "The identifier " + CodeGen.escapeStringLiteral(node.name) + " must not be in expression position in strict mode"));
+            s = s.addStrictError(ErrorMessages.IDENTIFIER_EXP_STRICT.apply(node));
         }
         return s;
     }
@@ -541,17 +544,17 @@ public class EarlyErrorChecker extends MonoidalReducer<EarlyErrorState> {
             @NotNull EarlyErrorState consequent,
             @NotNull Maybe<EarlyErrorState> alternate) {
         if (isLabeledFunction(node.consequent)) {
-            consequent = consequent.addError(new EarlyError(node.consequent, "The consequent of an if statement must not be a labeled function declaration"));
+            consequent = consequent.addError(ErrorMessages.CONSEQUENT_IS_LABELED_FN.apply(node.consequent));
         }
         if (node.alternate.isJust() && isLabeledFunction(node.alternate.just())) {
-            alternate = alternate.map(t -> t.addError(new EarlyError(node.alternate.just(), "The alternate of an if statement must not be a labeled function declaration")));
+            alternate = alternate.map(t -> t.addError(ErrorMessages.ALTERNATE_IS_LABELED_FN.apply(node.alternate.just())));
         }
         if (node.consequent instanceof FunctionDeclaration) {
-            consequent = consequent.addStrictError(new EarlyError(node.consequent, "FunctionDeclarations in IfStatements are disallowed in strict mode"));
+            consequent = consequent.addStrictError(ErrorMessages.IF_FNDECL_STRICT.apply(node.consequent));
             consequent = consequent.observeLexicalBoundary();
         }
         if (node.alternate.isJust() && node.alternate.just() instanceof FunctionDeclaration) {
-            alternate = alternate.map(t -> t.addStrictError(new EarlyError(node.alternate.just(), "FunctionDeclarations in IfStatements are disallowed in strict mode")));
+            alternate = alternate.map(t -> t.addStrictError(ErrorMessages.IF_FNDECL_STRICT.apply(node.alternate.just())));
             alternate = alternate.map(EarlyErrorState::observeLexicalBoundary);
         }
         return super.reduceIfStatement(node, test, consequent, alternate);
@@ -580,13 +583,13 @@ public class EarlyErrorChecker extends MonoidalReducer<EarlyErrorState> {
     public EarlyErrorState reduceLabeledStatement(@NotNull LabeledStatement node, @NotNull EarlyErrorState body) {
         EarlyErrorState s = super.reduceLabeledStatement(node, body);
         if (node.label.equals("yield")) {
-            s = s.addStrictError(new EarlyError(node, "The identifier 'yield' must not be in label position in strict mode"));
+            s = s.addStrictError(ErrorMessages.YIELD_LABEL.apply(node));
         }
         if (s.usedLabelNames.get(node.label).isJust()) {
-            s = s.addError(new EarlyError(node, "Label " + CodeGen.escapeStringLiteral(node.label) + " has already been declared"));
+            s = s.addError(ErrorMessages.DUPLICATE_LABEL.apply(node));
         }
         if (node.body instanceof FunctionDeclaration) {
-            s = s.addStrictError(new EarlyError(node, "Labeled FunctionDeclarations are disallowed in strict mode"));
+            s = s.addStrictError(ErrorMessages.FN_LABEL_STRICT.apply(node));
         }
         s = isIterationStatement(node.body)
                 ? s.observeIterationLabel(node)
@@ -598,8 +601,8 @@ public class EarlyErrorChecker extends MonoidalReducer<EarlyErrorState> {
     @Override
     public EarlyErrorState reduceLiteralRegExpExpression(@NotNull LiteralRegExpExpression node) {
         EarlyErrorState s = new EarlyErrorState(); // todo `identity`?
-        if (node.flags.matches(".*[igmyu].*") || containsDuplicates(Arrays.asList(node.flags.toCharArray()))) {
-            s = s.addError(new EarlyError(node, "Invalid regular expression flags"));
+        if (node.flags.matches(".*[^igmyu].*") || containsDuplicates(node.flags)) {
+            s = s.addError(ErrorMessages.INVALID_REGEX_FLAG_MACHINE.apply(node));
         }
         return s;
     }
@@ -638,16 +641,16 @@ public class EarlyErrorChecker extends MonoidalReducer<EarlyErrorState> {
         EarlyErrorState s2 = s.enforceConflictingLexicallyDeclaredNames(s.varDeclaredNames); // effectively final, for lambdas, because Java is godawful
         ImmutableList<EarlyError> errors = s2.exportedNames.entries().flatMap(p ->
                         p.b.length > 1 ?
-                                p.b.maybeTail().just().map(dupeNode -> new EarlyError(dupeNode, "Duplicate export " + CodeGen.escapeStringLiteral(p.a)))
+                                p.b.maybeTail().just().map(dupeNode -> ErrorMessages.DUPLICATE_EXPORT.apply(dupeNode, p.a))
                                 : ImmutableList.nil()
         );
         errors = errors.append(
                 s2.exportedBindings.entries()
                         .filter(p -> !p.a.equals("*default*") && s2.lexicallyDeclaredNames.get(p.a).isEmpty() && s2.varDeclaredNames.get(p.a).isEmpty())
-                        .flatMap(p -> p.b.map(undeclaredNode -> new EarlyError(undeclaredNode, "Exported binding " + CodeGen.escapeStringLiteral(p.a) + " is not declared")))
+                        .flatMap(p -> p.b.map(undeclaredNode -> ErrorMessages.UNDECLARED_EXPORT.apply(undeclaredNode, p.a)))
         );
         errors = errors.append(
-                s2.newTargetExpressions.map(n -> new EarlyError(n, "new.target must be within function (but not arrow expression) code"))
+                s2.newTargetExpressions.map(ErrorMessages.NEW_TARGET_TOP::apply)
         ); // TODO is there a reason this isn't an EarlyErrorState method?
         s = s2.addErrors(errors);
 
@@ -677,7 +680,7 @@ public class EarlyErrorChecker extends MonoidalReducer<EarlyErrorState> {
         s = s.enforceSuperCallExpressionsInConstructorMethod();
         ImmutableList<ObjectProperty> protos = node.properties.filter(p -> p instanceof DataProperty && ((DataProperty) p).name instanceof StaticPropertyName && ((StaticPropertyName) ((DataProperty) p).name).value.equals("__proto__"));
         s = s.addErrors(
-                protos.maybeTail().orJust(ImmutableList.nil()).map(n -> new EarlyError(n, "Duplicate __proto__ property in object literal not allowed"))
+                protos.maybeTail().orJust(ImmutableList.nil()).map(ErrorMessages.DUPLICATE_PROTO::apply)
         );
         return s;
     }
@@ -688,7 +691,7 @@ public class EarlyErrorChecker extends MonoidalReducer<EarlyErrorState> {
         EarlyErrorState s = super.reduceScript(node, directives, statements);
         s = s.enforceDuplicateLexicallyDeclaredNames();
         s = s.enforceConflictingLexicallyDeclaredNames(s.varDeclaredNames);
-        s.addErrors(s.newTargetExpressions.map(n -> new EarlyError(n, "new.target must be within function (but not arrow expression) code")));
+        s = s.addErrors(s.newTargetExpressions.map(ErrorMessages.NEW_TARGET_TOP::apply));
         s = s.enforceFreeContinueStatementErrors();
         s = s.enforceFreeLabeledContinueStatementErrors();
         s = s.enforceFreeBreakStatementErrors();
@@ -776,7 +779,7 @@ public class EarlyErrorChecker extends MonoidalReducer<EarlyErrorState> {
     public EarlyErrorState reduceUnaryExpression(@NotNull UnaryExpression node, @NotNull EarlyErrorState operand) {
         EarlyErrorState s = super.reduceUnaryExpression(node, operand);
         if (node.operator.equals(UnaryOperator.Delete) && node.operand instanceof IdentifierExpression) {
-            s = s.addStrictError(new EarlyError(node, "Identifier expressions must not be deleted in strict mode"));
+            s = s.addStrictError(ErrorMessages.DELETE_IDENTIFIER_EXP_STRICT.apply(node));
         }
         return s;
     }
@@ -786,7 +789,7 @@ public class EarlyErrorChecker extends MonoidalReducer<EarlyErrorState> {
     public EarlyErrorState reduceUpdateExpression(@NotNull UpdateExpression node, @NotNull EarlyErrorState operand) {
         EarlyErrorState s = super.reduceUpdateExpression(node, operand);
         if (!isValidSimpleAssignmentTarget(node.operand)) {
-            s = s.addError(new EarlyError(node, "Increment/decrement target must be an identifier or member expression"));
+            s = s.addError(ErrorMessages.UPDATE_NONSIMPLE.apply(node));
         }
         s = s.clearBoundNames();
         return s;
@@ -801,9 +804,9 @@ public class EarlyErrorChecker extends MonoidalReducer<EarlyErrorState> {
             case Const:
             case Let:
                 s = s.observeLexicalDeclaration();
-                s.addErrors(
+                s = s.addErrors(
                         s.lexicallyDeclaredNames.get("let")
-                                .map(bi -> new EarlyError(bi, "Lexical declarations must not have a binding named \"let\""))
+                                .map(ErrorMessages.LEXICAL_LET_BINDING::apply)
                 );
                 break;
             case Var:
@@ -822,7 +825,7 @@ public class EarlyErrorChecker extends MonoidalReducer<EarlyErrorState> {
         if (node.declaration.kind.equals(VariableDeclarationKind.Const)) {
             s = s.addErrors(
                     node.declaration.declarators.filter(d -> d.init.isNothing())
-                            .map(d -> new EarlyError(d, "Constant lexical declarations must have an initialiser"))
+                            .map(ErrorMessages.CONST_WITHOUT_INIT::apply)
             );
         }
         return s;
@@ -836,7 +839,7 @@ public class EarlyErrorChecker extends MonoidalReducer<EarlyErrorState> {
             @NotNull EarlyErrorState body) {
         EarlyErrorState s = super.reduceWhileStatement(node, test, body);
         if (isLabeledFunction(node.body)) {
-            s = s.addError(new EarlyError(node.body, "The body of a while statement must not be a labeled function declaration"));
+            s = s.addError(ErrorMessages.WHILE_LABELED_FN.apply(node.body));
         }
         s = s.clearFreeContinueStatements().clearFreeBreakStatements();
         return s;
@@ -850,9 +853,9 @@ public class EarlyErrorChecker extends MonoidalReducer<EarlyErrorState> {
             @NotNull EarlyErrorState body) {
         EarlyErrorState s = super.reduceWithStatement(node, object, body);
         if (isLabeledFunction(node.body)) {
-            s = s.addError(new EarlyError(node.body, "The body of a with statement must not be a labeled function declaration"));
+            s = s.addError(ErrorMessages.WITH_LABELED_FN.apply(node.body));
         }
-        s = s.addStrictError(new EarlyError(node, "Strict mode code must not include a with statement"));
+        s = s.addStrictError(ErrorMessages.WITH_STRICT.apply(node));
         return s;
     }
 }

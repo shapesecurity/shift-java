@@ -14,23 +14,34 @@ import com.shapesecurity.shift.ast.MemberExpression;
 import com.shapesecurity.shift.ast.NewTargetExpression;
 import com.shapesecurity.shift.ast.Node;
 import com.shapesecurity.shift.ast.Super;
-import com.shapesecurity.shift.codegen.CodeGen;
 
 import org.jetbrains.annotations.NotNull;
 
 public class EarlyErrorState {
-    public static final F<Super, EarlyError> SUPERCALL_ERROR = node -> new EarlyError(node, "Calls to super must be in the \"constructor\" method of a class expression or class declaration that has a superclass");
-    public static final F<MemberExpression, EarlyError> SUPERPROPERTY_ERROR = node -> new EarlyError(node, "Member access on super must be in a method");
-    public static final F<BindingIdentifier, EarlyError> DUPLICATE_BINDING = node -> new EarlyError(node, "Duplicate binding " + CodeGen.escapeStringLiteral(node.name));
-    public static final F<ContinueStatement, EarlyError> FREE_CONTINUE = node -> new EarlyError(node, "Continue statement must be nested within an iteration statement");
-    public static final F<ContinueStatement, EarlyError> UNBOUND_CONTINUE = node -> new EarlyError(node, "Continue statement must be nested within an iteration statement with label " + CodeGen.escapeStringLiteral(node.label.just()));
-    public static final F<BreakStatement, EarlyError> FREE_BREAK = node -> new EarlyError(node, "Break statement must be nested within an iteration statement or a switch statement");
-    public static final F<BreakStatement, EarlyError> UNBOUND_BREAK = node -> new EarlyError(node, "Break statement must be nested within a statement with label " + CodeGen.escapeStringLiteral(node.label.just()));
 
     public static final Monoid<EarlyErrorState> MONOID = new EarlyErrorContextMonoid();
 
     // Fully saturated constructor.
-    public EarlyErrorState(@NotNull ImmutableList<EarlyError> errors, @NotNull ImmutableList<EarlyError> strictErrors, @NotNull HashTable<String, LabeledStatement> usedLabelNames, @NotNull ImmutableList<BreakStatement> freeBreakStatements, @NotNull ImmutableList<ContinueStatement> freeContinueStatements, @NotNull MultiHashTable<String, BreakStatement> freeLabeledBreakStatements, @NotNull MultiHashTable<String, ContinueStatement> freeLabeledContinueStatements, @NotNull ImmutableList<NewTargetExpression> newTargetExpressions, @NotNull MultiHashTable<String, BindingIdentifier> boundNames, @NotNull MultiHashTable<String, BindingIdentifier> previousLexicallyDeclaredNames, @NotNull MultiHashTable<String, BindingIdentifier> lexicallyDeclaredNames, @NotNull MultiHashTable<String, BindingIdentifier> functionDeclarationNames, @NotNull MultiHashTable<String, BindingIdentifier> varDeclaredNames, @NotNull MultiHashTable<String, BindingIdentifier> forOfVarDeclaredNames, @NotNull MultiHashTable<String, Node> exportedNames, @NotNull MultiHashTable<String, Node> exportedBindings, @NotNull ImmutableList<Super> superCallExpressions, @NotNull ImmutableList<Super> superCallExpressionsInConstructorMethod, @NotNull ImmutableList<MemberExpression> superPropertyExpressions) {
+    public EarlyErrorState(
+            @NotNull ImmutableList<EarlyError> errors,
+            @NotNull ImmutableList<EarlyError> strictErrors,
+            @NotNull HashTable<String, LabeledStatement> usedLabelNames,
+            @NotNull ImmutableList<BreakStatement> freeBreakStatements,
+            @NotNull ImmutableList<ContinueStatement> freeContinueStatements,
+            @NotNull MultiHashTable<String, BreakStatement> freeLabeledBreakStatements,
+            @NotNull MultiHashTable<String, ContinueStatement> freeLabeledContinueStatements,
+            @NotNull ImmutableList<NewTargetExpression> newTargetExpressions,
+            @NotNull MultiHashTable<String, BindingIdentifier> boundNames,
+            @NotNull MultiHashTable<String, BindingIdentifier> previousLexicallyDeclaredNames,
+            @NotNull MultiHashTable<String, BindingIdentifier> lexicallyDeclaredNames,
+            @NotNull MultiHashTable<String, BindingIdentifier> functionDeclarationNames,
+            @NotNull MultiHashTable<String, BindingIdentifier> varDeclaredNames,
+            @NotNull MultiHashTable<String, BindingIdentifier> forOfVarDeclaredNames,
+            @NotNull MultiHashTable<String, Node> exportedNames,
+            @NotNull MultiHashTable<String, Node> exportedBindings,
+            @NotNull ImmutableList<Super> superCallExpressions,
+            @NotNull ImmutableList<Super> superCallExpressionsInConstructorMethod,
+            @NotNull ImmutableList<MemberExpression> superPropertyExpressions) {
         this.errors = errors;
         this.strictErrors = strictErrors;
         this.usedLabelNames = usedLabelNames;
@@ -65,8 +76,8 @@ public class EarlyErrorState {
         this.boundNames = MultiHashTable.empty();
         this.previousLexicallyDeclaredNames = MultiHashTable.empty();
         this.lexicallyDeclaredNames = MultiHashTable.empty();
-        this.varDeclaredNames = MultiHashTable.empty();
         this.functionDeclarationNames = MultiHashTable.empty();
+        this.varDeclaredNames = MultiHashTable.empty();
         this.forOfVarDeclaredNames = MultiHashTable.empty();
         this.exportedNames = MultiHashTable.empty();
         this.exportedBindings = MultiHashTable.empty();
@@ -88,8 +99,8 @@ public class EarlyErrorState {
         this.boundNames = a.boundNames.merge(b.boundNames);
         this.previousLexicallyDeclaredNames = a.previousLexicallyDeclaredNames.merge(b.previousLexicallyDeclaredNames);
         this.lexicallyDeclaredNames = a.lexicallyDeclaredNames.merge(b.lexicallyDeclaredNames);
-        this.varDeclaredNames = a.varDeclaredNames.merge(b.varDeclaredNames);
         this.functionDeclarationNames = a.functionDeclarationNames.merge(b.functionDeclarationNames);
+        this.varDeclaredNames = a.varDeclaredNames.merge(b.varDeclaredNames);
         this.forOfVarDeclaredNames = a.forOfVarDeclaredNames.merge(b.forOfVarDeclaredNames);
         this.exportedNames = a.exportedNames.merge(b.exportedNames);
         this.exportedBindings = a.exportedBindings.merge(b.exportedBindings);
@@ -178,8 +189,8 @@ public class EarlyErrorState {
                 this.boundNames,
                 this.previousLexicallyDeclaredNames,
                 this.lexicallyDeclaredNames,
-                this.varDeclaredNames,
                 this.functionDeclarationNames,
+                this.varDeclaredNames,
                 this.forOfVarDeclaredNames,
                 this.exportedNames,
                 this.exportedBindings,
@@ -203,8 +214,8 @@ public class EarlyErrorState {
                 this.boundNames,
                 this.previousLexicallyDeclaredNames,
                 this.lexicallyDeclaredNames,
-                this.varDeclaredNames,
                 this.functionDeclarationNames,
+                this.varDeclaredNames,
                 this.forOfVarDeclaredNames,
                 this.exportedNames,
                 this.exportedBindings,
@@ -228,8 +239,8 @@ public class EarlyErrorState {
                 this.boundNames,
                 this.previousLexicallyDeclaredNames,
                 this.lexicallyDeclaredNames,
-                this.varDeclaredNames,
                 this.functionDeclarationNames,
+                this.varDeclaredNames,
                 this.forOfVarDeclaredNames,
                 this.exportedNames,
                 this.exportedBindings,
@@ -253,8 +264,8 @@ public class EarlyErrorState {
                 this.boundNames,
                 this.previousLexicallyDeclaredNames,
                 this.lexicallyDeclaredNames,
-                this.varDeclaredNames,
                 this.functionDeclarationNames,
+                this.varDeclaredNames,
                 this.forOfVarDeclaredNames,
                 this.exportedNames,
                 this.exportedBindings,
@@ -278,8 +289,8 @@ public class EarlyErrorState {
                 this.boundNames,
                 this.previousLexicallyDeclaredNames,
                 this.lexicallyDeclaredNames,
-                this.varDeclaredNames,
                 this.functionDeclarationNames,
+                this.varDeclaredNames,
                 this.forOfVarDeclaredNames,
                 this.exportedNames,
                 this.exportedBindings,
@@ -303,8 +314,8 @@ public class EarlyErrorState {
                 this.boundNames,
                 this.previousLexicallyDeclaredNames,
                 this.lexicallyDeclaredNames,
-                this.varDeclaredNames,
                 this.functionDeclarationNames,
+                this.varDeclaredNames,
                 this.forOfVarDeclaredNames,
                 this.exportedNames,
                 this.exportedBindings,
@@ -317,7 +328,7 @@ public class EarlyErrorState {
     @NotNull
     public EarlyErrorState enforceFreeBreakStatementErrors() {
         return new EarlyErrorState(
-                this.errors.append(this.freeBreakStatements.map(FREE_BREAK)),
+                this.errors.append(this.freeBreakStatements.map(ErrorMessages.FREE_BREAK)),
                 this.strictErrors,
                 this.usedLabelNames,
                 ImmutableList.nil(),
@@ -328,8 +339,8 @@ public class EarlyErrorState {
                 this.boundNames,
                 this.previousLexicallyDeclaredNames,
                 this.lexicallyDeclaredNames,
-                this.varDeclaredNames,
                 this.functionDeclarationNames,
+                this.varDeclaredNames,
                 this.forOfVarDeclaredNames,
                 this.exportedNames,
                 this.exportedBindings,
@@ -342,7 +353,7 @@ public class EarlyErrorState {
     @NotNull
     public EarlyErrorState enforceFreeLabeledBreakStatementErrors() {
         return new EarlyErrorState(
-                this.errors.append(this.freeLabeledBreakStatements.gatherValues().map(UNBOUND_BREAK)),
+                this.errors.append(this.freeLabeledBreakStatements.gatherValues().map(ErrorMessages.UNBOUND_BREAK)),
                 this.strictErrors,
                 this.usedLabelNames,
                 this.freeBreakStatements,
@@ -353,8 +364,8 @@ public class EarlyErrorState {
                 this.boundNames,
                 this.previousLexicallyDeclaredNames,
                 this.lexicallyDeclaredNames,
-                this.varDeclaredNames,
                 this.functionDeclarationNames,
+                this.varDeclaredNames,
                 this.forOfVarDeclaredNames,
                 this.exportedNames,
                 this.exportedBindings,
@@ -367,7 +378,7 @@ public class EarlyErrorState {
     @NotNull
     public EarlyErrorState enforceFreeContinueStatementErrors() {
         return new EarlyErrorState(
-                this.errors.append(this.freeContinueStatements.map(FREE_CONTINUE)),
+                this.errors.append(this.freeContinueStatements.map(ErrorMessages.FREE_CONTINUE)),
                 this.strictErrors,
                 this.usedLabelNames,
                 this.freeBreakStatements,
@@ -378,8 +389,8 @@ public class EarlyErrorState {
                 this.boundNames,
                 this.previousLexicallyDeclaredNames,
                 this.lexicallyDeclaredNames,
-                this.varDeclaredNames,
                 this.functionDeclarationNames,
+                this.varDeclaredNames,
                 this.forOfVarDeclaredNames,
                 this.exportedNames,
                 this.exportedBindings,
@@ -392,7 +403,7 @@ public class EarlyErrorState {
     @NotNull
     public EarlyErrorState enforceFreeLabeledContinueStatementErrors() {
         return new EarlyErrorState(
-                this.errors.append(this.freeLabeledContinueStatements.gatherValues().map(UNBOUND_CONTINUE)),
+                this.errors.append(this.freeLabeledContinueStatements.gatherValues().map(ErrorMessages.UNBOUND_CONTINUE)),
                 this.strictErrors,
                 this.usedLabelNames,
                 this.freeBreakStatements,
@@ -403,8 +414,8 @@ public class EarlyErrorState {
                 this.boundNames,
                 this.previousLexicallyDeclaredNames,
                 this.lexicallyDeclaredNames,
-                this.varDeclaredNames,
                 this.functionDeclarationNames,
+                this.varDeclaredNames,
                 this.forOfVarDeclaredNames,
                 this.exportedNames,
                 this.exportedBindings,
@@ -428,8 +439,8 @@ public class EarlyErrorState {
                 this.boundNames,
                 this.previousLexicallyDeclaredNames,
                 this.lexicallyDeclaredNames,
-                this.varDeclaredNames,
                 this.functionDeclarationNames,
+                this.varDeclaredNames,
                 this.forOfVarDeclaredNames,
                 this.exportedNames,
                 this.exportedBindings,
@@ -453,8 +464,8 @@ public class EarlyErrorState {
                 this.boundNames,
                 this.previousLexicallyDeclaredNames,
                 this.lexicallyDeclaredNames,
-                this.varDeclaredNames,
                 this.functionDeclarationNames,
+                this.varDeclaredNames,
                 this.forOfVarDeclaredNames,
                 this.exportedNames,
                 this.exportedBindings,
@@ -478,8 +489,8 @@ public class EarlyErrorState {
                 this.boundNames,
                 this.previousLexicallyDeclaredNames,
                 this.lexicallyDeclaredNames,
-                this.varDeclaredNames,
                 this.functionDeclarationNames,
+                this.varDeclaredNames,
                 this.forOfVarDeclaredNames,
                 this.exportedNames,
                 this.exportedBindings,
@@ -503,8 +514,8 @@ public class EarlyErrorState {
                 this.boundNames,
                 this.previousLexicallyDeclaredNames,
                 this.lexicallyDeclaredNames,
-                this.varDeclaredNames,
                 this.functionDeclarationNames,
+                this.varDeclaredNames,
                 this.forOfVarDeclaredNames,
                 this.exportedNames,
                 this.exportedBindings,
@@ -528,8 +539,8 @@ public class EarlyErrorState {
                 this.boundNames,
                 this.previousLexicallyDeclaredNames,
                 this.lexicallyDeclaredNames,
-                this.varDeclaredNames,
                 this.functionDeclarationNames,
+                this.varDeclaredNames,
                 this.forOfVarDeclaredNames,
                 this.exportedNames,
                 this.exportedBindings,
@@ -553,8 +564,8 @@ public class EarlyErrorState {
                 this.boundNames,
                 this.previousLexicallyDeclaredNames,
                 this.lexicallyDeclaredNames,
-                this.varDeclaredNames,
                 this.functionDeclarationNames,
+                this.varDeclaredNames,
                 this.forOfVarDeclaredNames,
                 this.exportedNames,
                 this.exportedBindings,
@@ -567,7 +578,7 @@ public class EarlyErrorState {
     @NotNull
     public EarlyErrorState enforceSuperCallExpressions() {
         return new EarlyErrorState(
-                this.errors.append(this.superCallExpressions.map(SUPERCALL_ERROR)).append(this.superCallExpressionsInConstructorMethod.map(SUPERCALL_ERROR)),
+                this.errors.append(this.superCallExpressions.map(ErrorMessages.SUPERCALL_ERROR)).append(this.superCallExpressionsInConstructorMethod.map(ErrorMessages.SUPERCALL_ERROR)),
                 this.strictErrors,
                 this.usedLabelNames,
                 this.freeBreakStatements,
@@ -578,8 +589,8 @@ public class EarlyErrorState {
                 this.boundNames,
                 this.previousLexicallyDeclaredNames,
                 this.lexicallyDeclaredNames,
-                this.varDeclaredNames,
                 this.functionDeclarationNames,
+                this.varDeclaredNames,
                 this.forOfVarDeclaredNames,
                 this.exportedNames,
                 this.exportedBindings,
@@ -592,7 +603,7 @@ public class EarlyErrorState {
     @NotNull
     public EarlyErrorState enforceSuperCallExpressionsInConstructorMethod() {
         return new EarlyErrorState(
-                this.errors.append(this.superCallExpressionsInConstructorMethod.map(SUPERCALL_ERROR)),
+                this.errors.append(this.superCallExpressionsInConstructorMethod.map(ErrorMessages.SUPERCALL_ERROR)),
                 this.strictErrors,
                 this.usedLabelNames,
                 this.freeBreakStatements,
@@ -603,8 +614,8 @@ public class EarlyErrorState {
                 this.boundNames,
                 this.previousLexicallyDeclaredNames,
                 this.lexicallyDeclaredNames,
-                this.varDeclaredNames,
                 this.functionDeclarationNames,
+                this.varDeclaredNames,
                 this.forOfVarDeclaredNames,
                 this.exportedNames,
                 this.exportedBindings,
@@ -628,8 +639,8 @@ public class EarlyErrorState {
                 this.boundNames,
                 this.previousLexicallyDeclaredNames,
                 this.lexicallyDeclaredNames,
-                this.varDeclaredNames,
                 this.functionDeclarationNames,
+                this.varDeclaredNames,
                 this.forOfVarDeclaredNames,
                 this.exportedNames,
                 this.exportedBindings,
@@ -653,8 +664,8 @@ public class EarlyErrorState {
                 this.boundNames,
                 this.previousLexicallyDeclaredNames,
                 this.lexicallyDeclaredNames,
-                this.varDeclaredNames,
                 this.functionDeclarationNames,
+                this.varDeclaredNames,
                 this.forOfVarDeclaredNames,
                 this.exportedNames,
                 this.exportedBindings,
@@ -667,7 +678,7 @@ public class EarlyErrorState {
     @NotNull
     public EarlyErrorState enforceSuperPropertyExpressions() {
         return new EarlyErrorState(
-                this.errors.append(this.superPropertyExpressions.map(SUPERPROPERTY_ERROR)),
+                this.errors.append(this.superPropertyExpressions.map(ErrorMessages.SUPERPROPERTY_ERROR)),
                 this.strictErrors,
                 this.usedLabelNames,
                 this.freeBreakStatements,
@@ -678,8 +689,8 @@ public class EarlyErrorState {
                 this.boundNames,
                 this.previousLexicallyDeclaredNames,
                 this.lexicallyDeclaredNames,
-                this.varDeclaredNames,
                 this.functionDeclarationNames,
+                this.varDeclaredNames,
                 this.forOfVarDeclaredNames,
                 this.exportedNames,
                 this.exportedBindings,
@@ -703,8 +714,8 @@ public class EarlyErrorState {
                 this.boundNames,
                 this.previousLexicallyDeclaredNames,
                 this.lexicallyDeclaredNames,
-                this.varDeclaredNames,
                 this.functionDeclarationNames,
+                this.varDeclaredNames,
                 this.forOfVarDeclaredNames,
                 this.exportedNames,
                 this.exportedBindings,
@@ -728,8 +739,8 @@ public class EarlyErrorState {
                 this.boundNames,
                 this.previousLexicallyDeclaredNames,
                 this.lexicallyDeclaredNames,
-                this.varDeclaredNames,
                 this.functionDeclarationNames,
+                this.varDeclaredNames,
                 this.forOfVarDeclaredNames,
                 this.exportedNames,
                 this.exportedBindings,
@@ -753,8 +764,8 @@ public class EarlyErrorState {
                 this.boundNames.put(bindingIdentifier.name, bindingIdentifier),
                 this.previousLexicallyDeclaredNames,
                 this.lexicallyDeclaredNames,
-                this.varDeclaredNames,
                 this.functionDeclarationNames,
+                this.varDeclaredNames,
                 this.forOfVarDeclaredNames,
                 this.exportedNames,
                 this.exportedBindings,
@@ -778,8 +789,8 @@ public class EarlyErrorState {
                 MultiHashTable.empty(),
                 this.previousLexicallyDeclaredNames,
                 this.lexicallyDeclaredNames,
-                this.varDeclaredNames,
                 this.functionDeclarationNames,
+                this.varDeclaredNames,
                 this.forOfVarDeclaredNames,
                 this.exportedNames,
                 this.exportedBindings,
@@ -803,8 +814,8 @@ public class EarlyErrorState {
                 MultiHashTable.empty(),
                 this.previousLexicallyDeclaredNames,
                 this.lexicallyDeclaredNames.merge(this.boundNames),
-                this.varDeclaredNames,
                 this.functionDeclarationNames,
+                this.varDeclaredNames,
                 this.forOfVarDeclaredNames,
                 this.exportedNames,
                 this.exportedBindings,
@@ -828,8 +839,8 @@ public class EarlyErrorState {
                 this.boundNames,
                 this.lexicallyDeclaredNames,
                 MultiHashTable.empty(),
-                this.varDeclaredNames,
                 MultiHashTable.empty(),
+                this.varDeclaredNames,
                 this.forOfVarDeclaredNames,
                 this.exportedNames,
                 this.exportedBindings,
@@ -842,7 +853,7 @@ public class EarlyErrorState {
     @NotNull
     public EarlyErrorState enforceDuplicateLexicallyDeclaredNames() {
         HashTable<String, ImmutableList<EarlyError>> errorMap = this.lexicallyDeclaredNames.toHashTable(
-                l -> ((l.length > 1) ? l.maybeTail().just().map(DUPLICATE_BINDING) : ImmutableList.nil())
+                l -> ((l.length > 1) ? l.maybeTail().just().map(ErrorMessages.DUPLICATE_BINDING) : ImmutableList.nil())
         );
         ImmutableList<EarlyError> dupErrors = errorMap.entries().flatMap(p -> p.b); // apparently this is too much for the type inference to do in one step
         return new EarlyErrorState(
@@ -857,8 +868,8 @@ public class EarlyErrorState {
                 this.boundNames,
                 this.previousLexicallyDeclaredNames,
                 this.lexicallyDeclaredNames, // TODO ensure this shouldn't be cleared per JS early error checker
-                this.varDeclaredNames,
                 this.functionDeclarationNames,
+                this.varDeclaredNames,
                 this.forOfVarDeclaredNames,
                 this.exportedNames,
                 this.exportedBindings,
@@ -871,7 +882,7 @@ public class EarlyErrorState {
     @NotNull
     public EarlyErrorState enforceConflictingLexicallyDeclaredNames(@NotNull MultiHashTable<String, BindingIdentifier> otherNames) {
         HashTable<String, ImmutableList<EarlyError>> errorMap = this.lexicallyDeclaredNames.toHashTable(
-                (k, vs) -> (otherNames.get(k).isNotEmpty() ? vs.map(DUPLICATE_BINDING) : ImmutableList.nil())
+                (k, vs) -> (otherNames.get(k).isNotEmpty() ? vs.map(ErrorMessages.DUPLICATE_BINDING) : ImmutableList.nil())
         );
         ImmutableList<EarlyError> dupErrors = errorMap.entries().flatMap(p -> p.b); // apparently this is too much for the type inference to do in one step
         return new EarlyErrorState(
@@ -886,8 +897,8 @@ public class EarlyErrorState {
                 this.boundNames,
                 this.previousLexicallyDeclaredNames,
                 this.lexicallyDeclaredNames, // TODO ensure this shouldn't be cleared per JS early error checker
-                this.varDeclaredNames,
                 this.functionDeclarationNames,
+                this.varDeclaredNames,
                 this.forOfVarDeclaredNames,
                 this.exportedNames,
                 this.exportedBindings,
@@ -900,6 +911,7 @@ public class EarlyErrorState {
     @NotNull
     public EarlyErrorState observeFunctionDeclaration() {
         EarlyErrorState res = this.observeVarBoundary();
+        MultiHashTable<String, BindingIdentifier> newFnDeclaredNames = res.functionDeclarationNames.merge(res.boundNames);
         return new EarlyErrorState(
                 res.errors,
                 res.strictErrors,
@@ -912,8 +924,8 @@ public class EarlyErrorState {
                 MultiHashTable.empty(),
                 res.previousLexicallyDeclaredNames,
                 res.lexicallyDeclaredNames,
+                newFnDeclaredNames,
                 res.varDeclaredNames,
-                res.functionDeclarationNames.merge(res.boundNames),
                 res.forOfVarDeclaredNames,
                 res.exportedNames,
                 res.exportedBindings,
@@ -937,8 +949,8 @@ public class EarlyErrorState {
                 this.boundNames,
                 this.previousLexicallyDeclaredNames,
                 this.lexicallyDeclaredNames.merge(this.functionDeclarationNames),
-                this.varDeclaredNames,
                 MultiHashTable.empty(),
+                this.varDeclaredNames,
                 this.forOfVarDeclaredNames,
                 this.exportedNames,
                 this.exportedBindings,
@@ -962,8 +974,8 @@ public class EarlyErrorState {
                 MultiHashTable.empty(),
                 this.previousLexicallyDeclaredNames,
                 this.lexicallyDeclaredNames,
-                this.varDeclaredNames.merge(this.boundNames),
                 this.functionDeclarationNames,
+                this.varDeclaredNames.merge(this.boundNames),
                 this.forOfVarDeclaredNames,
                 this.exportedNames,
                 this.exportedBindings,
@@ -987,8 +999,8 @@ public class EarlyErrorState {
                 this.boundNames,
                 this.previousLexicallyDeclaredNames,
                 this.lexicallyDeclaredNames,
-                this.varDeclaredNames,
                 this.functionDeclarationNames,
+                this.varDeclaredNames,
                 this.forOfVarDeclaredNames.merge(this.varDeclaredNames),
                 this.exportedNames,
                 this.exportedBindings,
@@ -1037,8 +1049,8 @@ public class EarlyErrorState {
                 this.boundNames,
                 this.previousLexicallyDeclaredNames,
                 this.lexicallyDeclaredNames,
-                this.varDeclaredNames,
                 this.functionDeclarationNames,
+                this.varDeclaredNames,
                 this.forOfVarDeclaredNames,
                 this.exportedNames.put(name, node),
                 this.exportedBindings,
@@ -1062,8 +1074,8 @@ public class EarlyErrorState {
                 this.boundNames,
                 this.previousLexicallyDeclaredNames,
                 this.lexicallyDeclaredNames,
-                this.varDeclaredNames,
                 this.functionDeclarationNames,
+                this.varDeclaredNames,
                 this.forOfVarDeclaredNames,
                 this.exportedNames.merge(this.lexicallyDeclaredNames.mapValues(bi -> (Node) bi)).merge(this.varDeclaredNames.mapValues(bi -> (Node) bi)),
                 this.exportedBindings.merge(this.lexicallyDeclaredNames.mapValues(bi -> (Node) bi)).merge(this.varDeclaredNames.mapValues(bi -> (Node) bi)),
@@ -1087,8 +1099,8 @@ public class EarlyErrorState {
                 this.boundNames,
                 this.previousLexicallyDeclaredNames,
                 this.lexicallyDeclaredNames,
-                this.varDeclaredNames,
                 this.functionDeclarationNames,
+                this.varDeclaredNames,
                 this.forOfVarDeclaredNames,
                 this.exportedNames,
                 this.exportedBindings.put(name, node),
@@ -1112,8 +1124,8 @@ public class EarlyErrorState {
                 this.boundNames,
                 this.previousLexicallyDeclaredNames,
                 this.lexicallyDeclaredNames,
-                this.varDeclaredNames,
                 this.functionDeclarationNames,
+                this.varDeclaredNames,
                 this.forOfVarDeclaredNames,
                 this.exportedNames,
                 MultiHashTable.empty(),
@@ -1137,8 +1149,8 @@ public class EarlyErrorState {
                 this.boundNames,
                 this.previousLexicallyDeclaredNames,
                 this.lexicallyDeclaredNames,
-                this.varDeclaredNames,
                 this.functionDeclarationNames,
+                this.varDeclaredNames,
                 this.forOfVarDeclaredNames,
                 this.exportedNames,
                 this.exportedBindings,
@@ -1162,8 +1174,8 @@ public class EarlyErrorState {
                 this.boundNames,
                 this.previousLexicallyDeclaredNames,
                 this.lexicallyDeclaredNames,
-                this.varDeclaredNames,
                 this.functionDeclarationNames,
+                this.varDeclaredNames,
                 this.forOfVarDeclaredNames,
                 this.exportedNames,
                 this.exportedBindings,
@@ -1187,8 +1199,8 @@ public class EarlyErrorState {
                 this.boundNames,
                 this.previousLexicallyDeclaredNames,
                 this.lexicallyDeclaredNames,
-                this.varDeclaredNames,
                 this.functionDeclarationNames,
+                this.varDeclaredNames,
                 this.forOfVarDeclaredNames,
                 this.exportedNames,
                 this.exportedBindings,
@@ -1212,8 +1224,8 @@ public class EarlyErrorState {
                 this.boundNames,
                 this.previousLexicallyDeclaredNames,
                 this.lexicallyDeclaredNames,
-                this.varDeclaredNames,
                 this.functionDeclarationNames,
+                this.varDeclaredNames,
                 this.forOfVarDeclaredNames,
                 this.exportedNames,
                 this.exportedBindings,
@@ -1237,8 +1249,8 @@ public class EarlyErrorState {
                 this.boundNames,
                 this.previousLexicallyDeclaredNames,
                 this.lexicallyDeclaredNames,
-                this.varDeclaredNames,
                 this.functionDeclarationNames,
+                this.varDeclaredNames,
                 this.forOfVarDeclaredNames,
                 this.exportedNames,
                 this.exportedBindings,

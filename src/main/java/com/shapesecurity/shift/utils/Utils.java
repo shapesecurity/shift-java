@@ -236,6 +236,7 @@ public final class Utils {
             case "interface":
             case "let":
             case "package":
+            case "private":
             case "protected":
             case "public":
             case "static":
