@@ -28,33 +28,33 @@ public class MonoidalReducer<State> implements Reducer<State> {
     protected MonoidalReducer(@NotNull Monoid<State> monoidClass) {
         this.monoidClass = monoidClass;
     }
-    
-    private State identity() {
+
+    protected State identity() {
         return this.monoidClass.identity();
     }
 
-    private State append(State a, State b) {
+    protected State append(State a, State b) {
         return this.monoidClass.append(a, b);
     }
 
-    private State append(State a, State b, State c) {
+    protected State append(State a, State b, State c) {
         return append(append(a, b), c);
     }
 
-    private State append(State a, State b, State c, State d) {
+    protected State append(State a, State b, State c, State d) {
         return append(append(a, b, c), d);
     }
 
-    private State fold(ImmutableList<State> as) {
+    protected State fold(ImmutableList<State> as) {
         return as.foldLeft(this::append, this.identity());
     }
 
-    private State fold1(ImmutableList<State> as, State a) {
+    protected State fold1(ImmutableList<State> as, State a) {
         return as.foldLeft(this::append, a);
     }
 
     @NotNull
-    private State o(@NotNull Maybe<State> s) {
+    protected State o(@NotNull Maybe<State> s) {
         return s.orJust(this.identity());
     }
 
@@ -469,10 +469,10 @@ public class MonoidalReducer<State> implements Reducer<State> {
     @Override
     public State reduceSetter(
             @NotNull Setter node,
-            @NotNull State params,
+            @NotNull State param,
             @NotNull State body,
             @NotNull State name) {
-        return append(params, body, name);
+        return append(param, body, name);
     }
 
     @NotNull
