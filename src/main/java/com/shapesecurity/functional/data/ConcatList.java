@@ -19,6 +19,8 @@ package com.shapesecurity.functional.data;
 import com.shapesecurity.functional.F;
 import com.shapesecurity.functional.F2;
 
+import java.lang.reflect.Array;
+
 import org.jetbrains.annotations.NotNull;
 
 public abstract class ConcatList<T> {
@@ -83,6 +85,15 @@ public abstract class ConcatList<T> {
   @NotNull
   public abstract Maybe<ConcatList<T>> update(int index, @NotNull T element);
 
+  @NotNull
+  public final T[] toArray(@NotNull F<Integer, T[]> constructor) {
+    T[] target = constructor.apply(this.length);
+    toArray(target, 0);
+    return target;
+  }
+
+  protected abstract void toArray(@NotNull T[] target, int i);
+
   public final static class Empty<T> extends ConcatList<T> {
     private Empty() {
       super(0);
@@ -145,6 +156,11 @@ public abstract class ConcatList<T> {
     @Override
     public Maybe<ConcatList<T>> update(int index, @NotNull T element) {
       return Maybe.nothing();
+    }
+
+    @Override
+    protected void toArray(@NotNull T[] target, int i) {
+
     }
   }
 
@@ -217,6 +233,11 @@ public abstract class ConcatList<T> {
     @Override
     public Maybe<ConcatList<T>> update(int index, @NotNull T element) {
       return index == 0 ? Maybe.just(single(element)) : Maybe.nothing();
+    }
+
+    @Override
+    protected void toArray(@NotNull T[] target, int i) {
+      target[i] = this.data;
     }
   }
 
@@ -293,7 +314,9 @@ public abstract class ConcatList<T> {
     @NotNull
     @Override
     public Maybe<ConcatList<T>> update(int index, @NotNull T element) {
-      if (index >= this.length) { return Maybe.nothing(); }
+      if (index >= this.length) {
+        return Maybe.nothing();
+      }
       ConcatList<T> left = this.left;
       ConcatList<T> right = this.right;
 
@@ -303,6 +326,12 @@ public abstract class ConcatList<T> {
         right = right.update(index - this.left.length, element).just();
       }
       return Maybe.just(left.append(right));
+    }
+
+    @Override
+    protected void toArray(@NotNull T[] target, int i) {
+      this.left.toArray(target, i);
+      this.right.toArray(target, i + this.left.length);
     }
   }
 
