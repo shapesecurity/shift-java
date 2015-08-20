@@ -408,7 +408,7 @@ public abstract class ImmutableList<A> implements Iterable<A> {
 
     /**
      * Tests all the elements in the {@link ImmutableList} with predicate <code>f</code> until it
-     * finds the element of reaches the end, then returns whether an element has been found or not.
+     * finds the element or reaches the end, then returns whether an element has been found or not.
      *
      * @param f The predicate.
      * @return Whether an elements satisfies the predicate <code>f</code>.

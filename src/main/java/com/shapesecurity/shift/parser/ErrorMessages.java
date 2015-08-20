@@ -16,10 +16,22 @@
 
 package com.shapesecurity.shift.parser;
 
+import com.shapesecurity.functional.F;
+import com.shapesecurity.functional.F2;
+import com.shapesecurity.shift.ast.BindingIdentifier;
+import com.shapesecurity.shift.ast.BreakStatement;
+import com.shapesecurity.shift.ast.ContinueStatement;
+import com.shapesecurity.shift.ast.IdentifierExpression;
+import com.shapesecurity.shift.ast.LabeledStatement;
+import com.shapesecurity.shift.ast.MemberExpression;
+import com.shapesecurity.shift.ast.Node;
+import com.shapesecurity.shift.ast.Super;
+import com.shapesecurity.shift.codegen.CodeGen;
+
 interface ErrorMessages {
 
     // error messages in error.js
-    String UNEXPECTED_TOKEN = "Unexpected token \"%s\"";
+    String UNEXPECTED_TOKEN = "Unexpected token \"%s\""; // TODO actual string escaping
     String UNEXPECTED_ILLEGAL_TOKEN = "Unexpected %s";
     String UNEXPECTED_NUMBER = "Unexpected number";
     String UNEXPECTED_STRING = "Unexpected string";
@@ -29,7 +41,7 @@ interface ErrorMessages {
     String NEWLINE_AFTER_THROW = "Illegal newline after throw";
     String NEWLINE_AFTER_ARROW_PARAMS = "Illegal newline after arrow parameters";
     String UNTERMINATED_REGEXP = "Invalid regular expression: missing /";
-    String INVALID_REGEXP_FLAGS = "In valid regular expression flags";
+    String INVALID_REGEXP_FLAGS = "Invalid regular expression flags";
     String INVALID_LHS_IN_ASSIGNMENT = "Invalid left-hand side in assignment";
     String INVALID_LHS_IN_FOR_IN = "Invalid left-hand side in for-in";
     String INVALID_LHS_IN_FOR_OF = "Invalid left-hand side in for-of";
@@ -67,4 +79,40 @@ interface ErrorMessages {
     String STRICT_LHS_ASSIGNMENT = "Assignment to eval or arguments is not allowed in strict mode";
     String STRICT_LHS_POSTFIX = "Postfix increment/decrement may not have eval or arguments operand in strict mode";
     String STRICT_LHS_PREFIX = "Prefix increment/decrement may not have eval or arguments operand in strict mode";
+
+    F<Super, EarlyError> SUPERCALL_ERROR = node -> new EarlyError(node, "Calls to super must be in the \"constructor\" method of a class expression or class declaration that has a superclass");
+    F<MemberExpression, EarlyError> SUPERPROPERTY_ERROR = node -> new EarlyError(node, "Member access on super must be in a method");
+    F<BindingIdentifier, EarlyError> DUPLICATE_BINDING = node -> new EarlyError(node, "Duplicate binding " + CodeGen.escapeStringLiteral(node.name));
+    F<ContinueStatement, EarlyError> FREE_CONTINUE = node -> new EarlyError(node, "Continue statement must be nested within an iteration statement");
+    F<ContinueStatement, EarlyError> UNBOUND_CONTINUE = node -> new EarlyError(node, "Continue statement must be nested within an iteration statement with label " + CodeGen.escapeStringLiteral(node.label.just()));
+    F<BreakStatement, EarlyError> FREE_BREAK = node -> new EarlyError(node, "Break statement must be nested within an iteration statement or a switch statement");
+    F<BreakStatement, EarlyError> UNBOUND_BREAK = node -> new EarlyError(node, "Break statement must be nested within a statement with label " + CodeGen.escapeStringLiteral(node.label.just()));
+    F<Node, EarlyError> DUPLICATE_CTOR = node -> new EarlyError(node, "Duplicate constructor method in class");
+    F<BindingIdentifier, EarlyError> BINDING_IDENTIFIER_STRICT = node -> new EarlyError(node, "The identifier " + CodeGen.escapeStringLiteral(node.name) + " must not be in binding position in strict mode");
+    F<IdentifierExpression, EarlyError> IDENTIFIER_EXP_STRICT = node -> new EarlyError(node, "The identifier " + CodeGen.escapeStringLiteral(node.name) + " must not be in expression position in strict mode");
+    F<Node, EarlyError> CTOR_SPECIAL = node -> new EarlyError(node, "Constructors cannot be generators, getters or setters");
+    F<Node, EarlyError> PROTOTYPE_METHOD = node -> new EarlyError(node, "Static class methods cannot be named \"prototype\"");
+    F<Node, EarlyError> DO_WHILE_LABELED_FN = node -> new EarlyError(node, "The body of a do-while statement must not be a labeled function declaration");
+    F<Node, EarlyError> FOR_IN_LABELED_FN = node -> new EarlyError(node, "The body of a for-in statement must not be a labeled function declaration");
+    F<Node, EarlyError> FOR_OF_LABELED_FN = node -> new EarlyError(node, "The body of a for-of statement must not be a labeled function declaration");
+    F<Node, EarlyError> FOR_LABELED_FN = node -> new EarlyError(node, "The body of a for statement must not be a labeled function declaration");
+    F<Node, EarlyError> WHILE_LABELED_FN = node -> new EarlyError(node, "The body of a while statement must not be a labeled function declaration");
+    F<Node, EarlyError> CONST_WITHOUT_INIT = node -> new EarlyError(node, "Constant lexical declarations must have an initialiser");
+    F<Node, EarlyError> CONSEQUENT_IS_LABELED_FN = node -> new EarlyError(node, "The consequent of an if statement must not be a labeled function declaration");
+    F<Node, EarlyError> ALTERNATE_IS_LABELED_FN = node -> new EarlyError(node, "The alternate of an if statement must not be a labeled function declaration");
+    F<Node, EarlyError> IF_FNDECL_STRICT = node -> new EarlyError(node, "FunctionDeclarations in IfStatements are disallowed in strict mode");
+    F<Node, EarlyError> YIELD_LABEL = node -> new EarlyError(node, "The identifier \"yield\" must not be in label position in strict mode");
+    F<LabeledStatement, EarlyError> DUPLICATE_LABEL = node -> new EarlyError(node, "Label " + CodeGen.escapeStringLiteral(node.label) + " has already been declared");
+    F<LabeledStatement, EarlyError> FN_LABEL_STRICT = node -> new EarlyError(node, "Labeled FunctionDeclarations are disallowed in strict mode");
+    F<Node, EarlyError> INVALID_REGEX_FLAG_MACHINE = node -> new EarlyError(node, INVALID_REGEXP_FLAGS);
+    F2<Node, String, EarlyError> DUPLICATE_EXPORT = (node, str) -> new EarlyError(node, "Duplicate export " + CodeGen.escapeStringLiteral(str));
+    F2<Node, String, EarlyError> UNDECLARED_EXPORT = (node, str) -> new EarlyError(node, "Exported binding " + CodeGen.escapeStringLiteral(str) + " is not declared");
+    F<Node, EarlyError> NEW_TARGET_TOP = node -> new EarlyError(node, "new.target must be within function (but not arrow expression) code");
+    F<Node, EarlyError> DUPLICATE_PROTO = node -> new EarlyError(node, "Duplicate __proto__ property in object literal not allowed");
+    F<Node, EarlyError> DELETE_IDENTIFIER_EXP_STRICT = node -> new EarlyError(node, "Identifier expressions must not be deleted in strict mode");
+    F<Node, EarlyError> UPDATE_NONSIMPLE = node -> new EarlyError(node, "Increment/decrement target must be an identifier or member expression");
+    F<Node, EarlyError> LEXICAL_LET_BINDING = node -> new EarlyError(node, "Lexical declarations must not have a binding named \"let\"");
+    F<Node, EarlyError> WITH_LABELED_FN = node -> new EarlyError(node, "The body of a with statement must not be a labeled function declaration");
+    F<Node, EarlyError> WITH_STRICT = node -> new EarlyError(node, "Strict mode code must not include a with statement");
+
 }
