@@ -576,8 +576,6 @@ public class EarlyErrorChecker extends MonoidalReducer<EarlyErrorState> {
         return s;
     }
 
-    // TODO no ImportSpecifier?
-
     @NotNull
     @Override
     public EarlyErrorState reduceLabeledStatement(@NotNull LabeledStatement node, @NotNull EarlyErrorState body) {
