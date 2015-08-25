@@ -1323,6 +1323,14 @@ public abstract class Parser extends Tokenizer {
     private Expression parseNumericLiteral() throws JsError {
         SourceLocation startLocation = this.getLocation();
         Token token = this.lex();
+        assert token instanceof NumericLiteralToken;
+        if (((NumericLiteralToken) token).octal && this.strict) {
+            if (((NumericLiteralToken) token).noctal) {
+              throw this.createErrorWithLocation(startLocation, "Unexpected noctal integer literal");
+            } else {
+              throw this.createErrorWithLocation(startLocation, "Unexpected legacy octal integer literal");
+            }
+        }
         if (Double.isInfinite(((NumericLiteralToken) token).value)) {
             return this.markLocation(startLocation, new LiteralInfinityExpression());
         } else {
