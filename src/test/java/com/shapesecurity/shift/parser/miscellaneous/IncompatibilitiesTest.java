@@ -79,13 +79,10 @@ public class IncompatibilitiesTest extends ParserTestCase {
         testScriptFailure("for(var x=1 of [1,2,3]) 0", 12, "Invalid variable declaration in for-of statement");
         testScriptFailure("for(let x=1 of [1,2,3]) 0", 12, "Invalid variable declaration in for-of statement");
 
-        testScript("for(var x in [1,2]) 0",
-                new ForInStatement(new VariableDeclaration(VariableDeclarationKind.Var, ImmutableList.list(
-                        new VariableDeclarator(new BindingIdentifier("x"), Maybe.nothing())
-                )), new ArrayExpression(ImmutableList.list(
-                        Maybe.just(new LiteralNumericExpression(1.0)), Maybe.just(new LiteralNumericExpression(2.0))
-                )), new ExpressionStatement(new LiteralNumericExpression(0.0)))
-        );
+        testScript("for(var x in [1,2]) 0", new ForInStatement(new VariableDeclaration(VariableDeclarationKind.Var,
+                ImmutableList.list(new VariableDeclarator(new BindingIdentifier("x"), Maybe.nothing()))),
+                new ArrayExpression(ImmutableList.list(Maybe.just(new LiteralNumericExpression(1.0)), Maybe.just(
+                    new LiteralNumericExpression(2.0)))), new ExpressionStatement(new LiteralNumericExpression(0.0))));
 
         testScript("for(let x in [1,2]) 0",
                 new ForInStatement(new VariableDeclaration(VariableDeclarationKind.Let, ImmutableList.list(
@@ -123,7 +120,9 @@ public class IncompatibilitiesTest extends ParserTestCase {
         testScript("a<!--b", new IdentifierExpression("a"));
 
         testModuleFailure("<!--", 0, "Unexpected token \"<\"");
+        testModuleFailureML("function a(){\n<!--\n}", 2, 0, 14, "Unexpected token \"<\"");
         testModuleFailure("-->", 2, "Unexpected token \">\"");
+        testModuleFailureML("function a(){\n-->\n}", 2, 2, 16, "Unexpected token \">\"");
 
         testModule("a<!--b",
                 new BinaryExpression(BinaryOperator.LessThan, new IdentifierExpression("a"),

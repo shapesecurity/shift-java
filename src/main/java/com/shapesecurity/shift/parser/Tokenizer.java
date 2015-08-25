@@ -576,14 +576,13 @@ public class Tokenizer {
                 } else {
                     break;
                 }
-            } else if (ch == '<') {
-                if (!this.moduleIsTheGoalSymbol && this.index + 4 <= length && this.source.charAt(this.index + 1) == '!' && this.source.charAt(this.index + 2)
-                        == '-' && this.source.charAt(
-                        this.index + 3) == '-') {
-                    this.skipSingleLineComment(4);
-                } else {
-                    break;
-                }
+            } else if (
+                ch == '<' && !this.moduleIsTheGoalSymbol && this.index + 4 <= length &&
+                this.source.charAt(this.index + 1) == '!' &&
+                this.source.charAt(this.index + 2) == '-' &&
+                this.source.charAt(this.index + 3) == '-'
+            ) {
+                this.skipSingleLineComment(4);
             } else {
                 break;
             }
