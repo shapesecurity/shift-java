@@ -24,7 +24,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class EOFToken extends Token {
     public EOFToken(@NotNull SourceRange slice) {
-        super(TokenType.EOS, slice, false);
+        super(TokenType.EOS, slice);
     }
 
     @NotNull

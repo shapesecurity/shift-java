@@ -11,7 +11,7 @@ public final class TemplateToken extends Token {
     public final boolean tail;
 
     public TemplateToken(@NotNull SourceRange slice, boolean tail) {
-        super(TokenType.TEMPLATE, slice, false);
+        super(TokenType.TEMPLATE, slice);
         this.tail = tail;
     }
 

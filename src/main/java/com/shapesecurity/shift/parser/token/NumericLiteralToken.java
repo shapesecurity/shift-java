@@ -25,14 +25,16 @@ import org.jetbrains.annotations.NotNull;
 
 public final class NumericLiteralToken extends Token {
     public final double value;
+    public final boolean octal;
 
     public NumericLiteralToken(@NotNull SourceRange slice, double value) {
         this(slice, value, false);
     }
 
     public NumericLiteralToken(@NotNull SourceRange slice, double value, boolean octal) {
-        super(TokenType.NUMBER, slice, octal);
+        super(TokenType.NUMBER, slice);
         this.value = value;
+        this.octal = octal;
     }
 
     @NotNull

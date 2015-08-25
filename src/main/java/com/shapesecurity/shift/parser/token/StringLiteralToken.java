@@ -24,10 +24,12 @@ import org.jetbrains.annotations.NotNull;
 
 public class StringLiteralToken extends Token {
     private final String value;
+    public final String octal;
 
-    public StringLiteralToken(@NotNull SourceRange slice, @NotNull String value, boolean octal) {
-        super(TokenType.STRING, slice, octal);
+    public StringLiteralToken(@NotNull SourceRange slice, @NotNull String value, String octal) {
+        super(TokenType.STRING, slice);
         this.value = value;
+        this.octal = octal;
     }
 
     @NotNull
