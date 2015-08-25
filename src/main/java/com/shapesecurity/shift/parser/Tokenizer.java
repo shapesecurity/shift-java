@@ -419,10 +419,6 @@ public class Tokenizer {
         switch (token.type.klass) {
             case Eof:
                 return this.createError(UNEXPECTED_EOS);
-            case NumericLiteral:
-                return this.createError(UNEXPECTED_NUMBER);
-            case StringLiteral:
-                return this.createError(UNEXPECTED_STRING);
             case Ident:
                 return this.createError(UNEXPECTED_IDENTIFIER);
             case Keyword:
@@ -433,8 +429,14 @@ public class Tokenizer {
                     return this.createError(STRICT_RESERVED_WORD);
                 }
                 return this.createError(UNEXPECTED_TOKEN, token.slice.getString());
+            case NumericLiteral:
+                return this.createError(UNEXPECTED_NUMBER);
+            case TemplateElement:
+                return this.createError(UNEXPECTED_TEMPLATE);
             case Punctuator:
                 return this.createError(UNEXPECTED_TOKEN, token.type.toString());
+            case StringLiteral:
+                return this.createError(UNEXPECTED_STRING);
             default:
                 break;
         }
