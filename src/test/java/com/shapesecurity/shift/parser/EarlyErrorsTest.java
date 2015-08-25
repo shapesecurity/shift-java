@@ -175,7 +175,7 @@ public class EarlyErrorsTest extends ParserTestCase {
         // TODO: these should fail but will not
         //testScriptEarlyError("(i\\u006E)", "Unexpected token \"in\"");
         //testScriptEarlyError("var i\\u006E;", "Unexpected token \"in\"");
-        //testParseModuleFailure("import {a as i\\u006E} from \"module\";", "Unexpected token \"in\"");
+        //testModuleEarlyError("import {a as i\\u006E} from \"module\";", "Unexpected token \"in\"");
 
         // 12.2.5.1
         // It is a Syntax Error if HasDirectSuper of MethodDefinition is true.
