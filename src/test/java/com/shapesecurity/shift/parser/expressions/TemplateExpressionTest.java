@@ -29,6 +29,7 @@ public class TemplateExpressionTest extends ParserTestCase {
         testScript("new a()``", new TemplateExpression(Maybe.just(new NewExpression(new IdentifierExpression("a"), ImmutableList.nil())), ImmutableList.list(new TemplateElement(""))));
 
         testScriptFailure("`", 1, "Unexpected end of input");
+        testScriptFailure("a++``", 3, "Unexpected template");
         testScriptFailure("`${a", 4, "Unexpected end of input");
         testScriptFailure("`${a}a${b}", 10, "Unexpected end of input");
         testScriptFailure("`\\37`", 4, "Unexpected \"`\"");

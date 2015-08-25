@@ -37,6 +37,7 @@ interface ErrorMessages {
     String UNEXPECTED_STRING = "Unexpected string";
     String UNEXPECTED_IDENTIFIER = "Unexpected identifier";
     String UNEXPECTED_RESERVED_WORD = "Unexpected reserved word";
+    String UNEXPECTED_TEMPLATE = "Unexpected template";
     String UNEXPECTED_EOS = "Unexpected end of input";
     String NEWLINE_AFTER_THROW = "Illegal newline after throw";
     String NEWLINE_AFTER_ARROW_PARAMS = "Illegal newline after arrow parameters";

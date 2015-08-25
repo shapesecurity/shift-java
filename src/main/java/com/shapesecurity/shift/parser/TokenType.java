@@ -101,12 +101,12 @@ public enum TokenType {
     NULL_LITERAL(TokenClass.NullLiteral, "null"),
     TRUE_LITERAL(TokenClass.BooleanLiteral, "true"),
     FALSE_LITERAL(TokenClass.BooleanLiteral, "false"),
-    NUMBER(TokenClass.NumericLiteral, ""),
-    STRING(TokenClass.StringLiteral, ""),
-    REGEXP(TokenClass.RegularExpression, ""),
-    IDENTIFIER(TokenClass.Ident, ""),
-    FUTURE_RESERVED_WORD(TokenClass.Keyword, ""),
-    FUTURE_STRICT_RESERVED_WORD(TokenClass.Keyword, ""),
+    NUMBER(TokenClass.NumericLiteral, "number"),
+    STRING(TokenClass.StringLiteral, "string"),
+    REGEXP(TokenClass.RegularExpression, "regexp"),
+    IDENTIFIER(TokenClass.Ident, "identifier"),
+    FUTURE_RESERVED_WORD(TokenClass.Keyword, "future-reserved-word"),
+    FUTURE_STRICT_RESERVED_WORD(TokenClass.Keyword, "future-strict-reserved-word"),
     CONST(TokenClass.Keyword, "const"),
     LET(TokenClass.Keyword, "let"),
     YIELD(TokenClass.Keyword, "yield"),
@@ -115,9 +115,8 @@ public enum TokenType {
     IMPORT(TokenClass.Keyword, "import"),
     EXPORT(TokenClass.Keyword, "export"),
     AWAIT(TokenClass.Keyword, "await"),
-    ILLEGAL(TokenClass.Illegal, ""),
-    TEMPLATE(TokenClass.TemplateElement, "");
-    public static final TokenType[] TOKEN_SUB_TYPES = values();
+    ILLEGAL(TokenClass.Illegal, "ILLEGAL"),
+    TEMPLATE(TokenClass.TemplateElement, "template");
     @NotNull
     public final TokenClass klass;
     @NotNull
