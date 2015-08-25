@@ -1173,7 +1173,7 @@ public class Tokenizer {
             }
         }
 
-        return new NumericLiteralToken(this.getSlice(start), Integer.parseInt(this.getSlice(start).getString().toString().substring(1), isOctal ? 8 : 10), true);
+        return new NumericLiteralToken(this.getSlice(start), Integer.parseInt(this.getSlice(start).getString().toString().substring(1), isOctal ? 8 : 10), true, !isOctal);
     }
 
     private NumericLiteralToken scanBinaryLiteral(int start) throws JsError {
