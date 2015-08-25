@@ -106,10 +106,6 @@ public class EarlyErrorChecker extends MonoidalReducer<EarlyErrorState> {
         return false;
     }
 
-    private boolean isValidSimpleAssignmentTarget(@NotNull BindingIdentifierMemberExpression node) { // TODO this is silly: it is always true.
-        return node instanceof BindingIdentifier || node instanceof ComputedMemberExpression || node instanceof StaticMemberExpression;
-    }
-
     private boolean isLabeledFunction(@NotNull Node node) {
         if (!(node instanceof LabeledStatement)) {
             return false;
@@ -786,9 +782,6 @@ public class EarlyErrorChecker extends MonoidalReducer<EarlyErrorState> {
     @Override
     public EarlyErrorState reduceUpdateExpression(@NotNull UpdateExpression node, @NotNull EarlyErrorState operand) {
         EarlyErrorState s = super.reduceUpdateExpression(node, operand);
-        if (!isValidSimpleAssignmentTarget(node.operand)) {
-            s = s.addError(ErrorMessages.UPDATE_NONSIMPLE.apply(node));
-        }
         s = s.clearBoundNames();
         return s;
     }
