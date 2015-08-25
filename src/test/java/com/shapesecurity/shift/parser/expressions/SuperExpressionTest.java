@@ -31,15 +31,15 @@ public class SuperExpressionTest extends ParserTestCase {
 
         testScript("class A extends B { constructor(a = super()){} }", new ClassDeclaration(new BindingIdentifier("A"),
                 Maybe.just(new IdentifierExpression("B")), ImmutableList.list(new ClassElement(false, new Method(false,
-                new FormalParameters(ImmutableList.list(new BindingWithDefault(new BindingIdentifier("a"), new CallExpression(
-                        new Super(), ImmutableList.nil()))), Maybe.nothing()), new FunctionBody(ImmutableList.nil(),
+                new FormalParameters(ImmutableList.list(new BindingWithDefault(new BindingIdentifier("a"),
+                    new CallExpression(new Super(), ImmutableList.nil()))), Maybe.nothing()), new FunctionBody(ImmutableList.nil(),
                 ImmutableList.nil()), new StaticPropertyName("constructor"))))));
 
         testScript("class A extends B { constructor() { ({a: super()}); } }", new ClassDeclaration(new BindingIdentifier("A"),
                 Maybe.just(new IdentifierExpression("B")), ImmutableList.list(new ClassElement(false, new Method(false,
                 new FormalParameters(ImmutableList.nil(), Maybe.nothing()), new FunctionBody(ImmutableList.nil(),
                 ImmutableList.list(new ExpressionStatement(new ObjectExpression(ImmutableList.list(new DataProperty(
-                        new CallExpression(new Super(), ImmutableList.nil()), new StaticPropertyName("a"))))))),
+                    new CallExpression(new Super(), ImmutableList.nil()), new StaticPropertyName("a"))))))),
                 new StaticPropertyName("constructor"))))));
 
         testScript("class A extends B { constructor() { () => super(); } }", new ClassDeclaration(new BindingIdentifier("A"),
@@ -54,7 +54,7 @@ public class SuperExpressionTest extends ParserTestCase {
                 new Method(false, new FormalParameters(ImmutableList.nil(), Maybe.nothing()), new FunctionBody(
                         ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new ArrowExpression(new FormalParameters(
                         ImmutableList.nil(), Maybe.nothing()), new FunctionBody(ImmutableList.nil(), ImmutableList.list(
-                        new ExpressionStatement(new CallExpression(new Super(), ImmutableList.nil())))))))),
+                    new ExpressionStatement(new CallExpression(new Super(), ImmutableList.nil())))))))),
                         new StaticPropertyName("constructor"))))));
 
         testScript("({ a() { super.b(); } });", new ObjectExpression(ImmutableList.list(new Method(false,
@@ -107,10 +107,17 @@ public class SuperExpressionTest extends ParserTestCase {
                         new NewExpression(new StaticMemberExpression("b", new Super()), ImmutableList.nil())))),
                         new StaticPropertyName("a"))))));
 
+        testScript("({ *f() { yield super.f(); } });", new ObjectExpression(ImmutableList.list(
+            new Method(true, new FormalParameters(ImmutableList.nil(), Maybe.nothing()), new FunctionBody(ImmutableList.nil(), ImmutableList.list(
+                new ExpressionStatement(new YieldExpression(Maybe.just(new CallExpression(new StaticMemberExpression("f", new Super()), ImmutableList.nil()))))
+            )), new StaticPropertyName("f"))
+        )));
+
         testScriptFailure("function f() { (super)() }", 21, "Unexpected token \"super\"");
         testScriptFailure("class A extends B { constructor() { super; } }", 41, "Unexpected token \"super\"");
         testScriptFailure("class A extends B { constructor() { (super)(); } }", 42, "Unexpected token \"super\"");
         testScriptFailure("class A extends B { constructor() { new super(); } }", 45, "Unexpected token \"(\""); // TODO: changed error from unexpected super
+
         testScriptFailure("({ a() { (super).b(); } });", 15, "Unexpected token \"super\"");
         testScriptFailure("class A extends B { constructor() { (super).a(); } }", 42, "Unexpected token \"super\"");
     }
