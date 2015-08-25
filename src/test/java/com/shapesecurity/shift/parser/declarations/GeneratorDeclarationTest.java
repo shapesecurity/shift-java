@@ -54,10 +54,10 @@ public class GeneratorDeclarationTest extends ParserTestCase {
                                 Maybe.nothing()), new FunctionBody(ImmutableList.nil(), ImmutableList.nil()))))));
 
         testScriptFailure("label: function* a(){}", 15, "Unexpected token \"*\"");
-        testScriptFailure("function*g(){ var yield; }", 18, "Unexpected token \"yield\"");
-        testScriptFailure("function*g(){ function yield(){}; }", 23, "Unexpected token \"yield\"");
-        testScriptFailure("function*g(){ (function yield(){}); }", 24, "Unexpected token \"yield\"");
         testScriptFailure("function*g() { var yield; }", 19, "Unexpected token \"yield\"");
+        testScriptFailure("function*g() { var yield = 1; }", 19, "Unexpected token \"yield\"");
+        testScriptFailure("function*g() { function yield(){}; }", 24, "Unexpected token \"yield\"");
+        testScriptFailure("function*g() { (function yield(){}); }", 25, "Unexpected token \"yield\"");
         testScriptFailure("function*g() { let yield; }", 19, "Unexpected token \"yield\"");
         testScriptFailure("function*g() { try {} catch (yield) {} }", 29, "Unexpected token \"yield\"");
     }
