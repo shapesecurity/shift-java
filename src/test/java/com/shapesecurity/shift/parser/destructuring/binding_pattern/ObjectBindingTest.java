@@ -40,6 +40,11 @@ public class ObjectBindingTest extends ParserTestCase {
                 new StaticPropertyName("x"), new ObjectBinding(ImmutableList.list(new BindingPropertyProperty(
                 new StaticPropertyName("y"), new BindingIdentifier("a"))))))), Maybe.just(new LiteralNumericExpression(0.0)))))));
 
+        testScript("var {let, yield} = 0;", new VariableDeclarationStatement(new VariableDeclaration(VariableDeclarationKind.Var,
+            ImmutableList.list(new VariableDeclarator(new ObjectBinding(ImmutableList.list(new BindingPropertyIdentifier(
+                new BindingIdentifier("let"), Maybe.nothing()), new BindingPropertyIdentifier(
+                new BindingIdentifier("yield"), Maybe.nothing()))), Maybe.just(new LiteralNumericExpression(0.0)))))));
+
         testScript("(a, b, [c]) => 0", new ArrowExpression(new FormalParameters(ImmutableList.list(new BindingIdentifier("a"),
                 new BindingIdentifier("b"), new ArrayBinding(ImmutableList.list(Maybe.just(new BindingIdentifier("c"))),
                         Maybe.nothing())), Maybe.nothing()), new LiteralNumericExpression(0.0)));

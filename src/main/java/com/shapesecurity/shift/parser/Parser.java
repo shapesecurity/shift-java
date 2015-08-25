@@ -282,7 +282,7 @@ public abstract class Parser extends Tokenizer {
         PropertyName name = fromParsePropertyName.a;
         Maybe<Binding> binding = fromParsePropertyName.b;
 
-        if ((token.type == TokenType.IDENTIFIER || token.type == TokenType.YIELD) && name instanceof StaticPropertyName) {
+        if ((token.type == TokenType.IDENTIFIER || token.type == TokenType.LET || token.type == TokenType.YIELD) && name instanceof StaticPropertyName) {
             if (!this.match(TokenType.COLON)) {
                 Maybe<Expression> defaultValue = Maybe.nothing();
                 if (this.eat(TokenType.ASSIGN)) {
