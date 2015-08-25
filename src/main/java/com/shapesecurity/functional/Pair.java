@@ -21,12 +21,10 @@ import com.shapesecurity.functional.data.HashCodeBuilder;
 import org.jetbrains.annotations.NotNull;
 
 public final class Pair<A, B> {
-    @NotNull
     public final A a;
-    @NotNull
     public final B b;
 
-    public Pair(@NotNull A a, @NotNull B b) {
+    public Pair(A a, B b) {
         super();
         this.a = a;
         this.b = b;

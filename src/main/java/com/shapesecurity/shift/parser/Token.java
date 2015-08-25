@@ -24,14 +24,11 @@ public abstract class Token {
     public final TokenType type;
     @NotNull
     public final SourceRange slice;
-    public final boolean octal;
     @Nullable
     public SourceRange leadingWhitespace;
 
     protected Token(@NotNull TokenType type,
-                    @NotNull SourceRange slice,
-                    boolean octal) {
-        this.octal = octal;
+                    @NotNull SourceRange slice) {
         this.type = type;
         this.slice = slice;
     }

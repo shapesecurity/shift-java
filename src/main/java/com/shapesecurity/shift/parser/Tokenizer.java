@@ -939,8 +939,8 @@ public class Tokenizer {
                     break;
                 case 0x5C:  // \\
                 {
-                    boolean octal = this.scanStringEscape("", false).b;
-                    if (octal) {
+                    String octal = this.scanStringEscape("", null).b;
+                    if (octal != null) {
                         throw this.createILLEGAL();
                     }
                     break;
@@ -959,14 +959,14 @@ public class Tokenizer {
         int start = this.index;
         this.index++;
 
-        boolean octal = false;
+        String octal = null;
         while (this.index < this.source.length()) {
             char ch = this.source.charAt(this.index);
             if (ch == quote) {
                 index++;
                 return new StringLiteralToken(this.getSlice(start), str, octal);
             } else if (ch == '\\') {
-                Pair<String, Boolean> info = this.scanStringEscape(str, octal);
+                Pair<String, String> info = this.scanStringEscape(str, octal);
                 str = info.a;
                 octal = info.b;
             } else if (Utils.isLineTerminator(ch)) {
@@ -981,7 +981,7 @@ public class Tokenizer {
     }
 
     @NotNull
-    private Pair<String, Boolean> scanStringEscape(String str, boolean octal) throws JsError {
+    private Pair<String, String> scanStringEscape(String str, String octal) throws JsError {
         this.index++;
         if (this.index == this.source.length()) {
             throw this.createILLEGAL();
@@ -1028,6 +1028,7 @@ public class Tokenizer {
                     break;
                 default:
                     if ('0' <= ch && ch <= '7') {
+                        int octalStart = this.index;
                         int octLen = 1;
                         // 3 digits are only allowed when string starts
                         // with 0, 1, 2, 3
@@ -1036,13 +1037,13 @@ public class Tokenizer {
                         }
                         int code = 0;
                         while (octLen < 3 && '0' <= ch && ch <= '7') {
+                            this.index++;
                             if (octLen > 0 || ch != '0') {
-                                octal = true;
+                                octal = this.source.substring(octalStart, this.index);
                             }
                             code *= 8;
-                            octLen++;
                             code += ch - '0';
-                            this.index++;
+                            octLen++;
                             if (this.index == this.source.length()) {
                                 throw this.createILLEGAL();
                             }

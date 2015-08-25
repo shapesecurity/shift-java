@@ -27,7 +27,7 @@ public class RegularExpressionLiteralToken extends Token {
     private final String value;
 
     public RegularExpressionLiteralToken(@NotNull SourceRange slice, @NotNull String value) {
-        super(TokenType.REGEXP, slice, false);
+        super(TokenType.REGEXP, slice);
         this.value = value;
     }
 

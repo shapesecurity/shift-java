@@ -24,7 +24,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class PunctuatorToken extends Token {
     public PunctuatorToken(@NotNull TokenType type, @NotNull SourceRange slice) {
-        super(type, slice, false);
+        super(type, slice);
     }
 
     @NotNull

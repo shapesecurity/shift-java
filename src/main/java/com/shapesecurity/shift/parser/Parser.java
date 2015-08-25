@@ -16,6 +16,7 @@ import com.shapesecurity.shift.ast.*;
 import com.shapesecurity.shift.ast.operators.*;
 import com.shapesecurity.shift.parser.token.NumericLiteralToken;
 import com.shapesecurity.shift.parser.token.RegularExpressionLiteralToken;
+import com.shapesecurity.shift.parser.token.StringLiteralToken;
 import com.shapesecurity.shift.parser.token.TemplateToken;
 import com.shapesecurity.shift.utils.D2A;
 
@@ -28,6 +29,7 @@ import java.util.function.BiFunction;
 public abstract class Parser extends Tokenizer {
     private boolean inFunctionBody;
     private boolean module;
+    private boolean strict;
     private boolean allowIn = true;
     private boolean isBindingElement;
     private boolean isAssignmentTarget = true;
@@ -39,7 +41,7 @@ public abstract class Parser extends Tokenizer {
 
     private Parser(@NotNull String source, boolean isModule) throws JsError {
         super(source, isModule);
-        this.module = isModule;
+        this.module = this.strict = isModule;
     }
 
     boolean eat(@NotNull TokenType subType) throws JsError {
@@ -144,7 +146,11 @@ public abstract class Parser extends Tokenizer {
 
             if (parsingDirectives) {
                 if (isStringLiteral && stmt instanceof ExpressionStatement && ((ExpressionStatement) stmt).expression instanceof LiteralStringExpression) {
-                    directives.add(this.markLocation(directiveLocation, new Directive(text.substring(1, text.length() - 1))));
+                    String rawValue = text.substring(1, text.length() - 1);
+                    if (rawValue.equals("use strict")) {
+                        this.strict = true;
+                    }
+                    directives.add(this.markLocation(directiveLocation, new Directive(rawValue)));
                 } else {
                     parsingDirectives = false;
                     statements.add(stmt);
@@ -162,8 +168,10 @@ public abstract class Parser extends Tokenizer {
         SourceLocation startLocation = this.getLocation();
         boolean oldInFunctionBody = this.inFunctionBody;
         boolean oldModule = this.module;
+        boolean oldStrict = this.strict;
         this.inFunctionBody = true;
         this.module = false;
+        this.strict = false;
 
         this.expect(TokenType.LBRACE);
         FunctionBody body = this.parseBody(this::parseStatementListItem, FunctionBody::new);
@@ -171,6 +179,7 @@ public abstract class Parser extends Tokenizer {
 
         this.inFunctionBody = oldInFunctionBody;
         this.module = oldModule;
+        this.strict = oldStrict;
 
         return this.markLocation(startLocation, body);
     }
@@ -788,7 +797,8 @@ public abstract class Parser extends Tokenizer {
     private SwitchCase parseSwitchCase() throws JsError {
         SourceLocation startLocation = this.getLocation();
         this.expect(TokenType.CASE);
-        return markLocation(startLocation, new SwitchCase(this.parseExpression().left().just(), this.parseSwitchCaseBody()));
+        return markLocation(startLocation, new SwitchCase(this.parseExpression().left().just(),
+            this.parseSwitchCaseBody()));
     }
 
     @NotNull
@@ -1451,7 +1461,8 @@ public abstract class Parser extends Tokenizer {
             }
             return this.markLocation(startLocation, new NewTargetExpression());
         }
-        Either<ExpressionSuper, Binding> fromParseLeftHandSideExpression = this.isolateCoverGrammar(() -> this.parseLeftHandSideExpression(false));
+        Either<ExpressionSuper, Binding> fromParseLeftHandSideExpression = this.isolateCoverGrammar(
+            () -> this.parseLeftHandSideExpression(false));
         if (fromParseLeftHandSideExpression.isLeft()) {
             ExpressionSuper callee = fromParseLeftHandSideExpression.left().just();
             if (!(callee instanceof Expression)) {
@@ -1557,7 +1568,12 @@ public abstract class Parser extends Tokenizer {
     @NotNull
     private Expression parseStringLiteral() throws JsError {
         SourceLocation startLocation = this.getLocation();
-        return this.markLocation(startLocation, new LiteralStringExpression(this.lex().getValueString().toString()));
+        Token token = this.lex();
+        assert token instanceof StringLiteralToken;
+        if (((StringLiteralToken) token).octal != null && this.strict) {
+            throw this.createErrorWithLocation(startLocation, "Unexpected legacy octal escape sequence: \\" + ((StringLiteralToken) token).octal);
+        }
+        return this.markLocation(startLocation, new LiteralStringExpression(token.getValueString().toString()));
     }
 
     @NotNull
