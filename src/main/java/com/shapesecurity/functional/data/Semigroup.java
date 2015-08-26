@@ -25,6 +25,8 @@ public interface Semigroup<T> {
     public static final IntegerAdditive INTEGER_ADDITIVE = new IntegerAdditive();
     public static final IntegerMultiplicative INTEGER_MULTIPLICATIVE = new IntegerMultiplicative();
     public static final StringConcat STRING_CONCAT = new StringConcat();
+    public static final BooleanOr BOOLEAN_OR = new BooleanOr();
+    public static final BooleanAnd BOOLEAN_AND = new BooleanAnd();
 
     @NotNull
     T append(T a, T b);
@@ -70,6 +72,28 @@ public interface Semigroup<T> {
         @Override
         public final String append(String a, String b) {
             return a + b;
+        }
+    }
+
+    public static class BooleanOr implements Semigroup<Boolean> {
+        protected BooleanOr() {
+        }
+
+        @NotNull
+        @Override
+        public final Boolean append(Boolean a, Boolean b) {
+            return a || b;
+        }
+    }
+
+    public static class BooleanAnd implements Semigroup<Boolean> {
+        protected BooleanAnd() {
+        }
+
+        @NotNull
+        @Override
+        public final Boolean append(Boolean a, Boolean b) {
+            return a && b;
         }
     }
 }

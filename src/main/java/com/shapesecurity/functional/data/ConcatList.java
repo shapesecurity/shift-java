@@ -158,7 +158,7 @@ public abstract class ConcatList<T> implements Iterable<T> {
 
         @Override
         public Iterator<T> iterator() {
-            return new Iterator<T> () {
+            return new Iterator<T>() {
                 @Override
                 public boolean hasNext() {
                     return false;
@@ -250,7 +250,7 @@ public abstract class ConcatList<T> implements Iterable<T> {
 
         @Override
         public Iterator<T> iterator() {
-            return new Iterator<T> () {
+            return new Iterator<T>() {
                 private boolean used = false;
 
                 @Override
@@ -366,7 +366,7 @@ public abstract class ConcatList<T> implements Iterable<T> {
 
         @Override
         public Iterator<T> iterator() {
-            return new Iterator<T> () {
+            return new Iterator<T>() {
                 private boolean isLeft = true;
                 private Iterator<T> branchIterator = left.iterator();
 

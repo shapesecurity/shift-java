@@ -27,6 +27,7 @@ import com.shapesecurity.shift.parser.token.StringLiteralToken;
 import com.shapesecurity.shift.utils.Utils;
 import com.shapesecurity.shift.visitor.Director;
 import com.shapesecurity.shift.visitor.MonoidalReducer;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;

@@ -798,7 +798,7 @@ public abstract class Parser extends Tokenizer {
         SourceLocation startLocation = this.getLocation();
         this.expect(TokenType.CASE);
         return markLocation(startLocation, new SwitchCase(this.parseExpression().left().just(),
-            this.parseSwitchCaseBody()));
+                this.parseSwitchCaseBody()));
     }
 
     @NotNull
@@ -1326,9 +1326,9 @@ public abstract class Parser extends Tokenizer {
         assert token instanceof NumericLiteralToken;
         if (((NumericLiteralToken) token).octal && this.strict) {
             if (((NumericLiteralToken) token).noctal) {
-              throw this.createErrorWithLocation(startLocation, "Unexpected noctal integer literal");
+                throw this.createErrorWithLocation(startLocation, "Unexpected noctal integer literal");
             } else {
-              throw this.createErrorWithLocation(startLocation, "Unexpected legacy octal integer literal");
+                throw this.createErrorWithLocation(startLocation, "Unexpected legacy octal integer literal");
             }
         }
         if (Double.isInfinite(((NumericLiteralToken) token).value)) {
@@ -1470,7 +1470,7 @@ public abstract class Parser extends Tokenizer {
             return this.markLocation(startLocation, new NewTargetExpression());
         }
         Either<ExpressionSuper, Binding> fromParseLeftHandSideExpression = this.isolateCoverGrammar(
-            () -> this.parseLeftHandSideExpression(false));
+                () -> this.parseLeftHandSideExpression(false));
         if (fromParseLeftHandSideExpression.isLeft()) {
             ExpressionSuper callee = fromParseLeftHandSideExpression.left().just();
             if (!(callee instanceof Expression)) {

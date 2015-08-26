@@ -1,8 +1,5 @@
 package com.shapesecurity.shift.parser;
 
-import com.shapesecurity.functional.F;
-import com.shapesecurity.functional.F2;
-import com.shapesecurity.functional.Pair;
 import com.shapesecurity.functional.data.HashTable;
 import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.functional.data.Monoid;
@@ -1260,7 +1257,6 @@ public class EarlyErrorState {
                 this.superPropertyExpressions
         );
     }
-
 
     private static final class EarlyErrorContextMonoid implements Monoid<EarlyErrorState> {
         @NotNull

@@ -324,7 +324,7 @@ public class MonoidalReducer<State> implements Reducer<State> {
 
     @NotNull
     @Override
-    public State reduceFunctionExpression(@NotNull FunctionExpression node, @NotNull Maybe<State> name, @NotNull State parameters, @NotNull State body) {
+    public State reduceFunctionExpression(@NotNull FunctionExpression node, @NotNull Maybe<State> name, @NotNull State parameters, @NotNull State body) { // TODO consistent 'params' / 'parameters' naming
         return append(o(name), parameters, body);
     }
 
