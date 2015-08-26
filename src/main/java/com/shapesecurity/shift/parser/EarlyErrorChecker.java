@@ -97,7 +97,7 @@ public class EarlyErrorChecker extends MonoidalReducer<EarlyErrorState> {
 
     private boolean containsDuplicates(@NotNull String arr) { // TODO maybe should go elsewhere
         HashTable<Character, Unit> seen = HashTable.empty(); // aka set
-        for (int i = 0, l = arr.length(); i<l; ++i) {
+        for (int i = 0, l = arr.length(); i < l; ++i) {
             if (seen.get(arr.charAt(i)).isJust()) {
                 return true;
             }
@@ -595,7 +595,7 @@ public class EarlyErrorChecker extends MonoidalReducer<EarlyErrorState> {
     @Override
     public EarlyErrorState reduceLiteralRegExpExpression(@NotNull LiteralRegExpExpression node) {
         EarlyErrorState s = new EarlyErrorState(); // todo `identity`?
-        if (node.flags.matches(".*[^igmyu].*") || containsDuplicates(node.flags)) {
+        if (!node.flags.matches("[igmyu]*") || containsDuplicates(node.flags)) {
             s = s.addError(ErrorMessages.INVALID_REGEX_FLAG_MACHINE.apply(node));
         }
         return s;
