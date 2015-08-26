@@ -595,7 +595,7 @@ public class EarlyErrorChecker extends MonoidalReducer<EarlyErrorState> {
     @Override
     public EarlyErrorState reduceLiteralRegExpExpression(@NotNull LiteralRegExpExpression node) {
         EarlyErrorState s = new EarlyErrorState(); // todo `identity`?
-        if (node.flags.matches(".*[^igmyu].*") || containsDuplicates(node.flags)) {
+        if (!node.flags.matches("[^igmyu]*") || containsDuplicates(node.flags)) {
             s = s.addError(ErrorMessages.INVALID_REGEX_FLAG_MACHINE.apply(node));
         }
         return s;
