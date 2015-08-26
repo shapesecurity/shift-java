@@ -25,6 +25,8 @@ public interface Monoid<T> extends Semigroup<T> {
     public static final IntegerAdditive INTEGER_ADDITIVE = new IntegerAdditive();
     public static final IntegerMultiplicative INTEGER_MULTIPLICATIVE = new IntegerMultiplicative();
     public static final StringConcat STRING_CONCAT = new StringConcat();
+    public static final BooleanOr BOOLEAN_OR = new BooleanOr();
+    public static final BooleanAnd BOOLEAN_AND = new BooleanAnd();
 
     @NotNull
     T identity();
@@ -74,6 +76,30 @@ public interface Monoid<T> extends Semigroup<T> {
         @Override
         public final String identity() {
             return "";
+        }
+    }
+
+    public static class BooleanOr extends Semigroup.BooleanOr implements Monoid<Boolean> {
+        protected BooleanOr() {
+            super();
+        }
+
+        @NotNull
+        @Override
+        public final Boolean identity() {
+            return false;
+        }
+    }
+
+    public static class BooleanAnd extends Semigroup.BooleanAnd implements Monoid<Boolean> {
+        protected BooleanAnd() {
+            super();
+        }
+
+        @NotNull
+        @Override
+        public final Boolean identity() {
+            return true;
         }
     }
 }
