@@ -27,16 +27,16 @@ public final class Utils {
     // Lu, Ll, Lt, Lm, Lo, Nl,
     // Mn, Mc, Nd, Pc
     private final static int IDENT_PART_MASK =
-        (1 << Character.UPPERCASE_LETTER) |
-        (1 << Character.LOWERCASE_LETTER) |
-        (1 << Character.TITLECASE_LETTER) |
-        (1 << Character.MODIFIER_LETTER) |
-        (1 << Character.OTHER_LETTER) |
-        (1 << Character.NON_SPACING_MARK) |
-        (1 << Character.COMBINING_SPACING_MARK) |
-        (1 << Character.DECIMAL_DIGIT_NUMBER) |
-        (1 << Character.LETTER_NUMBER) |
-        (1 << Character.CONNECTOR_PUNCTUATION);
+            (1 << Character.UPPERCASE_LETTER) |
+                    (1 << Character.LOWERCASE_LETTER) |
+                    (1 << Character.TITLECASE_LETTER) |
+                    (1 << Character.MODIFIER_LETTER) |
+                    (1 << Character.OTHER_LETTER) |
+                    (1 << Character.NON_SPACING_MARK) |
+                    (1 << Character.COMBINING_SPACING_MARK) |
+                    (1 << Character.DECIMAL_DIGIT_NUMBER) |
+                    (1 << Character.LETTER_NUMBER) |
+                    (1 << Character.CONNECTOR_PUNCTUATION);
 
     // static only
     private Utils() {
@@ -267,11 +267,11 @@ public final class Utils {
     private static final boolean[] IDENTIFIER_START = new boolean[0x80];
 
     static {
-        for(int ch = 0; ch < 0x80; ++ch) {
+        for (int ch = 0; ch < 0x80; ++ch) {
             IDENTIFIER_START[ch] =
-                ch >= 0x61 && ch <= 0x7A ||  // a..z
-                ch >= 0x41 && ch <= 0x5A ||  // A..Z
-                ch == 0x24 || ch == 0x5F;    // $ (dollar) and _ (underscore)
+                    ch >= 0x61 && ch <= 0x7A ||  // a..z
+                            ch >= 0x41 && ch <= 0x5A ||  // A..Z
+                            ch == 0x24 || ch == 0x5F;    // $ (dollar) and _ (underscore)
         }
     }
 
@@ -287,12 +287,12 @@ public final class Utils {
     private static final boolean[] IDENTIFIER_PART = new boolean[0x80];
 
     static {
-        for(int ch = 0; ch < 0x80; ++ch) {
+        for (int ch = 0; ch < 0x80; ++ch) {
             IDENTIFIER_PART[ch] =
-                ch >= 0x61 && ch <= 0x7A ||  // a..z
-                ch >= 0x41 && ch <= 0x5A ||  // A..Z
-                ch >= 0x30 && ch <= 0x39 ||  // 0..9
-                ch == 0x24 || ch == 0x5F;    // $ (dollar) and _ (underscore)
+                    ch >= 0x61 && ch <= 0x7A ||  // a..z
+                            ch >= 0x41 && ch <= 0x5A ||  // A..Z
+                            ch >= 0x30 && ch <= 0x39 ||  // 0..9
+                            ch == 0x24 || ch == 0x5F;    // $ (dollar) and _ (underscore)
         }
     }
 

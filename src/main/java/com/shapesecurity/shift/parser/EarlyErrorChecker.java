@@ -97,7 +97,7 @@ public class EarlyErrorChecker extends MonoidalReducer<EarlyErrorState> {
 
     private boolean containsDuplicates(@NotNull String arr) { // TODO maybe should go elsewhere
         HashTable<Character, Unit> seen = HashTable.empty(); // aka set
-        for (int i = 0, l = arr.length(); i<l; ++i) {
+        for (int i = 0, l = arr.length(); i < l; ++i) {
             if (seen.get(arr.charAt(i)).isJust()) {
                 return true;
             }

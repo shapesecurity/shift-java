@@ -1105,8 +1105,8 @@ public class Fuzzer {
 
     @NotNull
     private static VariableDeclarator randomVariableDeclaratorWithoutInit(@NotNull GenCtx ctx, int depth) {
-      Binding binding = (Binding) randomParameter(ctx, depth - 1);
-      return new VariableDeclarator(binding, Maybe.nothing());
+        Binding binding = (Binding) randomParameter(ctx, depth - 1);
+        return new VariableDeclarator(binding, Maybe.nothing());
     }
 
     @NotNull
