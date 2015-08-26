@@ -22,6 +22,7 @@ import com.shapesecurity.shift.ast.ReturnStatement;
 
 import com.shapesecurity.shift.ast.YieldExpression;
 import com.shapesecurity.shift.ast.YieldGeneratorExpression;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -46,20 +47,20 @@ public class ValidationContext {
 
     public ValidationContext() {
         this(
-          new ArrayList<>(), // errors
-          new ArrayList<>(), // freeReturnStatements
-          new ArrayList<>(), // bindingIdentifiersCalledDefault
-          new ArrayList<>(), // yieldExpressionsNotInGeneratorContext
-          new ArrayList<>()  // yieldGeneratorExpressionsNotInGeneratorContext
+                new ArrayList<>(), // errors
+                new ArrayList<>(), // freeReturnStatements
+                new ArrayList<>(), // bindingIdentifiersCalledDefault
+                new ArrayList<>(), // yieldExpressionsNotInGeneratorContext
+                new ArrayList<>()  // yieldGeneratorExpressionsNotInGeneratorContext
         );
     }
 
     private ValidationContext(
-      @NotNull List<ValidationError> errors,
-      @NotNull List<ReturnStatement> freeReturnStatements,
-      @NotNull List<BindingIdentifier> bindingIdentifiersCalledDefault,
-      @NotNull List<YieldExpression> yieldExpressionsNotInGeneratorContext,
-      @NotNull List<YieldGeneratorExpression> yieldGeneratorExpressionsNotInGeneratorContext
+            @NotNull List<ValidationError> errors,
+            @NotNull List<ReturnStatement> freeReturnStatements,
+            @NotNull List<BindingIdentifier> bindingIdentifiersCalledDefault,
+            @NotNull List<YieldExpression> yieldExpressionsNotInGeneratorContext,
+            @NotNull List<YieldGeneratorExpression> yieldGeneratorExpressionsNotInGeneratorContext
     ) {
         this.errors = errors;
         this.freeReturnStatements = freeReturnStatements;
