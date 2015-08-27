@@ -26,6 +26,7 @@ import com.shapesecurity.shift.ast.LabeledStatement;
 import com.shapesecurity.shift.ast.MemberExpression;
 import com.shapesecurity.shift.ast.Node;
 import com.shapesecurity.shift.ast.Super;
+import com.shapesecurity.shift.ast.YieldExpression;
 import com.shapesecurity.shift.codegen.CodeGen;
 
 interface ErrorMessages {
@@ -115,5 +116,8 @@ interface ErrorMessages {
     F<Node, EarlyError> LEXICAL_LET_BINDING = node -> new EarlyError(node, "Lexical declarations must not have a binding named \"let\"");
     F<Node, EarlyError> WITH_LABELED_FN = node -> new EarlyError(node, "The body of a with statement must not be a labeled function declaration");
     F<Node, EarlyError> WITH_STRICT = node -> new EarlyError(node, "Strict mode code must not include a with statement");
+    F<Node, EarlyError> YIELD_IN_ARROW_BODY = node -> new EarlyError(node, "Concise arrow bodies must not contain yield expressions");
+    F<Node, EarlyError> YIELD_IN_ARROW_PARAMS = node -> new EarlyError(node, "Arrow parameters must not contain yield expressions");
+    F<Node, EarlyError> YIELD_IN_GENERATOR_PARAMS = node -> new EarlyError(node, "Generator parameters must not contain yield expressions");
 
 }
