@@ -35,7 +35,6 @@ public abstract class Parser extends Tokenizer {
     private boolean isAssignmentTarget = true;
     @Nullable
     private JsError firstExprError;
-    private boolean inGeneratorParameter;
     private boolean allowYieldExpression;
     private boolean inParameter = false;
 
@@ -191,7 +190,7 @@ public abstract class Parser extends Tokenizer {
         }
         switch (this.lookahead.type) {
             case FUNCTION:
-                return this.parseFunction(false, true);
+                return this.parseFunctionDeclaration(false, true);
             case CLASS:
                 return this.parseClass(false);
             default:
@@ -296,9 +295,6 @@ public abstract class Parser extends Tokenizer {
                 Maybe<Expression> defaultValue = Maybe.nothing();
                 if (this.eat(TokenType.ASSIGN)) {
                     boolean previousAllowYieldExpression = this.allowYieldExpression;
-                    if (this.inGeneratorParameter) {
-                        this.allowYieldExpression = false;
-                    }
                     Either<Expression, Binding> expr = this.parseAssignmentExpression();
                     defaultValue = expr.left();
                     this.allowYieldExpression = previousAllowYieldExpression;
@@ -327,7 +323,7 @@ public abstract class Parser extends Tokenizer {
                 el = Maybe.nothing();
             } else {
                 if (this.eat(TokenType.ELLIPSIS)) {
-                    restElement = Maybe.just(this.parseBindingIdentifier());
+                    restElement = Maybe.just(this.parseBindingTarget());
                     break;
                 } else {
                     el = Maybe.just(this.parseBindingElement());
@@ -399,16 +395,15 @@ public abstract class Parser extends Tokenizer {
 
     @NotNull
     private Statement parseIfStatementChild() throws JsError {
-        return this.match(TokenType.FUNCTION) ? this.parseFunction(false, false) : this.parseStatement();
+        return this.match(TokenType.FUNCTION) ? this.parseFunctionDeclaration(false, false) : this.parseStatement();
     }
 
     @NotNull
-    private Statement parseFunction(boolean inDefault, boolean allowGenerator) throws JsError {
+    private Statement parseFunctionDeclaration(boolean inDefault, boolean allowGenerator) throws JsError {
         SourceLocation startLocation = this.getLocation();
         this.lex();
 
         boolean isGenerator = allowGenerator && this.eat(TokenType.MUL);
-        boolean previousGeneratorParameter = this.inGeneratorParameter;
         boolean previousYield = this.allowYieldExpression;
         BindingIdentifier name;
         if (!this.match(TokenType.LPAREN)) {
@@ -418,37 +413,30 @@ public abstract class Parser extends Tokenizer {
         } else {
             throw this.createUnexpected(this.lookahead);
         }
-        this.inGeneratorParameter = isGenerator;
         this.allowYieldExpression = isGenerator;
         FormalParameters params = this.parseParams();
-        this.inGeneratorParameter = previousGeneratorParameter;
         this.allowYieldExpression = isGenerator;
         FunctionBody body = this.parseFunctionBody();
         this.allowYieldExpression = previousYield;
-        this.inGeneratorParameter = previousGeneratorParameter;
         return this.markLocation(startLocation, new FunctionDeclaration(name, isGenerator, params, body));
     }
 
     @NotNull
-    private Expression parseFunction(boolean allowGenerator) throws JsError {
+    private Expression parseFunctionExpression(boolean allowGenerator) throws JsError {
         SourceLocation startLocation = this.getLocation();
         this.lex();
 
         Maybe<BindingIdentifier> name = Maybe.nothing();
         boolean isGenerator = allowGenerator && this.eat(TokenType.MUL);
-        boolean previousGeneratorParameter = this.inGeneratorParameter;
         boolean previousYield = this.allowYieldExpression;
+        this.allowYieldExpression = isGenerator;
         if (!this.match(TokenType.LPAREN)) {
             name = Maybe.just(this.parseBindingIdentifier());
         }
-        this.inGeneratorParameter = isGenerator;
-        this.allowYieldExpression = isGenerator;
         FormalParameters params = this.parseParams();
-        this.inGeneratorParameter = previousGeneratorParameter;
         this.allowYieldExpression = isGenerator;
         FunctionBody body = this.parseFunctionBody();
         this.allowYieldExpression = previousYield;
-        this.inGeneratorParameter = previousGeneratorParameter;
         return this.markLocation(startLocation, new FunctionExpression(name, isGenerator, params, body));
     }
 
@@ -490,15 +478,9 @@ public abstract class Parser extends Tokenizer {
         Binding binding = this.parseBindingTarget();
         BindingBindingWithDefault bbwd = binding;
         if (this.eat(TokenType.ASSIGN)) {
-            boolean previousInGeneratorParameter = this.inGeneratorParameter;
             boolean previousYieldExpression = this.allowYieldExpression;
-            if (this.inGeneratorParameter) {
-                this.allowYieldExpression = false;
-            }
-            this.inGeneratorParameter = false;
             Either<Expression, Binding> init = this.parseAssignmentExpression();
             bbwd = this.markLocation(startLocation, new BindingWithDefault(binding, init.left().just()));
-            this.inGeneratorParameter = previousInGeneratorParameter;
             this.allowYieldExpression = previousYieldExpression;
         }
         return bbwd;
@@ -563,7 +545,7 @@ public abstract class Parser extends Tokenizer {
                 }
                 Expression expr = this.parseExpression().left().just();
                 if (expr instanceof IdentifierExpression && this.eat(TokenType.COLON)) {
-                    Statement labeledBody = this.match(TokenType.FUNCTION) ? this.parseFunction(false, false) : this.parseStatement();
+                    Statement labeledBody = this.match(TokenType.FUNCTION) ? this.parseFunctionDeclaration(false, false) : this.parseStatement();
                     return new LabeledStatement(((IdentifierExpression) expr).getName(), labeledBody);
                 } else {
                     this.consumeSemicolon();
@@ -1053,7 +1035,7 @@ public abstract class Parser extends Tokenizer {
     private Either<Expression, Binding> parseAssignmentExpressionOrBindingElement() throws JsError {
         SourceLocation startLocation = this.getLocation();
 
-        if (this.allowYieldExpression && !this.inGeneratorParameter && this.match(TokenType.YIELD)) {
+        if (this.allowYieldExpression && this.match(TokenType.YIELD)) {
             this.isBindingElement = this.isAssignmentTarget = false;
             return Either.left(this.parseYieldExpression());
         }
@@ -1109,14 +1091,11 @@ public abstract class Parser extends Tokenizer {
         }
 
         this.lex();
-        boolean previousInGeneratorParameter = this.inGeneratorParameter;
-        this.inGeneratorParameter = false;
         Either<Expression, Binding> rhs = this.parseAssignmentExpression();
         if (rhs.isRight()) {
             throw this.createError(ErrorMessages.UNEXPECTED_OBJECT_BINDING);
         }
 
-        this.inGeneratorParameter = previousInGeneratorParameter;
         this.firstExprError = null;
         if (operator.type == TokenType.ASSIGN) {
             return Either.left(this.markLocation(startLocation, new AssignmentExpression(assignmentTarget, rhs.left().just())));
@@ -1520,10 +1499,14 @@ public abstract class Parser extends Tokenizer {
         SourceLocation startLocation = this.getLocation();
 
         switch (this.lookahead.type) {
-            case IDENTIFIER:
             case YIELD:
+                if (this.allowYieldExpression) {
+                    throw this.createUnexpected(this.lookahead);
+                }
+                // falls through
             case LET:
-                return Either.left(new IdentifierExpression(this.parseIdentifier()));
+            case IDENTIFIER:
+                return Either.left(this.markLocation(startLocation, new IdentifierExpression(this.lex().toString())));
             case TRUE_LITERAL:
                 this.lex();
                 this.isBindingElement = this.isAssignmentTarget = false;
@@ -1538,7 +1521,7 @@ public abstract class Parser extends Tokenizer {
                 return Either.left(this.markLocation(startLocation, new LiteralNullExpression()));
             case FUNCTION:
                 this.isBindingElement = this.isAssignmentTarget = false;
-                return Either.left(this.markLocation(startLocation, this.parseFunction(true)));
+                return Either.left(this.markLocation(startLocation, this.parseFunctionExpression(true)));
             case NUMBER:
                 this.isBindingElement = this.isAssignmentTarget = false;
                 return Either.left(this.parseNumericLiteral());
@@ -1604,10 +1587,23 @@ public abstract class Parser extends Tokenizer {
                 SourceLocation elementLocation = this.getLocation();
                 if (this.eat(TokenType.ELLIPSIS)) {
                     Either<SpreadElementExpression, Binding> expr = this.parseAssignmentExpressionOrBindingElement().mapLeft(x -> (SpreadElementExpression) x); //TODO inherit cover grammar
-                    if (expr.isRight()) {
-                        throw this.createError(ErrorMessages.INVALID_REST); // TODO: some better error message
-                    } else {
+                    if (expr.isLeft()) {
                         exprs.add(Maybe.just(this.markLocation(elementLocation, new SpreadElement((Expression) expr.left().just()))));
+                    } else {
+                        allExpressionsSoFar = false;
+                        for (Maybe<SpreadElementExpression> e : exprs) {
+                            if (e.isNothing()) {
+                                bindings.add(Maybe.nothing());
+                            } else {
+                                SpreadElementExpression r = e.just();
+                                if (r instanceof SpreadElement) {
+                                    throw this.createError(ErrorMessages.INVALID_REST);
+                                }
+                                bindings.add(Maybe.just(transformDestructuring((Expression) r)));
+                            }
+                        }
+                        rest = expr.right();
+                        break;
                     }
                     if (!this.isAssignmentTarget && this.firstExprError != null) {
                         throw this.firstExprError;
@@ -1628,9 +1624,6 @@ public abstract class Parser extends Tokenizer {
                                 } else {
                                     SpreadElementExpression r = e.just();
                                     if (r instanceof SpreadElement) {
-                                        if (!(((SpreadElement) r).expression instanceof IdentifierExpression)) {
-                                            throw this.createError(ErrorMessages.INVALID_REST);
-                                        }
                                         rest = Maybe.just(this.transformDestructuring(((SpreadElement) r).expression));
                                         break;
                                     } else {
@@ -1678,7 +1671,7 @@ public abstract class Parser extends Tokenizer {
         boolean allExpressionsSoFar = true;
 
         while (!this.match(TokenType.RBRACE)) {
-            Either<ObjectProperty, BindingPropertyIdentifier> fromParsePropertyDefinition = this.parsePropertyDefinition();
+            Either<ObjectProperty, BindingProperty> fromParsePropertyDefinition = this.parsePropertyDefinition();
             if (allExpressionsSoFar) {
                 if (fromParsePropertyDefinition.isLeft()) {
                     objectProperties.add(fromParsePropertyDefinition.left().just());
@@ -1790,17 +1783,17 @@ public abstract class Parser extends Tokenizer {
     }
 
     @NotNull
-    private Either<ObjectProperty, BindingPropertyIdentifier> parsePropertyDefinition() throws JsError {
+    private Either<ObjectProperty, BindingProperty> parsePropertyDefinition() throws JsError {
         SourceLocation startLocation = this.getLocation();
         Token token = this.lookahead;
 
-        Either<PropertyName, MethodDefinition> methodOrKey = this.parseMethodDefinition();
+        Either<PropertyName, MethodDefinition> keyOrMethod = this.parseMethodDefinition();
 
-        if (methodOrKey.isRight()) {
+        if (keyOrMethod.isRight()) {
             this.isBindingElement = this.isAssignmentTarget = false;
-            return Either.left(methodOrKey.right().just());
-        } else if (methodOrKey.isLeft()) {
-            PropertyName propName = methodOrKey.left().just();
+            return Either.left(keyOrMethod.right().just());
+        } else if (keyOrMethod.isLeft()) {
+            PropertyName propName = keyOrMethod.left().just();
             if (propName instanceof StaticPropertyName) {
                 StaticPropertyName staticPropertyName = (StaticPropertyName) propName;
                 if (this.eat(TokenType.ASSIGN)) {
@@ -1823,10 +1816,21 @@ public abstract class Parser extends Tokenizer {
 
         this.expect(TokenType.COLON);
 
-        Expression expr = this.parseAssignmentExpressionOrBindingElement().left().just();
-        DataProperty toReturn = new DataProperty(expr, methodOrKey.left().just());
-        this.markLocation(startLocation, toReturn);
-        return Either.left(toReturn);
+        PropertyName name = keyOrMethod.left().just();
+        Either<Expression, Binding> val = this.parseAssignmentExpressionOrBindingElement();
+
+        return val.map(
+                expr -> {
+                    DataProperty toReturn = new DataProperty(expr, name); // TODO the fact that this is (val, name) and BindingPropertyProperty is (name, val) is very sad.
+                    this.markLocation(startLocation, toReturn);
+                    return toReturn;
+                },
+                binding -> {
+                    BindingPropertyProperty toReturn = new BindingPropertyProperty(name, binding);
+                    this.markLocation(startLocation, toReturn);
+                    return toReturn;
+                }
+        );
     }
 
     @NotNull
@@ -1865,12 +1869,8 @@ public abstract class Parser extends Tokenizer {
 
         if (this.match(TokenType.LPAREN)) {
             boolean previousYield = this.allowYieldExpression;
-            boolean previousInGeneratorParameter = this.inGeneratorParameter;
-            this.inGeneratorParameter = isGenerator;
             this.allowYieldExpression = isGenerator;
             FormalParameters params = this.parseParams();
-            this.inGeneratorParameter = previousInGeneratorParameter;
-            this.allowYieldExpression = previousYield;
             this.allowYieldExpression = isGenerator;
 
             FunctionBody body = this.parseFunctionBody();
@@ -1921,9 +1921,6 @@ public abstract class Parser extends Tokenizer {
                 }
             case LBRACK:
                 boolean previousYield = this.allowYieldExpression;
-                if (this.inGeneratorParameter) {
-                    this.allowYieldExpression = false;
-                }
                 this.lex();
                 Expression expr = this.parseAssignmentExpression().left().just();
                 this.expect(TokenType.RBRACK);
@@ -1961,9 +1958,7 @@ public abstract class Parser extends Tokenizer {
             name = Maybe.just(this.parseBindingIdentifier());
         }
 
-        boolean previousInGeneratorParameter = this.inGeneratorParameter;
         boolean previousParamYield = this.allowYieldExpression;
-        this.inGeneratorParameter = false;
         this.allowYieldExpression = false;
         if (this.eat(TokenType.EXTENDS)) {
             Either<ExpressionSuper, Binding> fromParseLeftHandSideExpression = this.isolateCoverGrammar(() -> this.parseLeftHandSideExpression(true));
@@ -1993,7 +1988,6 @@ public abstract class Parser extends Tokenizer {
             }
         }
         this.allowYieldExpression = previousParamYield;
-        this.inGeneratorParameter = previousInGeneratorParameter;
         return this.markLocation(startLocation, new ClassExpression(name, heritage, ImmutableList.from(elements)));
     }
 
@@ -2015,7 +2009,6 @@ public abstract class Parser extends Tokenizer {
             }
         }
 
-        boolean previousInGeneratorParameter = this.inGeneratorParameter;
         boolean previousParamYield = this.allowYieldExpression;
 
         if (this.eat(TokenType.EXTENDS)) {
@@ -2046,7 +2039,6 @@ public abstract class Parser extends Tokenizer {
             }
         }
         this.allowYieldExpression = previousParamYield;
-        this.inGeneratorParameter = previousInGeneratorParameter;
         return this.markLocation(startLocation, new ClassDeclaration(name.just(), heritage, ImmutableList.from(elements)));
     }
 
@@ -2168,13 +2160,13 @@ public abstract class Parser extends Tokenizer {
                 decl = new Export(this.parseClass(false));
                 break;
             case FUNCTION:
-                decl = new Export((FunctionDeclaration) this.parseFunction(false, true));
+                decl = new Export((FunctionDeclaration) this.parseFunctionDeclaration(false, true));
                 break;
             case DEFAULT:
                 this.lex();
                 switch (this.lookahead.type) {
                     case FUNCTION:
-                        decl = new ExportDefault((FunctionDeclaration) this.parseFunction(true, true));
+                        decl = new ExportDefault((FunctionDeclaration) this.parseFunctionDeclaration(true, true));
                         break;
                     case CLASS:
                         decl = new ExportDefault(this.parseClass(true));

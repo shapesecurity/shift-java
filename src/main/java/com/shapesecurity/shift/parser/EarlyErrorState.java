@@ -12,6 +12,7 @@ import com.shapesecurity.shift.ast.MemberExpression;
 import com.shapesecurity.shift.ast.NewTargetExpression;
 import com.shapesecurity.shift.ast.Node;
 import com.shapesecurity.shift.ast.Super;
+import com.shapesecurity.shift.ast.YieldExpression;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -39,7 +40,8 @@ public class EarlyErrorState {
             @NotNull MultiHashTable<String, Node> exportedBindings,
             @NotNull ImmutableList<Super> superCallExpressions,
             @NotNull ImmutableList<Super> superCallExpressionsInConstructorMethod,
-            @NotNull ImmutableList<MemberExpression> superPropertyExpressions) {
+            @NotNull ImmutableList<MemberExpression> superPropertyExpressions,
+            @NotNull ImmutableList<Node> yieldExpressions) {
         this.errors = errors;
         this.strictErrors = strictErrors;
         this.usedLabelNames = usedLabelNames;
@@ -59,6 +61,7 @@ public class EarlyErrorState {
         this.superCallExpressions = superCallExpressions;
         this.superCallExpressionsInConstructorMethod = superCallExpressionsInConstructorMethod;
         this.superPropertyExpressions = superPropertyExpressions;
+        this.yieldExpressions = yieldExpressions;
     }
 
     // Identity
@@ -82,6 +85,7 @@ public class EarlyErrorState {
         this.superCallExpressions = ImmutableList.nil();
         this.superCallExpressionsInConstructorMethod = ImmutableList.nil();
         this.superPropertyExpressions = ImmutableList.nil();
+        this.yieldExpressions = ImmutableList.nil();
     }
 
     // Append
@@ -105,6 +109,7 @@ public class EarlyErrorState {
         this.superCallExpressions = a.superCallExpressions.append(b.superCallExpressions);
         this.superCallExpressionsInConstructorMethod = a.superCallExpressionsInConstructorMethod.append(b.superCallExpressionsInConstructorMethod);
         this.superPropertyExpressions = a.superPropertyExpressions.append(b.superPropertyExpressions);
+        this.yieldExpressions = a.yieldExpressions.append(b.yieldExpressions);
     }
 
 
@@ -171,6 +176,9 @@ public class EarlyErrorState {
     // MemberExpressions with Super object
     @NotNull
     public final ImmutableList<MemberExpression> superPropertyExpressions;
+    // YieldExpressions which may be within parameters / concise arrow bodies
+    @NotNull
+    public final ImmutableList<Node> yieldExpressions;
 
 
     @NotNull
@@ -194,7 +202,8 @@ public class EarlyErrorState {
                 this.exportedBindings,
                 this.superCallExpressions,
                 this.superCallExpressionsInConstructorMethod,
-                this.superPropertyExpressions
+                this.superPropertyExpressions,
+                this.yieldExpressions
         );
     }
 
@@ -219,7 +228,8 @@ public class EarlyErrorState {
                 this.exportedBindings,
                 this.superCallExpressions,
                 this.superCallExpressionsInConstructorMethod,
-                this.superPropertyExpressions
+                this.superPropertyExpressions,
+                this.yieldExpressions
         );
     }
 
@@ -244,7 +254,8 @@ public class EarlyErrorState {
                 this.exportedBindings,
                 this.superCallExpressions,
                 this.superCallExpressionsInConstructorMethod,
-                this.superPropertyExpressions
+                this.superPropertyExpressions,
+                this.yieldExpressions
         );
     }
 
@@ -269,7 +280,8 @@ public class EarlyErrorState {
                 this.exportedBindings,
                 this.superCallExpressions,
                 this.superCallExpressionsInConstructorMethod,
-                this.superPropertyExpressions
+                this.superPropertyExpressions,
+                this.yieldExpressions
         );
     }
 
@@ -294,7 +306,8 @@ public class EarlyErrorState {
                 this.exportedBindings,
                 this.superCallExpressions,
                 this.superCallExpressionsInConstructorMethod,
-                this.superPropertyExpressions
+                this.superPropertyExpressions,
+                this.yieldExpressions
         );
     }
 
@@ -319,7 +332,8 @@ public class EarlyErrorState {
                 this.exportedBindings,
                 this.superCallExpressions,
                 this.superCallExpressionsInConstructorMethod,
-                this.superPropertyExpressions
+                this.superPropertyExpressions,
+                this.yieldExpressions
         );
     }
 
@@ -344,7 +358,8 @@ public class EarlyErrorState {
                 this.exportedBindings,
                 this.superCallExpressions,
                 this.superCallExpressionsInConstructorMethod,
-                this.superPropertyExpressions
+                this.superPropertyExpressions,
+                this.yieldExpressions
         );
     }
 
@@ -369,7 +384,8 @@ public class EarlyErrorState {
                 this.exportedBindings,
                 this.superCallExpressions,
                 this.superCallExpressionsInConstructorMethod,
-                this.superPropertyExpressions
+                this.superPropertyExpressions,
+                this.yieldExpressions
         );
     }
 
@@ -394,7 +410,8 @@ public class EarlyErrorState {
                 this.exportedBindings,
                 this.superCallExpressions,
                 this.superCallExpressionsInConstructorMethod,
-                this.superPropertyExpressions
+                this.superPropertyExpressions,
+                this.yieldExpressions
         );
     }
 
@@ -419,7 +436,8 @@ public class EarlyErrorState {
                 this.exportedBindings,
                 this.superCallExpressions,
                 this.superCallExpressionsInConstructorMethod,
-                this.superPropertyExpressions
+                this.superPropertyExpressions,
+                this.yieldExpressions
         );
     }
 
@@ -444,7 +462,8 @@ public class EarlyErrorState {
                 this.exportedBindings,
                 this.superCallExpressions,
                 this.superCallExpressionsInConstructorMethod,
-                this.superPropertyExpressions
+                this.superPropertyExpressions,
+                this.yieldExpressions
         );
     }
 
@@ -469,7 +488,8 @@ public class EarlyErrorState {
                 this.exportedBindings,
                 this.superCallExpressions,
                 this.superCallExpressionsInConstructorMethod,
-                this.superPropertyExpressions
+                this.superPropertyExpressions,
+                this.yieldExpressions
         );
     }
 
@@ -494,7 +514,8 @@ public class EarlyErrorState {
                 this.exportedBindings,
                 this.superCallExpressions,
                 this.superCallExpressionsInConstructorMethod,
-                this.superPropertyExpressions
+                this.superPropertyExpressions,
+                this.yieldExpressions
         );
     }
 
@@ -519,7 +540,8 @@ public class EarlyErrorState {
                 this.exportedBindings,
                 this.superCallExpressions.cons(node),
                 this.superCallExpressionsInConstructorMethod,
-                this.superPropertyExpressions
+                this.superPropertyExpressions,
+                this.yieldExpressions
         );
     }
 
@@ -544,7 +566,8 @@ public class EarlyErrorState {
                 this.exportedBindings,
                 ImmutableList.nil(),
                 this.superCallExpressions,
-                this.superPropertyExpressions
+                this.superPropertyExpressions,
+                this.yieldExpressions
         );
     }
 
@@ -569,7 +592,8 @@ public class EarlyErrorState {
                 this.exportedBindings,
                 this.superCallExpressions,
                 ImmutableList.nil(),
-                this.superPropertyExpressions
+                this.superPropertyExpressions,
+                this.yieldExpressions
         );
     }
 
@@ -594,7 +618,8 @@ public class EarlyErrorState {
                 this.exportedBindings,
                 ImmutableList.nil(),
                 ImmutableList.nil(),
-                this.superPropertyExpressions
+                this.superPropertyExpressions,
+                this.yieldExpressions
         );
     }
 
@@ -619,7 +644,8 @@ public class EarlyErrorState {
                 this.exportedBindings,
                 this.superCallExpressions,
                 ImmutableList.nil(),
-                this.superPropertyExpressions
+                this.superPropertyExpressions,
+                this.yieldExpressions
         );
     }
 
@@ -644,7 +670,8 @@ public class EarlyErrorState {
                 this.exportedBindings,
                 this.superCallExpressions,
                 this.superCallExpressionsInConstructorMethod,
-                this.superPropertyExpressions.cons(memberExpression)
+                this.superPropertyExpressions.cons(memberExpression),
+                this.yieldExpressions
         );
     }
 
@@ -669,7 +696,8 @@ public class EarlyErrorState {
                 this.exportedBindings,
                 this.superCallExpressions,
                 this.superCallExpressionsInConstructorMethod,
-                ImmutableList.nil()
+                ImmutableList.nil(),
+                this.yieldExpressions
         );
     }
 
@@ -694,7 +722,8 @@ public class EarlyErrorState {
                 this.exportedBindings,
                 this.superCallExpressions,
                 this.superCallExpressionsInConstructorMethod,
-                ImmutableList.nil()
+                ImmutableList.nil(),
+                this.yieldExpressions
         );
     }
 
@@ -719,7 +748,8 @@ public class EarlyErrorState {
                 this.exportedBindings,
                 this.superCallExpressions,
                 this.superCallExpressionsInConstructorMethod,
-                this.superPropertyExpressions
+                this.superPropertyExpressions,
+                this.yieldExpressions
         );
     }
 
@@ -744,7 +774,8 @@ public class EarlyErrorState {
                 this.exportedBindings,
                 this.superCallExpressions,
                 this.superCallExpressionsInConstructorMethod,
-                this.superPropertyExpressions
+                this.superPropertyExpressions,
+                this.yieldExpressions
         );
     }
 
@@ -769,7 +800,8 @@ public class EarlyErrorState {
                 this.exportedBindings,
                 this.superCallExpressions,
                 this.superCallExpressionsInConstructorMethod,
-                this.superPropertyExpressions
+                this.superPropertyExpressions,
+                this.yieldExpressions
         );
     }
 
@@ -794,7 +826,8 @@ public class EarlyErrorState {
                 this.exportedBindings,
                 this.superCallExpressions,
                 this.superCallExpressionsInConstructorMethod,
-                this.superPropertyExpressions
+                this.superPropertyExpressions,
+                this.yieldExpressions
         );
     }
 
@@ -819,7 +852,8 @@ public class EarlyErrorState {
                 this.exportedBindings,
                 this.superCallExpressions,
                 this.superCallExpressionsInConstructorMethod,
-                this.superPropertyExpressions
+                this.superPropertyExpressions,
+                this.yieldExpressions
         );
     }
 
@@ -844,7 +878,8 @@ public class EarlyErrorState {
                 this.exportedBindings,
                 this.superCallExpressions,
                 this.superCallExpressionsInConstructorMethod,
-                this.superPropertyExpressions
+                this.superPropertyExpressions,
+                this.yieldExpressions
         );
     }
 
@@ -873,7 +908,8 @@ public class EarlyErrorState {
                 this.exportedBindings,
                 this.superCallExpressions,
                 this.superCallExpressionsInConstructorMethod,
-                this.superPropertyExpressions
+                this.superPropertyExpressions,
+                this.yieldExpressions
         );
     }
 
@@ -902,7 +938,8 @@ public class EarlyErrorState {
                 this.exportedBindings,
                 this.superCallExpressions,
                 this.superCallExpressionsInConstructorMethod,
-                this.superPropertyExpressions
+                this.superPropertyExpressions,
+                this.yieldExpressions
         );
     }
 
@@ -929,7 +966,8 @@ public class EarlyErrorState {
                 res.exportedBindings,
                 res.superCallExpressions,
                 res.superCallExpressionsInConstructorMethod,
-                res.superPropertyExpressions
+                res.superPropertyExpressions,
+                res.yieldExpressions
         );
     }
 
@@ -954,7 +992,8 @@ public class EarlyErrorState {
                 this.exportedBindings,
                 this.superCallExpressions,
                 this.superCallExpressionsInConstructorMethod,
-                this.superPropertyExpressions
+                this.superPropertyExpressions,
+                this.yieldExpressions
         );
     }
 
@@ -979,7 +1018,8 @@ public class EarlyErrorState {
                 this.exportedBindings,
                 this.superCallExpressions,
                 this.superCallExpressionsInConstructorMethod,
-                this.superPropertyExpressions
+                this.superPropertyExpressions,
+                this.yieldExpressions
         );
     }
 
@@ -1004,7 +1044,8 @@ public class EarlyErrorState {
                 this.exportedBindings,
                 this.superCallExpressions,
                 this.superCallExpressionsInConstructorMethod,
-                this.superPropertyExpressions
+                this.superPropertyExpressions,
+                this.yieldExpressions
         );
     }
 
@@ -1029,7 +1070,8 @@ public class EarlyErrorState {
                 this.exportedBindings,
                 this.superCallExpressions,
                 this.superCallExpressionsInConstructorMethod,
-                this.superPropertyExpressions
+                this.superPropertyExpressions,
+                this.yieldExpressions
         );
     }
 
@@ -1054,7 +1096,8 @@ public class EarlyErrorState {
                 this.exportedBindings,
                 this.superCallExpressions,
                 this.superCallExpressionsInConstructorMethod,
-                this.superPropertyExpressions
+                this.superPropertyExpressions,
+                this.yieldExpressions
         );
     }
 
@@ -1079,7 +1122,8 @@ public class EarlyErrorState {
                 this.exportedBindings.merge(this.lexicallyDeclaredNames.mapValues(bi -> (Node) bi)).merge(this.varDeclaredNames.mapValues(bi -> (Node) bi)),
                 this.superCallExpressions,
                 this.superCallExpressionsInConstructorMethod,
-                this.superPropertyExpressions
+                this.superPropertyExpressions,
+                this.yieldExpressions
         );
     }
 
@@ -1104,7 +1148,8 @@ public class EarlyErrorState {
                 this.exportedBindings.put(name, node),
                 this.superCallExpressions,
                 this.superCallExpressionsInConstructorMethod,
-                this.superPropertyExpressions
+                this.superPropertyExpressions,
+                this.yieldExpressions
         );
     }
 
@@ -1129,7 +1174,60 @@ public class EarlyErrorState {
                 MultiHashTable.empty(),
                 this.superCallExpressions,
                 this.superCallExpressionsInConstructorMethod,
-                this.superPropertyExpressions
+                this.superPropertyExpressions,
+                this.yieldExpressions
+        );
+    }
+
+    @NotNull
+    public EarlyErrorState observeYieldExpression(@NotNull Node yieldExpression) {
+        return new EarlyErrorState(
+                this.errors,
+                this.strictErrors,
+                this.usedLabelNames,
+                this.freeBreakStatements,
+                this.freeContinueStatements,
+                this.freeLabeledBreakStatements,
+                this.freeLabeledContinueStatements,
+                this.newTargetExpressions,
+                this.boundNames,
+                this.previousLexicallyDeclaredNames,
+                this.lexicallyDeclaredNames,
+                this.functionDeclarationNames,
+                this.varDeclaredNames,
+                this.forOfVarDeclaredNames,
+                this.exportedNames,
+                this.exportedBindings,
+                this.superCallExpressions,
+                this.superCallExpressionsInConstructorMethod,
+                this.superPropertyExpressions,
+                this.yieldExpressions.cons(yieldExpression)
+        );
+    }
+
+    @NotNull
+    public EarlyErrorState clearYieldExpressions() {
+        return new EarlyErrorState(
+                this.errors,
+                this.strictErrors,
+                this.usedLabelNames,
+                this.freeBreakStatements,
+                this.freeContinueStatements,
+                this.freeLabeledBreakStatements,
+                this.freeLabeledContinueStatements,
+                this.newTargetExpressions,
+                this.boundNames,
+                this.previousLexicallyDeclaredNames,
+                this.lexicallyDeclaredNames,
+                this.functionDeclarationNames,
+                this.varDeclaredNames,
+                this.forOfVarDeclaredNames,
+                this.exportedNames,
+                this.exportedBindings,
+                this.superCallExpressions,
+                this.superCallExpressionsInConstructorMethod,
+                this.superPropertyExpressions,
+                ImmutableList.nil()
         );
     }
 
@@ -1154,7 +1252,8 @@ public class EarlyErrorState {
                 this.exportedBindings,
                 this.superCallExpressions,
                 this.superCallExpressionsInConstructorMethod,
-                this.superPropertyExpressions
+                this.superPropertyExpressions,
+                this.yieldExpressions
         );
     }
 
@@ -1179,7 +1278,8 @@ public class EarlyErrorState {
                 this.exportedBindings,
                 this.superCallExpressions,
                 this.superCallExpressionsInConstructorMethod,
-                this.superPropertyExpressions
+                this.superPropertyExpressions,
+                this.yieldExpressions
         );
     }
 
@@ -1204,7 +1304,8 @@ public class EarlyErrorState {
                 this.exportedBindings,
                 this.superCallExpressions,
                 this.superCallExpressionsInConstructorMethod,
-                this.superPropertyExpressions
+                this.superPropertyExpressions,
+                this.yieldExpressions
         );
     }
 
@@ -1229,7 +1330,8 @@ public class EarlyErrorState {
                 this.exportedBindings,
                 this.superCallExpressions,
                 this.superCallExpressionsInConstructorMethod,
-                this.superPropertyExpressions
+                this.superPropertyExpressions,
+                this.yieldExpressions
         );
     }
 
@@ -1254,7 +1356,8 @@ public class EarlyErrorState {
                 this.exportedBindings,
                 this.superCallExpressions,
                 this.superCallExpressionsInConstructorMethod,
-                this.superPropertyExpressions
+                this.superPropertyExpressions,
+                this.yieldExpressions
         );
     }
 

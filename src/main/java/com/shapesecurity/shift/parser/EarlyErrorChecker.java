@@ -61,6 +61,8 @@ import com.shapesecurity.shift.ast.VariableDeclarationKind;
 import com.shapesecurity.shift.ast.VariableDeclarationStatement;
 import com.shapesecurity.shift.ast.WhileStatement;
 import com.shapesecurity.shift.ast.WithStatement;
+import com.shapesecurity.shift.ast.YieldExpression;
+import com.shapesecurity.shift.ast.YieldGeneratorExpression;
 import com.shapesecurity.shift.ast.operators.UnaryOperator;
 import com.shapesecurity.shift.utils.Utils;
 import com.shapesecurity.shift.visitor.Director;
@@ -161,8 +163,11 @@ public class EarlyErrorChecker extends MonoidalReducer<EarlyErrorState> {
                 body = body.enforceStrictErrors();
             }
         }
+        body = body.addErrors(body.yieldExpressions.map(ErrorMessages.YIELD_IN_ARROW_BODY));
+        params = params.addErrors(params.yieldExpressions.map(ErrorMessages.YIELD_IN_ARROW_PARAMS));
 
         EarlyErrorState s = super.reduceArrowExpression(node, params, body);
+        s = s.clearYieldExpressions();
         return s.observeVarBoundary();
     }
 
@@ -445,6 +450,7 @@ public class EarlyErrorChecker extends MonoidalReducer<EarlyErrorState> {
         s = s.enforceFreeBreakStatementErrors();
         s = s.enforceFreeLabeledBreakStatementErrors();
         s = s.clearUsedLabelNames();
+        s = s.clearYieldExpressions();
         if (isStrictFunctionBody(node)) {
             s = s.enforceStrictErrors();
         }
@@ -452,7 +458,7 @@ public class EarlyErrorChecker extends MonoidalReducer<EarlyErrorState> {
     }
 
     @NotNull
-    @Override
+    @Override // TODO de-dup code between this and below
     public EarlyErrorState reduceFunctionDeclaration(@NotNull FunctionDeclaration node, @NotNull EarlyErrorState name, @NotNull EarlyErrorState params, @NotNull EarlyErrorState body) {
         boolean isSimpleParameterList = node.params.rest.isNothing() && !node.params.items.exists(i -> !(i instanceof BindingIdentifier));
         boolean dupParamIsNonstrictError = !isSimpleParameterList || node.isGenerator;
@@ -468,6 +474,9 @@ public class EarlyErrorChecker extends MonoidalReducer<EarlyErrorState> {
         body = body.enforceSuperPropertyExpressions();
         params = params.enforceSuperCallExpressions();
         params = params.enforceSuperPropertyExpressions();
+        if (node.isGenerator) {
+            params = params.addErrors(params.yieldExpressions.map(ErrorMessages.YIELD_IN_GENERATOR_PARAMS));
+        }
         params = params.clearNewTargetExpressions();
         body = body.clearNewTargetExpressions();
         if (isStrictFunctionBody(node.body)) {
@@ -475,6 +484,7 @@ public class EarlyErrorChecker extends MonoidalReducer<EarlyErrorState> {
             body = body.enforceStrictErrors();
         }
         EarlyErrorState s = super.reduceFunctionDeclaration(node, name, params, body);
+        s = s.clearYieldExpressions();
         s = s.observeFunctionDeclaration();
         return s;
     }
@@ -496,6 +506,9 @@ public class EarlyErrorChecker extends MonoidalReducer<EarlyErrorState> {
         body = body.enforceSuperPropertyExpressions();
         params = params.enforceSuperCallExpressions();
         params = params.enforceSuperPropertyExpressions();
+        if (node.isGenerator) {
+            params = params.addErrors(params.yieldExpressions.map(ErrorMessages.YIELD_IN_GENERATOR_PARAMS));
+        }
         params = params.clearNewTargetExpressions();
         body = body.clearNewTargetExpressions();
         if (isStrictFunctionBody(node.body)) {
@@ -504,6 +517,7 @@ public class EarlyErrorChecker extends MonoidalReducer<EarlyErrorState> {
         }
         EarlyErrorState s = super.reduceFunctionExpression(node, name, params, body);
         s = s.clearBoundNames();
+        s = s.clearYieldExpressions();
         s = s.observeVarBoundary();
         return s;
     }
@@ -613,6 +627,9 @@ public class EarlyErrorChecker extends MonoidalReducer<EarlyErrorState> {
             body = body.enforceSuperCallExpressions();
             params = params.enforceSuperCallExpressions();
         }
+        if (node.isGenerator) {
+            params = params.addErrors(params.yieldExpressions.map(ErrorMessages.YIELD_IN_GENERATOR_PARAMS));
+        }
         body = body.clearSuperPropertyExpressions();
         params = params.clearSuperPropertyExpressions();
         params = params.clearNewTargetExpressions();
@@ -622,6 +639,7 @@ public class EarlyErrorChecker extends MonoidalReducer<EarlyErrorState> {
             body = body.enforceStrictErrors();
         }
         EarlyErrorState s = super.reduceMethod(node, name, params, body);
+        s = s.clearYieldExpressions();
         s = s.observeVarBoundary();
         return s;
     }
@@ -849,4 +867,21 @@ public class EarlyErrorChecker extends MonoidalReducer<EarlyErrorState> {
         s = s.addStrictError(ErrorMessages.WITH_STRICT.apply(node));
         return s;
     }
+
+    @NotNull
+    @Override
+    public EarlyErrorState reduceYieldExpression(@NotNull YieldExpression node, @NotNull Maybe<EarlyErrorState> expression) {
+        EarlyErrorState s = super.reduceYieldExpression(node, expression);
+        s = s.observeYieldExpression(node);
+        return s;
+    }
+
+    @NotNull
+    @Override
+    public EarlyErrorState reduceYieldGeneratorExpression(@NotNull YieldGeneratorExpression node, @NotNull EarlyErrorState expression) {
+        EarlyErrorState s = super.reduceYieldGeneratorExpression(node, expression);
+        s = s.observeYieldExpression(node);
+        return s;
+    }
+
 }

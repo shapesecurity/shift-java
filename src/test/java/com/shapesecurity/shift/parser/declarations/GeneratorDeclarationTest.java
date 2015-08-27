@@ -26,12 +26,12 @@ public class GeneratorDeclarationTest extends ParserTestCase {
                 ImmutableList.nil(), Maybe.nothing()), new FunctionBody(ImmutableList.nil(), ImmutableList.nil())));
 
         testScript("function* a(a=yield){}", new FunctionDeclaration(new BindingIdentifier("a"), true, new FormalParameters(
-                ImmutableList.list(new BindingWithDefault(new BindingIdentifier("a"), new IdentifierExpression("yield"))),
+                ImmutableList.list(new BindingWithDefault(new BindingIdentifier("a"), new YieldExpression(Maybe.nothing()))),
                 Maybe.nothing()), new FunctionBody(ImmutableList.nil(), ImmutableList.nil())));
 
         testScript("function* a({[yield]:a}){}", new FunctionDeclaration(new BindingIdentifier("a"), true,
                 new FormalParameters(ImmutableList.list(new ObjectBinding(ImmutableList.list(new BindingPropertyProperty(
-                        new ComputedPropertyName(new IdentifierExpression("yield")), new BindingIdentifier("a"))))),
+                        new ComputedPropertyName(new YieldExpression(Maybe.nothing())), new BindingIdentifier("a"))))),
                         Maybe.nothing()), new FunctionBody(ImmutableList.nil(), ImmutableList.nil())));
 
         testScript("function* a(){({[yield]:a}=0)}", new FunctionDeclaration(new BindingIdentifier("a"),
@@ -53,11 +53,26 @@ public class GeneratorDeclarationTest extends ParserTestCase {
                         new FunctionDeclaration(new BindingIdentifier("a"), false, new FormalParameters(ImmutableList.nil(),
                                 Maybe.nothing()), new FunctionBody(ImmutableList.nil(), ImmutableList.nil()))))));
 
+        testScript("function*g() { (function*(x = yield){}); }", new FunctionDeclaration(new BindingIdentifier("g"), true, new FormalParameters(ImmutableList.nil(), Maybe.nothing()),
+                new FunctionBody(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new FunctionExpression(Maybe.nothing(), true,
+                        new FormalParameters(ImmutableList.list(new BindingWithDefault(new BindingIdentifier("x"), new YieldExpression(Maybe.nothing()))), Maybe.nothing()),
+                        new FunctionBody(ImmutableList.nil(), ImmutableList.nil()))
+                )))));
+
+        testScript("function*g() {x = { x: { x = yield } } = 0;}", new FunctionDeclaration(new BindingIdentifier("g"), true, new FormalParameters(ImmutableList.nil(), Maybe.nothing()),
+                new FunctionBody(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(
+                        new AssignmentExpression(new BindingIdentifier("x"), new AssignmentExpression(new ObjectBinding(ImmutableList.list(
+                                new BindingPropertyProperty(new StaticPropertyName("x"), new ObjectBinding(ImmutableList.list(
+                                        new BindingPropertyIdentifier(new BindingIdentifier("x"), Maybe.just(new YieldExpression(Maybe.nothing())))
+                                ))))),
+                                new LiteralNumericExpression(0.0)))
+                )))));
+
         testScriptFailure("label: function* a(){}", 15, "Unexpected token \"*\"");
+        testScriptFailure("function*g(yield){}", 11, "Unexpected token \"yield\"");
         testScriptFailure("function*g() { var yield; }", 19, "Unexpected token \"yield\"");
         testScriptFailure("function*g() { var yield = 1; }", 19, "Unexpected token \"yield\"");
         testScriptFailure("function*g() { function yield(){}; }", 24, "Unexpected token \"yield\"");
-        testScriptFailure("function*g() { (function yield(){}); }", 25, "Unexpected token \"yield\"");
         testScriptFailure("function*g() { let yield; }", 19, "Unexpected token \"yield\"");
         testScriptFailure("function*g() { try {} catch (yield) {} }", 29, "Unexpected token \"yield\"");
     }
