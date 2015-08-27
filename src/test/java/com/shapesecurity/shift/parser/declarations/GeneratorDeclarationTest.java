@@ -26,7 +26,7 @@ public class GeneratorDeclarationTest extends ParserTestCase {
                 ImmutableList.nil(), Maybe.nothing()), new FunctionBody(ImmutableList.nil(), ImmutableList.nil())));
 
         testScript("function* a(a=yield){}", new FunctionDeclaration(new BindingIdentifier("a"), true, new FormalParameters(
-                ImmutableList.list(new BindingWithDefault(new BindingIdentifier("a"), new IdentifierExpression("yield"))),
+                ImmutableList.list(new BindingWithDefault(new BindingIdentifier("a"), new YieldExpression(Maybe.nothing()))),
                 Maybe.nothing()), new FunctionBody(ImmutableList.nil(), ImmutableList.nil())));
 
         testScript("function* a({[yield]:a}){}", new FunctionDeclaration(new BindingIdentifier("a"), true,
@@ -53,11 +53,17 @@ public class GeneratorDeclarationTest extends ParserTestCase {
                         new FunctionDeclaration(new BindingIdentifier("a"), false, new FormalParameters(ImmutableList.nil(),
                                 Maybe.nothing()), new FunctionBody(ImmutableList.nil(), ImmutableList.nil()))))));
 
+        testScript("function*g() { (function*(x = yield){}); }", new FunctionDeclaration(new BindingIdentifier("g"), true, new FormalParameters(ImmutableList.nil(), Maybe.nothing()),
+                new FunctionBody(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new FunctionExpression(Maybe.nothing(), true,
+                        new FormalParameters(ImmutableList.list(new BindingWithDefault(new BindingIdentifier("x"), new YieldExpression(Maybe.nothing()))), Maybe.nothing()),
+                        new FunctionBody(ImmutableList.nil(), ImmutableList.nil()))
+                )))));
+
         testScriptFailure("label: function* a(){}", 15, "Unexpected token \"*\"");
+        testScriptFailure("function*g(yield){}", 11, "Unexpected token \"yield\"");
         testScriptFailure("function*g() { var yield; }", 19, "Unexpected token \"yield\"");
         testScriptFailure("function*g() { var yield = 1; }", 19, "Unexpected token \"yield\"");
         testScriptFailure("function*g() { function yield(){}; }", 24, "Unexpected token \"yield\"");
-        testScriptFailure("function*g() { (function yield(){}); }", 25, "Unexpected token \"yield\"");
         testScriptFailure("function*g() { let yield; }", 19, "Unexpected token \"yield\"");
         testScriptFailure("function*g() { try {} catch (yield) {} }", 29, "Unexpected token \"yield\"");
     }
