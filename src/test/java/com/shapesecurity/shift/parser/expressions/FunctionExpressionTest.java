@@ -72,7 +72,16 @@ public class FunctionExpressionTest extends ParserTestCase {
                 ImmutableList.list(new ArrayBinding(ImmutableList.nil(), Maybe.nothing())), Maybe.nothing()), new FunctionBody(
                 ImmutableList.nil(), ImmutableList.nil())));
 
+        testScript("function* g(){ (function yield(){}); }", new FunctionDeclaration(new BindingIdentifier("g"), true, new FormalParameters(ImmutableList.nil(), Maybe.nothing()), new FunctionBody(ImmutableList.nil(), ImmutableList.list(
+                new ExpressionStatement(new FunctionExpression(Maybe.just(new BindingIdentifier("yield")), false, new FormalParameters(ImmutableList.nil(), Maybe.nothing()), new FunctionBody(ImmutableList.nil(), ImmutableList.nil())))
+        ))));
+
+        testScript("(function*(){ (function yield(){}); });", new FunctionExpression(Maybe.nothing(), true, new FormalParameters(ImmutableList.nil(), Maybe.nothing()), new FunctionBody(ImmutableList.nil(), ImmutableList.list(
+                new ExpressionStatement(new FunctionExpression(Maybe.just(new BindingIdentifier("yield")), false, new FormalParameters(ImmutableList.nil(), Maybe.nothing()), new FunctionBody(ImmutableList.nil(), ImmutableList.nil())))
+        ))));
+
         testScriptFailure("(function(...a, b){})", 14, "Unexpected token \",\"");
         testScriptFailure("(function((a)){})", 10, "Unexpected token \"(\"");
+
     }
 }
