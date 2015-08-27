@@ -1524,7 +1524,7 @@ public abstract class Parser extends Tokenizer {
                 // falls through
             case LET:
             case IDENTIFIER:
-                return Either.left(new IdentifierExpression(this.lex().toString()));
+                return Either.left(this.markLocation(startLocation, new IdentifierExpression(this.lex().toString())));
             case TRUE_LITERAL:
                 this.lex();
                 this.isBindingElement = this.isAssignmentTarget = false;
