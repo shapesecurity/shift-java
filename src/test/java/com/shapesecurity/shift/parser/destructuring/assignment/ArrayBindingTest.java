@@ -37,9 +37,9 @@ public class ArrayBindingTest extends ParserTestCase {
         testScriptFailure("[{a=0},{b=0},0] = 0", 14, "Invalid left-hand side in assignment");
         testScriptFailure("[{a=0},...0]", 2, "Illegal property initializer");
         testScriptFailure("[...0,a]=0", 8, "Invalid left-hand side in assignment");
-        testScriptFailure("[...0,{a=0}]=0", 11, "Invalid rest");
-        testScriptFailure("[...{a=0},]", 9, "Invalid rest");
-        testScriptFailure("[...{a=0},]=0", 9, "Invalid rest");
+        testScriptFailure("[...0,{a=0}]=0", 11, "Invalid left-hand side in assignment");
+        testScriptFailure("[...{a=0},]", 9, "Unexpected token \",\"");
+        testScriptFailure("[...{a=0},]=0", 9, "Unexpected token \",\"");
 
         // TODO: new tests added
         testScriptFailure("[0] = 0", 4, "Invalid left-hand side in assignment");

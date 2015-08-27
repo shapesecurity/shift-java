@@ -31,7 +31,7 @@ public class GeneratorDeclarationTest extends ParserTestCase {
 
         testScript("function* a({[yield]:a}){}", new FunctionDeclaration(new BindingIdentifier("a"), true,
                 new FormalParameters(ImmutableList.list(new ObjectBinding(ImmutableList.list(new BindingPropertyProperty(
-                        new ComputedPropertyName(new IdentifierExpression("yield")), new BindingIdentifier("a"))))),
+                        new ComputedPropertyName(new YieldExpression(Maybe.nothing())), new BindingIdentifier("a"))))),
                         Maybe.nothing()), new FunctionBody(ImmutableList.nil(), ImmutableList.nil())));
 
         testScript("function* a(){({[yield]:a}=0)}", new FunctionDeclaration(new BindingIdentifier("a"),
@@ -66,5 +66,12 @@ public class GeneratorDeclarationTest extends ParserTestCase {
         testScriptFailure("function*g() { function yield(){}; }", 24, "Unexpected token \"yield\"");
         testScriptFailure("function*g() { let yield; }", 19, "Unexpected token \"yield\"");
         testScriptFailure("function*g() { try {} catch (yield) {} }", 29, "Unexpected token \"yield\"");
+    }
+
+    @Test
+    public void testWorking() throws JsError {
+        testScript("assignmentResult = { x: { x = 1 } } = value;\n");
+
+
     }
 }
