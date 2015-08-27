@@ -59,6 +59,15 @@ public class GeneratorDeclarationTest extends ParserTestCase {
                         new FunctionBody(ImmutableList.nil(), ImmutableList.nil()))
                 )))));
 
+        testScript("function*g() {x = { x: { x = yield } } = 0;}", new FunctionDeclaration(new BindingIdentifier("g"), true, new FormalParameters(ImmutableList.nil(), Maybe.nothing()),
+                new FunctionBody(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(
+                        new AssignmentExpression(new BindingIdentifier("x"), new AssignmentExpression(new ObjectBinding(ImmutableList.list(
+                                new BindingPropertyProperty(new StaticPropertyName("x"), new ObjectBinding(ImmutableList.list(
+                                        new BindingPropertyIdentifier(new BindingIdentifier("x"), Maybe.just(new YieldExpression(Maybe.nothing())))
+                                ))))),
+                                new LiteralNumericExpression(0.0)))
+                )))));
+
         testScriptFailure("label: function* a(){}", 15, "Unexpected token \"*\"");
         testScriptFailure("function*g(yield){}", 11, "Unexpected token \"yield\"");
         testScriptFailure("function*g() { var yield; }", 19, "Unexpected token \"yield\"");
@@ -66,12 +75,5 @@ public class GeneratorDeclarationTest extends ParserTestCase {
         testScriptFailure("function*g() { function yield(){}; }", 24, "Unexpected token \"yield\"");
         testScriptFailure("function*g() { let yield; }", 19, "Unexpected token \"yield\"");
         testScriptFailure("function*g() { try {} catch (yield) {} }", 29, "Unexpected token \"yield\"");
-    }
-
-    @Test
-    public void testWorking() throws JsError {
-        testScript("assignmentResult = { x: { x = 1 } } = value;\n");
-
-
     }
 }

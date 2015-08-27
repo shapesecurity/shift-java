@@ -1671,7 +1671,7 @@ public abstract class Parser extends Tokenizer {
         boolean allExpressionsSoFar = true;
 
         while (!this.match(TokenType.RBRACE)) {
-            Either<ObjectProperty, BindingPropertyIdentifier> fromParsePropertyDefinition = this.parsePropertyDefinition();
+            Either<ObjectProperty, BindingProperty> fromParsePropertyDefinition = this.parsePropertyDefinition();
             if (allExpressionsSoFar) {
                 if (fromParsePropertyDefinition.isLeft()) {
                     objectProperties.add(fromParsePropertyDefinition.left().just());
@@ -1783,7 +1783,7 @@ public abstract class Parser extends Tokenizer {
     }
 
     @NotNull
-    private Either<ObjectProperty, BindingPropertyIdentifier> parsePropertyDefinition() throws JsError {
+    private Either<ObjectProperty, BindingProperty> parsePropertyDefinition() throws JsError {
         SourceLocation startLocation = this.getLocation();
         Token token = this.lookahead;
 
@@ -1816,10 +1816,21 @@ public abstract class Parser extends Tokenizer {
 
         this.expect(TokenType.COLON);
 
-        Expression expr = this.parseAssignmentExpressionOrBindingElement().left().just();
-        DataProperty toReturn = new DataProperty(expr, keyOrMethod.left().just());
-        this.markLocation(startLocation, toReturn);
-        return Either.left(toReturn);
+        PropertyName name = keyOrMethod.left().just();
+        Either<Expression, Binding> val = this.parseAssignmentExpressionOrBindingElement();
+
+        return val.map(
+                expr -> {
+                    DataProperty toReturn = new DataProperty(expr, name); // TODO the fact that this is (val, name) and BindingPropertyProperty is (name, val) is very sad.
+                    this.markLocation(startLocation, toReturn);
+                    return toReturn;
+                },
+                binding -> {
+                    BindingPropertyProperty toReturn = new BindingPropertyProperty(name, binding);
+                    this.markLocation(startLocation, toReturn);
+                    return toReturn;
+                }
+        );
     }
 
     @NotNull
