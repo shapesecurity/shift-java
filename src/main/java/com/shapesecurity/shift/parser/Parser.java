@@ -11,7 +11,10 @@ package com.shapesecurity.shift.parser;
 
 import com.shapesecurity.functional.Pair;
 import com.shapesecurity.functional.Thunk;
-import com.shapesecurity.functional.data.*;
+import com.shapesecurity.functional.data.Either;
+import com.shapesecurity.functional.data.Maybe;
+import com.shapesecurity.functional.data.ImmutableList;
+import com.shapesecurity.functional.data.NonEmptyImmutableList;
 import com.shapesecurity.shift.ast.*;
 import com.shapesecurity.shift.ast.operators.*;
 import com.shapesecurity.shift.parser.token.NumericLiteralToken;
