@@ -202,7 +202,7 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
     public State reduceFunctionExpression(@NotNull FunctionExpression node, @NotNull Maybe<State> name, @NotNull State parameters, @NotNull State body) {
         State primary = functionHelper(node, parameters, body, false);
         if (name.isJust()) {
-            return new State(name.just(), primary).addDeclarations(Kind.FunctionName).finish(node, Scope.Type.FunctionName);
+            return new State(name.just(), primary).addDeclarations(Kind.FunctionExpressionName).finish(node, Scope.Type.FunctionName);
         } else {
             return primary; // per spec, no function name scope is created for unnamed expressions.
         }
@@ -556,7 +556,7 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
         private State addFunctionDeclaration() {
             assert this.bindingsForParent.length == 1;
             BindingIdentifier binding = this.bindingsForParent.index(0).just();
-            Declaration decl = new Declaration(binding, Kind.FunctionName);
+            Declaration decl = new Declaration(binding, Kind.FunctionDeclaration);
             return new State(
                     this.freeIdentifiers,
                     this.functionScopedDeclarations,

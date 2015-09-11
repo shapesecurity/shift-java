@@ -28,7 +28,8 @@ public class Declaration {
         Var(false),
         Const(true),
         Let(true),
-        FunctionName(true),
+        FunctionDeclaration(true),
+        FunctionExpressionName(true),
         ClassName(true),
         Param(false),
         CatchParam(true);
