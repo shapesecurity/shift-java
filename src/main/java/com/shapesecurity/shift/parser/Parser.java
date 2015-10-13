@@ -1294,7 +1294,7 @@ public abstract class Parser extends Tokenizer {
             restrictedOperand = (MemberExpression) operand;
         } else if (operand instanceof IdentifierExpression) {
             String name = ((IdentifierExpression) operand).name;
-            restrictedOperand = operand.loc.map(loc -> new BindingIdentifier(loc, name)).orJustLazy(Thunk.from(() -> new BindingIdentifier(name)));
+            restrictedOperand = new BindingIdentifier(name);
         } else {
             throw this.createError("Increment/decrement target must be an identifier or member expression");
         }

@@ -2,13 +2,13 @@
 
 /**
  * Copyright 2015 Shape Security, Inc.
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -18,33 +18,23 @@
 
 package com.shapesecurity.shift.ast;
 
-import org.jetbrains.annotations.NotNull;
 import com.shapesecurity.functional.data.HashCodeBuilder;
 
-public abstract class BindingPattern extends Node implements Binding
-{
+public abstract class BindingPattern implements Binding {
 
-  public BindingPattern (@NotNull SourceSpan loc)
-  {
-    super(loc);
-  }
+    public BindingPattern() {
+        super();
+    }
 
-  public BindingPattern ()
-  {
-    super();
-  }
+    @Override
+    public boolean equals(Object object) {
+        return object instanceof BindingPattern;
+    }
 
-  @Override
-  public boolean equals(Object object)
-  {
-    return object instanceof BindingPattern;
-  }
-
-  @Override
-  public int hashCode()
-  {
-    int code = HashCodeBuilder.put(0, "BindingPattern");
-    return code;
-  }
+    @Override
+    public int hashCode() {
+        int code = HashCodeBuilder.put(0, "BindingPattern");
+        return code;
+    }
 
 }
