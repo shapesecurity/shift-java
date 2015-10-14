@@ -10,55 +10,54 @@ public class CloneReducer implements Reducer<Node> {
 
     @NotNull
     @Override
-    public ArrayBinding reduceArrayBinding(@NotNull ArrayBinding node, @NotNull ImmutableList<Maybe<Node>> elements, @NotNull Maybe<Node> restElement) {
+    public Binding reduceArrayBinding(@NotNull ArrayBinding node, @NotNull ImmutableList<Maybe<Node>> elements, @NotNull Maybe<Node> restElement) {
         ImmutableList<Maybe<BindingBindingWithDefault>> newElements = elements.map(x -> x.map(y -> (BindingBindingWithDefault)y));
         Maybe<Binding> newRestElement = restElement.map(x -> (Binding) x);
-
         return new ArrayBinding(newElements, newRestElement);
     }
 
 
     @NotNull
     @Override
-    public ArrayExpression reduceArrayExpression(@NotNull ArrayExpression node, @NotNull ImmutableList<Maybe<Node>> elements) {
+    public Expression reduceArrayExpression(@NotNull ArrayExpression node, @NotNull ImmutableList<Maybe<Node>> elements) {
         ImmutableList<Maybe<SpreadElementExpression>> newElements = elements.map(x -> x.map(y -> (SpreadElementExpression)y));
         return new ArrayExpression(newElements);
     }
 
     @NotNull
     @Override
-    public ArrowExpression reduceArrowExpression(@NotNull ArrowExpression node, @NotNull Node params, @NotNull Node body) {
+    public Expression reduceArrowExpression(@NotNull ArrowExpression node, @NotNull Node params, @NotNull Node body) {
         return new ArrowExpression((FormalParameters)params, (FunctionBodyExpression) body);
     }
 
     @NotNull
     @Override
-    public AssignmentExpression reduceAssignmentExpression(@NotNull AssignmentExpression node, @NotNull Node binding, @NotNull Node expression) {
+    public Expression reduceAssignmentExpression(@NotNull AssignmentExpression node, @NotNull Node binding, @NotNull Node expression) {
         return new AssignmentExpression((Binding) binding, (Expression) expression);
     }
 
     @NotNull
     @Override
-    public BinaryExpression reduceBinaryExpression(@NotNull BinaryExpression node, @NotNull Node left, @NotNull Node right) {
+    public Expression reduceBinaryExpression(@NotNull BinaryExpression node, @NotNull Node left, @NotNull Node right) {
         return new BinaryExpression(node.getOperator(), (Expression) left, (Expression) right);
     }
 
     @NotNull
     @Override
     public BindingIdentifier reduceBindingIdentifier(@NotNull BindingIdentifier node) {
-        return new BindingIdentifier(node.getName());
+        return node;
     }
 
     @NotNull
     @Override
-    public BindingPropertyIdentifier reduceBindingPropertyIdentifier(@NotNull BindingPropertyIdentifier node, @NotNull Node binding, @NotNull Maybe<Node> init) {
+    public BindingProperty reduceBindingPropertyIdentifier(@NotNull BindingPropertyIdentifier node, @NotNull Node binding, @NotNull Maybe<Node> init) {
         Maybe<Expression> newInit = init.map(x -> (Expression) x);
         return new BindingPropertyIdentifier((BindingIdentifier) binding, newInit);
     }
 
     @NotNull
     @Override
-    public BindingPropertyProperty reduceBindingPropertyProperty(@NotNull BindingPropertyProperty node, @NotNull Node name, @NotNull Node binding) {
+    public BindingProperty reduceBindingPropertyProperty(@NotNull BindingPropertyProperty node, @NotNull Node name, @NotNull Node binding) {
         return new BindingPropertyProperty((PropertyName) name, (BindingBindingWithDefault) binding);
     }
 
@@ -72,25 +71,24 @@ public class CloneReducer implements Reducer<Node> {
     @Override
     public Block reduceBlock(@NotNull Block node, @NotNull ImmutableList<Node> statements) {
         ImmutableList<Statement> newStatements = statements.map(x -> (Statement) x);
-
         return new Block(newStatements);
     }
 
     @NotNull
     @Override
-    public BlockStatement reduceBlockStatement(@NotNull BlockStatement node, @NotNull Node block) {
+    public Statement reduceBlockStatement(@NotNull BlockStatement node, @NotNull Node block) {
         return new BlockStatement((Block) block);
     }
 
     @NotNull
     @Override
-    public BreakStatement reduceBreakStatement(@NotNull BreakStatement node) {
+    public Statement reduceBreakStatement(@NotNull BreakStatement node) {
         return new BreakStatement(node.getLabel());
     }
 
     @NotNull
     @Override
-    public CallExpression reduceCallExpression(@NotNull CallExpression node, @NotNull Node callee, @NotNull ImmutableList<Node> arguments) {
+    public Expression reduceCallExpression(@NotNull CallExpression node, @NotNull Node callee, @NotNull ImmutableList<Node> arguments) {
         ImmutableList<SpreadElementExpression> newArguments = arguments.map(x -> (SpreadElementExpression) x);
         return new CallExpression((ExpressionSuper) callee, newArguments);
     }
@@ -103,10 +101,9 @@ public class CloneReducer implements Reducer<Node> {
 
     @NotNull
     @Override
-    public ClassDeclaration reduceClassDeclaration(@NotNull ClassDeclaration node, @NotNull Node name, @NotNull Maybe<Node> _super, @NotNull ImmutableList<Node> elements) {
+    public Statement reduceClassDeclaration(@NotNull ClassDeclaration node, @NotNull Node name, @NotNull Maybe<Node> _super, @NotNull ImmutableList<Node> elements) {
         Maybe<Expression> newSuper = _super.map(x -> (Expression)x);
         ImmutableList<ClassElement> newElements = elements.map(x -> (ClassElement) x);
-
         return new ClassDeclaration((BindingIdentifier) name, newSuper, newElements);
     }
 
@@ -118,95 +115,94 @@ public class CloneReducer implements Reducer<Node> {
 
     @NotNull
     @Override
-    public ClassExpression reduceClassExpression(@NotNull ClassExpression node, @NotNull Maybe<Node> name, @NotNull Maybe<Node> _super, @NotNull ImmutableList<Node> elements) {
+    public Expression reduceClassExpression(@NotNull ClassExpression node, @NotNull Maybe<Node> name, @NotNull Maybe<Node> _super, @NotNull ImmutableList<Node> elements) {
         Maybe<BindingIdentifier> newName = name.map(x -> (BindingIdentifier) x);
         Maybe<Expression> newSuper = _super.map(x -> (Expression) x);
         ImmutableList<ClassElement> newElements = elements.map(x -> (ClassElement) x);
-
         return new ClassExpression(newName, newSuper, newElements);
     }
 
     @NotNull
     @Override
-    public CompoundAssignmentExpression reduceCompoundAssignmentExpression(@NotNull CompoundAssignmentExpression node, @NotNull Node binding, @NotNull Node expression) {
+    public Expression reduceCompoundAssignmentExpression(@NotNull CompoundAssignmentExpression node, @NotNull Node binding, @NotNull Node expression) {
         return new CompoundAssignmentExpression(node.operator, (BindingIdentifierMemberExpression) binding, (Expression) expression);
     }
 
     @NotNull
     @Override
-    public ComputedMemberExpression reduceComputedMemberExpression(@NotNull ComputedMemberExpression node, @NotNull Node object, @NotNull Node expression) {
+    public MemberExpression reduceComputedMemberExpression(@NotNull ComputedMemberExpression node, @NotNull Node object, @NotNull Node expression) {
         return new ComputedMemberExpression((Expression) object, (ExpressionSuper) expression);
     }
 
     @NotNull
     @Override
-    public ComputedPropertyName reduceComputedPropertyName(@NotNull ComputedPropertyName node, @NotNull Node expression) {
+    public PropertyName reduceComputedPropertyName(@NotNull ComputedPropertyName node, @NotNull Node expression) {
         return new ComputedPropertyName((Expression) expression);
     }
 
     @NotNull
     @Override
-    public ConditionalExpression reduceConditionalExpression(@NotNull ConditionalExpression node, @NotNull Node test, @NotNull Node consequent, @NotNull Node alternate) {
+    public Expression reduceConditionalExpression(@NotNull ConditionalExpression node, @NotNull Node test, @NotNull Node consequent, @NotNull Node alternate) {
         return new ConditionalExpression((Expression) test, (Expression) consequent, (Expression) alternate);
     }
 
     @NotNull
     @Override
-    public ContinueStatement reduceContinueStatement(@NotNull ContinueStatement node) {
+    public Statement reduceContinueStatement(@NotNull ContinueStatement node) {
         return new ContinueStatement(node.getLabel());
     }
 
     @NotNull
     @Override
-    public DataProperty reduceDataProperty(@NotNull DataProperty node, @NotNull Node value, @NotNull Node name) {
+    public ObjectProperty reduceDataProperty(@NotNull DataProperty node, @NotNull Node value, @NotNull Node name) {
         return new DataProperty((Expression) value, (PropertyName) name); //TODO: should value be here?
     }
 
     @NotNull
     @Override
-    public DebuggerStatement reduceDebuggerStatement(@NotNull DebuggerStatement node) {
+    public Statement reduceDebuggerStatement(@NotNull DebuggerStatement node) {
         return new DebuggerStatement(); //TODO: is this correct?
     }
 
     @NotNull
     @Override
     public Directive reduceDirective(@NotNull Directive node) {
-        return new Directive(node.getRawValue());
+        return node;
     }
 
     @NotNull
     @Override
-    public DoWhileStatement reduceDoWhileStatement(@NotNull DoWhileStatement node, @NotNull Node test, @NotNull Node body) {
+    public Statement reduceDoWhileStatement(@NotNull DoWhileStatement node, @NotNull Node test, @NotNull Node body) {
         return new DoWhileStatement((Expression) test, (Statement) body);
     }
 
     @NotNull
     @Override
-    public EmptyStatement reduceEmptyStatement(@NotNull EmptyStatement node) {
-        return new EmptyStatement(); //TODO: is this correct?
+    public Statement reduceEmptyStatement(@NotNull EmptyStatement node) {
+        return node;
     }
 
     @NotNull
     @Override
-    public Export reduceExport(@NotNull Export node, @NotNull Node declaration) {
+    public ImportDeclarationExportDeclarationStatement reduceExport(@NotNull Export node, @NotNull Node declaration) {
         return new Export((FunctionDeclarationClassDeclarationVariableDeclaration) declaration);
     }
 
     @NotNull
     @Override
-    public ExportAllFrom reduceExportAllFrom(@NotNull ExportAllFrom node) {
-        return new ExportAllFrom(node.getModuleSpecifier());
+    public ImportDeclarationExportDeclarationStatement reduceExportAllFrom(@NotNull ExportAllFrom node) {
+        return node;
     }
 
     @NotNull
     @Override
-    public ExportDefault reduceExportDefault(@NotNull ExportDefault node, @NotNull Node body) {
+    public ImportDeclarationExportDeclarationStatement reduceExportDefault(@NotNull ExportDefault node, @NotNull Node body) {
         return new ExportDefault((FunctionDeclarationClassDeclarationExpression) body);
     }
 
     @NotNull
     @Override
-    public ExportFrom reduceExportFrom(@NotNull ExportFrom node, @NotNull ImmutableList<Node> namedExports) {
+    public ImportDeclarationExportDeclarationStatement reduceExportFrom(@NotNull ExportFrom node, @NotNull ImmutableList<Node> namedExports) {
         ImmutableList<ExportSpecifier> newNamedExports = namedExports.map(x -> (ExportSpecifier) x);
         return new ExportFrom(newNamedExports, node.getModuleSpecifier());
     }
@@ -214,34 +210,33 @@ public class CloneReducer implements Reducer<Node> {
     @NotNull
     @Override
     public ExportSpecifier reduceExportSpecifier(@NotNull ExportSpecifier node) {
-        return new ExportSpecifier(node.getName(), node.getExportedName());
+        return node;
     }
 
     @NotNull
     @Override
-    public ExpressionStatement reduceExpressionStatement(@NotNull ExpressionStatement node, @NotNull Node expression) {
+    public Statement reduceExpressionStatement(@NotNull ExpressionStatement node, @NotNull Node expression) {
         return new ExpressionStatement((Expression) expression);
     }
 
     @NotNull
     @Override
-    public ForInStatement reduceForInStatement(@NotNull ForInStatement node, @NotNull Node left, @NotNull Node right, @NotNull Node body) {
+    public Statement reduceForInStatement(@NotNull ForInStatement node, @NotNull Node left, @NotNull Node right, @NotNull Node body) {
         return new ForInStatement((VariableDeclarationBinding) left, (Expression) right, (Statement) body);
     }
 
     @NotNull
     @Override
-    public ForOfStatement reduceForOfStatement(@NotNull ForOfStatement node, @NotNull Node left, @NotNull Node right, @NotNull Node body) {
+    public Statement reduceForOfStatement(@NotNull ForOfStatement node, @NotNull Node left, @NotNull Node right, @NotNull Node body) {
         return new ForOfStatement((VariableDeclarationBinding) left, (Expression) right, (Statement) body);
     }
 
     @NotNull
     @Override
-    public ForStatement reduceForStatement(@NotNull ForStatement node, @NotNull Maybe<Node> init, @NotNull Maybe<Node> test, @NotNull Maybe<Node> update, @NotNull Node body) {
+    public Statement reduceForStatement(@NotNull ForStatement node, @NotNull Maybe<Node> init, @NotNull Maybe<Node> test, @NotNull Maybe<Node> update, @NotNull Node body) {
         Maybe<VariableDeclarationExpression> newInit = init.map(x -> (VariableDeclarationExpression) x);
         Maybe<Expression> newTest = test.map(x -> (Expression) x);
         Maybe<Expression> newUpdate = update.map(x -> (Expression) x);
-
         return new ForStatement(newInit, newTest, newUpdate, (Statement) body);
     }
 
@@ -250,7 +245,6 @@ public class CloneReducer implements Reducer<Node> {
     public FormalParameters reduceFormalParameters(@NotNull FormalParameters node, @NotNull ImmutableList<Node> items, @NotNull Maybe<Node> rest) {
         ImmutableList<BindingBindingWithDefault> newItems = items.map(x -> (BindingBindingWithDefault) x);
         Maybe<BindingIdentifier> newRest = rest.map(x -> (BindingIdentifier) x);
-
         return new FormalParameters(newItems, newRest);
     }
 
@@ -259,58 +253,53 @@ public class CloneReducer implements Reducer<Node> {
     public FunctionBody reduceFunctionBody(@NotNull FunctionBody node, @NotNull ImmutableList<Node> directives, @NotNull ImmutableList<Node> statements) {
         ImmutableList<Directive> newDirectives = directives.map(x -> (Directive) x);
         ImmutableList<Statement> newStatements = statements.map(x -> (Statement) x);
-
         return new FunctionBody(newDirectives, newStatements);
     }
 
     @NotNull
     @Override
-    public FunctionDeclaration reduceFunctionDeclaration(@NotNull FunctionDeclaration node, @NotNull Node name, @NotNull Node params, @NotNull Node body) {
+    public Statement reduceFunctionDeclaration(@NotNull FunctionDeclaration node, @NotNull Node name, @NotNull Node params, @NotNull Node body) {
         return new FunctionDeclaration((BindingIdentifier) name, node.getIsGenerator(), (FormalParameters) params, (FunctionBody) body);
     }
 
     @NotNull
     @Override
-    public FunctionExpression reduceFunctionExpression(@NotNull FunctionExpression node, @NotNull Maybe<Node> name, @NotNull Node parameters, @NotNull Node body) {
+    public Expression reduceFunctionExpression(@NotNull FunctionExpression node, @NotNull Maybe<Node> name, @NotNull Node parameters, @NotNull Node body) {
         Maybe<BindingIdentifier> newName = name.map(x -> (BindingIdentifier) x);
-
         return new FunctionExpression(newName, node.getIsGenerator(), (FormalParameters) parameters, (FunctionBody) body);
     }
 
     @NotNull
     @Override
-    public Getter reduceGetter(@NotNull Getter node, @NotNull Node body, @NotNull Node name) {
+    public MethodDefinition reduceGetter(@NotNull Getter node, @NotNull Node body, @NotNull Node name) {
         return new Getter((FunctionBody) body, (PropertyName) name);
     }
 
     @NotNull
     @Override
-    public IdentifierExpression reduceIdentifierExpression(@NotNull IdentifierExpression node) {
-        return new IdentifierExpression(node.getName());
+    public Expression reduceIdentifierExpression(@NotNull IdentifierExpression node) {
+        return node;
     }
 
     @NotNull
     @Override
-    public IfStatement reduceIfStatement(@NotNull IfStatement node, @NotNull Node test, @NotNull Node consequent, @NotNull Maybe<Node> alternate) {
+    public Statement reduceIfStatement(@NotNull IfStatement node, @NotNull Node test, @NotNull Node consequent, @NotNull Maybe<Node> alternate) {
         Maybe<Statement> newAlternate = alternate.map(x -> (Statement) x);
-
         return new IfStatement((Expression) test, (Statement) consequent, newAlternate);
     }
 
     @NotNull
     @Override
-    public Import reduceImport(@NotNull Import node, @NotNull Maybe<Node> defaultBinding, @NotNull ImmutableList<Node> namedImports) {
+    public ImportDeclarationExportDeclarationStatement reduceImport(@NotNull Import node, @NotNull Maybe<Node> defaultBinding, @NotNull ImmutableList<Node> namedImports) {
         Maybe<BindingIdentifier> newDefaultBinding = defaultBinding.map(x -> (BindingIdentifier) x);
         ImmutableList<ImportSpecifier> newNamedImports = namedImports.map(x -> (ImportSpecifier) x);
-
         return new Import(newDefaultBinding, newNamedImports, node.getModuleSpecifier());
     }
 
     @NotNull
     @Override
-    public ImportNamespace reduceImportNamespace(@NotNull ImportNamespace node, @NotNull Maybe<Node> defaultBinding, @NotNull Node namespaceBinding) {
+    public ImportDeclarationExportDeclarationStatement reduceImportNamespace(@NotNull ImportNamespace node, @NotNull Maybe<Node> defaultBinding, @NotNull Node namespaceBinding) {
         Maybe<BindingIdentifier> newDefaultBinding = defaultBinding.map(x -> (BindingIdentifier) x);
-
         return new ImportNamespace(newDefaultBinding, (BindingIdentifier) namespaceBinding, node.getModuleSpecifier());
     }
 
@@ -322,49 +311,49 @@ public class CloneReducer implements Reducer<Node> {
 
     @NotNull
     @Override
-    public LabeledStatement reduceLabeledStatement(@NotNull LabeledStatement node, @NotNull Node body) {
+    public Statement reduceLabeledStatement(@NotNull LabeledStatement node, @NotNull Node body) {
         return new LabeledStatement(node.getLabel(), (Statement) body);
     }
 
     @NotNull
     @Override
-    public LiteralBooleanExpression reduceLiteralBooleanExpression(@NotNull LiteralBooleanExpression node) {
-        return new LiteralBooleanExpression(node.getValue());
+    public Expression reduceLiteralBooleanExpression(@NotNull LiteralBooleanExpression node) {
+        return node;
     }
 
     @NotNull
     @Override
-    public LiteralInfinityExpression reduceLiteralInfinityExpression(@NotNull LiteralInfinityExpression node) {
-        return new LiteralInfinityExpression(); //TODO: is this correct?
+    public Expression reduceLiteralInfinityExpression(@NotNull LiteralInfinityExpression node) {
+        return node;
     }
 
     @NotNull
     @Override
-    public LiteralNullExpression reduceLiteralNullExpression(@NotNull LiteralNullExpression node) {
-        return new LiteralNullExpression(); //TODO: is this correct?
+    public Expression reduceLiteralNullExpression(@NotNull LiteralNullExpression node) {
+        return node;
     }
 
     @NotNull
     @Override
-    public LiteralNumericExpression reduceLiteralNumericExpression(@NotNull LiteralNumericExpression node) {
-        return new LiteralNumericExpression(node.getValue());
+    public Expression reduceLiteralNumericExpression(@NotNull LiteralNumericExpression node) {
+        return node;
     }
 
     @NotNull
     @Override
-    public LiteralRegExpExpression reduceLiteralRegExpExpression(@NotNull LiteralRegExpExpression node) {
-        return new LiteralRegExpExpression(node.getPattern(), node.getFlags());
+    public Expression reduceLiteralRegExpExpression(@NotNull LiteralRegExpExpression node) {
+        return node;
     }
 
     @NotNull
     @Override
-    public LiteralStringExpression reduceLiteralStringExpression(@NotNull LiteralStringExpression node) {
-        return new LiteralStringExpression(node.getValue());
+    public Expression reduceLiteralStringExpression(@NotNull LiteralStringExpression node) {
+        return node;
     }
 
     @NotNull
     @Override
-    public Method reduceMethod(@NotNull Method node, @NotNull Node params, @NotNull Node body, @NotNull Node name) {
+    public MethodDefinition reduceMethod(@NotNull Method node, @NotNull Node params, @NotNull Node body, @NotNull Node name) {
         return new Method(node.getIsGenerator(), (FormalParameters) params, (FunctionBody) body, (PropertyName) name);
     }
 
@@ -373,45 +362,40 @@ public class CloneReducer implements Reducer<Node> {
     public Module reduceModule(@NotNull Module node, @NotNull ImmutableList<Node> directives, @NotNull ImmutableList<Node> items) {
         ImmutableList<Directive> newDirectives = directives.map(x -> (Directive) x);
         ImmutableList<ImportDeclarationExportDeclarationStatement> newItems = items.map(x -> (ImportDeclarationExportDeclarationStatement) x);
-
         return new Module(newDirectives, newItems);
     }
 
     @NotNull
     @Override
-    public NewExpression reduceNewExpression(@NotNull NewExpression node, @NotNull Node callee, @NotNull ImmutableList<Node> arguments) {
+    public Expression reduceNewExpression(@NotNull NewExpression node, @NotNull Node callee, @NotNull ImmutableList<Node> arguments) {
         ImmutableList<SpreadElementExpression> newArguments = arguments.map(x -> (SpreadElementExpression) x);
-
         return new NewExpression((Expression) callee, newArguments);
     }
 
     @NotNull
     @Override
-    public NewTargetExpression reduceNewTargetExpression(@NotNull NewTargetExpression node) {
-        return new NewTargetExpression(); //TODO: double-check this!
+    public Expression reduceNewTargetExpression(@NotNull NewTargetExpression node) {
+        return node;
     }
 
     @NotNull
     @Override
-    public ObjectBinding reduceObjectBinding(@NotNull ObjectBinding node, @NotNull ImmutableList<Node> properties) {
+    public Binding reduceObjectBinding(@NotNull ObjectBinding node, @NotNull ImmutableList<Node> properties) {
         ImmutableList<BindingProperty> newProperties = properties.map(x -> (BindingProperty) x);
-
         return new ObjectBinding(newProperties);
     }
 
     @NotNull
     @Override
-    public ObjectExpression reduceObjectExpression(@NotNull ObjectExpression node, @NotNull ImmutableList<Node> properties) {
+    public Expression reduceObjectExpression(@NotNull ObjectExpression node, @NotNull ImmutableList<Node> properties) {
         ImmutableList<ObjectProperty> newProperties = properties.map(x -> (ObjectProperty) x);
-
         return new ObjectExpression(newProperties);
     }
 
     @NotNull
     @Override
-    public ReturnStatement reduceReturnStatement(@NotNull ReturnStatement node, @NotNull Maybe<Node> expression) {
+    public Statement reduceReturnStatement(@NotNull ReturnStatement node, @NotNull Maybe<Node> expression) {
         Maybe<Expression> newExpression = expression.map(x -> (Expression) x);
-
         return new ReturnStatement(newExpression);
     }
 
@@ -420,51 +404,49 @@ public class CloneReducer implements Reducer<Node> {
     public Script reduceScript(@NotNull Script node, @NotNull ImmutableList<Node> directives, @NotNull ImmutableList<Node> statements) {
         ImmutableList<Directive> newDirectives = directives.map(x -> (Directive) x);
         ImmutableList<Statement> newStatements = statements.map(x -> (Statement) x);
-
         return new Script(newDirectives, newStatements);
     }
 
     @NotNull
     @Override
-    public Setter reduceSetter(@NotNull Setter node, @NotNull Node params, @NotNull Node body, @NotNull Node name) {
+    public MethodDefinition reduceSetter(@NotNull Setter node, @NotNull Node params, @NotNull Node body, @NotNull Node name) {
         return new Setter((BindingBindingWithDefault) params, (FunctionBody) body, (PropertyName) name);
     }
 
     @NotNull
     @Override
-    public ShorthandProperty reduceShorthandProperty(@NotNull ShorthandProperty node) {
-        return new ShorthandProperty(node.getName());
+    public ObjectProperty reduceShorthandProperty(@NotNull ShorthandProperty node) {
+        return node;
     }
 
     @NotNull
     @Override
-    public SpreadElement reduceSpreadElement(@NotNull SpreadElement node, @NotNull Node expression) {
+    public SpreadElementExpression reduceSpreadElement(@NotNull SpreadElement node, @NotNull Node expression) {
         return new SpreadElement((Expression) expression);
     }
 
     @NotNull
     @Override
-    public StaticMemberExpression reduceStaticMemberExpression(@NotNull StaticMemberExpression node, @NotNull Node object) {
+    public MemberExpression reduceStaticMemberExpression(@NotNull StaticMemberExpression node, @NotNull Node object) {
         return new StaticMemberExpression(node.getProperty(), (ExpressionSuper) object);
     }
 
     @NotNull
     @Override
-    public StaticPropertyName reduceStaticPropertyName(@NotNull StaticPropertyName node) {
-        return new StaticPropertyName(node.getValue());
+    public PropertyName reduceStaticPropertyName(@NotNull StaticPropertyName node) {
+        return node;
     }
 
     @NotNull
     @Override
-    public Super reduceSuper(@NotNull Super node) {
-        return new Super();
+    public ExpressionSuper reduceSuper(@NotNull Super node) {
+        return node;
     }
 
     @NotNull
     @Override
     public SwitchCase reduceSwitchCase(@NotNull SwitchCase node, @NotNull Node test, @NotNull ImmutableList<Node> consequent) {
         ImmutableList<Statement> newConsequent = consequent.map(x -> (Statement) x);
-
         return new SwitchCase((Expression) test, newConsequent);
     }
 
@@ -472,77 +454,72 @@ public class CloneReducer implements Reducer<Node> {
     @Override
     public SwitchDefault reduceSwitchDefault(@NotNull SwitchDefault node, @NotNull ImmutableList<Node> consequent) {
         ImmutableList<Statement> newConsequent = consequent.map(x -> (Statement) x);
-
         return new SwitchDefault(newConsequent);
     }
 
     @NotNull
     @Override
-    public SwitchStatement reduceSwitchStatement(@NotNull SwitchStatement node, @NotNull Node discriminant, @NotNull ImmutableList<Node> cases) {
+    public Statement reduceSwitchStatement(@NotNull SwitchStatement node, @NotNull Node discriminant, @NotNull ImmutableList<Node> cases) {
         ImmutableList<SwitchCase> newCases = cases.map(x -> (SwitchCase) x);
-
         return new SwitchStatement((Expression) discriminant, newCases);
     }
 
     @NotNull
     @Override
-    public SwitchStatementWithDefault reduceSwitchStatementWithDefault(@NotNull SwitchStatementWithDefault node, @NotNull Node discriminant, @NotNull ImmutableList<Node> preDefaultCases, @NotNull Node defaultCase, @NotNull ImmutableList<Node> postDefaultCases) {
+    public Statement reduceSwitchStatementWithDefault(@NotNull SwitchStatementWithDefault node, @NotNull Node discriminant, @NotNull ImmutableList<Node> preDefaultCases, @NotNull Node defaultCase, @NotNull ImmutableList<Node> postDefaultCases) {
         ImmutableList<SwitchCase> newPreDefaultCases = preDefaultCases.map(x -> (SwitchCase) x);
         ImmutableList<SwitchCase> newPostDefaultCases = postDefaultCases.map(x -> (SwitchCase) x);
-
         return new SwitchStatementWithDefault((Expression) discriminant, newPreDefaultCases, (SwitchDefault) defaultCase, newPostDefaultCases);
     }
 
     @NotNull
     @Override
     public TemplateElement reduceTemplateElement(@NotNull TemplateElement node) {
-        return new TemplateElement(node.getRawValue());
+        return node;
     }
 
     @NotNull
     @Override
-    public TemplateExpression reduceTemplateExpression(@NotNull TemplateExpression node, @NotNull Maybe<Node> tag, @NotNull ImmutableList<Node> elements) {
+    public Expression reduceTemplateExpression(@NotNull TemplateExpression node, @NotNull Maybe<Node> tag, @NotNull ImmutableList<Node> elements) {
         Maybe<Expression> newTag = tag.map(x -> (Expression) x);
         ImmutableList<ExpressionTemplateElement> newElements = elements.map(x -> (ExpressionTemplateElement) x);
-
         return new TemplateExpression(newTag, newElements);
     }
 
     @NotNull
     @Override
-    public ThisExpression reduceThisExpression(@NotNull ThisExpression node) {
-        return new ThisExpression(); //TODO: see if this is correct
+    public Expression reduceThisExpression(@NotNull ThisExpression node) {
+        return node;
     }
 
     @NotNull
     @Override
-    public ThrowStatement reduceThrowStatement(@NotNull ThrowStatement node, @NotNull Node expression) {
+    public Statement reduceThrowStatement(@NotNull ThrowStatement node, @NotNull Node expression) {
         return new ThrowStatement((Expression) expression);
     }
 
     @NotNull
     @Override
-    public TryCatchStatement reduceTryCatchStatement(@NotNull TryCatchStatement node, @NotNull Node block, @NotNull Node catchClause) {
+    public Statement reduceTryCatchStatement(@NotNull TryCatchStatement node, @NotNull Node block, @NotNull Node catchClause) {
         return new TryCatchStatement((Block) block, (CatchClause) catchClause);
     }
 
     @NotNull
     @Override
-    public TryFinallyStatement reduceTryFinallyStatement(@NotNull TryFinallyStatement node, @NotNull Node block, @NotNull Maybe<Node> catchClause, @NotNull Node finalizer) {
+    public Statement reduceTryFinallyStatement(@NotNull TryFinallyStatement node, @NotNull Node block, @NotNull Maybe<Node> catchClause, @NotNull Node finalizer) {
         Maybe<CatchClause> newCatchClause = catchClause.map(x -> (CatchClause) x);
-
         return new TryFinallyStatement((Block) block, newCatchClause, (Block) finalizer);
     }
 
     @NotNull
     @Override
-    public UnaryExpression reduceUnaryExpression(@NotNull UnaryExpression node, @NotNull Node operand) {
+    public Expression reduceUnaryExpression(@NotNull UnaryExpression node, @NotNull Node operand) {
         return new UnaryExpression(node.getOperator(), (Expression) operand);
     }
 
     @NotNull
     @Override
-    public UpdateExpression reduceUpdateExpression(@NotNull UpdateExpression node, @NotNull Node operand) {
+    public Expression reduceUpdateExpression(@NotNull UpdateExpression node, @NotNull Node operand) {
         return new UpdateExpression(node.getIsPrefix(), node.getOperator(), (BindingIdentifierMemberExpression) operand);
     }
 
@@ -550,13 +527,12 @@ public class CloneReducer implements Reducer<Node> {
     @Override
     public VariableDeclaration reduceVariableDeclaration(@NotNull VariableDeclaration node, @NotNull ImmutableList<Node> declarators) {
         ImmutableList<VariableDeclarator> newDeclarators = declarators.map(x -> (VariableDeclarator) x);
-
         return new VariableDeclaration(node.getKind(), newDeclarators);
     }
 
     @NotNull
     @Override
-    public VariableDeclarationStatement reduceVariableDeclarationStatement(@NotNull VariableDeclarationStatement node, @NotNull Node declaration) {
+    public Statement reduceVariableDeclarationStatement(@NotNull VariableDeclarationStatement node, @NotNull Node declaration) {
         return new VariableDeclarationStatement((VariableDeclaration) declaration);
     }
 
@@ -564,33 +540,31 @@ public class CloneReducer implements Reducer<Node> {
     @Override
     public VariableDeclarator reduceVariableDeclarator(@NotNull VariableDeclarator node, @NotNull Node binding, @NotNull Maybe<Node> init) {
         Maybe<Expression> newInit = init.map(x -> (Expression) x);
-
         return new VariableDeclarator((Binding) binding, newInit);
     }
 
     @NotNull
     @Override
-    public WhileStatement reduceWhileStatement(@NotNull WhileStatement node, @NotNull Node test, @NotNull Node body) {
+    public Statement reduceWhileStatement(@NotNull WhileStatement node, @NotNull Node test, @NotNull Node body) {
         return new WhileStatement((Expression) test, (Statement) body);
     }
 
     @NotNull
     @Override
-    public WithStatement reduceWithStatement(@NotNull WithStatement node, @NotNull Node object, @NotNull Node body) {
+    public Statement reduceWithStatement(@NotNull WithStatement node, @NotNull Node object, @NotNull Node body) {
         return new WithStatement((Expression) object, (Statement) body);
     }
 
     @NotNull
     @Override
-    public YieldExpression reduceYieldExpression(@NotNull YieldExpression node, @NotNull Maybe<Node> expression) {
+    public Expression reduceYieldExpression(@NotNull YieldExpression node, @NotNull Maybe<Node> expression) {
         Maybe<Expression> newExpression = expression.map(x -> (Expression) x);
-
         return new YieldExpression(newExpression);
     }
 
     @NotNull
     @Override
-    public YieldGeneratorExpression reduceYieldGeneratorExpression(@NotNull YieldGeneratorExpression node, @NotNull Node expression) {
+    public Expression reduceYieldGeneratorExpression(@NotNull YieldGeneratorExpression node, @NotNull Node expression) {
         return new YieldGeneratorExpression((Expression) expression);
     }
 }
