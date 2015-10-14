@@ -1,6 +1,21 @@
 package com.shapesecurity.shift.reducer;
 
+import com.shapesecurity.shift.ast.BlockStatement;
+import com.shapesecurity.shift.ast.ComputedMemberExpression;
+import com.shapesecurity.shift.ast.EmptyStatement;
+import com.shapesecurity.shift.ast.Expression;
+import com.shapesecurity.shift.ast.LiteralNullExpression;
+import com.shapesecurity.shift.ast.Node;
+import com.shapesecurity.shift.ast.Script;
+import com.shapesecurity.shift.ast.StaticMemberExpression;
+import com.shapesecurity.shift.codegen.CodeGen;
 import com.shapesecurity.shift.parser.JsError;
+import com.shapesecurity.shift.parser.Parser;
+import com.shapesecurity.shift.visitor.Director;
+
+import static org.junit.Assert.assertEquals;
+
+import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 
 public class CloneReducerTest extends CloneReducerTestCase {
@@ -674,5 +689,38 @@ public class CloneReducerTest extends CloneReducerTestCase {
         cloneTestScript("(function a() {'use strict';return 0;});");
         cloneTestScript("\"use strict\" + 0");
         cloneTestModule("\"use strict\";");
+    }
+
+
+    @Test
+    public void testTypeAlteringCloneReducerSubclass() throws JsError {
+        Script script, clone;
+
+        script =  Parser.parseScript("{}");
+        clone = (Script) Director.reduceScript(new ReplaceBlockStatementsWithEmptyStatements(), script);
+        assertEquals(CodeGen.codeGen(clone), ";");
+
+        script =  Parser.parseScript("a.b");
+        clone = (Script) Director.reduceScript(new ReplaceStaticMemberExpressionWithComputedMemberExpression(), script);
+        assertEquals(CodeGen.codeGen(clone), "null[null]");
+    }
+
+    class ReplaceStaticMemberExpressionWithComputedMemberExpression extends CloneReducer {
+        @Override
+        @NotNull
+        public ComputedMemberExpression reduceStaticMemberExpression(@NotNull StaticMemberExpression staticMemberExpression, @NotNull Node object) {
+            return new ComputedMemberExpression(new LiteralNullExpression(), new LiteralNullExpression());
+        }
+    }
+
+    // TODO: replace MemberExpression with some other Binding
+    // TODO: replace MemberExpression with some non-MemberExpression Expression
+
+    class ReplaceBlockStatementsWithEmptyStatements extends CloneReducer {
+        @Override
+        @NotNull
+        public EmptyStatement reduceBlockStatement(@NotNull BlockStatement blockStatement, @NotNull Node block) {
+            return new EmptyStatement();
+        }
     }
 }
