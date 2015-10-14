@@ -14,10 +14,7 @@ public class CloneReducer implements Reducer<Node> {
         ImmutableList<Maybe<BindingBindingWithDefault>> newElements = elements.map(x -> x.map(y -> (BindingBindingWithDefault)y));
         Maybe<Binding> newRestElement = restElement.map(x -> (Binding) x);
 
-        Maybe<SourceSpan> loc = node.getLoc();
-        return loc.isJust() ?
-                new ArrayBinding(loc.just(), newElements, newRestElement) :
-                new ArrayBinding(newElements, newRestElement);
+        return new ArrayBinding(newElements, newRestElement);
     }
 
 
@@ -49,10 +46,7 @@ public class CloneReducer implements Reducer<Node> {
     @NotNull
     @Override
     public BindingIdentifier reduceBindingIdentifier(@NotNull BindingIdentifier node) {
-        Maybe<SourceSpan> loc = node.getLoc();
-        return loc.isJust() ?
-                new BindingIdentifier(loc.just(), node.getName()) :
-                new BindingIdentifier(node.getName());
+        return new BindingIdentifier(node.getName());
     }
 
     @NotNull
@@ -71,10 +65,7 @@ public class CloneReducer implements Reducer<Node> {
     @NotNull
     @Override
     public BindingWithDefault reduceBindingWithDefault(@NotNull BindingWithDefault node, @NotNull Node binding, @NotNull Node init) {
-        Maybe<SourceSpan> loc = node.getLoc();
-        return loc.isJust() ?
-                new BindingWithDefault(loc.just(), (Binding) binding, (Expression) init) :
-                new BindingWithDefault((Binding) binding, (Expression) init);
+        return new BindingWithDefault((Binding) binding, (Expression) init);
     }
 
     @NotNull
@@ -82,10 +73,7 @@ public class CloneReducer implements Reducer<Node> {
     public Block reduceBlock(@NotNull Block node, @NotNull ImmutableList<Node> statements) {
         ImmutableList<Statement> newStatements = statements.map(x -> (Statement) x);
 
-        Maybe<SourceSpan> loc = node.getLoc();
-        return loc.isJust() ?
-                new Block(loc.just(), newStatements) :
-                new Block(newStatements);
+        return new Block(newStatements);
     }
 
     @NotNull
@@ -110,10 +98,7 @@ public class CloneReducer implements Reducer<Node> {
     @NotNull
     @Override
     public CatchClause reduceCatchClause(@NotNull CatchClause node, @NotNull Node binding, @NotNull Node body) {
-        Maybe<SourceSpan> loc = node.getLoc();
-        return loc.isJust() ?
-                new CatchClause(loc.just(), (Binding) binding, (Block) body) :
-                new CatchClause((Binding) binding, (Block) body);
+        return new CatchClause((Binding) binding, (Block) body);
     }
 
     @NotNull
@@ -128,10 +113,7 @@ public class CloneReducer implements Reducer<Node> {
     @NotNull
     @Override
     public ClassElement reduceClassElement(@NotNull ClassElement node, @NotNull Node method) {
-        Maybe<SourceSpan> loc = node.getLoc();
-        return loc.isJust() ?
-                new ClassElement(loc.just(), node.isStatic, (MethodDefinition) method) :
-                new ClassElement(node.isStatic, (MethodDefinition) method);
+        return new ClassElement(node.isStatic, (MethodDefinition) method);
     }
 
     @NotNull
@@ -189,10 +171,7 @@ public class CloneReducer implements Reducer<Node> {
     @NotNull
     @Override
     public Directive reduceDirective(@NotNull Directive node) {
-        Maybe<SourceSpan> loc = node.getLoc();
-        return loc.isJust() ?
-                new Directive(loc.just(), node.getRawValue()) :
-                new Directive(node.getRawValue());
+        return new Directive(node.getRawValue());
     }
 
     @NotNull
@@ -235,10 +214,7 @@ public class CloneReducer implements Reducer<Node> {
     @NotNull
     @Override
     public ExportSpecifier reduceExportSpecifier(@NotNull ExportSpecifier node) {
-        Maybe<SourceSpan> loc = node.getLoc();
-        return loc.isJust() ?
-                new ExportSpecifier(loc.just(), node.getName(), node.getExportedName()) :
-                new ExportSpecifier(node.getName(), node.getExportedName());
+        return new ExportSpecifier(node.getName(), node.getExportedName());
     }
 
     @NotNull
@@ -275,8 +251,7 @@ public class CloneReducer implements Reducer<Node> {
         ImmutableList<BindingBindingWithDefault> newItems = items.map(x -> (BindingBindingWithDefault) x);
         Maybe<BindingIdentifier> newRest = rest.map(x -> (BindingIdentifier) x);
 
-        Maybe<SourceSpan> loc = node.getLoc();
-        return loc.isJust() ? new FormalParameters(loc.just(), newItems, newRest) : new FormalParameters(newItems, newRest);
+        return new FormalParameters(newItems, newRest);
     }
 
     @NotNull
@@ -285,10 +260,7 @@ public class CloneReducer implements Reducer<Node> {
         ImmutableList<Directive> newDirectives = directives.map(x -> (Directive) x);
         ImmutableList<Statement> newStatements = statements.map(x -> (Statement) x);
 
-        Maybe<SourceSpan> loc = node.getLoc();
-        return loc.isJust() ?
-                new FunctionBody(loc.just(), newDirectives, newStatements) :
-                new FunctionBody(newDirectives, newStatements);
+        return new FunctionBody(newDirectives, newStatements);
     }
 
     @NotNull
@@ -345,10 +317,7 @@ public class CloneReducer implements Reducer<Node> {
     @NotNull
     @Override
     public ImportSpecifier reduceImportSpecifier(@NotNull ImportSpecifier node, @NotNull Node binding) {
-        Maybe<SourceSpan> loc = node.getLoc();
-        return loc.isJust() ?
-                new ImportSpecifier(loc.just(), node.getName(), (BindingIdentifier) binding) :
-                new ImportSpecifier(node.getName(), (BindingIdentifier) binding);
+        return new ImportSpecifier(node.getName(), (BindingIdentifier) binding);
     }
 
     @NotNull
@@ -405,9 +374,7 @@ public class CloneReducer implements Reducer<Node> {
         ImmutableList<Directive> newDirectives = directives.map(x -> (Directive) x);
         ImmutableList<ImportDeclarationExportDeclarationStatement> newItems = items.map(x -> (ImportDeclarationExportDeclarationStatement) x);
 
-
-        Maybe<SourceSpan> loc = node.getLoc();
-        return loc.isJust() ? new Module(loc.just(), newDirectives, newItems) : new Module(newDirectives, newItems);
+        return new Module(newDirectives, newItems);
     }
 
     @NotNull
@@ -429,8 +396,7 @@ public class CloneReducer implements Reducer<Node> {
     public ObjectBinding reduceObjectBinding(@NotNull ObjectBinding node, @NotNull ImmutableList<Node> properties) {
         ImmutableList<BindingProperty> newProperties = properties.map(x -> (BindingProperty) x);
 
-        Maybe<SourceSpan> loc = node.getLoc();
-        return loc.isJust() ? new ObjectBinding(loc.just(), newProperties) : new ObjectBinding(newProperties);
+        return new ObjectBinding(newProperties);
     }
 
     @NotNull
@@ -455,8 +421,7 @@ public class CloneReducer implements Reducer<Node> {
         ImmutableList<Directive> newDirectives = directives.map(x -> (Directive) x);
         ImmutableList<Statement> newStatements = statements.map(x -> (Statement) x);
 
-        Maybe<SourceSpan> loc = node.getLoc();
-        return loc.isJust() ? new Script(loc.just(), newDirectives, newStatements) : new Script(newDirectives, newStatements);
+        return new Script(newDirectives, newStatements);
     }
 
     @NotNull
@@ -474,8 +439,7 @@ public class CloneReducer implements Reducer<Node> {
     @NotNull
     @Override
     public SpreadElement reduceSpreadElement(@NotNull SpreadElement node, @NotNull Node expression) {
-        Maybe<SourceSpan> loc = node.getLoc();
-        return loc.isJust() ? new SpreadElement(loc.just(), (Expression) expression) : new SpreadElement((Expression) expression);
+        return new SpreadElement((Expression) expression);
     }
 
     @NotNull
@@ -493,8 +457,7 @@ public class CloneReducer implements Reducer<Node> {
     @NotNull
     @Override
     public Super reduceSuper(@NotNull Super node) {
-        Maybe<SourceSpan> loc = node.getLoc();
-        return loc.isJust() ? new Super(loc.just()) : new Super();
+        return new Super();
     }
 
     @NotNull
@@ -502,10 +465,7 @@ public class CloneReducer implements Reducer<Node> {
     public SwitchCase reduceSwitchCase(@NotNull SwitchCase node, @NotNull Node test, @NotNull ImmutableList<Node> consequent) {
         ImmutableList<Statement> newConsequent = consequent.map(x -> (Statement) x);
 
-        Maybe<SourceSpan> loc = node.getLoc();
-        return loc.isJust() ?
-                new SwitchCase(loc.just(), (Expression) test, newConsequent) :
-                new SwitchCase((Expression) test, newConsequent);
+        return new SwitchCase((Expression) test, newConsequent);
     }
 
     @NotNull
@@ -513,8 +473,7 @@ public class CloneReducer implements Reducer<Node> {
     public SwitchDefault reduceSwitchDefault(@NotNull SwitchDefault node, @NotNull ImmutableList<Node> consequent) {
         ImmutableList<Statement> newConsequent = consequent.map(x -> (Statement) x);
 
-        Maybe<SourceSpan> loc = node.getLoc();
-        return loc.isJust() ? new SwitchDefault(loc.just(), newConsequent) : new SwitchDefault(newConsequent);
+        return new SwitchDefault(newConsequent);
     }
 
     @NotNull
@@ -537,8 +496,7 @@ public class CloneReducer implements Reducer<Node> {
     @NotNull
     @Override
     public TemplateElement reduceTemplateElement(@NotNull TemplateElement node) {
-        Maybe<SourceSpan> loc = node.getLoc();
-        return loc.isJust() ? new TemplateElement(loc.just(), node.getRawValue()) : new TemplateElement(node.getRawValue());
+        return new TemplateElement(node.getRawValue());
     }
 
     @NotNull
@@ -593,10 +551,7 @@ public class CloneReducer implements Reducer<Node> {
     public VariableDeclaration reduceVariableDeclaration(@NotNull VariableDeclaration node, @NotNull ImmutableList<Node> declarators) {
         ImmutableList<VariableDeclarator> newDeclarators = declarators.map(x -> (VariableDeclarator) x);
 
-        Maybe<SourceSpan> loc = node.getLoc();
-        return loc.isJust() ?
-                new VariableDeclaration(loc.just(), node.getKind(), newDeclarators) :
-                new VariableDeclaration(node.getKind(), newDeclarators);
+        return new VariableDeclaration(node.getKind(), newDeclarators);
     }
 
     @NotNull
@@ -610,10 +565,7 @@ public class CloneReducer implements Reducer<Node> {
     public VariableDeclarator reduceVariableDeclarator(@NotNull VariableDeclarator node, @NotNull Node binding, @NotNull Maybe<Node> init) {
         Maybe<Expression> newInit = init.map(x -> (Expression) x);
 
-        Maybe<SourceSpan> loc = node.getLoc();
-        return loc.isJust() ?
-                new VariableDeclarator(loc.just(), (Binding) binding, newInit) :
-                new VariableDeclarator((Binding) binding, newInit);
+        return new VariableDeclarator((Binding) binding, newInit);
     }
 
     @NotNull
