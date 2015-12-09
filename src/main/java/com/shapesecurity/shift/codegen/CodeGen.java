@@ -25,7 +25,6 @@ import com.shapesecurity.shift.ast.operators.Precedence;
 import com.shapesecurity.shift.utils.Utils;
 import com.shapesecurity.shift.visitor.Director;
 import com.shapesecurity.shift.visitor.Reducer;
-
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -124,117 +123,6 @@ public final class CodeGen implements Reducer<CodeRep> {
         }
     }
 
-    private Precedence getBinaryPrecedence(BinaryOperator operator) {
-        switch (operator) {
-            case Sequence:
-                return Precedence.SEQUENCE;
-            case LogicalOr:
-                return Precedence.LOGICAL_OR;
-            case LogicalAnd:
-                return Precedence.LOGICAL_AND;
-            case BitwiseOr:
-                return Precedence.BITWISE_OR;
-            case BitwiseXor:
-                return Precedence.BITWISE_XOR;
-            case BitwiseAnd:
-                return Precedence.BITWISE_AND;
-            case Plus:
-            case Minus:
-                return Precedence.ADDITIVE;
-            case Equal:
-            case NotEqual:
-            case StrictEqual:
-            case StrictNotEqual:
-                return Precedence.EQUALITY;
-            case Mul:
-            case Div:
-            case Rem:
-                return Precedence.MULTIPLICATIVE;
-            case LessThan:
-            case LessThanEqual:
-            case GreaterThan:
-            case GreaterThanEqual:
-            case In:
-            case Instanceof:
-                return Precedence.RELATIONAL;
-            case Left:
-            case Right:
-            case UnsignedRight:
-                return Precedence.SHIFT;
-            default: // SHOULD NOT BE HERE
-                return Precedence.ASSIGNMENT;
-        }
-    }
-
-    @NotNull
-    private Precedence getPrecedence(Node node) {
-        if (node instanceof ArrayExpression
-                || node instanceof ClassExpression
-                || node instanceof FunctionExpression
-                || node instanceof IdentifierExpression
-                || node instanceof LiteralBooleanExpression
-                || node instanceof LiteralNullExpression
-                || node instanceof LiteralNumericExpression
-                || node instanceof LiteralInfinityExpression
-                || node instanceof LiteralRegExpExpression
-                || node instanceof LiteralStringExpression
-                || node instanceof ObjectExpression
-                || node instanceof ThisExpression) {
-            return Precedence.PRIMARY;
-        } else if (node instanceof AssignmentExpression
-                || node instanceof CompoundAssignmentExpression
-                || node instanceof YieldExpression
-                || node instanceof YieldGeneratorExpression) {
-            return Precedence.ASSIGNMENT;
-        } else if (node instanceof ConditionalExpression) {
-            return Precedence.CONDITIONAL;
-        } else if (node instanceof ComputedMemberExpression) {
-            ExpressionSuper object = ((ComputedMemberExpression) node)._object;
-            if (object instanceof CallExpression
-                    || object instanceof ComputedMemberExpression
-                    || object instanceof StaticMemberExpression
-                    || object instanceof TemplateExpression) {
-                return getPrecedence((Expression) object);
-            } else {
-                return Precedence.MEMBER;
-            }
-        } else if (node instanceof StaticMemberExpression) {
-            ExpressionSuper object = ((StaticMemberExpression) node)._object;
-            if (object instanceof CallExpression
-                    || object instanceof ComputedMemberExpression
-                    || object instanceof StaticMemberExpression
-                    || object instanceof TemplateExpression) {
-                return getPrecedence((Expression) object);
-            } else {
-                return Precedence.MEMBER;
-            }
-        } else if (node instanceof TemplateExpression) {
-            Maybe<Expression> maybeTag = ((TemplateExpression) node).tag;
-            if (maybeTag.isNothing()) {
-                return Precedence.MEMBER;
-            }
-            Expression tag = maybeTag.just();
-            if (tag instanceof CallExpression
-                    || tag instanceof ComputedMemberExpression
-                    || tag instanceof StaticMemberExpression
-                    || tag instanceof TemplateExpression) {
-                return getPrecedence(tag);
-            } else {
-                return Precedence.MEMBER;
-            }
-        } else if (node instanceof BinaryExpression) {
-            return getBinaryPrecedence(((BinaryExpression) node).operator);
-        } else if (node instanceof CallExpression) {
-            return Precedence.CALL;
-        } else if (node instanceof NewExpression) {
-            return ((NewExpression) node).arguments.length == 0 ? Precedence.NEW : Precedence.MEMBER;
-        } else if (node instanceof UpdateExpression) {
-            return ((UpdateExpression) node).isPrefix ? Precedence.PREFIX : Precedence.POSTFIX;
-        } else { // if (node instanceof UnaryExpression) {
-            return Precedence.PREFIX;
-        }
-    }
-
     private boolean isIdentifierNameES6(String id) {
         char ch;
         char lowCh;
@@ -266,7 +154,7 @@ public final class CodeGen implements Reducer<CodeRep> {
     }
 
     private CodeRep p(Node node, Precedence precedence, CodeRep a) {
-        return getPrecedence(node).ordinal() < precedence.ordinal() ? factory.paren(a) : a;
+        return ((Expression) node).getPrecedence().ordinal() < precedence.ordinal() ? factory.paren(a) : a;
     }
 
     @NotNull
@@ -326,14 +214,13 @@ public final class CodeGen implements Reducer<CodeRep> {
 
     @Override
     @NotNull
-    public CodeRep reduceAssignmentExpression(@NotNull AssignmentExpression node, @NotNull CodeRep binding, @NotNull CodeRep expression) {
-        CodeRep leftCode = binding;
+    public CodeRep reduceAssignmentExpression(@NotNull AssignmentExpression node, @NotNull CodeRep leftCode, @NotNull CodeRep expression) {
         CodeRep rightCode = expression;
         boolean containsIn = expression.containsIn;
-        boolean startsWithCurly = binding.startsWithCurly;
-        boolean startsWithLetSquareBracket = binding.startsWithLetSquareBracket;
-        boolean startsWithFunctionOrClass = binding.startsWithFunctionOrClass;
-        if (getPrecedence(node.expression).ordinal() < getPrecedence(node).ordinal()) {
+        boolean startsWithCurly = leftCode.startsWithCurly;
+        boolean startsWithLetSquareBracket = leftCode.startsWithLetSquareBracket;
+        boolean startsWithFunctionOrClass = leftCode.startsWithFunctionOrClass;
+        if (node.expression.getPrecedence().ordinal() < node.getPrecedence().ordinal()) {
             rightCode = factory.paren(rightCode);
             containsIn = false;
         }
@@ -353,7 +240,7 @@ public final class CodeGen implements Reducer<CodeRep> {
         boolean startsWithLetSquareBracket = left.startsWithLetSquareBracket;
         boolean startsWithFunctionOrClass = left.startsWithFunctionOrClass;
         boolean leftContainsIn = left.containsIn;
-        if (getPrecedence(node.left).ordinal() < getPrecedence(node).ordinal()) {
+        if (node.left.getPrecedence().ordinal() < node.getPrecedence().ordinal()) {
             leftCode = factory.paren(leftCode);
             startsWithCurly = false;
             startsWithLetSquareBracket = false;
@@ -362,7 +249,7 @@ public final class CodeGen implements Reducer<CodeRep> {
         }
         CodeRep rightCode = right;
         boolean rightContainsIn = right.containsIn;
-        if (getPrecedence(node.right).ordinal() <= getPrecedence(node).ordinal()) {
+        if (node.right.getPrecedence().ordinal() <= node.getPrecedence().ordinal()) {
             rightCode = factory.paren(rightCode);
             rightContainsIn = false;
         }
@@ -427,7 +314,7 @@ public final class CodeGen implements Reducer<CodeRep> {
     public CodeRep reduceCallExpression(@NotNull CallExpression node, @NotNull CodeRep callee, @NotNull ImmutableList<CodeRep> arguments) {
         CodeRep result;
         if (node.callee instanceof Expression) {
-            result = seqVA(p((Expression) node.callee, getPrecedence(node), callee), factory.paren(factory.commaSep(arguments)));
+            result = seqVA(p(node.callee, node.getPrecedence(), callee), factory.paren(factory.commaSep(arguments)));
         } else {
             result = seqVA(callee, factory.paren(factory.commaSep(arguments)));
         }
@@ -486,7 +373,7 @@ public final class CodeGen implements Reducer<CodeRep> {
         boolean startsWithCurly = binding.startsWithCurly;
         boolean startsWithLetSquareBracket = binding.startsWithLetSquareBracket;
         boolean startsWithFunctionOrClass = binding.startsWithFunctionOrClass;
-        if (getPrecedence(node.expression).ordinal() < getPrecedence(node).ordinal()) {
+        if (node.expression.getPrecedence().ordinal() < node.getPrecedence().ordinal()) {
             rightCode = factory.paren(rightCode);
             containsIn = false;
         }
@@ -504,7 +391,7 @@ public final class CodeGen implements Reducer<CodeRep> {
         boolean startsWithLetSquareBracket = object.startsWithLetSquareBracket || node._object instanceof IdentifierExpression && ((IdentifierExpression) node._object).name.equals("let");
         CodeRep result;
         if (node._object instanceof Expression) {
-            result = seqVA(p((Expression) node._object, getPrecedence(node), object), factory.bracket(expression));
+            result = seqVA(p(node._object, node.getPrecedence(), object), factory.bracket(expression));
         } else {
             result = seqVA(object, factory.bracket(expression));
         }
@@ -852,7 +739,7 @@ public final class CodeGen implements Reducer<CodeRep> {
     @Override
     @NotNull
     public CodeRep reduceNewExpression(@NotNull NewExpression node, @NotNull CodeRep callee, @NotNull ImmutableList<CodeRep> arguments) {
-        CodeRep calleeRep = getPrecedence(node.callee) == Precedence.CALL ? factory.paren(callee) : p(node.callee, getPrecedence(node), callee);
+        CodeRep calleeRep = node.callee.getPrecedence() == Precedence.CALL ? factory.paren(callee) : p(node.callee, node.getPrecedence(), callee);
         return seqVA(factory.token("new"), calleeRep, arguments.length == 0 ? factory.empty() : factory.paren(factory.commaSep(arguments)));
     }
 
@@ -927,7 +814,7 @@ public final class CodeGen implements Reducer<CodeRep> {
     public CodeRep reduceStaticMemberExpression(@NotNull StaticMemberExpression node, @NotNull CodeRep object) {
         CodeRep state;
         if (node._object instanceof Expression) {
-            state = seqVA(p((Expression) node._object, getPrecedence(node), object), factory.token("."), factory.token(node.property));
+            state = seqVA(p(node._object, node.getPrecedence(), object), factory.token("."), factory.token(node.property));
         } else {
             // node._object is a Super
             state = seqVA(object, factory.token("."), factory.token(node.property));
@@ -1009,7 +896,7 @@ public final class CodeGen implements Reducer<CodeRep> {
     @NotNull
     @Override
     public CodeRep reduceTemplateExpression(@NotNull TemplateExpression node, @NotNull Maybe<CodeRep> tag, @NotNull ImmutableList<CodeRep> elements) {
-        CodeRep state = node.tag.isNothing() ? factory.empty() : p(node.tag.just(), getPrecedence(node), tag.just());
+        CodeRep state = node.tag.maybe(factory.empty(), t -> p(t, node.getPrecedence(), tag.just()));
         state = seqVA(state, factory.token("`"));
         for (int i = 0, l = node.elements.length; i < l; ++i) {
             if (node.elements.index(i).just() instanceof TemplateElement) {
@@ -1074,10 +961,10 @@ public final class CodeGen implements Reducer<CodeRep> {
     @NotNull
     @Override
     public CodeRep reduceUnaryExpression(@NotNull UnaryExpression node, @NotNull CodeRep operand) {
-        return seqVA(factory.token(node.operator.getName()), p(node.operand, getPrecedence(node), operand));
+        return seqVA(factory.token(node.operator.getName()), p(node.operand, node.getPrecedence(), operand));
     }
 
-    //@NotNull
+    @NotNull
     @Override
     public CodeRep reduceUpdateExpression(@NotNull UpdateExpression node, @NotNull CodeRep operand) {
         if (node.isPrefix) {
@@ -1087,7 +974,7 @@ public final class CodeGen implements Reducer<CodeRep> {
             if (node.operand instanceof BindingIdentifier) {
                 toReturn = seqVA(operand, factory.token(node.operator.getName()));
             } else {
-                toReturn = seqVA(p((MemberExpression) node.operand, Precedence.NEW, operand), factory.token(node.operator.getName()));
+                toReturn = seqVA(p(node.operand, Precedence.NEW, operand), factory.token(node.operator.getName()));
             }
             toReturn.startsWithCurly = operand.startsWithCurly;
             toReturn.startsWithLetSquareBracket = operand.startsWithLetSquareBracket;
@@ -1148,13 +1035,13 @@ public final class CodeGen implements Reducer<CodeRep> {
         if (node.expression.isNothing()) {
             return factory.token("yield");
         }
-        return seqVA(factory.token("yield"), p(node.expression.just(), getPrecedence(node), expression.just()));
+        return seqVA(factory.token("yield"), p(node.expression.just(), node.getPrecedence(), expression.just()));
     }
 
     @NotNull
     @Override
     public CodeRep reduceYieldGeneratorExpression(@NotNull YieldGeneratorExpression node, @NotNull CodeRep expression) {
-        return seqVA(factory.token("yield"), factory.token("*"), p(node.expression, getPrecedence(node), expression));
+        return seqVA(factory.token("yield"), factory.token("*"), p(node.expression, node.getPrecedence(), expression));
     }
 
     @NotNull

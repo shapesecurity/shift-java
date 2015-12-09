@@ -22,7 +22,6 @@ import com.shapesecurity.functional.data.HashCodeBuilder;
 import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.functional.data.Maybe;
 import com.shapesecurity.shift.ast.operators.Precedence;
-
 import org.jetbrains.annotations.NotNull;
 
 public class TemplateExpression extends Expression implements Node {
@@ -43,7 +42,7 @@ public class TemplateExpression extends Expression implements Node {
     @Override
     public boolean equals(Object object) {
         return object instanceof TemplateExpression && this.tag.equals(((TemplateExpression) object).tag) &&
-               this.elements.equals(((TemplateExpression) object).elements);
+                this.elements.equals(((TemplateExpression) object).elements);
     }
 
     @Override
@@ -77,7 +76,13 @@ public class TemplateExpression extends Expression implements Node {
     @Override
     @NotNull
     public Precedence getPrecedence() {
-        return this.tag.isJust() ? Precedence.MEMBER : Precedence.PRIMARY;
+        return this.tag.map(tag -> {
+            Precedence tagPrecedence = tag.getPrecedence();
+            if (tagPrecedence == Precedence.CALL) {
+                return Precedence.CALL;
+            }
+            return Precedence.MEMBER;
+        }).orJust(Precedence.MEMBER);
     }
 
 }

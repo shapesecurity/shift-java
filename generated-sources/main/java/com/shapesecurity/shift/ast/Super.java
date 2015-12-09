@@ -19,6 +19,8 @@
 package com.shapesecurity.shift.ast;
 
 import com.shapesecurity.functional.data.HashCodeBuilder;
+import com.shapesecurity.shift.ast.operators.Precedence;
+import org.jetbrains.annotations.NotNull;
 
 public class Super implements Node, ExpressionSuper {
 
@@ -33,8 +35,12 @@ public class Super implements Node, ExpressionSuper {
 
     @Override
     public int hashCode() {
-        int code = HashCodeBuilder.put(0, "Super");
-        return code;
+        return HashCodeBuilder.put(0, "Super");
     }
 
+    @NotNull
+    @Override
+    public Precedence getPrecedence() {
+        return Precedence.MEMBER;
+    }
 }

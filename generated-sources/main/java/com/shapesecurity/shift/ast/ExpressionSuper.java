@@ -18,4 +18,10 @@
 
 package com.shapesecurity.shift.ast;
 
-public interface ExpressionSuper extends Node {}
+import com.shapesecurity.shift.ast.operators.Precedence;
+import org.jetbrains.annotations.NotNull;
+
+public interface ExpressionSuper extends Node {
+    @NotNull
+    Precedence getPrecedence();
+}

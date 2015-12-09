@@ -614,6 +614,7 @@ public class CodeGenTest {
         test("new((new a)().a)", "new((new a)()).a");
         test("new a.a");
         test("new(a().a)");
+        test("(new a``).a");
     }
 
     @Test
@@ -796,6 +797,7 @@ public class CodeGenTest {
         test("a``");
         test("a.b``");
         test("a[b]``");
+        test("a()[b]``");
         test("a()``");
         test("(a+b)``");
         test("(function(){}``)", "(function(){})``");

@@ -75,6 +75,10 @@ public class ComputedMemberExpression extends MemberExpression implements Node {
     @Override
     @NotNull
     public Precedence getPrecedence() {
+        Precedence p = this._object.getPrecedence();
+        if (p == Precedence.CALL) {
+            return Precedence.CALL;
+        }
         return Precedence.MEMBER;
     }
 
