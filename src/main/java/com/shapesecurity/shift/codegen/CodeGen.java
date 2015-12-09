@@ -70,50 +70,6 @@ public final class CodeGen implements Reducer<CodeRep> {
         return (char) ((lead - 0xD800) * 0x400 + (trail - 0xDC00) + 0x10000);
     }
 
-    public static String escapeStringLiteral(String stringValue) {
-        String result = "";
-        int nSingle = 0;
-        int nDouble = 0;
-        for (int i = 0, l = stringValue.length(); i < l; ++i) {
-            char ch = stringValue.charAt(i);
-            if (ch == '\"') {
-                ++nDouble;
-            } else if (ch == '\'') {
-                ++nSingle;
-            }
-        }
-        char delim = nDouble > nSingle ? '\'' : '\"';
-        result += delim;
-        for (int i = 0; i < stringValue.length(); i++) {
-            char ch = stringValue.charAt(i);
-            if (ch == delim) {
-                result += "\\" + delim;
-            } else if (ch == '\b') {
-                result += "\\b";
-            } else if (ch == '\t') {
-                result += "\\t";
-            } else if (ch == '\n') {
-                result += "\\n";
-            } else if (ch == '\u000B') {
-                result += "\\v";
-            } else if (ch == '\u000C') {
-                result += "\\f";
-            } else if (ch == '\r') {
-                result += "\\r";
-            } else if (ch == '\\') {
-                result += "\\\\";
-            } else if (ch == '\u2028') {
-                result += "\\u2028";
-            } else if (ch == '\u2029') {
-                result += "\\u2029";
-            } else {
-                result += ch;
-            }
-        }
-        result += delim;
-        return result;
-    }
-
     @NotNull
     private CodeRep getAssignmentExpr(@NotNull Maybe<CodeRep> state) {
         if (state.isJust()) {
@@ -475,7 +431,7 @@ public final class CodeGen implements Reducer<CodeRep> {
     @NotNull
     @Override
     public CodeRep reduceExportAllFrom(@NotNull ExportAllFrom node) {
-        return seqVA(factory.token("export"), factory.token("*"), factory.token("from"), factory.token(escapeStringLiteral(node.moduleSpecifier)), factory.semiOp());
+        return seqVA(factory.token("export"), factory.token("*"), factory.token("from"), factory.token(Utils.escapeStringLiteral(node.moduleSpecifier)), factory.semiOp());
 
     }
 
@@ -495,7 +451,7 @@ public final class CodeGen implements Reducer<CodeRep> {
         return seqVA(
                 factory.token("export"),
                 factory.brace(factory.commaSep(namedExports)),
-                node.moduleSpecifier.maybe(factory.empty(), m -> seqVA(factory.token("from"), factory.token(escapeStringLiteral(m)), factory.semiOp()))
+                node.moduleSpecifier.maybe(factory.empty(), m -> seqVA(factory.token("from"), factory.token(Utils.escapeStringLiteral(m)), factory.semiOp()))
         );
     }
 
@@ -645,9 +601,9 @@ public final class CodeGen implements Reducer<CodeRep> {
             bindings.add(factory.brace(factory.commaSep(namedImports)));
         }
         if (bindings.size() == 0) {
-            return seqVA(factory.token("import"), factory.token(escapeStringLiteral(node.moduleSpecifier)), factory.semiOp());
+            return seqVA(factory.token("import"), factory.token(Utils.escapeStringLiteral(node.moduleSpecifier)), factory.semiOp());
         }
-        return seqVA(factory.token("import"), factory.commaSep(ImmutableList.from(bindings)), factory.token("from"), factory.token(escapeStringLiteral(node.moduleSpecifier)), factory.semiOp());
+        return seqVA(factory.token("import"), factory.commaSep(ImmutableList.from(bindings)), factory.token("from"), factory.token(Utils.escapeStringLiteral(node.moduleSpecifier)), factory.semiOp());
     }
 
     @NotNull
@@ -660,7 +616,7 @@ public final class CodeGen implements Reducer<CodeRep> {
                 factory.token("as"),
                 namespaceBinding,
                 factory.token("from"),
-                factory.token(escapeStringLiteral(node.moduleSpecifier)),
+                factory.token(Utils.escapeStringLiteral(node.moduleSpecifier)),
                 factory.semiOp()
         );
     }
@@ -836,7 +792,7 @@ public final class CodeGen implements Reducer<CodeRep> {
                 double n = Double.parseDouble(node.value);
                 return new CodeRep.NumberCodeRep(n);
             } catch (NumberFormatException ignored) {
-                return factory.token(escapeStringLiteral(node.value));
+                return factory.token(Utils.escapeStringLiteral(node.value));
             }
         }
     }

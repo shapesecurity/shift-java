@@ -59,72 +59,53 @@ public final class Utils {
     }
 
     public static String escapeStringLiteral(@NotNull String stringValue) {
-        int dq = 0, sq = 0;
-        for (char ch : stringValue.toCharArray()) {
-            if (ch == '\'') {
-                sq++;
-            } else if (ch == '"') {
-                dq++;
+        int nSingle = 0;
+        int nDouble = 0;
+        for (int i = 0, l = stringValue.length(); i < l; ++i) {
+            char ch = stringValue.charAt(i);
+            if (ch == '\"') {
+                ++nDouble;
+            } else if (ch == '\'') {
+                ++nSingle;
             }
         }
-        return escapeStringLiteral(stringValue, sq >= dq ? '"' : '\'');
+        char delim = nDouble > nSingle ? '\'' : '\"';
+        return escapeStringLiteral(stringValue, delim);
     }
 
     @NotNull
-    @SuppressWarnings("checkstyle:magicnumber")
-    public static String escapeStringLiteral(@NotNull String stringValue, char quote) {
+    public static String escapeStringLiteral(@NotNull String stringValue, char delim) {
         StringBuilder result = new StringBuilder();
-        result.append(quote);
-        char[] chars = stringValue.toCharArray();
-        for (char ch : chars) {
-            switch (ch) {
-                case '\b':
-                    result.append("\\b");
-                    break;
-                case '\t':
-                    result.append("\\t");
-                    break;
-                case '\n':
-                    result.append("\\n");
-                    break;
-                case '\u000B':
-                    result.append("\\v");
-                    break;
-                case '\u000C':
-                    result.append("\\f");
-                    break;
-                case '\r':
-                    result.append("\\r");
-                    break;
-                case '\"':
-                    if (quote == '\"') {
-                        result.append("\\\"");
-                    } else {
-                        result.append("\"");
-                    }
-                    break;
-                case '\'':
-                    if (quote == '\'') {
-                        result.append("\\\'");
-                    } else {
-                        result.append("'");
-                    }
-                    break;
-                case '\\':
-                    result.append("\\\\");
-                    break;
-                case '\u2028':
-                    result.append("\\u2028");
-                    break;
-                case '\u2029':
-                    result.append("\\u2029");
-                    break;
-                default:
-                    result.append(ch);
-                    break;
+        result.append(delim);
+        for (int i = 0; i < stringValue.length(); i++) {
+            char ch = stringValue.charAt(i);
+            if (ch == delim) {
+                result.append("\\").append(delim);
+            } else if (ch == '\0') {
+                result.append("\\0");
+            } else if (ch == '\b') {
+                result.append("\\b");
+            } else if (ch == '\t') {
+                result.append("\\t");
+            } else if (ch == '\n') {
+                result.append("\\n");
+            } else if (ch == '\u000B') {
+                result.append("\\v");
+            } else if (ch == '\u000C') {
+                result.append("\\f");
+            } else if (ch == '\r') {
+                result.append("\\r");
+            } else if (ch == '\\') {
+                result.append("\\\\");
+            } else if (ch == '\u2028') {
+                result.append("\\u2028");
+            } else if (ch == '\u2029') {
+                result.append("\\u2029");
+            } else {
+                result.append(ch);
             }
         }
-        result.append(quote);
+        result.append(delim);
         return result.toString();
     }
 
