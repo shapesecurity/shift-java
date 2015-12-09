@@ -5,7 +5,7 @@
 
 	<groupId>com.shapesecurity</groupId>
 	<artifactId>shift</artifactId>
-	<version>2.1.2-SNAPSHOT</version>
+	<version>2.1.2</version>
 	<packaging>jar</packaging>
 
 	<name>Shift AST</name>
