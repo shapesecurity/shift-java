@@ -115,4 +115,27 @@ public class ScopeSerializerTest {
         // check serialization
         TestCase.assertEquals("{\"node\": \"Script_0\", \"type\": \"Global\", \"isDynamic\": true, \"through\": [{\"node\": \"IdentifierExpression(alert)_1\", \"accessibility\": \"Read\"}], \"variables\": [{\"name\": \"alert\", \"references\": [{\"node\": \"IdentifierExpression(alert)_1\", \"accessibility\": \"Read\"}], \"declarations\": []}], \"children\": [{\"node\": \"Script_0\", \"type\": \"Script\", \"isDynamic\": false, \"through\": [{\"node\": \"IdentifierExpression(alert)_1\", \"accessibility\": \"Read\"}], \"variables\": [], \"children\": [{\"node\": \"FunctionExpression_2\", \"type\": \"Function\", \"isDynamic\": false, \"through\": [{\"node\": \"IdentifierExpression(alert)_1\", \"accessibility\": \"Read\"}], \"variables\": [{\"name\": \"arguments\", \"references\": [], \"declarations\": []}, {\"name\": \"f1\", \"references\": [{\"node\": \"BindingIdentifier(f1)_3\", \"accessibility\": \"Write\"}, {\"node\": \"IdentifierExpression(f1)_4\", \"accessibility\": \"Read\"}], \"declarations\": [{\"node\": \"BindingIdentifier(f1)_3\", \"kind\": \"Var\"}]}], \"children\": []}]}]}", serialized);
     }
+
+    @Test
+    public void testScopeSerializer_B331() throws JsError {
+        // get scope tree
+        String js = "(function() {" +
+                "function getOuter(){return f;}" +
+                " var g;" +
+                "{" +
+                "   f = 1;" +
+                "   function f(){}" +
+                "   g = f;" +
+                "}" +
+                "})();";
+        Script script = Parser.parseScript(js);
+        GlobalScope globalScope = ScopeAnalyzer.analyze(script);
+
+        // get serialization of scope tree
+        ScopeSerializer serializer = new ScopeSerializer();
+        String serialized = serializer.serializeScope(globalScope);
+
+        // check serialization
+        TestCase.assertEquals("{\"node\": \"Script_0\", \"type\": \"Global\", \"isDynamic\": true, \"through\": [], \"variables\": [], \"children\": [{\"node\": \"Script_0\", \"type\": \"Script\", \"isDynamic\": false, \"through\": [], \"variables\": [], \"children\": [{\"node\": \"FunctionExpression_1\", \"type\": \"Function\", \"isDynamic\": false, \"through\": [], \"variables\": [{\"name\": \"arguments\", \"references\": [], \"declarations\": []}, {\"name\": \"g\", \"references\": [{\"node\": \"BindingIdentifier(g)_2\", \"accessibility\": \"Write\"}], \"declarations\": [{\"node\": \"BindingIdentifier(g)_3\", \"kind\": \"Var\"}]}, {\"name\": \"f\", \"references\": [{\"node\": \"IdentifierExpression(f)_4\", \"accessibility\": \"Read\"}], \"declarations\": [{\"node\": \"BindingIdentifier(f)_5\", \"kind\": \"Var\"}]}, {\"name\": \"getOuter\", \"references\": [], \"declarations\": [{\"node\": \"BindingIdentifier(getOuter)_6\", \"kind\": \"FunctionDeclaration\"}]}], \"children\": [{\"node\": \"FunctionDeclaration_7\", \"type\": \"Function\", \"isDynamic\": false, \"through\": [{\"node\": \"IdentifierExpression(f)_4\", \"accessibility\": \"Read\"}], \"variables\": [{\"name\": \"arguments\", \"references\": [], \"declarations\": []}], \"children\": []}, {\"node\": \"Block_8\", \"type\": \"Block\", \"isDynamic\": false, \"through\": [{\"node\": \"BindingIdentifier(g)_2\", \"accessibility\": \"Write\"}], \"variables\": [{\"name\": \"f\", \"references\": [{\"node\": \"BindingIdentifier(f)_9\", \"accessibility\": \"Write\"}, {\"node\": \"IdentifierExpression(f)_10\", \"accessibility\": \"Read\"}], \"declarations\": [{\"node\": \"BindingIdentifier(f)_5\", \"kind\": \"FunctionDeclaration\"}]}], \"children\": [{\"node\": \"FunctionDeclaration_11\", \"type\": \"Function\", \"isDynamic\": false, \"through\": [], \"variables\": [{\"name\": \"arguments\", \"references\": [], \"declarations\": []}], \"children\": []}]}]}]}]}", serialized);
+    }
 }

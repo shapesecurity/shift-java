@@ -182,7 +182,7 @@ public class MonoidalReducer<State> implements Reducer<State> {
 
     @NotNull
     @Override
-    public State reduceComputedMemberExpression(
+    public State reduceComputedMemberExpression( // todo this seems like the wrong order.
             @NotNull ComputedMemberExpression node,
             @NotNull State expression,
             @NotNull State object) {

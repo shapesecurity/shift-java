@@ -1790,6 +1790,32 @@ public class ScopeTest extends TestCase {
         TestCase.assertEquals("{\"node\": \"Script_0\", \"type\": \"Global\", \"isDynamic\": true, \"through\": [], \"variables\": [{\"name\": \"f3\", \"references\": [], \"declarations\": [{\"node\": \"BindingIdentifier(f3)_1\", \"kind\": \"FunctionDeclaration\"}]}], \"children\": [{\"node\": \"Script_0\", \"type\": \"Script\", \"isDynamic\": false, \"through\": [], \"variables\": [], \"children\": [{\"node\": \"FunctionDeclaration_2\", \"type\": \"Function\", \"isDynamic\": false, \"through\": [], \"variables\": [{\"name\": \"arguments\", \"references\": [{\"node\": \"IdentifierExpression(arguments)_3\", \"accessibility\": \"Read\"}], \"declarations\": [{\"node\": \"BindingIdentifier(arguments)_4\", \"kind\": \"FunctionDeclaration\"}]}], \"children\": [{\"node\": \"FunctionDeclaration_5\", \"type\": \"Function\", \"isDynamic\": false, \"through\": [], \"variables\": [{\"name\": \"arguments\", \"references\": [], \"declarations\": []}], \"children\": []}]}]}]}", serialized);
     }
 
+    @Test
+    public void testParameterScope() throws JsError {
+        String js = "!function(x){let y;};";
+        Script script = Parser.parseScript(js);
+        GlobalScope globalScope = ScopeAnalyzer.analyze(script);
+        ScopeSerializer serializer = new ScopeSerializer();
+        String serialized = serializer.serializeScope(globalScope);
+
+        TestCase.assertEquals("{\"node\": \"Script_0\", \"type\": \"Global\", \"isDynamic\": true, \"through\": [], \"variables\": [], \"children\": [{\"node\": \"Script_0\", \"type\": \"Script\", \"isDynamic\": false, \"through\": [], \"variables\": [], \"children\": [{\"node\": \"FunctionExpression_1\", \"type\": \"Function\", \"isDynamic\": false, \"through\": [], \"variables\": [{\"name\": \"y\", \"references\": [], \"declarations\": [{\"node\": \"BindingIdentifier(y)_2\", \"kind\": \"Let\"}]}, {\"name\": \"x\", \"references\": [], \"declarations\": [{\"node\": \"BindingIdentifier(x)_3\", \"kind\": \"Param\"}]}, {\"name\": \"arguments\", \"references\": [], \"declarations\": []}], \"children\": []}]}]}", serialized);
+
+        js = "!function(x = 1){let y;};";
+        script = Parser.parseScript(js);
+        globalScope = ScopeAnalyzer.analyze(script);
+        serializer = new ScopeSerializer();
+        serialized = serializer.serializeScope(globalScope);
+
+        TestCase.assertEquals("{\"node\": \"Script_0\", \"type\": \"Global\", \"isDynamic\": true, \"through\": [], \"variables\": [], \"children\": [{\"node\": \"Script_0\", \"type\": \"Script\", \"isDynamic\": false, \"through\": [], \"variables\": [], \"children\": [{\"node\": \"FunctionExpression_1\", \"type\": \"Parameters\", \"isDynamic\": false, \"through\": [], \"variables\": [{\"name\": \"x\", \"references\": [], \"declarations\": [{\"node\": \"BindingIdentifier(x)_2\", \"kind\": \"Param\"}]}], \"children\": [{\"node\": \"FormalParameters_3\", \"type\": \"ParameterExpression\", \"isDynamic\": false, \"through\": [], \"variables\": [], \"children\": []}, {\"node\": \"FunctionExpression_1\", \"type\": \"Function\", \"isDynamic\": false, \"through\": [], \"variables\": [{\"name\": \"y\", \"references\": [], \"declarations\": [{\"node\": \"BindingIdentifier(y)_4\", \"kind\": \"Let\"}]}, {\"name\": \"arguments\", \"references\": [], \"declarations\": []}], \"children\": []}]}]}]}", serialized);
+
+        js = "!function(x, y = () => (x,y,z)){let z;};";
+        script = Parser.parseScript(js);
+        globalScope = ScopeAnalyzer.analyze(script);
+        serializer = new ScopeSerializer();
+        serialized = serializer.serializeScope(globalScope);
+
+        TestCase.assertEquals("{\"node\": \"Script_0\", \"type\": \"Global\", \"isDynamic\": true, \"through\": [{\"node\": \"IdentifierExpression(z)_1\", \"accessibility\": \"Read\"}], \"variables\": [{\"name\": \"z\", \"references\": [{\"node\": \"IdentifierExpression(z)_1\", \"accessibility\": \"Read\"}], \"declarations\": []}], \"children\": [{\"node\": \"Script_0\", \"type\": \"Script\", \"isDynamic\": false, \"through\": [{\"node\": \"IdentifierExpression(z)_1\", \"accessibility\": \"Read\"}], \"variables\": [], \"children\": [{\"node\": \"FunctionExpression_2\", \"type\": \"Parameters\", \"isDynamic\": false, \"through\": [{\"node\": \"IdentifierExpression(z)_1\", \"accessibility\": \"Read\"}], \"variables\": [{\"name\": \"y\", \"references\": [{\"node\": \"IdentifierExpression(y)_3\", \"accessibility\": \"Read\"}], \"declarations\": [{\"node\": \"BindingIdentifier(y)_4\", \"kind\": \"Param\"}]}, {\"name\": \"x\", \"references\": [{\"node\": \"IdentifierExpression(x)_5\", \"accessibility\": \"Read\"}], \"declarations\": [{\"node\": \"BindingIdentifier(x)_6\", \"kind\": \"Param\"}]}], \"children\": [{\"node\": \"FormalParameters_7\", \"type\": \"ParameterExpression\", \"isDynamic\": false, \"through\": [{\"node\": \"IdentifierExpression(x)_5\", \"accessibility\": \"Read\"}, {\"node\": \"IdentifierExpression(y)_3\", \"accessibility\": \"Read\"}, {\"node\": \"IdentifierExpression(z)_1\", \"accessibility\": \"Read\"}], \"variables\": [], \"children\": [{\"node\": \"ArrowExpression_8\", \"type\": \"ArrowFunction\", \"isDynamic\": false, \"through\": [{\"node\": \"IdentifierExpression(x)_5\", \"accessibility\": \"Read\"}, {\"node\": \"IdentifierExpression(y)_3\", \"accessibility\": \"Read\"}, {\"node\": \"IdentifierExpression(z)_1\", \"accessibility\": \"Read\"}], \"variables\": [], \"children\": []}]}, {\"node\": \"FunctionExpression_2\", \"type\": \"Function\", \"isDynamic\": false, \"through\": [], \"variables\": [{\"name\": \"z\", \"references\": [], \"declarations\": [{\"node\": \"BindingIdentifier(z)_9\", \"kind\": \"Let\"}]}, {\"name\": \"arguments\", \"references\": [], \"declarations\": []}], \"children\": []}]}]}]}", serialized);
+    }
 /*
     @Test
     public void testDestructuring() throws JsError {

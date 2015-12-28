@@ -52,15 +52,15 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
         Scope.Type fnType = isArrowFn ? Scope.Type.ArrowFunction : Scope.Type.Function;
         if (params.hasParameterExpressions) {
             params = params.withoutParameterExpressions(); // no need to pass that information on
-            return new State(params, body.finish(fnNode, fnType)).addDeclarations(Kind.Param).finish(fnNode, Scope.Type.Parameters, !isArrowFn);
+            return new State(params, body.finish(fnNode, fnType, !isArrowFn)).finish(fnNode, Scope.Type.Parameters);
         } else {
-            return new State(params.addDeclarations(Kind.Param), body).finish(fnNode, fnType, !isArrowFn);
+            return new State(params, body).finish(fnNode, fnType, !isArrowFn);
         }
     }
 
     @NotNull
     // TODO you'd think you'd need to do this for labelled function declarations too, but the spec actually doesn't say so...
-    private ImmutableList<BindingIdentifier> varScopedFunctionHelper(@NotNull ImmutableList<Statement> statements) { // get the names of functions declared in the statement list
+    private ImmutableList<BindingIdentifier> getFunctionDeclarations(@NotNull ImmutableList<Statement> statements) { // get the names of functions declared in the statement list
         ImmutableList<BindingIdentifier> potentiallyVarScopedFunctionDeclarations = ImmutableList.nil();
         for (Statement statement : statements) { // TODO this is not a very clean way of doing this
             if (statement instanceof FunctionDeclaration) {
@@ -118,7 +118,7 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
     @NotNull
     @Override
     public State reduceBlock(@NotNull Block node, @NotNull ImmutableList<State> statements) {
-        return super.reduceBlock(node, statements).withPotentialVarFunctions(varScopedFunctionHelper(node.statements)).finish(node, Scope.Type.Block);
+        return super.reduceBlock(node, statements).withPotentialVarFunctions(getFunctionDeclarations(node.statements)).finish(node, Scope.Type.Block);
     }
 
     @NotNull
@@ -133,8 +133,8 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
 
     @NotNull
     @Override
-    public State reduceCatchClause(@NotNull CatchClause node, @NotNull State param, @NotNull State body) {
-        return super.reduceCatchClause(node, param.addDeclarations(Kind.CatchParam), body).finish(node, Scope.Type.Catch);
+    public State reduceCatchClause(@NotNull CatchClause node, @NotNull State binding, @NotNull State body) {
+        return super.reduceCatchClause(node, binding.addDeclarations(Kind.CatchParam), body).finish(node, Scope.Type.Catch);
     }
 
     @NotNull
@@ -146,7 +146,7 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
     @NotNull
     @Override
     public State reduceClassExpression(@NotNull ClassExpression node, @NotNull Maybe<State> name, @NotNull Maybe<State> _super, @NotNull ImmutableList<State> elements) {
-        return super.reduceClassExpression(node, name, _super, elements).addDeclarations(Kind.ClassName).finish(node, Scope.Type.FunctionName);
+        return super.reduceClassExpression(node, name, _super, elements).addDeclarations(Kind.ClassName).finish(node, Scope.Type.FunctionName); // todo ClassName scope?
     }
 
     @NotNull
@@ -183,17 +183,18 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
     @Override
     public State reduceFormalParameters(@NotNull FormalParameters node, @NotNull ImmutableList<State> items, @NotNull Maybe<State> rest) {
         return items.foldLeft((x, y) ->
-                        new State(x.hasParameterExpressions ? x.finish(node, Scope.Type.ParameterExpression) : x, y),
+                        new State(x, y.hasParameterExpressions ? y.finish(node, Scope.Type.ParameterExpression) : y),
                 rest.orJust(new State()))
                 .addDeclarations(Kind.Param);
         // TODO have the node associated with a parameter's scope be more precise than the full list of parameters
     }
 
-    // TODO should defining a function count as writing to its name, for symmetry with initialized variable declaration
+    // TODO should defining a function count as writing to its name, for symmetry with initialized variable declaration?
     @NotNull
     @Override
     public State reduceFunctionDeclaration(@NotNull FunctionDeclaration node, @NotNull State name, @NotNull State params, @NotNull State body) {
         return new State(name, functionHelper(node, params, body, false)).addFunctionDeclaration();
+        // todo it is possible that this should sometimes add a write-reference per B.3.3
     }
 
     // TODO should defining a function count as writing to its name, for symmetry with initialized variable declaration
@@ -238,8 +239,8 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
         ImmutableList<Statement> statements = ImmutableList.list(node.consequent);
         if (node.alternate.isJust()) {
             statements = statements.cons(node.alternate.just());
-        }
-        return super.reduceIfStatement(node, test, consequent, alternate).withPotentialVarFunctions(varScopedFunctionHelper(statements));
+        } // todo this is probably wrong: `if(true) function f(){}; else function f(){};` should define var-scoped f, I think.
+        return super.reduceIfStatement(node, test, consequent, alternate).withPotentialVarFunctions(getFunctionDeclarations(statements));
     }
 
 
@@ -273,13 +274,13 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
     @NotNull
     @Override
     public State reduceSwitchCase(@NotNull SwitchCase node, @NotNull State test, @NotNull ImmutableList<State> consequent) {
-        return super.reduceSwitchCase(node, test, consequent).finish(node, Scope.Type.Block).withPotentialVarFunctions(varScopedFunctionHelper(node.consequent));
+        return super.reduceSwitchCase(node, test, consequent).finish(node, Scope.Type.Block).withPotentialVarFunctions(getFunctionDeclarations(node.consequent));
     }
 
     @NotNull
     @Override
     public State reduceSwitchDefault(@NotNull SwitchDefault node, @NotNull ImmutableList<State> consequent) {
-        return super.reduceSwitchDefault(node, consequent).finish(node, Scope.Type.Block).withPotentialVarFunctions(varScopedFunctionHelper(node.consequent));
+        return super.reduceSwitchDefault(node, consequent).finish(node, Scope.Type.Block).withPotentialVarFunctions(getFunctionDeclarations(node.consequent));
     }
 
     @NotNull
@@ -392,7 +393,7 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
             this.children = a.children.append(b.children);
             this.dynamic = a.dynamic || b.dynamic;
             this.bindingsForParent = a.bindingsForParent.append(b.bindingsForParent);
-            this.potentiallyVarScopedFunctionDeclarations = a.potentiallyVarScopedFunctionDeclarations.merge(b.potentiallyVarScopedFunctionDeclarations, (l, r) -> Either.right(Unit.unit)); // "A var binding for F is only instantiated here if it is neither [..., nor] another FunctionDeclaration"
+            this.potentiallyVarScopedFunctionDeclarations = a.potentiallyVarScopedFunctionDeclarations.merge(b.potentiallyVarScopedFunctionDeclarations, (l, r) -> Either.right(Unit.unit)); // "A var binding for F is only instantiated here if it is neither [..., nor] another FunctionDeclaration" TODO this is wrong, should just union; pvsfd should be a multimap
             this.hasParameterExpressions = a.hasParameterExpressions || b.hasParameterExpressions;
         }
 
@@ -419,7 +420,6 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
                 case Catch:
                 case With:
                 case FunctionName:
-                case Parameters:
                 case ParameterExpression:
                     // resolve only block-scoped free declarations
                     ImmutableList<Variable> variables3 = variables;
@@ -441,8 +441,9 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
                     }
                     variables = variables3;
                     functionScope = this.functionScopedDeclarations;
-                    potentiallyVarScopedFunctionDeclarations = potentiallyVarScopedFunctionDeclarations.foldLeft((acc, p) -> p.b.either(bi -> acc.put(p.a, p.b), u -> acc), HashTable.empty()); // ie, filter out those marked as do-not-create-binding, since that will no longer apply. Why HashTables do not have a filter, I do not know.
+                    potentiallyVarScopedFunctionDeclarations = potentiallyVarScopedFunctionDeclarations.foldLeft((acc, p) -> p.b.either(bi -> acc.put(p.a, p.b), u -> acc), HashTable.empty()); // ie, filter out those names marked as do-not-create-binding, since that will no longer apply. Why HashTables do not have a filter, I do not know.
                     break;
+                case Parameters:
                 case ArrowFunction:
                 case Function:
                 case Module:
@@ -517,7 +518,7 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
 
             return new State(
                     freeIdentifiers, functionScope, HashTable.empty(), HashTable.empty(),
-                    ImmutableList.list(scope), false, this.bindingsForParent, potentiallyVarScopedFunctionDeclarations, false);
+                    ImmutableList.list(scope), false, this.bindingsForParent, potentiallyVarScopedFunctionDeclarations, this.hasParameterExpressions);
         }
 
         /*
