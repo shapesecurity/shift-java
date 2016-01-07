@@ -16,6 +16,7 @@
 
 package com.shapesecurity.shift.scope;
 
+import com.shapesecurity.functional.F2;
 import com.shapesecurity.functional.Pair;
 import com.shapesecurity.functional.Unit;
 import com.shapesecurity.functional.data.Either;
@@ -134,7 +135,7 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
     @NotNull
     @Override
     public State reduceCatchClause(@NotNull CatchClause node, @NotNull State binding, @NotNull State body) {
-        return super.reduceCatchClause(node, binding.addDeclarations(Kind.CatchParam), body).finish(node, Scope.Type.Catch);
+        return super.reduceCatchClause(node, binding.addDeclarations(Kind.CatchParameter), body).finish(node, Scope.Type.Catch);
     }
 
     @NotNull
@@ -146,7 +147,7 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
     @NotNull
     @Override
     public State reduceClassExpression(@NotNull ClassExpression node, @NotNull Maybe<State> name, @NotNull Maybe<State> _super, @NotNull ImmutableList<State> elements) {
-        return super.reduceClassExpression(node, name, _super, elements).addDeclarations(Kind.ClassName).finish(node, Scope.Type.FunctionName); // todo ClassName scope?
+        return super.reduceClassExpression(node, name, _super, elements).addDeclarations(Kind.ClassName).finish(node, Scope.Type.ClassName);
     }
 
     @NotNull
@@ -182,11 +183,11 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
     @NotNull
     @Override
     public State reduceFormalParameters(@NotNull FormalParameters node, @NotNull ImmutableList<State> items, @NotNull Maybe<State> rest) {
-        return items.foldLeft((x, y) ->
-                        new State(x, y.hasParameterExpressions ? y.finish(node, Scope.Type.ParameterExpression) : y),
+        return items.mapWithIndex((F2<Integer, State, Pair>) Pair::new)
+                .foldLeft((x, y) ->
+                        new State(x, ((State) y.b).hasParameterExpressions ? ((State) y.b).finish(node.items.index((Integer) y.a).just(), Scope.Type.ParameterExpression) : ((State) y.b)),
                 rest.orJust(new State()))
-                .addDeclarations(Kind.Param);
-        // TODO have the node associated with a parameter's scope be more precise than the full list of parameters
+                .addDeclarations(Kind.Parameter);
     }
 
     // TODO should defining a function count as writing to its name, for symmetry with initialized variable declaration?
@@ -266,7 +267,7 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
     @Override
     public State reduceSetter(@NotNull Setter node, @NotNull State parameter, @NotNull State body, @NotNull State name) {
         parameter = parameter.hasParameterExpressions ? parameter.finish(node, Scope.Type.ParameterExpression) : parameter;
-        return new State(name, functionHelper(node, parameter.addDeclarations(Kind.Param), body, false));
+        return new State(name, functionHelper(node, parameter.addDeclarations(Kind.Parameter), body, false));
         // TODO have the node associated with the parameter's scope be more precise
     }
 

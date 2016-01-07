@@ -85,6 +85,7 @@ public class Scope {
         ArrowFunction,
         Function,
         FunctionName,
+        ClassName,
         Parameters,
         ParameterExpression,
         With,
