@@ -400,7 +400,7 @@ public class Flattener extends MonoidalReducer<ImmutableList<Node>> { // TODO sh
     @NotNull
     @Override
     public ImmutableList<Node> reduceModule(@NotNull Module node, @NotNull ImmutableList<ImmutableList<Node>> directives, @NotNull ImmutableList<ImmutableList<Node>> items) {
-        return ImmutableList.<Node>list(node);
+        return ImmutableList.<Node>list(node).append(super.reduceModule(node, directives, items));
     }
 
     @NotNull

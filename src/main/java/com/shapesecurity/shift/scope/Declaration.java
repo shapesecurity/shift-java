@@ -31,9 +31,11 @@ public class Declaration {
         FunctionDeclaration(true),
         FunctionB33(false),
         FunctionExpressionName(true),
-        ClassName(true),
+        ClassDeclaration(true),
+        ClassExpressionName(true),
         Parameter(false),
-        CatchParameter(true);
+        CatchParameter(true),
+        Import(true);
 
         public final boolean isFunctionScoped;
         public final boolean isBlockScoped;
