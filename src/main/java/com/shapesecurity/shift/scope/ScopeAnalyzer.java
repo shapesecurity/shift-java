@@ -18,8 +18,6 @@ package com.shapesecurity.shift.scope;
 
 import com.shapesecurity.functional.F2;
 import com.shapesecurity.functional.Pair;
-import com.shapesecurity.functional.Unit;
-import com.shapesecurity.functional.data.Either;
 import com.shapesecurity.functional.data.HashTable;
 import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.functional.data.Maybe;
@@ -49,7 +47,8 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
     }
 
     @NotNull
-    private State functionHelper(@NotNull Node fnNode, @NotNull State params, @NotNull State body, boolean isArrowFn) {
+    private State finishFunction(@NotNull Node fnNode, @NotNull State params, @NotNull State body) {
+        boolean isArrowFn = fnNode instanceof ArrowExpression;
         Scope.Type fnType = isArrowFn ? Scope.Type.ArrowFunction : Scope.Type.Function;
         if (params.hasParameterExpressions) {
             params = params.withoutParameterExpressions(); // no need to pass that information on
@@ -75,7 +74,7 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
     @NotNull
     @Override
     public State reduceArrowExpression(@NotNull ArrowExpression node, @NotNull State params, @NotNull State body) {
-        return functionHelper(node, params, body, true);
+        return finishFunction(node, params, body);
     }
 
     @NotNull
@@ -194,7 +193,7 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
     @NotNull
     @Override
     public State reduceFunctionDeclaration(@NotNull FunctionDeclaration node, @NotNull State name, @NotNull State params, @NotNull State body) {
-        return new State(name, functionHelper(node, params, body, false)).addFunctionDeclaration();
+        return new State(name, finishFunction(node, params, body)).addFunctionDeclaration();
         // todo it is possible that this should sometimes add a write-reference per B.3.3
     }
 
@@ -202,7 +201,7 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
     @NotNull
     @Override
     public State reduceFunctionExpression(@NotNull FunctionExpression node, @NotNull Maybe<State> name, @NotNull State parameters, @NotNull State body) {
-        State primary = functionHelper(node, parameters, body, false);
+        State primary = finishFunction(node, parameters, body);
         if (name.isJust()) {
             return new State(name.just(), primary).addDeclarations(Kind.FunctionExpressionName).finish(node, Scope.Type.FunctionName);
         } else {
@@ -252,7 +251,7 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
     @NotNull
     @Override
     public State reduceMethod(@NotNull Method node, @NotNull State params, @NotNull State body, @NotNull State name) {
-        return new State(name, functionHelper(node, params, body, false));
+        return new State(name, finishFunction(node, params, body));
     }
 
     @NotNull
@@ -271,7 +270,7 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
     @Override
     public State reduceSetter(@NotNull Setter node, @NotNull State parameter, @NotNull State body, @NotNull State name) {
         parameter = parameter.hasParameterExpressions ? parameter.finish(node, Scope.Type.ParameterExpression) : parameter;
-        return new State(name, functionHelper(node, parameter.addDeclarations(Kind.Parameter), body, false));
+        return new State(name, finishFunction(node, parameter.addDeclarations(Kind.Parameter), body));
         // TODO have the node associated with the parameter's scope be more precise
     }
 
