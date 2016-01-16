@@ -1740,6 +1740,54 @@ public class ScopeTest extends TestCase {
     }
 
     @Test
+    public void testDestructuring() throws JsError {
+        String js = "var {x, a:{b:y = z}} = null; var [z] = y;";
+        Script script = parse(js);
+        GlobalScope globalScope = ScopeAnalyzer.analyze(script);
+        Scope topLevelLexicalScope = globalScope.children.maybeHead().just();
+
+        final BindingIdentifier xNode1 = bi( new Getter().d(ScriptStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorBinding_()).d(ObjectBindingProperties_(0)).d(BindingPropertyIdentifierBinding_())
+                .apply(script) );
+        final BindingIdentifier yNode1 = bi( new Getter().d(ScriptStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorBinding_()).d(ObjectBindingProperties_(1)).d(BindingPropertyPropertyBinding_()).d(ObjectBindingProperties_(0)).d(BindingPropertyPropertyBinding_()).d(BindingWithDefaultBinding_())
+                .apply(script) );
+        final IdentifierExpression zNode1 = ie( new Getter().d(ScriptStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorBinding_()).d(ObjectBindingProperties_(1)).d(BindingPropertyPropertyBinding_()).d(ObjectBindingProperties_(0)).d(BindingPropertyPropertyBinding_()).d(BindingWithDefaultInit_())
+                .apply(script) );
+        final BindingIdentifier zNode2 = bi( new Getter().d(ScriptStatements_(1)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorBinding_()).d(ArrayBindingElements_(0))
+                .apply(script) );
+        final IdentifierExpression yNode2 = ie( new Getter().d(ScriptStatements_(1)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorInit_())
+                .apply(script) );
+
+        final Either<BindingIdentifier, IdentifierExpression> xNode1E = Either.left(xNode1);
+        final Either<BindingIdentifier, IdentifierExpression> yNode1E = Either.left(yNode1);
+        final Either<BindingIdentifier, IdentifierExpression> zNode1E = Either.right(zNode1);
+        final Either<BindingIdentifier, IdentifierExpression> zNode2E = Either.left(zNode2);
+        final Either<BindingIdentifier, IdentifierExpression> yNode2E = Either.right(yNode2);
+
+        { // global scope
+
+            ImmutableList<Scope> children = ImmutableList.list(topLevelLexicalScope);
+
+            ImmutableList<String> through = ImmutableList.nil();
+
+            // mapping of variable names from this scope object to the list of their declarations and their references
+            Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<Either<BindingIdentifier, IdentifierExpression>>>> variables = new HashMap<>();
+            variables.put("x", new Pair<>(ImmutableList.list(xNode1), ImmutableList.list(xNode1E)));
+            variables.put("y", new Pair<>(ImmutableList.list(yNode1), ImmutableList.list(yNode1E, yNode2E)));
+            variables.put("z", new Pair<>(ImmutableList.list(zNode2), ImmutableList.list(zNode1E, zNode2E)));
+
+            Map<Either<BindingIdentifier, IdentifierExpression>, Accessibility> referenceTypes = new HashMap<>();
+            referenceTypes.put(xNode1E, Accessibility.Write);
+            referenceTypes.put(yNode1E, Accessibility.Write);
+            referenceTypes.put(yNode2E, Accessibility.Read);
+            referenceTypes.put(zNode1E, Accessibility.Read);
+            referenceTypes.put(zNode2E, Accessibility.Write);
+
+            checkScope(globalScope, Scope.Type.Global, true, children, through, variables, referenceTypes);
+        }
+    }
+
+
+    @Test
     public void testScope_binding() throws JsError {
         checkScopeSerialization(
                 "function foo(b){function r(){for(var b=0;;);}}",
@@ -1816,6 +1864,20 @@ public class ScopeTest extends TestCase {
                 "{\"node\": \"Script_0\", \"type\": \"Global\", \"isDynamic\": true, \"through\": [], \"variables\": [], \"children\": [{\"node\": \"Script_0\", \"type\": \"Script\", \"isDynamic\": false, \"through\": [], \"variables\": [], \"children\": [{\"node\": \"FunctionExpression_3\", \"type\": \"FunctionName\", \"isDynamic\": false, \"through\": [], \"variables\": [{\"name\": \"f\", \"references\": [], \"declarations\": [{\"node\": \"BindingIdentifier(f)_4\", \"kind\": \"FunctionExpressionName\"}]}], \"children\": [{\"node\": \"FunctionExpression_3\", \"type\": \"Function\", \"isDynamic\": false, \"through\": [], \"variables\": [{\"name\": \"arguments\", \"references\": [], \"declarations\": []}, {\"name\": \"f\", \"references\": [{\"node\": \"IdentifierExpression(f)_20\", \"accessibility\": \"Read\"}], \"declarations\": [{\"node\": \"BindingIdentifier(f)_10\", \"kind\": \"FunctionB33\"}, {\"node\": \"BindingIdentifier(f)_16\", \"kind\": \"FunctionB33\"}]}], \"children\": [{\"node\": \"Block_8\", \"type\": \"Block\", \"isDynamic\": false, \"through\": [], \"variables\": [{\"name\": \"f\", \"references\": [], \"declarations\": [{\"node\": \"BindingIdentifier(f)_10\", \"kind\": \"FunctionDeclaration\"}]}], \"children\": [{\"node\": \"FunctionDeclaration_9\", \"type\": \"Function\", \"isDynamic\": false, \"through\": [], \"variables\": [{\"name\": \"arguments\", \"references\": [], \"declarations\": []}], \"children\": []}]}, {\"node\": \"Block_14\", \"type\": \"Block\", \"isDynamic\": false, \"through\": [], \"variables\": [{\"name\": \"f\", \"references\": [], \"declarations\": [{\"node\": \"BindingIdentifier(f)_16\", \"kind\": \"FunctionDeclaration\"}]}], \"children\": [{\"node\": \"FunctionDeclaration_15\", \"type\": \"Function\", \"isDynamic\": false, \"through\": [], \"variables\": [{\"name\": \"arguments\", \"references\": [], \"declarations\": []}], \"children\": []}]}]}]}]}]}"
         );
 
+        checkScopeSerialization( // As above, but as a module. Because B.3.3 only applies in strict mode, this case is substantially different from the previous.
+                "!function f() {\n" +
+                        "  {\n" +
+                        "    function f(){}\n" +
+                        "  }\n" +
+                        "  {\n" +
+                        "    function f(){}\n" +
+                        "  }\n" +
+                        "  f;\n" +
+                        "}",
+                "{\"node\": \"Module_0\", \"type\": \"Global\", \"isDynamic\": true, \"through\": [], \"variables\": [], \"children\": [{\"node\": \"Module_0\", \"type\": \"Module\", \"isDynamic\": false, \"through\": [], \"variables\": [], \"children\": [{\"node\": \"FunctionExpression_3\", \"type\": \"FunctionName\", \"isDynamic\": false, \"through\": [], \"variables\": [{\"name\": \"f\", \"references\": [{\"node\": \"IdentifierExpression(f)_20\", \"accessibility\": \"Read\"}], \"declarations\": [{\"node\": \"BindingIdentifier(f)_4\", \"kind\": \"FunctionExpressionName\"}]}], \"children\": [{\"node\": \"FunctionExpression_3\", \"type\": \"Function\", \"isDynamic\": false, \"through\": [{\"node\": \"IdentifierExpression(f)_20\", \"accessibility\": \"Read\"}], \"variables\": [{\"name\": \"arguments\", \"references\": [], \"declarations\": []}], \"children\": [{\"node\": \"Block_8\", \"type\": \"Block\", \"isDynamic\": false, \"through\": [], \"variables\": [{\"name\": \"f\", \"references\": [], \"declarations\": [{\"node\": \"BindingIdentifier(f)_10\", \"kind\": \"FunctionDeclaration\"}]}], \"children\": [{\"node\": \"FunctionDeclaration_9\", \"type\": \"Function\", \"isDynamic\": false, \"through\": [], \"variables\": [{\"name\": \"arguments\", \"references\": [], \"declarations\": []}], \"children\": []}]}, {\"node\": \"Block_14\", \"type\": \"Block\", \"isDynamic\": false, \"through\": [], \"variables\": [{\"name\": \"f\", \"references\": [], \"declarations\": [{\"node\": \"BindingIdentifier(f)_16\", \"kind\": \"FunctionDeclaration\"}]}], \"children\": [{\"node\": \"FunctionDeclaration_15\", \"type\": \"Function\", \"isDynamic\": false, \"through\": [], \"variables\": [{\"name\": \"arguments\", \"references\": [], \"declarations\": []}], \"children\": []}]}]}]}]}]}",
+                false
+        );
+
         checkScopeSerialization(
                 "!function f() {\n" +
                         "  if (0)\n" +
@@ -1852,53 +1914,8 @@ public class ScopeTest extends TestCase {
                 false
         );
     }
-    /*
-    @Test
-    public void testDestructuring() throws JsError {
-        String js = "let {x, a:{b:y = z}} = null; var [z] = y;";
-        Script script = parse(js);
-        GlobalScope globalScope = ScopeAnalyzer.analyze(script);
 
-        final BindingIdentifier xNode1 = bi( new Getter().d(ScriptStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorBinding_()).d(ObjectBindingProperties_(0)).d(BindingPropertyIdentifierBinding_())
-                .apply(script) );
-        final BindingIdentifier yNode1 = bi( new Getter().d(ScriptStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorBinding_()).d(ObjectBindingProperties_(1)).d(BindingPropertyPropertyBinding_()).d(ObjectBindingProperties_(0)).d(BindingPropertyPropertyBinding_()).d(BindingWithDefaultBinding_())
-                .apply(script) );
-        final IdentifierExpression zNode1 = ie( new Getter().d(ScriptStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorBinding_()).d(ObjectBindingProperties_(1)).d(BindingPropertyPropertyBinding_()).d(ObjectBindingProperties_(0)).d(BindingPropertyPropertyBinding_()).d(BindingWithDefaultInit_())
-                .apply(script) );
-        final BindingIdentifier zNode2 = bi( new Getter().d(ScriptStatements_(1)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorBinding_()).d(ArrayBindingElements_(0))
-                .apply(script) );
-        final IdentifierExpression yNode2 = ie( new Getter().d(ScriptStatements_(1)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorInit_())
-                .apply(script) );
 
-        final Either<BindingIdentifier, IdentifierExpression> xNode1E = Either.left(xNode1);
-        final Either<BindingIdentifier, IdentifierExpression> yNode1E = Either.left(yNode1);
-        final Either<BindingIdentifier, IdentifierExpression> zNode1E = Either.right(zNode1);
-        final Either<BindingIdentifier, IdentifierExpression> zNode2E = Either.left(zNode2);
-        final Either<BindingIdentifier, IdentifierExpression> yNode2E = Either.right(yNode2);
-
-        { // global scope
-
-            ImmutableList<Scope> children = ImmutableList.nil();
-
-            ImmutableList<String> through = ImmutableList.nil();
-
-            // mapping of variable names from this scope object to the list of their declarations and their references
-            Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<Either<BindingIdentifier, IdentifierExpression>>>> variables = new HashMap<>();
-            variables.put("x", new Pair<>(ImmutableList.list(xNode1), ImmutableList.list(xNode1E)));
-            variables.put("y", new Pair<>(ImmutableList.list(yNode1), ImmutableList.list(yNode1E, yNode2E)));
-            variables.put("z", new Pair<>(ImmutableList.list(zNode2), ImmutableList.list(zNode1E, zNode2E)));
-
-            Map<Either<BindingIdentifier, IdentifierExpression>, Accessibility> referenceTypes = new HashMap<>();
-            referenceTypes.put(xNode1E, Accessibility.Write);
-            referenceTypes.put(yNode1E, Accessibility.Write);
-            referenceTypes.put(yNode2E, Accessibility.Read);
-            referenceTypes.put(zNode1E, Accessibility.Read);
-            referenceTypes.put(zNode2E, Accessibility.Write);
-
-            checkScope(globalScope, Scope.Type.Global, true, children, through, variables, referenceTypes);
-        }
-    }
-*/
 
     /**
      * Check the given scope is correct based on the information provided

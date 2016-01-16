@@ -18,32 +18,36 @@ package com.shapesecurity.shift.scope;
 
 import com.shapesecurity.functional.F2;
 import com.shapesecurity.functional.Pair;
-import com.shapesecurity.functional.data.HashTable;
-import com.shapesecurity.functional.data.ImmutableList;
-import com.shapesecurity.functional.data.Maybe;
-import com.shapesecurity.functional.data.Monoid;
+import com.shapesecurity.functional.data.*;
 import com.shapesecurity.shift.ast.*;
 import com.shapesecurity.shift.scope.Declaration.Kind;
 import com.shapesecurity.shift.visitor.Director;
 import com.shapesecurity.shift.visitor.MonoidalReducer;
 
+import com.shapesecurity.shift.visitor.StrictnessReducer;
 import org.jetbrains.annotations.NotNull;
 
 public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
-    private static final ScopeAnalyzer INSTANCE = new ScopeAnalyzer();
+    private final ImmutableSet<Node> sloppySet;
 
-    private ScopeAnalyzer() {
+    private ScopeAnalyzer(@NotNull Script script) {
         super(new StateMonoid());
+        sloppySet = StrictnessReducer.analyze(script);
+    }
+
+    private ScopeAnalyzer(@NotNull Module module) {
+        super(new StateMonoid());
+        sloppySet = ImmutableSet.emptyP();
     }
 
     @NotNull
     public static GlobalScope analyze(@NotNull Script script) {
-        return (GlobalScope) Director.reduceScript(INSTANCE, script).children.maybeHead().just();
+        return (GlobalScope) Director.reduceScript(new ScopeAnalyzer(script), script).children.maybeHead().just();
     }
 
     @NotNull
     public static GlobalScope analyze(@NotNull Module module) {
-        return (GlobalScope) Director.reduceModule(INSTANCE, module).children.maybeHead().just();
+        return (GlobalScope) Director.reduceModule(new ScopeAnalyzer(module), module).children.maybeHead().just();
     }
 
     @NotNull
@@ -52,9 +56,9 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
         Scope.Type fnType = isArrowFn ? Scope.Type.ArrowFunction : Scope.Type.Function;
         if (params.hasParameterExpressions) {
             params = params.withoutParameterExpressions(); // no need to pass that information on
-            return new State(params, body.finish(fnNode, fnType, !isArrowFn)).finish(fnNode, Scope.Type.Parameters);
+            return new State(params, body.finish(fnNode, fnType, !isArrowFn, this.sloppySet.contains(fnNode))).finish(fnNode, Scope.Type.Parameters);
         } else {
-            return new State(params, body).finish(fnNode, fnType, !isArrowFn);
+            return new State(params, body).finish(fnNode, fnType, !isArrowFn, this.sloppySet.contains(fnNode));
         }
     }
 
@@ -212,7 +216,7 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
     @NotNull
     @Override
     public State reduceGetter(@NotNull Getter node, @NotNull State body, @NotNull State name) {
-        return new State(name, body.finish(node, Scope.Type.Function, true));
+        return new State(name, body.finish(node, Scope.Type.Function, true, this.sloppySet.contains(node)));
         // variables defined in body are not in scope when evaluating name (which may be computed)
     }
 
@@ -408,10 +412,10 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
          * are carried forward into the new state object.
          */
         private State finish(@NotNull Node astNode, @NotNull Scope.Type scopeType) {
-            return finish(astNode, scopeType, false);
+            return finish(astNode, scopeType, false, false);
         }
 
-        private State finish(@NotNull Node astNode, @NotNull Scope.Type scopeType, boolean resolveArguments) {
+        private State finish(@NotNull Node astNode, @NotNull Scope.Type scopeType, boolean resolveArguments, boolean shouldB33) {
             ImmutableList<Variable> variables = ImmutableList.nil();
 
             HashTable<String, ImmutableList<Declaration>> functionScope = HashTable.empty();
@@ -487,7 +491,7 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
 
 
                     // B.3.3: create an additional var-scoped binding for functions in blocks
-                    if (scopeType == Scope.Type.Function || scopeType == Scope.Type.ArrowFunction) { // todo maybe also script? check bugzilla.
+                    if (shouldB33) { // todo maybe also script? check bugzilla.
                         newDeclarations = newDeclarations.merge(potentiallyVarScopedFunctionDeclarations, ImmutableList::append);
                     }
 
