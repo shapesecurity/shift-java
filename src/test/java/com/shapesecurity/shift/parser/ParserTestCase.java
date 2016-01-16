@@ -101,7 +101,6 @@ public abstract class ParserTestCase extends TestCase {
 
     public static void testScriptEarlyError(@NotNull String source, @NotNull String error) throws JsError {
         Script script = Parser.parseScript(source);
-        //System.out.println(Serializer.serialize(script));
         ImmutableList<EarlyError> errors = EarlyErrorChecker.validate(script);
         assertEquals(1, errors.length);
         assertEquals(error, errors.maybeHead().just().message);

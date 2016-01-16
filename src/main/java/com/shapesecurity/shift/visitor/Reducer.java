@@ -126,7 +126,7 @@ public interface Reducer<State> {
             @NotNull State expression);
 
     @NotNull
-    State reduceComputedMemberExpression(
+    State reduceComputedMemberExpression( // todo this seems like the wrong order.
             @NotNull ComputedMemberExpression node,
             @NotNull State expression,
             @NotNull State object);
@@ -298,7 +298,7 @@ public interface Reducer<State> {
     State reduceLiteralStringExpression(@NotNull LiteralStringExpression node);
 
     @NotNull
-    State reduceMethod(
+    State reduceMethod( // TODO this seems like the wrong order.
             @NotNull Method node,
             @NotNull State params,
             @NotNull State body,

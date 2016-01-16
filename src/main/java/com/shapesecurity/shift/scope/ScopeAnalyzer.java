@@ -16,51 +16,55 @@
 
 package com.shapesecurity.shift.scope;
 
+import com.shapesecurity.functional.F2;
 import com.shapesecurity.functional.Pair;
-import com.shapesecurity.functional.Unit;
-import com.shapesecurity.functional.data.Either;
-import com.shapesecurity.functional.data.HashTable;
-import com.shapesecurity.functional.data.ImmutableList;
-import com.shapesecurity.functional.data.Maybe;
-import com.shapesecurity.functional.data.Monoid;
+import com.shapesecurity.functional.data.*;
 import com.shapesecurity.shift.ast.*;
 import com.shapesecurity.shift.scope.Declaration.Kind;
 import com.shapesecurity.shift.visitor.Director;
 import com.shapesecurity.shift.visitor.MonoidalReducer;
 
+import com.shapesecurity.shift.visitor.StrictnessReducer;
 import org.jetbrains.annotations.NotNull;
 
 public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
-    private static final ScopeAnalyzer INSTANCE = new ScopeAnalyzer();
+    private final ImmutableSet<Node> sloppySet;
 
-    private ScopeAnalyzer() {
+    private ScopeAnalyzer(@NotNull Script script) {
         super(new StateMonoid());
+        sloppySet = StrictnessReducer.analyze(script);
+    }
+
+    private ScopeAnalyzer(@NotNull Module module) {
+        super(new StateMonoid());
+        sloppySet = ImmutableSet.emptyP();
     }
 
     @NotNull
     public static GlobalScope analyze(@NotNull Script script) {
-        return (GlobalScope) Director.reduceScript(INSTANCE, script).children.maybeHead().just();
+        return (GlobalScope) Director.reduceScript(new ScopeAnalyzer(script), script).children.maybeHead().just();
     }
 
     @NotNull
     public static GlobalScope analyze(@NotNull Module module) {
-        return (GlobalScope) Director.reduceModule(INSTANCE, module).children.maybeHead().just();
+        return (GlobalScope) Director.reduceModule(new ScopeAnalyzer(module), module).children.maybeHead().just();
     }
 
     @NotNull
-    private State functionHelper(@NotNull Node fnNode, @NotNull State params, @NotNull State body, boolean isArrowFn) {
+    private State finishFunction(@NotNull Node fnNode, @NotNull State params, @NotNull State body) {
+        boolean isArrowFn = fnNode instanceof ArrowExpression;
         Scope.Type fnType = isArrowFn ? Scope.Type.ArrowFunction : Scope.Type.Function;
         if (params.hasParameterExpressions) {
             params = params.withoutParameterExpressions(); // no need to pass that information on
-            return new State(params, body.finish(fnNode, fnType)).addDeclarations(Kind.Param).finish(fnNode, Scope.Type.Parameters, !isArrowFn);
+            return new State(params, body.finish(fnNode, fnType, !isArrowFn, this.sloppySet.contains(fnNode))).finish(fnNode, Scope.Type.Parameters);
         } else {
-            return new State(params.addDeclarations(Kind.Param), body).finish(fnNode, fnType, !isArrowFn);
+            return new State(params, body).finish(fnNode, fnType, !isArrowFn, this.sloppySet.contains(fnNode));
         }
     }
 
     @NotNull
     // TODO you'd think you'd need to do this for labelled function declarations too, but the spec actually doesn't say so...
-    private ImmutableList<BindingIdentifier> varScopedFunctionHelper(@NotNull ImmutableList<Statement> statements) { // get the names of functions declared in the statement list
+    private ImmutableList<BindingIdentifier> getFunctionDeclarations(@NotNull ImmutableList<Statement> statements) { // get the names of functions declared in the statement list
         ImmutableList<BindingIdentifier> potentiallyVarScopedFunctionDeclarations = ImmutableList.nil();
         for (Statement statement : statements) { // TODO this is not a very clean way of doing this
             if (statement instanceof FunctionDeclaration) {
@@ -74,7 +78,7 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
     @NotNull
     @Override
     public State reduceArrowExpression(@NotNull ArrowExpression node, @NotNull State params, @NotNull State body) {
-        return functionHelper(node, params, body, true);
+        return finishFunction(node, params, body);
     }
 
     @NotNull
@@ -118,7 +122,7 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
     @NotNull
     @Override
     public State reduceBlock(@NotNull Block node, @NotNull ImmutableList<State> statements) {
-        return super.reduceBlock(node, statements).withPotentialVarFunctions(varScopedFunctionHelper(node.statements)).finish(node, Scope.Type.Block);
+        return super.reduceBlock(node, statements).withPotentialVarFunctions(getFunctionDeclarations(node.statements)).finish(node, Scope.Type.Block);
     }
 
     @NotNull
@@ -133,20 +137,20 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
 
     @NotNull
     @Override
-    public State reduceCatchClause(@NotNull CatchClause node, @NotNull State param, @NotNull State body) {
-        return super.reduceCatchClause(node, param.addDeclarations(Kind.CatchParam), body).finish(node, Scope.Type.Catch);
+    public State reduceCatchClause(@NotNull CatchClause node, @NotNull State binding, @NotNull State body) {
+        return super.reduceCatchClause(node, binding.addDeclarations(Kind.CatchParameter), body).finish(node, Scope.Type.Catch);
     }
 
     @NotNull
     @Override
     public State reduceClassDeclaration(@NotNull ClassDeclaration node, @NotNull State name, @NotNull Maybe<State> _super, @NotNull ImmutableList<State> elements) {
-        return super.reduceClassDeclaration(node, name.addDeclarations(Kind.ClassName), _super, elements);
+        return super.reduceClassDeclaration(node, name.addDeclarations(Kind.ClassDeclaration), _super, elements);
     }
 
     @NotNull
     @Override
     public State reduceClassExpression(@NotNull ClassExpression node, @NotNull Maybe<State> name, @NotNull Maybe<State> _super, @NotNull ImmutableList<State> elements) {
-        return super.reduceClassExpression(node, name, _super, elements).addDeclarations(Kind.ClassName).finish(node, Scope.Type.FunctionName);
+        return super.reduceClassExpression(node, name, _super, elements).addDeclarations(Kind.ClassExpressionName).finish(node, Scope.Type.ClassName);
     }
 
     @NotNull
@@ -182,25 +186,26 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
     @NotNull
     @Override
     public State reduceFormalParameters(@NotNull FormalParameters node, @NotNull ImmutableList<State> items, @NotNull Maybe<State> rest) {
-        return items.foldLeft((x, y) ->
-                        new State(x.hasParameterExpressions ? x.finish(node, Scope.Type.ParameterExpression) : x, y),
+        return items.mapWithIndex((F2<Integer, State, Pair>) Pair::new)
+                .foldLeft((x, y) ->
+                        new State(x, ((State) y.b).hasParameterExpressions ? ((State) y.b).finish(node.items.index((Integer) y.a).just(), Scope.Type.ParameterExpression) : ((State) y.b)),
                 rest.orJust(new State()))
-                .addDeclarations(Kind.Param);
-        // TODO have the node associated with a parameter's scope be more precise than the full list of parameters
+                .addDeclarations(Kind.Parameter);
     }
 
-    // TODO should defining a function count as writing to its name, for symmetry with initialized variable declaration
+    // TODO should defining a function count as writing to its name, for symmetry with initialized variable declaration?
     @NotNull
     @Override
     public State reduceFunctionDeclaration(@NotNull FunctionDeclaration node, @NotNull State name, @NotNull State params, @NotNull State body) {
-        return new State(name, functionHelper(node, params, body, false)).addFunctionDeclaration();
+        return new State(name, finishFunction(node, params, body)).addFunctionDeclaration();
+        // todo it is possible that this should sometimes add a write-reference per B.3.3
     }
 
     // TODO should defining a function count as writing to its name, for symmetry with initialized variable declaration
     @NotNull
     @Override
     public State reduceFunctionExpression(@NotNull FunctionExpression node, @NotNull Maybe<State> name, @NotNull State parameters, @NotNull State body) {
-        State primary = functionHelper(node, parameters, body, false);
+        State primary = finishFunction(node, parameters, body);
         if (name.isJust()) {
             return new State(name.just(), primary).addDeclarations(Kind.FunctionExpressionName).finish(node, Scope.Type.FunctionName);
         } else {
@@ -211,7 +216,7 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
     @NotNull
     @Override
     public State reduceGetter(@NotNull Getter node, @NotNull State body, @NotNull State name) {
-        return new State(name, body.finish(node, Scope.Type.Function, true));
+        return new State(name, body.finish(node, Scope.Type.Function, true, this.sloppySet.contains(node)));
         // variables defined in body are not in scope when evaluating name (which may be computed)
     }
 
@@ -239,14 +244,18 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
         if (node.alternate.isJust()) {
             statements = statements.cons(node.alternate.just());
         }
-        return super.reduceIfStatement(node, test, consequent, alternate).withPotentialVarFunctions(varScopedFunctionHelper(statements));
+        return super.reduceIfStatement(node, test, consequent, alternate).withPotentialVarFunctions(getFunctionDeclarations(statements));
     }
 
+    @NotNull
+    public State reduceImport(@NotNull Import node, @NotNull Maybe<State> defaultBinding, @NotNull ImmutableList<State> namedImports) {
+        return super.reduceImport(node, defaultBinding, namedImports).addDeclarations(Kind.Import);
+    }
 
     @NotNull
     @Override
     public State reduceMethod(@NotNull Method node, @NotNull State params, @NotNull State body, @NotNull State name) {
-        return new State(name, functionHelper(node, params, body, false));
+        return new State(name, finishFunction(node, params, body));
     }
 
     @NotNull
@@ -265,7 +274,7 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
     @Override
     public State reduceSetter(@NotNull Setter node, @NotNull State parameter, @NotNull State body, @NotNull State name) {
         parameter = parameter.hasParameterExpressions ? parameter.finish(node, Scope.Type.ParameterExpression) : parameter;
-        return new State(name, functionHelper(node, parameter.addDeclarations(Kind.Param), body, false));
+        return new State(name, finishFunction(node, parameter.addDeclarations(Kind.Parameter), body));
         // TODO have the node associated with the parameter's scope be more precise
     }
 
@@ -273,13 +282,13 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
     @NotNull
     @Override
     public State reduceSwitchCase(@NotNull SwitchCase node, @NotNull State test, @NotNull ImmutableList<State> consequent) {
-        return super.reduceSwitchCase(node, test, consequent).finish(node, Scope.Type.Block).withPotentialVarFunctions(varScopedFunctionHelper(node.consequent));
+        return super.reduceSwitchCase(node, test, consequent).finish(node, Scope.Type.Block).withPotentialVarFunctions(getFunctionDeclarations(node.consequent));
     }
 
     @NotNull
     @Override
     public State reduceSwitchDefault(@NotNull SwitchDefault node, @NotNull ImmutableList<State> consequent) {
-        return super.reduceSwitchDefault(node, consequent).finish(node, Scope.Type.Block).withPotentialVarFunctions(varScopedFunctionHelper(node.consequent));
+        return super.reduceSwitchDefault(node, consequent).finish(node, Scope.Type.Block).withPotentialVarFunctions(getFunctionDeclarations(node.consequent));
     }
 
     @NotNull
@@ -338,7 +347,7 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
         @NotNull
         public final ImmutableList<BindingIdentifier> bindingsForParent; // either references bubbling up to the AssignmentExpression, ForOfStatement, or ForInStatement which writes to them or declarations bubbling up to the VariableDeclaration, FunctionDeclaration, ClassDeclaration, FormalParameters, Setter, Method, or CatchClause which declares them
         @NotNull
-        public final HashTable<String, Either<BindingIdentifier, Unit>> potentiallyVarScopedFunctionDeclarations; // for annex B.3.3, which says (essentially) that function declarations are *also* var-scoped if doing so is not an early error (although not at the top level; only within functions). Unit: there are at least two of this name, and so none can be created.
+        public final HashTable<String, ImmutableList<Declaration>> potentiallyVarScopedFunctionDeclarations; // for annex B.3.3, which says (essentially) that function declarations are *also* var-scoped if doing so is not an early error (although not at the top level; only within functions).
 
         /*
          * Fully saturated constructor
@@ -351,7 +360,7 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
                 @NotNull ImmutableList<Scope> children,
                 boolean dynamic,
                 @NotNull ImmutableList<BindingIdentifier> bindingsForParent,
-                @NotNull HashTable<String, Either<BindingIdentifier, Unit>> potentiallyVarScopedFunctionDeclarations,
+                @NotNull HashTable<String, ImmutableList<Declaration>> potentiallyVarScopedFunctionDeclarations,
                 boolean hasParameterExpressions
         ) {
             this.freeIdentifiers = freeIdentifiers;
@@ -392,7 +401,7 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
             this.children = a.children.append(b.children);
             this.dynamic = a.dynamic || b.dynamic;
             this.bindingsForParent = a.bindingsForParent.append(b.bindingsForParent);
-            this.potentiallyVarScopedFunctionDeclarations = a.potentiallyVarScopedFunctionDeclarations.merge(b.potentiallyVarScopedFunctionDeclarations, (l, r) -> Either.right(Unit.unit)); // "A var binding for F is only instantiated here if it is neither [..., nor] another FunctionDeclaration"
+            this.potentiallyVarScopedFunctionDeclarations = a.potentiallyVarScopedFunctionDeclarations.merge(b.potentiallyVarScopedFunctionDeclarations, ImmutableList::append);
             this.hasParameterExpressions = a.hasParameterExpressions || b.hasParameterExpressions;
         }
 
@@ -403,23 +412,37 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
          * are carried forward into the new state object.
          */
         private State finish(@NotNull Node astNode, @NotNull Scope.Type scopeType) {
-            return finish(astNode, scopeType, false);
+            return finish(astNode, scopeType, false, false);
         }
 
-        private State finish(@NotNull Node astNode, @NotNull Scope.Type scopeType, boolean resolveArguments) {
+        private State finish(@NotNull Node astNode, @NotNull Scope.Type scopeType, boolean resolveArguments, boolean shouldB33) {
             ImmutableList<Variable> variables = ImmutableList.nil();
 
             HashTable<String, ImmutableList<Declaration>> functionScope = HashTable.empty();
             HashTable<String, ImmutableList<Reference>> freeIdentifiers = this.freeIdentifiers;
-            HashTable<String, Either<BindingIdentifier, Unit>> potentiallyVarScopedFunctionDeclarations = this.potentiallyVarScopedFunctionDeclarations;
+            HashTable<String, ImmutableList<Declaration>> potentiallyVarScopedFunctionDeclarations = this.potentiallyVarScopedFunctionDeclarations;
             ImmutableList<Scope> children = this.children;
+
+            for (Pair<String, ImmutableList<Declaration>> name :  this.blockScopedDeclarations.entries()) {
+                potentiallyVarScopedFunctionDeclarations = potentiallyVarScopedFunctionDeclarations.remove(name.a);
+            }
+            for (Pair<String, ImmutableList<Declaration>> fdecl :  this.functionDeclarations.entries()) {
+                Maybe<ImmutableList<Declaration>> maybeConflict = this.potentiallyVarScopedFunctionDeclarations.get(fdecl.a);
+                if (maybeConflict.isJust()) {
+                    ImmutableList<Declaration> existingDeclarations = maybeConflict.just();
+                    ImmutableList<Declaration> newDeclarations = fdecl.b;
+                    if (existingDeclarations.length != 1 || existingDeclarations.maybeHead().just().node != newDeclarations.maybeHead().just().node) { // don't conflict with your own lexical declaration
+                        potentiallyVarScopedFunctionDeclarations = potentiallyVarScopedFunctionDeclarations.remove(fdecl.a);
+                    }
+                }
+            }
+
 
             switch (scopeType) {
                 case Block:
                 case Catch:
                 case With:
                 case FunctionName:
-                case Parameters:
                 case ParameterExpression:
                     // resolve only block-scoped free declarations
                     ImmutableList<Variable> variables3 = variables;
@@ -429,20 +452,11 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
                         ImmutableList<Reference> references2 = freeIdentifiers.get(name2).orJust(ImmutableList.nil());
                         variables3 = ImmutableList.cons(new Variable(name2, references2, declarations2), variables3);
                         freeIdentifiers = freeIdentifiers.remove(name2);
-
-                        // we do not create var-scoped bindings for functions if doing so would cause an early error, ie, if a containing block has a block-scoped declaration of the same name
-                        Maybe<Either<BindingIdentifier, Unit>> maybeConflict = this.potentiallyVarScopedFunctionDeclarations.get(name2);
-                        if (maybeConflict.isJust() && maybeConflict.just().isLeft()) {
-                            BindingIdentifier conflict = maybeConflict.just().left().just();
-                            if (declarations2.length != 1 || declarations2.maybeHead().just().node != conflict) { // don't conflict with your own lexical declaration
-                                potentiallyVarScopedFunctionDeclarations = potentiallyVarScopedFunctionDeclarations.put(name2, Either.right(Unit.unit)); // mark as do-not-create-binding
-                            }
-                        }
                     }
                     variables = variables3;
                     functionScope = this.functionScopedDeclarations;
-                    potentiallyVarScopedFunctionDeclarations = potentiallyVarScopedFunctionDeclarations.foldLeft((acc, p) -> p.b.either(bi -> acc.put(p.a, p.b), u -> acc), HashTable.empty()); // ie, filter out those marked as do-not-create-binding, since that will no longer apply. Why HashTables do not have a filter, I do not know.
                     break;
+                case Parameters:
                 case ArrowFunction:
                 case Function:
                 case Module:
@@ -477,17 +491,8 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
 
 
                     // B.3.3: create an additional var-scoped binding for functions in blocks
-                    if (scopeType == Scope.Type.Function || scopeType == Scope.Type.ArrowFunction) { // todo maybe also script? check bugzilla.
-                        // Ensure that we do not create var-scoped bindings for nested functions if doing so would cause an early error, ie, if a containing block has a block-scoped declaration of the same name
-                        // todo check catch-block interaction
-                        for (Pair<String, ImmutableList<Declaration>> entry1 : this.blockScopedDeclarations.entries()) {
-                            potentiallyVarScopedFunctionDeclarations = potentiallyVarScopedFunctionDeclarations.remove(entry1.a);
-                        }
-                        HashTable<String, BindingIdentifier> varFuncDecls = potentiallyVarScopedFunctionDeclarations.foldLeft((acc, p) -> p.b.either(bi -> acc.put(p.a, bi), u -> acc), HashTable.empty());
-                        newDeclarations = newDeclarations.merge(
-                                varFuncDecls.map(bi -> ImmutableList.list(new Declaration(bi, Kind.Var))),
-                                ImmutableList::append
-                        );
+                    if (shouldB33) { // todo maybe also script? check bugzilla.
+                        newDeclarations = newDeclarations.merge(potentiallyVarScopedFunctionDeclarations, ImmutableList::append);
                     }
 
                     for (Pair<String, ImmutableList<Declaration>> entry : newDeclarations.entries()) {
@@ -517,7 +522,7 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
 
             return new State(
                     freeIdentifiers, functionScope, HashTable.empty(), HashTable.empty(),
-                    ImmutableList.list(scope), false, this.bindingsForParent, potentiallyVarScopedFunctionDeclarations, false);
+                    ImmutableList.list(scope), false, this.bindingsForParent, potentiallyVarScopedFunctionDeclarations, this.hasParameterExpressions);
         }
 
         /*
@@ -662,13 +667,10 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
 
         @NotNull
         public State withPotentialVarFunctions(@NotNull ImmutableList<BindingIdentifier> funcs) {
-            HashTable<String, Either<BindingIdentifier, Unit>> potentiallyVarScopedFunctionDeclarations = this.potentiallyVarScopedFunctionDeclarations;
+            HashTable<String, ImmutableList<Declaration>> potentiallyVarScopedFunctionDeclarations = this.potentiallyVarScopedFunctionDeclarations;
             for (BindingIdentifier bi : funcs) {
-                if (potentiallyVarScopedFunctionDeclarations.get(bi.name).isJust()) {
-                    potentiallyVarScopedFunctionDeclarations = potentiallyVarScopedFunctionDeclarations.put(bi.name, Either.right(Unit.unit));
-                } else {
-                    potentiallyVarScopedFunctionDeclarations = potentiallyVarScopedFunctionDeclarations.put(bi.name, Either.left(bi));
-                }
+                ImmutableList<Declaration> existing = potentiallyVarScopedFunctionDeclarations.get(bi.name).orJust(ImmutableList.nil());
+                potentiallyVarScopedFunctionDeclarations = potentiallyVarScopedFunctionDeclarations.put(bi.name, existing.cons(new Declaration(bi, Kind.FunctionB33)));
             }
             return new State(
                     this.freeIdentifiers,

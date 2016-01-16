@@ -70,6 +70,10 @@ public class GeneratorDeclarationTest extends ParserTestCase {
 
         testScriptFailure("label: function* a(){}", 15, "Unexpected token \"*\"");
         testScriptFailure("function*g(yield){}", 11, "Unexpected token \"yield\"");
+        testScriptFailure("function*g({yield}){}", 17, "Unexpected token \"yield\"");
+        testScriptFailure("function*g([yield]){}", 12, "Unexpected token \"yield\"");
+        testScriptFailure("function*g({a: yield}){}", 15, "Unexpected token \"yield\"");
+        testScriptFailure("function*g(yield = 0){}", 11, "Unexpected token \"yield\"");
         testScriptFailure("function*g() { var yield; }", 19, "Unexpected token \"yield\"");
         testScriptFailure("function*g() { var yield = 1; }", 19, "Unexpected token \"yield\"");
         testScriptFailure("function*g() { function yield(){}; }", 24, "Unexpected token \"yield\"");

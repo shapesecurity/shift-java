@@ -3,18 +3,92 @@ package com.shapesecurity.shift.scope;
 import com.shapesecurity.functional.Pair;
 import com.shapesecurity.functional.data.HashTable;
 import com.shapesecurity.functional.data.ImmutableList;
-import com.shapesecurity.shift.ast.BindingIdentifier;
-import com.shapesecurity.shift.ast.IdentifierExpression;
-import com.shapesecurity.shift.ast.Node;
+import com.shapesecurity.shift.ast.*;
+import com.shapesecurity.shift.visitor.Flattener;
 
 import java.util.*;
 
 public class ScopeSerializer {
+    private Map<Node, Integer> nodeToID;
 
-    private Map<Node, Integer> nodeToID = new IdentityHashMap<>();
-    private int currentID = 0;
+    private class VariableComparator implements Comparator<Variable> {
+        @Override
+        public int compare(Variable v1, Variable v2) {
+            int comparison = v1.name.compareTo(v2.name);
+            if (comparison != 0) {
+                return comparison;
+            }
+            comparison = v1.declarations.length - v2.declarations.length;
+            if (comparison != 0) {
+                return comparison;
+            }
+            comparison = v1.references.length - v2.references.length;
+            if (comparison != 0) {
+                return comparison;
+            }
+            for (int i = 0; i < v1.declarations.length; ++i) {
+                Declaration d1 = v1.declarations.index(0).just();
+                Declaration d2 = v2.declarations.index(0).just();
+                comparison = d1.kind.compareTo(d2.kind);
+                if (comparison != 0) {
+                    return comparison;
+                }
+                comparison = nodeToID.get(d1.node).compareTo(nodeToID.get(d2.node));
+                if (comparison != 0) {
+                    return comparison;
+                }
+            }
+            ReferenceComparator refcompare = new ReferenceComparator();
+            for (int i = 0; i < v1.references.length; ++i) {
+                Reference r1 = v1.references.index(0).just();
+                Reference r2 = v2.references.index(0).just();
+                comparison = refcompare.compare(r1, r2);
+                if (comparison != 0) {
+                    return comparison;
+                }
+            }
+            return 0;
+        }
+    }
 
-    public String serializeScope(Scope scope) {
+    private class ReferenceComparator implements Comparator<Reference> {
+        @Override
+        public int compare(Reference r1, Reference r2) {
+            int comparison = ((r1.accessibility.isRead() ? 1 : 0) + (r1.accessibility.isWrite() ? 2 : 0))
+                    - ((r2.accessibility.isRead() ? 1 : 0) + (r2.accessibility.isWrite() ? 2 : 0));
+            if (comparison != 0) {
+                return comparison;
+            }
+            return nodeToID.get(r1.node.either(x->x, x->x)).compareTo(nodeToID.get(r2.node.either(x->x, x->x)));
+        }
+    }
+
+    private ScopeSerializer(GlobalScope scope) {
+        nodeToID = new IdentityHashMap<>();
+        ImmutableList<Node> nodes;
+        if (scope.astNode instanceof Script) {
+            nodes = Flattener.flatten((Script) scope.astNode);
+        } else if (scope.astNode instanceof Module) {
+            nodes = Flattener.flatten((Module) scope.astNode);
+        } else {
+            throw new RuntimeException("GlobalScope does not correspond to script or module");
+        }
+        nodes.foreach(n -> nodeToID.put(n, nodeToID.size())); // this logic could go elsewhere. we just need a canonical node->id map for canonical serialization.
+    }
+
+    private ScopeSerializer(Map<Node, Integer> nodeToId) {
+        this.nodeToID = nodeToId;
+    }
+
+    public static String serialize(GlobalScope scope) {
+        return (new ScopeSerializer(scope)).serializeScope(scope);
+    }
+
+    public static String serialize(GlobalScope scope, Map<Node, Integer> nodeToId) {
+        return (new ScopeSerializer(nodeToId)).serializeScope(scope);
+    }
+
+    private String serializeScope(Scope scope) {
         String serialized = "{";
         serialized += "\"node\": \"" + serializeNode(scope.astNode) + "\"";
         serialized += ", \"type\": \"" + scope.type + "\"";
@@ -26,10 +100,6 @@ public class ScopeSerializer {
     }
 
     private String serializeNode(Node node) {
-        if (!nodeToID.containsKey(node)) {
-            nodeToID.put(node, currentID);
-            currentID++;
-        }
         if (node instanceof IdentifierExpression) {
             return node.getClass().getSimpleName() + "(" + ((IdentifierExpression) node).name + ")_" + nodeToID.get(node);
         } else if (node instanceof BindingIdentifier) {
@@ -46,6 +116,7 @@ public class ScopeSerializer {
                 references.add(reference);
             }
         }
+        Collections.sort(references, new ReferenceComparator());
         return ImmutableList.from(references);
     }
 
@@ -111,11 +182,14 @@ public class ScopeSerializer {
     }
 
     private String serializeVariableList(Collection<Variable> variables) {
+        List<Variable> sortedVariables = new ArrayList<>(variables);
+        Collections.sort(sortedVariables, new VariableComparator());
+
         String serialized = "[";
-        for (Variable variable : variables) {
+        for (Variable variable : sortedVariables) {
             serialized += serializeVariable(variable) + ", ";
         }
-        if (variables.size() > 0) {
+        if (sortedVariables.size() > 0) {
             serialized = serialized.substring(0, serialized.length() - 2);
         }
         serialized += "]";

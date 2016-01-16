@@ -29,10 +29,14 @@ public class Declaration {
         Const(true),
         Let(true),
         FunctionDeclaration(true),
+        FunctionB33(false),
         FunctionExpressionName(true),
-        ClassName(true),
-        Param(false),
-        CatchParam(true);
+        ClassDeclaration(true),
+        ClassExpressionName(true),
+        Parameter(false),
+        CatchParameter(true),
+        Import(true);
+
         public final boolean isFunctionScoped;
         public final boolean isBlockScoped;
 

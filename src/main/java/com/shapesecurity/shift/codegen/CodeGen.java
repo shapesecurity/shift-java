@@ -165,6 +165,9 @@ public final class CodeGen implements Reducer<CodeRep> {
         } else if (body.startsWithCurly) {
             body = factory.paren(body);
         }
+        if (node.body instanceof Expression) {
+            body = p(node.body, Precedence.ASSIGNMENT, body);
+        }
         return seqVA(params, factory.token("=>"), body);
     }
 
