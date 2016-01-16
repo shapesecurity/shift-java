@@ -445,6 +445,7 @@ public class CodeGenTest {
         test("a=>{0;return}");
         test("()=>function(){}");
         test("()=>class{}");
+        test("()=>(1,2)");
     }
 
     @Test
