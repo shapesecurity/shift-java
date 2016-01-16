@@ -301,6 +301,8 @@ public abstract class Parser extends Tokenizer {
                     Either<Expression, Binding> expr = this.parseAssignmentExpression();
                     defaultValue = expr.left();
                     this.allowYieldExpression = previousAllowYieldExpression;
+                } else if (token.type == TokenType.YIELD && this.allowYieldExpression) {
+                    throw this.createUnexpected(token);
                 }
                 return this.markLocation(startLocation, new BindingPropertyIdentifier((BindingIdentifier) binding.just(), defaultValue));
             }

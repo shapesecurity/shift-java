@@ -28,8 +28,6 @@ import com.shapesecurity.shift.path.Getter;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.shapesecurity.shift.visitor.Flattener;
-import com.sun.xml.internal.ws.api.BindingID;
 import junit.framework.TestCase;
 
 import org.jetbrains.annotations.NotNull;

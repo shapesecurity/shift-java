@@ -5,7 +5,6 @@ import com.shapesecurity.functional.data.HashTable;
 import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.shift.ast.*;
 import com.shapesecurity.shift.visitor.Flattener;
-import jdk.nashorn.internal.objects.Global;
 
 import java.util.*;
 
