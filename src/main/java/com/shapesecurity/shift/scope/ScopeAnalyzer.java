@@ -443,6 +443,7 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
                 case Catch:
                 case With:
                 case FunctionName:
+                case ClassName:
                 case ParameterExpression:
                     // resolve only block-scoped free declarations
                     ImmutableList<Variable> variables3 = variables;
