@@ -24,22 +24,6 @@ public class Flattener extends MonoidalReducer<ImmutableList<Node>> { // TODO sh
     }
 
     @NotNull
-    private <A> ImmutableList<A> flattenM(@NotNull ImmutableList<Maybe<ImmutableList<A>>> l) {
-        return flatten(Maybe.catMaybes(l));
-    }
-
-    @NotNull
-    private <A> ImmutableList<A> flattenM(@NotNull Maybe<ImmutableList<A>> l) {
-        return l.orJust(ImmutableList.nil());
-    }
-
-    @NotNull
-    private <A> ImmutableList<A> flatten(@NotNull ImmutableList<ImmutableList<A>> l) { // todo should maybe go in functional
-        return l.flatMap(x -> x);
-    }
-
-
-    @NotNull
     @Override
     public ImmutableList<Node> reduceArrayBinding(@NotNull ArrayBinding node, @NotNull ImmutableList<Maybe<ImmutableList<Node>>> elements, @NotNull Maybe<ImmutableList<Node>> restElement) {
         return ImmutableList.<Node>list(node).append(super.reduceArrayBinding(node, elements, restElement));
@@ -394,7 +378,7 @@ public class Flattener extends MonoidalReducer<ImmutableList<Node>> { // TODO sh
     @NotNull
     @Override
     public ImmutableList<Node> reduceMethod(@NotNull Method node, @NotNull ImmutableList<Node> params, @NotNull ImmutableList<Node> body, @NotNull ImmutableList<Node> name) {
-        return ImmutableList.<Node>list(node);
+        return ImmutableList.<Node>list(node).append(super.reduceMethod(node, params, body, name)); // TODO this seems like the wrong order
     }
 
     @NotNull

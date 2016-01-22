@@ -5,16 +5,14 @@ import com.shapesecurity.functional.Tuple3;
 import com.shapesecurity.functional.Tuple4;
 import com.shapesecurity.functional.data.HashTable;
 import com.shapesecurity.functional.data.Maybe;
-import com.shapesecurity.shift.ast.FunctionDeclaration;
-import com.shapesecurity.shift.ast.Node;
-import com.shapesecurity.shift.ast.BindingIdentifier;
-import com.shapesecurity.shift.ast.IdentifierExpression;
+import com.shapesecurity.shift.ast.*;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.IdentityHashMap;
 import java.util.Map;
+import java.util.NoSuchElementException;
 
 public class ScopeLookup {
     @NotNull
@@ -59,16 +57,33 @@ public class ScopeLookup {
         });
     }
 
-    public Variable findVariableDeclaredBy(@NotNull BindingIdentifier bindingIdentifier) { // NB: When used with function declarations, which can declare multiple variables under B.3.3, returns the lexical binding.
-        return bindingIdentifierDeclarationCache.get(bindingIdentifier);
+    @NotNull
+    public Variable findVariableDeclaredBy(@NotNull BindingIdentifier bindingIdentifier) { // NB: When used with function declarations, which can declare multiple variables under B.3.3, returns the lexical binding. When used with class declarations, returns the class-local binding.
+        assert !bindingIdentifier.name.equals("*default");
+        Variable v = bindingIdentifierDeclarationCache.get(bindingIdentifier);
+        if (v == null) {
+            throw new NoSuchElementException("Binding identifier not present in AST");
+        }
+        return v;
     }
 
+    @NotNull
     public Variable findVariableReferencedBy(@NotNull BindingIdentifier bindingIdentifier) {
-        return bindingIdentifierReferenceCache.get(bindingIdentifier);
+        assert !bindingIdentifier.name.equals("*default");
+        Variable v = bindingIdentifierReferenceCache.get(bindingIdentifier);
+        if (v == null) {
+            throw new NoSuchElementException("Binding identifier not present in AST");
+        }
+        return v; // TODO test this : does it throw on, eg, "var a;"?
     }
 
+    @NotNull
     public Variable findVariableReferencedBy(@NotNull IdentifierExpression identifierExpression) {
-        return identifierExpressionReferenceCache.get(identifierExpression);
+        Variable v = identifierExpressionReferenceCache.get(identifierExpression);
+        if (v == null) {
+            throw new NoSuchElementException("Identifier expression not present in AST");
+        }
+        return v;
     }
 
     // Because of annex B.3.3, in addition to a lexical binding (outside of scripts, which ???), functions may create a variable
@@ -77,19 +92,37 @@ public class ScopeLookup {
     // Assuming the function declaration occurs somewhere in the AST corresponding to this global scope,
     // there always will be at least one variable declared by the given function.
     // Returns (lexical, variable)
+    @NotNull
     public Pair<Variable, Maybe<Variable>> findVariablesForFuncDecl(@NotNull final FunctionDeclaration func) {
+        assert !func.name.name.equals("*default");
         if (functionDeclarationCache.containsKey(func.name)) {
             return functionDeclarationCache.get(func.name);
         } else {
-            return new Pair<>(bindingIdentifierDeclarationCache.get(func.name), Maybe.nothing());
+            Variable v = bindingIdentifierDeclarationCache.get(func.name);
+            if (v == null) {
+                throw new NoSuchElementException("Function declaration present in AST");
+            }
+            return new Pair<>(v, Maybe.nothing());
         }
+    }
+
+    // Class declarations always create two variables. This function returns both: (class-local, outer).
+    @NotNull
+    public Pair<Variable, Variable> findVariablesForClassDecl(@NotNull final ClassDeclaration cl) {
+        assert !cl.name.name.equals("*default");
+        Pair<Variable, Maybe<Variable>> vs = functionDeclarationCache.get(cl.name);
+        if (vs == null) {
+            throw new NoSuchElementException("Class declaration present in AST");
+        }
+        return new Pair<>(vs.a, vs.b.just());
     }
 
     public boolean isGlobal(@NotNull Variable variable) {
         return isGlobalCache.get(variable);
     }
 
-    public Scope findScopeFor(@NotNull Node node) {
-        return nodeScopeCache.get(node);
+    @NotNull
+    public Maybe<Scope> findScopeFor(@NotNull Node node) {
+        return Maybe.fromNullable(nodeScopeCache.get(node));
     }
 }

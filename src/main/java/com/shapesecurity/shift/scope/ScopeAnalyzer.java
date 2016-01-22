@@ -90,6 +90,9 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
     @NotNull
     @Override
     public State reduceBindingIdentifier(@NotNull BindingIdentifier node) {
+        if (node.name.equals("*default*")) {
+            return new State();
+        }
         return new State(
                 HashTable.empty(),
                 HashTable.empty(),
@@ -144,13 +147,14 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
     @NotNull
     @Override
     public State reduceClassDeclaration(@NotNull ClassDeclaration node, @NotNull State name, @NotNull Maybe<State> _super, @NotNull ImmutableList<State> elements) {
-        return super.reduceClassDeclaration(node, name.addDeclarations(Kind.ClassDeclaration), _super, elements);
+        State s = super.reduceClassDeclaration(node, name, _super, elements).addDeclarations(Kind.ClassName).finish(node, Scope.Type.ClassName);
+        return new State(s, name.addDeclarations(Kind.ClassDeclaration));
     }
 
     @NotNull
     @Override
     public State reduceClassExpression(@NotNull ClassExpression node, @NotNull Maybe<State> name, @NotNull Maybe<State> _super, @NotNull ImmutableList<State> elements) {
-        return super.reduceClassExpression(node, name, _super, elements).addDeclarations(Kind.ClassExpressionName).finish(node, Scope.Type.ClassName);
+        return super.reduceClassExpression(node, name, _super, elements).addDeclarations(Kind.ClassName).finish(node, Scope.Type.ClassName);
     }
 
     @NotNull
@@ -560,7 +564,9 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
 
         @NotNull
         private State addFunctionDeclaration() {
-            assert this.bindingsForParent.length == 1;
+            if (this.bindingsForParent.length == 0) { // i.e., this is `export default function () {...}`
+                return this;
+            }
             BindingIdentifier binding = this.bindingsForParent.index(0).just();
             Declaration decl = new Declaration(binding, Kind.FunctionDeclaration);
             return new State(
