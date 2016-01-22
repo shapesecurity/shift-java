@@ -14,6 +14,7 @@ import java.util.IdentityHashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
+
 public class ScopeLookup {
     @NotNull
     private final Map<BindingIdentifier, Variable> bindingIdentifierDeclarationCache = new IdentityHashMap<>();
@@ -58,23 +59,19 @@ public class ScopeLookup {
     }
 
     @NotNull
-    public Variable findVariableDeclaredBy(@NotNull BindingIdentifier bindingIdentifier) { // NB: When used with function declarations, which can declare multiple variables under B.3.3, returns the lexical binding. When used with class declarations, returns the class-local binding.
-        assert !bindingIdentifier.name.equals("*default");
-        Variable v = bindingIdentifierDeclarationCache.get(bindingIdentifier);
-        if (v == null) {
-            throw new NoSuchElementException("Binding identifier not present in AST");
+    public Maybe<Variable> findVariableDeclaredBy(@NotNull BindingIdentifier bindingIdentifier) { // NB: When used with function declarations, which can declare multiple variables under B.3.3, returns the lexical binding. When used with class declarations, returns the class-local binding.
+        if (bindingIdentifier.name.equals("*default*")) {
+            throw new IllegalArgumentException("Can't lookup default exports");
         }
-        return v;
+        return Maybe.fromNullable(bindingIdentifierDeclarationCache.get(bindingIdentifier));
     }
 
     @NotNull
-    public Variable findVariableReferencedBy(@NotNull BindingIdentifier bindingIdentifier) {
-        assert !bindingIdentifier.name.equals("*default");
-        Variable v = bindingIdentifierReferenceCache.get(bindingIdentifier);
-        if (v == null) {
-            throw new NoSuchElementException("Binding identifier not present in AST");
+    public Maybe<Variable> findVariableReferencedBy(@NotNull BindingIdentifier bindingIdentifier) {
+        if (bindingIdentifier.name.equals("*default*")) {
+            throw new IllegalArgumentException("Can't lookup default exports");
         }
-        return v; // TODO test this : does it throw on, eg, "var a;"?
+        return Maybe.fromNullable(bindingIdentifierReferenceCache.get(bindingIdentifier));
     }
 
     @NotNull
@@ -94,7 +91,9 @@ public class ScopeLookup {
     // Returns (lexical, variable)
     @NotNull
     public Pair<Variable, Maybe<Variable>> findVariablesForFuncDecl(@NotNull final FunctionDeclaration func) {
-        assert !func.name.name.equals("*default");
+        if (func.name.name.equals("*default*")) {
+            throw new IllegalArgumentException("Can't lookup default exports");
+        }
         if (functionDeclarationCache.containsKey(func.name)) {
             return functionDeclarationCache.get(func.name);
         } else {
@@ -109,10 +108,12 @@ public class ScopeLookup {
     // Class declarations always create two variables. This function returns both: (class-local, outer).
     @NotNull
     public Pair<Variable, Variable> findVariablesForClassDecl(@NotNull final ClassDeclaration cl) {
-        assert !cl.name.name.equals("*default");
+        if (cl.name.name.equals("*default*")) {
+            throw new IllegalArgumentException("Can't lookup default exports");
+        }
         Pair<Variable, Maybe<Variable>> vs = functionDeclarationCache.get(cl.name);
         if (vs == null) {
-            throw new NoSuchElementException("Class declaration present in AST");
+            throw new NoSuchElementException("Class declaration not present in AST");
         }
         return new Pair<>(vs.a, vs.b.just());
     }
