@@ -91,14 +91,13 @@ public class ScopeLookupTest {
         for (Node node : nodes) {
             if (node instanceof BindingIdentifier) {
                 final BindingIdentifier bi = (BindingIdentifier) node;
+                Maybe<Variable> mv = lookup.findVariableDeclaredBy(bi);
+                TestCase.assertTrue(mv.isNothing() || mv.just().declarations.exists(decl -> decl.node == bi));
+                Maybe<Variable> mv2 = lookup.findVariableReferencedBy(bi);
+                TestCase.assertTrue(mv2.isNothing() || mv2.just().references.exists(ref -> ref.node.isLeft() && ref.node.left().just() == bi));
                 if (bi.name.equals("*default*")) {
-                    assertThrows(Unit -> lookup.findVariableDeclaredBy(bi));
-                    assertThrows(Unit -> lookup.findVariableReferencedBy(bi));
+                    TestCase.assertTrue(mv.isNothing() && mv2.isNothing());
                 } else {
-                    Maybe<Variable> mv = lookup.findVariableDeclaredBy(bi);
-                    TestCase.assertTrue(mv.isNothing() || mv.just().declarations.exists(decl -> decl.node == bi));
-                    Maybe<Variable> mv2 = lookup.findVariableReferencedBy(bi);
-                    TestCase.assertTrue(mv2.isNothing() || mv2.just().references.exists(ref -> ref.node.isLeft() && ref.node.left().just() == bi));
                     TestCase.assertTrue(mv.isJust() || mv2.isJust());
                 }
             } else if (node instanceof IdentifierExpression) {
@@ -222,7 +221,7 @@ public class ScopeLookupTest {
     @Test
     public void testFunctions() throws JsError {
         checkScopeLookupSanity("!function(){};");
-        checkScopeLookupSanity(";!function f(){};");
+        checkScopeLookupSanity("!function f(){};");
         checkScopeLookupSanity("function g(){};");
         checkScopeLookupSanity("(() => { { function h(){}; h; } h; });");
     }

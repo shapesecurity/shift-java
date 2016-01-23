@@ -60,17 +60,11 @@ public class ScopeLookup {
 
     @NotNull
     public Maybe<Variable> findVariableDeclaredBy(@NotNull BindingIdentifier bindingIdentifier) { // NB: When used with function declarations, which can declare multiple variables under B.3.3, returns the lexical binding. When used with class declarations, returns the class-local binding.
-        if (bindingIdentifier.name.equals("*default*")) {
-            throw new IllegalArgumentException("Can't lookup default exports");
-        }
         return Maybe.fromNullable(bindingIdentifierDeclarationCache.get(bindingIdentifier));
     }
 
     @NotNull
     public Maybe<Variable> findVariableReferencedBy(@NotNull BindingIdentifier bindingIdentifier) {
-        if (bindingIdentifier.name.equals("*default*")) {
-            throw new IllegalArgumentException("Can't lookup default exports");
-        }
         return Maybe.fromNullable(bindingIdentifierReferenceCache.get(bindingIdentifier));
     }
 
