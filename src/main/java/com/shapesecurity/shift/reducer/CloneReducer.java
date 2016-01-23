@@ -131,7 +131,7 @@ public class CloneReducer implements Reducer<Node> {
     @NotNull
     @Override
     public MemberExpression reduceComputedMemberExpression(@NotNull ComputedMemberExpression node, @NotNull Node object, @NotNull Node expression) {
-        return new ComputedMemberExpression((Expression) object, (ExpressionSuper) expression);
+        return new ComputedMemberExpression((Expression) expression, (ExpressionSuper) object);
     }
 
     @NotNull
@@ -172,7 +172,7 @@ public class CloneReducer implements Reducer<Node> {
 
     @NotNull
     @Override
-    public Statement reduceDoWhileStatement(@NotNull DoWhileStatement node, @NotNull Node test, @NotNull Node body) {
+    public Statement reduceDoWhileStatement(@NotNull DoWhileStatement node, @NotNull Node body, @NotNull Node test) {
         return new DoWhileStatement((Expression) test, (Statement) body);
     }
 
@@ -264,14 +264,14 @@ public class CloneReducer implements Reducer<Node> {
 
     @NotNull
     @Override
-    public Expression reduceFunctionExpression(@NotNull FunctionExpression node, @NotNull Maybe<Node> name, @NotNull Node parameters, @NotNull Node body) {
+    public Expression reduceFunctionExpression(@NotNull FunctionExpression node, @NotNull Maybe<Node> name, @NotNull Node params, @NotNull Node body) {
         Maybe<BindingIdentifier> newName = name.map(x -> (BindingIdentifier) x);
-        return new FunctionExpression(newName, node.getIsGenerator(), (FormalParameters) parameters, (FunctionBody) body);
+        return new FunctionExpression(newName, node.getIsGenerator(), (FormalParameters) params, (FunctionBody) body);
     }
 
     @NotNull
     @Override
-    public MethodDefinition reduceGetter(@NotNull Getter node, @NotNull Node body, @NotNull Node name) {
+    public MethodDefinition reduceGetter(@NotNull Getter node, @NotNull Node name, @NotNull Node body) {
         return new Getter((FunctionBody) body, (PropertyName) name);
     }
 
@@ -353,7 +353,7 @@ public class CloneReducer implements Reducer<Node> {
 
     @NotNull
     @Override
-    public MethodDefinition reduceMethod(@NotNull Method node, @NotNull Node params, @NotNull Node body, @NotNull Node name) {
+    public MethodDefinition reduceMethod(@NotNull Method node, @NotNull Node name, @NotNull Node params, @NotNull Node body) {
         return new Method(node.getIsGenerator(), (FormalParameters) params, (FunctionBody) body, (PropertyName) name);
     }
 
@@ -409,7 +409,7 @@ public class CloneReducer implements Reducer<Node> {
 
     @NotNull
     @Override
-    public MethodDefinition reduceSetter(@NotNull Setter node, @NotNull Node params, @NotNull Node body, @NotNull Node name) {
+    public MethodDefinition reduceSetter(@NotNull Setter node, @NotNull Node name, @NotNull Node params, @NotNull Node body) {
         return new Setter((BindingBindingWithDefault) params, (FunctionBody) body, (PropertyName) name);
     }
 

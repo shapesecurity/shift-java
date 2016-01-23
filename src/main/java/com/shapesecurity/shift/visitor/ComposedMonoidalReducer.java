@@ -182,9 +182,9 @@ public class ComposedMonoidalReducer<A, B> extends MonoidalReducer<Pair<A, B>> {
     @Override
     public Pair<A, B> reduceComputedMemberExpression(
             @NotNull ComputedMemberExpression node,
-            @NotNull Pair<A, B> expression,
-            @NotNull Pair<A, B> object) {
-        return new Pair<>(reducerA.reduceComputedMemberExpression(node, a(expression), a(object)), reducerB.reduceComputedMemberExpression(node, b(expression), b(object)));
+            @NotNull Pair<A, B> object,
+            @NotNull Pair<A, B> expression) {
+        return new Pair<>(reducerA.reduceComputedMemberExpression(node, a(object), a(expression)), reducerB.reduceComputedMemberExpression(node, b(object), b(expression)));
     }
 
     @NotNull
@@ -322,8 +322,8 @@ public class ComposedMonoidalReducer<A, B> extends MonoidalReducer<Pair<A, B>> {
 
     @NotNull
     @Override
-    public Pair<A, B> reduceFunctionExpression(@NotNull FunctionExpression node, @NotNull Maybe<Pair<A, B>> name, @NotNull Pair<A, B> parameters, @NotNull Pair<A, B> body) {
-        return new Pair<>(reducerA.reduceFunctionExpression(node, a(name), a(parameters), a(body)), reducerB.reduceFunctionExpression(node, b(name), b(parameters), b(body)));
+    public Pair<A, B> reduceFunctionExpression(@NotNull FunctionExpression node, @NotNull Maybe<Pair<A, B>> name, @NotNull Pair<A, B> params, @NotNull Pair<A, B> body) {
+        return new Pair<>(reducerA.reduceFunctionExpression(node, a(name), a(params), a(body)), reducerB.reduceFunctionExpression(node, b(name), b(params), b(body)));
     }
 
     @NotNull
@@ -468,9 +468,9 @@ public class ComposedMonoidalReducer<A, B> extends MonoidalReducer<Pair<A, B>> {
     public Pair<A, B> reduceSetter(
             @NotNull Setter node,
             @NotNull Pair<A, B> name,
-            @NotNull Pair<A, B> parameter,
+            @NotNull Pair<A, B> param,
             @NotNull Pair<A, B> body) {
-        return new Pair<>(reducerA.reduceSetter(node, a(name), a(parameter), a(body)), reducerB.reduceSetter(node, b(name), b(parameter), b(body)));
+        return new Pair<>(reducerA.reduceSetter(node, a(name), a(param), a(body)), reducerB.reduceSetter(node, b(name), b(param), b(body)));
     }
 
     @NotNull

@@ -294,9 +294,9 @@ public class EarlyErrorChecker extends MonoidalReducer<EarlyErrorState> {
     @Override
     public EarlyErrorState reduceComputedMemberExpression(
             @NotNull ComputedMemberExpression node,
-            @NotNull EarlyErrorState expression,
-            @NotNull EarlyErrorState object) {
-        EarlyErrorState s = super.reduceComputedMemberExpression(node, expression, object);
+            @NotNull EarlyErrorState object,
+            @NotNull EarlyErrorState expression) {
+        EarlyErrorState s = super.reduceComputedMemberExpression(node, object, expression);
         if (node._object instanceof Super) {
             s = s.observeSuperPropertyExpression(node);
         }
@@ -524,7 +524,7 @@ public class EarlyErrorChecker extends MonoidalReducer<EarlyErrorState> {
 
     @NotNull
     @Override
-    public EarlyErrorState reduceGetter(@NotNull Getter node, @NotNull EarlyErrorState body, @NotNull EarlyErrorState name) {
+    public EarlyErrorState reduceGetter(@NotNull Getter node, @NotNull EarlyErrorState name, @NotNull EarlyErrorState body) {
         body = body.enforceSuperCallExpressions();
         body = body.clearSuperPropertyExpressions();
         body = body.clearNewTargetExpressions();
@@ -617,7 +617,7 @@ public class EarlyErrorChecker extends MonoidalReducer<EarlyErrorState> {
 
     @NotNull
     @Override
-    public EarlyErrorState reduceMethod(@NotNull Method node, @NotNull EarlyErrorState params, @NotNull EarlyErrorState body, @NotNull EarlyErrorState name) {
+    public EarlyErrorState reduceMethod(@NotNull Method node, @NotNull EarlyErrorState name, @NotNull EarlyErrorState params, @NotNull EarlyErrorState body) {
         params = params.enforceDuplicateLexicallyDeclaredNames();
         body = body.enforceConflictingLexicallyDeclaredNames(params.lexicallyDeclaredNames);
         if (node.name instanceof StaticPropertyName && ((StaticPropertyName) node.name).value.equals("constructor")) {
@@ -720,9 +720,9 @@ public class EarlyErrorChecker extends MonoidalReducer<EarlyErrorState> {
     @Override
     public EarlyErrorState reduceSetter(
             @NotNull Setter node,
+            @NotNull EarlyErrorState name,
             @NotNull EarlyErrorState param,
-            @NotNull EarlyErrorState body,
-            @NotNull EarlyErrorState name) {
+            @NotNull EarlyErrorState body) {
         param = param.observeLexicalDeclaration();
         param = param.enforceDuplicateLexicallyDeclaredNames();
         body = body.enforceConflictingLexicallyDeclaredNames(param.lexicallyDeclaredNames);
