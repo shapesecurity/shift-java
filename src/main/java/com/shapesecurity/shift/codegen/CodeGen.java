@@ -346,7 +346,7 @@ public final class CodeGen implements Reducer<CodeRep> {
 
     @Override
     @NotNull
-    public CodeRep reduceComputedMemberExpression(@NotNull ComputedMemberExpression node, @NotNull CodeRep expression, @NotNull CodeRep object) {
+    public CodeRep reduceComputedMemberExpression(@NotNull ComputedMemberExpression node, @NotNull CodeRep object, @NotNull CodeRep expression) {
         boolean startsWithLetSquareBracket = object.startsWithLetSquareBracket || node._object instanceof IdentifierExpression && ((IdentifierExpression) node._object).name.equals("let");
         CodeRep result;
         if (node._object instanceof Expression) {
@@ -411,7 +411,7 @@ public final class CodeGen implements Reducer<CodeRep> {
     @Override
     @NotNull
     public CodeRep reduceDoWhileStatement(
-            @NotNull DoWhileStatement node, @NotNull CodeRep test, @NotNull CodeRep body) {
+            @NotNull DoWhileStatement node, @NotNull CodeRep body, @NotNull CodeRep test) {
         return seqVA(
                 factory.token("do"), body, factory.token("while"), factory.paren(test), factory.semiOp());
     }
@@ -560,7 +560,7 @@ public final class CodeGen implements Reducer<CodeRep> {
     @Override
     @NotNull
     public CodeRep reduceGetter(
-            @NotNull Getter node, @NotNull CodeRep body, @NotNull CodeRep name) {
+            @NotNull Getter node, @NotNull CodeRep name, @NotNull CodeRep body) {
         return seqVA(factory.token("get"), name, factory.paren(factory.empty()), factory.brace(body));
     }
 
@@ -677,7 +677,7 @@ public final class CodeGen implements Reducer<CodeRep> {
 
     @NotNull
     @Override
-    public CodeRep reduceMethod(@NotNull Method node, @NotNull CodeRep params, @NotNull CodeRep body, @NotNull CodeRep name) {
+    public CodeRep reduceMethod(@NotNull Method node, @NotNull CodeRep name, @NotNull CodeRep params, @NotNull CodeRep body) {
         return seqVA(node.isGenerator ? factory.token("*") : factory.empty(), name, factory.paren(params), factory.brace(body));
     }
 
@@ -750,10 +750,10 @@ public final class CodeGen implements Reducer<CodeRep> {
     @NotNull
     public CodeRep reduceSetter(
             @NotNull Setter node,
-            @NotNull CodeRep parameter,
-            @NotNull CodeRep body,
-            @NotNull CodeRep name) {
-        return (seqVA(factory.token("set"), name, factory.paren(parameter), factory.brace(body)));
+            @NotNull CodeRep name,
+            @NotNull CodeRep param,
+            @NotNull CodeRep body) {
+        return (seqVA(factory.token("set"), name, factory.paren(param), factory.brace(body)));
     }
 
     @NotNull

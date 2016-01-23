@@ -126,10 +126,10 @@ public interface Reducer<State> {
             @NotNull State expression);
 
     @NotNull
-    State reduceComputedMemberExpression( // todo this seems like the wrong order.
+    State reduceComputedMemberExpression(
             @NotNull ComputedMemberExpression node,
-            @NotNull State expression,
-            @NotNull State object);
+            @NotNull State object,
+            @NotNull State expression);
 
     @NotNull
     State reduceComputedPropertyName(
@@ -161,8 +161,8 @@ public interface Reducer<State> {
     @NotNull
     State reduceDoWhileStatement(
             @NotNull DoWhileStatement node,
-            @NotNull State test,
-            @NotNull State body);
+            @NotNull State body,
+            @NotNull State test);
 
     @NotNull
     State reduceEmptyStatement(@NotNull EmptyStatement node);
@@ -238,14 +238,14 @@ public interface Reducer<State> {
     State reduceFunctionExpression(
             @NotNull FunctionExpression node,
             @NotNull Maybe<State> name,
-            @NotNull State parameters,
+            @NotNull State params,
             @NotNull State body);
 
     @NotNull
     State reduceGetter(
             @NotNull Getter node,
-            @NotNull State body,
-            @NotNull State name);
+            @NotNull State name,
+            @NotNull State body);
 
     @NotNull
     State reduceIdentifierExpression(@NotNull IdentifierExpression node);
@@ -298,11 +298,11 @@ public interface Reducer<State> {
     State reduceLiteralStringExpression(@NotNull LiteralStringExpression node);
 
     @NotNull
-    State reduceMethod( // TODO this seems like the wrong order.
+    State reduceMethod(
             @NotNull Method node,
+            @NotNull State name,
             @NotNull State params,
-            @NotNull State body,
-            @NotNull State name);
+            @NotNull State body);
 
     @NotNull
     State reduceModule(
@@ -343,9 +343,9 @@ public interface Reducer<State> {
     @NotNull
     State reduceSetter(
             @NotNull Setter node,
-            @NotNull State params,
-            @NotNull State body,
-            @NotNull State name);
+            @NotNull State name,
+            @NotNull State param,
+            @NotNull State body);
 
     @NotNull
     State reduceShorthandProperty(@NotNull ShorthandProperty node);

@@ -200,7 +200,7 @@ public class Serializer implements Reducer<StringBuilder> {
 
     @NotNull
     @Override
-    public StringBuilder reduceComputedMemberExpression(@NotNull ComputedMemberExpression node, @NotNull StringBuilder expression, @NotNull StringBuilder object) {
+    public StringBuilder reduceComputedMemberExpression(@NotNull ComputedMemberExpression node, @NotNull StringBuilder object, @NotNull StringBuilder expression) {
         return b("ComputedMemberExpression").add("expression", expression).add("object", object).done(node);
     }
 
@@ -242,7 +242,7 @@ public class Serializer implements Reducer<StringBuilder> {
 
     @NotNull
     @Override
-    public StringBuilder reduceDoWhileStatement(@NotNull DoWhileStatement node, @NotNull StringBuilder test, @NotNull StringBuilder body) {
+    public StringBuilder reduceDoWhileStatement(@NotNull DoWhileStatement node, @NotNull StringBuilder body, @NotNull StringBuilder test) {
         return b("DoWhileStatement").add("test", test).add("body", body).done(node);
     }
 
@@ -326,16 +326,16 @@ public class Serializer implements Reducer<StringBuilder> {
 
     @NotNull
     @Override
-    public StringBuilder reduceFunctionExpression(@NotNull FunctionExpression node, @NotNull Maybe<StringBuilder> name, @NotNull StringBuilder parameters, @NotNull StringBuilder body) {
-        return b("FunctionExpression").add("name", name).add("isGenerator", node.isGenerator).add("params", parameters).add("body", body).done(node);
+    public StringBuilder reduceFunctionExpression(@NotNull FunctionExpression node, @NotNull Maybe<StringBuilder> name, @NotNull StringBuilder params, @NotNull StringBuilder body) {
+        return b("FunctionExpression").add("name", name).add("isGenerator", node.isGenerator).add("params", params).add("body", body).done(node);
     }
 
     @NotNull
     @Override
     public StringBuilder reduceGetter(
             @NotNull Getter node,
-            @NotNull StringBuilder body,
-            @NotNull StringBuilder name) {
+            @NotNull StringBuilder name,
+            @NotNull StringBuilder body) {
         return b("Getter").add("body", body).add("name", name).done(node);
     }
 
@@ -413,7 +413,7 @@ public class Serializer implements Reducer<StringBuilder> {
 
     @NotNull
     @Override
-    public StringBuilder reduceMethod(@NotNull Method node, @NotNull StringBuilder params, @NotNull StringBuilder body, @NotNull StringBuilder name) {
+    public StringBuilder reduceMethod(@NotNull Method node, @NotNull StringBuilder name, @NotNull StringBuilder params, @NotNull StringBuilder body) {
         return b("Method").add("isGenerator", node.isGenerator).add("params", params).add("body", body).add("name", name).done(node);
     }
 
@@ -461,7 +461,7 @@ public class Serializer implements Reducer<StringBuilder> {
 
     @NotNull
     @Override
-    public StringBuilder reduceSetter(@NotNull Setter node, @NotNull StringBuilder param, @NotNull StringBuilder body, @NotNull StringBuilder name) {
+    public StringBuilder reduceSetter(@NotNull Setter node, @NotNull StringBuilder name, @NotNull StringBuilder param, @NotNull StringBuilder body) {
         return b("Setter").add("param", param).add("body", body).add("name", name).done(node);
     }
 
