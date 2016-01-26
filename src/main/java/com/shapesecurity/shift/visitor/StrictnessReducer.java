@@ -73,8 +73,8 @@ public class StrictnessReducer extends MonoidalReducer<ImmutableSet<Node>> {
 
     @NotNull
     @Override
-    public ImmutableSet<Node> reduceFunctionExpression(@NotNull FunctionExpression node, @NotNull Maybe<ImmutableSet<Node>> name, @NotNull ImmutableSet<Node> parameters, @NotNull ImmutableSet<Node> body) {
-        ImmutableSet<Node> state = super.reduceFunctionExpression(node, name, parameters, body);
+    public ImmutableSet<Node> reduceFunctionExpression(@NotNull FunctionExpression node, @NotNull Maybe<ImmutableSet<Node>> name, @NotNull ImmutableSet<Node> params, @NotNull ImmutableSet<Node> body) {
+        ImmutableSet<Node> state = super.reduceFunctionExpression(node, name, params, body);
         if (hasStrict((node.body).directives)) {
             return this.monoidClass.identity();
         }
@@ -113,8 +113,8 @@ public class StrictnessReducer extends MonoidalReducer<ImmutableSet<Node>> {
 
     @NotNull
     @Override
-    public ImmutableSet<Node> reduceSetter(@NotNull Setter node, @NotNull ImmutableSet<Node> name, @NotNull ImmutableSet<Node> parameter, @NotNull ImmutableSet<Node> body) {
-        ImmutableSet<Node> state = super.reduceSetter(node, name, parameter, body);
+    public ImmutableSet<Node> reduceSetter(@NotNull Setter node, @NotNull ImmutableSet<Node> name, @NotNull ImmutableSet<Node> param, @NotNull ImmutableSet<Node> body) {
+        ImmutableSet<Node> state = super.reduceSetter(node, name, param, body);
         if (hasStrict((node.body).directives)) {
             return this.monoidClass.identity();
         }

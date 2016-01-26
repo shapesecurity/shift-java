@@ -24,22 +24,6 @@ public class Flattener extends MonoidalReducer<ImmutableList<Node>> { // TODO sh
     }
 
     @NotNull
-    private <A> ImmutableList<A> flattenM(@NotNull ImmutableList<Maybe<ImmutableList<A>>> l) {
-        return flatten(Maybe.catMaybes(l));
-    }
-
-    @NotNull
-    private <A> ImmutableList<A> flattenM(@NotNull Maybe<ImmutableList<A>> l) {
-        return l.orJust(ImmutableList.nil());
-    }
-
-    @NotNull
-    private <A> ImmutableList<A> flatten(@NotNull ImmutableList<ImmutableList<A>> l) { // todo should maybe go in functional
-        return l.flatMap(x -> x);
-    }
-
-
-    @NotNull
     @Override
     public ImmutableList<Node> reduceArrayBinding(@NotNull ArrayBinding node, @NotNull ImmutableList<Maybe<ImmutableList<Node>>> elements, @NotNull Maybe<ImmutableList<Node>> restElement) {
         return ImmutableList.<Node>list(node).append(super.reduceArrayBinding(node, elements, restElement));
@@ -163,11 +147,11 @@ public class Flattener extends MonoidalReducer<ImmutableList<Node>> { // TODO sh
 
     @NotNull
     @Override
-    public ImmutableList<Node> reduceComputedMemberExpression( // todo this seems like the wrong order.
+    public ImmutableList<Node> reduceComputedMemberExpression(
                                                  @NotNull ComputedMemberExpression node,
-                                                 @NotNull ImmutableList<Node> expression,
-                                                 @NotNull ImmutableList<Node> object) {
-        return ImmutableList.<Node>list(node).append(super.reduceComputedMemberExpression(node, expression, object));
+                                                 @NotNull ImmutableList<Node> object,
+                                                 @NotNull ImmutableList<Node> expression) {
+        return ImmutableList.<Node>list(node).append(super.reduceComputedMemberExpression(node, object, expression));
     }
 
     @NotNull
@@ -305,14 +289,14 @@ public class Flattener extends MonoidalReducer<ImmutableList<Node>> { // TODO sh
 
     @NotNull
     @Override
-    public ImmutableList<Node> reduceFunctionExpression(@NotNull FunctionExpression node, @NotNull Maybe<ImmutableList<Node>> name, @NotNull ImmutableList<Node> parameters, @NotNull ImmutableList<Node> body) { // TODO consistent 'params' / 'parameters' naming
-        return ImmutableList.<Node>list(node).append(super.reduceFunctionExpression(node, name, parameters, body));
+    public ImmutableList<Node> reduceFunctionExpression(@NotNull FunctionExpression node, @NotNull Maybe<ImmutableList<Node>> name, @NotNull ImmutableList<Node> params, @NotNull ImmutableList<Node> body) {
+        return ImmutableList.<Node>list(node).append(super.reduceFunctionExpression(node, name, params, body));
     }
 
     @NotNull
     @Override
-    public ImmutableList<Node> reduceGetter(@NotNull Getter node, @NotNull ImmutableList<Node> body, @NotNull ImmutableList<Node> name) {
-        return ImmutableList.<Node>list(node).append(super.reduceGetter(node, body, name));
+    public ImmutableList<Node> reduceGetter(@NotNull Getter node, @NotNull ImmutableList<Node> name, @NotNull ImmutableList<Node> body) {
+        return ImmutableList.<Node>list(node).append(super.reduceGetter(node, name, body));
     }
 
     @NotNull
@@ -393,8 +377,8 @@ public class Flattener extends MonoidalReducer<ImmutableList<Node>> { // TODO sh
 
     @NotNull
     @Override
-    public ImmutableList<Node> reduceMethod(@NotNull Method node, @NotNull ImmutableList<Node> params, @NotNull ImmutableList<Node> body, @NotNull ImmutableList<Node> name) {
-        return ImmutableList.<Node>list(node);
+    public ImmutableList<Node> reduceMethod(@NotNull Method node, @NotNull ImmutableList<Node> name, @NotNull ImmutableList<Node> params, @NotNull ImmutableList<Node> body) {
+        return ImmutableList.<Node>list(node).append(super.reduceMethod(node, name, params, body));
     }
 
     @NotNull
@@ -450,10 +434,10 @@ public class Flattener extends MonoidalReducer<ImmutableList<Node>> { // TODO sh
     @Override
     public ImmutableList<Node> reduceSetter(
             @NotNull Setter node,
+            @NotNull ImmutableList<Node> name,
             @NotNull ImmutableList<Node> param,
-            @NotNull ImmutableList<Node> body,
-            @NotNull ImmutableList<Node> name) {
-        return ImmutableList.<Node>list(node).append(super.reduceSetter(node, param, body, name));
+            @NotNull ImmutableList<Node> body) {
+        return ImmutableList.<Node>list(node).append(super.reduceSetter(node, name, param, body));
     }
 
     @NotNull

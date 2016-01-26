@@ -90,6 +90,9 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
     @NotNull
     @Override
     public State reduceBindingIdentifier(@NotNull BindingIdentifier node) {
+        if (node.name.equals("*default*")) {
+            return new State();
+        }
         return new State(
                 HashTable.empty(),
                 HashTable.empty(),
@@ -144,13 +147,14 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
     @NotNull
     @Override
     public State reduceClassDeclaration(@NotNull ClassDeclaration node, @NotNull State name, @NotNull Maybe<State> _super, @NotNull ImmutableList<State> elements) {
-        return super.reduceClassDeclaration(node, name.addDeclarations(Kind.ClassDeclaration), _super, elements);
+        State s = super.reduceClassDeclaration(node, name, _super, elements).addDeclarations(Kind.ClassName).finish(node, Scope.Type.ClassName);
+        return new State(s, name.addDeclarations(Kind.ClassDeclaration));
     }
 
     @NotNull
     @Override
     public State reduceClassExpression(@NotNull ClassExpression node, @NotNull Maybe<State> name, @NotNull Maybe<State> _super, @NotNull ImmutableList<State> elements) {
-        return super.reduceClassExpression(node, name, _super, elements).addDeclarations(Kind.ClassExpressionName).finish(node, Scope.Type.ClassName);
+        return super.reduceClassExpression(node, name, _super, elements).addDeclarations(Kind.ClassName).finish(node, Scope.Type.ClassName);
     }
 
     @NotNull
@@ -161,7 +165,7 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
 
     @NotNull
     @Override
-    public State reduceComputedMemberExpression(@NotNull ComputedMemberExpression node, @NotNull State expression, @NotNull State object) {
+    public State reduceComputedMemberExpression(@NotNull ComputedMemberExpression node, @NotNull State object, @NotNull State expression) {
         return super.reduceComputedMemberExpression(node, object, expression).withParameterExpressions();
     }
 
@@ -204,8 +208,8 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
     // TODO should defining a function count as writing to its name, for symmetry with initialized variable declaration
     @NotNull
     @Override
-    public State reduceFunctionExpression(@NotNull FunctionExpression node, @NotNull Maybe<State> name, @NotNull State parameters, @NotNull State body) {
-        State primary = finishFunction(node, parameters, body);
+    public State reduceFunctionExpression(@NotNull FunctionExpression node, @NotNull Maybe<State> name, @NotNull State params, @NotNull State body) {
+        State primary = finishFunction(node, params, body);
         if (name.isJust()) {
             return new State(name.just(), primary).addDeclarations(Kind.FunctionExpressionName).finish(node, Scope.Type.FunctionName);
         } else {
@@ -215,7 +219,7 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
 
     @NotNull
     @Override
-    public State reduceGetter(@NotNull Getter node, @NotNull State body, @NotNull State name) {
+    public State reduceGetter(@NotNull Getter node, @NotNull State name, @NotNull State body) {
         return new State(name, body.finish(node, Scope.Type.Function, true, this.sloppySet.contains(node)));
         // variables defined in body are not in scope when evaluating name (which may be computed)
     }
@@ -254,7 +258,7 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
 
     @NotNull
     @Override
-    public State reduceMethod(@NotNull Method node, @NotNull State params, @NotNull State body, @NotNull State name) {
+    public State reduceMethod(@NotNull Method node, @NotNull State name, @NotNull State params, @NotNull State body) {
         return new State(name, finishFunction(node, params, body));
     }
 
@@ -272,12 +276,11 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
 
     @NotNull
     @Override
-    public State reduceSetter(@NotNull Setter node, @NotNull State parameter, @NotNull State body, @NotNull State name) {
-        parameter = parameter.hasParameterExpressions ? parameter.finish(node, Scope.Type.ParameterExpression) : parameter;
-        return new State(name, finishFunction(node, parameter.addDeclarations(Kind.Parameter), body));
+    public State reduceSetter(@NotNull Setter node, @NotNull State name, @NotNull State param, @NotNull State body) {
+        param = param.hasParameterExpressions ? param.finish(node, Scope.Type.ParameterExpression) : param;
+        return new State(name, finishFunction(node, param.addDeclarations(Kind.Parameter), body));
         // TODO have the node associated with the parameter's scope be more precise
     }
-
 
     @NotNull
     @Override
@@ -560,7 +563,9 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
 
         @NotNull
         private State addFunctionDeclaration() {
-            assert this.bindingsForParent.length == 1;
+            if (this.bindingsForParent.length == 0) { // i.e., this is `export default function () {...}`
+                return this;
+            }
             BindingIdentifier binding = this.bindingsForParent.index(0).just();
             Declaration decl = new Declaration(binding, Kind.FunctionDeclaration);
             return new State(

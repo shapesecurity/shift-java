@@ -182,11 +182,11 @@ public class MonoidalReducer<State> implements Reducer<State> {
 
     @NotNull
     @Override
-    public State reduceComputedMemberExpression( // todo this seems like the wrong order.
+    public State reduceComputedMemberExpression(
             @NotNull ComputedMemberExpression node,
-            @NotNull State expression,
-            @NotNull State object) {
-        return append(expression, object);
+            @NotNull State object,
+            @NotNull State expression) {
+        return append(object, expression);
     }
 
     @NotNull
@@ -324,14 +324,14 @@ public class MonoidalReducer<State> implements Reducer<State> {
 
     @NotNull
     @Override
-    public State reduceFunctionExpression(@NotNull FunctionExpression node, @NotNull Maybe<State> name, @NotNull State parameters, @NotNull State body) { // TODO consistent 'params' / 'parameters' naming
-        return append(o(name), parameters, body);
+    public State reduceFunctionExpression(@NotNull FunctionExpression node, @NotNull Maybe<State> name, @NotNull State params, @NotNull State body) {
+        return append(o(name), params, body);
     }
 
     @NotNull
     @Override
-    public State reduceGetter(@NotNull Getter node, @NotNull State body, @NotNull State name) {
-        return append(body, name);
+    public State reduceGetter(@NotNull Getter node, @NotNull State name, @NotNull State body) {
+        return append(name, body);
     }
 
     @NotNull
@@ -412,8 +412,8 @@ public class MonoidalReducer<State> implements Reducer<State> {
 
     @NotNull
     @Override
-    public State reduceMethod(@NotNull Method node, @NotNull State params, @NotNull State body, @NotNull State name) {
-        return append(params, body, name);
+    public State reduceMethod(@NotNull Method node, @NotNull State name, @NotNull State params, @NotNull State body) {
+        return append(name, params, body);
     }
 
     @NotNull
@@ -469,10 +469,10 @@ public class MonoidalReducer<State> implements Reducer<State> {
     @Override
     public State reduceSetter(
             @NotNull Setter node,
+            @NotNull State name,
             @NotNull State param,
-            @NotNull State body,
-            @NotNull State name) {
-        return append(param, body, name);
+            @NotNull State body) {
+        return append(name, param, body);
     }
 
     @NotNull
