@@ -27,9 +27,13 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.BiFunction;
 
 public abstract class Parser extends Tokenizer {
+    protected static Map<Node, Maybe<SourceSpan>> locations = new HashMap<>();
+
     private boolean inFunctionBody;
     private boolean module;
     private boolean strict;
@@ -81,9 +85,12 @@ public abstract class Parser extends Tokenizer {
 
     @NotNull
     protected <T extends Node> T markLocation(@NotNull SourceLocation startLocation, @NotNull T node) {
-        // TODO: actually mark location
-//    node.loc = Maybe.just(new SourceSpan(Maybe.nothing(), startLocation, new SourceLocation(this.lastLine+1, this.lastIndex-this.lastLineStart, this.lastIndex)));
+        Parser.locations.put(node, Maybe.just(new SourceSpan(Maybe.nothing(), startLocation, new SourceLocation(this.lastLine+1, this.lastIndex-this.lastLineStart, this.lastIndex))));
         return node;
+    }
+
+    public static Maybe<SourceSpan> getLocation(@NotNull Node node) {
+        return locations.get(node);
     }
 
     private boolean lookaheadLexicalDeclaration() throws JsError {
