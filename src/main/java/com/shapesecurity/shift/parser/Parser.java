@@ -10,11 +10,7 @@
 package com.shapesecurity.shift.parser;
 
 import com.shapesecurity.functional.Pair;
-import com.shapesecurity.functional.Thunk;
-import com.shapesecurity.functional.data.Either;
-import com.shapesecurity.functional.data.Maybe;
-import com.shapesecurity.functional.data.ImmutableList;
-import com.shapesecurity.functional.data.NonEmptyImmutableList;
+import com.shapesecurity.functional.data.*;
 import com.shapesecurity.shift.ast.*;
 import com.shapesecurity.shift.ast.operators.*;
 import com.shapesecurity.shift.parser.token.NumericLiteralToken;
@@ -22,17 +18,14 @@ import com.shapesecurity.shift.parser.token.RegularExpressionLiteralToken;
 import com.shapesecurity.shift.parser.token.StringLiteralToken;
 import com.shapesecurity.shift.parser.token.TemplateToken;
 import com.shapesecurity.shift.utils.D2A;
-
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.function.BiFunction;
 
 public abstract class Parser extends Tokenizer {
-    public Map<Node, Maybe<SourceSpan>> locations = new HashMap<>();
+    public HashTable<Node, SourceSpan> locations = HashTable.empty();
 
     private boolean inFunctionBody;
     private boolean module;
@@ -85,23 +78,16 @@ public abstract class Parser extends Tokenizer {
 
     @NotNull
     protected <T extends Node> T markLocation(@NotNull SourceLocation startLocation, @NotNull T node) {
-        locations.put(
-                node,
-                Maybe.just(
-                        new SourceSpan(
-                                Maybe.nothing(),
-                                startLocation,
-                                new SourceLocation(
-                                        this.lastLine + 1,
-                                        this.lastIndex - this.lastLineStart,
-                                        this.lastIndex
-                                )
-                        )
-                )
+        SourceLocation endLocation = new SourceLocation(
+                this.lastLine + 1,
+                this.lastIndex - this.lastLineStart,
+                this.lastIndex
         );
+        locations.put(node, new SourceSpan(Maybe.nothing(), startLocation, endLocation));
         return node;
     }
 
+    @NotNull
     public Maybe<SourceSpan> getLocation(@NotNull Node node) {
         return locations.get(node);
     }
