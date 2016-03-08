@@ -32,7 +32,7 @@ import java.util.Map;
 import java.util.function.BiFunction;
 
 public abstract class Parser extends Tokenizer {
-    protected static Map<Node, Maybe<SourceSpan>> locations = new HashMap<>();
+    public Map<Node, Maybe<SourceSpan>> locations = new HashMap<>();
 
     private boolean inFunctionBody;
     private boolean module;
@@ -85,7 +85,7 @@ public abstract class Parser extends Tokenizer {
 
     @NotNull
     protected <T extends Node> T markLocation(@NotNull SourceLocation startLocation, @NotNull T node) {
-        Parser.locations.put(
+        locations.put(
                 node,
                 Maybe.just(
                         new SourceSpan(
@@ -102,7 +102,7 @@ public abstract class Parser extends Tokenizer {
         return node;
     }
 
-    public static Maybe<SourceSpan> getLocation(@NotNull Node node) {
+    public Maybe<SourceSpan> getLocation(@NotNull Node node) {
         return locations.get(node);
     }
 
