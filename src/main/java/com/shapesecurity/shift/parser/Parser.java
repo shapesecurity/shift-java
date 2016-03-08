@@ -85,7 +85,20 @@ public abstract class Parser extends Tokenizer {
 
     @NotNull
     protected <T extends Node> T markLocation(@NotNull SourceLocation startLocation, @NotNull T node) {
-        Parser.locations.put(node, Maybe.just(new SourceSpan(Maybe.nothing(), startLocation, new SourceLocation(this.lastLine+1, this.lastIndex-this.lastLineStart, this.lastIndex))));
+        Parser.locations.put(
+                node,
+                Maybe.just(
+                        new SourceSpan(
+                                Maybe.nothing(),
+                                startLocation,
+                                new SourceLocation(
+                                        this.lastLine + 1,
+                                        this.lastIndex - this.lastLineStart,
+                                        this.lastIndex
+                                )
+                        )
+                )
+        );
         return node;
     }
 

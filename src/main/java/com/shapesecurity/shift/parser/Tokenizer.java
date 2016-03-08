@@ -1209,6 +1209,8 @@ public class Tokenizer {
         int start = this.index;
 
         this.lastIndex = this.index;
+        this.lastLine = this.line;
+        this.lastLineStart = this.lineStart;
 
         this.skipComment();
 
@@ -1356,6 +1358,8 @@ public class Tokenizer {
                 this.startLine,
                 this.startLineStart,
                 this.lastIndex,
+                this.lastLine,
+                this.lastLineStart,
                 this.lookahead,
                 this.hasLineTerminatorBeforeNext
         );
@@ -1369,6 +1373,8 @@ public class Tokenizer {
         this.startLine = s.startLine;
         this.startLineStart = s.startLineStart;
         this.lastIndex = s.lastIndex;
+        this.lastLine = s.lastLine;
+        this.lastLineStart = s.lastLineStart;
         this.lookahead = s.lookahead;
         this.hasLineTerminatorBeforeNext = s.hasLineTerminatorBeforeNext;
     }

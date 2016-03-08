@@ -10,6 +10,8 @@ public class TokenizerState {
     public final int startIndex;
     public final int startLine;
     public final int startLineStart;
+    public final int lastLine;
+    public final int lastLineStart;
     public final int lastIndex;
     @NotNull
     public final Token lookahead;
@@ -23,6 +25,8 @@ public class TokenizerState {
             int startLine,
             int startLineStart,
             int lastIndex,
+            int lastLine,
+            int lastLineStart,
             @NotNull Token lookahead,
             boolean hasLineTerminatorBeforeNext
     ) {
@@ -33,6 +37,8 @@ public class TokenizerState {
         this.startLine = startLine;
         this.startLineStart = startLineStart;
         this.lastIndex = lastIndex;
+        this.lastLine = lastLine;
+        this.lastLineStart = lastLineStart;
         this.lookahead = lookahead;
         this.hasLineTerminatorBeforeNext = hasLineTerminatorBeforeNext;
     }
