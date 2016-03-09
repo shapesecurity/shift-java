@@ -24,8 +24,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.function.BiFunction;
 
-public abstract class Parser extends Tokenizer {
-    public HashTable<Node, SourceSpan> locations = HashTable.empty();
+public class Parser extends Tokenizer {
 
     protected boolean inFunctionBody = false;
     protected boolean module;
@@ -76,20 +75,11 @@ public abstract class Parser extends Tokenizer {
         }
     }
 
+    // TODO: change this to more general `finishNode`; add `startNode` that calls `getLocation` in ParserWithLocation;
+    // finally, have Parser extend abstract class GenericParser<AdditionalStateT> using Unit and no-op start/finish
     @NotNull
     protected <T extends Node> T markLocation(@NotNull SourceLocation startLocation, @NotNull T node) {
-        SourceLocation endLocation = new SourceLocation(
-                this.lastLine + 1,
-                this.lastIndex - this.lastLineStart,
-                this.lastIndex
-        );
-        locations.put(node, new SourceSpan(Maybe.nothing(), startLocation, endLocation));
         return node;
-    }
-
-    @NotNull
-    public Maybe<SourceSpan> getLocation(@NotNull Node node) {
-        return locations.get(node);
     }
 
     protected boolean lookaheadLexicalDeclaration() throws JsError {
@@ -108,15 +98,15 @@ public abstract class Parser extends Tokenizer {
 
     @NotNull
     public static Script parseScript(@NotNull String text) throws JsError {
-        return new ScriptParser(text).parse();
+        Parser p = new Parser(text, false);
+        return p.parseTopLevel(p::parseStatementListItem, Script::new);
     }
 
     @NotNull
     public static Module parseModule(@NotNull String text) throws JsError {
-        return new ModuleParser(text).parse();
+        Parser p = new Parser(text, true);
+        return p.parseTopLevel(p::parseModuleItem, Module::new);
     }
-
-    protected abstract Node parse() throws JsError;
 
     @NotNull
     protected ImportDeclarationExportDeclarationStatement parseModuleItem() throws JsError {
@@ -136,7 +126,17 @@ public abstract class Parser extends Tokenizer {
     }
 
     @NotNull
+    protected <A, B extends Node> B  parseTopLevel(@NotNull ExceptionalSupplier<A> parser, @NotNull BiFunction<ImmutableList<Directive>, ImmutableList<A>, B> constructor) throws JsError {
+        B node = this.parseBody(parser, constructor);
+        if (!this.match(TokenType.EOS)) {
+            throw this.createUnexpected(this.lookahead);
+        }
+        return node;
+    }
+
+    @NotNull
     protected <A, B extends Node> B parseBody(@NotNull ExceptionalSupplier<A> parser, @NotNull BiFunction<ImmutableList<Directive>, ImmutableList<A>, B> constructor) throws JsError {
+        SourceLocation startLocation = this.getLocation();
         ArrayList<Directive> directives = new ArrayList<>();
         ArrayList<A> statements = new ArrayList<>();
         boolean parsingDirectives = true;
@@ -168,12 +168,12 @@ public abstract class Parser extends Tokenizer {
             }
         }
 
-        return constructor.apply(ImmutableList.from(directives), ImmutableList.from(statements));
+        B node = constructor.apply(ImmutableList.from(directives), ImmutableList.from(statements));
+        return this.markLocation(startLocation, node);
     }
 
     @NotNull
     protected FunctionBody parseFunctionBody() throws JsError {
-        SourceLocation startLocation = this.getLocation();
         boolean oldInFunctionBody = this.inFunctionBody;
         boolean oldModule = this.module;
         boolean oldStrict = this.strict;
@@ -189,7 +189,7 @@ public abstract class Parser extends Tokenizer {
         this.module = oldModule;
         this.strict = oldStrict;
 
-        return this.markLocation(startLocation, body);
+        return body;
     }
 
     @NotNull
@@ -2369,35 +2369,6 @@ public abstract class Parser extends Tokenizer {
             this.left = left;
             this.operator = operator;
             this.precedence = operator.getPrecedence().ordinal();
-        }
-    }
-
-    public static class ScriptParser extends Parser {
-        public ScriptParser(String text) throws JsError {
-            super(text, false);
-        }
-
-        @NotNull
-        @Override
-        public Script parse() throws JsError {
-            SourceLocation startLocation = this.getLocation();
-            Script node = this.parseBody(this::parseStatementListItem, Script::new);
-            if (!this.match(TokenType.EOS)) {
-                throw this.createUnexpected(this.lookahead);
-            }
-            return this.markLocation(startLocation, node);
-        }
-    }
-
-    public static class ModuleParser extends Parser {
-        public ModuleParser(String text) throws JsError {
-            super(text, true);
-        }
-
-        @NotNull
-        @Override
-        public Module parse() throws JsError {
-            return this.markLocation(this.getLocation(), this.parseBody(this::parseModuleItem, Module::new));
         }
     }
 }

@@ -1,0 +1,42 @@
+package com.shapesecurity.shift.parser;
+
+import com.shapesecurity.functional.data.HashTable;
+import com.shapesecurity.functional.data.Maybe;
+import com.shapesecurity.shift.ast.*;
+import org.jetbrains.annotations.NotNull;
+
+public class ParserWithLocation {
+	protected final HashTable<Node, SourceSpan> locations = HashTable.empty();
+
+	public ParserWithLocation() {}
+
+	@NotNull
+	public Script parseScript(@NotNull String text) throws JsError {
+		Parser p = new ParserWithLocationInternal(text, false);
+		return p.parseTopLevel(p::parseStatementListItem, Script::new);
+	}
+
+	@NotNull
+	public Module parseModule(@NotNull String text) throws JsError {
+		Parser p = new ParserWithLocationInternal(text, true);
+		return p.parseTopLevel(p::parseModuleItem, Module::new);
+	}
+
+	@NotNull
+	public Maybe<SourceSpan> getLocation(@NotNull Node node) {
+		return this.locations.get(node);
+	}
+
+	private class ParserWithLocationInternal extends Parser {
+		protected ParserWithLocationInternal(@NotNull String source, boolean isModule) throws JsError {
+			super(source, isModule);
+		}
+
+		@NotNull
+		protected <T extends Node> T markLocation(@NotNull SourceLocation startLocation, @NotNull T node) {
+			SourceLocation endLocation = new SourceLocation(this.lastLine + 1, this.lastIndex - this.lastLineStart, this.lastIndex);
+			ParserWithLocation.this.locations.put(node, new SourceSpan(Maybe.nothing(), startLocation, endLocation));
+			return node;
+		}
+	}
+}
