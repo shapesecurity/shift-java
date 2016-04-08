@@ -31,8 +31,8 @@ public class SuperExpressionTest extends ParserTestCase {
 
         testScript("class A extends B { constructor(a = super()){} }", new ClassDeclaration(new BindingIdentifier("A"),
                 Maybe.just(new IdentifierExpression("B")), ImmutableList.list(new ClassElement(false, new Method(false,
-                new FormalParameters(ImmutableList.list(new BindingWithDefault(new BindingIdentifier("a"),
-                    new CallExpression(new Super(), ImmutableList.nil()))), Maybe.nothing()), new FunctionBody(ImmutableList.nil(),
+                new FormalParameters(ImmutableList.list(new Parameter(new BindingIdentifier("a"),
+                    Maybe.just(new CallExpression(new Super(), ImmutableList.nil())))), Maybe.nothing()), new FunctionBody(ImmutableList.nil(),
                 ImmutableList.nil()), new StaticPropertyName("constructor"))))));
 
         testScript("class A extends B { constructor() { ({a: super()}); } }", new ClassDeclaration(new BindingIdentifier("A"),
@@ -64,17 +64,17 @@ public class SuperExpressionTest extends ParserTestCase {
 
         testScript("({ *a() { super.b = 0; } });", new ObjectExpression(ImmutableList.list(new Method(true,
                 new FormalParameters(ImmutableList.nil(), Maybe.nothing()), new FunctionBody(ImmutableList.nil(),
-                ImmutableList.list(new ExpressionStatement(new AssignmentExpression(new StaticMemberExpression("b", new Super()),
+                ImmutableList.list(new ExpressionStatement(new AssignmentExpression(new StaticMemberAssignmentTarget("b", new Super()),
                         new LiteralNumericExpression(0.0))))), new StaticPropertyName("a")))));
 
         testScript("({ get a() { super[0] = 1; } });", new ObjectExpression(ImmutableList.list(new Getter(new FunctionBody(
                 ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new AssignmentExpression(
-                new ComputedMemberExpression(new LiteralNumericExpression(0.0), new Super()),
+                new ComputedMemberAssignmentTarget(new LiteralNumericExpression(0.0), new Super()),
                 new LiteralNumericExpression(1.0))))), new StaticPropertyName("a")))));
 
         testScript("({ set a(x) { super.b[0] = 1; } });", new ObjectExpression(ImmutableList.list(new Setter(
-                new BindingIdentifier("x"), new FunctionBody(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(
-                new AssignmentExpression(new ComputedMemberExpression(new LiteralNumericExpression(0.0),
+                new Parameter(new BindingIdentifier("x"), Maybe.nothing()), new FunctionBody(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(
+                new AssignmentExpression(new ComputedMemberAssignmentTarget(new LiteralNumericExpression(0.0),
                         new StaticMemberExpression("b", new Super())), new LiteralNumericExpression(1.0))))),
                 new StaticPropertyName("a")))));
 

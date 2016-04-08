@@ -26,7 +26,7 @@ public class FunctionDeclarationTest extends ParserTestCase {
                 ImmutableList.nil())));
 
         testScript("function test(t, t) { }", new FunctionDeclaration(new BindingIdentifier("test"), false,
-                new FormalParameters(ImmutableList.list(new BindingIdentifier("t"), new BindingIdentifier("t")),
+                new FormalParameters(ImmutableList.list(new Parameter(new BindingIdentifier("t"), Maybe.nothing()), new Parameter(new BindingIdentifier("t"), Maybe.nothing())),
                         Maybe.nothing()), new FunctionBody(ImmutableList.nil(), ImmutableList.nil())));
 
         testScript("function eval() { function inner() { \"use strict\" } }", new FunctionDeclaration(
@@ -36,17 +36,17 @@ public class FunctionDeclarationTest extends ParserTestCase {
                         new Directive("use strict")), ImmutableList.nil()))))));
 
         testScript("function hello(a) { z(); }", new FunctionDeclaration(new BindingIdentifier("hello"), false,
-                new FormalParameters(ImmutableList.list(new BindingIdentifier("a")), Maybe.nothing()), new FunctionBody(
+                new FormalParameters(ImmutableList.list(new Parameter(new BindingIdentifier("a"), Maybe.nothing())), Maybe.nothing()), new FunctionBody(
                 ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new CallExpression(new IdentifierExpression("z"),
                 ImmutableList.nil()))))));
 
         testScript("function hello(a, b) { z(); }", new FunctionDeclaration(new BindingIdentifier("hello"), false,
-                new FormalParameters(ImmutableList.list(new BindingIdentifier("a"), new BindingIdentifier("b")),
+                new FormalParameters(ImmutableList.list(new Parameter(new BindingIdentifier("a"), Maybe.nothing()), new Parameter(new BindingIdentifier("b"), Maybe.nothing())),
                         Maybe.nothing()), new FunctionBody(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(
                 new CallExpression(new IdentifierExpression("z"), ImmutableList.nil()))))));
 
         testScript("function universe(__proto__) { }", new FunctionDeclaration(new BindingIdentifier("universe"), false,
-                new FormalParameters(ImmutableList.list(new BindingIdentifier("__proto__")), Maybe.nothing()), new FunctionBody(
+                new FormalParameters(ImmutableList.list(new Parameter(new BindingIdentifier("__proto__"), Maybe.nothing())), Maybe.nothing()), new FunctionBody(
                 ImmutableList.nil(), ImmutableList.nil())));
 
         testScript("function test() { \"use strict\"\n + 0; }", new FunctionDeclaration(new BindingIdentifier("test"), false,

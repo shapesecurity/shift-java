@@ -36,7 +36,7 @@ public class IdentifierExpressionTest extends ParserTestCase {
                 ImmutableList.list(new VariableDeclarator(new BindingIdentifier("yield"), Maybe.nothing()))),
                 new LiteralNumericExpression(0.0), new EmptyStatement()));
 
-        testScript("for(let.let in 0);", new ForInStatement(new StaticMemberExpression("let", new IdentifierExpression("let")),
+        testScript("for(let.let in 0);", new ForInStatement(new StaticMemberAssignmentTarget("let", new IdentifierExpression("let")),
                 new LiteralNumericExpression(0.0), new EmptyStatement()));
 
         testScript("日本語", new IdentifierExpression("日本語"));

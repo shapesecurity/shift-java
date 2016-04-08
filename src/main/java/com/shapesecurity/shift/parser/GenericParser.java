@@ -1603,7 +1603,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
                             break;
                     }
                 }
-                return Either.left(this.finishNode(startState, new LiteralRegExpExpression(pattern, gFlag, iFlag, mFlag, uFlag, yFlag)));
+                return Either.left(this.finishNode(startState, new LiteralRegExpExpression(pattern, gFlag, iFlag, mFlag, yFlag, uFlag)));
             default:
                 throw this.createUnexpected(this.lookahead);
         }
@@ -1777,7 +1777,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
             ArrayList<Maybe<BindingBindingWithDefault>> elements = new ArrayList<>();
             for (Maybe<AssignmentTargetAssignmentTargetWithDefault> elementOrElison : aat.elements) {
                 if (elementOrElison.isJust()) {
-                    elements.add(Maybe.just(this.targetToBindingPossiblyWithDefault((AssignmentTargetAssignmentTargetWithDefault) elementOrElison)));
+                    elements.add(Maybe.just(this.targetToBindingPossiblyWithDefault((AssignmentTargetAssignmentTargetWithDefault) elementOrElison.just())));
                 } else {
                     elements.add(Maybe.nothing());
                 }

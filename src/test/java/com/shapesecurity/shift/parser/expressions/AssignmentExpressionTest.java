@@ -27,7 +27,7 @@ public class AssignmentExpressionTest extends ParserTestCase {
                 new BindingIdentifier("x"), new LiteralNumericExpression(0.0)));
 
         testScript("x.x *= 0", new CompoundAssignmentExpression(CompoundAssignmentOperator.AssignMul,
-                new StaticMemberExpression("x", new IdentifierExpression("x")), new LiteralNumericExpression(0.0)));
+                new StaticMemberAssignmentTarget("x", new IdentifierExpression("x")), new LiteralNumericExpression(0.0)));
 
         testScript("x /= 0", new CompoundAssignmentExpression(CompoundAssignmentOperator.AssignDiv,
                 new BindingIdentifier("x"), new LiteralNumericExpression(0.0)));
@@ -63,24 +63,24 @@ public class AssignmentExpressionTest extends ParserTestCase {
                 new CompoundAssignmentExpression(CompoundAssignmentOperator.AssignPlus,
                         new BindingIdentifier("y"), new LiteralNumericExpression(0.0))));
 
-        testScript("'use strict'; eval[0] = 0", new AssignmentExpression(new ComputedMemberExpression(
+        testScript("'use strict'; eval[0] = 0", new AssignmentExpression(new ComputedMemberAssignmentTarget(
                 new LiteralNumericExpression(0.0), new IdentifierExpression("eval")), new LiteralNumericExpression(0.0)));
 
-        testScript("'use strict'; arguments[0] = 0", new AssignmentExpression(new ComputedMemberExpression(
+        testScript("'use strict'; arguments[0] = 0", new AssignmentExpression(new ComputedMemberAssignmentTarget(
                 new LiteralNumericExpression(0.0), new IdentifierExpression("arguments")), new LiteralNumericExpression(0.0)));
 
         testScript("((((((((((((((((((((((((((((((((((((((((a)))))))))))))))))))))))))))))))))))))))) = 0",
                 new AssignmentExpression(new BindingIdentifier("a"), new LiteralNumericExpression(0.0)));
 
         testScript("((((((((((((((((((((((((((((((((((((((((a.a)))))))))))))))))))))))))))))))))))))))) = 0",
-                new AssignmentExpression(new StaticMemberExpression("a", new IdentifierExpression("a")),
+                new AssignmentExpression(new StaticMemberAssignmentTarget("a", new IdentifierExpression("a")),
                         new LiteralNumericExpression(0.0)));
 
-        testScript("[0].length = 0", new AssignmentExpression(new StaticMemberExpression("length",
+        testScript("[0].length = 0", new AssignmentExpression(new StaticMemberAssignmentTarget("length",
                 new ArrayExpression(ImmutableList.list(Maybe.just(new LiteralNumericExpression(0.0))))),
                 new LiteralNumericExpression(0.0)));
 
-        testScript("([0].length) = 0", new AssignmentExpression(new StaticMemberExpression("length",
+        testScript("([0].length) = 0", new AssignmentExpression(new StaticMemberAssignmentTarget("length",
                 new ArrayExpression(ImmutableList.list(Maybe.just(new LiteralNumericExpression(0.0))))),
                 new LiteralNumericExpression(0.0)));
     }

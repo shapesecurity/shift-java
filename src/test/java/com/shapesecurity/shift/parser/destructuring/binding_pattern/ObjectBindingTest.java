@@ -45,9 +45,9 @@ public class ObjectBindingTest extends ParserTestCase {
                 new BindingIdentifier("let"), Maybe.nothing()), new BindingPropertyIdentifier(
                 new BindingIdentifier("yield"), Maybe.nothing()))), Maybe.just(new LiteralNumericExpression(0.0)))))));
 
-        testScript("(a, b, [c]) => 0", new ArrowExpression(new FormalParameters(ImmutableList.list(new BindingIdentifier("a"),
-                new BindingIdentifier("b"), new ArrayBinding(ImmutableList.list(Maybe.just(new BindingIdentifier("c"))),
-                        Maybe.nothing())), Maybe.nothing()), new LiteralNumericExpression(0.0)));
+        testScript("(a, b, [c]) => 0", new ArrowExpression(new FormalParameters(ImmutableList.list(new Parameter(new BindingIdentifier("a"), Maybe.nothing()),
+                new Parameter(new BindingIdentifier("b"), Maybe.nothing()), new Parameter(new ArrayBinding(ImmutableList.list(Maybe.just(new BindingIdentifier("c"))),
+                        Maybe.nothing()), Maybe.nothing())), Maybe.nothing()), new LiteralNumericExpression(0.0)));
 
         testScript("try {} catch ({e}) {}", new TryCatchStatement(new Block(ImmutableList.nil()), new CatchClause(
                 new ObjectBinding(ImmutableList.list(new BindingPropertyIdentifier(new BindingIdentifier("e"), Maybe.nothing()))),

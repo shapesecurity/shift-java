@@ -32,7 +32,7 @@ public class ForInStatementTest extends ParserTestCase {
         testScript("for(a in b);", new ForInStatement(new BindingIdentifier("a"), new IdentifierExpression("b"),
                 new EmptyStatement()));
 
-        testScript("for(a.b in c);", new ForInStatement(new StaticMemberExpression("b", new IdentifierExpression("a")),
+        testScript("for(a.b in c);", new ForInStatement(new StaticMemberAssignmentTarget("b", new IdentifierExpression("a")),
                 new IdentifierExpression("c"), new EmptyStatement()));
 
         testScript("for(let of in of);", new ForInStatement(new VariableDeclaration(VariableDeclarationKind.Let,

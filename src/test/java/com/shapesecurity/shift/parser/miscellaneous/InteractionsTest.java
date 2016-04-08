@@ -185,15 +185,15 @@ public class InteractionsTest extends ParserTestCase {
         testScript("class A extends B { a() { [super.b] = c } }", new ClassDeclaration(new BindingIdentifier("A"),
                 Maybe.just(new IdentifierExpression("B")), ImmutableList.list(new ClassElement(false, new Method(false,
                 new FormalParameters(ImmutableList.nil(), Maybe.nothing()), new FunctionBody(ImmutableList.nil(),
-                ImmutableList.list(new ExpressionStatement(new AssignmentExpression(new ArrayBinding(ImmutableList.list(
-                        Maybe.just(new StaticMemberExpression("b", new Super()))), Maybe.nothing()),
+                ImmutableList.list(new ExpressionStatement(new AssignmentExpression(new ArrayAssignmentTarget(ImmutableList.list(
+                        Maybe.just(new StaticMemberAssignmentTarget("b", new Super()))), Maybe.nothing()),
                         new IdentifierExpression("c"))))), new StaticPropertyName("a"))))));
 
         testScript("class A extends B { a() { ({b: super[c]}) = d } }", new ClassDeclaration(new BindingIdentifier("A"),
                 Maybe.just(new IdentifierExpression("B")), ImmutableList.list(new ClassElement(false, new Method(false,
                 new FormalParameters(ImmutableList.nil(), Maybe.nothing()), new FunctionBody(ImmutableList.nil(),
-                ImmutableList.list(new ExpressionStatement(new AssignmentExpression(new ObjectBinding(ImmutableList.list(
-                        new BindingPropertyProperty(new StaticPropertyName("b"), new ComputedMemberExpression(
+                ImmutableList.list(new ExpressionStatement(new AssignmentExpression(new ObjectAssignmentTarget(ImmutableList.list(
+                        new AssignmentTargetPropertyProperty(new StaticPropertyName("b"), new ComputedMemberAssignmentTarget(
                                 new IdentifierExpression("c"), new Super())))), new IdentifierExpression("d"))))),
                 new StaticPropertyName("a"))))));
 
