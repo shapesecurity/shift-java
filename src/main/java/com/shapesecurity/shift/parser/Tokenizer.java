@@ -17,7 +17,6 @@
 package com.shapesecurity.shift.parser;
 
 import com.shapesecurity.functional.Pair;
-import com.shapesecurity.shift.ast.SourceLocation;
 import com.shapesecurity.shift.parser.token.*;
 import com.shapesecurity.shift.utils.Utils;
 

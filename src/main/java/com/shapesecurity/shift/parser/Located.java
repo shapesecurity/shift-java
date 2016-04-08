@@ -16,8 +16,6 @@
 
 package com.shapesecurity.shift.parser;
 
-import com.shapesecurity.shift.ast.SourceLocation;
-
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

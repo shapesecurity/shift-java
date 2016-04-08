@@ -26,8 +26,6 @@ import com.shapesecurity.shift.ast.LabeledStatement;
 import com.shapesecurity.shift.ast.MemberExpression;
 import com.shapesecurity.shift.ast.Node;
 import com.shapesecurity.shift.ast.Super;
-import com.shapesecurity.shift.ast.YieldExpression;
-import com.shapesecurity.shift.codegen.CodeGen;
 import com.shapesecurity.shift.utils.Utils;
 
 interface ErrorMessages {

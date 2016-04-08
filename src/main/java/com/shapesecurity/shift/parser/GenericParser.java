@@ -18,7 +18,6 @@ import com.shapesecurity.shift.parser.token.RegularExpressionLiteralToken;
 import com.shapesecurity.shift.parser.token.StringLiteralToken;
 import com.shapesecurity.shift.parser.token.TemplateToken;
 import com.shapesecurity.shift.utils.D2A;
-import com.sun.tools.corba.se.idl.constExpr.Not;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -302,7 +301,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
                 Maybe<Expression> defaultValue = Maybe.nothing();
                 if (this.eat(TokenType.ASSIGN)) {
                     boolean previousAllowYieldExpression = this.allowYieldExpression;
-                    Either<Expression, Binding> expr = this.parseAssignmentExpression();
+                    Either<Expression, AssignmentTarget> expr = this.parseAssignmentExpression();
                     defaultValue = expr.left();
                     this.allowYieldExpression = previousAllowYieldExpression;
                 } else if (token.type == TokenType.YIELD && this.allowYieldExpression) {
@@ -380,7 +379,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
             this.allowYieldExpression = previousYield;
             return this.finishNode(startState, new ArrowExpression(paramsNode, body));
         } else {
-            Either<Expression, Binding> body = this.parseAssignmentExpression();
+            Either<Expression, AssignmentTarget> body = this.parseAssignmentExpression();
             return this.finishNode(startState, new ArrowExpression(paramsNode, body.left().just()));
         }
     }
@@ -488,7 +487,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
         BindingBindingWithDefault bbwd = binding;
         if (this.eat(TokenType.ASSIGN)) {
             boolean previousYieldExpression = this.allowYieldExpression;
-            Either<Expression, Binding> init = this.parseAssignmentExpression();
+            Either<Expression, AssignmentTarget> init = this.parseAssignmentExpression();
             bbwd = this.finishNode(startState, new BindingWithDefault(binding, init.left().just()));
             this.allowYieldExpression = previousYieldExpression;
         }
@@ -620,7 +619,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
             } else {
                 boolean previousAllowIn = this.allowIn;
                 this.allowIn = false;
-                Either<Expression, Binding> fromParseAssignmentOrBinding = this.parseAssignmentExpressionOrBindingElement();
+                Either<Expression, AssignmentTarget> fromParseAssignmentOrBinding = this.parseAssignmentExpressionOrTarget();
                 Expression expr;
                 if (fromParseAssignmentOrBinding.isLeft()) {
                     expr = fromParseAssignmentOrBinding.left().just();
@@ -673,10 +672,10 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
     protected AssignmentTargetProperty transformDestructuring(ObjectProperty objectProperty) throws JsError {
         if (objectProperty instanceof DataProperty) {
             DataProperty dataProperty = (DataProperty) objectProperty;
-            return new BindingPropertyProperty(dataProperty.name, this.transformDestructuringWithDefault(dataProperty.expression));
+            return new AssignmentTargetPropertyProperty(dataProperty.name, this.transformDestructuringWithDefault(dataProperty.expression));
         } else if (objectProperty instanceof ShorthandProperty) {
             ShorthandProperty shorthandProperty = (ShorthandProperty) objectProperty;
-            return new BindingPropertyIdentifier(new BindingIdentifier(shorthandProperty.name.name), Maybe.nothing());
+            return new AssignmentTargetPropertyIdentifier(new BindingIdentifier(shorthandProperty.name.name), Maybe.nothing());
         }
         throw this.createError(ErrorMessages.INVALID_LHS_IN_ASSIGNMENT);
     }
@@ -706,7 +705,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
             ArrayExpression arrayExpression = (ArrayExpression) node;
             Maybe<SpreadElementExpression> last = Maybe.join(arrayExpression.elements.maybeLast());
             ImmutableList<Maybe<SpreadElementExpression>> elements = arrayExpression.elements;
-            ArrayList<Maybe<BindingBindingWithDefault>> newElements = new ArrayList<>();
+            ArrayList<Maybe<AssignmentTargetAssignmentTargetWithDefault>> newElements = new ArrayList<>();
             if (last.isJust() && last.just() instanceof SpreadElement) {
                 SpreadElement spreadElement = (SpreadElement) last.just();
                 for (Maybe<SpreadElementExpression> maybeBbwd : ((NonEmptyImmutableList<Maybe<SpreadElementExpression>>) elements).init()) {
@@ -716,7 +715,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
                         newElements.add(Maybe.nothing());
                     }
                 }
-                return new ArrayBinding(ImmutableList.from(newElements), Maybe.just(this.transformDestructuring(spreadElement.expression)));
+                return new ArrayAssignmentTarget(ImmutableList.from(newElements), Maybe.just(this.transformDestructuring(spreadElement.expression)));
             } else {
                 for (Maybe<SpreadElementExpression> maybeBbwd : elements) {
                     if (maybeBbwd.isJust()) {
@@ -725,17 +724,17 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
                         newElements.add(Maybe.nothing());
                     }
                 }
-                return new ArrayBinding(ImmutableList.from(newElements), Maybe.nothing());
+                return new ArrayAssignmentTarget(ImmutableList.from(newElements), Maybe.nothing());
             }
 
         } else if (node instanceof IdentifierExpression) {
             return new BindingIdentifier(((IdentifierExpression) node).name);
         } else if (node instanceof ComputedMemberExpression) {
             ComputedMemberExpression expr = (ComputedMemberExpression) node;
-            return new ComputedMemberBinding(expr.expression, expr._object);
+            return new ComputedMemberAssignmentTarget(expr.expression, expr._object);
         } else if (node instanceof StaticMemberExpression) {
             StaticMemberExpression expr = (StaticMemberExpression) node;
-            return new StaticMemberBinding(expr.property, expr._object);
+            return new StaticMemberAssignmentTarget(expr.property, expr._object);
         }
         throw this.createError(ErrorMessages.INVALID_LHS_IN_ASSIGNMENT);
     }
@@ -746,17 +745,12 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
     }
 
     @NotNull
-    protected BindingBindingWithDefault transformDestructuringWithDefault(Expression node) throws JsError {
+    protected AssignmentTargetAssignmentTargetWithDefault transformDestructuringWithDefault(Expression node) throws JsError {
         if (node instanceof AssignmentExpression) {
             AssignmentExpression assignmentExpression = (AssignmentExpression) node;
-            return new BindingWithDefault(this.transformDestructuring(assignmentExpression.binding), assignmentExpression.expression);
+            return new AssignmentTargetWithDefault(assignmentExpression.binding, assignmentExpression.expression);
         }
         return this.transformDestructuring(node);
-    }
-
-    @NotNull
-    protected Binding transformDestructuring(Binding b) {
-        return b;
     }
 
     protected boolean matchContextualKeyword(String keyword) {
@@ -1001,9 +995,9 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
     }
 
     @NotNull
-    protected Either<Expression, Binding> parseExpression() throws JsError {
+    protected Either<Expression, AssignmentTarget> parseExpression() throws JsError {
         AdditionalStateT startState = this.startNode();
-        Either<Expression, Binding> left = this.parseAssignmentExpression();
+        Either<Expression, AssignmentTarget> left = this.parseAssignmentExpression();
         if (this.match(TokenType.COMMA)) {
             while (!this.eof()) {
                 if (!this.match(TokenType.COMMA)) {
@@ -1051,12 +1045,12 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
     }
 
     @NotNull
-    protected Either<Expression, Binding> parseAssignmentExpression() throws JsError {
-        return this.isolateCoverGrammar(this::parseAssignmentExpressionOrBindingElement);
+    protected Either<Expression, AssignmentTarget> parseAssignmentExpression() throws JsError {
+        return this.isolateCoverGrammar(this::parseAssignmentExpressionOrTarget);
     }
 
     @NotNull
-    protected Either<Expression, Binding> parseAssignmentExpressionOrBindingElement() throws JsError {
+    protected Either<Expression, AssignmentTarget> parseAssignmentExpressionOrTarget() throws JsError {
         AdditionalStateT startState = this.startNode();
 
         if (this.allowYieldExpression && this.match(TokenType.YIELD)) {
@@ -1064,14 +1058,14 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
             return Either.left(this.parseYieldExpression());
         }
 
-        Either<Expression, Binding> expr;
+        Either<Expression, AssignmentTarget> expr;
         if (this.match(TokenType.IDENTIFIER) || this.match(TokenType.YIELD) || this.match(TokenType.LET)) {
             expr = this.parseConditionalExpression();
             if (!this.hasLineTerminatorBeforeNext && this.match(TokenType.ARROW)) {
                 this.isBindingElement = this.isAssignmentTarget = false;
                 this.firstExprError = null;
                 ArrayList<BindingBindingWithDefault> params = new ArrayList<>();
-                params.add(this.transformDestructuring(expr.left().just()));
+                params.add(this.targetToBinding(this.transformDestructuring(expr.left().just())));
                 return Either.left(this.parseArrowExpressionTail(params, Maybe.nothing(), startState));
             }
         } else {
@@ -1095,7 +1089,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
                 isAssignmentOperator = true;
                 break;
         }
-        Binding assignmentTarget;
+        AssignmentTarget assignmentTarget;
         if (isAssignmentOperator) {
             if (expr.isRight() || !this.isAssignmentTarget || !isValidSimpleAssignmentTarget(expr.left().just())) {
                 throw this.createError(ErrorMessages.INVALID_LHS_IN_ASSIGNMENT);
@@ -1115,7 +1109,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
         }
 
         this.lex();
-        Either<Expression, Binding> rhs = this.parseAssignmentExpression();
+        Either<Expression, AssignmentTarget> rhs = this.parseAssignmentExpression();
         if (rhs.isRight()) {
             throw this.createError(ErrorMessages.UNEXPECTED_OBJECT_BINDING);
         }
@@ -1127,7 +1121,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
             CompoundAssignmentOperator compoundAssignmentOperator = lookupCompoundAssignmentOperator(operator);
             if (compoundAssignmentOperator != null) {
                 this.isBindingElement = this.isAssignmentTarget = false;
-                return Either.left(this.finishNode(startState, new CompoundAssignmentExpression(compoundAssignmentOperator, (BindingIdentifierMemberExpression) assignmentTarget, rhs.left().just())));
+                return Either.left(this.finishNode(startState, new CompoundAssignmentExpression(compoundAssignmentOperator, (SimpleAssignmentTarget) assignmentTarget, rhs.left().just())));
             } else {
                 throw this.createError("should not be here", 0, 0, 0);
             }
@@ -1187,9 +1181,9 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
     }
 
     @NotNull
-    protected Either<Expression, Binding> parseConditionalExpression() throws JsError {
+    protected Either<Expression, AssignmentTarget> parseConditionalExpression() throws JsError {
         AdditionalStateT startState = this.startNode();
-        Either<Expression, Binding> test = this.parseBinaryExpression();
+        Either<Expression, AssignmentTarget> test = this.parseBinaryExpression();
         if (this.firstExprError != null) {
             return test;
         }
@@ -1211,9 +1205,9 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
     }
 
     @NotNull
-    protected Either<Expression, Binding> parseBinaryExpression() throws JsError {
+    protected Either<Expression, AssignmentTarget> parseBinaryExpression() throws JsError {
         AdditionalStateT startState = this.startNode();
-        Either<Expression, Binding> left = this.parseUnaryExpression();
+        Either<Expression, AssignmentTarget> left = this.parseUnaryExpression();
 
         BinaryOperator operator = lookupBinaryOperator(this.lookahead, this.allowIn);
         if (operator == null) {
@@ -1227,7 +1221,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
             ImmutableList<ExprStackItem<AdditionalStateT>> stack = ImmutableList.nil();
             stack = stack.cons(new ExprStackItem<>(startState, left.left().just(), operator));
             startState = this.startNode();
-            Either<Expression, Binding> expr = this.isolateCoverGrammar(this::parseUnaryExpression);
+            Either<Expression, AssignmentTarget> expr = this.isolateCoverGrammar(this::parseUnaryExpression);
             operator = lookupBinaryOperator(this.lookahead, this.allowIn);
             while (operator != null) {
                 Precedence precedence = operator.getPrecedence();
@@ -1260,7 +1254,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
     }
 
     @NotNull
-    protected Either<Expression, Binding> parseUnaryExpression() throws JsError {
+    protected Either<Expression, AssignmentTarget> parseUnaryExpression() throws JsError {
         if (this.lookahead.type.klass != TokenClass.Punctuator && this.lookahead.type.klass != TokenClass.Keyword) {
             return this.parseUpdateExpression();
         }
@@ -1273,7 +1267,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
 
         this.lex();
         this.isBindingElement = this.isAssignmentTarget = false;
-        Either<Expression, Binding> operand = this.isolateCoverGrammar(this::parseUnaryExpression);
+        Either<Expression, AssignmentTarget> operand = this.isolateCoverGrammar(this::parseUnaryExpression);
 
         if (operand.isLeft()) {
             UpdateOperator updateOperator = lookupUpdateOperator(operatorToken);
@@ -1289,9 +1283,9 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
     }
 
     @NotNull
-    protected Either<Expression, Binding> parseUpdateExpression() throws JsError {
+    protected Either<Expression, AssignmentTarget> parseUpdateExpression() throws JsError {
         AdditionalStateT startState = this.startNode();
-        Either<Expression, Binding> operand = this.parseLeftHandSideExpression(true).mapLeft(x -> (Expression) x);
+        Either<Expression, AssignmentTarget> operand = this.parseLeftHandSideExpression(true).mapLeft(x -> (Expression) x);
         if (this.firstExprError != null || this.hasLineTerminatorBeforeNext) {
             return operand;
         }
@@ -1341,12 +1335,12 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
     }
 
     @NotNull
-    protected Either<ExpressionSuper, Binding> parseLeftHandSideExpression(boolean allowCall) throws JsError {
+    protected Either<ExpressionSuper, AssignmentTarget> parseLeftHandSideExpression(boolean allowCall) throws JsError {
         AdditionalStateT startState = this.startNode();
         boolean previousAllowIn = this.allowIn;
         this.allowIn = allowCall;
 
-        Either<ExpressionSuper, Binding> expr;
+        Either<ExpressionSuper, AssignmentTarget> expr;
         Token token = this.lookahead;
 
         if (this.eat(TokenType.SUPER)) {
@@ -1359,7 +1353,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
                     expr = Either.left(this.finishNode(startState, new CallExpression(expr.left().just(), this.parseArgumentList())));
                 }
             } else if (this.match(TokenType.LBRACK)) {
-                expr = Either.left(this.finishNode(startState, new ComputedMemberExpression(this.parseComputedMember().left().just(), expr.left().just())));
+                expr = Either.left(this.finishNode(startState, new ComputedMemberExpression(this.parseComputedMember(), expr.left().just())));
                 this.isAssignmentTarget = true;
             } else if (this.match(TokenType.PERIOD)) {
                 expr = Either.left(this.finishNode(startState, new StaticMemberExpression(this.parseStaticMember(), expr.left().just())));
@@ -1387,7 +1381,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
             } else if (this.match(TokenType.LBRACK)) {
                 this.isBindingElement = false;
                 this.isAssignmentTarget = true;
-                expr = Either.left(this.finishNode(startState, new ComputedMemberExpression(this.parseComputedMember().left().just(), expr.left().just())));
+                expr = Either.left(this.finishNode(startState, new ComputedMemberExpression(this.parseComputedMember(), expr.left().just())));
             } else if (this.match(TokenType.PERIOD)) {
                 this.isBindingElement = false;
                 this.isAssignmentTarget = true;
@@ -1398,7 +1392,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
         }
 
         this.allowIn = previousAllowIn;
-        if (expr.isLeft()) { // todo why is htis not just return expr?
+        if (expr.isLeft()) { // todo why is this not just return expr?
             return Either.left(expr.left().just());
         } else {
             return Either.right(expr.right().just());
@@ -1416,9 +1410,9 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
     }
 
     @NotNull
-    protected Either<Expression, Binding> parseComputedMember() throws JsError {
+    protected Expression parseComputedMember() throws JsError {
         this.lex();
-        Either<Expression, Binding> expr = this.parseExpression();
+        Expression expr = this.parseExpression().left().just();
         this.expect(TokenType.RBRACK);
         return expr;
     }
@@ -1471,7 +1465,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
             }
             return this.finishNode(startState, new NewTargetExpression());
         }
-        Either<ExpressionSuper, Binding> fromParseLeftHandSideExpression = this.isolateCoverGrammar(
+        Either<ExpressionSuper, AssignmentTarget> fromParseLeftHandSideExpression = this.isolateCoverGrammar(
                 () -> this.parseLeftHandSideExpression(false));
         if (fromParseLeftHandSideExpression.isLeft()) {
             ExpressionSuper callee = fromParseLeftHandSideExpression.left().just();
@@ -1515,7 +1509,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
     }
 
     @NotNull
-    protected Either<Expression, Binding> parsePrimaryExpression() throws JsError {
+    protected Either<Expression, AssignmentTarget> parsePrimaryExpression() throws JsError {
         if (this.match(TokenType.LPAREN)) {
             return this.parseGroupExpression();
         }
@@ -1628,13 +1622,13 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
     }
 
     @NotNull
-    protected Either<Expression, Binding> parseArrayExpression() throws JsError {
+    protected Either<Expression, AssignmentTarget> parseArrayExpression() throws JsError {
         AdditionalStateT startState = this.startNode();
         this.lex();
 
         ArrayList<Maybe<SpreadElementExpression>> exprs = new ArrayList<>();
-        ArrayList<Maybe<BindingBindingWithDefault>> bindings = new ArrayList<>();
-        Maybe<Binding> rest = Maybe.nothing();
+        ArrayList<Maybe<AssignmentTargetAssignmentTargetWithDefault>> bindings = new ArrayList<>();
+        Maybe<AssignmentTarget> rest = Maybe.nothing();
         boolean allExpressionsSoFar = true;
 
         while (true) {
@@ -1646,7 +1640,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
             } else {
                 AdditionalStateT elementLocation = this.startNode();
                 if (this.eat(TokenType.ELLIPSIS)) {
-                    Either<SpreadElementExpression, Binding> expr = this.parseAssignmentExpressionOrBindingElement().mapLeft(x -> (SpreadElementExpression) x); //TODO inherit cover grammar
+                    Either<SpreadElementExpression, AssignmentTarget> expr = this.parseAssignmentExpressionOrTarget().mapLeft(x -> (SpreadElementExpression) x); //TODO inherit cover grammar
                     if (expr.isLeft()) {
                         exprs.add(Maybe.just(this.finishNode(elementLocation, new SpreadElement((Expression) expr.left().just()))));
                     } else {
@@ -1672,7 +1666,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
                         this.isBindingElement = this.isAssignmentTarget = false;
                     }
                 } else {
-                    Either<Expression, Binding> expr = this.parseAssignmentExpressionOrBindingElement(); //TODO inherit cover grammar
+                    Either<Expression, AssignmentTarget> expr = this.parseAssignmentExpressionOrTarget(); //TODO inherit cover grammar
                     if (allExpressionsSoFar) {
                         if (expr.isLeft()) {
                             exprs.add(expr.left().map(x -> (SpreadElementExpression) x));
@@ -1691,13 +1685,13 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
                                     }
                                 }
                             }
-                            bindings.add(expr.right().map(x -> (BindingBindingWithDefault) x));
+                            bindings.add(expr.right().map(x -> (AssignmentTargetAssignmentTargetWithDefault) x));
                         }
                     } else {
                         if (expr.isLeft()) {
                             bindings.add(Maybe.just(this.transformDestructuring(expr.left().just())));
                         } else {
-                            bindings.add(expr.right().map(x -> (BindingBindingWithDefault) x));
+                            bindings.add(expr.right().map(x -> (AssignmentTargetAssignmentTargetWithDefault) x));
                         }
                     }
 
@@ -1716,22 +1710,22 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
         if (allExpressionsSoFar) {
             return Either.left(this.finishNode(startState, new ArrayExpression(ImmutableList.from(exprs))));
         } else {
-            return Either.right(this.finishNode(startState, new ArrayBinding(ImmutableList.from(bindings), rest)));
+            return Either.right(this.finishNode(startState, new ArrayAssignmentTarget(ImmutableList.from(bindings), rest)));
         }
     }
 
     @NotNull
-    protected Either<Expression, Binding> parseObjectExpression() throws JsError {
+    protected Either<Expression, AssignmentTarget> parseObjectExpression() throws JsError {
         AdditionalStateT startState = this.startNode();
         this.lex();
 
         ArrayList<ObjectProperty> objectProperties = new ArrayList<>();
-        ArrayList<BindingProperty> bindingProperties = new ArrayList<>();
+        ArrayList<AssignmentTargetProperty> bindingProperties = new ArrayList<>();
 
         boolean allExpressionsSoFar = true;
 
         while (!this.match(TokenType.RBRACE)) {
-            Either<ObjectProperty, BindingProperty> fromParsePropertyDefinition = this.parsePropertyDefinition();
+            Either<ObjectProperty, AssignmentTargetProperty> fromParsePropertyDefinition = this.parsePropertyDefinition();
             if (allExpressionsSoFar) {
                 if (fromParsePropertyDefinition.isLeft()) {
                     objectProperties.add(fromParsePropertyDefinition.left().just());
@@ -1759,14 +1753,69 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
             this.finishNode(startState, toReturn);
             return Either.left(toReturn);
         } else {
-            ObjectBinding toReturn = new ObjectBinding(ImmutableList.from(bindingProperties));
+            ObjectAssignmentTarget toReturn = new ObjectAssignmentTarget(ImmutableList.from(bindingProperties));
             this.finishNode(startState, toReturn);
             return Either.right(toReturn);
         }
     }
 
+    @NotNull // todo move this
+    protected BindingWithDefault targetToBindingWithDefault(@NotNull AssignmentTargetWithDefault target) throws JsError {
+        return new BindingWithDefault(targetToBinding(target.binding), target.init);
+    }
+
     @NotNull
-    protected Either<Expression, Binding> parseGroupExpression() throws JsError {
+    protected Binding targetToBinding(@NotNull AssignmentTarget target) throws JsError {
+        if (target instanceof BindingIdentifier) {
+            return (BindingIdentifier) target;
+        } else if (target instanceof MemberAssignmentTarget) { // TODO correct location information for this error (ugh)
+            throw this.createError(this.match(TokenType.ASSIGN) ? ErrorMessages.INVALID_LHS_IN_ASSIGNMENT : ErrorMessages.ILLEGAL_ARROW_FUNCTION_PARAMS); // TODO correct error message
+        } else if (target instanceof ArrayAssignmentTarget) {
+            ArrayAssignmentTarget aat = (ArrayAssignmentTarget) target;
+            // can't do this as a lambda because lambdas can't throw...
+            // return new ArrayBinding(aat.elements.map(x -> x.map(this::targetToBindingPossiblyWithDefault)), aat.rest.map(this::targetToBinding));
+            ArrayList<Maybe<BindingBindingWithDefault>> elements = new ArrayList<>();
+            for (Maybe<AssignmentTargetAssignmentTargetWithDefault> elementOrElison : aat.elements) {
+                if (elementOrElison.isJust()) {
+                    elements.add(Maybe.just(this.targetToBindingPossiblyWithDefault((AssignmentTargetAssignmentTargetWithDefault) elementOrElison)));
+                } else {
+                    elements.add(Maybe.nothing());
+                }
+            }
+            Maybe<Binding> rest;
+            if (aat.rest.isJust()) {
+                rest = Maybe.just(this.targetToBinding(aat.rest.just()));
+            } else {
+                rest = Maybe.nothing();
+            }
+            return new ArrayBinding(ImmutableList.from(elements), rest);
+        } else {
+            ObjectAssignmentTarget oat = (ObjectAssignmentTarget) target;
+            ArrayList<BindingProperty> properties = new ArrayList<>();
+            for (AssignmentTargetProperty prop : oat.properties) {
+                if (prop instanceof AssignmentTargetPropertyIdentifier) {
+                    AssignmentTargetPropertyIdentifier atpi = (AssignmentTargetPropertyIdentifier) prop;
+                    properties.add(new BindingPropertyIdentifier(atpi.binding, atpi.init));
+                } else {
+                    AssignmentTargetPropertyProperty atpp = (AssignmentTargetPropertyProperty) prop;
+                    properties.add(new BindingPropertyProperty(atpp.name, this.targetToBindingPossiblyWithDefault(atpp.binding)));
+                }
+            }
+            return new ObjectBinding(ImmutableList.from(properties));
+        }
+    }
+
+    @NotNull
+    protected BindingBindingWithDefault targetToBindingPossiblyWithDefault(@NotNull AssignmentTargetAssignmentTargetWithDefault target) throws JsError {
+        if (target instanceof AssignmentTargetWithDefault) {
+            return targetToBindingWithDefault((AssignmentTargetWithDefault) target);
+        } else {
+            return targetToBinding((AssignmentTarget) target);
+        }
+    }
+
+    @NotNull
+    protected Either<Expression, AssignmentTarget> parseGroupExpression() throws JsError {
         AdditionalStateT startState = this.startNode();
         SourceLocation startLocation = this.getLocation();
 
@@ -1781,14 +1830,14 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
             return Either.left(this.parseArrowExpressionTail(new ArrayList<>(), rest, startState));
         }
 
-        Either<Expression, Binding> group = this.inheritCoverGrammar(this::parseAssignmentExpressionOrBindingElement);
+        Either<Expression, AssignmentTarget> group = this.inheritCoverGrammar(this::parseAssignmentExpressionOrTarget);
 
         ArrayList<BindingBindingWithDefault> params = new ArrayList<>();
         if (this.isBindingElement) {
             if (group.isLeft()) {
-                params.add(this.transformDestructuringWithDefault(group.left().just()));
+                params.add(this.targetToBindingPossiblyWithDefault(this.transformDestructuringWithDefault(group.left().just())));
             } else {
-                params.add(group.right().just());
+                params.add(this.targetToBinding(group.right().just()));
             }
         }
 
@@ -1812,12 +1861,12 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
                 params.add(binding);
             } else {
                 // Can be either binding element or assignment target.
-                Either<Expression, Binding> expr = this.inheritCoverGrammar(this::parseAssignmentExpressionOrBindingElement);
+                Either<Expression, AssignmentTarget> expr = this.inheritCoverGrammar(this::parseAssignmentExpressionOrTarget);
                 if (this.isBindingElement) {
                     if (expr.isLeft()) {
-                        params.add(this.transformDestructuringWithDefault(expr.left().just()));
+                        params.add(this.targetToBindingPossiblyWithDefault(this.transformDestructuringWithDefault(expr.left().just())));
                     } else {
-                        params.add(expr.right().just());
+                        params.add(this.targetToBinding(expr.right().just()));
                     }
                 }
                 if (this.firstExprError == null) {
@@ -1844,7 +1893,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
     }
 
     @NotNull
-    protected Either<ObjectProperty, BindingProperty> parsePropertyDefinition() throws JsError {
+    protected Either<ObjectProperty, AssignmentTargetProperty> parsePropertyDefinition() throws JsError {
         AdditionalStateT startState = this.startNode();
         SourceLocation startLocation = this.getLocation();
         Token token = this.lookahead;
@@ -1861,7 +1910,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
                 if (this.eat(TokenType.ASSIGN)) {
                     Expression init = this.isolateCoverGrammar(this::parseAssignmentExpression).left().just();
                     this.firstExprError = this.createErrorWithLocation(startLocation, ErrorMessages.ILLEGAL_PROPERTY);
-                    BindingPropertyIdentifier toReturn = new BindingPropertyIdentifier(this.transformDestructuring(staticPropertyName), Maybe.just(init));
+                    AssignmentTargetPropertyIdentifier toReturn = new AssignmentTargetPropertyIdentifier(this.transformDestructuring(staticPropertyName), Maybe.just(init));
                     this.finishNode(startState, toReturn);
                     return Either.right(toReturn);
                 }
@@ -1879,7 +1928,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
         this.expect(TokenType.COLON);
 
         PropertyName name = keyOrMethod.left().just();
-        Either<Expression, Binding> val = this.parseAssignmentExpressionOrBindingElement();
+        Either<Expression, AssignmentTarget> val = this.parseAssignmentExpressionOrTarget();
 
         return val.map(
                 expr -> {
@@ -1888,7 +1937,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
                     return toReturn;
                 },
                 binding -> {
-                    BindingPropertyProperty toReturn = new BindingPropertyProperty(name, binding);
+                    AssignmentTargetPropertyProperty toReturn = new AssignmentTargetPropertyProperty(name, binding);
                     this.finishNode(startState, toReturn);
                     return toReturn;
                 }
@@ -2033,7 +2082,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
         boolean previousParamYield = this.allowYieldExpression;
         this.allowYieldExpression = false;
         if (this.eat(TokenType.EXTENDS)) {
-            Either<ExpressionSuper, Binding> fromParseLeftHandSideExpression = this.isolateCoverGrammar(() -> this.parseLeftHandSideExpression(true));
+            Either<ExpressionSuper, AssignmentTarget> fromParseLeftHandSideExpression = this.isolateCoverGrammar(() -> this.parseLeftHandSideExpression(true));
             if (fromParseLeftHandSideExpression.isLeft()) {
                 heritage = Maybe.just((Expression) fromParseLeftHandSideExpression.left().just());
             } else {
@@ -2084,7 +2133,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
         boolean previousParamYield = this.allowYieldExpression;
 
         if (this.eat(TokenType.EXTENDS)) {
-            Either<ExpressionSuper, Binding> fromParseLeftHandSideExpression = this.isolateCoverGrammar(() -> this.parseLeftHandSideExpression(true));
+            Either<ExpressionSuper, AssignmentTarget> fromParseLeftHandSideExpression = this.isolateCoverGrammar(() -> this.parseLeftHandSideExpression(true));
             if (fromParseLeftHandSideExpression.isLeft()) {
                 heritage = Maybe.just((Expression) fromParseLeftHandSideExpression.left().just());
             } else {
