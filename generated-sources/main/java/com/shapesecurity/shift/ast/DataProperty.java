@@ -18,56 +18,61 @@
 
 package com.shapesecurity.shift.ast;
 
-import com.shapesecurity.functional.data.HashCodeBuilder;
-
 import org.jetbrains.annotations.NotNull;
+import com.shapesecurity.functional.data.HashCodeBuilder;
 
 public class DataProperty extends NamedObjectProperty implements Node {
 
-    @NotNull
-    public final Expression expression;
+  @NotNull
+  public final Expression expression;
 
-    @NotNull
-    public final PropertyName name;
+  @NotNull
+  public final PropertyName name;
 
-    public DataProperty(@NotNull Expression expression, @NotNull PropertyName name) {
-        super(name);
-        this.expression = expression;
-        this.name = name;
-    }
+  public DataProperty (@NotNull Expression expression, @NotNull PropertyName name)
+  {
+    super(name);
+    this.expression = expression;
+    this.name = name;
+  }
 
-    @Override
-    public boolean equals(Object object) {
-        return object instanceof DataProperty && this.expression.equals(((DataProperty) object).expression) &&
-               this.name.equals(((DataProperty) object).name);
-    }
+  @Override
+  public boolean equals(Object object)
+  {
+    return object instanceof DataProperty && this.expression.equals(((DataProperty) object).expression) && this.name.equals(((DataProperty) object).name);
+  }
 
-    @Override
-    public int hashCode() {
-        int code = HashCodeBuilder.put(0, "DataProperty");
-        code = HashCodeBuilder.put(code, this.expression);
-        code = HashCodeBuilder.put(code, this.name);
-        return code;
-    }
+  @Override
+  public int hashCode()
+  {
+    int code = HashCodeBuilder.put(0, "DataProperty");
+    code = HashCodeBuilder.put(code, this.expression);
+    code = HashCodeBuilder.put(code, this.name);
+    return code;
+  }
 
-    @NotNull
-    public Expression getExpression() {
-        return this.expression;
-    }
+  @NotNull
+  public Expression getExpression()
+  {
+    return this.expression;
+  }
 
-    @NotNull
-    public DataProperty setExpression(@NotNull Expression expression) {
-        return new DataProperty(expression, this.name);
-    }
+  @NotNull
+  public PropertyName getName()
+  {
+    return this.name;
+  }
 
-    @NotNull
-    public PropertyName getName() {
-        return this.name;
-    }
+  @NotNull
+  public DataProperty setExpression(@NotNull Expression expression)
+  {
+    return new DataProperty(expression, this.name);
+  }
 
-    @NotNull
-    public DataProperty setName(@NotNull PropertyName name) {
-        return new DataProperty(this.expression, name);
-    }
+  @NotNull
+  public DataProperty setName(@NotNull PropertyName name)
+  {
+    return new DataProperty(this.expression, name);
+  }
 
 }

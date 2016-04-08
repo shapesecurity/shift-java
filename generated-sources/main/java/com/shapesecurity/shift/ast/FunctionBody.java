@@ -18,57 +18,62 @@
 
 package com.shapesecurity.shift.ast;
 
+import org.jetbrains.annotations.NotNull;
 import com.shapesecurity.functional.data.HashCodeBuilder;
 import com.shapesecurity.functional.data.ImmutableList;
 
-import org.jetbrains.annotations.NotNull;
-
 public class FunctionBody implements Node, FunctionBodyExpression {
 
-    @NotNull
-    public final ImmutableList<Directive> directives;
+  @NotNull
+  public final ImmutableList<Directive> directives;
 
-    @NotNull
-    public final ImmutableList<Statement> statements;
+  @NotNull
+  public final ImmutableList<Statement> statements;
 
-    public FunctionBody(@NotNull ImmutableList<Directive> directives, @NotNull ImmutableList<Statement> statements) {
-        super();
-        this.directives = directives;
-        this.statements = statements;
-    }
+  public FunctionBody (@NotNull ImmutableList<Directive> directives, @NotNull ImmutableList<Statement> statements)
+  {
+    super();
+    this.directives = directives;
+    this.statements = statements;
+  }
 
-    @Override
-    public boolean equals(Object object) {
-        return object instanceof FunctionBody && this.directives.equals(((FunctionBody) object).directives) &&
-               this.statements.equals(((FunctionBody) object).statements);
-    }
+  @Override
+  public boolean equals(Object object)
+  {
+    return object instanceof FunctionBody && this.directives.equals(((FunctionBody) object).directives) && this.statements.equals(((FunctionBody) object).statements);
+  }
 
-    @Override
-    public int hashCode() {
-        int code = HashCodeBuilder.put(0, "FunctionBody");
-        code = HashCodeBuilder.put(code, this.directives);
-        code = HashCodeBuilder.put(code, this.statements);
-        return code;
-    }
+  @Override
+  public int hashCode()
+  {
+    int code = HashCodeBuilder.put(0, "FunctionBody");
+    code = HashCodeBuilder.put(code, this.directives);
+    code = HashCodeBuilder.put(code, this.statements);
+    return code;
+  }
 
-    @NotNull
-    public ImmutableList<Directive> getDirectives() {
-        return this.directives;
-    }
+  @NotNull
+  public ImmutableList<Directive> getDirectives()
+  {
+    return this.directives;
+  }
 
-    @NotNull
-    public FunctionBody setDirectives(@NotNull ImmutableList<Directive> directives) {
-        return new FunctionBody(directives, this.statements);
-    }
+  @NotNull
+  public ImmutableList<Statement> getStatements()
+  {
+    return this.statements;
+  }
 
-    @NotNull
-    public ImmutableList<Statement> getStatements() {
-        return this.statements;
-    }
+  @NotNull
+  public FunctionBody setDirectives(@NotNull ImmutableList<Directive> directives)
+  {
+    return new FunctionBody(directives, this.statements);
+  }
 
-    @NotNull
-    public FunctionBody setStatements(@NotNull ImmutableList<Statement> statements) {
-        return new FunctionBody(this.directives, statements);
-    }
+  @NotNull
+  public FunctionBody setStatements(@NotNull ImmutableList<Statement> statements)
+  {
+    return new FunctionBody(this.directives, statements);
+  }
 
 }

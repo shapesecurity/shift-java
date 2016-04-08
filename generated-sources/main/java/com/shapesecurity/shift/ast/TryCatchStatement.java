@@ -18,56 +18,61 @@
 
 package com.shapesecurity.shift.ast;
 
-import com.shapesecurity.functional.data.HashCodeBuilder;
-
 import org.jetbrains.annotations.NotNull;
+import com.shapesecurity.functional.data.HashCodeBuilder;
 
 public class TryCatchStatement extends Statement implements Node {
 
-    @NotNull
-    public final Block body;
+  @NotNull
+  public final Block body;
 
-    @NotNull
-    public final CatchClause catchClause;
+  @NotNull
+  public final CatchClause catchClause;
 
-    public TryCatchStatement(@NotNull Block body, @NotNull CatchClause catchClause) {
-        super();
-        this.body = body;
-        this.catchClause = catchClause;
-    }
+  public TryCatchStatement (@NotNull Block body, @NotNull CatchClause catchClause)
+  {
+    super();
+    this.body = body;
+    this.catchClause = catchClause;
+  }
 
-    @Override
-    public boolean equals(Object object) {
-        return object instanceof TryCatchStatement && this.body.equals(((TryCatchStatement) object).body) &&
-               this.catchClause.equals(((TryCatchStatement) object).catchClause);
-    }
+  @Override
+  public boolean equals(Object object)
+  {
+    return object instanceof TryCatchStatement && this.body.equals(((TryCatchStatement) object).body) && this.catchClause.equals(((TryCatchStatement) object).catchClause);
+  }
 
-    @Override
-    public int hashCode() {
-        int code = HashCodeBuilder.put(0, "TryCatchStatement");
-        code = HashCodeBuilder.put(code, this.body);
-        code = HashCodeBuilder.put(code, this.catchClause);
-        return code;
-    }
+  @Override
+  public int hashCode()
+  {
+    int code = HashCodeBuilder.put(0, "TryCatchStatement");
+    code = HashCodeBuilder.put(code, this.body);
+    code = HashCodeBuilder.put(code, this.catchClause);
+    return code;
+  }
 
-    @NotNull
-    public Block getBody() {
-        return this.body;
-    }
+  @NotNull
+  public Block getBody()
+  {
+    return this.body;
+  }
 
-    @NotNull
-    public TryCatchStatement setBody(@NotNull Block body) {
-        return new TryCatchStatement(body, this.catchClause);
-    }
+  @NotNull
+  public CatchClause getCatchClause()
+  {
+    return this.catchClause;
+  }
 
-    @NotNull
-    public CatchClause getCatchClause() {
-        return this.catchClause;
-    }
+  @NotNull
+  public TryCatchStatement setBody(@NotNull Block body)
+  {
+    return new TryCatchStatement(body, this.catchClause);
+  }
 
-    @NotNull
-    public TryCatchStatement setCatchClause(@NotNull CatchClause catchClause) {
-        return new TryCatchStatement(this.body, catchClause);
-    }
+  @NotNull
+  public TryCatchStatement setCatchClause(@NotNull CatchClause catchClause)
+  {
+    return new TryCatchStatement(this.body, catchClause);
+  }
 
 }

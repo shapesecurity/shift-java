@@ -18,41 +18,45 @@
 
 package com.shapesecurity.shift.ast;
 
+import org.jetbrains.annotations.NotNull;
 import com.shapesecurity.functional.data.HashCodeBuilder;
 import com.shapesecurity.functional.data.ImmutableList;
 
-import org.jetbrains.annotations.NotNull;
+public class ObjectBinding implements Node, BindingPattern {
 
-public class ObjectBinding implements Node, Binding {
+  @NotNull
+  public final ImmutableList<BindingProperty> properties;
 
-    @NotNull
-    public final ImmutableList<BindingProperty> properties;
+  public ObjectBinding (@NotNull ImmutableList<BindingProperty> properties)
+  {
+    super();
+    this.properties = properties;
+  }
 
-    public ObjectBinding(@NotNull ImmutableList<BindingProperty> properties) {
-        super();
-        this.properties = properties;
-    }
+  @Override
+  public boolean equals(Object object)
+  {
+    return object instanceof ObjectBinding && this.properties.equals(((ObjectBinding) object).properties);
+  }
 
-    @Override
-    public boolean equals(Object object) {
-        return object instanceof ObjectBinding && this.properties.equals(((ObjectBinding) object).properties);
-    }
+  @Override
+  public int hashCode()
+  {
+    int code = HashCodeBuilder.put(0, "ObjectBinding");
+    code = HashCodeBuilder.put(code, this.properties);
+    return code;
+  }
 
-    @Override
-    public int hashCode() {
-        int code = HashCodeBuilder.put(0, "ObjectBinding");
-        code = HashCodeBuilder.put(code, this.properties);
-        return code;
-    }
+  @NotNull
+  public ImmutableList<BindingProperty> getProperties()
+  {
+    return this.properties;
+  }
 
-    @NotNull
-    public ImmutableList<BindingProperty> getProperties() {
-        return this.properties;
-    }
-
-    @NotNull
-    public ObjectBinding setProperties(@NotNull ImmutableList<BindingProperty> properties) {
-        return new ObjectBinding(properties);
-    }
+  @NotNull
+  public ObjectBinding setProperties(@NotNull ImmutableList<BindingProperty> properties)
+  {
+    return new ObjectBinding(properties);
+  }
 
 }

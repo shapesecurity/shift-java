@@ -18,4 +18,5 @@
 
 package com.shapesecurity.shift.ast;
 
-public interface FunctionBodyExpression extends Node {}
+public interface FunctionBodyExpression extends Node {
+}

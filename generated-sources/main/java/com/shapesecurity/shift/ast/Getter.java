@@ -18,56 +18,61 @@
 
 package com.shapesecurity.shift.ast;
 
-import com.shapesecurity.functional.data.HashCodeBuilder;
-
 import org.jetbrains.annotations.NotNull;
+import com.shapesecurity.functional.data.HashCodeBuilder;
 
 public class Getter extends MethodDefinition implements Node {
 
-    @NotNull
-    public final FunctionBody body;
+  @NotNull
+  public final FunctionBody body;
 
-    @NotNull
-    public final PropertyName name;
+  @NotNull
+  public final PropertyName name;
 
-    public Getter(@NotNull FunctionBody body, @NotNull PropertyName name) {
-        super(body, name);
-        this.body = body;
-        this.name = name;
-    }
+  public Getter (@NotNull FunctionBody body, @NotNull PropertyName name)
+  {
+    super(body, name);
+    this.body = body;
+    this.name = name;
+  }
 
-    @Override
-    public boolean equals(Object object) {
-        return object instanceof Getter && this.body.equals(((Getter) object).body) && this.name.equals(
-            ((Getter) object).name);
-    }
+  @Override
+  public boolean equals(Object object)
+  {
+    return object instanceof Getter && this.body.equals(((Getter) object).body) && this.name.equals(((Getter) object).name);
+  }
 
-    @Override
-    public int hashCode() {
-        int code = HashCodeBuilder.put(0, "Getter");
-        code = HashCodeBuilder.put(code, this.body);
-        code = HashCodeBuilder.put(code, this.name);
-        return code;
-    }
+  @Override
+  public int hashCode()
+  {
+    int code = HashCodeBuilder.put(0, "Getter");
+    code = HashCodeBuilder.put(code, this.body);
+    code = HashCodeBuilder.put(code, this.name);
+    return code;
+  }
 
-    @NotNull
-    public FunctionBody getBody() {
-        return this.body;
-    }
+  @NotNull
+  public FunctionBody getBody()
+  {
+    return this.body;
+  }
 
-    @NotNull
-    public Getter setBody(@NotNull FunctionBody body) {
-        return new Getter(body, this.name);
-    }
+  @NotNull
+  public PropertyName getName()
+  {
+    return this.name;
+  }
 
-    @NotNull
-    public PropertyName getName() {
-        return this.name;
-    }
+  @NotNull
+  public Getter setBody(@NotNull FunctionBody body)
+  {
+    return new Getter(body, this.name);
+  }
 
-    @NotNull
-    public Getter setName(@NotNull PropertyName name) {
-        return new Getter(this.body, name);
-    }
+  @NotNull
+  public Getter setName(@NotNull PropertyName name)
+  {
+    return new Getter(this.body, name);
+  }
 
 }

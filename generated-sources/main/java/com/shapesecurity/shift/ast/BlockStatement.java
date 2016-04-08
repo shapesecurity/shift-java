@@ -18,40 +18,44 @@
 
 package com.shapesecurity.shift.ast;
 
-import com.shapesecurity.functional.data.HashCodeBuilder;
-
 import org.jetbrains.annotations.NotNull;
+import com.shapesecurity.functional.data.HashCodeBuilder;
 
 public class BlockStatement extends Statement implements Node {
 
-    @NotNull
-    public final Block block;
+  @NotNull
+  public final Block block;
 
-    public BlockStatement(@NotNull Block block) {
-        super();
-        this.block = block;
-    }
+  public BlockStatement (@NotNull Block block)
+  {
+    super();
+    this.block = block;
+  }
 
-    @Override
-    public boolean equals(Object object) {
-        return object instanceof BlockStatement && this.block.equals(((BlockStatement) object).block);
-    }
+  @Override
+  public boolean equals(Object object)
+  {
+    return object instanceof BlockStatement && this.block.equals(((BlockStatement) object).block);
+  }
 
-    @Override
-    public int hashCode() {
-        int code = HashCodeBuilder.put(0, "BlockStatement");
-        code = HashCodeBuilder.put(code, this.block);
-        return code;
-    }
+  @Override
+  public int hashCode()
+  {
+    int code = HashCodeBuilder.put(0, "BlockStatement");
+    code = HashCodeBuilder.put(code, this.block);
+    return code;
+  }
 
-    @NotNull
-    public Block getBlock() {
-        return this.block;
-    }
+  @NotNull
+  public Block getBlock()
+  {
+    return this.block;
+  }
 
-    @NotNull
-    public BlockStatement setBlock(@NotNull Block block) {
-        return new BlockStatement(block);
-    }
+  @NotNull
+  public BlockStatement setBlock(@NotNull Block block)
+  {
+    return new BlockStatement(block);
+  }
 
 }

@@ -18,56 +18,61 @@
 
 package com.shapesecurity.shift.ast;
 
-import com.shapesecurity.functional.data.HashCodeBuilder;
-
 import org.jetbrains.annotations.NotNull;
+import com.shapesecurity.functional.data.HashCodeBuilder;
 
 public class BindingPropertyProperty extends BindingProperty implements Node {
 
-    @NotNull
-    public final PropertyName name;
+  @NotNull
+  public final PropertyName name;
 
-    @NotNull
-    public final BindingBindingWithDefault binding;
+  @NotNull
+  public final BindingBindingWithDefault binding;
 
-    public BindingPropertyProperty(@NotNull PropertyName name, @NotNull BindingBindingWithDefault binding) {
-        super();
-        this.name = name;
-        this.binding = binding;
-    }
+  public BindingPropertyProperty (@NotNull PropertyName name, @NotNull BindingBindingWithDefault binding)
+  {
+    super();
+    this.name = name;
+    this.binding = binding;
+  }
 
-    @Override
-    public boolean equals(Object object) {
-        return object instanceof BindingPropertyProperty && this.name.equals(((BindingPropertyProperty) object).name) &&
-               this.binding.equals(((BindingPropertyProperty) object).binding);
-    }
+  @Override
+  public boolean equals(Object object)
+  {
+    return object instanceof BindingPropertyProperty && this.name.equals(((BindingPropertyProperty) object).name) && this.binding.equals(((BindingPropertyProperty) object).binding);
+  }
 
-    @Override
-    public int hashCode() {
-        int code = HashCodeBuilder.put(0, "BindingPropertyProperty");
-        code = HashCodeBuilder.put(code, this.name);
-        code = HashCodeBuilder.put(code, this.binding);
-        return code;
-    }
+  @Override
+  public int hashCode()
+  {
+    int code = HashCodeBuilder.put(0, "BindingPropertyProperty");
+    code = HashCodeBuilder.put(code, this.name);
+    code = HashCodeBuilder.put(code, this.binding);
+    return code;
+  }
 
-    @NotNull
-    public PropertyName getName() {
-        return this.name;
-    }
+  @NotNull
+  public PropertyName getName()
+  {
+    return this.name;
+  }
 
-    @NotNull
-    public BindingPropertyProperty setName(@NotNull PropertyName name) {
-        return new BindingPropertyProperty(name, this.binding);
-    }
+  @NotNull
+  public BindingBindingWithDefault getBinding()
+  {
+    return this.binding;
+  }
 
-    @NotNull
-    public BindingBindingWithDefault getBinding() {
-        return this.binding;
-    }
+  @NotNull
+  public BindingPropertyProperty setName(@NotNull PropertyName name)
+  {
+    return new BindingPropertyProperty(name, this.binding);
+  }
 
-    @NotNull
-    public BindingPropertyProperty setBinding(@NotNull BindingBindingWithDefault binding) {
-        return new BindingPropertyProperty(this.name, binding);
-    }
+  @NotNull
+  public BindingPropertyProperty setBinding(@NotNull BindingBindingWithDefault binding)
+  {
+    return new BindingPropertyProperty(this.name, binding);
+  }
 
 }

@@ -18,56 +18,61 @@
 
 package com.shapesecurity.shift.ast;
 
-import com.shapesecurity.functional.data.HashCodeBuilder;
-
 import org.jetbrains.annotations.NotNull;
+import com.shapesecurity.functional.data.HashCodeBuilder;
 
 public class WithStatement extends Statement implements Node {
 
-    @NotNull
-    public final Expression _object;
+  @NotNull
+  public final Expression _object;
 
-    @NotNull
-    public final Statement body;
+  @NotNull
+  public final Statement body;
 
-    public WithStatement(@NotNull Expression _object, @NotNull Statement body) {
-        super();
-        this._object = _object;
-        this.body = body;
-    }
+  public WithStatement (@NotNull Expression _object, @NotNull Statement body)
+  {
+    super();
+    this._object = _object;
+    this.body = body;
+  }
 
-    @Override
-    public boolean equals(Object object) {
-        return object instanceof WithStatement && this._object.equals(((WithStatement) object)._object) &&
-               this.body.equals(((WithStatement) object).body);
-    }
+  @Override
+  public boolean equals(Object object)
+  {
+    return object instanceof WithStatement && this._object.equals(((WithStatement) object)._object) && this.body.equals(((WithStatement) object).body);
+  }
 
-    @Override
-    public int hashCode() {
-        int code = HashCodeBuilder.put(0, "WithStatement");
-        code = HashCodeBuilder.put(code, this._object);
-        code = HashCodeBuilder.put(code, this.body);
-        return code;
-    }
+  @Override
+  public int hashCode()
+  {
+    int code = HashCodeBuilder.put(0, "WithStatement");
+    code = HashCodeBuilder.put(code, this._object);
+    code = HashCodeBuilder.put(code, this.body);
+    return code;
+  }
 
-    @NotNull
-    public Expression get_object() {
-        return this._object;
-    }
+  @NotNull
+  public Expression get_object()
+  {
+    return this._object;
+  }
 
-    @NotNull
-    public WithStatement set_object(@NotNull Expression _object) {
-        return new WithStatement(_object, this.body);
-    }
+  @NotNull
+  public Statement getBody()
+  {
+    return this.body;
+  }
 
-    @NotNull
-    public Statement getBody() {
-        return this.body;
-    }
+  @NotNull
+  public WithStatement set_object(@NotNull Expression _object)
+  {
+    return new WithStatement(_object, this.body);
+  }
 
-    @NotNull
-    public WithStatement setBody(@NotNull Statement body) {
-        return new WithStatement(this._object, body);
-    }
+  @NotNull
+  public WithStatement setBody(@NotNull Statement body)
+  {
+    return new WithStatement(this._object, body);
+  }
 
 }

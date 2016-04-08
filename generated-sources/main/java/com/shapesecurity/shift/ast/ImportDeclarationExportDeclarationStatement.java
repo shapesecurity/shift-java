@@ -18,4 +18,5 @@
 
 package com.shapesecurity.shift.ast;
 
-public interface ImportDeclarationExportDeclarationStatement extends Node {}
+public interface ImportDeclarationExportDeclarationStatement extends Node {
+}

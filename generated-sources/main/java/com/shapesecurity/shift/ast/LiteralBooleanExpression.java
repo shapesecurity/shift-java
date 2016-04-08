@@ -18,48 +18,52 @@
 
 package com.shapesecurity.shift.ast;
 
+import org.jetbrains.annotations.NotNull;
 import com.shapesecurity.functional.data.HashCodeBuilder;
 import com.shapesecurity.shift.ast.operators.Precedence;
 
-import org.jetbrains.annotations.NotNull;
-
 public class LiteralBooleanExpression extends Expression implements Node {
 
-    @NotNull
-    public final Boolean value;
+  @NotNull
+  public final Boolean value;
 
-    public LiteralBooleanExpression(@NotNull Boolean value) {
-        super();
-        this.value = value;
-    }
+  public LiteralBooleanExpression (@NotNull Boolean value)
+  {
+    super();
+    this.value = value;
+  }
 
-    @Override
-    public boolean equals(Object object) {
-        return object instanceof LiteralBooleanExpression && this.value.equals(
-            ((LiteralBooleanExpression) object).value);
-    }
+  @Override
+  public boolean equals(Object object)
+  {
+    return object instanceof LiteralBooleanExpression && this.value.equals(((LiteralBooleanExpression) object).value);
+  }
 
-    @Override
-    public int hashCode() {
-        int code = HashCodeBuilder.put(0, "LiteralBooleanExpression");
-        code = HashCodeBuilder.put(code, this.value);
-        return code;
-    }
+  @Override
+  public int hashCode()
+  {
+    int code = HashCodeBuilder.put(0, "LiteralBooleanExpression");
+    code = HashCodeBuilder.put(code, this.value);
+    return code;
+  }
 
-    @NotNull
-    public Boolean getValue() {
-        return this.value;
-    }
+  @NotNull
+  public Boolean getValue()
+  {
+    return this.value;
+  }
 
-    @NotNull
-    public LiteralBooleanExpression setValue(@NotNull Boolean value) {
-        return new LiteralBooleanExpression(value);
-    }
+  @NotNull
+  public LiteralBooleanExpression setValue(@NotNull Boolean value)
+  {
+    return new LiteralBooleanExpression(value);
+  }
 
-    @Override
-    @NotNull
-    public Precedence getPrecedence() {
-        return Precedence.PRIMARY;
-    }
+  @Override
+  @NotNull
+  public Precedence getPrecedence()
+  {
+    return Precedence.PRIMARY;
+  }
 
 }

@@ -18,97 +18,96 @@
 
 package com.shapesecurity.shift.ast;
 
+import org.jetbrains.annotations.NotNull;
 import com.shapesecurity.functional.data.HashCodeBuilder;
 import com.shapesecurity.functional.data.ImmutableList;
 
-import org.jetbrains.annotations.NotNull;
-
 public class SwitchStatementWithDefault extends Statement implements Node {
 
-    @NotNull
-    public final Expression discriminant;
+  @NotNull
+  public final Expression discriminant;
 
-    @NotNull
-    public final ImmutableList<SwitchCase> preDefaultCases;
+  @NotNull
+  public final ImmutableList<SwitchCase> preDefaultCases;
 
-    @NotNull
-    public final SwitchDefault defaultCase;
+  @NotNull
+  public final SwitchDefault defaultCase;
 
-    @NotNull
-    public final ImmutableList<SwitchCase> postDefaultCases;
+  @NotNull
+  public final ImmutableList<SwitchCase> postDefaultCases;
 
-    public SwitchStatementWithDefault(@NotNull Expression discriminant,
-                                      @NotNull ImmutableList<SwitchCase> preDefaultCases,
-                                      @NotNull SwitchDefault defaultCase,
-                                      @NotNull ImmutableList<SwitchCase> postDefaultCases) {
-        super();
-        this.discriminant = discriminant;
-        this.preDefaultCases = preDefaultCases;
-        this.defaultCase = defaultCase;
-        this.postDefaultCases = postDefaultCases;
-    }
+  public SwitchStatementWithDefault (@NotNull Expression discriminant, @NotNull ImmutableList<SwitchCase> preDefaultCases, @NotNull SwitchDefault defaultCase, @NotNull ImmutableList<SwitchCase> postDefaultCases)
+  {
+    super();
+    this.discriminant = discriminant;
+    this.preDefaultCases = preDefaultCases;
+    this.defaultCase = defaultCase;
+    this.postDefaultCases = postDefaultCases;
+  }
 
-    @Override
-    public boolean equals(Object object) {
-        return object instanceof SwitchStatementWithDefault && this.discriminant.equals(
-            ((SwitchStatementWithDefault) object).discriminant) && this.preDefaultCases.equals(
-            ((SwitchStatementWithDefault) object).preDefaultCases) && this.defaultCase.equals(
-            ((SwitchStatementWithDefault) object).defaultCase) && this.postDefaultCases.equals(
-            ((SwitchStatementWithDefault) object).postDefaultCases);
-    }
+  @Override
+  public boolean equals(Object object)
+  {
+    return object instanceof SwitchStatementWithDefault && this.discriminant.equals(((SwitchStatementWithDefault) object).discriminant) && this.preDefaultCases.equals(((SwitchStatementWithDefault) object).preDefaultCases) && this.defaultCase.equals(((SwitchStatementWithDefault) object).defaultCase) && this.postDefaultCases.equals(((SwitchStatementWithDefault) object).postDefaultCases);
+  }
 
-    @Override
-    public int hashCode() {
-        int code = HashCodeBuilder.put(0, "SwitchStatementWithDefault");
-        code = HashCodeBuilder.put(code, this.discriminant);
-        code = HashCodeBuilder.put(code, this.preDefaultCases);
-        code = HashCodeBuilder.put(code, this.defaultCase);
-        code = HashCodeBuilder.put(code, this.postDefaultCases);
-        return code;
-    }
+  @Override
+  public int hashCode()
+  {
+    int code = HashCodeBuilder.put(0, "SwitchStatementWithDefault");
+    code = HashCodeBuilder.put(code, this.discriminant);
+    code = HashCodeBuilder.put(code, this.preDefaultCases);
+    code = HashCodeBuilder.put(code, this.defaultCase);
+    code = HashCodeBuilder.put(code, this.postDefaultCases);
+    return code;
+  }
 
-    @NotNull
-    public Expression getDiscriminant() {
-        return this.discriminant;
-    }
+  @NotNull
+  public Expression getDiscriminant()
+  {
+    return this.discriminant;
+  }
 
-    @NotNull
-    public SwitchStatementWithDefault setDiscriminant(@NotNull Expression discriminant) {
-        return new SwitchStatementWithDefault(discriminant, this.preDefaultCases, this.defaultCase,
-            this.postDefaultCases);
-    }
+  @NotNull
+  public ImmutableList<SwitchCase> getPreDefaultCases()
+  {
+    return this.preDefaultCases;
+  }
 
-    @NotNull
-    public ImmutableList<SwitchCase> getPreDefaultCases() {
-        return this.preDefaultCases;
-    }
+  @NotNull
+  public SwitchDefault getDefaultCase()
+  {
+    return this.defaultCase;
+  }
 
-    @NotNull
-    public SwitchStatementWithDefault setPreDefaultCases(@NotNull ImmutableList<SwitchCase> preDefaultCases) {
-        return new SwitchStatementWithDefault(this.discriminant, preDefaultCases, this.defaultCase,
-            this.postDefaultCases);
-    }
+  @NotNull
+  public ImmutableList<SwitchCase> getPostDefaultCases()
+  {
+    return this.postDefaultCases;
+  }
 
-    @NotNull
-    public SwitchDefault getDefaultCase() {
-        return this.defaultCase;
-    }
+  @NotNull
+  public SwitchStatementWithDefault setDiscriminant(@NotNull Expression discriminant)
+  {
+    return new SwitchStatementWithDefault(discriminant, this.preDefaultCases, this.defaultCase, this.postDefaultCases);
+  }
 
-    @NotNull
-    public SwitchStatementWithDefault setDefaultCase(@NotNull SwitchDefault defaultCase) {
-        return new SwitchStatementWithDefault(this.discriminant, this.preDefaultCases, defaultCase,
-            this.postDefaultCases);
-    }
+  @NotNull
+  public SwitchStatementWithDefault setPreDefaultCases(@NotNull ImmutableList<SwitchCase> preDefaultCases)
+  {
+    return new SwitchStatementWithDefault(this.discriminant, preDefaultCases, this.defaultCase, this.postDefaultCases);
+  }
 
-    @NotNull
-    public ImmutableList<SwitchCase> getPostDefaultCases() {
-        return this.postDefaultCases;
-    }
+  @NotNull
+  public SwitchStatementWithDefault setDefaultCase(@NotNull SwitchDefault defaultCase)
+  {
+    return new SwitchStatementWithDefault(this.discriminant, this.preDefaultCases, defaultCase, this.postDefaultCases);
+  }
 
-    @NotNull
-    public SwitchStatementWithDefault setPostDefaultCases(@NotNull ImmutableList<SwitchCase> postDefaultCases) {
-        return new SwitchStatementWithDefault(this.discriminant, this.preDefaultCases, this.defaultCase,
-            postDefaultCases);
-    }
+  @NotNull
+  public SwitchStatementWithDefault setPostDefaultCases(@NotNull ImmutableList<SwitchCase> postDefaultCases)
+  {
+    return new SwitchStatementWithDefault(this.discriminant, this.preDefaultCases, this.defaultCase, postDefaultCases);
+  }
 
 }

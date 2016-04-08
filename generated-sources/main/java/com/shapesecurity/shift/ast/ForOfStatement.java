@@ -18,73 +18,78 @@
 
 package com.shapesecurity.shift.ast;
 
-import com.shapesecurity.functional.data.HashCodeBuilder;
-
 import org.jetbrains.annotations.NotNull;
+import com.shapesecurity.functional.data.HashCodeBuilder;
 
 public class ForOfStatement extends IterationStatement implements Node {
 
-    @NotNull
-    public final VariableDeclarationBinding left;
+  @NotNull
+  public final VariableDeclarationAssignmentTarget left;
 
-    @NotNull
-    public final Expression right;
+  @NotNull
+  public final Expression right;
 
-    @NotNull
-    public final Statement body;
+  @NotNull
+  public final Statement body;
 
-    public ForOfStatement(@NotNull VariableDeclarationBinding left,
-                          @NotNull Expression right,
-                          @NotNull Statement body) {
-        super(body);
-        this.left = left;
-        this.right = right;
-        this.body = body;
-    }
+  public ForOfStatement (@NotNull VariableDeclarationAssignmentTarget left, @NotNull Expression right, @NotNull Statement body)
+  {
+    super(body);
+    this.left = left;
+    this.right = right;
+    this.body = body;
+  }
 
-    @Override
-    public boolean equals(Object object) {
-        return object instanceof ForOfStatement && this.left.equals(((ForOfStatement) object).left) &&
-               this.right.equals(((ForOfStatement) object).right) && this.body.equals(((ForOfStatement) object).body);
-    }
+  @Override
+  public boolean equals(Object object)
+  {
+    return object instanceof ForOfStatement && this.left.equals(((ForOfStatement) object).left) && this.right.equals(((ForOfStatement) object).right) && this.body.equals(((ForOfStatement) object).body);
+  }
 
-    @Override
-    public int hashCode() {
-        int code = HashCodeBuilder.put(0, "ForOfStatement");
-        code = HashCodeBuilder.put(code, this.left);
-        code = HashCodeBuilder.put(code, this.right);
-        code = HashCodeBuilder.put(code, this.body);
-        return code;
-    }
+  @Override
+  public int hashCode()
+  {
+    int code = HashCodeBuilder.put(0, "ForOfStatement");
+    code = HashCodeBuilder.put(code, this.left);
+    code = HashCodeBuilder.put(code, this.right);
+    code = HashCodeBuilder.put(code, this.body);
+    return code;
+  }
 
-    @NotNull
-    public VariableDeclarationBinding getLeft() {
-        return this.left;
-    }
+  @NotNull
+  public VariableDeclarationAssignmentTarget getLeft()
+  {
+    return this.left;
+  }
 
-    @NotNull
-    public ForOfStatement setLeft(@NotNull VariableDeclarationBinding left) {
-        return new ForOfStatement(left, this.right, this.body);
-    }
+  @NotNull
+  public Expression getRight()
+  {
+    return this.right;
+  }
 
-    @NotNull
-    public Expression getRight() {
-        return this.right;
-    }
+  @NotNull
+  public Statement getBody()
+  {
+    return this.body;
+  }
 
-    @NotNull
-    public ForOfStatement setRight(@NotNull Expression right) {
-        return new ForOfStatement(this.left, right, this.body);
-    }
+  @NotNull
+  public ForOfStatement setLeft(@NotNull VariableDeclarationAssignmentTarget left)
+  {
+    return new ForOfStatement(left, this.right, this.body);
+  }
 
-    @NotNull
-    public Statement getBody() {
-        return this.body;
-    }
+  @NotNull
+  public ForOfStatement setRight(@NotNull Expression right)
+  {
+    return new ForOfStatement(this.left, right, this.body);
+  }
 
-    @NotNull
-    public ForOfStatement setBody(@NotNull Statement body) {
-        return new ForOfStatement(this.left, this.right, body);
-    }
+  @NotNull
+  public ForOfStatement setBody(@NotNull Statement body)
+  {
+    return new ForOfStatement(this.left, this.right, body);
+  }
 
 }

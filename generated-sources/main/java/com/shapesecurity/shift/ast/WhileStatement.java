@@ -18,56 +18,61 @@
 
 package com.shapesecurity.shift.ast;
 
-import com.shapesecurity.functional.data.HashCodeBuilder;
-
 import org.jetbrains.annotations.NotNull;
+import com.shapesecurity.functional.data.HashCodeBuilder;
 
 public class WhileStatement extends IterationStatement implements Node {
 
-    @NotNull
-    public final Expression test;
+  @NotNull
+  public final Expression test;
 
-    @NotNull
-    public final Statement body;
+  @NotNull
+  public final Statement body;
 
-    public WhileStatement(@NotNull Expression test, @NotNull Statement body) {
-        super(body);
-        this.test = test;
-        this.body = body;
-    }
+  public WhileStatement (@NotNull Expression test, @NotNull Statement body)
+  {
+    super(body);
+    this.test = test;
+    this.body = body;
+  }
 
-    @Override
-    public boolean equals(Object object) {
-        return object instanceof WhileStatement && this.test.equals(((WhileStatement) object).test) && this.body.equals(
-            ((WhileStatement) object).body);
-    }
+  @Override
+  public boolean equals(Object object)
+  {
+    return object instanceof WhileStatement && this.test.equals(((WhileStatement) object).test) && this.body.equals(((WhileStatement) object).body);
+  }
 
-    @Override
-    public int hashCode() {
-        int code = HashCodeBuilder.put(0, "WhileStatement");
-        code = HashCodeBuilder.put(code, this.test);
-        code = HashCodeBuilder.put(code, this.body);
-        return code;
-    }
+  @Override
+  public int hashCode()
+  {
+    int code = HashCodeBuilder.put(0, "WhileStatement");
+    code = HashCodeBuilder.put(code, this.test);
+    code = HashCodeBuilder.put(code, this.body);
+    return code;
+  }
 
-    @NotNull
-    public Expression getTest() {
-        return this.test;
-    }
+  @NotNull
+  public Expression getTest()
+  {
+    return this.test;
+  }
 
-    @NotNull
-    public WhileStatement setTest(@NotNull Expression test) {
-        return new WhileStatement(test, this.body);
-    }
+  @NotNull
+  public Statement getBody()
+  {
+    return this.body;
+  }
 
-    @NotNull
-    public Statement getBody() {
-        return this.body;
-    }
+  @NotNull
+  public WhileStatement setTest(@NotNull Expression test)
+  {
+    return new WhileStatement(test, this.body);
+  }
 
-    @NotNull
-    public WhileStatement setBody(@NotNull Statement body) {
-        return new WhileStatement(this.test, body);
-    }
+  @NotNull
+  public WhileStatement setBody(@NotNull Statement body)
+  {
+    return new WhileStatement(this.test, body);
+  }
 
 }

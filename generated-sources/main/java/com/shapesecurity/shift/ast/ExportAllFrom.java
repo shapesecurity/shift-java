@@ -18,40 +18,44 @@
 
 package com.shapesecurity.shift.ast;
 
-import com.shapesecurity.functional.data.HashCodeBuilder;
-
 import org.jetbrains.annotations.NotNull;
+import com.shapesecurity.functional.data.HashCodeBuilder;
 
 public class ExportAllFrom extends ExportDeclaration implements Node {
 
-    @NotNull
-    public final String moduleSpecifier;
+  @NotNull
+  public final String  moduleSpecifier;
 
-    public ExportAllFrom(@NotNull String moduleSpecifier) {
-        super();
-        this.moduleSpecifier = moduleSpecifier;
-    }
+  public ExportAllFrom (@NotNull String  moduleSpecifier)
+  {
+    super();
+    this.moduleSpecifier = moduleSpecifier;
+  }
 
-    @Override
-    public boolean equals(Object object) {
-        return object instanceof ExportAllFrom && this.moduleSpecifier.equals(((ExportAllFrom) object).moduleSpecifier);
-    }
+  @Override
+  public boolean equals(Object object)
+  {
+    return object instanceof ExportAllFrom && this.moduleSpecifier.equals(((ExportAllFrom) object).moduleSpecifier);
+  }
 
-    @Override
-    public int hashCode() {
-        int code = HashCodeBuilder.put(0, "ExportAllFrom");
-        code = HashCodeBuilder.put(code, this.moduleSpecifier);
-        return code;
-    }
+  @Override
+  public int hashCode()
+  {
+    int code = HashCodeBuilder.put(0, "ExportAllFrom");
+    code = HashCodeBuilder.put(code, this.moduleSpecifier);
+    return code;
+  }
 
-    @NotNull
-    public String getModuleSpecifier() {
-        return this.moduleSpecifier;
-    }
+  @NotNull
+  public String  getModuleSpecifier()
+  {
+    return this.moduleSpecifier;
+  }
 
-    @NotNull
-    public ExportAllFrom setModuleSpecifier(@NotNull String moduleSpecifier) {
-        return new ExportAllFrom(moduleSpecifier);
-    }
+  @NotNull
+  public ExportAllFrom setModuleSpecifier(@NotNull String  moduleSpecifier)
+  {
+    return new ExportAllFrom(moduleSpecifier);
+  }
 
 }

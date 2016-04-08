@@ -18,83 +18,88 @@
 
 package com.shapesecurity.shift.ast;
 
-import com.shapesecurity.functional.data.HashCodeBuilder;
-import com.shapesecurity.functional.data.ImmutableList;
-import com.shapesecurity.functional.data.Maybe;
-import com.shapesecurity.shift.ast.operators.Precedence;
-
 import org.jetbrains.annotations.NotNull;
+import com.shapesecurity.functional.data.HashCodeBuilder;
+import com.shapesecurity.functional.data.Maybe;
+import com.shapesecurity.functional.data.ImmutableList;
+import com.shapesecurity.shift.ast.operators.Precedence;
 
 public class ClassExpression extends Expression implements Node, Class {
 
-    @NotNull
-    public final Maybe<BindingIdentifier> name;
+  @NotNull
+  public final Maybe<BindingIdentifier> name;
 
-    @NotNull
-    public final Maybe<Expression> _super;
+  @NotNull
+  public final Maybe<Expression> _super;
 
-    @NotNull
-    public final ImmutableList<ClassElement> elements;
+  @NotNull
+  public final ImmutableList<ClassElement> elements;
 
-    public ClassExpression(@NotNull Maybe<BindingIdentifier> name,
-                           @NotNull Maybe<Expression> _super,
-                           @NotNull ImmutableList<ClassElement> elements) {
-        super();
-        this.name = name;
-        this._super = _super;
-        this.elements = elements;
-    }
+  public ClassExpression (@NotNull Maybe<BindingIdentifier> name, @NotNull Maybe<Expression> _super, @NotNull ImmutableList<ClassElement> elements)
+  {
+    super();
+    this.name = name;
+    this._super = _super;
+    this.elements = elements;
+  }
 
-    @Override
-    public boolean equals(Object object) {
-        return object instanceof ClassExpression && this.name.equals(((ClassExpression) object).name) &&
-               this._super.equals(((ClassExpression) object)._super) && this.elements.equals(
-            ((ClassExpression) object).elements);
-    }
+  @Override
+  public boolean equals(Object object)
+  {
+    return object instanceof ClassExpression && this.name.equals(((ClassExpression) object).name) && this._super.equals(((ClassExpression) object)._super) && this.elements.equals(((ClassExpression) object).elements);
+  }
 
-    @Override
-    public int hashCode() {
-        int code = HashCodeBuilder.put(0, "ClassExpression");
-        code = HashCodeBuilder.put(code, this.name);
-        code = HashCodeBuilder.put(code, this._super);
-        code = HashCodeBuilder.put(code, this.elements);
-        return code;
-    }
+  @Override
+  public int hashCode()
+  {
+    int code = HashCodeBuilder.put(0, "ClassExpression");
+    code = HashCodeBuilder.put(code, this.name);
+    code = HashCodeBuilder.put(code, this._super);
+    code = HashCodeBuilder.put(code, this.elements);
+    return code;
+  }
 
-    @NotNull
-    public Maybe<BindingIdentifier> getName() {
-        return this.name;
-    }
+  @NotNull
+  public Maybe<BindingIdentifier> getName()
+  {
+    return this.name;
+  }
 
-    @NotNull
-    public ClassExpression setName(@NotNull Maybe<BindingIdentifier> name) {
-        return new ClassExpression(name, this._super, this.elements);
-    }
+  @NotNull
+  public Maybe<Expression> getSuper()
+  {
+    return this._super;
+  }
 
-    @NotNull
-    public Maybe<Expression> getSuper() {
-        return this._super;
-    }
+  @NotNull
+  public ImmutableList<ClassElement> getElements()
+  {
+    return this.elements;
+  }
 
-    @NotNull
-    public ClassExpression setSuper(@NotNull Maybe<Expression> _super) {
-        return new ClassExpression(this.name, _super, this.elements);
-    }
+  @NotNull
+  public ClassExpression setName(@NotNull Maybe<BindingIdentifier> name)
+  {
+    return new ClassExpression(name, this._super, this.elements);
+  }
 
-    @NotNull
-    public ImmutableList<ClassElement> getElements() {
-        return this.elements;
-    }
+  @NotNull
+  public ClassExpression setSuper(@NotNull Maybe<Expression> _super)
+  {
+    return new ClassExpression(this.name, _super, this.elements);
+  }
 
-    @NotNull
-    public ClassExpression setElements(@NotNull ImmutableList<ClassElement> elements) {
-        return new ClassExpression(this.name, this._super, elements);
-    }
+  @NotNull
+  public ClassExpression setElements(@NotNull ImmutableList<ClassElement> elements)
+  {
+    return new ClassExpression(this.name, this._super, elements);
+  }
 
-    @Override
-    @NotNull
-    public Precedence getPrecedence() {
-        return Precedence.PRIMARY;
-    }
+  @Override
+  @NotNull
+  public Precedence getPrecedence()
+  {
+    return Precedence.PRIMARY;
+  }
 
 }

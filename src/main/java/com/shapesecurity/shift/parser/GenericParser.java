@@ -18,6 +18,7 @@ import com.shapesecurity.shift.parser.token.RegularExpressionLiteralToken;
 import com.shapesecurity.shift.parser.token.StringLiteralToken;
 import com.shapesecurity.shift.parser.token.TemplateToken;
 import com.shapesecurity.shift.utils.D2A;
+import com.sun.tools.corba.se.idl.constExpr.Not;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -362,7 +363,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
     }
 
     @NotNull
-    protected Expression parseArrowExpressionTail(ArrayList<BindingBindingWithDefault> params, Maybe<BindingIdentifier> rest, AdditionalStateT startState) throws JsError {
+    protected Expression parseArrowExpressionTail(ArrayList<BindingBindingWithDefault> params, Maybe<Binding> rest, AdditionalStateT startState) throws JsError {
         if (this.hasLineTerminatorBeforeNext) {
             throw this.createError(ErrorMessages.NEWLINE_AFTER_ARROW_PARAMS);
         }
@@ -370,7 +371,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
         this.isBindingElement = this.isAssignmentTarget = false;
         this.firstExprError = null;
 
-        FormalParameters paramsNode = this.finishNode(startState, new FormalParameters(ImmutableList.from(params), rest));
+        FormalParameters paramsNode = this.finishNode(startState, new FormalParameters(ImmutableList.from(params).map(this::bindingToParameter), rest));
 
         if (this.match(TokenType.LBRACE)) {
             boolean previousYield = this.allowYieldExpression;
@@ -468,7 +469,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
             }
         }
         this.expect(TokenType.RPAREN);
-        return this.finishNode(paramsLocation, new FormalParameters(ImmutableList.from(items), Maybe.fromNullable(rest)));
+        return this.finishNode(paramsLocation, new FormalParameters(ImmutableList.from(items).map(this::bindingToParameter), Maybe.fromNullable(rest)));
     }
 
     @NotNull
@@ -595,7 +596,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
                         this.lex();
                         right = this.parseExpression().left();
                         Statement body = this.getIteratorStatementEpilogue();
-                        return new ForInStatement((VariableDeclarationBinding) init, right.just(), body);
+                        return new ForInStatement((VariableDeclarationAssignmentTarget) init, right.just(), body);
                     } else {
                         if (!(((VariableDeclaration) init).declarators.index(0).just().init).equals(Maybe.nothing())) {
                             throw this.createError(ErrorMessages.INVALID_VAR_INIT_FOR_OF);
@@ -603,7 +604,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
                         this.lex();
                         right = this.parseAssignmentExpression().left();
                         Statement body = this.getIteratorStatementEpilogue();
-                        return new ForOfStatement((VariableDeclarationBinding) init, right.just(), body);
+                        return new ForOfStatement((VariableDeclarationAssignmentTarget) init, right.just(), body);
                     }
                 } else {
                     this.expect(TokenType.SEMICOLON);
@@ -669,27 +670,38 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
     }
 
     @NotNull
-    protected BindingProperty transformDestructuring(ObjectProperty objectProperty) throws JsError {
+    protected AssignmentTargetProperty transformDestructuring(ObjectProperty objectProperty) throws JsError {
         if (objectProperty instanceof DataProperty) {
             DataProperty dataProperty = (DataProperty) objectProperty;
             return new BindingPropertyProperty(dataProperty.name, this.transformDestructuringWithDefault(dataProperty.expression));
         } else if (objectProperty instanceof ShorthandProperty) {
             ShorthandProperty shorthandProperty = (ShorthandProperty) objectProperty;
-            return new BindingPropertyIdentifier(new BindingIdentifier(shorthandProperty.name), Maybe.nothing());
+            return new BindingPropertyIdentifier(new BindingIdentifier(shorthandProperty.name.name), Maybe.nothing());
         }
         throw this.createError(ErrorMessages.INVALID_LHS_IN_ASSIGNMENT);
     }
 
+    // TODO: preserve location information
+    @NotNull
+    protected Parameter bindingToParameter(@NotNull BindingBindingWithDefault binding) {
+        if (binding instanceof Binding) {
+            return new Parameter((Binding) binding, Maybe.nothing());
+        } else {
+            BindingWithDefault bd = (BindingWithDefault) binding;
+            return new Parameter(bd.binding, Maybe.just(bd.init));
+        }
+    }
+
     // TODO: preserve location information in transformDestructuring() functions by implementing copyLocation()
     @NotNull
-    protected Binding transformDestructuring(Expression node) throws JsError {
+    protected AssignmentTarget transformDestructuring(Expression node) throws JsError {
         if (node instanceof ObjectExpression) {
             ObjectExpression objectExpression = (ObjectExpression) node;
-            ArrayList<BindingProperty> properties = new ArrayList<>();
+            ArrayList<AssignmentTargetProperty> properties = new ArrayList<>();
             for (ObjectProperty p : objectExpression.properties) {
                 properties.add(this.transformDestructuring(p));
             }
-            return new ObjectBinding(ImmutableList.from(properties));
+            return new ObjectAssignmentTarget(ImmutableList.from(properties));
         } else if (node instanceof ArrayExpression) {
             ArrayExpression arrayExpression = (ArrayExpression) node;
             Maybe<SpreadElementExpression> last = Maybe.join(arrayExpression.elements.maybeLast());
@@ -718,8 +730,12 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
 
         } else if (node instanceof IdentifierExpression) {
             return new BindingIdentifier(((IdentifierExpression) node).name);
-        } else if (node instanceof ComputedMemberExpression || node instanceof StaticMemberExpression) {
-            return (Binding) node;
+        } else if (node instanceof ComputedMemberExpression) {
+            ComputedMemberExpression expr = (ComputedMemberExpression) node;
+            return new ComputedMemberBinding(expr.expression, expr._object);
+        } else if (node instanceof StaticMemberExpression) {
+            StaticMemberExpression expr = (StaticMemberExpression) node;
+            return new StaticMemberBinding(expr.property, expr._object);
         }
         throw this.createError(ErrorMessages.INVALID_LHS_IN_ASSIGNMENT);
     }
@@ -1294,12 +1310,9 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
 
     @NotNull
     protected Expression createUpdateExpression(@NotNull AdditionalStateT startState, @NotNull Expression operand, @NotNull UpdateOperator operator, boolean isPrefix) throws JsError {
-        BindingIdentifierMemberExpression restrictedOperand;
-        if (operand instanceof MemberExpression) {
-            restrictedOperand = (MemberExpression) operand;
-        } else if (operand instanceof IdentifierExpression) {
-            String name = ((IdentifierExpression) operand).name;
-            restrictedOperand = new BindingIdentifier(name);
+        SimpleAssignmentTarget restrictedOperand;
+        if (operand instanceof MemberExpression || operand instanceof IdentifierExpression) {
+            restrictedOperand = (SimpleAssignmentTarget) transformDestructuring(operand);
         } else {
             throw this.createError("Increment/decrement target must be an identifier or member expression");
         }
@@ -1385,7 +1398,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
         }
 
         this.allowIn = previousAllowIn;
-        if (expr.isLeft()) {
+        if (expr.isLeft()) { // todo why is htis not just return expr?
             return Either.left(expr.left().just());
         } else {
             return Either.right(expr.right().just());
@@ -1560,7 +1573,43 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
                 int lastSlash = ((RegularExpressionLiteralToken) token).getValueString().lastIndexOf("/");
                 String pattern = ((RegularExpressionLiteralToken) token).getValueString().substring(1, lastSlash);
                 String flags = ((RegularExpressionLiteralToken) token).getValueString().substring(lastSlash + 1);
-                return Either.left(this.finishNode(startState, new LiteralRegExpExpression(pattern, flags)));
+                boolean gFlag = false, iFlag = false, mFlag = false, uFlag = false, yFlag = false;
+                for (char c : flags.toCharArray()) {
+                    switch (c) {
+                        // duplicate or invalid flags are Early Syntax Errors per 12.2.8.1, but we can't represent them, so they are an early grammar error.
+                        case 'g':
+                            if (gFlag) {
+                                throw this.createErrorWithLocation(this.getLocation(), "Duplicate regular expression flag 'g'");
+                            }
+                            gFlag = true;
+                            break;
+                        case 'i':
+                            if (iFlag) {
+                                throw this.createErrorWithLocation(this.getLocation(), "Duplicate regular expression flag 'i'");
+                            }
+                            iFlag = true;
+                            break;
+                        case 'm':
+                            if (mFlag) {
+                                throw this.createErrorWithLocation(this.getLocation(), "Duplicate regular expression flag 'm'");
+                            }
+                            mFlag = true;
+                            break;
+                        case 'u':
+                            if (uFlag) {
+                                throw this.createErrorWithLocation(this.getLocation(), "Duplicate regular expression flag 'u'");
+                            }
+                            uFlag = true;
+                            break;
+                        case 'y':
+                            if (yFlag) {
+                                throw this.createErrorWithLocation(this.getLocation(), "Duplicate regular expression flag 'y'");
+                            }
+                            yFlag = true;
+                            break;
+                    }
+                }
+                return Either.left(this.finishNode(startState, new LiteralRegExpExpression(pattern, gFlag, iFlag, mFlag, uFlag, yFlag)));
             default:
                 throw this.createUnexpected(this.lookahead);
         }
@@ -1726,7 +1775,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
             this.isBindingElement = this.isAssignmentTarget = false;
             return Either.left(this.parseArrowExpressionTail(new ArrayList<>(), Maybe.nothing(), startState));
         } else if (this.eat(TokenType.ELLIPSIS)) {
-            Maybe<BindingIdentifier> rest = Maybe.just(this.parseBindingIdentifier());
+            Maybe<Binding> rest = Maybe.just(this.parseBindingTarget());
             this.expect(TokenType.RPAREN);
             this.isBindingElement = this.isAssignmentTarget = false;
             return Either.left(this.parseArrowExpressionTail(new ArrayList<>(), rest, startState));
@@ -1752,7 +1801,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
                     throw this.createUnexpected(this.lookahead);
                 }
                 this.lex();
-                Maybe<BindingIdentifier> rest = Maybe.just(this.parseBindingIdentifier());
+                Maybe<Binding> rest = Maybe.just(this.parseBindingTarget());
                 this.expect(TokenType.RPAREN);
                 return Either.left(this.parseArrowExpressionTail(params, rest, startState));
             }
@@ -1820,7 +1869,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
                     if (token.type != TokenType.IDENTIFIER && token.type != TokenType.YIELD && token.type != TokenType.LET) {
                         throw this.createUnexpected(token);
                     }
-                    ShorthandProperty toReturn = new ShorthandProperty(staticPropertyName.value);
+                    ShorthandProperty toReturn = new ShorthandProperty(new IdentifierExpression(staticPropertyName.value));
                     this.finishNode(startState, toReturn);
                     return Either.left(toReturn);
                 }
@@ -1870,12 +1919,22 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
                     name = this.parsePropertyName().a;
                     this.expect(TokenType.LPAREN);
                     BindingBindingWithDefault param = this.parseBindingElement();
+                    Binding binding;
+                    Maybe<Expression> init;
+                    if (param instanceof Binding) {
+                        binding = (Binding) param;
+                        init = Maybe.nothing();
+                    } else {
+                        BindingWithDefault bindingWithDefault = (BindingWithDefault) param;
+                        binding = bindingWithDefault.binding;
+                        init = Maybe.just(bindingWithDefault.init);
+                    }
                     this.expect(TokenType.RPAREN);
                     boolean previousYield = this.allowYieldExpression;
                     this.allowYieldExpression = false;
                     FunctionBody body = this.parseFunctionBody();
                     this.allowYieldExpression = previousYield;
-                    return Either.right(this.finishNode(startState, new Setter(param, body, name)));
+                    return Either.right(this.finishNode(startState, new Setter(new Parameter(binding, init), body, name)));
                 }
             }
         }
@@ -2162,12 +2221,12 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
                 decl = new ExportAllFrom(this.parseFromClause());
                 break;
             case LBRACE:
-                ImmutableList<ExportSpecifier> namedExports = this.parseExportClause();
-                Maybe<String> moduleSpecifier = Maybe.nothing();
+                ImmutableList<ExportFromSpecifier> namedExports = this.parseExportClause();
                 if (this.matchContextualKeyword("from")) {
-                    moduleSpecifier = Maybe.just(this.parseFromClause());
+                    decl = new ExportFrom(namedExports, this.parseFromClause());
+                } else {
+                    decl = new ExportLocals(namedExports.map(x -> new ExportLocalSpecifier(new IdentifierExpression(x.name), x.exportedName)));
                 }
-                decl = new ExportFrom(namedExports, moduleSpecifier);
                 break;
             case CLASS:
                 decl = new Export(this.parseClass(false));
@@ -2203,11 +2262,11 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
     }
 
     @NotNull
-    protected ImmutableList<ExportSpecifier> parseExportClause() throws JsError {
+    protected ImmutableList<ExportFromSpecifier> parseExportClause() throws JsError {
         this.expect(TokenType.LBRACE);
-        ArrayList<ExportSpecifier> result = new ArrayList<>();
+        ArrayList<ExportFromSpecifier> result = new ArrayList<>();
         while (!this.eat(TokenType.RBRACE)) {
-            result.add(this.parseExportSpecifier());
+            result.add(this.parseExportFromSpecifier());
             if (!this.eat(TokenType.COMMA)) {
                 this.expect(TokenType.RBRACE);
                 break;
@@ -2217,14 +2276,14 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
     }
 
     @NotNull
-    protected ExportSpecifier parseExportSpecifier() throws JsError {
+    protected ExportFromSpecifier parseExportFromSpecifier() throws JsError {
         AdditionalStateT startState = this.startNode();
         String name = this.parseIdentifierName();
         if (this.eatContextualKeyword("as") != null) {
             String exportedName = this.parseIdentifierName();
-            return this.finishNode(startState, new ExportSpecifier(Maybe.just(name), exportedName));
+            return this.finishNode(startState, new ExportFromSpecifier(name, Maybe.just(exportedName)));
         }
-        return this.finishNode(startState, new ExportSpecifier(Maybe.nothing(), name));
+        return this.finishNode(startState, new ExportFromSpecifier(name, Maybe.nothing()));
     }
 
     @Nullable

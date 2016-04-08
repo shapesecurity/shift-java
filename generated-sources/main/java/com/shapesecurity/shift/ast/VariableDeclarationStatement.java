@@ -18,41 +18,44 @@
 
 package com.shapesecurity.shift.ast;
 
-import com.shapesecurity.functional.data.HashCodeBuilder;
-
 import org.jetbrains.annotations.NotNull;
+import com.shapesecurity.functional.data.HashCodeBuilder;
 
 public class VariableDeclarationStatement extends Statement implements Node {
 
-    @NotNull
-    public final VariableDeclaration declaration;
+  @NotNull
+  public final VariableDeclaration declaration;
 
-    public VariableDeclarationStatement(@NotNull VariableDeclaration declaration) {
-        super();
-        this.declaration = declaration;
-    }
+  public VariableDeclarationStatement (@NotNull VariableDeclaration declaration)
+  {
+    super();
+    this.declaration = declaration;
+  }
 
-    @Override
-    public boolean equals(Object object) {
-        return object instanceof VariableDeclarationStatement && this.declaration.equals(
-            ((VariableDeclarationStatement) object).declaration);
-    }
+  @Override
+  public boolean equals(Object object)
+  {
+    return object instanceof VariableDeclarationStatement && this.declaration.equals(((VariableDeclarationStatement) object).declaration);
+  }
 
-    @Override
-    public int hashCode() {
-        int code = HashCodeBuilder.put(0, "VariableDeclarationStatement");
-        code = HashCodeBuilder.put(code, this.declaration);
-        return code;
-    }
+  @Override
+  public int hashCode()
+  {
+    int code = HashCodeBuilder.put(0, "VariableDeclarationStatement");
+    code = HashCodeBuilder.put(code, this.declaration);
+    return code;
+  }
 
-    @NotNull
-    public VariableDeclaration getDeclaration() {
-        return this.declaration;
-    }
+  @NotNull
+  public VariableDeclaration getDeclaration()
+  {
+    return this.declaration;
+  }
 
-    @NotNull
-    public VariableDeclarationStatement setDeclaration(@NotNull VariableDeclaration declaration) {
-        return new VariableDeclarationStatement(declaration);
-    }
+  @NotNull
+  public VariableDeclarationStatement setDeclaration(@NotNull VariableDeclaration declaration)
+  {
+    return new VariableDeclarationStatement(declaration);
+  }
 
 }

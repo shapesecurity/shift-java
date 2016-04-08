@@ -18,59 +18,63 @@
 
 package com.shapesecurity.shift.ast;
 
-import com.shapesecurity.functional.data.HashCodeBuilder;
-import com.shapesecurity.functional.data.ImmutableList;
-import com.shapesecurity.functional.data.Maybe;
-
 import org.jetbrains.annotations.NotNull;
+import com.shapesecurity.functional.data.HashCodeBuilder;
+import com.shapesecurity.functional.data.Maybe;
+import com.shapesecurity.functional.data.ImmutableList;
 
 public class FormalParameters implements Node {
 
-    @NotNull
-    public final ImmutableList<BindingBindingWithDefault> items;
+  @NotNull
+  public final ImmutableList<Parameter> items;
 
-    @NotNull
-    public final Maybe<BindingIdentifier> rest;
+  @NotNull
+  public final Maybe<Binding> rest;
 
-    public FormalParameters(@NotNull ImmutableList<BindingBindingWithDefault> items,
-                            @NotNull Maybe<BindingIdentifier> rest) {
-        super();
-        this.items = items;
-        this.rest = rest;
-    }
+  public FormalParameters (@NotNull ImmutableList<Parameter> items, @NotNull Maybe<Binding> rest)
+  {
+    super();
+    this.items = items;
+    this.rest = rest;
+  }
 
-    @Override
-    public boolean equals(Object object) {
-        return object instanceof FormalParameters && this.items.equals(((FormalParameters) object).items) &&
-               this.rest.equals(((FormalParameters) object).rest);
-    }
+  @Override
+  public boolean equals(Object object)
+  {
+    return object instanceof FormalParameters && this.items.equals(((FormalParameters) object).items) && this.rest.equals(((FormalParameters) object).rest);
+  }
 
-    @Override
-    public int hashCode() {
-        int code = HashCodeBuilder.put(0, "FormalParameters");
-        code = HashCodeBuilder.put(code, this.items);
-        code = HashCodeBuilder.put(code, this.rest);
-        return code;
-    }
+  @Override
+  public int hashCode()
+  {
+    int code = HashCodeBuilder.put(0, "FormalParameters");
+    code = HashCodeBuilder.put(code, this.items);
+    code = HashCodeBuilder.put(code, this.rest);
+    return code;
+  }
 
-    @NotNull
-    public ImmutableList<BindingBindingWithDefault> getItems() {
-        return this.items;
-    }
+  @NotNull
+  public ImmutableList<Parameter> getItems()
+  {
+    return this.items;
+  }
 
-    @NotNull
-    public FormalParameters setItems(@NotNull ImmutableList<BindingBindingWithDefault> items) {
-        return new FormalParameters(items, this.rest);
-    }
+  @NotNull
+  public Maybe<Binding> getRest()
+  {
+    return this.rest;
+  }
 
-    @NotNull
-    public Maybe<BindingIdentifier> getRest() {
-        return this.rest;
-    }
+  @NotNull
+  public FormalParameters setItems(@NotNull ImmutableList<Parameter> items)
+  {
+    return new FormalParameters(items, this.rest);
+  }
 
-    @NotNull
-    public FormalParameters setRest(@NotNull Maybe<BindingIdentifier> rest) {
-        return new FormalParameters(this.items, rest);
-    }
+  @NotNull
+  public FormalParameters setRest(@NotNull Maybe<Binding> rest)
+  {
+    return new FormalParameters(this.items, rest);
+  }
 
 }

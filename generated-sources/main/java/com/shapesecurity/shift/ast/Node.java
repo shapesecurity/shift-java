@@ -18,6 +18,9 @@
 
 package com.shapesecurity.shift.ast;
 
+import org.jetbrains.annotations.NotNull;
+import com.shapesecurity.functional.data.HashCodeBuilder;
+
 public interface Node {
 
 }

@@ -18,5 +18,5 @@
 
 package com.shapesecurity.shift.ast;
 
-
-public interface Binding extends Node, BindingBindingWithDefault, VariableDeclarationBinding {}
+public interface Binding extends Node, BindingBindingWithDefault {
+}

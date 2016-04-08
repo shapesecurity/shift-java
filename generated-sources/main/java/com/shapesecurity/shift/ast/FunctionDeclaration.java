@@ -18,93 +18,95 @@
 
 package com.shapesecurity.shift.ast;
 
+import org.jetbrains.annotations.NotNull;
 import com.shapesecurity.functional.data.HashCodeBuilder;
 
-import org.jetbrains.annotations.NotNull;
+public class FunctionDeclaration extends Statement implements Node, FunctionDeclarationClassDeclarationVariableDeclaration, FunctionDeclarationClassDeclarationExpression, Function {
 
-public class FunctionDeclaration extends Statement implements Node,
-    FunctionDeclarationClassDeclarationVariableDeclaration,
-    FunctionDeclarationClassDeclarationExpression,
-    Function {
+  @NotNull
+  public final BindingIdentifier name;
 
-    @NotNull
-    public final BindingIdentifier name;
+  @NotNull
+  public final Boolean isGenerator;
 
-    @NotNull
-    public final Boolean isGenerator;
+  @NotNull
+  public final FormalParameters params;
 
-    @NotNull
-    public final FormalParameters params;
+  @NotNull
+  public final FunctionBody body;
 
-    @NotNull
-    public final FunctionBody body;
+  public FunctionDeclaration (@NotNull BindingIdentifier name, @NotNull Boolean isGenerator, @NotNull FormalParameters params, @NotNull FunctionBody body)
+  {
+    super();
+    this.name = name;
+    this.isGenerator = isGenerator;
+    this.params = params;
+    this.body = body;
+  }
 
-    public FunctionDeclaration(@NotNull BindingIdentifier name,
-                               @NotNull Boolean isGenerator,
-                               @NotNull FormalParameters params,
-                               @NotNull FunctionBody body) {
-        super();
-        this.name = name;
-        this.isGenerator = isGenerator;
-        this.params = params;
-        this.body = body;
-    }
+  @Override
+  public boolean equals(Object object)
+  {
+    return object instanceof FunctionDeclaration && this.name.equals(((FunctionDeclaration) object).name) && this.isGenerator.equals(((FunctionDeclaration) object).isGenerator) && this.params.equals(((FunctionDeclaration) object).params) && this.body.equals(((FunctionDeclaration) object).body);
+  }
 
-    @Override
-    public boolean equals(Object object) {
-        return object instanceof FunctionDeclaration && this.name.equals(((FunctionDeclaration) object).name) &&
-               this.isGenerator.equals(((FunctionDeclaration) object).isGenerator) && this.params.equals(
-            ((FunctionDeclaration) object).params) && this.body.equals(((FunctionDeclaration) object).body);
-    }
+  @Override
+  public int hashCode()
+  {
+    int code = HashCodeBuilder.put(0, "FunctionDeclaration");
+    code = HashCodeBuilder.put(code, this.name);
+    code = HashCodeBuilder.put(code, this.isGenerator);
+    code = HashCodeBuilder.put(code, this.params);
+    code = HashCodeBuilder.put(code, this.body);
+    return code;
+  }
 
-    @Override
-    public int hashCode() {
-        int code = HashCodeBuilder.put(0, "FunctionDeclaration");
-        code = HashCodeBuilder.put(code, this.name);
-        code = HashCodeBuilder.put(code, this.isGenerator);
-        code = HashCodeBuilder.put(code, this.params);
-        code = HashCodeBuilder.put(code, this.body);
-        return code;
-    }
+  @NotNull
+  public BindingIdentifier getName()
+  {
+    return this.name;
+  }
 
-    @NotNull
-    public BindingIdentifier getName() {
-        return this.name;
-    }
+  @NotNull
+  public Boolean getIsGenerator()
+  {
+    return this.isGenerator;
+  }
 
-    @NotNull
-    public FunctionDeclaration setName(@NotNull BindingIdentifier name) {
-        return new FunctionDeclaration(name, this.isGenerator, this.params, this.body);
-    }
+  @NotNull
+  public FormalParameters getParams()
+  {
+    return this.params;
+  }
 
-    @NotNull
-    public Boolean getIsGenerator() {
-        return this.isGenerator;
-    }
+  @NotNull
+  public FunctionBody getBody()
+  {
+    return this.body;
+  }
 
-    @NotNull
-    public FunctionDeclaration setIsGenerator(@NotNull Boolean isGenerator) {
-        return new FunctionDeclaration(this.name, isGenerator, this.params, this.body);
-    }
+  @NotNull
+  public FunctionDeclaration setName(@NotNull BindingIdentifier name)
+  {
+    return new FunctionDeclaration(name, this.isGenerator, this.params, this.body);
+  }
 
-    @NotNull
-    public FormalParameters getParams() {
-        return this.params;
-    }
+  @NotNull
+  public FunctionDeclaration setIsGenerator(@NotNull Boolean isGenerator)
+  {
+    return new FunctionDeclaration(this.name, isGenerator, this.params, this.body);
+  }
 
-    @NotNull
-    public FunctionDeclaration setParams(@NotNull FormalParameters params) {
-        return new FunctionDeclaration(this.name, this.isGenerator, params, this.body);
-    }
+  @NotNull
+  public FunctionDeclaration setParams(@NotNull FormalParameters params)
+  {
+    return new FunctionDeclaration(this.name, this.isGenerator, params, this.body);
+  }
 
-    @NotNull
-    public FunctionBody getBody() {
-        return this.body;
-    }
-
-    @NotNull
-    public FunctionDeclaration setBody(@NotNull FunctionBody body) {
-        return new FunctionDeclaration(this.name, this.isGenerator, this.params, body);
-    }
+  @NotNull
+  public FunctionDeclaration setBody(@NotNull FunctionBody body)
+  {
+    return new FunctionDeclaration(this.name, this.isGenerator, this.params, body);
+  }
 
 }

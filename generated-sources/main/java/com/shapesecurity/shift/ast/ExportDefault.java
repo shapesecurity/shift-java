@@ -18,40 +18,44 @@
 
 package com.shapesecurity.shift.ast;
 
-import com.shapesecurity.functional.data.HashCodeBuilder;
-
 import org.jetbrains.annotations.NotNull;
+import com.shapesecurity.functional.data.HashCodeBuilder;
 
 public class ExportDefault extends ExportDeclaration implements Node {
 
-    @NotNull
-    public final FunctionDeclarationClassDeclarationExpression body;
+  @NotNull
+  public final FunctionDeclarationClassDeclarationExpression body;
 
-    public ExportDefault(@NotNull FunctionDeclarationClassDeclarationExpression body) {
-        super();
-        this.body = body;
-    }
+  public ExportDefault (@NotNull FunctionDeclarationClassDeclarationExpression body)
+  {
+    super();
+    this.body = body;
+  }
 
-    @Override
-    public boolean equals(Object object) {
-        return object instanceof ExportDefault && this.body.equals(((ExportDefault) object).body);
-    }
+  @Override
+  public boolean equals(Object object)
+  {
+    return object instanceof ExportDefault && this.body.equals(((ExportDefault) object).body);
+  }
 
-    @Override
-    public int hashCode() {
-        int code = HashCodeBuilder.put(0, "ExportDefault");
-        code = HashCodeBuilder.put(code, this.body);
-        return code;
-    }
+  @Override
+  public int hashCode()
+  {
+    int code = HashCodeBuilder.put(0, "ExportDefault");
+    code = HashCodeBuilder.put(code, this.body);
+    return code;
+  }
 
-    @NotNull
-    public FunctionDeclarationClassDeclarationExpression getBody() {
-        return this.body;
-    }
+  @NotNull
+  public FunctionDeclarationClassDeclarationExpression getBody()
+  {
+    return this.body;
+  }
 
-    @NotNull
-    public ExportDefault setBody(@NotNull FunctionDeclarationClassDeclarationExpression body) {
-        return new ExportDefault(body);
-    }
+  @NotNull
+  public ExportDefault setBody(@NotNull FunctionDeclarationClassDeclarationExpression body)
+  {
+    return new ExportDefault(body);
+  }
 
 }

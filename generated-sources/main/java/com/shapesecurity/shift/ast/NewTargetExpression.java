@@ -18,32 +18,35 @@
 
 package com.shapesecurity.shift.ast;
 
+import org.jetbrains.annotations.NotNull;
 import com.shapesecurity.functional.data.HashCodeBuilder;
 import com.shapesecurity.shift.ast.operators.Precedence;
 
-import org.jetbrains.annotations.NotNull;
-
 public class NewTargetExpression extends Expression implements Node {
 
-    public NewTargetExpression() {
-        super();
-    }
+  public NewTargetExpression ()
+  {
+    super();
+  }
 
-    @Override
-    public boolean equals(Object object) {
-        return object instanceof NewTargetExpression;
-    }
+  @Override
+  public boolean equals(Object object)
+  {
+    return object instanceof NewTargetExpression;
+  }
 
-    @Override
-    public int hashCode() {
-        int code = HashCodeBuilder.put(0, "NewTargetExpression");
-        return code;
-    }
+  @Override
+  public int hashCode()
+  {
+    int code = HashCodeBuilder.put(0, "NewTargetExpression");
+    return code;
+  }
 
-    @Override
-    @NotNull
-    public Precedence getPrecedence() {
-        return Precedence.MEMBER;
-    }
+  @Override
+  @NotNull
+  public Precedence getPrecedence()
+  {
+    return Precedence.MEMBER;
+  }
 
 }

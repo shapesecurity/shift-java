@@ -18,48 +18,53 @@
 
 package com.shapesecurity.shift.ast;
 
+import org.jetbrains.annotations.NotNull;
 import com.shapesecurity.functional.data.HashCodeBuilder;
 import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.shift.ast.operators.Precedence;
 
-import org.jetbrains.annotations.NotNull;
-
 public class ObjectExpression extends Expression implements Node {
 
-    @NotNull
-    public final ImmutableList<ObjectProperty> properties;
+  @NotNull
+  public final ImmutableList<ObjectProperty> properties;
 
-    public ObjectExpression(@NotNull ImmutableList<ObjectProperty> properties) {
-        super();
-        this.properties = properties;
-    }
+  public ObjectExpression (@NotNull ImmutableList<ObjectProperty> properties)
+  {
+    super();
+    this.properties = properties;
+  }
 
-    @Override
-    public boolean equals(Object object) {
-        return object instanceof ObjectExpression && this.properties.equals(((ObjectExpression) object).properties);
-    }
+  @Override
+  public boolean equals(Object object)
+  {
+    return object instanceof ObjectExpression && this.properties.equals(((ObjectExpression) object).properties);
+  }
 
-    @Override
-    public int hashCode() {
-        int code = HashCodeBuilder.put(0, "ObjectExpression");
-        code = HashCodeBuilder.put(code, this.properties);
-        return code;
-    }
+  @Override
+  public int hashCode()
+  {
+    int code = HashCodeBuilder.put(0, "ObjectExpression");
+    code = HashCodeBuilder.put(code, this.properties);
+    return code;
+  }
 
-    @NotNull
-    public ImmutableList<ObjectProperty> getProperties() {
-        return this.properties;
-    }
+  @NotNull
+  public ImmutableList<ObjectProperty> getProperties()
+  {
+    return this.properties;
+  }
 
-    @NotNull
-    public ObjectExpression setProperties(@NotNull ImmutableList<ObjectProperty> properties) {
-        return new ObjectExpression(properties);
-    }
+  @NotNull
+  public ObjectExpression setProperties(@NotNull ImmutableList<ObjectProperty> properties)
+  {
+    return new ObjectExpression(properties);
+  }
 
-    @Override
-    @NotNull
-    public Precedence getPrecedence() {
-        return Precedence.PRIMARY;
-    }
+  @Override
+  @NotNull
+  public Precedence getPrecedence()
+  {
+    return Precedence.PRIMARY;
+  }
 
 }

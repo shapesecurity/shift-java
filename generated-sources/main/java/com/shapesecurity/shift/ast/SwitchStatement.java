@@ -18,57 +18,62 @@
 
 package com.shapesecurity.shift.ast;
 
+import org.jetbrains.annotations.NotNull;
 import com.shapesecurity.functional.data.HashCodeBuilder;
 import com.shapesecurity.functional.data.ImmutableList;
 
-import org.jetbrains.annotations.NotNull;
-
 public class SwitchStatement extends Statement implements Node {
 
-    @NotNull
-    public final Expression discriminant;
+  @NotNull
+  public final Expression discriminant;
 
-    @NotNull
-    public final ImmutableList<SwitchCase> cases;
+  @NotNull
+  public final ImmutableList<SwitchCase> cases;
 
-    public SwitchStatement(@NotNull Expression discriminant, @NotNull ImmutableList<SwitchCase> cases) {
-        super();
-        this.discriminant = discriminant;
-        this.cases = cases;
-    }
+  public SwitchStatement (@NotNull Expression discriminant, @NotNull ImmutableList<SwitchCase> cases)
+  {
+    super();
+    this.discriminant = discriminant;
+    this.cases = cases;
+  }
 
-    @Override
-    public boolean equals(Object object) {
-        return object instanceof SwitchStatement && this.discriminant.equals(((SwitchStatement) object).discriminant) &&
-               this.cases.equals(((SwitchStatement) object).cases);
-    }
+  @Override
+  public boolean equals(Object object)
+  {
+    return object instanceof SwitchStatement && this.discriminant.equals(((SwitchStatement) object).discriminant) && this.cases.equals(((SwitchStatement) object).cases);
+  }
 
-    @Override
-    public int hashCode() {
-        int code = HashCodeBuilder.put(0, "SwitchStatement");
-        code = HashCodeBuilder.put(code, this.discriminant);
-        code = HashCodeBuilder.put(code, this.cases);
-        return code;
-    }
+  @Override
+  public int hashCode()
+  {
+    int code = HashCodeBuilder.put(0, "SwitchStatement");
+    code = HashCodeBuilder.put(code, this.discriminant);
+    code = HashCodeBuilder.put(code, this.cases);
+    return code;
+  }
 
-    @NotNull
-    public Expression getDiscriminant() {
-        return this.discriminant;
-    }
+  @NotNull
+  public Expression getDiscriminant()
+  {
+    return this.discriminant;
+  }
 
-    @NotNull
-    public SwitchStatement setDiscriminant(@NotNull Expression discriminant) {
-        return new SwitchStatement(discriminant, this.cases);
-    }
+  @NotNull
+  public ImmutableList<SwitchCase> getCases()
+  {
+    return this.cases;
+  }
 
-    @NotNull
-    public ImmutableList<SwitchCase> getCases() {
-        return this.cases;
-    }
+  @NotNull
+  public SwitchStatement setDiscriminant(@NotNull Expression discriminant)
+  {
+    return new SwitchStatement(discriminant, this.cases);
+  }
 
-    @NotNull
-    public SwitchStatement setCases(@NotNull ImmutableList<SwitchCase> cases) {
-        return new SwitchStatement(this.discriminant, cases);
-    }
+  @NotNull
+  public SwitchStatement setCases(@NotNull ImmutableList<SwitchCase> cases)
+  {
+    return new SwitchStatement(this.discriminant, cases);
+  }
 
 }

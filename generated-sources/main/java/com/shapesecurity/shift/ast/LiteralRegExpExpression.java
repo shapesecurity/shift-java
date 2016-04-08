@@ -18,63 +18,137 @@
 
 package com.shapesecurity.shift.ast;
 
+import org.jetbrains.annotations.NotNull;
 import com.shapesecurity.functional.data.HashCodeBuilder;
 import com.shapesecurity.shift.ast.operators.Precedence;
 
-import org.jetbrains.annotations.NotNull;
-
 public class LiteralRegExpExpression extends Expression implements Node {
 
-    @NotNull
-    public final String pattern;
+  @NotNull
+  public final String  pattern;
 
-    @NotNull
-    public final String flags;
+  @NotNull
+  public final Boolean global;
 
-    public LiteralRegExpExpression(@NotNull String pattern, @NotNull String flags) {
-        super();
-        this.pattern = pattern;
-        this.flags = flags;
-    }
+  @NotNull
+  public final Boolean ignoreCase;
 
-    @Override
-    public boolean equals(Object object) {
-        return object instanceof LiteralRegExpExpression && this.pattern.equals(
-            ((LiteralRegExpExpression) object).pattern) && this.flags.equals(((LiteralRegExpExpression) object).flags);
-    }
+  @NotNull
+  public final Boolean multiLine;
 
-    @Override
-    public int hashCode() {
-        int code = HashCodeBuilder.put(0, "LiteralRegExpExpression");
-        code = HashCodeBuilder.put(code, this.pattern);
-        code = HashCodeBuilder.put(code, this.flags);
-        return code;
-    }
+  @NotNull
+  public final Boolean sticky;
 
-    @NotNull
-    public String getPattern() {
-        return this.pattern;
-    }
+  @NotNull
+  public final Boolean unicode;
 
-    @NotNull
-    public LiteralRegExpExpression setPattern(@NotNull String pattern) {
-        return new LiteralRegExpExpression(pattern, this.flags);
-    }
+  public LiteralRegExpExpression (@NotNull String  pattern, @NotNull Boolean global, @NotNull Boolean ignoreCase, @NotNull Boolean multiLine, @NotNull Boolean sticky, @NotNull Boolean unicode)
+  {
+    super();
+    this.pattern = pattern;
+    this.global = global;
+    this.ignoreCase = ignoreCase;
+    this.multiLine = multiLine;
+    this.sticky = sticky;
+    this.unicode = unicode;
+  }
 
-    @NotNull
-    public String getFlags() {
-        return this.flags;
-    }
+  @Override
+  public boolean equals(Object object)
+  {
+    return object instanceof LiteralRegExpExpression && this.pattern.equals(((LiteralRegExpExpression) object).pattern) && this.global.equals(((LiteralRegExpExpression) object).global) && this.ignoreCase.equals(((LiteralRegExpExpression) object).ignoreCase) && this.multiLine.equals(((LiteralRegExpExpression) object).multiLine) && this.sticky.equals(((LiteralRegExpExpression) object).sticky) && this.unicode.equals(((LiteralRegExpExpression) object).unicode);
+  }
 
-    @NotNull
-    public LiteralRegExpExpression setFlags(@NotNull String flags) {
-        return new LiteralRegExpExpression(this.pattern, flags);
-    }
+  @Override
+  public int hashCode()
+  {
+    int code = HashCodeBuilder.put(0, "LiteralRegExpExpression");
+    code = HashCodeBuilder.put(code, this.pattern);
+    code = HashCodeBuilder.put(code, this.global);
+    code = HashCodeBuilder.put(code, this.ignoreCase);
+    code = HashCodeBuilder.put(code, this.multiLine);
+    code = HashCodeBuilder.put(code, this.sticky);
+    code = HashCodeBuilder.put(code, this.unicode);
+    return code;
+  }
 
-    @Override
-    @NotNull
-    public Precedence getPrecedence() {
-        return Precedence.PRIMARY;
-    }
+  @NotNull
+  public String  getPattern()
+  {
+    return this.pattern;
+  }
+
+  @NotNull
+  public Boolean getGlobal()
+  {
+    return this.global;
+  }
+
+  @NotNull
+  public Boolean getIgnoreCase()
+  {
+    return this.ignoreCase;
+  }
+
+  @NotNull
+  public Boolean getMultiLine()
+  {
+    return this.multiLine;
+  }
+
+  @NotNull
+  public Boolean getSticky()
+  {
+    return this.sticky;
+  }
+
+  @NotNull
+  public Boolean getUnicode()
+  {
+    return this.unicode;
+  }
+
+  @NotNull
+  public LiteralRegExpExpression setPattern(@NotNull String  pattern)
+  {
+    return new LiteralRegExpExpression(pattern, this.global, this.ignoreCase, this.multiLine, this.sticky, this.unicode);
+  }
+
+  @NotNull
+  public LiteralRegExpExpression setGlobal(@NotNull Boolean global)
+  {
+    return new LiteralRegExpExpression(this.pattern, global, this.ignoreCase, this.multiLine, this.sticky, this.unicode);
+  }
+
+  @NotNull
+  public LiteralRegExpExpression setIgnoreCase(@NotNull Boolean ignoreCase)
+  {
+    return new LiteralRegExpExpression(this.pattern, this.global, ignoreCase, this.multiLine, this.sticky, this.unicode);
+  }
+
+  @NotNull
+  public LiteralRegExpExpression setMultiLine(@NotNull Boolean multiLine)
+  {
+    return new LiteralRegExpExpression(this.pattern, this.global, this.ignoreCase, multiLine, this.sticky, this.unicode);
+  }
+
+  @NotNull
+  public LiteralRegExpExpression setSticky(@NotNull Boolean sticky)
+  {
+    return new LiteralRegExpExpression(this.pattern, this.global, this.ignoreCase, this.multiLine, sticky, this.unicode);
+  }
+
+  @NotNull
+  public LiteralRegExpExpression setUnicode(@NotNull Boolean unicode)
+  {
+    return new LiteralRegExpExpression(this.pattern, this.global, this.ignoreCase, this.multiLine, this.sticky, unicode);
+  }
+
+  @Override
+  @NotNull
+  public Precedence getPrecedence()
+  {
+    return Precedence.PRIMARY;
+  }
 
 }

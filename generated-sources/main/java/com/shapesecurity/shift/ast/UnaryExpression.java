@@ -18,64 +18,70 @@
 
 package com.shapesecurity.shift.ast;
 
+import org.jetbrains.annotations.NotNull;
 import com.shapesecurity.functional.data.HashCodeBuilder;
 import com.shapesecurity.shift.ast.operators.Precedence;
 import com.shapesecurity.shift.ast.operators.UnaryOperator;
 
-import org.jetbrains.annotations.NotNull;
-
 public class UnaryExpression extends Expression implements Node {
 
-    @NotNull
-    public final UnaryOperator operator;
+  @NotNull
+  public final UnaryOperator operator;
 
-    @NotNull
-    public final Expression operand;
+  @NotNull
+  public final Expression operand;
 
-    public UnaryExpression(@NotNull UnaryOperator operator, @NotNull Expression operand) {
-        super();
-        this.operator = operator;
-        this.operand = operand;
-    }
+  public UnaryExpression (@NotNull UnaryOperator operator, @NotNull Expression operand)
+  {
+    super();
+    this.operator = operator;
+    this.operand = operand;
+  }
 
-    @Override
-    public boolean equals(Object object) {
-        return object instanceof UnaryExpression && this.operator.equals(((UnaryExpression) object).operator) &&
-               this.operand.equals(((UnaryExpression) object).operand);
-    }
+  @Override
+  public boolean equals(Object object)
+  {
+    return object instanceof UnaryExpression && this.operator.equals(((UnaryExpression) object).operator) && this.operand.equals(((UnaryExpression) object).operand);
+  }
 
-    @Override
-    public int hashCode() {
-        int code = HashCodeBuilder.put(0, "UnaryExpression");
-        code = HashCodeBuilder.put(code, this.operator);
-        code = HashCodeBuilder.put(code, this.operand);
-        return code;
-    }
+  @Override
+  public int hashCode()
+  {
+    int code = HashCodeBuilder.put(0, "UnaryExpression");
+    code = HashCodeBuilder.put(code, this.operator);
+    code = HashCodeBuilder.put(code, this.operand);
+    return code;
+  }
 
-    @NotNull
-    public UnaryOperator getOperator() {
-        return this.operator;
-    }
+  @NotNull
+  public UnaryOperator getOperator()
+  {
+    return this.operator;
+  }
 
-    @NotNull
-    public UnaryExpression setOperator(@NotNull UnaryOperator operator) {
-        return new UnaryExpression(operator, this.operand);
-    }
+  @NotNull
+  public Expression getOperand()
+  {
+    return this.operand;
+  }
 
-    @NotNull
-    public Expression getOperand() {
-        return this.operand;
-    }
+  @NotNull
+  public UnaryExpression setOperator(@NotNull UnaryOperator operator)
+  {
+    return new UnaryExpression(operator, this.operand);
+  }
 
-    @NotNull
-    public UnaryExpression setOperand(@NotNull Expression operand) {
-        return new UnaryExpression(this.operator, operand);
-    }
+  @NotNull
+  public UnaryExpression setOperand(@NotNull Expression operand)
+  {
+    return new UnaryExpression(this.operator, operand);
+  }
 
-    @Override
-    @NotNull
-    public Precedence getPrecedence() {
-        return Precedence.PREFIX;
-    }
+  @Override
+  @NotNull
+  public Precedence getPrecedence()
+  {
+    return Precedence.PREFIX;
+  }
 
 }

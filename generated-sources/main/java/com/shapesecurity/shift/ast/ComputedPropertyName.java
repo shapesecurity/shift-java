@@ -18,41 +18,44 @@
 
 package com.shapesecurity.shift.ast;
 
-import com.shapesecurity.functional.data.HashCodeBuilder;
-
 import org.jetbrains.annotations.NotNull;
+import com.shapesecurity.functional.data.HashCodeBuilder;
 
 public class ComputedPropertyName extends PropertyName implements Node {
 
-    @NotNull
-    public final Expression expression;
+  @NotNull
+  public final Expression expression;
 
-    public ComputedPropertyName(@NotNull Expression expression) {
-        super();
-        this.expression = expression;
-    }
+  public ComputedPropertyName (@NotNull Expression expression)
+  {
+    super();
+    this.expression = expression;
+  }
 
-    @Override
-    public boolean equals(Object object) {
-        return object instanceof ComputedPropertyName && this.expression.equals(
-            ((ComputedPropertyName) object).expression);
-    }
+  @Override
+  public boolean equals(Object object)
+  {
+    return object instanceof ComputedPropertyName && this.expression.equals(((ComputedPropertyName) object).expression);
+  }
 
-    @Override
-    public int hashCode() {
-        int code = HashCodeBuilder.put(0, "ComputedPropertyName");
-        code = HashCodeBuilder.put(code, this.expression);
-        return code;
-    }
+  @Override
+  public int hashCode()
+  {
+    int code = HashCodeBuilder.put(0, "ComputedPropertyName");
+    code = HashCodeBuilder.put(code, this.expression);
+    return code;
+  }
 
-    @NotNull
-    public Expression getExpression() {
-        return this.expression;
-    }
+  @NotNull
+  public Expression getExpression()
+  {
+    return this.expression;
+  }
 
-    @NotNull
-    public ComputedPropertyName setExpression(@NotNull Expression expression) {
-        return new ComputedPropertyName(expression);
-    }
+  @NotNull
+  public ComputedPropertyName setExpression(@NotNull Expression expression)
+  {
+    return new ComputedPropertyName(expression);
+  }
 
 }

@@ -18,57 +18,62 @@
 
 package com.shapesecurity.shift.ast;
 
+import org.jetbrains.annotations.NotNull;
 import com.shapesecurity.functional.data.HashCodeBuilder;
 import com.shapesecurity.functional.data.Maybe;
 
-import org.jetbrains.annotations.NotNull;
-
 public class VariableDeclarator implements Node {
 
-    @NotNull
-    public final Binding binding;
+  @NotNull
+  public final Binding binding;
 
-    @NotNull
-    public final Maybe<Expression> init;
+  @NotNull
+  public final Maybe<Expression> init;
 
-    public VariableDeclarator(@NotNull Binding binding, @NotNull Maybe<Expression> init) {
-        super();
-        this.binding = binding;
-        this.init = init;
-    }
+  public VariableDeclarator (@NotNull Binding binding, @NotNull Maybe<Expression> init)
+  {
+    super();
+    this.binding = binding;
+    this.init = init;
+  }
 
-    @Override
-    public boolean equals(Object object) {
-        return object instanceof VariableDeclarator && this.binding.equals(((VariableDeclarator) object).binding) &&
-               this.init.equals(((VariableDeclarator) object).init);
-    }
+  @Override
+  public boolean equals(Object object)
+  {
+    return object instanceof VariableDeclarator && this.binding.equals(((VariableDeclarator) object).binding) && this.init.equals(((VariableDeclarator) object).init);
+  }
 
-    @Override
-    public int hashCode() {
-        int code = HashCodeBuilder.put(0, "VariableDeclarator");
-        code = HashCodeBuilder.put(code, this.binding);
-        code = HashCodeBuilder.put(code, this.init);
-        return code;
-    }
+  @Override
+  public int hashCode()
+  {
+    int code = HashCodeBuilder.put(0, "VariableDeclarator");
+    code = HashCodeBuilder.put(code, this.binding);
+    code = HashCodeBuilder.put(code, this.init);
+    return code;
+  }
 
-    @NotNull
-    public Binding getBinding() {
-        return this.binding;
-    }
+  @NotNull
+  public Binding getBinding()
+  {
+    return this.binding;
+  }
 
-    @NotNull
-    public VariableDeclarator setBinding(@NotNull Binding binding) {
-        return new VariableDeclarator(binding, this.init);
-    }
+  @NotNull
+  public Maybe<Expression> getInit()
+  {
+    return this.init;
+  }
 
-    @NotNull
-    public Maybe<Expression> getInit() {
-        return this.init;
-    }
+  @NotNull
+  public VariableDeclarator setBinding(@NotNull Binding binding)
+  {
+    return new VariableDeclarator(binding, this.init);
+  }
 
-    @NotNull
-    public VariableDeclarator setInit(@NotNull Maybe<Expression> init) {
-        return new VariableDeclarator(this.binding, init);
-    }
+  @NotNull
+  public VariableDeclarator setInit(@NotNull Maybe<Expression> init)
+  {
+    return new VariableDeclarator(this.binding, init);
+  }
 
 }

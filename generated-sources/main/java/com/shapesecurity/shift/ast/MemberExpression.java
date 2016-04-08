@@ -18,35 +18,38 @@
 
 package com.shapesecurity.shift.ast;
 
+import org.jetbrains.annotations.NotNull;
 import com.shapesecurity.functional.data.HashCodeBuilder;
 
-import org.jetbrains.annotations.NotNull;
+public abstract class MemberExpression extends Expression implements Node {
 
-public abstract class MemberExpression extends Expression implements Node, BindingIdentifierMemberExpression, Binding {
+  @NotNull
+  public final ExpressionSuper _object;
 
-    @NotNull
-    public final ExpressionSuper _object;
+  public MemberExpression (@NotNull ExpressionSuper _object)
+  {
+    super();
+    this._object = _object;
+  }
 
-    public MemberExpression(@NotNull ExpressionSuper _object) {
-        super();
-        this._object = _object;
-    }
+  @Override
+  public boolean equals(Object object)
+  {
+    return object instanceof MemberExpression && this._object.equals(((MemberExpression) object)._object);
+  }
 
-    @Override
-    public boolean equals(Object object) {
-        return object instanceof MemberExpression && this._object.equals(((MemberExpression) object)._object);
-    }
+  @Override
+  public int hashCode()
+  {
+    int code = HashCodeBuilder.put(0, "MemberExpression");
+    code = HashCodeBuilder.put(code, this._object);
+    return code;
+  }
 
-    @Override
-    public int hashCode() {
-        int code = HashCodeBuilder.put(0, "MemberExpression");
-        code = HashCodeBuilder.put(code, this._object);
-        return code;
-    }
-
-    @NotNull
-    public ExpressionSuper get_object() {
-        return this._object;
-    }
+  @NotNull
+  public ExpressionSuper get_object()
+  {
+    return this._object;
+  }
 
 }

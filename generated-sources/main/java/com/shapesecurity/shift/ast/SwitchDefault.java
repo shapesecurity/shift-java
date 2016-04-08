@@ -18,41 +18,45 @@
 
 package com.shapesecurity.shift.ast;
 
+import org.jetbrains.annotations.NotNull;
 import com.shapesecurity.functional.data.HashCodeBuilder;
 import com.shapesecurity.functional.data.ImmutableList;
 
-import org.jetbrains.annotations.NotNull;
-
 public class SwitchDefault implements Node {
 
-    @NotNull
-    public final ImmutableList<Statement> consequent;
+  @NotNull
+  public final ImmutableList<Statement> consequent;
 
-    public SwitchDefault(@NotNull ImmutableList<Statement> consequent) {
-        super();
-        this.consequent = consequent;
-    }
+  public SwitchDefault (@NotNull ImmutableList<Statement> consequent)
+  {
+    super();
+    this.consequent = consequent;
+  }
 
-    @Override
-    public boolean equals(Object object) {
-        return object instanceof SwitchDefault && this.consequent.equals(((SwitchDefault) object).consequent);
-    }
+  @Override
+  public boolean equals(Object object)
+  {
+    return object instanceof SwitchDefault && this.consequent.equals(((SwitchDefault) object).consequent);
+  }
 
-    @Override
-    public int hashCode() {
-        int code = HashCodeBuilder.put(0, "SwitchDefault");
-        code = HashCodeBuilder.put(code, this.consequent);
-        return code;
-    }
+  @Override
+  public int hashCode()
+  {
+    int code = HashCodeBuilder.put(0, "SwitchDefault");
+    code = HashCodeBuilder.put(code, this.consequent);
+    return code;
+  }
 
-    @NotNull
-    public ImmutableList<Statement> getConsequent() {
-        return this.consequent;
-    }
+  @NotNull
+  public ImmutableList<Statement> getConsequent()
+  {
+    return this.consequent;
+  }
 
-    @NotNull
-    public SwitchDefault setConsequent(@NotNull ImmutableList<Statement> consequent) {
-        return new SwitchDefault(consequent);
-    }
+  @NotNull
+  public SwitchDefault setConsequent(@NotNull ImmutableList<Statement> consequent)
+  {
+    return new SwitchDefault(consequent);
+  }
 
 }

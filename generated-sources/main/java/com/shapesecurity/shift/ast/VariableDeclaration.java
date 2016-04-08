@@ -18,61 +18,62 @@
 
 package com.shapesecurity.shift.ast;
 
+import org.jetbrains.annotations.NotNull;
 import com.shapesecurity.functional.data.HashCodeBuilder;
 import com.shapesecurity.functional.data.ImmutableList;
 
-import org.jetbrains.annotations.NotNull;
+public class VariableDeclaration implements Node, FunctionDeclarationClassDeclarationVariableDeclaration, VariableDeclarationAssignmentTarget, VariableDeclarationExpression {
 
-public class VariableDeclaration implements Node,
-    FunctionDeclarationClassDeclarationVariableDeclaration,
-    VariableDeclarationBinding,
-    VariableDeclarationExpression {
+  @NotNull
+  public final VariableDeclarationKind kind;
 
-    @NotNull
-    public final VariableDeclarationKind kind;
+  @NotNull
+  public final ImmutableList<VariableDeclarator> declarators;
 
-    @NotNull
-    public final ImmutableList<VariableDeclarator> declarators;
+  public VariableDeclaration (@NotNull VariableDeclarationKind kind, @NotNull ImmutableList<VariableDeclarator> declarators)
+  {
+    super();
+    this.kind = kind;
+    this.declarators = declarators;
+  }
 
-    public VariableDeclaration(@NotNull VariableDeclarationKind kind,
-                               @NotNull ImmutableList<VariableDeclarator> declarators) {
-        super();
-        this.kind = kind;
-        this.declarators = declarators;
-    }
+  @Override
+  public boolean equals(Object object)
+  {
+    return object instanceof VariableDeclaration && this.kind.equals(((VariableDeclaration) object).kind) && this.declarators.equals(((VariableDeclaration) object).declarators);
+  }
 
-    @Override
-    public boolean equals(Object object) {
-        return object instanceof VariableDeclaration && this.kind.equals(((VariableDeclaration) object).kind) &&
-               this.declarators.equals(((VariableDeclaration) object).declarators);
-    }
+  @Override
+  public int hashCode()
+  {
+    int code = HashCodeBuilder.put(0, "VariableDeclaration");
+    code = HashCodeBuilder.put(code, this.kind);
+    code = HashCodeBuilder.put(code, this.declarators);
+    return code;
+  }
 
-    @Override
-    public int hashCode() {
-        int code = HashCodeBuilder.put(0, "VariableDeclaration");
-        code = HashCodeBuilder.put(code, this.kind);
-        code = HashCodeBuilder.put(code, this.declarators);
-        return code;
-    }
+  @NotNull
+  public VariableDeclarationKind getKind()
+  {
+    return this.kind;
+  }
 
-    @NotNull
-    public VariableDeclarationKind getKind() {
-        return this.kind;
-    }
+  @NotNull
+  public ImmutableList<VariableDeclarator> getDeclarators()
+  {
+    return this.declarators;
+  }
 
-    @NotNull
-    public VariableDeclaration setKind(@NotNull VariableDeclarationKind kind) {
-        return new VariableDeclaration(kind, this.declarators);
-    }
+  @NotNull
+  public VariableDeclaration setKind(@NotNull VariableDeclarationKind kind)
+  {
+    return new VariableDeclaration(kind, this.declarators);
+  }
 
-    @NotNull
-    public ImmutableList<VariableDeclarator> getDeclarators() {
-        return this.declarators;
-    }
-
-    @NotNull
-    public VariableDeclaration setDeclarators(@NotNull ImmutableList<VariableDeclarator> declarators) {
-        return new VariableDeclaration(this.kind, declarators);
-    }
+  @NotNull
+  public VariableDeclaration setDeclarators(@NotNull ImmutableList<VariableDeclarator> declarators)
+  {
+    return new VariableDeclaration(this.kind, declarators);
+  }
 
 }

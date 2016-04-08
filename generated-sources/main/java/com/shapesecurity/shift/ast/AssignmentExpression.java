@@ -18,63 +18,69 @@
 
 package com.shapesecurity.shift.ast;
 
+import org.jetbrains.annotations.NotNull;
 import com.shapesecurity.functional.data.HashCodeBuilder;
 import com.shapesecurity.shift.ast.operators.Precedence;
 
-import org.jetbrains.annotations.NotNull;
-
 public class AssignmentExpression extends Expression implements Node {
 
-    @NotNull
-    public final Binding binding;
+  @NotNull
+  public final AssignmentTarget binding;
 
-    @NotNull
-    public final Expression expression;
+  @NotNull
+  public final Expression expression;
 
-    public AssignmentExpression(@NotNull Binding binding, @NotNull Expression expression) {
-        super();
-        this.binding = binding;
-        this.expression = expression;
-    }
+  public AssignmentExpression (@NotNull AssignmentTarget binding, @NotNull Expression expression)
+  {
+    super();
+    this.binding = binding;
+    this.expression = expression;
+  }
 
-    @Override
-    public boolean equals(Object object) {
-        return object instanceof AssignmentExpression && this.binding.equals(((AssignmentExpression) object).binding) &&
-               this.expression.equals(((AssignmentExpression) object).expression);
-    }
+  @Override
+  public boolean equals(Object object)
+  {
+    return object instanceof AssignmentExpression && this.binding.equals(((AssignmentExpression) object).binding) && this.expression.equals(((AssignmentExpression) object).expression);
+  }
 
-    @Override
-    public int hashCode() {
-        int code = HashCodeBuilder.put(0, "AssignmentExpression");
-        code = HashCodeBuilder.put(code, this.binding);
-        code = HashCodeBuilder.put(code, this.expression);
-        return code;
-    }
+  @Override
+  public int hashCode()
+  {
+    int code = HashCodeBuilder.put(0, "AssignmentExpression");
+    code = HashCodeBuilder.put(code, this.binding);
+    code = HashCodeBuilder.put(code, this.expression);
+    return code;
+  }
 
-    @NotNull
-    public Binding getBinding() {
-        return this.binding;
-    }
+  @NotNull
+  public AssignmentTarget getBinding()
+  {
+    return this.binding;
+  }
 
-    @NotNull
-    public AssignmentExpression setBinding(@NotNull Binding binding) {
-        return new AssignmentExpression(binding, this.expression);
-    }
+  @NotNull
+  public Expression getExpression()
+  {
+    return this.expression;
+  }
 
-    @NotNull
-    public Expression getExpression() {
-        return this.expression;
-    }
+  @NotNull
+  public AssignmentExpression setBinding(@NotNull AssignmentTarget binding)
+  {
+    return new AssignmentExpression(binding, this.expression);
+  }
 
-    @NotNull
-    public AssignmentExpression setExpression(@NotNull Expression expression) {
-        return new AssignmentExpression(this.binding, expression);
-    }
+  @NotNull
+  public AssignmentExpression setExpression(@NotNull Expression expression)
+  {
+    return new AssignmentExpression(this.binding, expression);
+  }
 
-    @Override
-    @NotNull
-    public Precedence getPrecedence() {
-        return Precedence.ASSIGNMENT;
-    }
+  @Override
+  @NotNull
+  public Precedence getPrecedence()
+  {
+    return Precedence.ASSIGNMENT;
+  }
 
 }

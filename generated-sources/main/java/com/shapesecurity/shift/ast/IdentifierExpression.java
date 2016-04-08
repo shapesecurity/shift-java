@@ -18,47 +18,52 @@
 
 package com.shapesecurity.shift.ast;
 
+import org.jetbrains.annotations.NotNull;
 import com.shapesecurity.functional.data.HashCodeBuilder;
 import com.shapesecurity.shift.ast.operators.Precedence;
 
-import org.jetbrains.annotations.NotNull;
-
 public class IdentifierExpression extends Expression implements Node {
 
-    @NotNull
-    public final String name;
+  @NotNull
+  public final String name;
 
-    public IdentifierExpression(@NotNull String name) {
-        super();
-        this.name = name;
-    }
+  public IdentifierExpression (@NotNull String name)
+  {
+    super();
+    this.name = name;
+  }
 
-    @Override
-    public boolean equals(Object object) {
-        return object instanceof IdentifierExpression && this.name.equals(((IdentifierExpression) object).name);
-    }
+  @Override
+  public boolean equals(Object object)
+  {
+    return object instanceof IdentifierExpression && this.name.equals(((IdentifierExpression) object).name);
+  }
 
-    @Override
-    public int hashCode() {
-        int code = HashCodeBuilder.put(0, "IdentifierExpression");
-        code = HashCodeBuilder.put(code, this.name);
-        return code;
-    }
+  @Override
+  public int hashCode()
+  {
+    int code = HashCodeBuilder.put(0, "IdentifierExpression");
+    code = HashCodeBuilder.put(code, this.name);
+    return code;
+  }
 
-    @NotNull
-    public String getName() {
-        return this.name;
-    }
+  @NotNull
+  public String getName()
+  {
+    return this.name;
+  }
 
-    @NotNull
-    public IdentifierExpression setName(@NotNull String name) {
-        return new IdentifierExpression(name);
-    }
+  @NotNull
+  public IdentifierExpression setName(@NotNull String name)
+  {
+    return new IdentifierExpression(name);
+  }
 
-    @Override
-    @NotNull
-    public Precedence getPrecedence() {
-        return Precedence.PRIMARY;
-    }
+  @Override
+  @NotNull
+  public Precedence getPrecedence()
+  {
+    return Precedence.PRIMARY;
+  }
 
 }

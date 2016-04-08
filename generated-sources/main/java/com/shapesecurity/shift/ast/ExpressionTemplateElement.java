@@ -18,4 +18,5 @@
 
 package com.shapesecurity.shift.ast;
 
-public interface ExpressionTemplateElement extends Node {}
+public interface ExpressionTemplateElement extends Node {
+}

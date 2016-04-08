@@ -18,41 +18,45 @@
 
 package com.shapesecurity.shift.ast;
 
+import org.jetbrains.annotations.NotNull;
 import com.shapesecurity.functional.data.HashCodeBuilder;
 import com.shapesecurity.functional.data.Maybe;
 
-import org.jetbrains.annotations.NotNull;
-
 public class ContinueStatement extends Statement implements Node {
 
-    @NotNull
-    public final Maybe<String> label;
+  @NotNull
+  public final Maybe<String> label;
 
-    public ContinueStatement(@NotNull Maybe<String> label) {
-        super();
-        this.label = label;
-    }
+  public ContinueStatement (@NotNull Maybe<String> label)
+  {
+    super();
+    this.label = label;
+  }
 
-    @Override
-    public boolean equals(Object object) {
-        return object instanceof ContinueStatement && this.label.equals(((ContinueStatement) object).label);
-    }
+  @Override
+  public boolean equals(Object object)
+  {
+    return object instanceof ContinueStatement && this.label.equals(((ContinueStatement) object).label);
+  }
 
-    @Override
-    public int hashCode() {
-        int code = HashCodeBuilder.put(0, "ContinueStatement");
-        code = HashCodeBuilder.put(code, this.label);
-        return code;
-    }
+  @Override
+  public int hashCode()
+  {
+    int code = HashCodeBuilder.put(0, "ContinueStatement");
+    code = HashCodeBuilder.put(code, this.label);
+    return code;
+  }
 
-    @NotNull
-    public Maybe<String> getLabel() {
-        return this.label;
-    }
+  @NotNull
+  public Maybe<String> getLabel()
+  {
+    return this.label;
+  }
 
-    @NotNull
-    public ContinueStatement setLabel(@NotNull Maybe<String> label) {
-        return new ContinueStatement(label);
-    }
+  @NotNull
+  public ContinueStatement setLabel(@NotNull Maybe<String> label)
+  {
+    return new ContinueStatement(label);
+  }
 
 }

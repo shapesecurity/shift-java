@@ -18,47 +18,52 @@
 
 package com.shapesecurity.shift.ast;
 
+import org.jetbrains.annotations.NotNull;
 import com.shapesecurity.functional.data.HashCodeBuilder;
 import com.shapesecurity.shift.ast.operators.Precedence;
 
-import org.jetbrains.annotations.NotNull;
-
 public class LiteralStringExpression extends Expression implements Node {
 
-    @NotNull
-    public final String value;
+  @NotNull
+  public final String  value;
 
-    public LiteralStringExpression(@NotNull String value) {
-        super();
-        this.value = value;
-    }
+  public LiteralStringExpression (@NotNull String  value)
+  {
+    super();
+    this.value = value;
+  }
 
-    @Override
-    public boolean equals(Object object) {
-        return object instanceof LiteralStringExpression && this.value.equals(((LiteralStringExpression) object).value);
-    }
+  @Override
+  public boolean equals(Object object)
+  {
+    return object instanceof LiteralStringExpression && this.value.equals(((LiteralStringExpression) object).value);
+  }
 
-    @Override
-    public int hashCode() {
-        int code = HashCodeBuilder.put(0, "LiteralStringExpression");
-        code = HashCodeBuilder.put(code, this.value);
-        return code;
-    }
+  @Override
+  public int hashCode()
+  {
+    int code = HashCodeBuilder.put(0, "LiteralStringExpression");
+    code = HashCodeBuilder.put(code, this.value);
+    return code;
+  }
 
-    @NotNull
-    public String getValue() {
-        return this.value;
-    }
+  @NotNull
+  public String  getValue()
+  {
+    return this.value;
+  }
 
-    @NotNull
-    public LiteralStringExpression setValue(@NotNull String value) {
-        return new LiteralStringExpression(value);
-    }
+  @NotNull
+  public LiteralStringExpression setValue(@NotNull String  value)
+  {
+    return new LiteralStringExpression(value);
+  }
 
-    @Override
-    @NotNull
-    public Precedence getPrecedence() {
-        return Precedence.PRIMARY;
-    }
+  @Override
+  @NotNull
+  public Precedence getPrecedence()
+  {
+    return Precedence.PRIMARY;
+  }
 
 }

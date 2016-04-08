@@ -18,35 +18,38 @@
 
 package com.shapesecurity.shift.ast;
 
-import com.shapesecurity.functional.data.HashCodeBuilder;
-
 import org.jetbrains.annotations.NotNull;
+import com.shapesecurity.functional.data.HashCodeBuilder;
 
 public abstract class IterationStatement extends Statement implements Node {
 
-    @NotNull
-    public final Statement body;
+  @NotNull
+  public final Statement body;
 
-    public IterationStatement(@NotNull Statement body) {
-        super();
-        this.body = body;
-    }
+  public IterationStatement (@NotNull Statement body)
+  {
+    super();
+    this.body = body;
+  }
 
-    @Override
-    public boolean equals(Object object) {
-        return object instanceof IterationStatement && this.body.equals(((IterationStatement) object).body);
-    }
+  @Override
+  public boolean equals(Object object)
+  {
+    return object instanceof IterationStatement && this.body.equals(((IterationStatement) object).body);
+  }
 
-    @Override
-    public int hashCode() {
-        int code = HashCodeBuilder.put(0, "IterationStatement");
-        code = HashCodeBuilder.put(code, this.body);
-        return code;
-    }
+  @Override
+  public int hashCode()
+  {
+    int code = HashCodeBuilder.put(0, "IterationStatement");
+    code = HashCodeBuilder.put(code, this.body);
+    return code;
+  }
 
-    @NotNull
-    public Statement getBody() {
-        return this.body;
-    }
+  @NotNull
+  public Statement getBody()
+  {
+    return this.body;
+  }
 
 }

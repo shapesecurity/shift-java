@@ -18,76 +18,80 @@
 
 package com.shapesecurity.shift.ast;
 
-import com.shapesecurity.functional.data.HashCodeBuilder;
-import com.shapesecurity.functional.data.ImmutableList;
-import com.shapesecurity.functional.data.Maybe;
-
 import org.jetbrains.annotations.NotNull;
+import com.shapesecurity.functional.data.HashCodeBuilder;
+import com.shapesecurity.functional.data.Maybe;
+import com.shapesecurity.functional.data.ImmutableList;
 
 public class Import extends ImportDeclaration implements Node {
 
-    @NotNull
-    public final Maybe<BindingIdentifier> defaultBinding;
+  @NotNull
+  public final Maybe<BindingIdentifier> defaultBinding;
 
-    @NotNull
-    public final ImmutableList<ImportSpecifier> namedImports;
+  @NotNull
+  public final ImmutableList<ImportSpecifier> namedImports;
 
-    @NotNull
-    public final String moduleSpecifier;
+  @NotNull
+  public final String  moduleSpecifier;
 
-    public Import(@NotNull Maybe<BindingIdentifier> defaultBinding,
-                  @NotNull ImmutableList<ImportSpecifier> namedImports,
-                  @NotNull String moduleSpecifier) {
-        super(moduleSpecifier);
-        this.defaultBinding = defaultBinding;
-        this.namedImports = namedImports;
-        this.moduleSpecifier = moduleSpecifier;
-    }
+  public Import (@NotNull Maybe<BindingIdentifier> defaultBinding, @NotNull ImmutableList<ImportSpecifier> namedImports, @NotNull String  moduleSpecifier)
+  {
+    super(moduleSpecifier);
+    this.defaultBinding = defaultBinding;
+    this.namedImports = namedImports;
+    this.moduleSpecifier = moduleSpecifier;
+  }
 
-    @Override
-    public boolean equals(Object object) {
-        return object instanceof Import && this.defaultBinding.equals(((Import) object).defaultBinding) &&
-               this.namedImports.equals(((Import) object).namedImports) && this.moduleSpecifier.equals(
-            ((Import) object).moduleSpecifier);
-    }
+  @Override
+  public boolean equals(Object object)
+  {
+    return object instanceof Import && this.defaultBinding.equals(((Import) object).defaultBinding) && this.namedImports.equals(((Import) object).namedImports) && this.moduleSpecifier.equals(((Import) object).moduleSpecifier);
+  }
 
-    @Override
-    public int hashCode() {
-        int code = HashCodeBuilder.put(0, "Import");
-        code = HashCodeBuilder.put(code, this.defaultBinding);
-        code = HashCodeBuilder.put(code, this.namedImports);
-        code = HashCodeBuilder.put(code, this.moduleSpecifier);
-        return code;
-    }
+  @Override
+  public int hashCode()
+  {
+    int code = HashCodeBuilder.put(0, "Import");
+    code = HashCodeBuilder.put(code, this.defaultBinding);
+    code = HashCodeBuilder.put(code, this.namedImports);
+    code = HashCodeBuilder.put(code, this.moduleSpecifier);
+    return code;
+  }
 
-    @NotNull
-    public Maybe<BindingIdentifier> getDefaultBinding() {
-        return this.defaultBinding;
-    }
+  @NotNull
+  public Maybe<BindingIdentifier> getDefaultBinding()
+  {
+    return this.defaultBinding;
+  }
 
-    @NotNull
-    public Import setDefaultBinding(@NotNull Maybe<BindingIdentifier> defaultBinding) {
-        return new Import(defaultBinding, this.namedImports, this.moduleSpecifier);
-    }
+  @NotNull
+  public ImmutableList<ImportSpecifier> getNamedImports()
+  {
+    return this.namedImports;
+  }
 
-    @NotNull
-    public ImmutableList<ImportSpecifier> getNamedImports() {
-        return this.namedImports;
-    }
+  @NotNull
+  public String  getModuleSpecifier()
+  {
+    return this.moduleSpecifier;
+  }
 
-    @NotNull
-    public Import setNamedImports(@NotNull ImmutableList<ImportSpecifier> namedImports) {
-        return new Import(this.defaultBinding, namedImports, this.moduleSpecifier);
-    }
+  @NotNull
+  public Import setDefaultBinding(@NotNull Maybe<BindingIdentifier> defaultBinding)
+  {
+    return new Import(defaultBinding, this.namedImports, this.moduleSpecifier);
+  }
 
-    @NotNull
-    public String getModuleSpecifier() {
-        return this.moduleSpecifier;
-    }
+  @NotNull
+  public Import setNamedImports(@NotNull ImmutableList<ImportSpecifier> namedImports)
+  {
+    return new Import(this.defaultBinding, namedImports, this.moduleSpecifier);
+  }
 
-    @NotNull
-    public Import setModuleSpecifier(@NotNull String moduleSpecifier) {
-        return new Import(this.defaultBinding, this.namedImports, moduleSpecifier);
-    }
+  @NotNull
+  public Import setModuleSpecifier(@NotNull String  moduleSpecifier)
+  {
+    return new Import(this.defaultBinding, this.namedImports, moduleSpecifier);
+  }
 
 }

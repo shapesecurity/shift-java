@@ -18,57 +18,62 @@
 
 package com.shapesecurity.shift.ast;
 
+import org.jetbrains.annotations.NotNull;
 import com.shapesecurity.functional.data.HashCodeBuilder;
 import com.shapesecurity.functional.data.ImmutableList;
 
-import org.jetbrains.annotations.NotNull;
-
 public class SwitchCase implements Node {
 
-    @NotNull
-    public final Expression test;
+  @NotNull
+  public final Expression test;
 
-    @NotNull
-    public final ImmutableList<Statement> consequent;
+  @NotNull
+  public final ImmutableList<Statement> consequent;
 
-    public SwitchCase(@NotNull Expression test, @NotNull ImmutableList<Statement> consequent) {
-        super();
-        this.test = test;
-        this.consequent = consequent;
-    }
+  public SwitchCase (@NotNull Expression test, @NotNull ImmutableList<Statement> consequent)
+  {
+    super();
+    this.test = test;
+    this.consequent = consequent;
+  }
 
-    @Override
-    public boolean equals(Object object) {
-        return object instanceof SwitchCase && this.test.equals(((SwitchCase) object).test) && this.consequent.equals(
-            ((SwitchCase) object).consequent);
-    }
+  @Override
+  public boolean equals(Object object)
+  {
+    return object instanceof SwitchCase && this.test.equals(((SwitchCase) object).test) && this.consequent.equals(((SwitchCase) object).consequent);
+  }
 
-    @Override
-    public int hashCode() {
-        int code = HashCodeBuilder.put(0, "SwitchCase");
-        code = HashCodeBuilder.put(code, this.test);
-        code = HashCodeBuilder.put(code, this.consequent);
-        return code;
-    }
+  @Override
+  public int hashCode()
+  {
+    int code = HashCodeBuilder.put(0, "SwitchCase");
+    code = HashCodeBuilder.put(code, this.test);
+    code = HashCodeBuilder.put(code, this.consequent);
+    return code;
+  }
 
-    @NotNull
-    public Expression getTest() {
-        return this.test;
-    }
+  @NotNull
+  public Expression getTest()
+  {
+    return this.test;
+  }
 
-    @NotNull
-    public SwitchCase setTest(@NotNull Expression test) {
-        return new SwitchCase(test, this.consequent);
-    }
+  @NotNull
+  public ImmutableList<Statement> getConsequent()
+  {
+    return this.consequent;
+  }
 
-    @NotNull
-    public ImmutableList<Statement> getConsequent() {
-        return this.consequent;
-    }
+  @NotNull
+  public SwitchCase setTest(@NotNull Expression test)
+  {
+    return new SwitchCase(test, this.consequent);
+  }
 
-    @NotNull
-    public SwitchCase setConsequent(@NotNull ImmutableList<Statement> consequent) {
-        return new SwitchCase(this.test, consequent);
-    }
+  @NotNull
+  public SwitchCase setConsequent(@NotNull ImmutableList<Statement> consequent)
+  {
+    return new SwitchCase(this.test, consequent);
+  }
 
 }

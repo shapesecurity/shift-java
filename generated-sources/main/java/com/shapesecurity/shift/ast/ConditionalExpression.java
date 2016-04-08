@@ -18,81 +18,86 @@
 
 package com.shapesecurity.shift.ast;
 
+import org.jetbrains.annotations.NotNull;
 import com.shapesecurity.functional.data.HashCodeBuilder;
 import com.shapesecurity.shift.ast.operators.Precedence;
 
-import org.jetbrains.annotations.NotNull;
-
 public class ConditionalExpression extends Expression implements Node {
 
-    @NotNull
-    public final Expression test;
+  @NotNull
+  public final Expression test;
 
-    @NotNull
-    public final Expression consequent;
+  @NotNull
+  public final Expression consequent;
 
-    @NotNull
-    public final Expression alternate;
+  @NotNull
+  public final Expression alternate;
 
-    public ConditionalExpression(@NotNull Expression test,
-                                 @NotNull Expression consequent,
-                                 @NotNull Expression alternate) {
-        super();
-        this.test = test;
-        this.consequent = consequent;
-        this.alternate = alternate;
-    }
+  public ConditionalExpression (@NotNull Expression test, @NotNull Expression consequent, @NotNull Expression alternate)
+  {
+    super();
+    this.test = test;
+    this.consequent = consequent;
+    this.alternate = alternate;
+  }
 
-    @Override
-    public boolean equals(Object object) {
-        return object instanceof ConditionalExpression && this.test.equals(((ConditionalExpression) object).test) &&
-               this.consequent.equals(((ConditionalExpression) object).consequent) && this.alternate.equals(
-            ((ConditionalExpression) object).alternate);
-    }
+  @Override
+  public boolean equals(Object object)
+  {
+    return object instanceof ConditionalExpression && this.test.equals(((ConditionalExpression) object).test) && this.consequent.equals(((ConditionalExpression) object).consequent) && this.alternate.equals(((ConditionalExpression) object).alternate);
+  }
 
-    @Override
-    public int hashCode() {
-        int code = HashCodeBuilder.put(0, "ConditionalExpression");
-        code = HashCodeBuilder.put(code, this.test);
-        code = HashCodeBuilder.put(code, this.consequent);
-        code = HashCodeBuilder.put(code, this.alternate);
-        return code;
-    }
+  @Override
+  public int hashCode()
+  {
+    int code = HashCodeBuilder.put(0, "ConditionalExpression");
+    code = HashCodeBuilder.put(code, this.test);
+    code = HashCodeBuilder.put(code, this.consequent);
+    code = HashCodeBuilder.put(code, this.alternate);
+    return code;
+  }
 
-    @NotNull
-    public Expression getTest() {
-        return this.test;
-    }
+  @NotNull
+  public Expression getTest()
+  {
+    return this.test;
+  }
 
-    @NotNull
-    public ConditionalExpression setTest(@NotNull Expression test) {
-        return new ConditionalExpression(test, this.consequent, this.alternate);
-    }
+  @NotNull
+  public Expression getConsequent()
+  {
+    return this.consequent;
+  }
 
-    @NotNull
-    public Expression getConsequent() {
-        return this.consequent;
-    }
+  @NotNull
+  public Expression getAlternate()
+  {
+    return this.alternate;
+  }
 
-    @NotNull
-    public ConditionalExpression setConsequent(@NotNull Expression consequent) {
-        return new ConditionalExpression(this.test, consequent, this.alternate);
-    }
+  @NotNull
+  public ConditionalExpression setTest(@NotNull Expression test)
+  {
+    return new ConditionalExpression(test, this.consequent, this.alternate);
+  }
 
-    @NotNull
-    public Expression getAlternate() {
-        return this.alternate;
-    }
+  @NotNull
+  public ConditionalExpression setConsequent(@NotNull Expression consequent)
+  {
+    return new ConditionalExpression(this.test, consequent, this.alternate);
+  }
 
-    @NotNull
-    public ConditionalExpression setAlternate(@NotNull Expression alternate) {
-        return new ConditionalExpression(this.test, this.consequent, alternate);
-    }
+  @NotNull
+  public ConditionalExpression setAlternate(@NotNull Expression alternate)
+  {
+    return new ConditionalExpression(this.test, this.consequent, alternate);
+  }
 
-    @Override
-    @NotNull
-    public Precedence getPrecedence() {
-        return Precedence.CONDITIONAL;
-    }
+  @Override
+  @NotNull
+  public Precedence getPrecedence()
+  {
+    return Precedence.CONDITIONAL;
+  }
 
 }

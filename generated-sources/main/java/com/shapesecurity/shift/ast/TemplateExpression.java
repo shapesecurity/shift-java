@@ -18,71 +18,71 @@
 
 package com.shapesecurity.shift.ast;
 
-import com.shapesecurity.functional.data.HashCodeBuilder;
-import com.shapesecurity.functional.data.ImmutableList;
-import com.shapesecurity.functional.data.Maybe;
-import com.shapesecurity.shift.ast.operators.Precedence;
 import org.jetbrains.annotations.NotNull;
+import com.shapesecurity.functional.data.HashCodeBuilder;
+import com.shapesecurity.functional.data.Maybe;
+import com.shapesecurity.functional.data.ImmutableList;
+import com.shapesecurity.shift.ast.operators.Precedence;
 
 public class TemplateExpression extends Expression implements Node {
 
-    @NotNull
-    public final Maybe<Expression> tag;
+  @NotNull
+  public final Maybe<Expression> tag;
 
-    @NotNull
-    public final ImmutableList<ExpressionTemplateElement> elements;
+  @NotNull
+  public final ImmutableList<ExpressionTemplateElement> elements;
 
-    public TemplateExpression(@NotNull Maybe<Expression> tag,
-                              @NotNull ImmutableList<ExpressionTemplateElement> elements) {
-        super();
-        this.tag = tag;
-        this.elements = elements;
-    }
+  public TemplateExpression (@NotNull Maybe<Expression> tag, @NotNull ImmutableList<ExpressionTemplateElement> elements)
+  {
+    super();
+    this.tag = tag;
+    this.elements = elements;
+  }
 
-    @Override
-    public boolean equals(Object object) {
-        return object instanceof TemplateExpression && this.tag.equals(((TemplateExpression) object).tag) &&
-                this.elements.equals(((TemplateExpression) object).elements);
-    }
+  @Override
+  public boolean equals(Object object)
+  {
+    return object instanceof TemplateExpression && this.tag.equals(((TemplateExpression) object).tag) && this.elements.equals(((TemplateExpression) object).elements);
+  }
 
-    @Override
-    public int hashCode() {
-        int code = HashCodeBuilder.put(0, "TemplateExpression");
-        code = HashCodeBuilder.put(code, this.tag);
-        code = HashCodeBuilder.put(code, this.elements);
-        return code;
-    }
+  @Override
+  public int hashCode()
+  {
+    int code = HashCodeBuilder.put(0, "TemplateExpression");
+    code = HashCodeBuilder.put(code, this.tag);
+    code = HashCodeBuilder.put(code, this.elements);
+    return code;
+  }
 
-    @NotNull
-    public Maybe<Expression> getTag() {
-        return this.tag;
-    }
+  @NotNull
+  public Maybe<Expression> getTag()
+  {
+    return this.tag;
+  }
 
-    @NotNull
-    public TemplateExpression setTag(@NotNull Maybe<Expression> tag) {
-        return new TemplateExpression(tag, this.elements);
-    }
+  @NotNull
+  public ImmutableList<ExpressionTemplateElement> getElements()
+  {
+    return this.elements;
+  }
 
-    @NotNull
-    public ImmutableList<ExpressionTemplateElement> getElements() {
-        return this.elements;
-    }
+  @NotNull
+  public TemplateExpression setTag(@NotNull Maybe<Expression> tag)
+  {
+    return new TemplateExpression(tag, this.elements);
+  }
 
-    @NotNull
-    public TemplateExpression setElements(@NotNull ImmutableList<ExpressionTemplateElement> elements) {
-        return new TemplateExpression(this.tag, elements);
-    }
+  @NotNull
+  public TemplateExpression setElements(@NotNull ImmutableList<ExpressionTemplateElement> elements)
+  {
+    return new TemplateExpression(this.tag, elements);
+  }
 
-    @Override
-    @NotNull
-    public Precedence getPrecedence() {
-        return this.tag.map(tag -> {
-            Precedence tagPrecedence = tag.getPrecedence();
-            if (tagPrecedence == Precedence.CALL) {
-                return Precedence.CALL;
-            }
-            return Precedence.MEMBER;
-        }).orJust(Precedence.MEMBER);
-    }
+  @Override
+  @NotNull
+  public Precedence getPrecedence()
+  {
+    return this.tag.isJust() ? Precedence.MEMBER : Precedence.PRIMARY;
+  }
 
 }

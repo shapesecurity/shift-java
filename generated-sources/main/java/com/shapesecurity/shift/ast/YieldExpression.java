@@ -18,48 +18,53 @@
 
 package com.shapesecurity.shift.ast;
 
+import org.jetbrains.annotations.NotNull;
 import com.shapesecurity.functional.data.HashCodeBuilder;
 import com.shapesecurity.functional.data.Maybe;
 import com.shapesecurity.shift.ast.operators.Precedence;
 
-import org.jetbrains.annotations.NotNull;
-
 public class YieldExpression extends Expression implements Node {
 
-    @NotNull
-    public final Maybe<Expression> expression;
+  @NotNull
+  public final Maybe<Expression> expression;
 
-    public YieldExpression(@NotNull Maybe<Expression> expression) {
-        super();
-        this.expression = expression;
-    }
+  public YieldExpression (@NotNull Maybe<Expression> expression)
+  {
+    super();
+    this.expression = expression;
+  }
 
-    @Override
-    public boolean equals(Object object) {
-        return object instanceof YieldExpression && this.expression.equals(((YieldExpression) object).expression);
-    }
+  @Override
+  public boolean equals(Object object)
+  {
+    return object instanceof YieldExpression && this.expression.equals(((YieldExpression) object).expression);
+  }
 
-    @Override
-    public int hashCode() {
-        int code = HashCodeBuilder.put(0, "YieldExpression");
-        code = HashCodeBuilder.put(code, this.expression);
-        return code;
-    }
+  @Override
+  public int hashCode()
+  {
+    int code = HashCodeBuilder.put(0, "YieldExpression");
+    code = HashCodeBuilder.put(code, this.expression);
+    return code;
+  }
 
-    @NotNull
-    public Maybe<Expression> getExpression() {
-        return this.expression;
-    }
+  @NotNull
+  public Maybe<Expression> getExpression()
+  {
+    return this.expression;
+  }
 
-    @NotNull
-    public YieldExpression setExpression(@NotNull Maybe<Expression> expression) {
-        return new YieldExpression(expression);
-    }
+  @NotNull
+  public YieldExpression setExpression(@NotNull Maybe<Expression> expression)
+  {
+    return new YieldExpression(expression);
+  }
 
-    @Override
-    @NotNull
-    public Precedence getPrecedence() {
-        return Precedence.ASSIGNMENT;
-    }
+  @Override
+  @NotNull
+  public Precedence getPrecedence()
+  {
+    return Precedence.ASSIGNMENT;
+  }
 
 }

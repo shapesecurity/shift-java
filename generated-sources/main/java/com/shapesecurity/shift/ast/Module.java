@@ -18,58 +18,62 @@
 
 package com.shapesecurity.shift.ast;
 
+import org.jetbrains.annotations.NotNull;
 import com.shapesecurity.functional.data.HashCodeBuilder;
 import com.shapesecurity.functional.data.ImmutableList;
 
-import org.jetbrains.annotations.NotNull;
+public class Module extends Program implements Node {
 
-public class Module implements Node {
+  @NotNull
+  public final ImmutableList<Directive> directives;
 
-    @NotNull
-    public final ImmutableList<Directive> directives;
+  @NotNull
+  public final ImmutableList<ImportDeclarationExportDeclarationStatement> items;
 
-    @NotNull
-    public final ImmutableList<ImportDeclarationExportDeclarationStatement> items;
+  public Module (@NotNull ImmutableList<Directive> directives, @NotNull ImmutableList<ImportDeclarationExportDeclarationStatement> items)
+  {
+    super();
+    this.directives = directives;
+    this.items = items;
+  }
 
-    public Module(@NotNull ImmutableList<Directive> directives,
-                  @NotNull ImmutableList<ImportDeclarationExportDeclarationStatement> items) {
-        super();
-        this.directives = directives;
-        this.items = items;
-    }
+  @Override
+  public boolean equals(Object object)
+  {
+    return object instanceof Module && this.directives.equals(((Module) object).directives) && this.items.equals(((Module) object).items);
+  }
 
-    @Override
-    public boolean equals(Object object) {
-        return object instanceof Module && this.directives.equals(((Module) object).directives) && this.items.equals(
-            ((Module) object).items);
-    }
+  @Override
+  public int hashCode()
+  {
+    int code = HashCodeBuilder.put(0, "Module");
+    code = HashCodeBuilder.put(code, this.directives);
+    code = HashCodeBuilder.put(code, this.items);
+    return code;
+  }
 
-    @Override
-    public int hashCode() {
-        int code = HashCodeBuilder.put(0, "Module");
-        code = HashCodeBuilder.put(code, this.directives);
-        code = HashCodeBuilder.put(code, this.items);
-        return code;
-    }
+  @NotNull
+  public ImmutableList<Directive> getDirectives()
+  {
+    return this.directives;
+  }
 
-    @NotNull
-    public ImmutableList<Directive> getDirectives() {
-        return this.directives;
-    }
+  @NotNull
+  public ImmutableList<ImportDeclarationExportDeclarationStatement> getItems()
+  {
+    return this.items;
+  }
 
-    @NotNull
-    public Module setDirectives(@NotNull ImmutableList<Directive> directives) {
-        return new Module(directives, this.items);
-    }
+  @NotNull
+  public Module setDirectives(@NotNull ImmutableList<Directive> directives)
+  {
+    return new Module(directives, this.items);
+  }
 
-    @NotNull
-    public ImmutableList<ImportDeclarationExportDeclarationStatement> getItems() {
-        return this.items;
-    }
-
-    @NotNull
-    public Module setItems(@NotNull ImmutableList<ImportDeclarationExportDeclarationStatement> items) {
-        return new Module(this.directives, items);
-    }
+  @NotNull
+  public Module setItems(@NotNull ImmutableList<ImportDeclarationExportDeclarationStatement> items)
+  {
+    return new Module(this.directives, items);
+  }
 
 }

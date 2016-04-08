@@ -18,82 +18,87 @@
 
 package com.shapesecurity.shift.ast;
 
+import org.jetbrains.annotations.NotNull;
 import com.shapesecurity.functional.data.HashCodeBuilder;
 import com.shapesecurity.shift.ast.operators.Precedence;
 import com.shapesecurity.shift.ast.operators.UpdateOperator;
 
-import org.jetbrains.annotations.NotNull;
-
 public class UpdateExpression extends Expression implements Node {
 
-    @NotNull
-    public final Boolean isPrefix;
+  @NotNull
+  public final Boolean isPrefix;
 
-    @NotNull
-    public final UpdateOperator operator;
+  @NotNull
+  public final UpdateOperator operator;
 
-    @NotNull
-    public final BindingIdentifierMemberExpression operand;
+  @NotNull
+  public final SimpleAssignmentTarget operand;
 
-    public UpdateExpression(@NotNull Boolean isPrefix,
-                            @NotNull UpdateOperator operator,
-                            @NotNull BindingIdentifierMemberExpression operand) {
-        super();
-        this.isPrefix = isPrefix;
-        this.operator = operator;
-        this.operand = operand;
-    }
+  public UpdateExpression (@NotNull Boolean isPrefix, @NotNull UpdateOperator operator, @NotNull SimpleAssignmentTarget operand)
+  {
+    super();
+    this.isPrefix = isPrefix;
+    this.operator = operator;
+    this.operand = operand;
+  }
 
-    @Override
-    public boolean equals(Object object) {
-        return object instanceof UpdateExpression && this.isPrefix.equals(((UpdateExpression) object).isPrefix) &&
-               this.operator.equals(((UpdateExpression) object).operator) && this.operand.equals(
-            ((UpdateExpression) object).operand);
-    }
+  @Override
+  public boolean equals(Object object)
+  {
+    return object instanceof UpdateExpression && this.isPrefix.equals(((UpdateExpression) object).isPrefix) && this.operator.equals(((UpdateExpression) object).operator) && this.operand.equals(((UpdateExpression) object).operand);
+  }
 
-    @Override
-    public int hashCode() {
-        int code = HashCodeBuilder.put(0, "UpdateExpression");
-        code = HashCodeBuilder.put(code, this.isPrefix);
-        code = HashCodeBuilder.put(code, this.operator);
-        code = HashCodeBuilder.put(code, this.operand);
-        return code;
-    }
+  @Override
+  public int hashCode()
+  {
+    int code = HashCodeBuilder.put(0, "UpdateExpression");
+    code = HashCodeBuilder.put(code, this.isPrefix);
+    code = HashCodeBuilder.put(code, this.operator);
+    code = HashCodeBuilder.put(code, this.operand);
+    return code;
+  }
 
-    @NotNull
-    public Boolean getIsPrefix() {
-        return this.isPrefix;
-    }
+  @NotNull
+  public Boolean getIsPrefix()
+  {
+    return this.isPrefix;
+  }
 
-    @NotNull
-    public UpdateExpression setIsPrefix(@NotNull Boolean isPrefix) {
-        return new UpdateExpression(isPrefix, this.operator, this.operand);
-    }
+  @NotNull
+  public UpdateOperator getOperator()
+  {
+    return this.operator;
+  }
 
-    @NotNull
-    public UpdateOperator getOperator() {
-        return this.operator;
-    }
+  @NotNull
+  public SimpleAssignmentTarget getOperand()
+  {
+    return this.operand;
+  }
 
-    @NotNull
-    public UpdateExpression setOperator(@NotNull UpdateOperator operator) {
-        return new UpdateExpression(this.isPrefix, operator, this.operand);
-    }
+  @NotNull
+  public UpdateExpression setIsPrefix(@NotNull Boolean isPrefix)
+  {
+    return new UpdateExpression(isPrefix, this.operator, this.operand);
+  }
 
-    @NotNull
-    public BindingIdentifierMemberExpression getOperand() {
-        return this.operand;
-    }
+  @NotNull
+  public UpdateExpression setOperator(@NotNull UpdateOperator operator)
+  {
+    return new UpdateExpression(this.isPrefix, operator, this.operand);
+  }
 
-    @NotNull
-    public UpdateExpression setOperand(@NotNull BindingIdentifierMemberExpression operand) {
-        return new UpdateExpression(this.isPrefix, this.operator, operand);
-    }
+  @NotNull
+  public UpdateExpression setOperand(@NotNull SimpleAssignmentTarget operand)
+  {
+    return new UpdateExpression(this.isPrefix, this.operator, operand);
+  }
 
-    @Override
-    @NotNull
-    public Precedence getPrecedence() {
-        return this.isPrefix ? Precedence.PREFIX : Precedence.POSTFIX;
-    }
+  @Override
+  @NotNull
+  public Precedence getPrecedence()
+  {
+    return this.isPrefix ? Precedence.PREFIX : Precedence.POSTFIX;
+  }
 
 }

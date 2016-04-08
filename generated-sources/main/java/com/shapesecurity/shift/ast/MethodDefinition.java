@@ -18,46 +18,49 @@
 
 package com.shapesecurity.shift.ast;
 
-import com.shapesecurity.functional.data.HashCodeBuilder;
-
 import org.jetbrains.annotations.NotNull;
+import com.shapesecurity.functional.data.HashCodeBuilder;
 
 public abstract class MethodDefinition extends NamedObjectProperty implements Node {
 
-    @NotNull
-    public final FunctionBody body;
+  @NotNull
+  public final FunctionBody body;
 
-    @NotNull
-    public final PropertyName name;
+  @NotNull
+  public final PropertyName name;
 
-    public MethodDefinition(@NotNull FunctionBody body, @NotNull PropertyName name) {
-        super(name);
-        this.body = body;
-        this.name = name;
-    }
+  public MethodDefinition (@NotNull FunctionBody body, @NotNull PropertyName name)
+  {
+    super(name);
+    this.body = body;
+    this.name = name;
+  }
 
-    @Override
-    public boolean equals(Object object) {
-        return object instanceof MethodDefinition && this.body.equals(((MethodDefinition) object).body) &&
-               this.name.equals(((MethodDefinition) object).name);
-    }
+  @Override
+  public boolean equals(Object object)
+  {
+    return object instanceof MethodDefinition && this.body.equals(((MethodDefinition) object).body) && this.name.equals(((MethodDefinition) object).name);
+  }
 
-    @Override
-    public int hashCode() {
-        int code = HashCodeBuilder.put(0, "MethodDefinition");
-        code = HashCodeBuilder.put(code, this.body);
-        code = HashCodeBuilder.put(code, this.name);
-        return code;
-    }
+  @Override
+  public int hashCode()
+  {
+    int code = HashCodeBuilder.put(0, "MethodDefinition");
+    code = HashCodeBuilder.put(code, this.body);
+    code = HashCodeBuilder.put(code, this.name);
+    return code;
+  }
 
-    @NotNull
-    public FunctionBody getBody() {
-        return this.body;
-    }
+  @NotNull
+  public FunctionBody getBody()
+  {
+    return this.body;
+  }
 
-    @NotNull
-    public PropertyName getName() {
-        return this.name;
-    }
+  @NotNull
+  public PropertyName getName()
+  {
+    return this.name;
+  }
 
 }

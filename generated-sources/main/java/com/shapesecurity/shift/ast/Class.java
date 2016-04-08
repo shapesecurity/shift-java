@@ -18,5 +18,5 @@
 
 package com.shapesecurity.shift.ast;
 
-
-public interface Class extends Node {}
+public interface Class extends Node {
+}

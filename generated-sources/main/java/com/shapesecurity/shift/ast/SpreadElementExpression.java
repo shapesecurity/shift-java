@@ -18,4 +18,5 @@
 
 package com.shapesecurity.shift.ast;
 
-public interface SpreadElementExpression extends Node {}
+public interface SpreadElementExpression extends Node {
+}

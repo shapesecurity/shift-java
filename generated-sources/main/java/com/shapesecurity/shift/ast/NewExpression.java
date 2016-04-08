@@ -18,64 +18,70 @@
 
 package com.shapesecurity.shift.ast;
 
+import org.jetbrains.annotations.NotNull;
 import com.shapesecurity.functional.data.HashCodeBuilder;
 import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.shift.ast.operators.Precedence;
 
-import org.jetbrains.annotations.NotNull;
-
 public class NewExpression extends Expression implements Node {
 
-    @NotNull
-    public final Expression callee;
+  @NotNull
+  public final Expression callee;
 
-    @NotNull
-    public final ImmutableList<SpreadElementExpression> arguments;
+  @NotNull
+  public final ImmutableList<SpreadElementExpression> arguments;
 
-    public NewExpression(@NotNull Expression callee, @NotNull ImmutableList<SpreadElementExpression> arguments) {
-        super();
-        this.callee = callee;
-        this.arguments = arguments;
-    }
+  public NewExpression (@NotNull Expression callee, @NotNull ImmutableList<SpreadElementExpression> arguments)
+  {
+    super();
+    this.callee = callee;
+    this.arguments = arguments;
+  }
 
-    @Override
-    public boolean equals(Object object) {
-        return object instanceof NewExpression && this.callee.equals(((NewExpression) object).callee) &&
-               this.arguments.equals(((NewExpression) object).arguments);
-    }
+  @Override
+  public boolean equals(Object object)
+  {
+    return object instanceof NewExpression && this.callee.equals(((NewExpression) object).callee) && this.arguments.equals(((NewExpression) object).arguments);
+  }
 
-    @Override
-    public int hashCode() {
-        int code = HashCodeBuilder.put(0, "NewExpression");
-        code = HashCodeBuilder.put(code, this.callee);
-        code = HashCodeBuilder.put(code, this.arguments);
-        return code;
-    }
+  @Override
+  public int hashCode()
+  {
+    int code = HashCodeBuilder.put(0, "NewExpression");
+    code = HashCodeBuilder.put(code, this.callee);
+    code = HashCodeBuilder.put(code, this.arguments);
+    return code;
+  }
 
-    @NotNull
-    public Expression getCallee() {
-        return this.callee;
-    }
+  @NotNull
+  public Expression getCallee()
+  {
+    return this.callee;
+  }
 
-    @NotNull
-    public NewExpression setCallee(@NotNull Expression callee) {
-        return new NewExpression(callee, this.arguments);
-    }
+  @NotNull
+  public ImmutableList<SpreadElementExpression> getArguments()
+  {
+    return this.arguments;
+  }
 
-    @NotNull
-    public ImmutableList<SpreadElementExpression> getArguments() {
-        return this.arguments;
-    }
+  @NotNull
+  public NewExpression setCallee(@NotNull Expression callee)
+  {
+    return new NewExpression(callee, this.arguments);
+  }
 
-    @NotNull
-    public NewExpression setArguments(@NotNull ImmutableList<SpreadElementExpression> arguments) {
-        return new NewExpression(this.callee, arguments);
-    }
+  @NotNull
+  public NewExpression setArguments(@NotNull ImmutableList<SpreadElementExpression> arguments)
+  {
+    return new NewExpression(this.callee, arguments);
+  }
 
-    @Override
-    @NotNull
-    public Precedence getPrecedence() {
-        return this.arguments.isEmpty() ? Precedence.NEW : Precedence.MEMBER;
-    }
+  @Override
+  @NotNull
+  public Precedence getPrecedence()
+  {
+    return this.arguments.isEmpty() ? Precedence.NEW : Precedence.MEMBER;
+  }
 
 }

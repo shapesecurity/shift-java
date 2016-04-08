@@ -18,36 +18,38 @@
 
 package com.shapesecurity.shift.ast;
 
-import com.shapesecurity.functional.data.HashCodeBuilder;
-
 import org.jetbrains.annotations.NotNull;
+import com.shapesecurity.functional.data.HashCodeBuilder;
 
 public abstract class ImportDeclaration implements Node, ImportDeclarationExportDeclarationStatement {
 
-    @NotNull
-    public final String moduleSpecifier;
+  @NotNull
+  public final String  moduleSpecifier;
 
-    public ImportDeclaration(@NotNull String moduleSpecifier) {
-        super();
-        this.moduleSpecifier = moduleSpecifier;
-    }
+  public ImportDeclaration (@NotNull String  moduleSpecifier)
+  {
+    super();
+    this.moduleSpecifier = moduleSpecifier;
+  }
 
-    @Override
-    public boolean equals(Object object) {
-        return object instanceof ImportDeclaration && this.moduleSpecifier.equals(
-            ((ImportDeclaration) object).moduleSpecifier);
-    }
+  @Override
+  public boolean equals(Object object)
+  {
+    return object instanceof ImportDeclaration && this.moduleSpecifier.equals(((ImportDeclaration) object).moduleSpecifier);
+  }
 
-    @Override
-    public int hashCode() {
-        int code = HashCodeBuilder.put(0, "ImportDeclaration");
-        code = HashCodeBuilder.put(code, this.moduleSpecifier);
-        return code;
-    }
+  @Override
+  public int hashCode()
+  {
+    int code = HashCodeBuilder.put(0, "ImportDeclaration");
+    code = HashCodeBuilder.put(code, this.moduleSpecifier);
+    return code;
+  }
 
-    @NotNull
-    public String getModuleSpecifier() {
-        return this.moduleSpecifier;
-    }
+  @NotNull
+  public String  getModuleSpecifier()
+  {
+    return this.moduleSpecifier;
+  }
 
 }

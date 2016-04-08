@@ -18,76 +18,79 @@
 
 package com.shapesecurity.shift.ast;
 
+import org.jetbrains.annotations.NotNull;
 import com.shapesecurity.functional.data.HashCodeBuilder;
 import com.shapesecurity.functional.data.Maybe;
 
-import org.jetbrains.annotations.NotNull;
-
 public class ImportNamespace extends ImportDeclaration implements Node {
 
-    @NotNull
-    public final Maybe<BindingIdentifier> defaultBinding;
+  @NotNull
+  public final Maybe<BindingIdentifier> defaultBinding;
 
-    @NotNull
-    public final BindingIdentifier namespaceBinding;
+  @NotNull
+  public final BindingIdentifier namespaceBinding;
 
-    @NotNull
-    public final String moduleSpecifier;
+  @NotNull
+  public final String  moduleSpecifier;
 
-    public ImportNamespace(@NotNull Maybe<BindingIdentifier> defaultBinding,
-                           @NotNull BindingIdentifier namespaceBinding,
-                           @NotNull String moduleSpecifier) {
-        super(moduleSpecifier);
-        this.defaultBinding = defaultBinding;
-        this.namespaceBinding = namespaceBinding;
-        this.moduleSpecifier = moduleSpecifier;
-    }
+  public ImportNamespace (@NotNull Maybe<BindingIdentifier> defaultBinding, @NotNull BindingIdentifier namespaceBinding, @NotNull String  moduleSpecifier)
+  {
+    super(moduleSpecifier);
+    this.defaultBinding = defaultBinding;
+    this.namespaceBinding = namespaceBinding;
+    this.moduleSpecifier = moduleSpecifier;
+  }
 
-    @Override
-    public boolean equals(Object object) {
-        return object instanceof ImportNamespace && this.defaultBinding.equals(
-            ((ImportNamespace) object).defaultBinding) && this.namespaceBinding.equals(
-            ((ImportNamespace) object).namespaceBinding) && this.moduleSpecifier.equals(
-            ((ImportNamespace) object).moduleSpecifier);
-    }
+  @Override
+  public boolean equals(Object object)
+  {
+    return object instanceof ImportNamespace && this.defaultBinding.equals(((ImportNamespace) object).defaultBinding) && this.namespaceBinding.equals(((ImportNamespace) object).namespaceBinding) && this.moduleSpecifier.equals(((ImportNamespace) object).moduleSpecifier);
+  }
 
-    @Override
-    public int hashCode() {
-        int code = HashCodeBuilder.put(0, "ImportNamespace");
-        code = HashCodeBuilder.put(code, this.defaultBinding);
-        code = HashCodeBuilder.put(code, this.namespaceBinding);
-        code = HashCodeBuilder.put(code, this.moduleSpecifier);
-        return code;
-    }
+  @Override
+  public int hashCode()
+  {
+    int code = HashCodeBuilder.put(0, "ImportNamespace");
+    code = HashCodeBuilder.put(code, this.defaultBinding);
+    code = HashCodeBuilder.put(code, this.namespaceBinding);
+    code = HashCodeBuilder.put(code, this.moduleSpecifier);
+    return code;
+  }
 
-    @NotNull
-    public Maybe<BindingIdentifier> getDefaultBinding() {
-        return this.defaultBinding;
-    }
+  @NotNull
+  public Maybe<BindingIdentifier> getDefaultBinding()
+  {
+    return this.defaultBinding;
+  }
 
-    @NotNull
-    public ImportNamespace setDefaultBinding(@NotNull Maybe<BindingIdentifier> defaultBinding) {
-        return new ImportNamespace(defaultBinding, this.namespaceBinding, this.moduleSpecifier);
-    }
+  @NotNull
+  public BindingIdentifier getNamespaceBinding()
+  {
+    return this.namespaceBinding;
+  }
 
-    @NotNull
-    public BindingIdentifier getNamespaceBinding() {
-        return this.namespaceBinding;
-    }
+  @NotNull
+  public String  getModuleSpecifier()
+  {
+    return this.moduleSpecifier;
+  }
 
-    @NotNull
-    public ImportNamespace setNamespaceBinding(@NotNull BindingIdentifier namespaceBinding) {
-        return new ImportNamespace(this.defaultBinding, namespaceBinding, this.moduleSpecifier);
-    }
+  @NotNull
+  public ImportNamespace setDefaultBinding(@NotNull Maybe<BindingIdentifier> defaultBinding)
+  {
+    return new ImportNamespace(defaultBinding, this.namespaceBinding, this.moduleSpecifier);
+  }
 
-    @NotNull
-    public String getModuleSpecifier() {
-        return this.moduleSpecifier;
-    }
+  @NotNull
+  public ImportNamespace setNamespaceBinding(@NotNull BindingIdentifier namespaceBinding)
+  {
+    return new ImportNamespace(this.defaultBinding, namespaceBinding, this.moduleSpecifier);
+  }
 
-    @NotNull
-    public ImportNamespace setModuleSpecifier(@NotNull String moduleSpecifier) {
-        return new ImportNamespace(this.defaultBinding, this.namespaceBinding, moduleSpecifier);
-    }
+  @NotNull
+  public ImportNamespace setModuleSpecifier(@NotNull String  moduleSpecifier)
+  {
+    return new ImportNamespace(this.defaultBinding, this.namespaceBinding, moduleSpecifier);
+  }
 
 }

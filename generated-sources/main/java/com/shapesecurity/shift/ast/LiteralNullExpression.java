@@ -18,32 +18,35 @@
 
 package com.shapesecurity.shift.ast;
 
+import org.jetbrains.annotations.NotNull;
 import com.shapesecurity.functional.data.HashCodeBuilder;
 import com.shapesecurity.shift.ast.operators.Precedence;
 
-import org.jetbrains.annotations.NotNull;
-
 public class LiteralNullExpression extends Expression implements Node {
 
-    public LiteralNullExpression() {
-        super();
-    }
+  public LiteralNullExpression ()
+  {
+    super();
+  }
 
-    @Override
-    public boolean equals(Object object) {
-        return object instanceof LiteralNullExpression;
-    }
+  @Override
+  public boolean equals(Object object)
+  {
+    return object instanceof LiteralNullExpression;
+  }
 
-    @Override
-    public int hashCode() {
-        int code = HashCodeBuilder.put(0, "LiteralNullExpression");
-        return code;
-    }
+  @Override
+  public int hashCode()
+  {
+    int code = HashCodeBuilder.put(0, "LiteralNullExpression");
+    return code;
+  }
 
-    @Override
-    @NotNull
-    public Precedence getPrecedence() {
-        return Precedence.PRIMARY;
-    }
+  @Override
+  @NotNull
+  public Precedence getPrecedence()
+  {
+    return Precedence.PRIMARY;
+  }
 
 }

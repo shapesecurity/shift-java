@@ -18,23 +18,27 @@
 
 package com.shapesecurity.shift.ast;
 
+import org.jetbrains.annotations.NotNull;
 import com.shapesecurity.functional.data.HashCodeBuilder;
 
 public abstract class ExportDeclaration implements Node, ImportDeclarationExportDeclarationStatement {
 
-    public ExportDeclaration() {
-        super();
-    }
+  public ExportDeclaration ()
+  {
+    super();
+  }
 
-    @Override
-    public boolean equals(Object object) {
-        return object instanceof ExportDeclaration;
-    }
+  @Override
+  public boolean equals(Object object)
+  {
+    return object instanceof ExportDeclaration;
+  }
 
-    @Override
-    public int hashCode() {
-        int code = HashCodeBuilder.put(0, "ExportDeclaration");
-        return code;
-    }
+  @Override
+  public int hashCode()
+  {
+    int code = HashCodeBuilder.put(0, "ExportDeclaration");
+    return code;
+  }
 
 }

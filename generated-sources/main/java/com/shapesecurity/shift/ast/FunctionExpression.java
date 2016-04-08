@@ -18,98 +18,104 @@
 
 package com.shapesecurity.shift.ast;
 
+import org.jetbrains.annotations.NotNull;
 import com.shapesecurity.functional.data.HashCodeBuilder;
 import com.shapesecurity.functional.data.Maybe;
 import com.shapesecurity.shift.ast.operators.Precedence;
 
-import org.jetbrains.annotations.NotNull;
-
 public class FunctionExpression extends Expression implements Node, Function {
 
-    @NotNull
-    public final Maybe<BindingIdentifier> name;
+  @NotNull
+  public final Maybe<BindingIdentifier> name;
 
-    @NotNull
-    public final Boolean isGenerator;
+  @NotNull
+  public final Boolean isGenerator;
 
-    @NotNull
-    public final FormalParameters params;
+  @NotNull
+  public final FormalParameters params;
 
-    @NotNull
-    public final FunctionBody body;
+  @NotNull
+  public final FunctionBody body;
 
-    public FunctionExpression(@NotNull Maybe<BindingIdentifier> name,
-                              @NotNull Boolean isGenerator,
-                              @NotNull FormalParameters params,
-                              @NotNull FunctionBody body) {
-        super();
-        this.name = name;
-        this.isGenerator = isGenerator;
-        this.params = params;
-        this.body = body;
-    }
+  public FunctionExpression (@NotNull Maybe<BindingIdentifier> name, @NotNull Boolean isGenerator, @NotNull FormalParameters params, @NotNull FunctionBody body)
+  {
+    super();
+    this.name = name;
+    this.isGenerator = isGenerator;
+    this.params = params;
+    this.body = body;
+  }
 
-    @Override
-    public boolean equals(Object object) {
-        return object instanceof FunctionExpression && this.name.equals(((FunctionExpression) object).name) &&
-               this.isGenerator.equals(((FunctionExpression) object).isGenerator) && this.params.equals(
-            ((FunctionExpression) object).params) && this.body.equals(((FunctionExpression) object).body);
-    }
+  @Override
+  public boolean equals(Object object)
+  {
+    return object instanceof FunctionExpression && this.name.equals(((FunctionExpression) object).name) && this.isGenerator.equals(((FunctionExpression) object).isGenerator) && this.params.equals(((FunctionExpression) object).params) && this.body.equals(((FunctionExpression) object).body);
+  }
 
-    @Override
-    public int hashCode() {
-        int code = HashCodeBuilder.put(0, "FunctionExpression");
-        code = HashCodeBuilder.put(code, this.name);
-        code = HashCodeBuilder.put(code, this.isGenerator);
-        code = HashCodeBuilder.put(code, this.params);
-        code = HashCodeBuilder.put(code, this.body);
-        return code;
-    }
+  @Override
+  public int hashCode()
+  {
+    int code = HashCodeBuilder.put(0, "FunctionExpression");
+    code = HashCodeBuilder.put(code, this.name);
+    code = HashCodeBuilder.put(code, this.isGenerator);
+    code = HashCodeBuilder.put(code, this.params);
+    code = HashCodeBuilder.put(code, this.body);
+    return code;
+  }
 
-    @NotNull
-    public Maybe<BindingIdentifier> getName() {
-        return this.name;
-    }
+  @NotNull
+  public Maybe<BindingIdentifier> getName()
+  {
+    return this.name;
+  }
 
-    @NotNull
-    public FunctionExpression setName(@NotNull Maybe<BindingIdentifier> name) {
-        return new FunctionExpression(name, this.isGenerator, this.params, this.body);
-    }
+  @NotNull
+  public Boolean getIsGenerator()
+  {
+    return this.isGenerator;
+  }
 
-    @NotNull
-    public Boolean getIsGenerator() {
-        return this.isGenerator;
-    }
+  @NotNull
+  public FormalParameters getParams()
+  {
+    return this.params;
+  }
 
-    @NotNull
-    public FunctionExpression setIsGenerator(@NotNull Boolean isGenerator) {
-        return new FunctionExpression(this.name, isGenerator, this.params, this.body);
-    }
+  @NotNull
+  public FunctionBody getBody()
+  {
+    return this.body;
+  }
 
-    @NotNull
-    public FormalParameters getParams() {
-        return this.params;
-    }
+  @NotNull
+  public FunctionExpression setName(@NotNull Maybe<BindingIdentifier> name)
+  {
+    return new FunctionExpression(name, this.isGenerator, this.params, this.body);
+  }
 
-    @NotNull
-    public FunctionExpression setParams(@NotNull FormalParameters params) {
-        return new FunctionExpression(this.name, this.isGenerator, params, this.body);
-    }
+  @NotNull
+  public FunctionExpression setIsGenerator(@NotNull Boolean isGenerator)
+  {
+    return new FunctionExpression(this.name, isGenerator, this.params, this.body);
+  }
 
-    @NotNull
-    public FunctionBody getBody() {
-        return this.body;
-    }
+  @NotNull
+  public FunctionExpression setParams(@NotNull FormalParameters params)
+  {
+    return new FunctionExpression(this.name, this.isGenerator, params, this.body);
+  }
 
-    @NotNull
-    public FunctionExpression setBody(@NotNull FunctionBody body) {
-        return new FunctionExpression(this.name, this.isGenerator, this.params, body);
-    }
+  @NotNull
+  public FunctionExpression setBody(@NotNull FunctionBody body)
+  {
+    return new FunctionExpression(this.name, this.isGenerator, this.params, body);
+  }
 
-    @Override
-    @NotNull
-    public Precedence getPrecedence() {
-        return Precedence.PRIMARY;
-    }
+  @Override
+  @NotNull
+  public Precedence getPrecedence()
+  {
+    return Precedence.PRIMARY;
+  }
 
 }

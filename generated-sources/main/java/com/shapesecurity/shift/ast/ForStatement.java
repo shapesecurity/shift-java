@@ -18,91 +18,96 @@
 
 package com.shapesecurity.shift.ast;
 
+import org.jetbrains.annotations.NotNull;
 import com.shapesecurity.functional.data.HashCodeBuilder;
 import com.shapesecurity.functional.data.Maybe;
 
-import org.jetbrains.annotations.NotNull;
-
 public class ForStatement extends IterationStatement implements Node {
 
-    @NotNull
-    public final Maybe<VariableDeclarationExpression> init;
+  @NotNull
+  public final Maybe<VariableDeclarationExpression> init;
 
-    @NotNull
-    public final Maybe<Expression> test;
+  @NotNull
+  public final Maybe<Expression> test;
 
-    @NotNull
-    public final Maybe<Expression> update;
+  @NotNull
+  public final Maybe<Expression> update;
 
-    @NotNull
-    public final Statement body;
+  @NotNull
+  public final Statement body;
 
-    public ForStatement(@NotNull Maybe<VariableDeclarationExpression> init,
-                        @NotNull Maybe<Expression> test,
-                        @NotNull Maybe<Expression> update,
-                        @NotNull Statement body) {
-        super(body);
-        this.init = init;
-        this.test = test;
-        this.update = update;
-        this.body = body;
-    }
+  public ForStatement (@NotNull Maybe<VariableDeclarationExpression> init, @NotNull Maybe<Expression> test, @NotNull Maybe<Expression> update, @NotNull Statement body)
+  {
+    super(body);
+    this.init = init;
+    this.test = test;
+    this.update = update;
+    this.body = body;
+  }
 
-    @Override
-    public boolean equals(Object object) {
-        return object instanceof ForStatement && this.init.equals(((ForStatement) object).init) && this.test.equals(
-            ((ForStatement) object).test) && this.update.equals(((ForStatement) object).update) && this.body.equals(
-            ((ForStatement) object).body);
-    }
+  @Override
+  public boolean equals(Object object)
+  {
+    return object instanceof ForStatement && this.init.equals(((ForStatement) object).init) && this.test.equals(((ForStatement) object).test) && this.update.equals(((ForStatement) object).update) && this.body.equals(((ForStatement) object).body);
+  }
 
-    @Override
-    public int hashCode() {
-        int code = HashCodeBuilder.put(0, "ForStatement");
-        code = HashCodeBuilder.put(code, this.init);
-        code = HashCodeBuilder.put(code, this.test);
-        code = HashCodeBuilder.put(code, this.update);
-        code = HashCodeBuilder.put(code, this.body);
-        return code;
-    }
+  @Override
+  public int hashCode()
+  {
+    int code = HashCodeBuilder.put(0, "ForStatement");
+    code = HashCodeBuilder.put(code, this.init);
+    code = HashCodeBuilder.put(code, this.test);
+    code = HashCodeBuilder.put(code, this.update);
+    code = HashCodeBuilder.put(code, this.body);
+    return code;
+  }
 
-    @NotNull
-    public Maybe<VariableDeclarationExpression> getInit() {
-        return this.init;
-    }
+  @NotNull
+  public Maybe<VariableDeclarationExpression> getInit()
+  {
+    return this.init;
+  }
 
-    @NotNull
-    public ForStatement setInit(@NotNull Maybe<VariableDeclarationExpression> init) {
-        return new ForStatement(init, this.test, this.update, this.body);
-    }
+  @NotNull
+  public Maybe<Expression> getTest()
+  {
+    return this.test;
+  }
 
-    @NotNull
-    public Maybe<Expression> getTest() {
-        return this.test;
-    }
+  @NotNull
+  public Maybe<Expression> getUpdate()
+  {
+    return this.update;
+  }
 
-    @NotNull
-    public ForStatement setTest(@NotNull Maybe<Expression> test) {
-        return new ForStatement(this.init, test, this.update, this.body);
-    }
+  @NotNull
+  public Statement getBody()
+  {
+    return this.body;
+  }
 
-    @NotNull
-    public Maybe<Expression> getUpdate() {
-        return this.update;
-    }
+  @NotNull
+  public ForStatement setInit(@NotNull Maybe<VariableDeclarationExpression> init)
+  {
+    return new ForStatement(init, this.test, this.update, this.body);
+  }
 
-    @NotNull
-    public ForStatement setUpdate(@NotNull Maybe<Expression> update) {
-        return new ForStatement(this.init, this.test, update, this.body);
-    }
+  @NotNull
+  public ForStatement setTest(@NotNull Maybe<Expression> test)
+  {
+    return new ForStatement(this.init, test, this.update, this.body);
+  }
 
-    @NotNull
-    public Statement getBody() {
-        return this.body;
-    }
+  @NotNull
+  public ForStatement setUpdate(@NotNull Maybe<Expression> update)
+  {
+    return new ForStatement(this.init, this.test, update, this.body);
+  }
 
-    @NotNull
-    public ForStatement setBody(@NotNull Statement body) {
-        return new ForStatement(this.init, this.test, this.update, body);
-    }
+  @NotNull
+  public ForStatement setBody(@NotNull Statement body)
+  {
+    return new ForStatement(this.init, this.test, this.update, body);
+  }
 
 }

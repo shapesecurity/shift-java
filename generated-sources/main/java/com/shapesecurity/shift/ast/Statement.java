@@ -18,23 +18,27 @@
 
 package com.shapesecurity.shift.ast;
 
+import org.jetbrains.annotations.NotNull;
 import com.shapesecurity.functional.data.HashCodeBuilder;
 
 public abstract class Statement implements Node, ImportDeclarationExportDeclarationStatement {
 
-    public Statement() {
-        super();
-    }
+  public Statement ()
+  {
+    super();
+  }
 
-    @Override
-    public boolean equals(Object object) {
-        return object instanceof Statement;
-    }
+  @Override
+  public boolean equals(Object object)
+  {
+    return object instanceof Statement;
+  }
 
-    @Override
-    public int hashCode() {
-        int code = HashCodeBuilder.put(0, "Statement");
-        return code;
-    }
+  @Override
+  public int hashCode()
+  {
+    int code = HashCodeBuilder.put(0, "Statement");
+    return code;
+  }
 
 }

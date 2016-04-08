@@ -18,57 +18,62 @@
 
 package com.shapesecurity.shift.ast;
 
+import org.jetbrains.annotations.NotNull;
 import com.shapesecurity.functional.data.HashCodeBuilder;
 import com.shapesecurity.functional.data.ImmutableList;
 
-import org.jetbrains.annotations.NotNull;
+public class Script extends Program implements Node {
 
-public class Script implements Node {
+  @NotNull
+  public final ImmutableList<Directive> directives;
 
-    @NotNull
-    public final ImmutableList<Directive> directives;
+  @NotNull
+  public final ImmutableList<Statement> statements;
 
-    @NotNull
-    public final ImmutableList<Statement> statements;
+  public Script (@NotNull ImmutableList<Directive> directives, @NotNull ImmutableList<Statement> statements)
+  {
+    super();
+    this.directives = directives;
+    this.statements = statements;
+  }
 
-    public Script(@NotNull ImmutableList<Directive> directives, @NotNull ImmutableList<Statement> statements) {
-        super();
-        this.directives = directives;
-        this.statements = statements;
-    }
+  @Override
+  public boolean equals(Object object)
+  {
+    return object instanceof Script && this.directives.equals(((Script) object).directives) && this.statements.equals(((Script) object).statements);
+  }
 
-    @Override
-    public boolean equals(Object object) {
-        return object instanceof Script && this.directives.equals(((Script) object).directives) &&
-               this.statements.equals(((Script) object).statements);
-    }
+  @Override
+  public int hashCode()
+  {
+    int code = HashCodeBuilder.put(0, "Script");
+    code = HashCodeBuilder.put(code, this.directives);
+    code = HashCodeBuilder.put(code, this.statements);
+    return code;
+  }
 
-    @Override
-    public int hashCode() {
-        int code = HashCodeBuilder.put(0, "Script");
-        code = HashCodeBuilder.put(code, this.directives);
-        code = HashCodeBuilder.put(code, this.statements);
-        return code;
-    }
+  @NotNull
+  public ImmutableList<Directive> getDirectives()
+  {
+    return this.directives;
+  }
 
-    @NotNull
-    public ImmutableList<Directive> getDirectives() {
-        return this.directives;
-    }
+  @NotNull
+  public ImmutableList<Statement> getStatements()
+  {
+    return this.statements;
+  }
 
-    @NotNull
-    public Script setDirectives(@NotNull ImmutableList<Directive> directives) {
-        return new Script(directives, this.statements);
-    }
+  @NotNull
+  public Script setDirectives(@NotNull ImmutableList<Directive> directives)
+  {
+    return new Script(directives, this.statements);
+  }
 
-    @NotNull
-    public ImmutableList<Statement> getStatements() {
-        return this.statements;
-    }
-
-    @NotNull
-    public Script setStatements(@NotNull ImmutableList<Statement> statements) {
-        return new Script(this.directives, statements);
-    }
+  @NotNull
+  public Script setStatements(@NotNull ImmutableList<Statement> statements)
+  {
+    return new Script(this.directives, statements);
+  }
 
 }

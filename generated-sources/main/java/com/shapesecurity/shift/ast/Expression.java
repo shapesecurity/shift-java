@@ -18,35 +18,31 @@
 
 package com.shapesecurity.shift.ast;
 
+import org.jetbrains.annotations.NotNull;
 import com.shapesecurity.functional.data.HashCodeBuilder;
 import com.shapesecurity.shift.ast.operators.Precedence;
 
-import org.jetbrains.annotations.NotNull;
+public abstract class Expression implements Node, ExpressionSuper, FunctionDeclarationClassDeclarationExpression, SpreadElementExpression, FunctionBodyExpression, ExpressionTemplateElement, VariableDeclarationExpression {
 
-public abstract class Expression implements Node,
-    ExpressionSuper,
-    FunctionDeclarationClassDeclarationExpression,
-    SpreadElementExpression,
-    FunctionBodyExpression,
-    ExpressionTemplateElement,
-    VariableDeclarationExpression {
+  public Expression ()
+  {
+    super();
+  }
 
-    public Expression() {
-        super();
-    }
+  @Override
+  public boolean equals(Object object)
+  {
+    return object instanceof Expression;
+  }
 
-    @Override
-    public boolean equals(Object object) {
-        return object instanceof Expression;
-    }
+  @Override
+  public int hashCode()
+  {
+    int code = HashCodeBuilder.put(0, "Expression");
+    return code;
+  }
 
-    @Override
-    public int hashCode() {
-        int code = HashCodeBuilder.put(0, "Expression");
-        return code;
-    }
-
-    @NotNull
-    public abstract Precedence getPrecedence();
+  @NotNull
+  public abstract Precedence getPrecedence();
 
 }

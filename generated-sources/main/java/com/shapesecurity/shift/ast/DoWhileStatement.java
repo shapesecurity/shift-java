@@ -18,56 +18,61 @@
 
 package com.shapesecurity.shift.ast;
 
-import com.shapesecurity.functional.data.HashCodeBuilder;
-
 import org.jetbrains.annotations.NotNull;
+import com.shapesecurity.functional.data.HashCodeBuilder;
 
 public class DoWhileStatement extends IterationStatement implements Node {
 
-    @NotNull
-    public final Expression test;
+  @NotNull
+  public final Expression test;
 
-    @NotNull
-    public final Statement body;
+  @NotNull
+  public final Statement body;
 
-    public DoWhileStatement(@NotNull Expression test, @NotNull Statement body) {
-        super(body);
-        this.test = test;
-        this.body = body;
-    }
+  public DoWhileStatement (@NotNull Expression test, @NotNull Statement body)
+  {
+    super(body);
+    this.test = test;
+    this.body = body;
+  }
 
-    @Override
-    public boolean equals(Object object) {
-        return object instanceof DoWhileStatement && this.test.equals(((DoWhileStatement) object).test) &&
-               this.body.equals(((DoWhileStatement) object).body);
-    }
+  @Override
+  public boolean equals(Object object)
+  {
+    return object instanceof DoWhileStatement && this.test.equals(((DoWhileStatement) object).test) && this.body.equals(((DoWhileStatement) object).body);
+  }
 
-    @Override
-    public int hashCode() {
-        int code = HashCodeBuilder.put(0, "DoWhileStatement");
-        code = HashCodeBuilder.put(code, this.test);
-        code = HashCodeBuilder.put(code, this.body);
-        return code;
-    }
+  @Override
+  public int hashCode()
+  {
+    int code = HashCodeBuilder.put(0, "DoWhileStatement");
+    code = HashCodeBuilder.put(code, this.test);
+    code = HashCodeBuilder.put(code, this.body);
+    return code;
+  }
 
-    @NotNull
-    public Expression getTest() {
-        return this.test;
-    }
+  @NotNull
+  public Expression getTest()
+  {
+    return this.test;
+  }
 
-    @NotNull
-    public DoWhileStatement setTest(@NotNull Expression test) {
-        return new DoWhileStatement(test, this.body);
-    }
+  @NotNull
+  public Statement getBody()
+  {
+    return this.body;
+  }
 
-    @NotNull
-    public Statement getBody() {
-        return this.body;
-    }
+  @NotNull
+  public DoWhileStatement setTest(@NotNull Expression test)
+  {
+    return new DoWhileStatement(test, this.body);
+  }
 
-    @NotNull
-    public DoWhileStatement setBody(@NotNull Statement body) {
-        return new DoWhileStatement(this.test, body);
-    }
+  @NotNull
+  public DoWhileStatement setBody(@NotNull Statement body)
+  {
+    return new DoWhileStatement(this.test, body);
+  }
 
 }

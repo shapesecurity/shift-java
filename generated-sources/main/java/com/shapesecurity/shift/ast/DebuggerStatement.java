@@ -18,23 +18,27 @@
 
 package com.shapesecurity.shift.ast;
 
+import org.jetbrains.annotations.NotNull;
 import com.shapesecurity.functional.data.HashCodeBuilder;
 
 public class DebuggerStatement extends Statement implements Node {
 
-    public DebuggerStatement() {
-        super();
-    }
+  public DebuggerStatement ()
+  {
+    super();
+  }
 
-    @Override
-    public boolean equals(Object object) {
-        return object instanceof DebuggerStatement;
-    }
+  @Override
+  public boolean equals(Object object)
+  {
+    return object instanceof DebuggerStatement;
+  }
 
-    @Override
-    public int hashCode() {
-        int code = HashCodeBuilder.put(0, "DebuggerStatement");
-        return code;
-    }
+  @Override
+  public int hashCode()
+  {
+    int code = HashCodeBuilder.put(0, "DebuggerStatement");
+    return code;
+  }
 
 }

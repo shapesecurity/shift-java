@@ -18,67 +18,69 @@
 
 package com.shapesecurity.shift.ast;
 
+import org.jetbrains.annotations.NotNull;
 import com.shapesecurity.functional.data.HashCodeBuilder;
 import com.shapesecurity.shift.ast.operators.Precedence;
-import org.jetbrains.annotations.NotNull;
 
 public class StaticMemberExpression extends MemberExpression implements Node {
 
-    @NotNull
-    public final String property;
+  @NotNull
+  public final String property;
 
-    @NotNull
-    public final ExpressionSuper _object;
+  @NotNull
+  public final ExpressionSuper _object;
 
-    public StaticMemberExpression(@NotNull String property, @NotNull ExpressionSuper _object) {
-        super(_object);
-        this.property = property;
-        this._object = _object;
-    }
+  public StaticMemberExpression (@NotNull String property, @NotNull ExpressionSuper _object)
+  {
+    super(_object);
+    this.property = property;
+    this._object = _object;
+  }
 
-    @Override
-    public boolean equals(Object object) {
-        return object instanceof StaticMemberExpression && this.property.equals(
-                ((StaticMemberExpression) object).property) && this._object.equals(
-                ((StaticMemberExpression) object)._object);
-    }
+  @Override
+  public boolean equals(Object object)
+  {
+    return object instanceof StaticMemberExpression && this.property.equals(((StaticMemberExpression) object).property) && this._object.equals(((StaticMemberExpression) object)._object);
+  }
 
-    @Override
-    public int hashCode() {
-        int code = HashCodeBuilder.put(0, "StaticMemberExpression");
-        code = HashCodeBuilder.put(code, this.property);
-        code = HashCodeBuilder.put(code, this._object);
-        return code;
-    }
+  @Override
+  public int hashCode()
+  {
+    int code = HashCodeBuilder.put(0, "StaticMemberExpression");
+    code = HashCodeBuilder.put(code, this.property);
+    code = HashCodeBuilder.put(code, this._object);
+    return code;
+  }
 
-    @NotNull
-    public String getProperty() {
-        return this.property;
-    }
+  @NotNull
+  public String getProperty()
+  {
+    return this.property;
+  }
 
-    @NotNull
-    public StaticMemberExpression setProperty(@NotNull String property) {
-        return new StaticMemberExpression(property, this._object);
-    }
+  @NotNull
+  public ExpressionSuper get_object()
+  {
+    return this._object;
+  }
 
-    @NotNull
-    public ExpressionSuper get_object() {
-        return this._object;
-    }
+  @NotNull
+  public StaticMemberExpression setProperty(@NotNull String property)
+  {
+    return new StaticMemberExpression(property, this._object);
+  }
 
-    @NotNull
-    public StaticMemberExpression set_object(@NotNull ExpressionSuper _object) {
-        return new StaticMemberExpression(this.property, _object);
-    }
+  @NotNull
+  public StaticMemberExpression set_object(@NotNull ExpressionSuper _object)
+  {
+    return new StaticMemberExpression(this.property, _object);
+  }
 
-    @Override
-    @NotNull
-    public Precedence getPrecedence() {
-        Precedence p = this._object.getPrecedence();
-        if (p == Precedence.CALL) {
-            return Precedence.CALL;
-        }
-        return Precedence.MEMBER;
-    }
+  @Override
+  @NotNull
+  public Precedence getPrecedence()
+  {
+    return Precedence.MEMBER;
+  }
 
 }

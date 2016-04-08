@@ -18,40 +18,44 @@
 
 package com.shapesecurity.shift.ast;
 
-import com.shapesecurity.functional.data.HashCodeBuilder;
-
 import org.jetbrains.annotations.NotNull;
+import com.shapesecurity.functional.data.HashCodeBuilder;
 
 public class SpreadElement implements Node, SpreadElementExpression {
 
-    @NotNull
-    public final Expression expression;
+  @NotNull
+  public final Expression expression;
 
-    public SpreadElement(@NotNull Expression expression) {
-        super();
-        this.expression = expression;
-    }
+  public SpreadElement (@NotNull Expression expression)
+  {
+    super();
+    this.expression = expression;
+  }
 
-    @Override
-    public boolean equals(Object object) {
-        return object instanceof SpreadElement && this.expression.equals(((SpreadElement) object).expression);
-    }
+  @Override
+  public boolean equals(Object object)
+  {
+    return object instanceof SpreadElement && this.expression.equals(((SpreadElement) object).expression);
+  }
 
-    @Override
-    public int hashCode() {
-        int code = HashCodeBuilder.put(0, "SpreadElement");
-        code = HashCodeBuilder.put(code, this.expression);
-        return code;
-    }
+  @Override
+  public int hashCode()
+  {
+    int code = HashCodeBuilder.put(0, "SpreadElement");
+    code = HashCodeBuilder.put(code, this.expression);
+    return code;
+  }
 
-    @NotNull
-    public Expression getExpression() {
-        return this.expression;
-    }
+  @NotNull
+  public Expression getExpression()
+  {
+    return this.expression;
+  }
 
-    @NotNull
-    public SpreadElement setExpression(@NotNull Expression expression) {
-        return new SpreadElement(expression);
-    }
+  @NotNull
+  public SpreadElement setExpression(@NotNull Expression expression)
+  {
+    return new SpreadElement(expression);
+  }
 
 }

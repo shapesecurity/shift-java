@@ -18,56 +18,61 @@
 
 package com.shapesecurity.shift.ast;
 
-import com.shapesecurity.functional.data.HashCodeBuilder;
-
 import org.jetbrains.annotations.NotNull;
+import com.shapesecurity.functional.data.HashCodeBuilder;
 
 public class LabeledStatement extends Statement implements Node {
 
-    @NotNull
-    public final String label;
+  @NotNull
+  public final String label;
 
-    @NotNull
-    public final Statement body;
+  @NotNull
+  public final Statement body;
 
-    public LabeledStatement(@NotNull String label, @NotNull Statement body) {
-        super();
-        this.label = label;
-        this.body = body;
-    }
+  public LabeledStatement (@NotNull String label, @NotNull Statement body)
+  {
+    super();
+    this.label = label;
+    this.body = body;
+  }
 
-    @Override
-    public boolean equals(Object object) {
-        return object instanceof LabeledStatement && this.label.equals(((LabeledStatement) object).label) &&
-               this.body.equals(((LabeledStatement) object).body);
-    }
+  @Override
+  public boolean equals(Object object)
+  {
+    return object instanceof LabeledStatement && this.label.equals(((LabeledStatement) object).label) && this.body.equals(((LabeledStatement) object).body);
+  }
 
-    @Override
-    public int hashCode() {
-        int code = HashCodeBuilder.put(0, "LabeledStatement");
-        code = HashCodeBuilder.put(code, this.label);
-        code = HashCodeBuilder.put(code, this.body);
-        return code;
-    }
+  @Override
+  public int hashCode()
+  {
+    int code = HashCodeBuilder.put(0, "LabeledStatement");
+    code = HashCodeBuilder.put(code, this.label);
+    code = HashCodeBuilder.put(code, this.body);
+    return code;
+  }
 
-    @NotNull
-    public String getLabel() {
-        return this.label;
-    }
+  @NotNull
+  public String getLabel()
+  {
+    return this.label;
+  }
 
-    @NotNull
-    public LabeledStatement setLabel(@NotNull String label) {
-        return new LabeledStatement(label, this.body);
-    }
+  @NotNull
+  public Statement getBody()
+  {
+    return this.body;
+  }
 
-    @NotNull
-    public Statement getBody() {
-        return this.body;
-    }
+  @NotNull
+  public LabeledStatement setLabel(@NotNull String label)
+  {
+    return new LabeledStatement(label, this.body);
+  }
 
-    @NotNull
-    public LabeledStatement setBody(@NotNull Statement body) {
-        return new LabeledStatement(this.label, body);
-    }
+  @NotNull
+  public LabeledStatement setBody(@NotNull Statement body)
+  {
+    return new LabeledStatement(this.label, body);
+  }
 
 }

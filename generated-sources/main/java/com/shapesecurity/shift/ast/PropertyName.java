@@ -18,23 +18,27 @@
 
 package com.shapesecurity.shift.ast;
 
+import org.jetbrains.annotations.NotNull;
 import com.shapesecurity.functional.data.HashCodeBuilder;
 
 public abstract class PropertyName implements Node {
 
-    public PropertyName() {
-        super();
-    }
+  public PropertyName ()
+  {
+    super();
+  }
 
-    @Override
-    public boolean equals(Object object) {
-        return object instanceof PropertyName;
-    }
+  @Override
+  public boolean equals(Object object)
+  {
+    return object instanceof PropertyName;
+  }
 
-    @Override
-    public int hashCode() {
-        int code = HashCodeBuilder.put(0, "PropertyName");
-        return code;
-    }
+  @Override
+  public int hashCode()
+  {
+    int code = HashCodeBuilder.put(0, "PropertyName");
+    return code;
+  }
 
 }

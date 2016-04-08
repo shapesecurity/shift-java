@@ -18,40 +18,44 @@
 
 package com.shapesecurity.shift.ast;
 
+import org.jetbrains.annotations.NotNull;
 import com.shapesecurity.functional.data.HashCodeBuilder;
 
-import org.jetbrains.annotations.NotNull;
+public class BindingIdentifier implements Node, Binding, SimpleAssignmentTarget {
 
-public class BindingIdentifier implements Node, BindingIdentifierMemberExpression, Binding {
+  @NotNull
+  public final String name;
 
-    @NotNull
-    public final String name;
+  public BindingIdentifier (@NotNull String name)
+  {
+    super();
+    this.name = name;
+  }
 
-    public BindingIdentifier(@NotNull String name) {
-        super();
-        this.name = name;
-    }
+  @Override
+  public boolean equals(Object object)
+  {
+    return object instanceof BindingIdentifier && this.name.equals(((BindingIdentifier) object).name);
+  }
 
-    @Override
-    public boolean equals(Object object) {
-        return object instanceof BindingIdentifier && this.name.equals(((BindingIdentifier) object).name);
-    }
+  @Override
+  public int hashCode()
+  {
+    int code = HashCodeBuilder.put(0, "BindingIdentifier");
+    code = HashCodeBuilder.put(code, this.name);
+    return code;
+  }
 
-    @Override
-    public int hashCode() {
-        int code = HashCodeBuilder.put(0, "BindingIdentifier");
-        code = HashCodeBuilder.put(code, this.name);
-        return code;
-    }
+  @NotNull
+  public String getName()
+  {
+    return this.name;
+  }
 
-    @NotNull
-    public String getName() {
-        return this.name;
-    }
-
-    @NotNull
-    public BindingIdentifier setName(@NotNull String name) {
-        return new BindingIdentifier(name);
-    }
+  @NotNull
+  public BindingIdentifier setName(@NotNull String name)
+  {
+    return new BindingIdentifier(name);
+  }
 
 }

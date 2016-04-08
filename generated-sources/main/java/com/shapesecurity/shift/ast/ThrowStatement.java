@@ -18,40 +18,44 @@
 
 package com.shapesecurity.shift.ast;
 
-import com.shapesecurity.functional.data.HashCodeBuilder;
-
 import org.jetbrains.annotations.NotNull;
+import com.shapesecurity.functional.data.HashCodeBuilder;
 
 public class ThrowStatement extends Statement implements Node {
 
-    @NotNull
-    public final Expression expression;
+  @NotNull
+  public final Expression expression;
 
-    public ThrowStatement(@NotNull Expression expression) {
-        super();
-        this.expression = expression;
-    }
+  public ThrowStatement (@NotNull Expression expression)
+  {
+    super();
+    this.expression = expression;
+  }
 
-    @Override
-    public boolean equals(Object object) {
-        return object instanceof ThrowStatement && this.expression.equals(((ThrowStatement) object).expression);
-    }
+  @Override
+  public boolean equals(Object object)
+  {
+    return object instanceof ThrowStatement && this.expression.equals(((ThrowStatement) object).expression);
+  }
 
-    @Override
-    public int hashCode() {
-        int code = HashCodeBuilder.put(0, "ThrowStatement");
-        code = HashCodeBuilder.put(code, this.expression);
-        return code;
-    }
+  @Override
+  public int hashCode()
+  {
+    int code = HashCodeBuilder.put(0, "ThrowStatement");
+    code = HashCodeBuilder.put(code, this.expression);
+    return code;
+  }
 
-    @NotNull
-    public Expression getExpression() {
-        return this.expression;
-    }
+  @NotNull
+  public Expression getExpression()
+  {
+    return this.expression;
+  }
 
-    @NotNull
-    public ThrowStatement setExpression(@NotNull Expression expression) {
-        return new ThrowStatement(expression);
-    }
+  @NotNull
+  public ThrowStatement setExpression(@NotNull Expression expression)
+  {
+    return new ThrowStatement(expression);
+  }
 
 }

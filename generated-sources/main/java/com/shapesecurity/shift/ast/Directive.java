@@ -18,40 +18,44 @@
 
 package com.shapesecurity.shift.ast;
 
-import com.shapesecurity.functional.data.HashCodeBuilder;
-
 import org.jetbrains.annotations.NotNull;
+import com.shapesecurity.functional.data.HashCodeBuilder;
 
 public class Directive implements Node {
 
-    @NotNull
-    public final String rawValue;
+  @NotNull
+  public final String  rawValue;
 
-    public Directive(@NotNull String rawValue) {
-        super();
-        this.rawValue = rawValue;
-    }
+  public Directive (@NotNull String  rawValue)
+  {
+    super();
+    this.rawValue = rawValue;
+  }
 
-    @Override
-    public boolean equals(Object object) {
-        return object instanceof Directive && this.rawValue.equals(((Directive) object).rawValue);
-    }
+  @Override
+  public boolean equals(Object object)
+  {
+    return object instanceof Directive && this.rawValue.equals(((Directive) object).rawValue);
+  }
 
-    @Override
-    public int hashCode() {
-        int code = HashCodeBuilder.put(0, "Directive");
-        code = HashCodeBuilder.put(code, this.rawValue);
-        return code;
-    }
+  @Override
+  public int hashCode()
+  {
+    int code = HashCodeBuilder.put(0, "Directive");
+    code = HashCodeBuilder.put(code, this.rawValue);
+    return code;
+  }
 
-    @NotNull
-    public String getRawValue() {
-        return this.rawValue;
-    }
+  @NotNull
+  public String  getRawValue()
+  {
+    return this.rawValue;
+  }
 
-    @NotNull
-    public Directive setRawValue(@NotNull String rawValue) {
-        return new Directive(rawValue);
-    }
+  @NotNull
+  public Directive setRawValue(@NotNull String  rawValue)
+  {
+    return new Directive(rawValue);
+  }
 
 }

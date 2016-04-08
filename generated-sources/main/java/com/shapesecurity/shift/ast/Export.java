@@ -18,40 +18,44 @@
 
 package com.shapesecurity.shift.ast;
 
-import com.shapesecurity.functional.data.HashCodeBuilder;
-
 import org.jetbrains.annotations.NotNull;
+import com.shapesecurity.functional.data.HashCodeBuilder;
 
 public class Export extends ExportDeclaration implements Node {
 
-    @NotNull
-    public final FunctionDeclarationClassDeclarationVariableDeclaration declaration;
+  @NotNull
+  public final FunctionDeclarationClassDeclarationVariableDeclaration declaration;
 
-    public Export(@NotNull FunctionDeclarationClassDeclarationVariableDeclaration declaration) {
-        super();
-        this.declaration = declaration;
-    }
+  public Export (@NotNull FunctionDeclarationClassDeclarationVariableDeclaration declaration)
+  {
+    super();
+    this.declaration = declaration;
+  }
 
-    @Override
-    public boolean equals(Object object) {
-        return object instanceof Export && this.declaration.equals(((Export) object).declaration);
-    }
+  @Override
+  public boolean equals(Object object)
+  {
+    return object instanceof Export && this.declaration.equals(((Export) object).declaration);
+  }
 
-    @Override
-    public int hashCode() {
-        int code = HashCodeBuilder.put(0, "Export");
-        code = HashCodeBuilder.put(code, this.declaration);
-        return code;
-    }
+  @Override
+  public int hashCode()
+  {
+    int code = HashCodeBuilder.put(0, "Export");
+    code = HashCodeBuilder.put(code, this.declaration);
+    return code;
+  }
 
-    @NotNull
-    public FunctionDeclarationClassDeclarationVariableDeclaration getDeclaration() {
-        return this.declaration;
-    }
+  @NotNull
+  public FunctionDeclarationClassDeclarationVariableDeclaration getDeclaration()
+  {
+    return this.declaration;
+  }
 
-    @NotNull
-    public Export setDeclaration(@NotNull FunctionDeclarationClassDeclarationVariableDeclaration declaration) {
-        return new Export(declaration);
-    }
+  @NotNull
+  public Export setDeclaration(@NotNull FunctionDeclarationClassDeclarationVariableDeclaration declaration)
+  {
+    return new Export(declaration);
+  }
 
 }

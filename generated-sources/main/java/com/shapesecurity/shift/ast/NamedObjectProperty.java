@@ -18,35 +18,38 @@
 
 package com.shapesecurity.shift.ast;
 
-import com.shapesecurity.functional.data.HashCodeBuilder;
-
 import org.jetbrains.annotations.NotNull;
+import com.shapesecurity.functional.data.HashCodeBuilder;
 
 public abstract class NamedObjectProperty extends ObjectProperty implements Node {
 
-    @NotNull
-    public final PropertyName name;
+  @NotNull
+  public final PropertyName name;
 
-    public NamedObjectProperty(@NotNull PropertyName name) {
-        super();
-        this.name = name;
-    }
+  public NamedObjectProperty (@NotNull PropertyName name)
+  {
+    super();
+    this.name = name;
+  }
 
-    @Override
-    public boolean equals(Object object) {
-        return object instanceof NamedObjectProperty && this.name.equals(((NamedObjectProperty) object).name);
-    }
+  @Override
+  public boolean equals(Object object)
+  {
+    return object instanceof NamedObjectProperty && this.name.equals(((NamedObjectProperty) object).name);
+  }
 
-    @Override
-    public int hashCode() {
-        int code = HashCodeBuilder.put(0, "NamedObjectProperty");
-        code = HashCodeBuilder.put(code, this.name);
-        return code;
-    }
+  @Override
+  public int hashCode()
+  {
+    int code = HashCodeBuilder.put(0, "NamedObjectProperty");
+    code = HashCodeBuilder.put(code, this.name);
+    return code;
+  }
 
-    @NotNull
-    public PropertyName getName() {
-        return this.name;
-    }
+  @NotNull
+  public PropertyName getName()
+  {
+    return this.name;
+  }
 
 }

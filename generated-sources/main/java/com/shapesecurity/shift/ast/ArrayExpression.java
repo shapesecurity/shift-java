@@ -18,49 +18,54 @@
 
 package com.shapesecurity.shift.ast;
 
-import com.shapesecurity.functional.data.HashCodeBuilder;
-import com.shapesecurity.functional.data.ImmutableList;
-import com.shapesecurity.functional.data.Maybe;
-import com.shapesecurity.shift.ast.operators.Precedence;
-
 import org.jetbrains.annotations.NotNull;
+import com.shapesecurity.functional.data.HashCodeBuilder;
+import com.shapesecurity.functional.data.Maybe;
+import com.shapesecurity.functional.data.ImmutableList;
+import com.shapesecurity.shift.ast.operators.Precedence;
 
 public class ArrayExpression extends Expression implements Node {
 
-    @NotNull
-    public final ImmutableList<Maybe<SpreadElementExpression>> elements;
+  @NotNull
+  public final ImmutableList<Maybe<SpreadElementExpression>> elements;
 
-    public ArrayExpression(@NotNull ImmutableList<Maybe<SpreadElementExpression>> elements) {
-        super();
-        this.elements = elements;
-    }
+  public ArrayExpression (@NotNull ImmutableList<Maybe<SpreadElementExpression>> elements)
+  {
+    super();
+    this.elements = elements;
+  }
 
-    @Override
-    public boolean equals(Object object) {
-        return object instanceof ArrayExpression && this.elements.equals(((ArrayExpression) object).elements);
-    }
+  @Override
+  public boolean equals(Object object)
+  {
+    return object instanceof ArrayExpression && this.elements.equals(((ArrayExpression) object).elements);
+  }
 
-    @Override
-    public int hashCode() {
-        int code = HashCodeBuilder.put(0, "ArrayExpression");
-        code = HashCodeBuilder.put(code, this.elements);
-        return code;
-    }
+  @Override
+  public int hashCode()
+  {
+    int code = HashCodeBuilder.put(0, "ArrayExpression");
+    code = HashCodeBuilder.put(code, this.elements);
+    return code;
+  }
 
-    @NotNull
-    public ImmutableList<Maybe<SpreadElementExpression>> getElements() {
-        return this.elements;
-    }
+  @NotNull
+  public ImmutableList<Maybe<SpreadElementExpression>> getElements()
+  {
+    return this.elements;
+  }
 
-    @NotNull
-    public ArrayExpression setElements(@NotNull ImmutableList<Maybe<SpreadElementExpression>> elements) {
-        return new ArrayExpression(elements);
-    }
+  @NotNull
+  public ArrayExpression setElements(@NotNull ImmutableList<Maybe<SpreadElementExpression>> elements)
+  {
+    return new ArrayExpression(elements);
+  }
 
-    @Override
-    @NotNull
-    public Precedence getPrecedence() {
-        return Precedence.PRIMARY;
-    }
+  @Override
+  @NotNull
+  public Precedence getPrecedence()
+  {
+    return Precedence.PRIMARY;
+  }
 
 }

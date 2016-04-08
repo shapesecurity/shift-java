@@ -18,80 +18,87 @@
 
 package com.shapesecurity.shift.ast;
 
-import com.shapesecurity.functional.data.HashCodeBuilder;
-import com.shapesecurity.shift.ast.operators.BinaryOperator;
-import com.shapesecurity.shift.ast.operators.Precedence;
-
 import org.jetbrains.annotations.NotNull;
+import com.shapesecurity.functional.data.HashCodeBuilder;
+import com.shapesecurity.shift.ast.operators.Precedence;
+import com.shapesecurity.shift.ast.operators.BinaryOperator;
 
 public class BinaryExpression extends Expression implements Node {
 
-    @NotNull
-    public final BinaryOperator operator;
+  @NotNull
+  public final BinaryOperator operator;
 
-    @NotNull
-    public final Expression left;
+  @NotNull
+  public final Expression left;
 
-    @NotNull
-    public final Expression right;
+  @NotNull
+  public final Expression right;
 
-    public BinaryExpression(@NotNull BinaryOperator operator, @NotNull Expression left, @NotNull Expression right) {
-        super();
-        this.operator = operator;
-        this.left = left;
-        this.right = right;
-    }
+  public BinaryExpression (@NotNull BinaryOperator operator, @NotNull Expression left, @NotNull Expression right)
+  {
+    super();
+    this.operator = operator;
+    this.left = left;
+    this.right = right;
+  }
 
-    @Override
-    public boolean equals(Object object) {
-        return object instanceof BinaryExpression && this.operator.equals(((BinaryExpression) object).operator) &&
-               this.left.equals(((BinaryExpression) object).left) && this.right.equals(
-            ((BinaryExpression) object).right);
-    }
+  @Override
+  public boolean equals(Object object)
+  {
+    return object instanceof BinaryExpression && this.operator.equals(((BinaryExpression) object).operator) && this.left.equals(((BinaryExpression) object).left) && this.right.equals(((BinaryExpression) object).right);
+  }
 
-    @Override
-    public int hashCode() {
-        int code = HashCodeBuilder.put(0, "BinaryExpression");
-        code = HashCodeBuilder.put(code, this.operator);
-        code = HashCodeBuilder.put(code, this.left);
-        code = HashCodeBuilder.put(code, this.right);
-        return code;
-    }
+  @Override
+  public int hashCode()
+  {
+    int code = HashCodeBuilder.put(0, "BinaryExpression");
+    code = HashCodeBuilder.put(code, this.operator);
+    code = HashCodeBuilder.put(code, this.left);
+    code = HashCodeBuilder.put(code, this.right);
+    return code;
+  }
 
-    @NotNull
-    public BinaryOperator getOperator() {
-        return this.operator;
-    }
+  @NotNull
+  public BinaryOperator getOperator()
+  {
+    return this.operator;
+  }
 
-    @NotNull
-    public BinaryExpression setOperator(@NotNull BinaryOperator operator) {
-        return new BinaryExpression(operator, this.left, this.right);
-    }
+  @NotNull
+  public Expression getLeft()
+  {
+    return this.left;
+  }
 
-    @NotNull
-    public Expression getLeft() {
-        return this.left;
-    }
+  @NotNull
+  public Expression getRight()
+  {
+    return this.right;
+  }
 
-    @NotNull
-    public BinaryExpression setLeft(@NotNull Expression left) {
-        return new BinaryExpression(this.operator, left, this.right);
-    }
+  @NotNull
+  public BinaryExpression setOperator(@NotNull BinaryOperator operator)
+  {
+    return new BinaryExpression(operator, this.left, this.right);
+  }
 
-    @NotNull
-    public Expression getRight() {
-        return this.right;
-    }
+  @NotNull
+  public BinaryExpression setLeft(@NotNull Expression left)
+  {
+    return new BinaryExpression(this.operator, left, this.right);
+  }
 
-    @NotNull
-    public BinaryExpression setRight(@NotNull Expression right) {
-        return new BinaryExpression(this.operator, this.left, right);
-    }
+  @NotNull
+  public BinaryExpression setRight(@NotNull Expression right)
+  {
+    return new BinaryExpression(this.operator, this.left, right);
+  }
 
-    @Override
-    @NotNull
-    public Precedence getPrecedence() {
-        return this.operator.getPrecedence();
-    }
+  @Override
+  @NotNull
+  public Precedence getPrecedence()
+  {
+    return this.operator.getPrecedence();
+  }
 
 }

@@ -18,4 +18,5 @@
 
 package com.shapesecurity.shift.ast;
 
-public interface FunctionDeclarationClassDeclarationVariableDeclaration extends Node {}
+public interface FunctionDeclarationClassDeclarationVariableDeclaration extends Node {
+}

@@ -18,56 +18,61 @@
 
 package com.shapesecurity.shift.ast;
 
-import com.shapesecurity.functional.data.HashCodeBuilder;
-
 import org.jetbrains.annotations.NotNull;
+import com.shapesecurity.functional.data.HashCodeBuilder;
 
 public class ClassElement implements Node {
 
-    @NotNull
-    public final Boolean isStatic;
+  @NotNull
+  public final Boolean isStatic;
 
-    @NotNull
-    public final MethodDefinition method;
+  @NotNull
+  public final MethodDefinition method;
 
-    public ClassElement(@NotNull Boolean isStatic, @NotNull MethodDefinition method) {
-        super();
-        this.isStatic = isStatic;
-        this.method = method;
-    }
+  public ClassElement (@NotNull Boolean isStatic, @NotNull MethodDefinition method)
+  {
+    super();
+    this.isStatic = isStatic;
+    this.method = method;
+  }
 
-    @Override
-    public boolean equals(Object object) {
-        return object instanceof ClassElement && this.isStatic.equals(((ClassElement) object).isStatic) &&
-               this.method.equals(((ClassElement) object).method);
-    }
+  @Override
+  public boolean equals(Object object)
+  {
+    return object instanceof ClassElement && this.isStatic.equals(((ClassElement) object).isStatic) && this.method.equals(((ClassElement) object).method);
+  }
 
-    @Override
-    public int hashCode() {
-        int code = HashCodeBuilder.put(0, "ClassElement");
-        code = HashCodeBuilder.put(code, this.isStatic);
-        code = HashCodeBuilder.put(code, this.method);
-        return code;
-    }
+  @Override
+  public int hashCode()
+  {
+    int code = HashCodeBuilder.put(0, "ClassElement");
+    code = HashCodeBuilder.put(code, this.isStatic);
+    code = HashCodeBuilder.put(code, this.method);
+    return code;
+  }
 
-    @NotNull
-    public Boolean getIsStatic() {
-        return this.isStatic;
-    }
+  @NotNull
+  public Boolean getIsStatic()
+  {
+    return this.isStatic;
+  }
 
-    @NotNull
-    public ClassElement setIsStatic(@NotNull Boolean isStatic) {
-        return new ClassElement(isStatic, this.method);
-    }
+  @NotNull
+  public MethodDefinition getMethod()
+  {
+    return this.method;
+  }
 
-    @NotNull
-    public MethodDefinition getMethod() {
-        return this.method;
-    }
+  @NotNull
+  public ClassElement setIsStatic(@NotNull Boolean isStatic)
+  {
+    return new ClassElement(isStatic, this.method);
+  }
 
-    @NotNull
-    public ClassElement setMethod(@NotNull MethodDefinition method) {
-        return new ClassElement(this.isStatic, method);
-    }
+  @NotNull
+  public ClassElement setMethod(@NotNull MethodDefinition method)
+  {
+    return new ClassElement(this.isStatic, method);
+  }
 
 }

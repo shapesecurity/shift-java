@@ -18,48 +18,52 @@
 
 package com.shapesecurity.shift.ast;
 
+import org.jetbrains.annotations.NotNull;
 import com.shapesecurity.functional.data.HashCodeBuilder;
 import com.shapesecurity.shift.ast.operators.Precedence;
 
-import org.jetbrains.annotations.NotNull;
-
 public class LiteralNumericExpression extends Expression implements Node {
 
-    @NotNull
-    public final Double value;
+  @NotNull
+  public final Double value;
 
-    public LiteralNumericExpression(@NotNull Double value) {
-        super();
-        this.value = value;
-    }
+  public LiteralNumericExpression (@NotNull Double value)
+  {
+    super();
+    this.value = value;
+  }
 
-    @Override
-    public boolean equals(Object object) {
-        return object instanceof LiteralNumericExpression && this.value.equals(
-            ((LiteralNumericExpression) object).value);
-    }
+  @Override
+  public boolean equals(Object object)
+  {
+    return object instanceof LiteralNumericExpression && this.value.equals(((LiteralNumericExpression) object).value);
+  }
 
-    @Override
-    public int hashCode() {
-        int code = HashCodeBuilder.put(0, "LiteralNumericExpression");
-        code = HashCodeBuilder.put(code, this.value);
-        return code;
-    }
+  @Override
+  public int hashCode()
+  {
+    int code = HashCodeBuilder.put(0, "LiteralNumericExpression");
+    code = HashCodeBuilder.put(code, this.value);
+    return code;
+  }
 
-    @NotNull
-    public Double getValue() {
-        return this.value;
-    }
+  @NotNull
+  public Double getValue()
+  {
+    return this.value;
+  }
 
-    @NotNull
-    public LiteralNumericExpression setValue(@NotNull Double value) {
-        return new LiteralNumericExpression(value);
-    }
+  @NotNull
+  public LiteralNumericExpression setValue(@NotNull Double value)
+  {
+    return new LiteralNumericExpression(value);
+  }
 
-    @Override
-    @NotNull
-    public Precedence getPrecedence() {
-        return Precedence.PRIMARY;
-    }
+  @Override
+  @NotNull
+  public Precedence getPrecedence()
+  {
+    return Precedence.PRIMARY;
+  }
 
 }

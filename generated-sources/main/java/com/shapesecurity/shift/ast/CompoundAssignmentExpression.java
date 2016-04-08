@@ -18,83 +18,87 @@
 
 package com.shapesecurity.shift.ast;
 
-import com.shapesecurity.functional.data.HashCodeBuilder;
-import com.shapesecurity.shift.ast.operators.CompoundAssignmentOperator;
-import com.shapesecurity.shift.ast.operators.Precedence;
-
 import org.jetbrains.annotations.NotNull;
+import com.shapesecurity.functional.data.HashCodeBuilder;
+import com.shapesecurity.shift.ast.operators.Precedence;
+import com.shapesecurity.shift.ast.operators.CompoundAssignmentOperator;
 
 public class CompoundAssignmentExpression extends Expression implements Node {
 
-    @NotNull
-    public final CompoundAssignmentOperator operator;
+  @NotNull
+  public final CompoundAssignmentOperator operator;
 
-    @NotNull
-    public final BindingIdentifierMemberExpression binding;
+  @NotNull
+  public final SimpleAssignmentTarget binding;
 
-    @NotNull
-    public final Expression expression;
+  @NotNull
+  public final Expression expression;
 
-    public CompoundAssignmentExpression(@NotNull CompoundAssignmentOperator operator,
-                                        @NotNull BindingIdentifierMemberExpression binding,
-                                        @NotNull Expression expression) {
-        super();
-        this.operator = operator;
-        this.binding = binding;
-        this.expression = expression;
-    }
+  public CompoundAssignmentExpression (@NotNull CompoundAssignmentOperator operator, @NotNull SimpleAssignmentTarget binding, @NotNull Expression expression)
+  {
+    super();
+    this.operator = operator;
+    this.binding = binding;
+    this.expression = expression;
+  }
 
-    @Override
-    public boolean equals(Object object) {
-        return object instanceof CompoundAssignmentExpression && this.operator.equals(
-            ((CompoundAssignmentExpression) object).operator) && this.binding.equals(
-            ((CompoundAssignmentExpression) object).binding) && this.expression.equals(
-            ((CompoundAssignmentExpression) object).expression);
-    }
+  @Override
+  public boolean equals(Object object)
+  {
+    return object instanceof CompoundAssignmentExpression && this.operator.equals(((CompoundAssignmentExpression) object).operator) && this.binding.equals(((CompoundAssignmentExpression) object).binding) && this.expression.equals(((CompoundAssignmentExpression) object).expression);
+  }
 
-    @Override
-    public int hashCode() {
-        int code = HashCodeBuilder.put(0, "CompoundAssignmentExpression");
-        code = HashCodeBuilder.put(code, this.operator);
-        code = HashCodeBuilder.put(code, this.binding);
-        code = HashCodeBuilder.put(code, this.expression);
-        return code;
-    }
+  @Override
+  public int hashCode()
+  {
+    int code = HashCodeBuilder.put(0, "CompoundAssignmentExpression");
+    code = HashCodeBuilder.put(code, this.operator);
+    code = HashCodeBuilder.put(code, this.binding);
+    code = HashCodeBuilder.put(code, this.expression);
+    return code;
+  }
 
-    @NotNull
-    public CompoundAssignmentOperator getOperator() {
-        return this.operator;
-    }
+  @NotNull
+  public CompoundAssignmentOperator getOperator()
+  {
+    return this.operator;
+  }
 
-    @NotNull
-    public CompoundAssignmentExpression setOperator(@NotNull CompoundAssignmentOperator operator) {
-        return new CompoundAssignmentExpression(operator, this.binding, this.expression);
-    }
+  @NotNull
+  public SimpleAssignmentTarget getBinding()
+  {
+    return this.binding;
+  }
 
-    @NotNull
-    public BindingIdentifierMemberExpression getBinding() {
-        return this.binding;
-    }
+  @NotNull
+  public Expression getExpression()
+  {
+    return this.expression;
+  }
 
-    @NotNull
-    public CompoundAssignmentExpression setBinding(@NotNull BindingIdentifierMemberExpression binding) {
-        return new CompoundAssignmentExpression(this.operator, binding, this.expression);
-    }
+  @NotNull
+  public CompoundAssignmentExpression setOperator(@NotNull CompoundAssignmentOperator operator)
+  {
+    return new CompoundAssignmentExpression(operator, this.binding, this.expression);
+  }
 
-    @NotNull
-    public Expression getExpression() {
-        return this.expression;
-    }
+  @NotNull
+  public CompoundAssignmentExpression setBinding(@NotNull SimpleAssignmentTarget binding)
+  {
+    return new CompoundAssignmentExpression(this.operator, binding, this.expression);
+  }
 
-    @NotNull
-    public CompoundAssignmentExpression setExpression(@NotNull Expression expression) {
-        return new CompoundAssignmentExpression(this.operator, this.binding, expression);
-    }
+  @NotNull
+  public CompoundAssignmentExpression setExpression(@NotNull Expression expression)
+  {
+    return new CompoundAssignmentExpression(this.operator, this.binding, expression);
+  }
 
-    @Override
-    @NotNull
-    public Precedence getPrecedence() {
-        return Precedence.ASSIGNMENT;
-    }
+  @Override
+  @NotNull
+  public Precedence getPrecedence()
+  {
+    return Precedence.ASSIGNMENT;
+  }
 
 }

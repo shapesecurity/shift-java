@@ -18,41 +18,45 @@
 
 package com.shapesecurity.shift.ast;
 
+import org.jetbrains.annotations.NotNull;
 import com.shapesecurity.functional.data.HashCodeBuilder;
 import com.shapesecurity.functional.data.ImmutableList;
 
-import org.jetbrains.annotations.NotNull;
-
 public class Block implements Node {
 
-    @NotNull
-    public final ImmutableList<Statement> statements;
+  @NotNull
+  public final ImmutableList<Statement> statements;
 
-    public Block(@NotNull ImmutableList<Statement> statements) {
-        super();
-        this.statements = statements;
-    }
+  public Block (@NotNull ImmutableList<Statement> statements)
+  {
+    super();
+    this.statements = statements;
+  }
 
-    @Override
-    public boolean equals(Object object) {
-        return object instanceof Block && this.statements.equals(((Block) object).statements);
-    }
+  @Override
+  public boolean equals(Object object)
+  {
+    return object instanceof Block && this.statements.equals(((Block) object).statements);
+  }
 
-    @Override
-    public int hashCode() {
-        int code = HashCodeBuilder.put(0, "Block");
-        code = HashCodeBuilder.put(code, this.statements);
-        return code;
-    }
+  @Override
+  public int hashCode()
+  {
+    int code = HashCodeBuilder.put(0, "Block");
+    code = HashCodeBuilder.put(code, this.statements);
+    return code;
+  }
 
-    @NotNull
-    public ImmutableList<Statement> getStatements() {
-        return this.statements;
-    }
+  @NotNull
+  public ImmutableList<Statement> getStatements()
+  {
+    return this.statements;
+  }
 
-    @NotNull
-    public Block setStatements(@NotNull ImmutableList<Statement> statements) {
-        return new Block(statements);
-    }
+  @NotNull
+  public Block setStatements(@NotNull ImmutableList<Statement> statements)
+  {
+    return new Block(statements);
+  }
 
 }

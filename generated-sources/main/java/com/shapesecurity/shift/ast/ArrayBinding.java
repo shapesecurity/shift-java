@@ -18,59 +18,63 @@
 
 package com.shapesecurity.shift.ast;
 
-import com.shapesecurity.functional.data.HashCodeBuilder;
-import com.shapesecurity.functional.data.ImmutableList;
-import com.shapesecurity.functional.data.Maybe;
-
 import org.jetbrains.annotations.NotNull;
+import com.shapesecurity.functional.data.HashCodeBuilder;
+import com.shapesecurity.functional.data.Maybe;
+import com.shapesecurity.functional.data.ImmutableList;
 
-public class ArrayBinding implements Node, Binding {
+public class ArrayBinding implements Node, BindingPattern {
 
-    @NotNull
-    public final ImmutableList<Maybe<BindingBindingWithDefault>> elements;
+  @NotNull
+  public final ImmutableList<Maybe<BindingBindingWithDefault>> elements;
 
-    @NotNull
-    public final Maybe<Binding> restElement;
+  @NotNull
+  public final Maybe<Binding> rest;
 
-    public ArrayBinding(@NotNull ImmutableList<Maybe<BindingBindingWithDefault>> elements,
-                        @NotNull Maybe<Binding> restElement) {
-        super();
-        this.elements = elements;
-        this.restElement = restElement;
-    }
+  public ArrayBinding (@NotNull ImmutableList<Maybe<BindingBindingWithDefault>> elements, @NotNull Maybe<Binding> rest)
+  {
+    super();
+    this.elements = elements;
+    this.rest = rest;
+  }
 
-    @Override
-    public boolean equals(Object object) {
-        return object instanceof ArrayBinding && this.elements.equals(((ArrayBinding) object).elements) &&
-               this.restElement.equals(((ArrayBinding) object).restElement);
-    }
+  @Override
+  public boolean equals(Object object)
+  {
+    return object instanceof ArrayBinding && this.elements.equals(((ArrayBinding) object).elements) && this.rest.equals(((ArrayBinding) object).rest);
+  }
 
-    @Override
-    public int hashCode() {
-        int code = HashCodeBuilder.put(0, "ArrayBinding");
-        code = HashCodeBuilder.put(code, this.elements);
-        code = HashCodeBuilder.put(code, this.restElement);
-        return code;
-    }
+  @Override
+  public int hashCode()
+  {
+    int code = HashCodeBuilder.put(0, "ArrayBinding");
+    code = HashCodeBuilder.put(code, this.elements);
+    code = HashCodeBuilder.put(code, this.rest);
+    return code;
+  }
 
-    @NotNull
-    public ImmutableList<Maybe<BindingBindingWithDefault>> getElements() {
-        return this.elements;
-    }
+  @NotNull
+  public ImmutableList<Maybe<BindingBindingWithDefault>> getElements()
+  {
+    return this.elements;
+  }
 
-    @NotNull
-    public ArrayBinding setElements(@NotNull ImmutableList<Maybe<BindingBindingWithDefault>> elements) {
-        return new ArrayBinding(elements, this.restElement);
-    }
+  @NotNull
+  public Maybe<Binding> getRest()
+  {
+    return this.rest;
+  }
 
-    @NotNull
-    public Maybe<Binding> getRestElement() {
-        return this.restElement;
-    }
+  @NotNull
+  public ArrayBinding setElements(@NotNull ImmutableList<Maybe<BindingBindingWithDefault>> elements)
+  {
+    return new ArrayBinding(elements, this.rest);
+  }
 
-    @NotNull
-    public ArrayBinding setRestElement(@NotNull Maybe<Binding> restElement) {
-        return new ArrayBinding(this.elements, restElement);
-    }
+  @NotNull
+  public ArrayBinding setRest(@NotNull Maybe<Binding> rest)
+  {
+    return new ArrayBinding(this.elements, rest);
+  }
 
 }

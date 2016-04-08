@@ -18,56 +18,61 @@
 
 package com.shapesecurity.shift.ast;
 
-import com.shapesecurity.functional.data.HashCodeBuilder;
-
 import org.jetbrains.annotations.NotNull;
+import com.shapesecurity.functional.data.HashCodeBuilder;
 
 public class CatchClause implements Node {
 
-    @NotNull
-    public final Binding binding;
+  @NotNull
+  public final Binding binding;
 
-    @NotNull
-    public final Block body;
+  @NotNull
+  public final Block body;
 
-    public CatchClause(@NotNull Binding binding, @NotNull Block body) {
-        super();
-        this.binding = binding;
-        this.body = body;
-    }
+  public CatchClause (@NotNull Binding binding, @NotNull Block body)
+  {
+    super();
+    this.binding = binding;
+    this.body = body;
+  }
 
-    @Override
-    public boolean equals(Object object) {
-        return object instanceof CatchClause && this.binding.equals(((CatchClause) object).binding) && this.body.equals(
-            ((CatchClause) object).body);
-    }
+  @Override
+  public boolean equals(Object object)
+  {
+    return object instanceof CatchClause && this.binding.equals(((CatchClause) object).binding) && this.body.equals(((CatchClause) object).body);
+  }
 
-    @Override
-    public int hashCode() {
-        int code = HashCodeBuilder.put(0, "CatchClause");
-        code = HashCodeBuilder.put(code, this.binding);
-        code = HashCodeBuilder.put(code, this.body);
-        return code;
-    }
+  @Override
+  public int hashCode()
+  {
+    int code = HashCodeBuilder.put(0, "CatchClause");
+    code = HashCodeBuilder.put(code, this.binding);
+    code = HashCodeBuilder.put(code, this.body);
+    return code;
+  }
 
-    @NotNull
-    public Binding getBinding() {
-        return this.binding;
-    }
+  @NotNull
+  public Binding getBinding()
+  {
+    return this.binding;
+  }
 
-    @NotNull
-    public CatchClause setBinding(@NotNull Binding binding) {
-        return new CatchClause(binding, this.body);
-    }
+  @NotNull
+  public Block getBody()
+  {
+    return this.body;
+  }
 
-    @NotNull
-    public Block getBody() {
-        return this.body;
-    }
+  @NotNull
+  public CatchClause setBinding(@NotNull Binding binding)
+  {
+    return new CatchClause(binding, this.body);
+  }
 
-    @NotNull
-    public CatchClause setBody(@NotNull Block body) {
-        return new CatchClause(this.binding, body);
-    }
+  @NotNull
+  public CatchClause setBody(@NotNull Block body)
+  {
+    return new CatchClause(this.binding, body);
+  }
 
 }

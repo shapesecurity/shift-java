@@ -18,58 +18,62 @@
 
 package com.shapesecurity.shift.ast;
 
+import org.jetbrains.annotations.NotNull;
 import com.shapesecurity.functional.data.HashCodeBuilder;
 import com.shapesecurity.functional.data.ImmutableList;
-import com.shapesecurity.functional.data.Maybe;
-
-import org.jetbrains.annotations.NotNull;
 
 public class ExportFrom extends ExportDeclaration implements Node {
 
-    @NotNull
-    public final ImmutableList<ExportSpecifier> namedExports;
+  @NotNull
+  public final ImmutableList<ExportFromSpecifier> namedExports;
 
-    @NotNull
-    public final Maybe<String> moduleSpecifier;
+  @NotNull
+  public final String  moduleSpecifier;
 
-    public ExportFrom(@NotNull ImmutableList<ExportSpecifier> namedExports, @NotNull Maybe<String> moduleSpecifier) {
-        super();
-        this.namedExports = namedExports;
-        this.moduleSpecifier = moduleSpecifier;
-    }
+  public ExportFrom (@NotNull ImmutableList<ExportFromSpecifier> namedExports, @NotNull String  moduleSpecifier)
+  {
+    super();
+    this.namedExports = namedExports;
+    this.moduleSpecifier = moduleSpecifier;
+  }
 
-    @Override
-    public boolean equals(Object object) {
-        return object instanceof ExportFrom && this.namedExports.equals(((ExportFrom) object).namedExports) &&
-               this.moduleSpecifier.equals(((ExportFrom) object).moduleSpecifier);
-    }
+  @Override
+  public boolean equals(Object object)
+  {
+    return object instanceof ExportFrom && this.namedExports.equals(((ExportFrom) object).namedExports) && this.moduleSpecifier.equals(((ExportFrom) object).moduleSpecifier);
+  }
 
-    @Override
-    public int hashCode() {
-        int code = HashCodeBuilder.put(0, "ExportFrom");
-        code = HashCodeBuilder.put(code, this.namedExports);
-        code = HashCodeBuilder.put(code, this.moduleSpecifier);
-        return code;
-    }
+  @Override
+  public int hashCode()
+  {
+    int code = HashCodeBuilder.put(0, "ExportFrom");
+    code = HashCodeBuilder.put(code, this.namedExports);
+    code = HashCodeBuilder.put(code, this.moduleSpecifier);
+    return code;
+  }
 
-    @NotNull
-    public ImmutableList<ExportSpecifier> getNamedExports() {
-        return this.namedExports;
-    }
+  @NotNull
+  public ImmutableList<ExportFromSpecifier> getNamedExports()
+  {
+    return this.namedExports;
+  }
 
-    @NotNull
-    public ExportFrom setNamedExports(@NotNull ImmutableList<ExportSpecifier> namedExports) {
-        return new ExportFrom(namedExports, this.moduleSpecifier);
-    }
+  @NotNull
+  public String  getModuleSpecifier()
+  {
+    return this.moduleSpecifier;
+  }
 
-    @NotNull
-    public Maybe<String> getModuleSpecifier() {
-        return this.moduleSpecifier;
-    }
+  @NotNull
+  public ExportFrom setNamedExports(@NotNull ImmutableList<ExportFromSpecifier> namedExports)
+  {
+    return new ExportFrom(namedExports, this.moduleSpecifier);
+  }
 
-    @NotNull
-    public ExportFrom setModuleSpecifier(@NotNull Maybe<String> moduleSpecifier) {
-        return new ExportFrom(this.namedExports, moduleSpecifier);
-    }
+  @NotNull
+  public ExportFrom setModuleSpecifier(@NotNull String  moduleSpecifier)
+  {
+    return new ExportFrom(this.namedExports, moduleSpecifier);
+  }
 
 }

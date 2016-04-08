@@ -18,40 +18,44 @@
 
 package com.shapesecurity.shift.ast;
 
-import com.shapesecurity.functional.data.HashCodeBuilder;
-
 import org.jetbrains.annotations.NotNull;
+import com.shapesecurity.functional.data.HashCodeBuilder;
 
 public class StaticPropertyName extends PropertyName implements Node {
 
-    @NotNull
-    public final String value;
+  @NotNull
+  public final String  value;
 
-    public StaticPropertyName(@NotNull String value) {
-        super();
-        this.value = value;
-    }
+  public StaticPropertyName (@NotNull String  value)
+  {
+    super();
+    this.value = value;
+  }
 
-    @Override
-    public boolean equals(Object object) {
-        return object instanceof StaticPropertyName && this.value.equals(((StaticPropertyName) object).value);
-    }
+  @Override
+  public boolean equals(Object object)
+  {
+    return object instanceof StaticPropertyName && this.value.equals(((StaticPropertyName) object).value);
+  }
 
-    @Override
-    public int hashCode() {
-        int code = HashCodeBuilder.put(0, "StaticPropertyName");
-        code = HashCodeBuilder.put(code, this.value);
-        return code;
-    }
+  @Override
+  public int hashCode()
+  {
+    int code = HashCodeBuilder.put(0, "StaticPropertyName");
+    code = HashCodeBuilder.put(code, this.value);
+    return code;
+  }
 
-    @NotNull
-    public String getValue() {
-        return this.value;
-    }
+  @NotNull
+  public String  getValue()
+  {
+    return this.value;
+  }
 
-    @NotNull
-    public StaticPropertyName setValue(@NotNull String value) {
-        return new StaticPropertyName(value);
-    }
+  @NotNull
+  public StaticPropertyName setValue(@NotNull String  value)
+  {
+    return new StaticPropertyName(value);
+  }
 
 }

@@ -18,68 +18,69 @@
 
 package com.shapesecurity.shift.ast;
 
+import org.jetbrains.annotations.NotNull;
 import com.shapesecurity.functional.data.HashCodeBuilder;
 import com.shapesecurity.shift.ast.operators.Precedence;
 
-import org.jetbrains.annotations.NotNull;
-
 public class ComputedMemberExpression extends MemberExpression implements Node {
 
-    @NotNull
-    public final Expression expression;
+  @NotNull
+  public final Expression expression;
 
-    @NotNull
-    public final ExpressionSuper _object;
+  @NotNull
+  public final ExpressionSuper _object;
 
-    public ComputedMemberExpression(@NotNull Expression expression, @NotNull ExpressionSuper _object) {
-        super(_object);
-        this.expression = expression;
-        this._object = _object;
-    }
+  public ComputedMemberExpression (@NotNull Expression expression, @NotNull ExpressionSuper _object)
+  {
+    super(_object);
+    this.expression = expression;
+    this._object = _object;
+  }
 
-    @Override
-    public boolean equals(Object object) {
-        return object instanceof ComputedMemberExpression && this.expression.equals(
-            ((ComputedMemberExpression) object).expression) && this._object.equals(
-            ((ComputedMemberExpression) object)._object);
-    }
+  @Override
+  public boolean equals(Object object)
+  {
+    return object instanceof ComputedMemberExpression && this.expression.equals(((ComputedMemberExpression) object).expression) && this._object.equals(((ComputedMemberExpression) object)._object);
+  }
 
-    @Override
-    public int hashCode() {
-        int code = HashCodeBuilder.put(0, "ComputedMemberExpression");
-        code = HashCodeBuilder.put(code, this.expression);
-        code = HashCodeBuilder.put(code, this._object);
-        return code;
-    }
+  @Override
+  public int hashCode()
+  {
+    int code = HashCodeBuilder.put(0, "ComputedMemberExpression");
+    code = HashCodeBuilder.put(code, this.expression);
+    code = HashCodeBuilder.put(code, this._object);
+    return code;
+  }
 
-    @NotNull
-    public Expression getExpression() {
-        return this.expression;
-    }
+  @NotNull
+  public Expression getExpression()
+  {
+    return this.expression;
+  }
 
-    @NotNull
-    public ComputedMemberExpression setExpression(@NotNull Expression expression) {
-        return new ComputedMemberExpression(expression, this._object);
-    }
+  @NotNull
+  public ExpressionSuper get_object()
+  {
+    return this._object;
+  }
 
-    @NotNull
-    public ExpressionSuper get_object() {
-        return this._object;
-    }
+  @NotNull
+  public ComputedMemberExpression setExpression(@NotNull Expression expression)
+  {
+    return new ComputedMemberExpression(expression, this._object);
+  }
 
-    @NotNull
-    public ComputedMemberExpression set_object(@NotNull ExpressionSuper _object) {
-        return new ComputedMemberExpression(this.expression, _object);
-    }
+  @NotNull
+  public ComputedMemberExpression set_object(@NotNull ExpressionSuper _object)
+  {
+    return new ComputedMemberExpression(this.expression, _object);
+  }
 
-    @Override
-    @NotNull
-    public Precedence getPrecedence() {
-        Precedence p = this._object.getPrecedence();
-        if (p == Precedence.CALL) {
-            return Precedence.CALL;
-        }
-        return Precedence.MEMBER;
-    }
+  @Override
+  @NotNull
+  public Precedence getPrecedence()
+  {
+    return Precedence.MEMBER;
+  }
 
 }

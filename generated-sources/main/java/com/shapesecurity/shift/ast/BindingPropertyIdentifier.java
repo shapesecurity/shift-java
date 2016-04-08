@@ -18,58 +18,62 @@
 
 package com.shapesecurity.shift.ast;
 
+import org.jetbrains.annotations.NotNull;
 import com.shapesecurity.functional.data.HashCodeBuilder;
 import com.shapesecurity.functional.data.Maybe;
 
-import org.jetbrains.annotations.NotNull;
-
 public class BindingPropertyIdentifier extends BindingProperty implements Node {
 
-    @NotNull
-    public final BindingIdentifier binding;
+  @NotNull
+  public final BindingIdentifier binding;
 
-    @NotNull
-    public final Maybe<Expression> init;
+  @NotNull
+  public final Maybe<Expression> init;
 
-    public BindingPropertyIdentifier(@NotNull BindingIdentifier binding, @NotNull Maybe<Expression> init) {
-        super();
-        this.binding = binding;
-        this.init = init;
-    }
+  public BindingPropertyIdentifier (@NotNull BindingIdentifier binding, @NotNull Maybe<Expression> init)
+  {
+    super();
+    this.binding = binding;
+    this.init = init;
+  }
 
-    @Override
-    public boolean equals(Object object) {
-        return object instanceof BindingPropertyIdentifier && this.binding.equals(
-            ((BindingPropertyIdentifier) object).binding) && this.init.equals(
-            ((BindingPropertyIdentifier) object).init);
-    }
+  @Override
+  public boolean equals(Object object)
+  {
+    return object instanceof BindingPropertyIdentifier && this.binding.equals(((BindingPropertyIdentifier) object).binding) && this.init.equals(((BindingPropertyIdentifier) object).init);
+  }
 
-    @Override
-    public int hashCode() {
-        int code = HashCodeBuilder.put(0, "BindingPropertyIdentifier");
-        code = HashCodeBuilder.put(code, this.binding);
-        code = HashCodeBuilder.put(code, this.init);
-        return code;
-    }
+  @Override
+  public int hashCode()
+  {
+    int code = HashCodeBuilder.put(0, "BindingPropertyIdentifier");
+    code = HashCodeBuilder.put(code, this.binding);
+    code = HashCodeBuilder.put(code, this.init);
+    return code;
+  }
 
-    @NotNull
-    public BindingIdentifier getBinding() {
-        return this.binding;
-    }
+  @NotNull
+  public BindingIdentifier getBinding()
+  {
+    return this.binding;
+  }
 
-    @NotNull
-    public BindingPropertyIdentifier setBinding(@NotNull BindingIdentifier binding) {
-        return new BindingPropertyIdentifier(binding, this.init);
-    }
+  @NotNull
+  public Maybe<Expression> getInit()
+  {
+    return this.init;
+  }
 
-    @NotNull
-    public Maybe<Expression> getInit() {
-        return this.init;
-    }
+  @NotNull
+  public BindingPropertyIdentifier setBinding(@NotNull BindingIdentifier binding)
+  {
+    return new BindingPropertyIdentifier(binding, this.init);
+  }
 
-    @NotNull
-    public BindingPropertyIdentifier setInit(@NotNull Maybe<Expression> init) {
-        return new BindingPropertyIdentifier(this.binding, init);
-    }
+  @NotNull
+  public BindingPropertyIdentifier setInit(@NotNull Maybe<Expression> init)
+  {
+    return new BindingPropertyIdentifier(this.binding, init);
+  }
 
 }

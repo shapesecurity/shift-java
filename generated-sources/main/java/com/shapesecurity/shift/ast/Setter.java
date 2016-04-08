@@ -18,71 +18,78 @@
 
 package com.shapesecurity.shift.ast;
 
-import com.shapesecurity.functional.data.HashCodeBuilder;
-
 import org.jetbrains.annotations.NotNull;
+import com.shapesecurity.functional.data.HashCodeBuilder;
 
 public class Setter extends MethodDefinition implements Node {
 
-    @NotNull
-    public final BindingBindingWithDefault param;
+  @NotNull
+  public final Parameter param;
 
-    @NotNull
-    public final FunctionBody body;
+  @NotNull
+  public final FunctionBody body;
 
-    @NotNull
-    public final PropertyName name;
+  @NotNull
+  public final PropertyName name;
 
-    public Setter(@NotNull BindingBindingWithDefault param, @NotNull FunctionBody body, @NotNull PropertyName name) {
-        super(body, name);
-        this.param = param;
-        this.body = body;
-        this.name = name;
-    }
+  public Setter (@NotNull Parameter param, @NotNull FunctionBody body, @NotNull PropertyName name)
+  {
+    super(body, name);
+    this.param = param;
+    this.body = body;
+    this.name = name;
+  }
 
-    @Override
-    public boolean equals(Object object) {
-        return object instanceof Setter && this.param.equals(((Setter) object).param) && this.body.equals(
-            ((Setter) object).body) && this.name.equals(((Setter) object).name);
-    }
+  @Override
+  public boolean equals(Object object)
+  {
+    return object instanceof Setter && this.param.equals(((Setter) object).param) && this.body.equals(((Setter) object).body) && this.name.equals(((Setter) object).name);
+  }
 
-    @Override
-    public int hashCode() {
-        int code = HashCodeBuilder.put(0, "Setter");
-        code = HashCodeBuilder.put(code, this.param);
-        code = HashCodeBuilder.put(code, this.body);
-        code = HashCodeBuilder.put(code, this.name);
-        return code;
-    }
+  @Override
+  public int hashCode()
+  {
+    int code = HashCodeBuilder.put(0, "Setter");
+    code = HashCodeBuilder.put(code, this.param);
+    code = HashCodeBuilder.put(code, this.body);
+    code = HashCodeBuilder.put(code, this.name);
+    return code;
+  }
 
-    @NotNull
-    public BindingBindingWithDefault getParam() {
-        return this.param;
-    }
+  @NotNull
+  public Parameter getParam()
+  {
+    return this.param;
+  }
 
-    @NotNull
-    public Setter setParam(@NotNull BindingBindingWithDefault param) {
-        return new Setter(param, this.body, this.name);
-    }
+  @NotNull
+  public FunctionBody getBody()
+  {
+    return this.body;
+  }
 
-    @NotNull
-    public FunctionBody getBody() {
-        return this.body;
-    }
+  @NotNull
+  public PropertyName getName()
+  {
+    return this.name;
+  }
 
-    @NotNull
-    public Setter setBody(@NotNull FunctionBody body) {
-        return new Setter(this.param, body, this.name);
-    }
+  @NotNull
+  public Setter setParam(@NotNull Parameter param)
+  {
+    return new Setter(param, this.body, this.name);
+  }
 
-    @NotNull
-    public PropertyName getName() {
-        return this.name;
-    }
+  @NotNull
+  public Setter setBody(@NotNull FunctionBody body)
+  {
+    return new Setter(this.param, body, this.name);
+  }
 
-    @NotNull
-    public Setter setName(@NotNull PropertyName name) {
-        return new Setter(this.param, this.body, name);
-    }
+  @NotNull
+  public Setter setName(@NotNull PropertyName name)
+  {
+    return new Setter(this.param, this.body, name);
+  }
 
 }

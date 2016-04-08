@@ -18,40 +18,44 @@
 
 package com.shapesecurity.shift.ast;
 
-import com.shapesecurity.functional.data.HashCodeBuilder;
-
 import org.jetbrains.annotations.NotNull;
+import com.shapesecurity.functional.data.HashCodeBuilder;
 
 public class ShorthandProperty extends ObjectProperty implements Node {
 
-    @NotNull
-    public final String name;
+  @NotNull
+  public final IdentifierExpression name;
 
-    public ShorthandProperty(@NotNull String name) {
-        super();
-        this.name = name;
-    }
+  public ShorthandProperty (@NotNull IdentifierExpression name)
+  {
+    super();
+    this.name = name;
+  }
 
-    @Override
-    public boolean equals(Object object) {
-        return object instanceof ShorthandProperty && this.name.equals(((ShorthandProperty) object).name);
-    }
+  @Override
+  public boolean equals(Object object)
+  {
+    return object instanceof ShorthandProperty && this.name.equals(((ShorthandProperty) object).name);
+  }
 
-    @Override
-    public int hashCode() {
-        int code = HashCodeBuilder.put(0, "ShorthandProperty");
-        code = HashCodeBuilder.put(code, this.name);
-        return code;
-    }
+  @Override
+  public int hashCode()
+  {
+    int code = HashCodeBuilder.put(0, "ShorthandProperty");
+    code = HashCodeBuilder.put(code, this.name);
+    return code;
+  }
 
-    @NotNull
-    public String getName() {
-        return this.name;
-    }
+  @NotNull
+  public IdentifierExpression getName()
+  {
+    return this.name;
+  }
 
-    @NotNull
-    public ShorthandProperty setName(@NotNull String name) {
-        return new ShorthandProperty(name);
-    }
+  @NotNull
+  public ShorthandProperty setName(@NotNull IdentifierExpression name)
+  {
+    return new ShorthandProperty(name);
+  }
 
 }

@@ -18,23 +18,27 @@
 
 package com.shapesecurity.shift.ast;
 
+import org.jetbrains.annotations.NotNull;
 import com.shapesecurity.functional.data.HashCodeBuilder;
 
 public class EmptyStatement extends Statement implements Node {
 
-    public EmptyStatement() {
-        super();
-    }
+  public EmptyStatement ()
+  {
+    super();
+  }
 
-    @Override
-    public boolean equals(Object object) {
-        return object instanceof EmptyStatement;
-    }
+  @Override
+  public boolean equals(Object object)
+  {
+    return object instanceof EmptyStatement;
+  }
 
-    @Override
-    public int hashCode() {
-        int code = HashCodeBuilder.put(0, "EmptyStatement");
-        return code;
-    }
+  @Override
+  public int hashCode()
+  {
+    int code = HashCodeBuilder.put(0, "EmptyStatement");
+    return code;
+  }
 
 }

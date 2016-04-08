@@ -18,63 +18,69 @@
 
 package com.shapesecurity.shift.ast;
 
+import org.jetbrains.annotations.NotNull;
 import com.shapesecurity.functional.data.HashCodeBuilder;
 import com.shapesecurity.shift.ast.operators.Precedence;
 
-import org.jetbrains.annotations.NotNull;
-
 public class ArrowExpression extends Expression implements Node {
 
-    @NotNull
-    public final FormalParameters params;
+  @NotNull
+  public final FormalParameters params;
 
-    @NotNull
-    public final FunctionBodyExpression body;
+  @NotNull
+  public final FunctionBodyExpression body;
 
-    public ArrowExpression(@NotNull FormalParameters params, @NotNull FunctionBodyExpression body) {
-        super();
-        this.params = params;
-        this.body = body;
-    }
+  public ArrowExpression (@NotNull FormalParameters params, @NotNull FunctionBodyExpression body)
+  {
+    super();
+    this.params = params;
+    this.body = body;
+  }
 
-    @Override
-    public boolean equals(Object object) {
-        return object instanceof ArrowExpression && this.params.equals(((ArrowExpression) object).params) &&
-               this.body.equals(((ArrowExpression) object).body);
-    }
+  @Override
+  public boolean equals(Object object)
+  {
+    return object instanceof ArrowExpression && this.params.equals(((ArrowExpression) object).params) && this.body.equals(((ArrowExpression) object).body);
+  }
 
-    @Override
-    public int hashCode() {
-        int code = HashCodeBuilder.put(0, "ArrowExpression");
-        code = HashCodeBuilder.put(code, this.params);
-        code = HashCodeBuilder.put(code, this.body);
-        return code;
-    }
+  @Override
+  public int hashCode()
+  {
+    int code = HashCodeBuilder.put(0, "ArrowExpression");
+    code = HashCodeBuilder.put(code, this.params);
+    code = HashCodeBuilder.put(code, this.body);
+    return code;
+  }
 
-    @NotNull
-    public FormalParameters getParams() {
-        return this.params;
-    }
+  @NotNull
+  public FormalParameters getParams()
+  {
+    return this.params;
+  }
 
-    @NotNull
-    public ArrowExpression setParams(@NotNull FormalParameters params) {
-        return new ArrowExpression(params, this.body);
-    }
+  @NotNull
+  public FunctionBodyExpression getBody()
+  {
+    return this.body;
+  }
 
-    @NotNull
-    public FunctionBodyExpression getBody() {
-        return this.body;
-    }
+  @NotNull
+  public ArrowExpression setParams(@NotNull FormalParameters params)
+  {
+    return new ArrowExpression(params, this.body);
+  }
 
-    @NotNull
-    public ArrowExpression setBody(@NotNull FunctionBodyExpression body) {
-        return new ArrowExpression(this.params, body);
-    }
+  @NotNull
+  public ArrowExpression setBody(@NotNull FunctionBodyExpression body)
+  {
+    return new ArrowExpression(this.params, body);
+  }
 
-    @Override
-    @NotNull
-    public Precedence getPrecedence() {
-        return Precedence.ASSIGNMENT;
-    }
+  @Override
+  @NotNull
+  public Precedence getPrecedence()
+  {
+    return Precedence.ASSIGNMENT;
+  }
 
 }

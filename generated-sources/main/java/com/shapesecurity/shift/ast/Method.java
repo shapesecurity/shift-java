@@ -18,90 +18,95 @@
 
 package com.shapesecurity.shift.ast;
 
-import com.shapesecurity.functional.data.HashCodeBuilder;
-
 import org.jetbrains.annotations.NotNull;
+import com.shapesecurity.functional.data.HashCodeBuilder;
 
 public class Method extends MethodDefinition implements Node {
 
-    @NotNull
-    public final Boolean isGenerator;
+  @NotNull
+  public final Boolean isGenerator;
 
-    @NotNull
-    public final FormalParameters params;
+  @NotNull
+  public final FormalParameters params;
 
-    @NotNull
-    public final FunctionBody body;
+  @NotNull
+  public final FunctionBody body;
 
-    @NotNull
-    public final PropertyName name;
+  @NotNull
+  public final PropertyName name;
 
-    public Method(@NotNull Boolean isGenerator,
-                  @NotNull FormalParameters params,
-                  @NotNull FunctionBody body,
-                  @NotNull PropertyName name) {
-        super(body, name);
-        this.isGenerator = isGenerator;
-        this.params = params;
-        this.body = body;
-        this.name = name;
-    }
+  public Method (@NotNull Boolean isGenerator, @NotNull FormalParameters params, @NotNull FunctionBody body, @NotNull PropertyName name)
+  {
+    super(body, name);
+    this.isGenerator = isGenerator;
+    this.params = params;
+    this.body = body;
+    this.name = name;
+  }
 
-    @Override
-    public boolean equals(Object object) {
-        return object instanceof Method && this.isGenerator.equals(((Method) object).isGenerator) && this.params.equals(
-            ((Method) object).params) && this.body.equals(((Method) object).body) && this.name.equals(
-            ((Method) object).name);
-    }
+  @Override
+  public boolean equals(Object object)
+  {
+    return object instanceof Method && this.isGenerator.equals(((Method) object).isGenerator) && this.params.equals(((Method) object).params) && this.body.equals(((Method) object).body) && this.name.equals(((Method) object).name);
+  }
 
-    @Override
-    public int hashCode() {
-        int code = HashCodeBuilder.put(0, "Method");
-        code = HashCodeBuilder.put(code, this.isGenerator);
-        code = HashCodeBuilder.put(code, this.params);
-        code = HashCodeBuilder.put(code, this.body);
-        code = HashCodeBuilder.put(code, this.name);
-        return code;
-    }
+  @Override
+  public int hashCode()
+  {
+    int code = HashCodeBuilder.put(0, "Method");
+    code = HashCodeBuilder.put(code, this.isGenerator);
+    code = HashCodeBuilder.put(code, this.params);
+    code = HashCodeBuilder.put(code, this.body);
+    code = HashCodeBuilder.put(code, this.name);
+    return code;
+  }
 
-    @NotNull
-    public Boolean getIsGenerator() {
-        return this.isGenerator;
-    }
+  @NotNull
+  public Boolean getIsGenerator()
+  {
+    return this.isGenerator;
+  }
 
-    @NotNull
-    public Method setIsGenerator(@NotNull Boolean isGenerator) {
-        return new Method(isGenerator, this.params, this.body, this.name);
-    }
+  @NotNull
+  public FormalParameters getParams()
+  {
+    return this.params;
+  }
 
-    @NotNull
-    public FormalParameters getParams() {
-        return this.params;
-    }
+  @NotNull
+  public FunctionBody getBody()
+  {
+    return this.body;
+  }
 
-    @NotNull
-    public Method setParams(@NotNull FormalParameters params) {
-        return new Method(this.isGenerator, params, this.body, this.name);
-    }
+  @NotNull
+  public PropertyName getName()
+  {
+    return this.name;
+  }
 
-    @NotNull
-    public FunctionBody getBody() {
-        return this.body;
-    }
+  @NotNull
+  public Method setIsGenerator(@NotNull Boolean isGenerator)
+  {
+    return new Method(isGenerator, this.params, this.body, this.name);
+  }
 
-    @NotNull
-    public Method setBody(@NotNull FunctionBody body) {
-        return new Method(this.isGenerator, this.params, body, this.name);
-    }
+  @NotNull
+  public Method setParams(@NotNull FormalParameters params)
+  {
+    return new Method(this.isGenerator, params, this.body, this.name);
+  }
 
-    @NotNull
-    public PropertyName getName() {
-        return this.name;
-    }
+  @NotNull
+  public Method setBody(@NotNull FunctionBody body)
+  {
+    return new Method(this.isGenerator, this.params, body, this.name);
+  }
 
-    @NotNull
-    public Method setName(@NotNull PropertyName name) {
-        return new Method(this.isGenerator, this.params, this.body, name);
-    }
+  @NotNull
+  public Method setName(@NotNull PropertyName name)
+  {
+    return new Method(this.isGenerator, this.params, this.body, name);
+  }
 
 }

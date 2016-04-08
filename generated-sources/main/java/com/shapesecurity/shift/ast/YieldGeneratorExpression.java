@@ -18,48 +18,52 @@
 
 package com.shapesecurity.shift.ast;
 
+import org.jetbrains.annotations.NotNull;
 import com.shapesecurity.functional.data.HashCodeBuilder;
 import com.shapesecurity.shift.ast.operators.Precedence;
 
-import org.jetbrains.annotations.NotNull;
-
 public class YieldGeneratorExpression extends Expression implements Node {
 
-    @NotNull
-    public final Expression expression;
+  @NotNull
+  public final Expression expression;
 
-    public YieldGeneratorExpression(@NotNull Expression expression) {
-        super();
-        this.expression = expression;
-    }
+  public YieldGeneratorExpression (@NotNull Expression expression)
+  {
+    super();
+    this.expression = expression;
+  }
 
-    @Override
-    public boolean equals(Object object) {
-        return object instanceof YieldGeneratorExpression && this.expression.equals(
-            ((YieldGeneratorExpression) object).expression);
-    }
+  @Override
+  public boolean equals(Object object)
+  {
+    return object instanceof YieldGeneratorExpression && this.expression.equals(((YieldGeneratorExpression) object).expression);
+  }
 
-    @Override
-    public int hashCode() {
-        int code = HashCodeBuilder.put(0, "YieldGeneratorExpression");
-        code = HashCodeBuilder.put(code, this.expression);
-        return code;
-    }
+  @Override
+  public int hashCode()
+  {
+    int code = HashCodeBuilder.put(0, "YieldGeneratorExpression");
+    code = HashCodeBuilder.put(code, this.expression);
+    return code;
+  }
 
-    @NotNull
-    public Expression getExpression() {
-        return this.expression;
-    }
+  @NotNull
+  public Expression getExpression()
+  {
+    return this.expression;
+  }
 
-    @NotNull
-    public YieldGeneratorExpression setExpression(@NotNull Expression expression) {
-        return new YieldGeneratorExpression(expression);
-    }
+  @NotNull
+  public YieldGeneratorExpression setExpression(@NotNull Expression expression)
+  {
+    return new YieldGeneratorExpression(expression);
+  }
 
-    @Override
-    @NotNull
-    public Precedence getPrecedence() {
-        return Precedence.ASSIGNMENT;
-    }
+  @Override
+  @NotNull
+  public Precedence getPrecedence()
+  {
+    return Precedence.ASSIGNMENT;
+  }
 
 }

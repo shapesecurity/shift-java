@@ -18,40 +18,44 @@
 
 package com.shapesecurity.shift.ast;
 
-import com.shapesecurity.functional.data.HashCodeBuilder;
-
 import org.jetbrains.annotations.NotNull;
+import com.shapesecurity.functional.data.HashCodeBuilder;
 
 public class TemplateElement implements Node, ExpressionTemplateElement {
 
-    @NotNull
-    public final String rawValue;
+  @NotNull
+  public final String  rawValue;
 
-    public TemplateElement(@NotNull String rawValue) {
-        super();
-        this.rawValue = rawValue;
-    }
+  public TemplateElement (@NotNull String  rawValue)
+  {
+    super();
+    this.rawValue = rawValue;
+  }
 
-    @Override
-    public boolean equals(Object object) {
-        return object instanceof TemplateElement && this.rawValue.equals(((TemplateElement) object).rawValue);
-    }
+  @Override
+  public boolean equals(Object object)
+  {
+    return object instanceof TemplateElement && this.rawValue.equals(((TemplateElement) object).rawValue);
+  }
 
-    @Override
-    public int hashCode() {
-        int code = HashCodeBuilder.put(0, "TemplateElement");
-        code = HashCodeBuilder.put(code, this.rawValue);
-        return code;
-    }
+  @Override
+  public int hashCode()
+  {
+    int code = HashCodeBuilder.put(0, "TemplateElement");
+    code = HashCodeBuilder.put(code, this.rawValue);
+    return code;
+  }
 
-    @NotNull
-    public String getRawValue() {
-        return this.rawValue;
-    }
+  @NotNull
+  public String  getRawValue()
+  {
+    return this.rawValue;
+  }
 
-    @NotNull
-    public TemplateElement setRawValue(@NotNull String rawValue) {
-        return new TemplateElement(rawValue);
-    }
+  @NotNull
+  public TemplateElement setRawValue(@NotNull String  rawValue)
+  {
+    return new TemplateElement(rawValue);
+  }
 
 }

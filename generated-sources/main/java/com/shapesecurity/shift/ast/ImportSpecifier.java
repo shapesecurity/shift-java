@@ -18,57 +18,62 @@
 
 package com.shapesecurity.shift.ast;
 
+import org.jetbrains.annotations.NotNull;
 import com.shapesecurity.functional.data.HashCodeBuilder;
 import com.shapesecurity.functional.data.Maybe;
 
-import org.jetbrains.annotations.NotNull;
-
 public class ImportSpecifier implements Node {
 
-    @NotNull
-    public final Maybe<String> name;
+  @NotNull
+  public final Maybe<String> name;
 
-    @NotNull
-    public final BindingIdentifier binding;
+  @NotNull
+  public final BindingIdentifier binding;
 
-    public ImportSpecifier(@NotNull Maybe<String> name, @NotNull BindingIdentifier binding) {
-        super();
-        this.name = name;
-        this.binding = binding;
-    }
+  public ImportSpecifier (@NotNull Maybe<String> name, @NotNull BindingIdentifier binding)
+  {
+    super();
+    this.name = name;
+    this.binding = binding;
+  }
 
-    @Override
-    public boolean equals(Object object) {
-        return object instanceof ImportSpecifier && this.name.equals(((ImportSpecifier) object).name) &&
-               this.binding.equals(((ImportSpecifier) object).binding);
-    }
+  @Override
+  public boolean equals(Object object)
+  {
+    return object instanceof ImportSpecifier && this.name.equals(((ImportSpecifier) object).name) && this.binding.equals(((ImportSpecifier) object).binding);
+  }
 
-    @Override
-    public int hashCode() {
-        int code = HashCodeBuilder.put(0, "ImportSpecifier");
-        code = HashCodeBuilder.put(code, this.name);
-        code = HashCodeBuilder.put(code, this.binding);
-        return code;
-    }
+  @Override
+  public int hashCode()
+  {
+    int code = HashCodeBuilder.put(0, "ImportSpecifier");
+    code = HashCodeBuilder.put(code, this.name);
+    code = HashCodeBuilder.put(code, this.binding);
+    return code;
+  }
 
-    @NotNull
-    public Maybe<String> getName() {
-        return this.name;
-    }
+  @NotNull
+  public Maybe<String> getName()
+  {
+    return this.name;
+  }
 
-    @NotNull
-    public ImportSpecifier setName(@NotNull Maybe<String> name) {
-        return new ImportSpecifier(name, this.binding);
-    }
+  @NotNull
+  public BindingIdentifier getBinding()
+  {
+    return this.binding;
+  }
 
-    @NotNull
-    public BindingIdentifier getBinding() {
-        return this.binding;
-    }
+  @NotNull
+  public ImportSpecifier setName(@NotNull Maybe<String> name)
+  {
+    return new ImportSpecifier(name, this.binding);
+  }
 
-    @NotNull
-    public ImportSpecifier setBinding(@NotNull BindingIdentifier binding) {
-        return new ImportSpecifier(this.name, binding);
-    }
+  @NotNull
+  public ImportSpecifier setBinding(@NotNull BindingIdentifier binding)
+  {
+    return new ImportSpecifier(this.name, binding);
+  }
 
 }

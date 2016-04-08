@@ -18,41 +18,45 @@
 
 package com.shapesecurity.shift.ast;
 
+import org.jetbrains.annotations.NotNull;
 import com.shapesecurity.functional.data.HashCodeBuilder;
 import com.shapesecurity.functional.data.Maybe;
 
-import org.jetbrains.annotations.NotNull;
-
 public class BreakStatement extends Statement implements Node {
 
-    @NotNull
-    public final Maybe<String> label;
+  @NotNull
+  public final Maybe<String> label;
 
-    public BreakStatement(@NotNull Maybe<String> label) {
-        super();
-        this.label = label;
-    }
+  public BreakStatement (@NotNull Maybe<String> label)
+  {
+    super();
+    this.label = label;
+  }
 
-    @Override
-    public boolean equals(Object object) {
-        return object instanceof BreakStatement && this.label.equals(((BreakStatement) object).label);
-    }
+  @Override
+  public boolean equals(Object object)
+  {
+    return object instanceof BreakStatement && this.label.equals(((BreakStatement) object).label);
+  }
 
-    @Override
-    public int hashCode() {
-        int code = HashCodeBuilder.put(0, "BreakStatement");
-        code = HashCodeBuilder.put(code, this.label);
-        return code;
-    }
+  @Override
+  public int hashCode()
+  {
+    int code = HashCodeBuilder.put(0, "BreakStatement");
+    code = HashCodeBuilder.put(code, this.label);
+    return code;
+  }
 
-    @NotNull
-    public Maybe<String> getLabel() {
-        return this.label;
-    }
+  @NotNull
+  public Maybe<String> getLabel()
+  {
+    return this.label;
+  }
 
-    @NotNull
-    public BreakStatement setLabel(@NotNull Maybe<String> label) {
-        return new BreakStatement(label);
-    }
+  @NotNull
+  public BreakStatement setLabel(@NotNull Maybe<String> label)
+  {
+    return new BreakStatement(label);
+  }
 
 }

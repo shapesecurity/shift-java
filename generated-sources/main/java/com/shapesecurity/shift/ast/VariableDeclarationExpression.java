@@ -18,4 +18,5 @@
 
 package com.shapesecurity.shift.ast;
 
-public interface VariableDeclarationExpression extends Node {}
+public interface VariableDeclarationExpression extends Node {
+}

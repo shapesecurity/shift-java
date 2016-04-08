@@ -18,29 +18,27 @@
 
 package com.shapesecurity.shift.ast;
 
-import com.shapesecurity.functional.data.HashCodeBuilder;
-import com.shapesecurity.shift.ast.operators.Precedence;
 import org.jetbrains.annotations.NotNull;
+import com.shapesecurity.functional.data.HashCodeBuilder;
 
 public class Super implements Node, ExpressionSuper {
 
-    public Super() {
-        super();
-    }
+  public Super ()
+  {
+    super();
+  }
 
-    @Override
-    public boolean equals(Object object) {
-        return object instanceof Super;
-    }
+  @Override
+  public boolean equals(Object object)
+  {
+    return object instanceof Super;
+  }
 
-    @Override
-    public int hashCode() {
-        return HashCodeBuilder.put(0, "Super");
-    }
+  @Override
+  public int hashCode()
+  {
+    int code = HashCodeBuilder.put(0, "Super");
+    return code;
+  }
 
-    @NotNull
-    @Override
-    public Precedence getPrecedence() {
-        return Precedence.MEMBER;
-    }
 }

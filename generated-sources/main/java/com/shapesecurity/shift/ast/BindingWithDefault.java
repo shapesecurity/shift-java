@@ -18,56 +18,61 @@
 
 package com.shapesecurity.shift.ast;
 
-import com.shapesecurity.functional.data.HashCodeBuilder;
-
 import org.jetbrains.annotations.NotNull;
+import com.shapesecurity.functional.data.HashCodeBuilder;
 
 public class BindingWithDefault implements Node, BindingBindingWithDefault {
 
-    @NotNull
-    public final Binding binding;
+  @NotNull
+  public final Binding binding;
 
-    @NotNull
-    public final Expression init;
+  @NotNull
+  public final Expression init;
 
-    public BindingWithDefault(@NotNull Binding binding, @NotNull Expression init) {
-        super();
-        this.binding = binding;
-        this.init = init;
-    }
+  public BindingWithDefault (@NotNull Binding binding, @NotNull Expression init)
+  {
+    super();
+    this.binding = binding;
+    this.init = init;
+  }
 
-    @Override
-    public boolean equals(Object object) {
-        return object instanceof BindingWithDefault && this.binding.equals(((BindingWithDefault) object).binding) &&
-               this.init.equals(((BindingWithDefault) object).init);
-    }
+  @Override
+  public boolean equals(Object object)
+  {
+    return object instanceof BindingWithDefault && this.binding.equals(((BindingWithDefault) object).binding) && this.init.equals(((BindingWithDefault) object).init);
+  }
 
-    @Override
-    public int hashCode() {
-        int code = HashCodeBuilder.put(0, "BindingWithDefault");
-        code = HashCodeBuilder.put(code, this.binding);
-        code = HashCodeBuilder.put(code, this.init);
-        return code;
-    }
+  @Override
+  public int hashCode()
+  {
+    int code = HashCodeBuilder.put(0, "BindingWithDefault");
+    code = HashCodeBuilder.put(code, this.binding);
+    code = HashCodeBuilder.put(code, this.init);
+    return code;
+  }
 
-    @NotNull
-    public Binding getBinding() {
-        return this.binding;
-    }
+  @NotNull
+  public Binding getBinding()
+  {
+    return this.binding;
+  }
 
-    @NotNull
-    public BindingWithDefault setBinding(@NotNull Binding binding) {
-        return new BindingWithDefault(binding, this.init);
-    }
+  @NotNull
+  public Expression getInit()
+  {
+    return this.init;
+  }
 
-    @NotNull
-    public Expression getInit() {
-        return this.init;
-    }
+  @NotNull
+  public BindingWithDefault setBinding(@NotNull Binding binding)
+  {
+    return new BindingWithDefault(binding, this.init);
+  }
 
-    @NotNull
-    public BindingWithDefault setInit(@NotNull Expression init) {
-        return new BindingWithDefault(this.binding, init);
-    }
+  @NotNull
+  public BindingWithDefault setInit(@NotNull Expression init)
+  {
+    return new BindingWithDefault(this.binding, init);
+  }
 
 }

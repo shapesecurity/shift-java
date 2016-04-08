@@ -18,64 +18,70 @@
 
 package com.shapesecurity.shift.ast;
 
+import org.jetbrains.annotations.NotNull;
 import com.shapesecurity.functional.data.HashCodeBuilder;
 import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.shift.ast.operators.Precedence;
 
-import org.jetbrains.annotations.NotNull;
-
 public class CallExpression extends Expression implements Node {
 
-    @NotNull
-    public final ExpressionSuper callee;
+  @NotNull
+  public final ExpressionSuper callee;
 
-    @NotNull
-    public final ImmutableList<SpreadElementExpression> arguments;
+  @NotNull
+  public final ImmutableList<SpreadElementExpression> arguments;
 
-    public CallExpression(@NotNull ExpressionSuper callee, @NotNull ImmutableList<SpreadElementExpression> arguments) {
-        super();
-        this.callee = callee;
-        this.arguments = arguments;
-    }
+  public CallExpression (@NotNull ExpressionSuper callee, @NotNull ImmutableList<SpreadElementExpression> arguments)
+  {
+    super();
+    this.callee = callee;
+    this.arguments = arguments;
+  }
 
-    @Override
-    public boolean equals(Object object) {
-        return object instanceof CallExpression && this.callee.equals(((CallExpression) object).callee) &&
-               this.arguments.equals(((CallExpression) object).arguments);
-    }
+  @Override
+  public boolean equals(Object object)
+  {
+    return object instanceof CallExpression && this.callee.equals(((CallExpression) object).callee) && this.arguments.equals(((CallExpression) object).arguments);
+  }
 
-    @Override
-    public int hashCode() {
-        int code = HashCodeBuilder.put(0, "CallExpression");
-        code = HashCodeBuilder.put(code, this.callee);
-        code = HashCodeBuilder.put(code, this.arguments);
-        return code;
-    }
+  @Override
+  public int hashCode()
+  {
+    int code = HashCodeBuilder.put(0, "CallExpression");
+    code = HashCodeBuilder.put(code, this.callee);
+    code = HashCodeBuilder.put(code, this.arguments);
+    return code;
+  }
 
-    @NotNull
-    public ExpressionSuper getCallee() {
-        return this.callee;
-    }
+  @NotNull
+  public ExpressionSuper getCallee()
+  {
+    return this.callee;
+  }
 
-    @NotNull
-    public CallExpression setCallee(@NotNull ExpressionSuper callee) {
-        return new CallExpression(callee, this.arguments);
-    }
+  @NotNull
+  public ImmutableList<SpreadElementExpression> getArguments()
+  {
+    return this.arguments;
+  }
 
-    @NotNull
-    public ImmutableList<SpreadElementExpression> getArguments() {
-        return this.arguments;
-    }
+  @NotNull
+  public CallExpression setCallee(@NotNull ExpressionSuper callee)
+  {
+    return new CallExpression(callee, this.arguments);
+  }
 
-    @NotNull
-    public CallExpression setArguments(@NotNull ImmutableList<SpreadElementExpression> arguments) {
-        return new CallExpression(this.callee, arguments);
-    }
+  @NotNull
+  public CallExpression setArguments(@NotNull ImmutableList<SpreadElementExpression> arguments)
+  {
+    return new CallExpression(this.callee, arguments);
+  }
 
-    @Override
-    @NotNull
-    public Precedence getPrecedence() {
-        return Precedence.CALL;
-    }
+  @Override
+  @NotNull
+  public Precedence getPrecedence()
+  {
+    return Precedence.CALL;
+  }
 
 }
