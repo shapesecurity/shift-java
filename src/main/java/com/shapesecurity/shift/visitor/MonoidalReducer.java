@@ -1,7 +1,7 @@
-/*
- * Copyright 2014 Shape Security, Inc.
+/**
+ * Copyright 2016 Shape Security, Inc.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
+ * Licensed under the Apache License, Version 2.0 (the "License")
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
@@ -60,8 +60,20 @@ public class MonoidalReducer<State> implements Reducer<State> {
 
     @NotNull
     @Override
-    public State reduceArrayBinding(@NotNull ArrayBinding node, @NotNull ImmutableList<Maybe<State>> elements, @NotNull Maybe<State> restElement) {
-        return append(fold(Maybe.catMaybes(elements)), o(restElement));
+    public State reduceArrayAssignmentTarget(
+            @NotNull ArrayAssignmentTarget node,
+            @NotNull ImmutableList<Maybe<State>> elements,
+            @NotNull Maybe<State> rest) {
+        return append(fold(Maybe.catMaybes(elements)), o(rest));
+    }
+
+    @NotNull
+    @Override
+    public State reduceArrayBinding(
+            @NotNull ArrayBinding node,
+            @NotNull ImmutableList<Maybe<State>> elements,
+            @NotNull Maybe<State> rest) {
+        return append(fold(Maybe.catMaybes(elements)), o(rest));
     }
 
     @NotNull
@@ -74,7 +86,10 @@ public class MonoidalReducer<State> implements Reducer<State> {
 
     @NotNull
     @Override
-    public State reduceArrowExpression(@NotNull ArrowExpression node, @NotNull State params, @NotNull State body) {
+    public State reduceArrowExpression(
+            @NotNull ArrowExpression node,
+            @NotNull State params,
+            @NotNull State body) {
         return append(params, body);
     }
 
@@ -85,6 +100,33 @@ public class MonoidalReducer<State> implements Reducer<State> {
             @NotNull State binding,
             @NotNull State expression) {
         return append(binding, expression);
+    }
+
+    @NotNull
+    @Override
+    public State reduceAssignmentTargetPropertyIdentifier(
+            @NotNull AssignmentTargetPropertyIdentifier node,
+            @NotNull State binding,
+            @NotNull Maybe<State> init) {
+        return append(binding, o(init));
+    }
+
+    @NotNull
+    @Override
+    public State reduceAssignmentTargetPropertyProperty(
+            @NotNull AssignmentTargetPropertyProperty node,
+            @NotNull State name,
+            @NotNull State binding) {
+        return append(name, binding);
+    }
+
+    @NotNull
+    @Override
+    public State reduceAssignmentTargetWithDefault(
+            @NotNull AssignmentTargetWithDefault node,
+            @NotNull State binding,
+            @NotNull State init) {
+        return append(binding, init);
     }
 
     @NotNull
@@ -104,31 +146,44 @@ public class MonoidalReducer<State> implements Reducer<State> {
 
     @NotNull
     @Override
-    public State reduceBindingPropertyIdentifier(@NotNull BindingPropertyIdentifier node, @NotNull State binding, @NotNull Maybe<State> init) {
+    public State reduceBindingPropertyIdentifier(
+            @NotNull BindingPropertyIdentifier node,
+            @NotNull State binding,
+            @NotNull Maybe<State> init) {
         return append(binding, o(init));
     }
 
     @NotNull
     @Override
-    public State reduceBindingPropertyProperty(@NotNull BindingPropertyProperty node, @NotNull State name, @NotNull State binding) {
+    public State reduceBindingPropertyProperty(
+            @NotNull BindingPropertyProperty node,
+            @NotNull State name,
+            @NotNull State binding) {
         return append(name, binding);
     }
 
     @NotNull
     @Override
-    public State reduceBindingWithDefault(@NotNull BindingWithDefault node, @NotNull State binding, @NotNull State init) {
+    public State reduceBindingWithDefault(
+            @NotNull BindingWithDefault node,
+            @NotNull State binding,
+            @NotNull State init) {
         return append(binding, init);
     }
 
     @NotNull
     @Override
-    public State reduceBlock(@NotNull Block node, @NotNull ImmutableList<State> statements) {
+    public State reduceBlock(
+            @NotNull Block node,
+            @NotNull ImmutableList<State> statements) {
         return fold(statements);
     }
 
     @NotNull
     @Override
-    public State reduceBlockStatement(@NotNull BlockStatement node, @NotNull State block) {
+    public State reduceBlockStatement(
+            @NotNull BlockStatement node,
+            @NotNull State block) {
         return block;
     }
 
@@ -158,26 +213,48 @@ public class MonoidalReducer<State> implements Reducer<State> {
 
     @NotNull
     @Override
-    public State reduceClassDeclaration(@NotNull ClassDeclaration node, @NotNull State name, @NotNull Maybe<State> _super, @NotNull ImmutableList<State> elements) {
-        return fold1(elements, append(name, o(_super)));
+    public State reduceClassDeclaration(
+            @NotNull ClassDeclaration node,
+            @NotNull State name,
+            @NotNull Maybe<State> _super,
+            @NotNull ImmutableList<State> elements) {
+        return append(name, o(_super), fold(elements));
     }
 
     @NotNull
     @Override
-    public State reduceClassElement(@NotNull ClassElement node, @NotNull State method) {
+    public State reduceClassElement(
+            @NotNull ClassElement node,
+            @NotNull State method) {
         return method;
     }
 
     @NotNull
     @Override
-    public State reduceClassExpression(@NotNull ClassExpression node, @NotNull Maybe<State> name, @NotNull Maybe<State> _super, @NotNull ImmutableList<State> elements) {
-        return fold1(elements, append(o(name), o(_super)));
+    public State reduceClassExpression(
+            @NotNull ClassExpression node,
+            @NotNull Maybe<State> name,
+            @NotNull Maybe<State> _super,
+            @NotNull ImmutableList<State> elements) {
+        return append(o(name), o(_super), fold(elements));
     }
 
     @NotNull
     @Override
-    public State reduceCompoundAssignmentExpression(@NotNull CompoundAssignmentExpression node, @NotNull State binding, @NotNull State expression) {
+    public State reduceCompoundAssignmentExpression(
+            @NotNull CompoundAssignmentExpression node,
+            @NotNull State binding,
+            @NotNull State expression) {
         return append(binding, expression);
+    }
+
+    @NotNull
+    @Override
+    public State reduceComputedMemberAssignmentTarget(
+            @NotNull ComputedMemberAssignmentTarget node,
+            @NotNull State object,
+            @NotNull State expression) {
+        return append(object, expression);
     }
 
     @NotNull
@@ -191,7 +268,9 @@ public class MonoidalReducer<State> implements Reducer<State> {
 
     @NotNull
     @Override
-    public State reduceComputedPropertyName(@NotNull ComputedPropertyName node, @NotNull State expression) {
+    public State reduceComputedPropertyName(
+            @NotNull ComputedPropertyName node,
+            @NotNull State expression) {
         return expression;
     }
 
@@ -216,8 +295,8 @@ public class MonoidalReducer<State> implements Reducer<State> {
     public State reduceDataProperty(
             @NotNull DataProperty node,
             @NotNull State name,
-            @NotNull State value) {
-        return append(name, value);
+            @NotNull State expression) {
+        return append(name, expression);
     }
 
     @NotNull
@@ -249,7 +328,9 @@ public class MonoidalReducer<State> implements Reducer<State> {
 
     @NotNull
     @Override
-    public State reduceExport(@NotNull Export node, @NotNull State declaration) {
+    public State reduceExport(
+            @NotNull Export node,
+            @NotNull State declaration) {
         return declaration;
     }
 
@@ -261,49 +342,87 @@ public class MonoidalReducer<State> implements Reducer<State> {
 
     @NotNull
     @Override
-    public State reduceExportDefault(@NotNull ExportDefault node, @NotNull State body) {
+    public State reduceExportDefault(
+            @NotNull ExportDefault node,
+            @NotNull State body) {
         return body;
     }
 
     @NotNull
     @Override
-    public State reduceExportFrom(@NotNull ExportFrom node, @NotNull ImmutableList<State> namedExports) {
+    public State reduceExportFrom(
+            @NotNull ExportFrom node,
+            @NotNull ImmutableList<State> namedExports) {
         return fold(namedExports);
     }
 
     @NotNull
     @Override
-    public State reduceExportSpecifier(@NotNull ExportSpecifier node) {
+    public State reduceExportFromSpecifier(@NotNull ExportFromSpecifier node) {
         return this.identity();
     }
 
     @NotNull
     @Override
-    public State reduceExpressionStatement(@NotNull ExpressionStatement node, @NotNull State expression) {
+    public State reduceExportLocalSpecifier(
+            @NotNull ExportLocalSpecifier node,
+            @NotNull State name) {
+        return name;
+    }
+
+    @NotNull
+    @Override
+    public State reduceExportLocals(
+            @NotNull ExportLocals node,
+            @NotNull ImmutableList<State> namedExports) {
+        return fold(namedExports);
+    }
+
+    @NotNull
+    @Override
+    public State reduceExpressionStatement(
+            @NotNull ExpressionStatement node,
+            @NotNull State expression) {
         return expression;
     }
 
     @NotNull
     @Override
-    public State reduceForInStatement(@NotNull ForInStatement node, @NotNull State left, @NotNull State right, @NotNull State body) {
+    public State reduceForInStatement(
+            @NotNull ForInStatement node,
+            @NotNull State left,
+            @NotNull State right,
+            @NotNull State body) {
         return append(left, right, body);
     }
 
     @NotNull
     @Override
-    public State reduceForOfStatement(@NotNull ForOfStatement node, @NotNull State left, @NotNull State right, @NotNull State body) {
+    public State reduceForOfStatement(
+            @NotNull ForOfStatement node,
+            @NotNull State left,
+            @NotNull State right,
+            @NotNull State body) {
         return append(left, right, body);
     }
 
     @NotNull
     @Override
-    public State reduceForStatement(@NotNull ForStatement node, @NotNull Maybe<State> init, @NotNull Maybe<State> test, @NotNull Maybe<State> update, @NotNull State body) {
+    public State reduceForStatement(
+            @NotNull ForStatement node,
+            @NotNull Maybe<State> init,
+            @NotNull Maybe<State> test,
+            @NotNull Maybe<State> update,
+            @NotNull State body) {
         return append(o(init), o(test), o(update), body);
     }
 
     @NotNull
     @Override
-    public State reduceFormalParameters(@NotNull FormalParameters node, @NotNull ImmutableList<State> items, @NotNull Maybe<State> rest) {
+    public State reduceFormalParameters(
+            @NotNull FormalParameters node,
+            @NotNull ImmutableList<State> items,
+            @NotNull Maybe<State> rest) {
         return append(fold(items), o(rest));
     }
 
@@ -318,19 +437,30 @@ public class MonoidalReducer<State> implements Reducer<State> {
 
     @NotNull
     @Override
-    public State reduceFunctionDeclaration(@NotNull FunctionDeclaration node, @NotNull State name, @NotNull State params, @NotNull State body) {
+    public State reduceFunctionDeclaration(
+            @NotNull FunctionDeclaration node,
+            @NotNull State name,
+            @NotNull State params,
+            @NotNull State body) {
         return append(name, params, body);
     }
 
     @NotNull
     @Override
-    public State reduceFunctionExpression(@NotNull FunctionExpression node, @NotNull Maybe<State> name, @NotNull State params, @NotNull State body) {
+    public State reduceFunctionExpression(
+            @NotNull FunctionExpression node,
+            @NotNull Maybe<State> name,
+            @NotNull State params,
+            @NotNull State body) {
         return append(o(name), params, body);
     }
 
     @NotNull
     @Override
-    public State reduceGetter(@NotNull Getter node, @NotNull State name, @NotNull State body) {
+    public State reduceGetter(
+            @NotNull Getter node,
+            @NotNull State name,
+            @NotNull State body) {
         return append(name, body);
     }
 
@@ -352,25 +482,35 @@ public class MonoidalReducer<State> implements Reducer<State> {
 
     @NotNull
     @Override
-    public State reduceImport(@NotNull Import node, @NotNull Maybe<State> defaultBinding, @NotNull ImmutableList<State> namedImports) {
+    public State reduceImport(
+            @NotNull Import node,
+            @NotNull Maybe<State> defaultBinding,
+            @NotNull ImmutableList<State> namedImports) {
         return fold1(namedImports, o(defaultBinding));
     }
 
     @NotNull
     @Override
-    public State reduceImportNamespace(@NotNull ImportNamespace node, @NotNull Maybe<State> defaultBinding, @NotNull State namespaceBinding) {
+    public State reduceImportNamespace(
+            @NotNull ImportNamespace node,
+            @NotNull Maybe<State> defaultBinding,
+            @NotNull State namespaceBinding) {
         return append(o(defaultBinding), namespaceBinding);
     }
 
     @NotNull
     @Override
-    public State reduceImportSpecifier(@NotNull ImportSpecifier node, @NotNull State binding) {
+    public State reduceImportSpecifier(
+            @NotNull ImportSpecifier node,
+            @NotNull State binding) {
         return binding;
     }
 
     @NotNull
     @Override
-    public State reduceLabeledStatement(@NotNull LabeledStatement node, @NotNull State body) {
+    public State reduceLabeledStatement(
+            @NotNull LabeledStatement node,
+            @NotNull State body) {
         return body;
     }
 
@@ -412,13 +552,20 @@ public class MonoidalReducer<State> implements Reducer<State> {
 
     @NotNull
     @Override
-    public State reduceMethod(@NotNull Method node, @NotNull State name, @NotNull State params, @NotNull State body) {
+    public State reduceMethod(
+            @NotNull Method node,
+            @NotNull State name,
+            @NotNull State params,
+            @NotNull State body) {
         return append(name, params, body);
     }
 
     @NotNull
     @Override
-    public State reduceModule(@NotNull Module node, @NotNull ImmutableList<State> directives, @NotNull ImmutableList<State> items) {
+    public State reduceModule(
+            @NotNull Module node,
+            @NotNull ImmutableList<State> directives,
+            @NotNull ImmutableList<State> items) {
         return append(fold(directives), fold(items));
     }
 
@@ -439,7 +586,17 @@ public class MonoidalReducer<State> implements Reducer<State> {
 
     @NotNull
     @Override
-    public State reduceObjectBinding(@NotNull ObjectBinding node, @NotNull ImmutableList<State> properties) {
+    public State reduceObjectAssignmentTarget(
+            @NotNull ObjectAssignmentTarget node,
+            @NotNull ImmutableList<State> properties) {
+        return fold(properties);
+    }
+
+    @NotNull
+    @Override
+    public State reduceObjectBinding(
+            @NotNull ObjectBinding node,
+            @NotNull ImmutableList<State> properties) {
         return fold(properties);
     }
 
@@ -453,6 +610,15 @@ public class MonoidalReducer<State> implements Reducer<State> {
 
     @NotNull
     @Override
+    public State reduceParameter(
+            @NotNull Parameter node,
+            @NotNull State binding,
+            @NotNull Maybe<State> init) {
+        return append(binding, o(init));
+    }
+
+    @NotNull
+    @Override
     public State reduceReturnStatement(
             @NotNull ReturnStatement node,
             @NotNull Maybe<State> expression) {
@@ -461,7 +627,10 @@ public class MonoidalReducer<State> implements Reducer<State> {
 
     @NotNull
     @Override
-    public State reduceScript(@NotNull Script node, @NotNull ImmutableList<State> directives, @NotNull ImmutableList<State> statements) {
+    public State reduceScript(
+            @NotNull Script node,
+            @NotNull ImmutableList<State> directives,
+            @NotNull ImmutableList<State> statements) {
         return append(fold(directives), fold(statements));
     }
 
@@ -477,19 +646,33 @@ public class MonoidalReducer<State> implements Reducer<State> {
 
     @NotNull
     @Override
-    public State reduceShorthandProperty(@NotNull ShorthandProperty node) {
-        return this.identity();
+    public State reduceShorthandProperty(
+            @NotNull ShorthandProperty node,
+            @NotNull State name) {
+        return name;
     }
 
     @NotNull
     @Override
-    public State reduceSpreadElement(@NotNull SpreadElement node, @NotNull State expression) {
+    public State reduceSpreadElement(
+            @NotNull SpreadElement node,
+            @NotNull State expression) {
         return expression;
     }
 
     @NotNull
     @Override
-    public State reduceStaticMemberExpression(@NotNull StaticMemberExpression node, @NotNull State object) {
+    public State reduceStaticMemberAssignmentTarget(
+            @NotNull StaticMemberAssignmentTarget node,
+            @NotNull State object) {
+        return object;
+    }
+
+    @NotNull
+    @Override
+    public State reduceStaticMemberExpression(
+            @NotNull StaticMemberExpression node,
+            @NotNull State object) {
         return object;
     }
 
@@ -550,7 +733,10 @@ public class MonoidalReducer<State> implements Reducer<State> {
 
     @NotNull
     @Override
-    public State reduceTemplateExpression(@NotNull TemplateExpression node, @NotNull Maybe<State> tag, @NotNull ImmutableList<State> elements) {
+    public State reduceTemplateExpression(
+            @NotNull TemplateExpression node,
+            @NotNull Maybe<State> tag,
+            @NotNull ImmutableList<State> elements) {
         return fold1(elements, o(tag));
     }
 
@@ -562,7 +748,9 @@ public class MonoidalReducer<State> implements Reducer<State> {
 
     @NotNull
     @Override
-    public State reduceThrowStatement(@NotNull ThrowStatement node, @NotNull State expression) {
+    public State reduceThrowStatement(
+            @NotNull ThrowStatement node,
+            @NotNull State expression) {
         return expression;
     }
 
@@ -570,36 +758,42 @@ public class MonoidalReducer<State> implements Reducer<State> {
     @Override
     public State reduceTryCatchStatement(
             @NotNull TryCatchStatement node,
-            @NotNull State block,
+            @NotNull State body,
             @NotNull State catchClause) {
-        return append(block, catchClause);
+        return append(body, catchClause);
     }
 
     @NotNull
     @Override
     public State reduceTryFinallyStatement(
             @NotNull TryFinallyStatement node,
-            @NotNull State block,
+            @NotNull State body,
             @NotNull Maybe<State> catchClause,
             @NotNull State finalizer) {
-        return append(block, o(catchClause), finalizer);
+        return append(body, o(catchClause), finalizer);
     }
 
     @NotNull
     @Override
-    public State reduceUnaryExpression(@NotNull UnaryExpression node, @NotNull State operand) {
+    public State reduceUnaryExpression(
+            @NotNull UnaryExpression node,
+            @NotNull State operand) {
         return operand;
     }
 
     @NotNull
     @Override
-    public State reduceUpdateExpression(@NotNull UpdateExpression node, @NotNull State operand) {
+    public State reduceUpdateExpression(
+            @NotNull UpdateExpression node,
+            @NotNull State operand) {
         return operand;
     }
 
     @NotNull
     @Override
-    public State reduceVariableDeclaration(@NotNull VariableDeclaration node, @NotNull ImmutableList<State> declarators) {
+    public State reduceVariableDeclaration(
+            @NotNull VariableDeclaration node,
+            @NotNull ImmutableList<State> declarators) {
         return fold(declarators);
     }
 
@@ -640,13 +834,17 @@ public class MonoidalReducer<State> implements Reducer<State> {
 
     @NotNull
     @Override
-    public State reduceYieldExpression(@NotNull YieldExpression node, @NotNull Maybe<State> expression) {
+    public State reduceYieldExpression(
+            @NotNull YieldExpression node,
+            @NotNull Maybe<State> expression) {
         return o(expression);
     }
 
     @NotNull
     @Override
-    public State reduceYieldGeneratorExpression(@NotNull YieldGeneratorExpression node, @NotNull State expression) {
+    public State reduceYieldGeneratorExpression(
+            @NotNull YieldGeneratorExpression node,
+            @NotNull State expression) {
         return expression;
     }
 }

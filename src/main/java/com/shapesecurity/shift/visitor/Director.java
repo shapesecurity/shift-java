@@ -30,9 +30,70 @@ public final class Director {
     State reduceArrayBinding(
             @NotNull Reducer<State> reducer,
             @NotNull ArrayBinding node) {
-        return reducer.reduceArrayBinding(node, reduceListMaybeBindingBindingWithDefault(reducer, node.elements), reduceMaybeBinding(reducer, node.restElement));
+        return reducer.reduceArrayBinding(node, reduceListMaybeBindingBindingWithDefault(reducer, node.elements), reduceMaybeBinding(reducer, node.rest));
     }
 
+    @NotNull
+    public static <State>
+    State reduceArrayAssignmentTarget(
+            @NotNull Reducer<State> reducer,
+            @NotNull ArrayAssignmentTarget node) {
+        return reducer.reduceArrayAssignmentTarget(node, reduceListMaybeAssignmentTargetAssignmentTargetWithDefault(reducer, node.elements), reduceMaybeAssignmentTarget(reducer, node.rest));
+    }
+
+    @NotNull
+    public static <State>
+    State reduceAssignmentTarget(
+            @NotNull Reducer<State> reducer,
+            @NotNull AssignmentTarget node) {
+        if (node instanceof ArrayAssignmentTarget) {
+            return reduceArrayAssignmentTarget(reducer, (ArrayAssignmentTarget) node);
+        } else if (node instanceof BindingIdentifier) {
+            return reduceBindingIdentifier(reducer, (BindingIdentifier) node);
+        } else if (node instanceof MemberAssignmentTarget) {
+            return reduceMemberAssignmentTarget(reducer, (MemberAssignmentTarget) node);
+        } else if (node instanceof ObjectAssignmentTarget) {
+            return reduceObjectAssignmentTarget(reducer, (ObjectAssignmentTarget) node);
+        } else { // no instances of BindingPattern
+            throw new RuntimeException("Not reached");
+        }
+    }
+
+    @NotNull
+    public static <State>
+    State reduceAssignmentTargetAssignmentTargetWithDefault(
+            @NotNull Reducer<State> reducer,
+            @NotNull AssignmentTargetAssignmentTargetWithDefault node) {
+        if (node instanceof AssignmentTarget) {
+            return reduceAssignmentTarget(reducer, (AssignmentTarget) node);
+        } else {
+            return reduceAssignmentTargetWithDefault(reducer, (AssignmentTargetWithDefault) node);
+        }
+    }
+
+    @NotNull
+    public static <State>
+    State reduceAssignmentTargetWithDefault(
+            @NotNull Reducer<State> reducer,
+            @NotNull AssignmentTargetWithDefault node) {
+        return reducer.reduceAssignmentTargetWithDefault(node, reduceAssignmentTarget(reducer, node.binding), reduceExpression(reducer, node.init));
+    }
+
+    @NotNull
+    public static <State>
+    State reduceAssignmentTargetProperty(
+            @NotNull Reducer<State> reducer,
+            @NotNull AssignmentTargetProperty node) {
+        if (node instanceof AssignmentTargetPropertyIdentifier) {
+            AssignmentTargetPropertyIdentifier tNode = (AssignmentTargetPropertyIdentifier) node;
+            return reducer.reduceAssignmentTargetPropertyIdentifier(tNode, reduceBindingIdentifier(reducer, tNode.binding), reduceMaybeExpression(reducer, tNode.init));
+        } else if (node instanceof AssignmentTargetPropertyProperty) {
+            AssignmentTargetPropertyProperty tNode = (AssignmentTargetPropertyProperty) node;
+            return reducer.reduceAssignmentTargetPropertyProperty(tNode, reducePropertyName(reducer, tNode.name), reduceAssignmentTargetAssignmentTargetWithDefault(reducer, tNode.binding));
+        } else {
+            throw new RuntimeException("Not reached");
+        }
+    }
     @NotNull
     public static <State>
     State reduceBinding(
@@ -73,13 +134,13 @@ public final class Director {
 
     @NotNull
     public static <State>
-    State reduceBindingIdentifierMemberExpression(
+    State reduceSimpleAssignmentTarget(
             @NotNull Reducer<State> reducer,
-            @NotNull BindingIdentifierMemberExpression node) {
+            @NotNull SimpleAssignmentTarget node) {
         if (node instanceof BindingIdentifier) {
             return reducer.reduceBindingIdentifier((BindingIdentifier) node);
         } else {
-            return reduceMemberExpression(reducer, (MemberExpression) node);
+            return reduceMemberAssignmentTarget(reducer, (MemberAssignmentTarget) node);
         }
     }
 
@@ -150,7 +211,10 @@ public final class Director {
             return reducer.reduceExportDefault(tNode, reduceFunctionDeclarationClassDeclarationExpression(reducer, tNode.body));
         } else if (node instanceof ExportFrom) {
             ExportFrom tNode = (ExportFrom) node;
-            return reducer.reduceExportFrom(tNode, reduceListExportSpecifier(reducer, tNode.namedExports));
+            return reducer.reduceExportFrom(tNode, reduceListExportFromSpecifier(reducer, tNode.namedExports));
+        } else if (node instanceof ExportLocals) {
+            ExportLocals tNode = (ExportLocals) node;
+            return reducer.reduceExportLocals(tNode, reduceListExportLocalSpecifier(reducer, tNode.namedExports));
         } else {
             throw new RuntimeException("Not reached");
         }
@@ -158,10 +222,18 @@ public final class Director {
 
     @NotNull
     public static <State>
-    State reduceExportSpecifier(
+    State reduceExportFromSpecifier(
             @NotNull Reducer<State> reducer,
-            @NotNull ExportSpecifier node) {
-        return reducer.reduceExportSpecifier(node);
+            @NotNull ExportFromSpecifier node) {
+        return reducer.reduceExportFromSpecifier(node);
+    }
+
+    @NotNull
+    public static <State>
+    State reduceExportLocalSpecifier(
+            @NotNull Reducer<State> reducer,
+            @NotNull ExportLocalSpecifier node) {
+        return reducer.reduceExportLocalSpecifier(node, reducer.reduceIdentifierExpression(node.name));
     }
 
     @NotNull
@@ -198,7 +270,7 @@ public final class Director {
             return reducer.reduceArrayExpression(tNode, reduceListMaybeSpreadElementExpression(reducer, tNode.elements));
         } else if (node instanceof AssignmentExpression) {
             AssignmentExpression tNode = (AssignmentExpression) node;
-            return reducer.reduceAssignmentExpression(tNode, reduceBinding(reducer, tNode.binding), reduceExpression(reducer, tNode.expression));
+            return reducer.reduceAssignmentExpression(tNode, reduceAssignmentTarget(reducer, tNode.binding), reduceExpression(reducer, tNode.expression));
         } else if (node instanceof BinaryExpression) {
             BinaryExpression tNode = (BinaryExpression) node;
             return reducer.reduceBinaryExpression(tNode, reduceExpression(reducer, tNode.left), reduceExpression(reducer, tNode.right));
@@ -210,7 +282,7 @@ public final class Director {
             return reducer.reduceClassExpression(tNode, reduceMaybeBindingIdentifier(reducer, tNode.name), reduceMaybeExpression(reducer, tNode._super), reduceListClassElement(reducer, tNode.elements));
         } else if (node instanceof CompoundAssignmentExpression) {
             CompoundAssignmentExpression tNode = (CompoundAssignmentExpression) node;
-            return reducer.reduceCompoundAssignmentExpression(tNode, reduceBindingIdentifierMemberExpression(reducer, tNode.binding), reduceExpression(reducer, tNode.expression));
+            return reducer.reduceCompoundAssignmentExpression(tNode, reduceSimpleAssignmentTarget(reducer, tNode.binding), reduceExpression(reducer, tNode.expression));
         } else if (node instanceof ComputedMemberExpression) {
             ComputedMemberExpression tNode = (ComputedMemberExpression) node;
             return reducer.reduceComputedMemberExpression(tNode, reduceExpressionSuper(reducer, tNode._object), reduceExpression(reducer, tNode.expression));
@@ -243,7 +315,7 @@ public final class Director {
             return reducer.reduceUnaryExpression(tNode, reduceExpression(reducer, tNode.operand));
         } else if (node instanceof UpdateExpression) {
             UpdateExpression tNode = (UpdateExpression) node;
-            return reducer.reduceUpdateExpression(tNode, reduceBindingIdentifierMemberExpression(reducer, tNode.operand));
+            return reducer.reduceUpdateExpression(tNode, reduceSimpleAssignmentTarget(reducer, tNode.operand));
         } else if (node instanceof YieldExpression) {
             YieldExpression tNode = (YieldExpression) node;
             return reducer.reduceYieldExpression(tNode, reduceMaybeExpression(reducer, tNode.expression));
@@ -286,7 +358,7 @@ public final class Director {
     State reduceFormalParameters(
             @NotNull Reducer<State> reducer,
             @NotNull FormalParameters node) {
-        return reducer.reduceFormalParameters(node, reduceListBindingBindingWithDefault(reducer, node.items), reduceMaybeBindingIdentifier(reducer, node.rest));
+        return reducer.reduceFormalParameters(node, reduceListParameter(reducer, node.items), reduceMaybeBinding(reducer, node.rest));
     }
 
     @NotNull
@@ -394,6 +466,14 @@ public final class Director {
 
     @NotNull
     public static <State>
+    ImmutableList<State> reduceListAssignmentTargetProperty(
+            @NotNull Reducer<State> reducer,
+            @NotNull ImmutableList<AssignmentTargetProperty> node) {
+        return node.map(x -> reduceAssignmentTargetProperty(reducer, x));
+    }
+
+    @NotNull
+    public static <State>
     ImmutableList<State> reduceListBindingProperty(
             @NotNull Reducer<State> reducer,
             @NotNull ImmutableList<BindingProperty> node) {
@@ -418,10 +498,18 @@ public final class Director {
 
     @NotNull
     public static <State>
-    ImmutableList<State> reduceListExportSpecifier(
+    ImmutableList<State> reduceListExportFromSpecifier(
             @NotNull Reducer<State> reducer,
-            @NotNull ImmutableList<ExportSpecifier> node) {
-        return node.map(x -> reduceExportSpecifier(reducer, x));
+            @NotNull ImmutableList<ExportFromSpecifier> node) {
+        return node.map(x -> reduceExportFromSpecifier(reducer, x));
+    }
+
+    @NotNull
+    public static <State>
+    ImmutableList<State> reduceListExportLocalSpecifier(
+            @NotNull Reducer<State> reducer,
+            @NotNull ImmutableList<ExportLocalSpecifier> node) {
+        return node.map(x -> reduceExportLocalSpecifier(reducer, x));
     }
 
     @NotNull
@@ -458,6 +546,14 @@ public final class Director {
 
     @NotNull
     public static <State>
+    ImmutableList<Maybe<State>> reduceListMaybeAssignmentTargetAssignmentTargetWithDefault(
+            @NotNull Reducer<State> reducer,
+            @NotNull ImmutableList<Maybe<AssignmentTargetAssignmentTargetWithDefault>> node) {
+        return node.map(x -> reduceMaybeAssignmentTargetAssignmentTargetWithDefault(reducer, x));
+    }
+
+    @NotNull
+    public static <State>
     ImmutableList<Maybe<State>> reduceListMaybeSpreadElementExpression(
             @NotNull Reducer<State> reducer,
             @NotNull ImmutableList<Maybe<SpreadElementExpression>> node) {
@@ -470,6 +566,14 @@ public final class Director {
             @NotNull Reducer<State> reducer,
             @NotNull ImmutableList<ObjectProperty> properties) {
         return properties.mapWithIndex((i, el) -> reduceObjectProperty(reducer, el));
+    }
+
+    @NotNull
+    public static <State>
+    ImmutableList<State> reduceListParameter(
+            @NotNull Reducer<State> reducer,
+            @NotNull ImmutableList<Parameter> parameters) {
+        return parameters.map(el -> reduceParameter(reducer, el));
     }
 
     @NotNull
@@ -506,6 +610,14 @@ public final class Director {
 
     @NotNull
     public static <State>
+    Maybe<State> reduceMaybeAssignmentTarget(
+            @NotNull Reducer<State> reducer,
+            @NotNull Maybe<AssignmentTarget> node) {
+        return node.map(x -> reduceAssignmentTarget(reducer, x));
+    }
+
+    @NotNull
+    public static <State>
     Maybe<State> reduceMaybeBinding(
             @NotNull Reducer<State> reducer,
             @NotNull Maybe<Binding> node) {
@@ -518,6 +630,14 @@ public final class Director {
             @NotNull Reducer<State> reducer,
             @NotNull Maybe<BindingBindingWithDefault> node) {
         return node.map(x -> reduceBindingBindingWithDefault(reducer, x));
+    }
+
+    @NotNull
+    public static <State>
+    Maybe<State> reduceMaybeAssignmentTargetAssignmentTargetWithDefault(
+            @NotNull Reducer<State> reducer,
+            @NotNull Maybe<AssignmentTargetAssignmentTargetWithDefault> node) {
+        return node.map(x -> reduceAssignmentTargetAssignmentTargetWithDefault(reducer, x));
     }
 
     @NotNull
@@ -576,6 +696,20 @@ public final class Director {
 
     @NotNull
     public static <State>
+    State reduceMemberAssignmentTarget(
+            @NotNull Reducer<State> reducer,
+            @NotNull MemberAssignmentTarget node) {
+        if (node instanceof ComputedMemberAssignmentTarget) {
+            ComputedMemberAssignmentTarget computedMemberAssignmentTarget = (ComputedMemberAssignmentTarget) node;
+            return reducer.reduceComputedMemberAssignmentTarget(computedMemberAssignmentTarget, reduceExpressionSuper(reducer, computedMemberAssignmentTarget._object), reduceExpression(reducer, computedMemberAssignmentTarget.expression));
+        } else {
+            StaticMemberAssignmentTarget staticMemberAssignmentTarget = (StaticMemberAssignmentTarget) node;
+            return reducer.reduceStaticMemberAssignmentTarget(staticMemberAssignmentTarget, reduceExpressionSuper(reducer, staticMemberAssignmentTarget._object));
+        }
+    }
+
+    @NotNull
+    public static <State>
     State reduceMethodDefinition(
             @NotNull Reducer<State> reducer,
             @NotNull MethodDefinition node) {
@@ -584,7 +718,7 @@ public final class Director {
             return reducer.reduceGetter(tNode, reducePropertyName(reducer, tNode.name), reduceFunctionBody(reducer, tNode.body));
         } else if (node instanceof Setter) {
             Setter tNode = (Setter) node;
-            return reducer.reduceSetter(tNode, reducePropertyName(reducer, tNode.name), reduceBindingBindingWithDefault(reducer, tNode.param), reduceFunctionBody(reducer, tNode.body));
+            return reducer.reduceSetter(tNode, reducePropertyName(reducer, tNode.name), reduceParameter(reducer, tNode.param), reduceFunctionBody(reducer, tNode.body));
         } else if (node instanceof Method) {
             Method tNode = (Method) node;
             return reducer.reduceMethod(tNode, reducePropertyName(reducer, tNode.name), reduceFormalParameters(reducer, tNode.params), reduceFunctionBody(reducer, tNode.body));
@@ -624,6 +758,22 @@ public final class Director {
 
     @NotNull
     public static <State>
+    State reduceObjectAssignmentTarget(
+            @NotNull Reducer<State> reducer,
+            @NotNull ObjectAssignmentTarget node) {
+        return reducer.reduceObjectAssignmentTarget(node, reduceListAssignmentTargetProperty(reducer, node.properties));
+    }
+
+    @NotNull
+    public static <State>
+    State reduceParameter(
+            @NotNull Reducer<State> reducer,
+            @NotNull Parameter node) {
+        return reducer.reduceParameter(node, reduceBinding(reducer, node.binding), reduceMaybeExpression(reducer, node.init));
+    }
+
+    @NotNull
+    public static <State>
     State reduceObjectProperty(
             @NotNull Reducer<State> reducer,
             @NotNull ObjectProperty node) {
@@ -635,7 +785,8 @@ public final class Director {
         } else if (node instanceof NamedObjectProperty) {
             return reduceNamedObjectProperty(reducer, (NamedObjectProperty) node);
         } else if (node instanceof ShorthandProperty) {
-            return reducer.reduceShorthandProperty((ShorthandProperty) node);
+            ShorthandProperty tNode = (ShorthandProperty) node;
+            return reducer.reduceShorthandProperty(tNode, reducer.reduceIdentifierExpression(tNode.name));
         } else {
             throw new RuntimeException("Not reached");
         }
@@ -714,10 +865,10 @@ public final class Director {
             return reducer.reduceExpressionStatement(tNode, reduceExpression(reducer, tNode.expression));
         } else if (node instanceof ForInStatement) {
             ForInStatement tNode = (ForInStatement) node;
-            return reducer.reduceForInStatement(tNode, reduceVariableDeclarationBinding(reducer, tNode.left), reduceExpression(reducer, tNode.right), reduceStatement(reducer, tNode.body));
+            return reducer.reduceForInStatement(tNode, reduceVariableDeclarationAssignmentTarget(reducer, tNode.left), reduceExpression(reducer, tNode.right), reduceStatement(reducer, tNode.body));
         } else if (node instanceof ForOfStatement) {
             ForOfStatement tNode = (ForOfStatement) node;
-            return reducer.reduceForOfStatement(tNode, reduceVariableDeclarationBinding(reducer, tNode.left), reduceExpression(reducer, tNode.right), reduceStatement(reducer, tNode.body));
+            return reducer.reduceForOfStatement(tNode, reduceVariableDeclarationAssignmentTarget(reducer, tNode.left), reduceExpression(reducer, tNode.right), reduceStatement(reducer, tNode.body));
         } else if (node instanceof ForStatement) {
             ForStatement tNode = (ForStatement) node;
             return reducer.reduceForStatement(tNode, reduceMaybeVariableDeclarationExpression(reducer, tNode.init), reduceMaybeExpression(reducer, tNode.test), reduceMaybeExpression(reducer, tNode.update), reduceStatement(reducer, tNode.body));
@@ -792,13 +943,13 @@ public final class Director {
 
     @NotNull
     public static <State>
-    State reduceVariableDeclarationBinding(
+    State reduceVariableDeclarationAssignmentTarget(
             @NotNull Reducer<State> reducer,
-            @NotNull VariableDeclarationBinding node) {
+            @NotNull VariableDeclarationAssignmentTarget node) {
         if (node instanceof VariableDeclaration) {
             return reduceVariableDeclaration(reducer, (VariableDeclaration) node);
-        } else if (node instanceof Binding) {
-            return reduceBinding(reducer, (Binding) node);
+        } else if (node instanceof AssignmentTarget) {
+            return reduceAssignmentTarget(reducer, (AssignmentTarget) node);
         } else {
             throw new RuntimeException("Not reached");
         }

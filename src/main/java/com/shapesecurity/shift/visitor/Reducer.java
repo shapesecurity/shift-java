@@ -1,7 +1,7 @@
-/*
- * Copyright 2014 Shape Security, Inc.
+/**
+ * Copyright 2016 Shape Security, Inc.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
+ * Licensed under the Apache License, Version 2.0 (the "License")
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
@@ -23,12 +23,17 @@ import com.shapesecurity.shift.ast.*;
 import org.jetbrains.annotations.NotNull;
 
 public interface Reducer<State> {
+    @NotNull
+    State reduceArrayAssignmentTarget(
+            @NotNull ArrayAssignmentTarget node,
+            @NotNull ImmutableList<Maybe<State>> elements,
+            @NotNull Maybe<State> rest);
 
     @NotNull
     State reduceArrayBinding(
             @NotNull ArrayBinding node,
             @NotNull ImmutableList<Maybe<State>> elements,
-            @NotNull Maybe<State> restElement);
+            @NotNull Maybe<State> rest);
 
     @NotNull
     State reduceArrayExpression(
@@ -48,14 +53,31 @@ public interface Reducer<State> {
             @NotNull State expression);
 
     @NotNull
+    State reduceAssignmentTargetPropertyIdentifier(
+            @NotNull AssignmentTargetPropertyIdentifier node,
+            @NotNull State binding,
+            @NotNull Maybe<State> init);
+
+    @NotNull
+    State reduceAssignmentTargetPropertyProperty(
+            @NotNull AssignmentTargetPropertyProperty node,
+            @NotNull State name,
+            @NotNull State binding);
+
+    @NotNull
+    State reduceAssignmentTargetWithDefault(
+            @NotNull AssignmentTargetWithDefault node,
+            @NotNull State binding,
+            @NotNull State init);
+
+    @NotNull
     State reduceBinaryExpression(
             @NotNull BinaryExpression node,
             @NotNull State left,
             @NotNull State right);
 
     @NotNull
-    State reduceBindingIdentifier(
-            @NotNull BindingIdentifier node);
+    State reduceBindingIdentifier(@NotNull BindingIdentifier node);
 
     @NotNull
     State reduceBindingPropertyIdentifier(
@@ -126,6 +148,12 @@ public interface Reducer<State> {
             @NotNull State expression);
 
     @NotNull
+    State reduceComputedMemberAssignmentTarget(
+            @NotNull ComputedMemberAssignmentTarget node,
+            @NotNull State object,
+            @NotNull State expression);
+
+    @NotNull
     State reduceComputedMemberExpression(
             @NotNull ComputedMemberExpression node,
             @NotNull State object,
@@ -149,8 +177,8 @@ public interface Reducer<State> {
     @NotNull
     State reduceDataProperty(
             @NotNull DataProperty node,
-            @NotNull State value,
-            @NotNull State name);
+            @NotNull State name,
+            @NotNull State expression);
 
     @NotNull
     State reduceDebuggerStatement(@NotNull DebuggerStatement node);
@@ -186,7 +214,17 @@ public interface Reducer<State> {
             @NotNull ImmutableList<State> namedExports);
 
     @NotNull
-    State reduceExportSpecifier(@NotNull ExportSpecifier node);
+    State reduceExportFromSpecifier(@NotNull ExportFromSpecifier node);
+
+    @NotNull
+    State reduceExportLocalSpecifier(
+            @NotNull ExportLocalSpecifier node,
+            @NotNull State name);
+
+    @NotNull
+    State reduceExportLocals(
+            @NotNull ExportLocals node,
+            @NotNull ImmutableList<State> namedExports);
 
     @NotNull
     State reduceExpressionStatement(
@@ -320,6 +358,11 @@ public interface Reducer<State> {
     State reduceNewTargetExpression(@NotNull NewTargetExpression node);
 
     @NotNull
+    State reduceObjectAssignmentTarget(
+            @NotNull ObjectAssignmentTarget node,
+            @NotNull ImmutableList<State> properties);
+
+    @NotNull
     State reduceObjectBinding(
             @NotNull ObjectBinding node,
             @NotNull ImmutableList<State> properties);
@@ -328,6 +371,12 @@ public interface Reducer<State> {
     State reduceObjectExpression(
             @NotNull ObjectExpression node,
             @NotNull ImmutableList<State> properties);
+
+    @NotNull
+    State reduceParameter(
+            @NotNull Parameter node,
+            @NotNull State binding,
+            @NotNull Maybe<State> init);
 
     @NotNull
     State reduceReturnStatement(
@@ -348,12 +397,19 @@ public interface Reducer<State> {
             @NotNull State body);
 
     @NotNull
-    State reduceShorthandProperty(@NotNull ShorthandProperty node);
+    State reduceShorthandProperty(
+            @NotNull ShorthandProperty node,
+            @NotNull State name);
 
     @NotNull
     State reduceSpreadElement(
             @NotNull SpreadElement node,
             @NotNull State expression);
+
+    @NotNull
+    State reduceStaticMemberAssignmentTarget(
+            @NotNull StaticMemberAssignmentTarget node,
+            @NotNull State object);
 
     @NotNull
     State reduceStaticMemberExpression(
@@ -411,13 +467,13 @@ public interface Reducer<State> {
     @NotNull
     State reduceTryCatchStatement(
             @NotNull TryCatchStatement node,
-            @NotNull State block,
+            @NotNull State body,
             @NotNull State catchClause);
 
     @NotNull
     State reduceTryFinallyStatement(
             @NotNull TryFinallyStatement node,
-            @NotNull State block,
+            @NotNull State body,
             @NotNull Maybe<State> catchClause,
             @NotNull State finalizer);
 

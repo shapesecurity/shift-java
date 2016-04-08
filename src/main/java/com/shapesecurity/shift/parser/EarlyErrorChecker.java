@@ -363,7 +363,7 @@
 //    @NotNull
 //    @Override
 //    public EarlyErrorState reduceExportSpecifier(@NotNull ExportSpecifier node) {
-//        return super.reduceExportSpecifier(node)
+//        return super.reduceExportFromSpecifier(node)
 //                .exportName(node.exportedName, node)
 //                .exportBinding(node.name.orJust(node.exportedName), node);
 //    }
