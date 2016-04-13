@@ -154,8 +154,8 @@ public class CloneReducer implements Reducer<Node> {
 
     @NotNull
     @Override
-    public ObjectProperty reduceDataProperty(@NotNull DataProperty node, @NotNull Node value, @NotNull Node name) {
-        return new DataProperty((Expression) value, (PropertyName) name); //TODO: should value be here?
+    public ObjectProperty reduceDataProperty(@NotNull DataProperty node, @NotNull Node expression, @NotNull Node name) {
+        return new DataProperty((Expression) expression, (PropertyName) name);
     }
 
     @NotNull
