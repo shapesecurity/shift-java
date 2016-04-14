@@ -31,6 +31,7 @@ public class ParserWithLocation {
 		}
 
 		@NotNull
+		@Override
 		protected <T extends Node> T finishNode(@NotNull SourceLocation startLocation, @NotNull T node) {
 			SourceLocation endLocation = this.getLocation();
 			locations = locations.put(node, new SourceSpan(Maybe.empty(), startLocation, endLocation));
