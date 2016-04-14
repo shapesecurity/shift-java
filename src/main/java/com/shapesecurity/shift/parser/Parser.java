@@ -33,4 +33,10 @@ public class Parser extends GenericParser<Unit> {
 	protected Unit startNode() {
 		return Unit.unit;
 	}
+
+	@NotNull
+	@Override
+	protected <T extends Node> T copyNode(@NotNull Node src, @NotNull T dest) {
+		return dest;
+	}
 }
