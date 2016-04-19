@@ -21,28 +21,26 @@ package com.shapesecurity.shift.ast;
 import org.jetbrains.annotations.NotNull;
 import com.shapesecurity.functional.data.HashCodeBuilder;
 
-public class StaticMemberAssignmentTarget extends MemberAssignmentTarget {
+public class AssignmentTargetIdentifier implements Node, SimpleAssignmentTarget {
     @NotNull
-    public final String property;
+    public final String name;
 
 
-    public StaticMemberAssignmentTarget (@NotNull ExpressionSuper object, @NotNull String property) {
-        super(object);
-        this.property = property;
+    public AssignmentTargetIdentifier (@NotNull String name) {
+        this.name = name;
     }
 
 
     @Override
     public boolean equals(Object object) {
-        return object instanceof StaticMemberAssignmentTarget && this.object.equals(((StaticMemberAssignmentTarget) object).object) && this.property.equals(((StaticMemberAssignmentTarget) object).property);
+        return object instanceof AssignmentTargetIdentifier && this.name.equals(((AssignmentTargetIdentifier) object).name);
     }
 
 
     @Override
     public int hashCode() {
-        int code = HashCodeBuilder.put(0, "StaticMemberAssignmentTarget");
-        code = HashCodeBuilder.put(code, this.object);
-        code = HashCodeBuilder.put(code, this.property);
+        int code = HashCodeBuilder.put(0, "AssignmentTargetIdentifier");
+        code = HashCodeBuilder.put(code, this.name);
         return code;
     }
 

@@ -426,7 +426,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
         this.allowYieldExpression = isGenerator;
         FunctionBody body = this.parseFunctionBody();
         this.allowYieldExpression = previousYield;
-        return this.finishNode(startState, new FunctionDeclaration(name, isGenerator, params, body));
+        return this.finishNode(startState, new FunctionDeclaration(isGenerator, name, params, body));
     }
 
     @NotNull
@@ -445,7 +445,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
         this.allowYieldExpression = isGenerator;
         FunctionBody body = this.parseFunctionBody();
         this.allowYieldExpression = previousYield;
-        return this.finishNode(startState, new FunctionExpression(name, isGenerator, params, body));
+        return this.finishNode(startState, new FunctionExpression(isGenerator, name, params, body));
     }
 
     @NotNull
@@ -554,7 +554,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
                 Expression expr = this.parseExpression().left().just();
                 if (expr instanceof IdentifierExpression && this.eat(TokenType.COLON)) {
                     Statement labeledBody = this.match(TokenType.FUNCTION) ? this.parseFunctionDeclaration(false, false) : this.parseStatement();
-                    return new LabeledStatement(((IdentifierExpression) expr).getName(), labeledBody);
+                    return new LabeledStatement(((IdentifierExpression) expr).name, labeledBody);
                 } else {
                     this.consumeSemicolon();
                     return new ExpressionStatement(expr);
@@ -646,7 +646,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
                     }
                     while (this.eat(TokenType.COMMA)) {
                         Expression rhs = this.parseAssignmentExpression().left().just();
-                        expr = this.finishNode(leftLocation, new BinaryExpression(BinaryOperator.Sequence, expr, rhs));
+                        expr = this.finishNode(leftLocation, new BinaryExpression(expr, BinaryOperator.Sequence, rhs));
                     }
                     if (this.match(TokenType.IN)) {
                         throw this.createError(ErrorMessages.INVALID_LHS_IN_FOR_IN);
@@ -675,7 +675,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
             return new AssignmentTargetPropertyProperty(dataProperty.name, this.transformDestructuringWithDefault(dataProperty.expression));
         } else if (objectProperty instanceof ShorthandProperty) {
             ShorthandProperty shorthandProperty = (ShorthandProperty) objectProperty;
-            return new AssignmentTargetPropertyIdentifier(new BindingIdentifier(shorthandProperty.name.name), Maybe.nothing());
+            return new AssignmentTargetPropertyIdentifier(new AssignmentTargetIdentifier(shorthandProperty.name.name), Maybe.nothing());
         }
         throw this.createError(ErrorMessages.INVALID_LHS_IN_ASSIGNMENT);
     }
@@ -728,20 +728,20 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
             }
 
         } else if (node instanceof IdentifierExpression) {
-            return new BindingIdentifier(((IdentifierExpression) node).name);
+            return new AssignmentTargetIdentifier(((IdentifierExpression) node).name);
         } else if (node instanceof ComputedMemberExpression) {
             ComputedMemberExpression expr = (ComputedMemberExpression) node;
-            return new ComputedMemberAssignmentTarget(expr.expression, expr._object);
+            return new ComputedMemberAssignmentTarget(expr.object, expr.expression);
         } else if (node instanceof StaticMemberExpression) {
             StaticMemberExpression expr = (StaticMemberExpression) node;
-            return new StaticMemberAssignmentTarget(expr.property, expr._object);
+            return new StaticMemberAssignmentTarget(expr.object, expr.property);
         }
         throw this.createError(ErrorMessages.INVALID_LHS_IN_ASSIGNMENT);
     }
 
     @NotNull
-    protected BindingIdentifier transformDestructuring(StaticPropertyName property) {
-        return new BindingIdentifier(property.value);
+    protected AssignmentTargetIdentifier transformDestructuring(StaticPropertyName property) {
+        return new AssignmentTargetIdentifier(property.value);
     }
 
     @NotNull
@@ -839,7 +839,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
         Expression test = this.parseExpression().left().just();
         this.expect(TokenType.RPAREN);
         this.eat(TokenType.SEMICOLON);
-        return new DoWhileStatement(test, body);
+        return new DoWhileStatement(body, test);
     }
 
     @NotNull
@@ -1005,7 +1005,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
                 }
                 this.lex();
                 Expression right = this.parseAssignmentExpression().left().just();
-                left = Either.left(this.finishNode(startState, new BinaryExpression(BinaryOperator.Sequence, left.left().just(), right)));
+                left = Either.left(this.finishNode(startState, new BinaryExpression(left.left().just(), BinaryOperator.Sequence, right)));
             }
         }
         return left;
@@ -1121,7 +1121,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
             CompoundAssignmentOperator compoundAssignmentOperator = lookupCompoundAssignmentOperator(operator);
             if (compoundAssignmentOperator != null) {
                 this.isBindingElement = this.isAssignmentTarget = false;
-                return Either.left(this.finishNode(startState, new CompoundAssignmentExpression(compoundAssignmentOperator, (SimpleAssignmentTarget) assignmentTarget, rhs.left().just())));
+                return Either.left(this.finishNode(startState, new CompoundAssignmentExpression((SimpleAssignmentTarget) assignmentTarget, compoundAssignmentOperator, rhs.left().just())));
             } else {
                 throw this.createError("should not be here", 0, 0, 0);
             }
@@ -1232,7 +1232,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
                     left = Either.left(stackItem.left);
                     stack = ((NonEmptyImmutableList<ExprStackItem<AdditionalStateT>>) stack).tail();
                     startState = stackItem.startState;
-                    expr = Either.left(this.finishNode(stackItem.startState, new BinaryExpression(stackOperator, left.left().just(), expr.left().just())));
+                    expr = Either.left(this.finishNode(stackItem.startState, new BinaryExpression(left.left().just(), stackOperator, expr.left().just())));
                 }
 
                 // Shift.
@@ -1247,7 +1247,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
             // Final reduce to clean-up the stack.
             return Either.left(stack.foldLeft(
                     (expr1, stackItem) -> this.finishNode(
-                            stackItem.startState, new BinaryExpression(stackItem.operator, stackItem.left, expr1)), expr.left().just()));
+                            stackItem.startState, new BinaryExpression(stackItem.left, stackItem.operator, expr1)), expr.left().just()));
         } else {
             throw this.createError(ErrorMessages.UNEXPECTED_OBJECT_BINDING);
         }
@@ -1349,14 +1349,13 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
 
             if (this.match(TokenType.LPAREN)) {
                 if (allowCall) {
-
                     expr = Either.left(this.finishNode(startState, new CallExpression(expr.left().just(), this.parseArgumentList())));
                 }
             } else if (this.match(TokenType.LBRACK)) {
-                expr = Either.left(this.finishNode(startState, new ComputedMemberExpression(this.parseComputedMember(), expr.left().just())));
+                expr = Either.left(this.finishNode(startState, new ComputedMemberExpression(expr.left().just(), this.parseComputedMember())));
                 this.isAssignmentTarget = true;
             } else if (this.match(TokenType.PERIOD)) {
-                expr = Either.left(this.finishNode(startState, new StaticMemberExpression(this.parseStaticMember(), expr.left().just())));
+                expr = Either.left(this.finishNode(startState, new StaticMemberExpression(expr.left().just(), this.parseStaticMember())));
                 this.isAssignmentTarget = true;
             } else {
                 throw this.createUnexpected(token);
@@ -1381,11 +1380,11 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
             } else if (this.match(TokenType.LBRACK)) {
                 this.isBindingElement = false;
                 this.isAssignmentTarget = true;
-                expr = Either.left(this.finishNode(startState, new ComputedMemberExpression(this.parseComputedMember(), expr.left().just())));
+                expr = Either.left(this.finishNode(startState, new ComputedMemberExpression(expr.left().just(), this.parseComputedMember())));
             } else if (this.match(TokenType.PERIOD)) {
                 this.isBindingElement = false;
                 this.isAssignmentTarget = true;
-                expr = Either.left(this.finishNode(startState, new StaticMemberExpression(this.parseStaticMember(), expr.left().just())));
+                expr = Either.left(this.finishNode(startState, new StaticMemberExpression(expr.left().just(), this.parseStaticMember())));
             } else {
                 break;
             }
@@ -1795,7 +1794,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
             for (AssignmentTargetProperty prop : oat.properties) {
                 if (prop instanceof AssignmentTargetPropertyIdentifier) {
                     AssignmentTargetPropertyIdentifier atpi = (AssignmentTargetPropertyIdentifier) prop;
-                    properties.add(new BindingPropertyIdentifier(atpi.binding, atpi.init));
+                    properties.add(new BindingPropertyIdentifier(new BindingIdentifier(atpi.binding.name), atpi.init));
                 } else {
                     AssignmentTargetPropertyProperty atpp = (AssignmentTargetPropertyProperty) prop;
                     properties.add(new BindingPropertyProperty(atpp.name, this.targetToBindingPossiblyWithDefault(atpp.binding)));
@@ -1870,7 +1869,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
                     }
                 }
                 if (this.firstExprError == null) {
-                    group = Either.left(this.finishNode(startState, new BinaryExpression(BinaryOperator.Sequence, group.left().just(), expr.left().just())));
+                    group = Either.left(this.finishNode(startState, new BinaryExpression(group.left().just(), BinaryOperator.Sequence, expr.left().just())));
                 } else {
                     mustBeArrowParameterList = true;
                 }
@@ -1932,7 +1931,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
 
         return val.map(
                 expr -> {
-                    DataProperty toReturn = new DataProperty(expr, name); // TODO the fact that this is (val, name) and BindingPropertyProperty is (name, val) is very sad.
+                    DataProperty toReturn = new DataProperty(name, expr);
                     this.finishNode(startState, toReturn);
                     return toReturn;
                 },
@@ -1963,7 +1962,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
                     this.expect(TokenType.LPAREN);
                     this.expect(TokenType.RPAREN);
                     FunctionBody body = this.parseFunctionBody();
-                    return Either.right(this.finishNode(startState, new Getter(body, name)));
+                    return Either.right(this.finishNode(startState, new Getter(name, body)));
                 } else if (tokenName.equals("set") && this.lookaheadPropertyName()) {
                     name = this.parsePropertyName().a;
                     this.expect(TokenType.LPAREN);
@@ -1983,7 +1982,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
                     this.allowYieldExpression = false;
                     FunctionBody body = this.parseFunctionBody();
                     this.allowYieldExpression = previousYield;
-                    return Either.right(this.finishNode(startState, new Setter(new Parameter(binding, init), body, name)));
+                    return Either.right(this.finishNode(startState, new Setter(name, new Parameter(binding, init), body)));
                 }
             }
         }
@@ -1997,7 +1996,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
             FunctionBody body = this.parseFunctionBody();
             this.allowYieldExpression = previousYield;
 
-            return Either.right(this.finishNode(startState, new Method(isGenerator, params, body, name)));
+            return Either.right(this.finishNode(startState, new Method(isGenerator, name, params, body)));
         }
 
         if (isGenerator && this.match(TokenType.COLON)) {
