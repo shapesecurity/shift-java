@@ -11,7 +11,7 @@ import org.junit.Test;
 public class ForInStatementTest extends ParserTestCase {
     @Test
     public void testForInStatement() throws JsError {
-        testScript("for(x in list) process(x);", new ForInStatement(new BindingIdentifier("x"),
+        testScript("for(x in list) process(x);", new ForInStatement(new AssignmentTargetIdentifier("x"),
                 new IdentifierExpression("list"), new ExpressionStatement(new CallExpression(
                 new IdentifierExpression("process"), ImmutableList.list(new IdentifierExpression("x"))))));
 
@@ -29,10 +29,10 @@ public class ForInStatementTest extends ParserTestCase {
                 ImmutableList.list(new VariableDeclarator(new BindingIdentifier("a"), Maybe.nothing()))),
                 new IdentifierExpression("b"), new EmptyStatement()));
 
-        testScript("for(a in b);", new ForInStatement(new BindingIdentifier("a"), new IdentifierExpression("b"),
+        testScript("for(a in b);", new ForInStatement(new AssignmentTargetIdentifier("a"), new IdentifierExpression("b"),
                 new EmptyStatement()));
 
-        testScript("for(a.b in c);", new ForInStatement(new StaticMemberAssignmentTarget("b", new IdentifierExpression("a")),
+        testScript("for(a.b in c);", new ForInStatement(new StaticMemberAssignmentTarget(new IdentifierExpression("a"), "b"),
                 new IdentifierExpression("c"), new EmptyStatement()));
 
         testScript("for(let of in of);", new ForInStatement(new VariableDeclaration(VariableDeclarationKind.Let,

@@ -21,11 +21,11 @@ public class WhileStatementTest extends ParserTestCase {
                 new ExpressionStatement(new CallExpression(new IdentifierExpression("doSomething"), ImmutableList.nil())
                 )));
 
-        testScript("while (x < 10) {x++; y--; }", new WhileStatement(new BinaryExpression(BinaryOperator.LessThan,
-                new IdentifierExpression("x"), new LiteralNumericExpression(10.0)), new BlockStatement(new Block(
+        testScript("while (x < 10) {x++; y--; }", new WhileStatement(new BinaryExpression(
+                new IdentifierExpression("x"), BinaryOperator.LessThan, new LiteralNumericExpression(10.0)), new BlockStatement(new Block(
                 ImmutableList.list(new ExpressionStatement(new UpdateExpression(false, UpdateOperator.Increment,
-                        new BindingIdentifier("x"))), new ExpressionStatement(new UpdateExpression(false, UpdateOperator.Decrement,
-                        new BindingIdentifier("y"))))
+                        new AssignmentTargetIdentifier("x"))), new ExpressionStatement(new UpdateExpression(false, UpdateOperator.Decrement,
+                        new AssignmentTargetIdentifier("y"))))
         ))));
     }
 }

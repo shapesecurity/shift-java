@@ -29,7 +29,7 @@ public class NewExpressionTest extends ParserTestCase {
         testScript("new f(...a)", new NewExpression(new IdentifierExpression("f"), ImmutableList.list(new SpreadElement(new IdentifierExpression("a")))));
 
         testScript("new f(...a = b)", new NewExpression(new IdentifierExpression("f"), ImmutableList.list(
-                new SpreadElement(new AssignmentExpression(new BindingIdentifier("a"), new IdentifierExpression("b"))))));
+                new SpreadElement(new AssignmentExpression(new AssignmentTargetIdentifier("a"), new IdentifierExpression("b"))))));
 
         testScript("new f(...a, ...b)", new NewExpression(new IdentifierExpression("f"), ImmutableList.list(
                 new SpreadElement(new IdentifierExpression("a")), new SpreadElement(new IdentifierExpression("b")))));

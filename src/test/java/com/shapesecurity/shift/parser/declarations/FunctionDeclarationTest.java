@@ -12,87 +12,87 @@ import org.junit.Test;
 public class FunctionDeclarationTest extends ParserTestCase {
     @Test
     public void testFunctionDeclaration() throws JsError {
-        testScript("function hello() { z(); }", new FunctionDeclaration(new BindingIdentifier("hello"), false,
+        testScript("function hello() { z(); }", new FunctionDeclaration(false, new BindingIdentifier("hello"),
                 new FormalParameters(ImmutableList.nil(), Maybe.nothing()), new FunctionBody(ImmutableList.nil(),
                 ImmutableList.list(new ExpressionStatement(new CallExpression(new IdentifierExpression("z"),
                         ImmutableList.nil()))))));
 
-        testScript("function eval() { }", new FunctionDeclaration(new BindingIdentifier("eval"), false,
+        testScript("function eval() { }", new FunctionDeclaration(false, new BindingIdentifier("eval"),
                 new FormalParameters(ImmutableList.nil(), Maybe.nothing()), new FunctionBody(ImmutableList.nil(),
                 ImmutableList.nil())));
 
-        testScript("function arguments() { }", new FunctionDeclaration(new BindingIdentifier("arguments"), false,
+        testScript("function arguments() { }", new FunctionDeclaration(false, new BindingIdentifier("arguments"),
                 new FormalParameters(ImmutableList.nil(), Maybe.nothing()), new FunctionBody(ImmutableList.nil(),
                 ImmutableList.nil())));
 
-        testScript("function test(t, t) { }", new FunctionDeclaration(new BindingIdentifier("test"), false,
+        testScript("function test(t, t) { }", new FunctionDeclaration(false, new BindingIdentifier("test"),
                 new FormalParameters(ImmutableList.list(new Parameter(new BindingIdentifier("t"), Maybe.nothing()), new Parameter(new BindingIdentifier("t"), Maybe.nothing())),
                         Maybe.nothing()), new FunctionBody(ImmutableList.nil(), ImmutableList.nil())));
 
         testScript("function eval() { function inner() { \"use strict\" } }", new FunctionDeclaration(
-                new BindingIdentifier("eval"), false, new FormalParameters(ImmutableList.nil(), Maybe.nothing()),
-                new FunctionBody(ImmutableList.nil(), ImmutableList.list(new FunctionDeclaration(new BindingIdentifier("inner"),
-                        false, new FormalParameters(ImmutableList.nil(), Maybe.nothing()), new FunctionBody(ImmutableList.list(
+                false, new BindingIdentifier("eval"), new FormalParameters(ImmutableList.nil(), Maybe.nothing()),
+                new FunctionBody(ImmutableList.nil(), ImmutableList.list(new FunctionDeclaration(false, new BindingIdentifier("inner"),
+                        new FormalParameters(ImmutableList.nil(), Maybe.nothing()), new FunctionBody(ImmutableList.list(
                         new Directive("use strict")), ImmutableList.nil()))))));
 
-        testScript("function hello(a) { z(); }", new FunctionDeclaration(new BindingIdentifier("hello"), false,
+        testScript("function hello(a) { z(); }", new FunctionDeclaration(false, new BindingIdentifier("hello"),
                 new FormalParameters(ImmutableList.list(new Parameter(new BindingIdentifier("a"), Maybe.nothing())), Maybe.nothing()), new FunctionBody(
                 ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new CallExpression(new IdentifierExpression("z"),
                 ImmutableList.nil()))))));
 
-        testScript("function hello(a, b) { z(); }", new FunctionDeclaration(new BindingIdentifier("hello"), false,
+        testScript("function hello(a, b) { z(); }", new FunctionDeclaration(false, new BindingIdentifier("hello"),
                 new FormalParameters(ImmutableList.list(new Parameter(new BindingIdentifier("a"), Maybe.nothing()), new Parameter(new BindingIdentifier("b"), Maybe.nothing())),
                         Maybe.nothing()), new FunctionBody(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(
                 new CallExpression(new IdentifierExpression("z"), ImmutableList.nil()))))));
 
-        testScript("function universe(__proto__) { }", new FunctionDeclaration(new BindingIdentifier("universe"), false,
+        testScript("function universe(__proto__) { }", new FunctionDeclaration(false, new BindingIdentifier("universe"),
                 new FormalParameters(ImmutableList.list(new Parameter(new BindingIdentifier("__proto__"), Maybe.nothing())), Maybe.nothing()), new FunctionBody(
                 ImmutableList.nil(), ImmutableList.nil())));
 
-        testScript("function test() { \"use strict\"\n + 0; }", new FunctionDeclaration(new BindingIdentifier("test"), false,
+        testScript("function test() { \"use strict\"\n + 0; }", new FunctionDeclaration(false, new BindingIdentifier("test"),
                 new FormalParameters(ImmutableList.nil(), Maybe.nothing()), new FunctionBody(ImmutableList.nil(),
-                ImmutableList.list(new ExpressionStatement(new BinaryExpression(BinaryOperator.Plus,
-                        new LiteralStringExpression("use strict"), new LiteralNumericExpression(0.0)))))));
+                ImmutableList.list(new ExpressionStatement(new BinaryExpression(
+                        new LiteralStringExpression("use strict"), BinaryOperator.Plus, new LiteralNumericExpression(0.0)))))));
 
         testScript("function a() {} function a() {}", new Script(ImmutableList.nil(), ImmutableList.list(
-                new FunctionDeclaration(new BindingIdentifier("a"), false, new FormalParameters(ImmutableList.nil(),
-                        Maybe.nothing()), new FunctionBody(ImmutableList.nil(), ImmutableList.nil())), new FunctionDeclaration(
-                        new BindingIdentifier("a"), false, new FormalParameters(ImmutableList.nil(), Maybe.nothing()),
+                new FunctionDeclaration(false, new BindingIdentifier("a"), new FormalParameters(ImmutableList.nil(),
+                        Maybe.nothing()), new FunctionBody(ImmutableList.nil(), ImmutableList.nil())), new FunctionDeclaration(false,
+                        new BindingIdentifier("a"), new FormalParameters(ImmutableList.nil(), Maybe.nothing()),
                         new FunctionBody(ImmutableList.nil(), ImmutableList.nil())))));
 
-        testScript("function a() { function a() {} function a() {} }", new FunctionDeclaration(new BindingIdentifier("a"),
-                false, new FormalParameters(ImmutableList.nil(), Maybe.nothing()), new FunctionBody(ImmutableList.nil(),
-                ImmutableList.list(new FunctionDeclaration(new BindingIdentifier("a"), false, new FormalParameters(
+        testScript("function a() { function a() {} function a() {} }", new FunctionDeclaration(false, new BindingIdentifier("a"),
+                new FormalParameters(ImmutableList.nil(), Maybe.nothing()), new FunctionBody(ImmutableList.nil(),
+                ImmutableList.list(new FunctionDeclaration(false, new BindingIdentifier("a"), new FormalParameters(
                                 ImmutableList.nil(), Maybe.nothing()), new FunctionBody(ImmutableList.nil(), ImmutableList.nil())),
-                        new FunctionDeclaration(new BindingIdentifier("a"), false, new FormalParameters(ImmutableList.nil(),
+                        new FunctionDeclaration(false, new BindingIdentifier("a"), new FormalParameters(ImmutableList.nil(),
                                 Maybe.nothing()), new FunctionBody(ImmutableList.nil(), ImmutableList.nil()))))));
 
-        testScript("a: function a(){}", new LabeledStatement("a", new FunctionDeclaration(new BindingIdentifier("a"), false,
+        testScript("a: function a(){}", new LabeledStatement("a", new FunctionDeclaration(false, new BindingIdentifier("a"),
                 new FormalParameters(ImmutableList.nil(), Maybe.nothing()), new FunctionBody(ImmutableList.nil(),
                 ImmutableList.nil()))));
 
-        testScript("if (0) function a(){}", new IfStatement(new LiteralNumericExpression(0.0), new FunctionDeclaration(
-                new BindingIdentifier("a"), false, new FormalParameters(ImmutableList.nil(), Maybe.nothing()),
+        testScript("if (0) function a(){}", new IfStatement(new LiteralNumericExpression(0.0), new FunctionDeclaration(false,
+                new BindingIdentifier("a"), new FormalParameters(ImmutableList.nil(), Maybe.nothing()),
                 new FunctionBody(ImmutableList.nil(), ImmutableList.nil())), Maybe.nothing()));
 
         testScript("if (0) function a(){} else;", new IfStatement(new LiteralNumericExpression(0.0),
-                new FunctionDeclaration(new BindingIdentifier("a"), false, new FormalParameters(ImmutableList.nil(),
+                new FunctionDeclaration(false, new BindingIdentifier("a"), new FormalParameters(ImmutableList.nil(),
                         Maybe.nothing()), new FunctionBody(ImmutableList.nil(), ImmutableList.nil())), Maybe.just(
                 new EmptyStatement())));
 
         testScript("if (0); else function a(){}", new IfStatement(new LiteralNumericExpression(0.0), new EmptyStatement(),
-                Maybe.just(new FunctionDeclaration(new BindingIdentifier("a"), false, new FormalParameters(ImmutableList.nil(),
+                Maybe.just(new FunctionDeclaration(false, new BindingIdentifier("a"), new FormalParameters(ImmutableList.nil(),
                         Maybe.nothing()), new FunctionBody(ImmutableList.nil(), ImmutableList.nil())))));
 
         testScript("if (0) function a(){} else function b(){}", new IfStatement(new LiteralNumericExpression(0.0),
-                new FunctionDeclaration(new BindingIdentifier("a"), false, new FormalParameters(ImmutableList.nil(),
+                new FunctionDeclaration(false, new BindingIdentifier("a"), new FormalParameters(ImmutableList.nil(),
                         Maybe.nothing()), new FunctionBody(ImmutableList.nil(), ImmutableList.nil())), Maybe.just(
-                new FunctionDeclaration(new BindingIdentifier("b"), false, new FormalParameters(ImmutableList.nil(),
+                new FunctionDeclaration(false, new BindingIdentifier("b"), new FormalParameters(ImmutableList.nil(),
                         Maybe.nothing()), new FunctionBody(ImmutableList.nil(), ImmutableList.nil())))));
 
         testScript("try {} catch (e) { if(0) function e(){} }", new TryCatchStatement(new Block(ImmutableList.nil()),
                 new CatchClause(new BindingIdentifier("e"), new Block(ImmutableList.list(new IfStatement(
-                        new LiteralNumericExpression(0.0), new FunctionDeclaration(new BindingIdentifier("e"), false,
+                        new LiteralNumericExpression(0.0), new FunctionDeclaration(false, new BindingIdentifier("e"),
                         new FormalParameters(ImmutableList.nil(), Maybe.nothing()), new FunctionBody(ImmutableList.nil(),
                         ImmutableList.nil())), Maybe.nothing()))))));
 

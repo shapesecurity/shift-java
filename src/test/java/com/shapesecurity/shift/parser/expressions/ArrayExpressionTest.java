@@ -32,7 +32,7 @@ public class ArrayExpressionTest extends ParserTestCase {
                 Maybe.just(new LiteralNumericExpression(1.0)), Maybe.nothing(), Maybe.nothing(),
                 Maybe.just(new LiteralNumericExpression(2.0)), Maybe.just(new LiteralNumericExpression(3.0)), Maybe.nothing())));
 
-        testScript("[a, ...(b=c)]", new ArrayExpression(ImmutableList.list(Maybe.just(new IdentifierExpression("a")), Maybe.just(new SpreadElement(new AssignmentExpression(new BindingIdentifier("b"), new IdentifierExpression("c")))))));
+        testScript("[a, ...(b=c)]", new ArrayExpression(ImmutableList.list(Maybe.just(new IdentifierExpression("a")), Maybe.just(new SpreadElement(new AssignmentExpression(new AssignmentTargetIdentifier("b"), new IdentifierExpression("c")))))));
         testScript("[,...a]", new ArrayExpression(ImmutableList.list(Maybe.nothing(), Maybe.just(new SpreadElement(new IdentifierExpression("a"))))));
 
         testScriptFailure("[a, ...(b=c)] = 0", 14, "Invalid left-hand side in assignment");

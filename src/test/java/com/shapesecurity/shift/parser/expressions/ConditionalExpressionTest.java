@@ -16,11 +16,11 @@ public class ConditionalExpressionTest extends ParserTestCase {
         testScript("y ? 1 : 2", new ConditionalExpression(new IdentifierExpression("y"), new LiteralNumericExpression(1.0),
                 new LiteralNumericExpression(2.0)));
 
-        testScript("x && y ? 1 : 2", new ConditionalExpression(new BinaryExpression(BinaryOperator.LogicalAnd,
-                new IdentifierExpression("x"), new IdentifierExpression("y")), new LiteralNumericExpression(1.0),
+        testScript("x && y ? 1 : 2", new ConditionalExpression(new BinaryExpression(
+                new IdentifierExpression("x"), BinaryOperator.LogicalAnd, new IdentifierExpression("y")), new LiteralNumericExpression(1.0),
                 new LiteralNumericExpression(2.0)));
 
-        testScript("x = (0) ? 1 : 2", new AssignmentExpression(new BindingIdentifier("x"), new ConditionalExpression(
+        testScript("x = (0) ? 1 : 2", new AssignmentExpression(new AssignmentTargetIdentifier("x"), new ConditionalExpression(
                 new LiteralNumericExpression(0.0), new LiteralNumericExpression(1.0), new LiteralNumericExpression(2.0))));
     }
 }

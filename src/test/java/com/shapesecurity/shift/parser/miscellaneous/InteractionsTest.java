@@ -13,55 +13,55 @@ import org.junit.Test;
 public class InteractionsTest extends ParserTestCase {
     @Test
     public void testInteractions() throws JsError {
-        testScript("0 .toString", new StaticMemberExpression("toString", new LiteralNumericExpression(0.0)));
+        testScript("0 .toString", new StaticMemberExpression(new LiteralNumericExpression(0.0), "toString"));
 
-        testScript("0.0.toString", new StaticMemberExpression("toString", new LiteralNumericExpression(0.0)));
+        testScript("0.0.toString", new StaticMemberExpression(new LiteralNumericExpression(0.0), "toString"));
 
-        testScript("0..toString", new StaticMemberExpression("toString", new LiteralNumericExpression(0.0)));
+        testScript("0..toString", new StaticMemberExpression(new LiteralNumericExpression(0.0), "toString"));
 
-        testScript("01.toString", new StaticMemberExpression("toString", new LiteralNumericExpression(1.0)));
+        testScript("01.toString", new StaticMemberExpression(new LiteralNumericExpression(1.0), "toString"));
 
-        testScript("a.b(b, c)", new CallExpression(new StaticMemberExpression("b", new IdentifierExpression("a")),
+        testScript("a.b(b, c)", new CallExpression(new StaticMemberExpression(new IdentifierExpression("a"), "b"),
                 ImmutableList.list(new IdentifierExpression("b"), new IdentifierExpression("c"))));
 
-        testScript("a[b](b,c)", new CallExpression(new ComputedMemberExpression(new IdentifierExpression("b"),
-                new IdentifierExpression("a")), ImmutableList.list(new IdentifierExpression("b"),
+        testScript("a[b](b,c)", new CallExpression(new ComputedMemberExpression(new IdentifierExpression("a"),
+                new IdentifierExpression("b")), ImmutableList.list(new IdentifierExpression("b"),
                 new IdentifierExpression("c"))));
 
-        testScript("new foo().bar()", new CallExpression(new StaticMemberExpression("bar", new NewExpression(
-                new IdentifierExpression("foo"), ImmutableList.nil())), ImmutableList.nil()));
+        testScript("new foo().bar()", new CallExpression(new StaticMemberExpression(new NewExpression(
+                new IdentifierExpression("foo"), ImmutableList.nil()), "bar"), ImmutableList.nil()));
 
-        testScript("new foo[bar]", new NewExpression(new ComputedMemberExpression(new IdentifierExpression("bar"),
-                new IdentifierExpression("foo")), ImmutableList.nil()));
+        testScript("new foo[bar]", new NewExpression(new ComputedMemberExpression(new IdentifierExpression("foo"),
+                new IdentifierExpression("bar")), ImmutableList.nil()));
 
-        testScript("new foo.bar()", new NewExpression(new StaticMemberExpression("bar", new IdentifierExpression("foo")),
+        testScript("new foo.bar()", new NewExpression(new StaticMemberExpression(new IdentifierExpression("foo"), "bar"),
                 ImmutableList.nil()));
 
-        testScript("(new foo).bar()", new CallExpression(new StaticMemberExpression("bar", new NewExpression(
-                new IdentifierExpression("foo"), ImmutableList.nil())), ImmutableList.nil()));
+        testScript("(new foo).bar()", new CallExpression(new StaticMemberExpression(new NewExpression(
+                new IdentifierExpression("foo"), ImmutableList.nil()), "bar"), ImmutableList.nil()));
 
-        testScript("a[0].b", new StaticMemberExpression("b", new ComputedMemberExpression(new LiteralNumericExpression(0.0),
-                new IdentifierExpression("a"))));
+        testScript("a[0].b", new StaticMemberExpression(new ComputedMemberExpression(
+                new IdentifierExpression("a"), new LiteralNumericExpression(0.0)), "b"));
 
-        testScript("a(0).b", new StaticMemberExpression("b", new CallExpression(new IdentifierExpression("a"),
-                ImmutableList.list(new LiteralNumericExpression(0.0)))));
+        testScript("a(0).b", new StaticMemberExpression(new CallExpression(new IdentifierExpression("a"),
+                ImmutableList.list(new LiteralNumericExpression(0.0))), "b"));
 
-        testScript("a(0).b(14, 3, 77).c", new StaticMemberExpression("c", new CallExpression(new StaticMemberExpression("b",
-                new CallExpression(new IdentifierExpression("a"), ImmutableList.list(new LiteralNumericExpression(0.0)))),
+        testScript("a(0).b(14, 3, 77).c", new StaticMemberExpression(new CallExpression(new StaticMemberExpression(
+                new CallExpression(new IdentifierExpression("a"), ImmutableList.list(new LiteralNumericExpression(0.0))), "b"),
                 ImmutableList.list(new LiteralNumericExpression(14.0), new LiteralNumericExpression(3.0),
-                        new LiteralNumericExpression(77.0)))));
+                        new LiteralNumericExpression(77.0))), "c"));
 
-        testScript("a.b.c(2014)", new CallExpression(new StaticMemberExpression("c", new StaticMemberExpression("b",
-                new IdentifierExpression("a"))), ImmutableList.list(new LiteralNumericExpression(2014.0))));
+        testScript("a.b.c(2014)", new CallExpression(new StaticMemberExpression(new StaticMemberExpression(
+                new IdentifierExpression("a"), "b"), "c"), ImmutableList.list(new LiteralNumericExpression(2014.0))));
 
-        testScript("a || b && c | d ^ e & f == g < h >>> i + j * k", new BinaryExpression(BinaryOperator.LogicalOr,
-                new IdentifierExpression("a"), new BinaryExpression(BinaryOperator.LogicalAnd, new IdentifierExpression("b"),
-                new BinaryExpression(BinaryOperator.BitwiseOr, new IdentifierExpression("c"), new BinaryExpression(
-                        BinaryOperator.BitwiseXor, new IdentifierExpression("d"), new BinaryExpression(BinaryOperator.BitwiseAnd,
-                        new IdentifierExpression("e"), new BinaryExpression(BinaryOperator.Equal, new IdentifierExpression("f"),
-                        new BinaryExpression(BinaryOperator.LessThan, new IdentifierExpression("g"), new BinaryExpression(
-                                BinaryOperator.UnsignedRight, new IdentifierExpression("h"), new BinaryExpression(BinaryOperator.Plus,
-                                new IdentifierExpression("i"), new BinaryExpression(BinaryOperator.Mul, new IdentifierExpression("j"),
+        testScript("a || b && c | d ^ e & f == g < h >>> i + j * k", new BinaryExpression(
+                new IdentifierExpression("a"), BinaryOperator.LogicalOr, new BinaryExpression(new IdentifierExpression("b"), BinaryOperator.LogicalAnd,
+                new BinaryExpression(new IdentifierExpression("c"), BinaryOperator.BitwiseOr, new BinaryExpression(
+                        new IdentifierExpression("d"), BinaryOperator.BitwiseXor, new BinaryExpression(
+                        new IdentifierExpression("e"), BinaryOperator.BitwiseAnd, new BinaryExpression(new IdentifierExpression("f"), BinaryOperator.Equal,
+                        new BinaryExpression(new IdentifierExpression("g"), BinaryOperator.LessThan, new BinaryExpression(
+                                new IdentifierExpression("h"), BinaryOperator.UnsignedRight, new BinaryExpression(
+                                new IdentifierExpression("i"), BinaryOperator.Plus, new BinaryExpression(new IdentifierExpression("j"), BinaryOperator.Mul,
                                 new IdentifierExpression("k"))))))))))));
 
         testScript("//\n;a;", new Script(ImmutableList.nil(), ImmutableList.list(new EmptyStatement(),
@@ -72,11 +72,11 @@ public class InteractionsTest extends ParserTestCase {
         testScript("0 /* block comment 1 */ /* block comment 2 */", new Script(ImmutableList.nil(), ImmutableList.list(
                 new ExpressionStatement(new LiteralNumericExpression(0.0)))));
 
-        testScript("(a + /* assignment */b ) * c", new BinaryExpression(BinaryOperator.Mul, new BinaryExpression(
-                BinaryOperator.Plus, new IdentifierExpression("a"), new IdentifierExpression("b")),
+        testScript("(a + /* assignment */b ) * c", new BinaryExpression(new BinaryExpression(
+                new IdentifierExpression("a"), BinaryOperator.Plus, new IdentifierExpression("b")), BinaryOperator.Mul,
                 new IdentifierExpression("c")));
 
-        testScript("/* assignment */\n a = b", new AssignmentExpression(new BindingIdentifier("a"),
+        testScript("/* assignment */\n a = b", new AssignmentExpression(new AssignmentTargetIdentifier("a"),
                 new IdentifierExpression("b")));
 
         testScript("0 /*The*/ /*Answer*/", new LiteralNumericExpression(0.0));
@@ -150,28 +150,28 @@ public class InteractionsTest extends ParserTestCase {
                         ImmutableList.nil())))))));
 
         testScript("/* header */ (function(){ var version = 1; }).call(this)", new CallExpression(
-                new StaticMemberExpression("call", new FunctionExpression(Maybe.nothing(), false, new FormalParameters(
+                new StaticMemberExpression(new FunctionExpression(false, Maybe.nothing(), new FormalParameters(
                         ImmutableList.nil(), Maybe.nothing()), new FunctionBody(ImmutableList.nil(), ImmutableList.list(
                         new VariableDeclarationStatement(new VariableDeclaration(VariableDeclarationKind.Var, ImmutableList.list(
                                 new VariableDeclarator(new BindingIdentifier("version"), Maybe.just(
-                                        new LiteralNumericExpression(1.0)))))))))), ImmutableList.list(new ThisExpression())));
+                                        new LiteralNumericExpression(1.0))))))))), "call"), ImmutableList.list(new ThisExpression())));
 
         testScript("(function(){ var version = 1; /* sync */ }).call(this)", new CallExpression(new StaticMemberExpression(
-                "call", new FunctionExpression(Maybe.nothing(), false, new FormalParameters(ImmutableList.nil(), Maybe.nothing()),
+                new FunctionExpression(false, Maybe.nothing(), new FormalParameters(ImmutableList.nil(), Maybe.nothing()),
                 new FunctionBody(ImmutableList.nil(), ImmutableList.list(new VariableDeclarationStatement(
                         new VariableDeclaration(VariableDeclarationKind.Var, ImmutableList.list(new VariableDeclarator(
-                                new BindingIdentifier("version"), Maybe.just(new LiteralNumericExpression(1.0)))))))))),
+                                new BindingIdentifier("version"), Maybe.just(new LiteralNumericExpression(1.0))))))))), "call"),
                 ImmutableList.list(new ThisExpression())));
 
         testScript("function f() { /* infinite */ while (true) { } /* bar */ var each; }", new FunctionDeclaration(
-                new BindingIdentifier("f"), false, new FormalParameters(ImmutableList.nil(), Maybe.nothing()),
+                false, new BindingIdentifier("f"), new FormalParameters(ImmutableList.nil(), Maybe.nothing()),
                 new FunctionBody(ImmutableList.nil(), ImmutableList.list(new WhileStatement(new LiteralBooleanExpression(true),
                         new BlockStatement(new Block(ImmutableList.nil()))), new VariableDeclarationStatement(
                         new VariableDeclaration(VariableDeclarationKind.Var, ImmutableList.list(new VariableDeclarator(
                                 new BindingIdentifier("each"), Maybe.nothing()))))))));
 
-        testScript("while (i-->0) {}", new WhileStatement(new BinaryExpression(BinaryOperator.GreaterThan,
-                new UpdateExpression(false, UpdateOperator.Decrement, new BindingIdentifier("i")),
+        testScript("while (i-->0) {}", new WhileStatement(new BinaryExpression(
+                new UpdateExpression(false, UpdateOperator.Decrement, new AssignmentTargetIdentifier("i")), BinaryOperator.GreaterThan,
                 new LiteralNumericExpression(0.0)), new BlockStatement(new Block(ImmutableList.nil()))));
 
         testScript("var x = 1<!--foo", new VariableDeclarationStatement(new VariableDeclaration(VariableDeclarationKind.Var,
@@ -179,23 +179,23 @@ public class InteractionsTest extends ParserTestCase {
                         new LiteralNumericExpression(1.0)))))));
 
         testScript("/* not comment*/; i-->0", new Script(ImmutableList.nil(), ImmutableList.list(new EmptyStatement(),
-                new ExpressionStatement(new BinaryExpression(BinaryOperator.GreaterThan, new UpdateExpression(false,
-                        UpdateOperator.Decrement, new BindingIdentifier("i")), new LiteralNumericExpression(0.0))))));
+                new ExpressionStatement(new BinaryExpression(new UpdateExpression(false,
+                        UpdateOperator.Decrement, new AssignmentTargetIdentifier("i")), BinaryOperator.GreaterThan, new LiteralNumericExpression(0.0))))));
 
         testScript("class A extends B { a() { [super.b] = c } }", new ClassDeclaration(new BindingIdentifier("A"),
-                Maybe.just(new IdentifierExpression("B")), ImmutableList.list(new ClassElement(false, new Method(false,
+                Maybe.just(new IdentifierExpression("B")), ImmutableList.list(new ClassElement(false, new Method(false, new StaticPropertyName("a"),
                 new FormalParameters(ImmutableList.nil(), Maybe.nothing()), new FunctionBody(ImmutableList.nil(),
                 ImmutableList.list(new ExpressionStatement(new AssignmentExpression(new ArrayAssignmentTarget(ImmutableList.list(
-                        Maybe.just(new StaticMemberAssignmentTarget("b", new Super()))), Maybe.nothing()),
-                        new IdentifierExpression("c"))))), new StaticPropertyName("a"))))));
+                        Maybe.just(new StaticMemberAssignmentTarget(new Super(), "b"))), Maybe.nothing()),
+                        new IdentifierExpression("c"))))))))));
 
         testScript("class A extends B { a() { ({b: super[c]}) = d } }", new ClassDeclaration(new BindingIdentifier("A"),
-                Maybe.just(new IdentifierExpression("B")), ImmutableList.list(new ClassElement(false, new Method(false,
+                Maybe.just(new IdentifierExpression("B")), ImmutableList.list(new ClassElement(false, new Method(false, new StaticPropertyName("a"),
                 new FormalParameters(ImmutableList.nil(), Maybe.nothing()), new FunctionBody(ImmutableList.nil(),
                 ImmutableList.list(new ExpressionStatement(new AssignmentExpression(new ObjectAssignmentTarget(ImmutableList.list(
                         new AssignmentTargetPropertyProperty(new StaticPropertyName("b"), new ComputedMemberAssignmentTarget(
-                                new IdentifierExpression("c"), new Super())))), new IdentifierExpression("d"))))),
-                new StaticPropertyName("a"))))));
+                                new Super(), new IdentifierExpression("c"))))), new IdentifierExpression("d")))))
+                )))));
 
         testScriptFailure("0.toString", 2, "Unexpected \"t\"");
     }

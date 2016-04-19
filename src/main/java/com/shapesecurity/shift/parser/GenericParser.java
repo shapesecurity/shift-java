@@ -1765,8 +1765,8 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
 
     @NotNull
     protected Binding targetToBinding(@NotNull AssignmentTarget target) throws JsError {
-        if (target instanceof BindingIdentifier) {
-            return (BindingIdentifier) target;
+        if (target instanceof AssignmentTargetIdentifier) {
+            return new BindingIdentifier(((AssignmentTargetIdentifier) target).name);
         } else if (target instanceof MemberAssignmentTarget) { // TODO correct location information for this error (ugh)
             throw this.createError(this.match(TokenType.ASSIGN) ? ErrorMessages.INVALID_LHS_IN_ASSIGNMENT : ErrorMessages.ILLEGAL_ARROW_FUNCTION_PARAMS); // TODO correct error message
         } else if (target instanceof ArrayAssignmentTarget) {

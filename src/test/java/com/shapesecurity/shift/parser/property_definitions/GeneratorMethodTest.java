@@ -11,16 +11,16 @@ import org.junit.Test;
 public class GeneratorMethodTest extends ParserTestCase {
     @Test
     public void testGeneratorMethod() throws JsError {
-        testScript("({*a(){}})", new ObjectExpression(ImmutableList.list(new Method(true, new FormalParameters(
-                ImmutableList.nil(), Maybe.nothing()), new FunctionBody(ImmutableList.nil(), ImmutableList.nil()),
-                new StaticPropertyName("a")))));
+        testScript("({*a(){}})", new ObjectExpression(ImmutableList.list(new Method(true, new StaticPropertyName("a"), new FormalParameters(
+                ImmutableList.nil(), Maybe.nothing()), new FunctionBody(ImmutableList.nil(), ImmutableList.nil())
+                ))));
 
-        testScript("({*yield(){}})", new ObjectExpression(ImmutableList.list(new Method(true, new FormalParameters(
-                ImmutableList.nil(), Maybe.nothing()), new FunctionBody(ImmutableList.nil(), ImmutableList.nil()),
-                new StaticPropertyName("yield")))));
+        testScript("({*yield(){}})", new ObjectExpression(ImmutableList.list(new Method(true, new StaticPropertyName("yield"), new FormalParameters(
+                ImmutableList.nil(), Maybe.nothing()), new FunctionBody(ImmutableList.nil(), ImmutableList.nil())
+                ))));
 
-        testScript("({*[yield](){}})", new ObjectExpression(ImmutableList.list(new Method(true, new FormalParameters(
-                ImmutableList.nil(), Maybe.nothing()), new FunctionBody(ImmutableList.nil(), ImmutableList.nil()),
-                new ComputedPropertyName(new IdentifierExpression("yield"))))));
+        testScript("({*[yield](){}})", new ObjectExpression(ImmutableList.list(new Method(true, new ComputedPropertyName(new IdentifierExpression("yield")), new FormalParameters(
+                ImmutableList.nil(), Maybe.nothing()), new FunctionBody(ImmutableList.nil(), ImmutableList.nil())
+                ))));
     }
 }

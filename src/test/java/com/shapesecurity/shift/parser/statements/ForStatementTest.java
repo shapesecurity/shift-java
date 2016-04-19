@@ -14,12 +14,12 @@ public class ForStatementTest extends ParserTestCase {
     @Test
     public void testForStatement() throws JsError {
         testScript("for(x, y;;);", new ForStatement(
-                Maybe.just(new BinaryExpression(BinaryOperator.Sequence, new IdentifierExpression("x"), new IdentifierExpression("y"))),
+                Maybe.just(new BinaryExpression(new IdentifierExpression("x"), BinaryOperator.Sequence, new IdentifierExpression("y"))),
                 Maybe.nothing(),
                 Maybe.nothing(),
                 new EmptyStatement()));
 
-        testScript("for(x = 0;;);", new ForStatement(Maybe.just(new AssignmentExpression(new BindingIdentifier("x"),
+        testScript("for(x = 0;;);", new ForStatement(Maybe.just(new AssignmentExpression(new AssignmentTargetIdentifier("x"),
                 new LiteralNumericExpression(0.0))), Maybe.nothing(), Maybe.nothing(), new EmptyStatement()));
 
         testScript("for(var x = 0;;);", new ForStatement(Maybe.just(new VariableDeclaration(VariableDeclarationKind.Var,
@@ -39,18 +39,18 @@ public class ForStatementTest extends ParserTestCase {
                 new EmptyStatement()));
 
         testScript("for(x; x < 0;);", new ForStatement(Maybe.just(new IdentifierExpression("x")), Maybe.just(
-                new BinaryExpression(BinaryOperator.LessThan, new IdentifierExpression("x"),
+                new BinaryExpression(new IdentifierExpression("x"), BinaryOperator.LessThan,
                         new LiteralNumericExpression(0.0))), Maybe.nothing(), new EmptyStatement()));
 
         testScript("for(x; x < 0; x++);", new ForStatement(Maybe.just(new IdentifierExpression("x")),
-                Maybe.just(new BinaryExpression(BinaryOperator.LessThan, new IdentifierExpression("x"),
+                Maybe.just(new BinaryExpression(new IdentifierExpression("x"), BinaryOperator.LessThan,
                         new LiteralNumericExpression(0.0))), Maybe.just(new UpdateExpression(false, UpdateOperator.Increment,
-                new BindingIdentifier("x"))), new EmptyStatement()));
+                new AssignmentTargetIdentifier("x"))), new EmptyStatement()));
 
         testScript("for(x; x < 0; x++) process(x);", new ForStatement(Maybe.just(new IdentifierExpression("x")),
-                Maybe.just(new BinaryExpression(BinaryOperator.LessThan, new IdentifierExpression("x"),
+                Maybe.just(new BinaryExpression(new IdentifierExpression("x"), BinaryOperator.LessThan,
                         new LiteralNumericExpression(0.0))),
-                Maybe.just(new UpdateExpression(false, UpdateOperator.Increment, new BindingIdentifier("x"))),
+                Maybe.just(new UpdateExpression(false, UpdateOperator.Increment, new AssignmentTargetIdentifier("x"))),
                 new ExpressionStatement(new CallExpression(new IdentifierExpression("process"),
                         ImmutableList.list(new IdentifierExpression("x"))))));
 

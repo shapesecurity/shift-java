@@ -20,7 +20,7 @@ public class ForOfStatementTest extends ParserTestCase {
                 ImmutableList.list(new VariableDeclarator(new BindingIdentifier("a"), Maybe.nothing()))),
                 new IdentifierExpression("b"), new EmptyStatement()));
 
-        testScript("for(a of b);", new ForOfStatement(new BindingIdentifier("a"), new IdentifierExpression("b"),
+        testScript("for(a of b);", new ForOfStatement(new AssignmentTargetIdentifier("a"), new IdentifierExpression("b"),
                 new EmptyStatement()));
 
         testScript("for(let [a] of b);", new ForOfStatement(new VariableDeclaration(VariableDeclarationKind.Let,

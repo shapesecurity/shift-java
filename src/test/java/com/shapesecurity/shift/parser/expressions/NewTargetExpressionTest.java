@@ -11,47 +11,47 @@ import org.junit.Test;
 public class NewTargetExpressionTest extends ParserTestCase {
     @Test
     public void testNewTargetExpression() throws JsError {
-        testScript("function f() { new.target; }", new FunctionDeclaration(new BindingIdentifier("f"), false,
+        testScript("function f() { new.target; }", new FunctionDeclaration(false, new BindingIdentifier("f"),
                 new FormalParameters(ImmutableList.nil(), Maybe.nothing()), new FunctionBody(ImmutableList.nil(),
                 ImmutableList.list(new ExpressionStatement(new NewTargetExpression())))));
 
-        testScript("function f(a = new.target){}", new FunctionDeclaration(new BindingIdentifier("f"), false,
+        testScript("function f(a = new.target){}", new FunctionDeclaration(false, new BindingIdentifier("f"),
                 new FormalParameters(ImmutableList.list(new Parameter(new BindingIdentifier("a"),
                         Maybe.just(new NewTargetExpression()))), Maybe.nothing()), new FunctionBody(ImmutableList.nil(),
                 ImmutableList.nil())));
 
-        testScript("(function f(a = new.target){})", new FunctionExpression(Maybe.just(new BindingIdentifier("f")), false,
+        testScript("(function f(a = new.target){})", new FunctionExpression(false, Maybe.just(new BindingIdentifier("f")),
                 new FormalParameters(ImmutableList.list(new Parameter(new BindingIdentifier("a"),
                         Maybe.just(new NewTargetExpression()))), Maybe.nothing()), new FunctionBody(ImmutableList.nil(),
                 ImmutableList.nil())));
 
-        testScript("({ set m(a = new.target){} })", new ObjectExpression(ImmutableList.list(new Setter(
+        testScript("({ set m(a = new.target){} })", new ObjectExpression(ImmutableList.list(new Setter(new StaticPropertyName("m"),
                 new Parameter(new BindingIdentifier("a"), Maybe.just(new NewTargetExpression())), new FunctionBody(
-                ImmutableList.nil(), ImmutableList.nil()), new StaticPropertyName("m")))));
+                ImmutableList.nil(), ImmutableList.nil())))));
 
-        testScript("({ m(a = new.target){} })", new ObjectExpression(ImmutableList.list(new Method(false,
+        testScript("({ m(a = new.target){} })", new ObjectExpression(ImmutableList.list(new Method(false, new StaticPropertyName("m"),
                 new FormalParameters(ImmutableList.list(new Parameter(new BindingIdentifier("a"),
                         Maybe.just(new NewTargetExpression()))), Maybe.nothing()), new FunctionBody(ImmutableList.nil(),
-                ImmutableList.nil()), new StaticPropertyName("m")))));
+                ImmutableList.nil())))));
 
-        testScript("({ get m(){ new.target } })", new ObjectExpression(ImmutableList.list(new Getter(new FunctionBody(
-                ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new NewTargetExpression()))),
-                new StaticPropertyName("m")))));
+        testScript("({ get m(){ new.target } })", new ObjectExpression(ImmutableList.list(new Getter(new StaticPropertyName("m"), new FunctionBody(
+                ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new NewTargetExpression())))
+                ))));
 
-        testScript("function f() { new.\\u0074arget; }", new FunctionDeclaration(new BindingIdentifier("f"), false,
+        testScript("function f() { new.\\u0074arget; }", new FunctionDeclaration(false, new BindingIdentifier("f"),
                 new FormalParameters(ImmutableList.nil(), Maybe.nothing()), new FunctionBody(ImmutableList.nil(),
                 ImmutableList.list(new ExpressionStatement(new NewTargetExpression())))));
 
-        testScript("function f() { new new.target; }", new FunctionDeclaration(new BindingIdentifier("f"), false,
+        testScript("function f() { new new.target; }", new FunctionDeclaration(false, new BindingIdentifier("f"),
                 new FormalParameters(ImmutableList.nil(), Maybe.nothing()), new FunctionBody(ImmutableList.nil(),
                 ImmutableList.list(new ExpressionStatement(new NewExpression(new NewTargetExpression(), ImmutableList.nil()))))));
 
-        testScript("function f() { new.target(); }", new FunctionDeclaration(new BindingIdentifier("f"), false,
+        testScript("function f() { new.target(); }", new FunctionDeclaration(false, new BindingIdentifier("f"),
                 new FormalParameters(ImmutableList.nil(), Maybe.nothing()), new FunctionBody(ImmutableList.nil(),
                 ImmutableList.list(new ExpressionStatement(new CallExpression(new NewTargetExpression(),
                         ImmutableList.nil()))))));
 
-        testScript("function f() { new[\"target\"]; }", new FunctionDeclaration(new BindingIdentifier("f"), false,
+        testScript("function f() { new[\"target\"]; }", new FunctionDeclaration(false, new BindingIdentifier("f"),
                 new FormalParameters(ImmutableList.nil(), Maybe.nothing()), new FunctionBody(ImmutableList.nil(),
                 ImmutableList.list(new ExpressionStatement(new NewExpression(new ArrayExpression(ImmutableList.list(
                         Maybe.just(new LiteralStringExpression("target")))), ImmutableList.nil()))))));

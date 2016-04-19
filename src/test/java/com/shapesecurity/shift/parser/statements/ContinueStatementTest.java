@@ -30,7 +30,7 @@ public class ContinueStatementTest extends ParserTestCase {
                 Maybe.just("__proto__"))))))));
 
         testScript("a: do continue a; while(1);", new LabeledStatement("a", new DoWhileStatement(
-                new LiteralNumericExpression(1.0), new ContinueStatement(Maybe.just("a")))));
+                new ContinueStatement(Maybe.just("a")), new LiteralNumericExpression(1.0))));
 
         testScript("a: while (0) { continue \n b; }", new LabeledStatement("a", new WhileStatement(
                 new LiteralNumericExpression(0.0), new BlockStatement(new Block(ImmutableList.list(new ContinueStatement(

@@ -21,11 +21,11 @@ public class IdentifierExpressionTest extends ParserTestCase {
 
         testScript("let()", new CallExpression(new IdentifierExpression("let"), ImmutableList.nil()));
 
-        testScript("let.let", new StaticMemberExpression("let", new IdentifierExpression("let")));
+        testScript("let.let", new StaticMemberExpression(new IdentifierExpression("let"), "let"));
 
         testScript("(let[let])", new ComputedMemberExpression(new IdentifierExpression("let"), new IdentifierExpression("let")));
 
-        testScript("(let[a])", new ComputedMemberExpression(new IdentifierExpression("a"), new IdentifierExpression("let")));
+        testScript("(let[a])", new ComputedMemberExpression(new IdentifierExpression("let"), new IdentifierExpression("a")));
 
         testScript("for(let;;);", new ForStatement(Maybe.just(new IdentifierExpression("let")), Maybe.nothing(), Maybe.nothing(), new EmptyStatement()));
 
@@ -36,7 +36,7 @@ public class IdentifierExpressionTest extends ParserTestCase {
                 ImmutableList.list(new VariableDeclarator(new BindingIdentifier("yield"), Maybe.nothing()))),
                 new LiteralNumericExpression(0.0), new EmptyStatement()));
 
-        testScript("for(let.let in 0);", new ForInStatement(new StaticMemberAssignmentTarget("let", new IdentifierExpression("let")),
+        testScript("for(let.let in 0);", new ForInStatement(new StaticMemberAssignmentTarget(new IdentifierExpression("let"), "let"),
                 new LiteralNumericExpression(0.0), new EmptyStatement()));
 
         testScript("日本語", new IdentifierExpression("日本語"));

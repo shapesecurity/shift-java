@@ -1,9 +1,6 @@
 package com.shapesecurity.shift.parser.expressions;
 
-import com.shapesecurity.shift.ast.AssignmentExpression;
-import com.shapesecurity.shift.ast.BindingIdentifier;
-import com.shapesecurity.shift.ast.IdentifierExpression;
-import com.shapesecurity.shift.ast.UnaryExpression;
+import com.shapesecurity.shift.ast.*;
 import com.shapesecurity.shift.ast.operators.UnaryOperator;
 import com.shapesecurity.shift.parser.ParserTestCase;
 import com.shapesecurity.shift.parser.JsError;
@@ -16,7 +13,7 @@ public class UnaryExpressionTest extends ParserTestCase {
         testScript("!a", new UnaryExpression(UnaryOperator.LogicalNot, new IdentifierExpression("a")));
 
         testScript("!(a=b)", new UnaryExpression(UnaryOperator.LogicalNot, new AssignmentExpression(
-                new BindingIdentifier("a"), new IdentifierExpression("b"))));
+                new AssignmentTargetIdentifier("a"), new IdentifierExpression("b"))));
 
         testScript("typeof a", new UnaryExpression(UnaryOperator.Typeof, new IdentifierExpression("a")));
 

@@ -14,8 +14,8 @@ public class ExpressionStatementTest extends ParserTestCase {
     public void testExpressionStatement() throws JsError {
         testScript("x", new ExpressionStatement(new IdentifierExpression("x")));
 
-        testScript("x, y", new ExpressionStatement(new BinaryExpression(BinaryOperator.Sequence,
-                new IdentifierExpression("x"), new IdentifierExpression("y"))));
+        testScript("x, y", new ExpressionStatement(new BinaryExpression(
+                new IdentifierExpression("x"), BinaryOperator.Sequence, new IdentifierExpression("y"))));
 
         testScript("\\u0061", new ExpressionStatement(new IdentifierExpression("a")));
 

@@ -48,7 +48,7 @@ public class IncompatibilitiesTest extends ParserTestCase {
         );
 
         testScript("{ function f() {} }",
-                new BlockStatement(new Block(ImmutableList.list(new FunctionDeclaration(new BindingIdentifier("f"), false,
+                new BlockStatement(new Block(ImmutableList.list(new FunctionDeclaration(false, new BindingIdentifier("f"),
                         new FormalParameters(ImmutableList.nil(), Maybe.nothing()), new FunctionBody(ImmutableList.nil(), ImmutableList.nil())))))
         );
     }
@@ -60,8 +60,8 @@ public class IncompatibilitiesTest extends ParserTestCase {
         // ES6: yield has been moved from the future reserved words list to the keywords list
         testScript("var yield = function yield(){};",
                 new VariableDeclarationStatement(new VariableDeclaration(VariableDeclarationKind.Var, ImmutableList.list(
-                        new VariableDeclarator(new BindingIdentifier("yield"), Maybe.just(new FunctionExpression(
-                                Maybe.just(new BindingIdentifier("yield")), false, new FormalParameters(ImmutableList.nil(), Maybe.nothing()),
+                        new VariableDeclarator(new BindingIdentifier("yield"), Maybe.just(new FunctionExpression(false,
+                                Maybe.just(new BindingIdentifier("yield")), new FormalParameters(ImmutableList.nil(), Maybe.nothing()),
                                 new FunctionBody(ImmutableList.nil(), ImmutableList.nil()))))
                 ))));
 
@@ -125,7 +125,7 @@ public class IncompatibilitiesTest extends ParserTestCase {
         testModuleFailureML("function a(){\n-->\n}", 2, 2, 16, "Unexpected token \">\"");
 
         testModule("a<!--b",
-                new BinaryExpression(BinaryOperator.LessThan, new IdentifierExpression("a"),
-                        new UnaryExpression(UnaryOperator.LogicalNot, new UpdateExpression(true, UpdateOperator.Decrement, new BindingIdentifier("b")))));
+                new BinaryExpression(new IdentifierExpression("a"), BinaryOperator.LessThan,
+                        new UnaryExpression(UnaryOperator.LogicalNot, new UpdateExpression(true, UpdateOperator.Decrement, new AssignmentTargetIdentifier("b")))));
     }
 }

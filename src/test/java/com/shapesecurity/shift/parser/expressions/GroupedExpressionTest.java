@@ -16,18 +16,18 @@ public class GroupedExpressionTest extends ParserTestCase {
 
         testScript("(0)", new LiteralNumericExpression(0.0));
 
-        testScript("(0, a)", new BinaryExpression(BinaryOperator.Sequence, new LiteralNumericExpression(0.0),
+        testScript("(0, a)", new BinaryExpression(new LiteralNumericExpression(0.0), BinaryOperator.Sequence,
                 new IdentifierExpression("a")));
 
-        testScript("(a, 0)", new BinaryExpression(BinaryOperator.Sequence, new IdentifierExpression("a"),
+        testScript("(a, 0)", new BinaryExpression(new IdentifierExpression("a"), BinaryOperator.Sequence,
                 new LiteralNumericExpression(0.0)));
 
-        testScript("(a, a)", new BinaryExpression(BinaryOperator.Sequence, new IdentifierExpression("a"),
+        testScript("(a, a)", new BinaryExpression(new IdentifierExpression("a"), BinaryOperator.Sequence,
                 new IdentifierExpression("a")));
 
-        testScript("((a,a),(a,a))", new BinaryExpression(BinaryOperator.Sequence, new BinaryExpression(
-                BinaryOperator.Sequence, new IdentifierExpression("a"), new IdentifierExpression("a")), new BinaryExpression(
-                BinaryOperator.Sequence, new IdentifierExpression("a"), new IdentifierExpression("a"))));
+        testScript("((a,a),(a,a))", new BinaryExpression(new BinaryExpression(
+                new IdentifierExpression("a"), BinaryOperator.Sequence, new IdentifierExpression("a")), BinaryOperator.Sequence, new BinaryExpression(
+                new IdentifierExpression("a"), BinaryOperator.Sequence, new IdentifierExpression("a"))));
 
         testScript("((((((((((((((((((((((((((((((((((((((((a))))))))))))))))))))))))))))))))))))))))",
                 new IdentifierExpression("a"));

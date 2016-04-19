@@ -19,7 +19,7 @@ public class CallExpressionTest extends ParserTestCase {
         testScript("f(...a)", new CallExpression(new IdentifierExpression("f"), ImmutableList.list(new SpreadElement(new IdentifierExpression("a")))));
 
         testScript("f(...a = b)", new CallExpression(new IdentifierExpression("f"), ImmutableList.list(new SpreadElement(
-                new AssignmentExpression(new BindingIdentifier("a"), new IdentifierExpression("b"))))));
+                new AssignmentExpression(new AssignmentTargetIdentifier("a"), new IdentifierExpression("b"))))));
 
         testScript("f(...a, ...b)", new CallExpression(new IdentifierExpression("f"), ImmutableList.list(new SpreadElement(
                 new IdentifierExpression("a")), new SpreadElement(new IdentifierExpression("b")))));

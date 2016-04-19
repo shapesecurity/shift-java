@@ -10,21 +10,21 @@ import org.junit.Test;
 public class ComputedMemberExpressionTest extends ParserTestCase {
     @Test
     public void testComputedMemberExpression() throws JsError {
-        testScript("a[b, c]", new ComputedMemberExpression(new BinaryExpression(
-                BinaryOperator.Sequence, new IdentifierExpression("b"), new IdentifierExpression("c")), new IdentifierExpression("a")));
+        testScript("a[b, c]", new ComputedMemberExpression(new IdentifierExpression("a"), new BinaryExpression(
+                new IdentifierExpression("b"), BinaryOperator.Sequence, new IdentifierExpression("c"))));
 
-        testScript("a[b]", new ComputedMemberExpression(new IdentifierExpression("b"), new IdentifierExpression("a")));
+        testScript("a[b]", new ComputedMemberExpression(new IdentifierExpression("a"), new IdentifierExpression("b")));
 
-        testScript("a[b] = b", new AssignmentExpression(new ComputedMemberAssignmentTarget(new IdentifierExpression("b"), new IdentifierExpression("a")), new IdentifierExpression("b")));
+        testScript("a[b] = b", new AssignmentExpression(new ComputedMemberAssignmentTarget(new IdentifierExpression("a"), new IdentifierExpression("b")), new IdentifierExpression("b")));
 
-        testScript("(a[b]||(c[d]=e))", new BinaryExpression(BinaryOperator.LogicalOr, new ComputedMemberExpression(
-                new IdentifierExpression("b"), new IdentifierExpression("a")), new AssignmentExpression(
-                new ComputedMemberAssignmentTarget(new IdentifierExpression("d"), new IdentifierExpression("c")),
+        testScript("(a[b]||(c[d]=e))", new BinaryExpression(new ComputedMemberExpression(
+                new IdentifierExpression("a"), new IdentifierExpression("b")), BinaryOperator.LogicalOr, new AssignmentExpression(
+                new ComputedMemberAssignmentTarget(new IdentifierExpression("c"), new IdentifierExpression("d")),
                 new IdentifierExpression("e"))));
 
-        testScript("a&&(b=c)&&(d=e)", new BinaryExpression(BinaryOperator.LogicalAnd, new BinaryExpression(
-                BinaryOperator.LogicalAnd, new IdentifierExpression("a"), new AssignmentExpression(new BindingIdentifier("b"),
-                new IdentifierExpression("c"))), new AssignmentExpression(new BindingIdentifier("d"),
+        testScript("a&&(b=c)&&(d=e)", new BinaryExpression(new BinaryExpression(
+                new IdentifierExpression("a"), BinaryOperator.LogicalAnd, new AssignmentExpression(new AssignmentTargetIdentifier("b"),
+                new IdentifierExpression("c"))), BinaryOperator.LogicalAnd, new AssignmentExpression(new AssignmentTargetIdentifier("d"),
                 new IdentifierExpression("e"))));
     }
 }

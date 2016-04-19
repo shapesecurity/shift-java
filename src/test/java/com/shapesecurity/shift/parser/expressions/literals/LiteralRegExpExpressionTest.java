@@ -35,7 +35,7 @@ public class LiteralRegExpExpressionTest extends ParserTestCase {
         testScript("/[-a-b-]/", new LiteralRegExpExpression("[-a-b-]", false, false, false, false, false));
         testScript("/[]/", new LiteralRegExpExpression("[]", false, false, false, false, false));
 
-        testScript("/0/g.test", new StaticMemberExpression("test", new LiteralRegExpExpression("0", true, false, false, false, false)));
+        testScript("/0/g.test", new StaticMemberExpression(new LiteralRegExpExpression("0", true, false, false, false, false), "test"));
 
         testScript("/{/;", new LiteralRegExpExpression("{", false, false, false, false, false));
         testScript("/}/;", new LiteralRegExpExpression("}", false, false, false, false, false));

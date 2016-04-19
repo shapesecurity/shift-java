@@ -13,18 +13,18 @@ public class ReturnStatementTest extends ParserTestCase {
 
     @Test
     public void testReturnStatement() throws JsError {
-        testScript("(function(){ return })", new FunctionExpression(Maybe.nothing(), false, NO_PARAMETERS,
+        testScript("(function(){ return })", new FunctionExpression(false, Maybe.nothing(), NO_PARAMETERS,
                 new FunctionBody(ImmutableList.nil(), ImmutableList.list(new ReturnStatement(Maybe.nothing())))));
 
-        testScript("(function(){ return; })", new FunctionExpression(Maybe.nothing(), false, NO_PARAMETERS,
+        testScript("(function(){ return; })", new FunctionExpression(false, Maybe.nothing(), NO_PARAMETERS,
                 new FunctionBody(ImmutableList.nil(), ImmutableList.list(new ReturnStatement(Maybe.nothing())))));
 
-        testScript("(function(){ return x; })", new FunctionExpression(Maybe.nothing(), false, NO_PARAMETERS,
+        testScript("(function(){ return x; })", new FunctionExpression(false, Maybe.nothing(), NO_PARAMETERS,
                 new FunctionBody(ImmutableList.nil(), ImmutableList.list(new ReturnStatement(Maybe.just(new IdentifierExpression("x")))))));
 
-        testScript("(function(){ return x * y })", new FunctionExpression(Maybe.nothing(), false, NO_PARAMETERS,
+        testScript("(function(){ return x * y })", new FunctionExpression(false, Maybe.nothing(), NO_PARAMETERS,
                 new FunctionBody(ImmutableList.nil(), ImmutableList.list(new ReturnStatement(
-                        Maybe.just(new BinaryExpression(BinaryOperator.Mul, new IdentifierExpression("x"), new IdentifierExpression("y")))
+                        Maybe.just(new BinaryExpression(new IdentifierExpression("x"), BinaryOperator.Mul, new IdentifierExpression("y")))
                 )))));
 
         testScript("_ => { return 0; }", new ArrowExpression(new FormalParameters(ImmutableList.list(

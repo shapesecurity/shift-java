@@ -14,11 +14,11 @@ public class WhitespaceTest extends ParserTestCase {
     public void testWhitespace() throws JsError {
         testScript("{ x\n++y }", new BlockStatement(new Block(ImmutableList.list(new ExpressionStatement(
                 new IdentifierExpression("x")), new ExpressionStatement(new UpdateExpression(true, UpdateOperator.Increment,
-                new BindingIdentifier("y")))))));
+                new AssignmentTargetIdentifier("y")))))));
 
         testScript("{ x\n--y }", new BlockStatement(new Block(ImmutableList.list(new ExpressionStatement(
                 new IdentifierExpression("x")), new ExpressionStatement(new UpdateExpression(true, UpdateOperator.Decrement,
-                new BindingIdentifier("y")))))));
+                new AssignmentTargetIdentifier("y")))))));
 
         testScript("{ var x = 14, y = 3\nz; }", new BlockStatement(new Block(ImmutableList.list(
                 new VariableDeclarationStatement(new VariableDeclaration(VariableDeclarationKind.Var, ImmutableList.list(
@@ -51,16 +51,16 @@ public class WhitespaceTest extends ParserTestCase {
 
         testScript("0 ;", new LiteralNumericExpression(0.0));
 
-        testScript("(function(){ return\nx; })", new FunctionExpression(Maybe.nothing(), false, new FormalParameters(
+        testScript("(function(){ return\nx; })", new FunctionExpression(false, Maybe.nothing(), new FormalParameters(
                 ImmutableList.nil(), Maybe.nothing()), new FunctionBody(ImmutableList.nil(), ImmutableList.list(
                 new ReturnStatement(Maybe.nothing()), new ExpressionStatement(new IdentifierExpression("x"))))));
 
-        testScript("(function(){ return // Comment\nx; })", new FunctionExpression(Maybe.nothing(), false,
+        testScript("(function(){ return // Comment\nx; })", new FunctionExpression(false, Maybe.nothing(),
                 new FormalParameters(ImmutableList.nil(), Maybe.nothing()), new FunctionBody(ImmutableList.nil(),
                 ImmutableList.list(new ReturnStatement(Maybe.nothing()), new ExpressionStatement(
                         new IdentifierExpression("x"))))));
 
-        testScript("(function(){ return/* Multiline\nComment */x; })", new FunctionExpression(Maybe.nothing(), false,
+        testScript("(function(){ return/* Multiline\nComment */x; })", new FunctionExpression(false, Maybe.nothing(),
                 new FormalParameters(ImmutableList.nil(), Maybe.nothing()), new FunctionBody(ImmutableList.nil(),
                 ImmutableList.list(new ReturnStatement(Maybe.nothing()), new ExpressionStatement(
                         new IdentifierExpression("x"))))));

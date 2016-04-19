@@ -19,102 +19,102 @@ public class ObjectExpressionTest extends ParserTestCase {
         testScript("+{ }", new UnaryExpression(UnaryOperator.Plus, new ObjectExpression(ImmutableList.nil())));
 
         testScript("({ answer: 0 })", new ObjectExpression(ImmutableList.list(new DataProperty(
-                new LiteralNumericExpression(0.0), new StaticPropertyName("answer")))));
+                new StaticPropertyName("answer"), new LiteralNumericExpression(0.0)))));
 
-        testScript("({ if: 0 })", new ObjectExpression(ImmutableList.list(new DataProperty(new LiteralNumericExpression(0.0),
-                new StaticPropertyName("if")))));
+        testScript("({ if: 0 })", new ObjectExpression(ImmutableList.list(new DataProperty(new StaticPropertyName("if"), new LiteralNumericExpression(0.0)
+                ))));
 
-        testScript("({ true: 0 })", new ObjectExpression(ImmutableList.list(new DataProperty(new LiteralNumericExpression(0.0),
-                new StaticPropertyName("true")))));
+        testScript("({ true: 0 })", new ObjectExpression(ImmutableList.list(new DataProperty(new StaticPropertyName("true"), new LiteralNumericExpression(0.0)
+                ))));
 
-        testScript("({ false: 0 })", new ObjectExpression(ImmutableList.list(new DataProperty(new LiteralNumericExpression(0.0),
-                new StaticPropertyName("false")))));
+        testScript("({ false: 0 })", new ObjectExpression(ImmutableList.list(new DataProperty(new StaticPropertyName("false"), new LiteralNumericExpression(0.0)
+                ))));
 
-        testScript("({ null: 0 })", new ObjectExpression(ImmutableList.list(new DataProperty(new LiteralNumericExpression(0.0),
-                new StaticPropertyName("null")))));
+        testScript("({ null: 0 })", new ObjectExpression(ImmutableList.list(new DataProperty(new StaticPropertyName("null"), new LiteralNumericExpression(0.0)
+                ))));
 
-        testScript("({ \"answer\": 0 })", new ObjectExpression(ImmutableList.list(new DataProperty(
-                new LiteralNumericExpression(0.0), new StaticPropertyName("answer")))));
+        testScript("({ \"answer\": 0 })", new ObjectExpression(ImmutableList.list(new DataProperty(new StaticPropertyName("answer"),
+                new LiteralNumericExpression(0.0)))));
 
-        testScript("({ x: 1, x: 2 })", new ObjectExpression(ImmutableList.list(new DataProperty(
-                new LiteralNumericExpression(1.0), new StaticPropertyName("x")), new DataProperty(
-                new LiteralNumericExpression(2.0), new StaticPropertyName("x")))));
+        testScript("({ x: 1, x: 2 })", new ObjectExpression(ImmutableList.list(new DataProperty(new StaticPropertyName("x"),
+                new LiteralNumericExpression(1.0)), new DataProperty(new StaticPropertyName("x"),
+                new LiteralNumericExpression(2.0)))));
 
-        testScript("({ get width() { return m_width } })", new ObjectExpression(ImmutableList.list(new Getter(
+        testScript("({ get width() { return m_width } })", new ObjectExpression(ImmutableList.list(new Getter(new StaticPropertyName("width"),
                 new FunctionBody(ImmutableList.nil(), ImmutableList.list(new ReturnStatement(Maybe.just(
-                        new IdentifierExpression("m_width"))))), new StaticPropertyName("width")))));
+                        new IdentifierExpression("m_width")))))))));
 
-        testScript("({ get undef() {} })", new ObjectExpression(ImmutableList.list(new Getter(
-                new FunctionBody(ImmutableList.nil(), ImmutableList.nil()), new StaticPropertyName("undef")))));
+        testScript("({ get undef() {} })", new ObjectExpression(ImmutableList.list(new Getter(new StaticPropertyName("undef"),
+                new FunctionBody(ImmutableList.nil(), ImmutableList.nil())))));
 
-        testScript("({ get if() {} })", new ObjectExpression(ImmutableList.list(new Getter(new FunctionBody(
-                ImmutableList.nil(), ImmutableList.nil()), new StaticPropertyName("if")))));
+        testScript("({ get if() {} })", new ObjectExpression(ImmutableList.list(new Getter(new StaticPropertyName("if"), new FunctionBody(
+                ImmutableList.nil(), ImmutableList.nil())))));
 
-        testScript("({ get true() {} })", new ObjectExpression(ImmutableList.list(new Getter(new FunctionBody(
-                ImmutableList.nil(), ImmutableList.nil()), new StaticPropertyName("true")))));
+        testScript("({ get true() {} })", new ObjectExpression(ImmutableList.list(new Getter(new StaticPropertyName("true"), new FunctionBody(
+                ImmutableList.nil(), ImmutableList.nil())))));
 
-        testScript("({ get false() {} })", new ObjectExpression(ImmutableList.list(new Getter(new FunctionBody(
-                ImmutableList.nil(), ImmutableList.nil()), new StaticPropertyName("false")))));
+        testScript("({ get false() {} })", new ObjectExpression(ImmutableList.list(new Getter(new StaticPropertyName("false"), new FunctionBody(
+                ImmutableList.nil(), ImmutableList.nil())))));
 
-        testScript("({ get null() {} })", new ObjectExpression(ImmutableList.list(new Getter(new FunctionBody(
-                ImmutableList.nil(), ImmutableList.nil()), new StaticPropertyName("null")))));
+        testScript("({ get null() {} })", new ObjectExpression(ImmutableList.list(new Getter(new StaticPropertyName("null"), new FunctionBody(
+                ImmutableList.nil(), ImmutableList.nil())))));
 
-        testScript("({ get \"undef\"() {} })", new ObjectExpression(ImmutableList.list(new Getter(new FunctionBody(
-                ImmutableList.nil(), ImmutableList.nil()), new StaticPropertyName("undef")))));
+        testScript("({ get \"undef\"() {} })", new ObjectExpression(ImmutableList.list(new Getter(new StaticPropertyName("undef"), new FunctionBody(
+                ImmutableList.nil(), ImmutableList.nil())))));
 
-        testScript("({ get 10() {} })", new ObjectExpression(ImmutableList.list(new Getter(new FunctionBody(
-                ImmutableList.nil(), ImmutableList.nil()), new StaticPropertyName("10")))));
+        testScript("({ get 10() {} })", new ObjectExpression(ImmutableList.list(new Getter(new StaticPropertyName("10"), new FunctionBody(
+                ImmutableList.nil(), ImmutableList.nil())))));
 
-        testScript("({ set width(w) { w } })", new ObjectExpression(ImmutableList.list(new Setter(new Parameter(new BindingIdentifier("w"), Maybe.nothing()),
-                new FunctionBody(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new IdentifierExpression("w")))),
-                new StaticPropertyName("width")))));
+        testScript("({ set width(w) { w } })", new ObjectExpression(ImmutableList.list(new Setter(new StaticPropertyName("width"), new Parameter(new BindingIdentifier("w"), Maybe.nothing()),
+                new FunctionBody(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new IdentifierExpression("w"))))
+                ))));
 
-        testScript("({ set if(w) { w } })", new ObjectExpression(ImmutableList.list(new Setter(new Parameter(new BindingIdentifier("w"), Maybe.nothing()),
-                new FunctionBody(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new IdentifierExpression("w")))),
-                new StaticPropertyName("if")))));
+        testScript("({ set if(w) { w } })", new ObjectExpression(ImmutableList.list(new Setter(new StaticPropertyName("if"), new Parameter(new BindingIdentifier("w"), Maybe.nothing()),
+                new FunctionBody(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new IdentifierExpression("w"))))
+                ))));
 
-        testScript("({ set true(w) { w } })", new ObjectExpression(ImmutableList.list(new Setter(new Parameter(new BindingIdentifier("w"), Maybe.nothing()),
-                new FunctionBody(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new IdentifierExpression("w")))),
-                new StaticPropertyName("true")))));
+        testScript("({ set true(w) { w } })", new ObjectExpression(ImmutableList.list(new Setter(new StaticPropertyName("true"), new Parameter(new BindingIdentifier("w"), Maybe.nothing()),
+                new FunctionBody(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new IdentifierExpression("w"))))
+                ))));
 
-        testScript("({ set false(w) { w } })", new ObjectExpression(ImmutableList.list(new Setter(new Parameter(new BindingIdentifier("w"), Maybe.nothing()),
-                new FunctionBody(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new IdentifierExpression("w")))),
-                new StaticPropertyName("false")))));
+        testScript("({ set false(w) { w } })", new ObjectExpression(ImmutableList.list(new Setter(new StaticPropertyName("false"), new Parameter(new BindingIdentifier("w"), Maybe.nothing()),
+                new FunctionBody(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new IdentifierExpression("w"))))
+                ))));
 
-        testScript("({ set null(w) { w } })", new ObjectExpression(ImmutableList.list(new Setter(new Parameter(new BindingIdentifier("w"), Maybe.nothing()),
-                new FunctionBody(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new IdentifierExpression("w")))),
-                new StaticPropertyName("null")))));
+        testScript("({ set null(w) { w } })", new ObjectExpression(ImmutableList.list(new Setter(new StaticPropertyName("null"), new Parameter(new BindingIdentifier("w"), Maybe.nothing()),
+                new FunctionBody(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new IdentifierExpression("w"))))
+                ))));
 
-        testScript("({ set \"null\"(w) { w } })", new ObjectExpression(ImmutableList.list(new Setter(new Parameter(new BindingIdentifier("w"), Maybe.nothing()),
-                new FunctionBody(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new IdentifierExpression("w")))),
-                new StaticPropertyName("null")))));
+        testScript("({ set \"null\"(w) { w } })", new ObjectExpression(ImmutableList.list(new Setter(new StaticPropertyName("null"), new Parameter(new BindingIdentifier("w"), Maybe.nothing()),
+                new FunctionBody(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new IdentifierExpression("w"))))
+                ))));
 
-        testScript("({ set 10(w) { w } })", new ObjectExpression(ImmutableList.list(new Setter(new Parameter(new BindingIdentifier("w"), Maybe.nothing()),
-                new FunctionBody(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new IdentifierExpression("w")))),
-                new StaticPropertyName("10")))));
+        testScript("({ set 10(w) { w } })", new ObjectExpression(ImmutableList.list(new Setter(new StaticPropertyName("10"), new Parameter(new BindingIdentifier("w"), Maybe.nothing()),
+                new FunctionBody(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new IdentifierExpression("w"))))
+                ))));
 
-        testScript("({ get: 2 })", new ObjectExpression(ImmutableList.list(new DataProperty(new LiteralNumericExpression(2.0),
-                new StaticPropertyName("get")))));
+        testScript("({ get: 2 })", new ObjectExpression(ImmutableList.list(new DataProperty(new StaticPropertyName("get"), new LiteralNumericExpression(2.0)
+                ))));
 
-        testScript("({ set: 2 })", new ObjectExpression(ImmutableList.list(new DataProperty(new LiteralNumericExpression(2.0),
-                new StaticPropertyName("set")))));
+        testScript("({ set: 2 })", new ObjectExpression(ImmutableList.list(new DataProperty(new StaticPropertyName("set"), new LiteralNumericExpression(2.0)
+                ))));
 
-        testScript("({ __proto__: 2 })", new ObjectExpression(ImmutableList.list(new DataProperty(new LiteralNumericExpression(2.0),
-                new StaticPropertyName("__proto__")))));
+        testScript("({ __proto__: 2 })", new ObjectExpression(ImmutableList.list(new DataProperty(new StaticPropertyName("__proto__"), new LiteralNumericExpression(2.0)
+                ))));
 
-        testScript("({ \"__proto__\": 2 })", new ObjectExpression(ImmutableList.list(new DataProperty(new LiteralNumericExpression(2.0),
-                new StaticPropertyName("__proto__")))));
+        testScript("({ \"__proto__\": 2 })", new ObjectExpression(ImmutableList.list(new DataProperty(new StaticPropertyName("__proto__"), new LiteralNumericExpression(2.0)
+                ))));
 
         testScript("({ get width() { return width }, set width(width) { return width; } })", new ObjectExpression(
-                ImmutableList.list(new Getter(new FunctionBody(ImmutableList.nil(), ImmutableList.list(new ReturnStatement(
-                        Maybe.just(new IdentifierExpression("width"))))), new StaticPropertyName("width")), new Setter(
+                ImmutableList.list(new Getter(new StaticPropertyName("width"), new FunctionBody(ImmutableList.nil(), ImmutableList.list(new ReturnStatement(
+                        Maybe.just(new IdentifierExpression("width")))))), new Setter(new StaticPropertyName("width"),
                         new Parameter(new BindingIdentifier("width"), Maybe.nothing()), new FunctionBody(ImmutableList.nil(), ImmutableList.list(new ReturnStatement(
-                        Maybe.just(new IdentifierExpression("width"))))), new StaticPropertyName("width")))));
+                        Maybe.just(new IdentifierExpression("width")))))))));
 
-        testScript("({a:0, get 'b'(){}, set 3(d){}})", new ObjectExpression(ImmutableList.list(new DataProperty(
-                new LiteralNumericExpression(0.0), new StaticPropertyName("a")), new Getter(new FunctionBody(ImmutableList.nil(),
-                ImmutableList.nil()), new StaticPropertyName("b")), new Setter(new Parameter(new BindingIdentifier("d"), Maybe.nothing()), new FunctionBody(
-                ImmutableList.nil(), ImmutableList.nil()), new StaticPropertyName("3")))));
+        testScript("({a:0, get 'b'(){}, set 3(d){}})", new ObjectExpression(ImmutableList.list(new DataProperty(new StaticPropertyName("a"),
+                new LiteralNumericExpression(0.0)), new Getter(new StaticPropertyName("b"), new FunctionBody(ImmutableList.nil(),
+                ImmutableList.nil())), new Setter(new StaticPropertyName("3"), new Parameter(new BindingIdentifier("d"), Maybe.nothing()), new FunctionBody(
+                ImmutableList.nil(), ImmutableList.nil())))));
 
         testScript("({a})", new ObjectExpression(ImmutableList.list(new ShorthandProperty(new IdentifierExpression("a")))));
 
@@ -122,44 +122,44 @@ public class ObjectExpressionTest extends ParserTestCase {
 
         testScript("({yield})", new ObjectExpression(ImmutableList.list(new ShorthandProperty(new IdentifierExpression("yield")))));
 
-        testScript("({a, b: 0, c})", new ObjectExpression(ImmutableList.list(new ShorthandProperty(new IdentifierExpression("a")), new DataProperty(
-                new LiteralNumericExpression(0.0), new StaticPropertyName("b")), new ShorthandProperty(new IdentifierExpression("c")))));
+        testScript("({a, b: 0, c})", new ObjectExpression(ImmutableList.list(new ShorthandProperty(new IdentifierExpression("a")), new DataProperty(new StaticPropertyName("b"),
+                new LiteralNumericExpression(0.0)), new ShorthandProperty(new IdentifierExpression("c")))));
 
         testScript("({a, b})", new ObjectExpression(ImmutableList.list(new ShorthandProperty(new IdentifierExpression("a")), new ShorthandProperty(new IdentifierExpression("b")))));
 
-        testScript("({a(){}})", new ObjectExpression(ImmutableList.list(new Method(false, new FormalParameters(
-                ImmutableList.nil(), Maybe.nothing()), new FunctionBody(ImmutableList.nil(), ImmutableList.nil()),
-                new StaticPropertyName("a")))));
+        testScript("({a(){}})", new ObjectExpression(ImmutableList.list(new Method(false, new StaticPropertyName("a"), new FormalParameters(
+                ImmutableList.nil(), Maybe.nothing()), new FunctionBody(ImmutableList.nil(), ImmutableList.nil())
+                ))));
 
-        testScript("({a(){let a;}})", new ObjectExpression(ImmutableList.list(new Method(false, new FormalParameters(
+        testScript("({a(){let a;}})", new ObjectExpression(ImmutableList.list(new Method(false, new StaticPropertyName("a"), new FormalParameters(
                 ImmutableList.nil(), Maybe.nothing()), new FunctionBody(ImmutableList.nil(), ImmutableList.list(
                 new VariableDeclarationStatement(new VariableDeclaration(VariableDeclarationKind.Let, ImmutableList.list(
-                        new VariableDeclarator(new BindingIdentifier("a"), Maybe.nothing())))))), new StaticPropertyName("a")))));
+                        new VariableDeclarator(new BindingIdentifier("a"), Maybe.nothing()))))))))));
 
-        testScript("({a(b){}})", new ObjectExpression(ImmutableList.list(new Method(false, new FormalParameters(
+        testScript("({a(b){}})", new ObjectExpression(ImmutableList.list(new Method(false, new StaticPropertyName("a"), new FormalParameters(
                 ImmutableList.list(new Parameter(new BindingIdentifier("b"), Maybe.nothing())), Maybe.nothing()), new FunctionBody(ImmutableList.nil(),
-                ImmutableList.nil()), new StaticPropertyName("a")))));
+                ImmutableList.nil())))));
 
-        testScript("({a(b,...c){}})", new ObjectExpression(ImmutableList.list(new Method(false, new FormalParameters(
+        testScript("({a(b,...c){}})", new ObjectExpression(ImmutableList.list(new Method(false, new StaticPropertyName("a"), new FormalParameters(
                 ImmutableList.list(new Parameter(new BindingIdentifier("b"), Maybe.nothing())), Maybe.just(new BindingIdentifier("c"))), new FunctionBody(
-                ImmutableList.nil(), ImmutableList.nil()), new StaticPropertyName("a")))));
+                ImmutableList.nil(), ImmutableList.nil())))));
 
-        testScript("({a(b,c){}})", new ObjectExpression(ImmutableList.list(new Method(false, new FormalParameters(
+        testScript("({a(b,c){}})", new ObjectExpression(ImmutableList.list(new Method(false, new StaticPropertyName("a"), new FormalParameters(
                 ImmutableList.list(new Parameter(new BindingIdentifier("b"), Maybe.nothing()), new Parameter(new BindingIdentifier("c"), Maybe.nothing())), Maybe.nothing()), new FunctionBody(
-                ImmutableList.nil(), ImmutableList.nil()), new StaticPropertyName("a")))));
+                ImmutableList.nil(), ImmutableList.nil())))));
 
-        testScript("({a(b,c){let d;}})", new ObjectExpression(ImmutableList.list(new Method(false, new FormalParameters(
+        testScript("({a(b,c){let d;}})", new ObjectExpression(ImmutableList.list(new Method(false, new StaticPropertyName("a"), new FormalParameters(
                 ImmutableList.list(new Parameter(new BindingIdentifier("b"), Maybe.nothing()), new Parameter(new BindingIdentifier("c"), Maybe.nothing())), Maybe.nothing()), new FunctionBody(
                 ImmutableList.nil(), ImmutableList.list(new VariableDeclarationStatement(new VariableDeclaration(
                 VariableDeclarationKind.Let, ImmutableList.list(new VariableDeclarator(new BindingIdentifier("d"),
-                Maybe.nothing())))))), new StaticPropertyName("a")))));
+                Maybe.nothing()))))))))));
 
-        testScript("({set a(eval){}})", new ObjectExpression(ImmutableList.list(new Setter(new Parameter(new BindingIdentifier("eval"), Maybe.nothing()),
-                new FunctionBody(ImmutableList.nil(), ImmutableList.nil()), new StaticPropertyName("a")))));
+        testScript("({set a(eval){}})", new ObjectExpression(ImmutableList.list(new Setter(new StaticPropertyName("a"), new Parameter(new BindingIdentifier("eval"), Maybe.nothing()),
+                new FunctionBody(ImmutableList.nil(), ImmutableList.nil())))));
 
-        testScript("({ set a([{b = 0}]){}, })", new ObjectExpression(ImmutableList.list(new Setter(new Parameter(new ArrayBinding(
+        testScript("({ set a([{b = 0}]){}, })", new ObjectExpression(ImmutableList.list(new Setter(new StaticPropertyName("a"), new Parameter(new ArrayBinding(
                 ImmutableList.list(Maybe.just(new ObjectBinding(ImmutableList.list(new BindingPropertyIdentifier(
                         new BindingIdentifier("b"), Maybe.just(new LiteralNumericExpression(0.0))))))), Maybe.nothing()), Maybe.nothing()),
-                new FunctionBody(ImmutableList.nil(), ImmutableList.nil()), new StaticPropertyName("a")))));
+                new FunctionBody(ImmutableList.nil(), ImmutableList.nil())))));
     }
 }

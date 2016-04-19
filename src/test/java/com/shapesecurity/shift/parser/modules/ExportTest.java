@@ -68,38 +68,38 @@ public class ExportTest extends ParserTestCase {
         testModule("export class A{} /* no semi */ false", new Export(new ClassDeclaration(new BindingIdentifier("A"),
                 Maybe.nothing(), ImmutableList.nil())));
 
-        testModule("export function A(){} /* no semi */ false", new Export(new FunctionDeclaration(new BindingIdentifier("A"),
-                false, new FormalParameters(ImmutableList.nil(), Maybe.nothing()), new FunctionBody(ImmutableList.nil(),
+        testModule("export function A(){} /* no semi */ false", new Export(new FunctionDeclaration(false, new BindingIdentifier("A"),
+                new FormalParameters(ImmutableList.nil(), Maybe.nothing()), new FunctionBody(ImmutableList.nil(),
                 ImmutableList.nil()))));
 
-        testModule("export default function (){} /* no semi */ false", new ExportDefault(new FunctionDeclaration(
-                new BindingIdentifier("*default*"), false, new FormalParameters(ImmutableList.nil(), Maybe.nothing()),
+        testModule("export default function (){} /* no semi */ false", new ExportDefault(new FunctionDeclaration(false,
+                new BindingIdentifier("*default*"), new FormalParameters(ImmutableList.nil(), Maybe.nothing()),
                 new FunctionBody(ImmutableList.nil(), ImmutableList.nil()))));
 
         testModule("export default class {} /* no semi */ false", new ExportDefault(new ClassDeclaration(
                 new BindingIdentifier("*default*"), Maybe.nothing(), ImmutableList.nil())));
 
-        testModule("export default 3 + 1", new ExportDefault(new BinaryExpression(BinaryOperator.Plus,
-                new LiteralNumericExpression(3.0), new LiteralNumericExpression(1.0))));
+        testModule("export default 3 + 1", new ExportDefault(new BinaryExpression(
+                new LiteralNumericExpression(3.0), BinaryOperator.Plus, new LiteralNumericExpression(1.0))));
 
         testModule("export default a", new ExportDefault(new IdentifierExpression("a")));
 
-        testModule("export default function a(){}", new ExportDefault(new FunctionDeclaration(new BindingIdentifier("a"),
-                false, new FormalParameters(ImmutableList.nil(), Maybe.nothing()), new FunctionBody(ImmutableList.nil(),
+        testModule("export default function a(){}", new ExportDefault(new FunctionDeclaration(false, new BindingIdentifier("a"),
+                new FormalParameters(ImmutableList.nil(), Maybe.nothing()), new FunctionBody(ImmutableList.nil(),
                 ImmutableList.nil()))));
 
         testModule("export default class a{}", new ExportDefault(new ClassDeclaration(new BindingIdentifier("a"),
                 Maybe.nothing(), ImmutableList.nil())));
 
-        testModule("export default function* a(){}", new ExportDefault(new FunctionDeclaration(new BindingIdentifier("a"),
-                true, new FormalParameters(ImmutableList.nil(), Maybe.nothing()), new FunctionBody(ImmutableList.nil(),
+        testModule("export default function* a(){}", new ExportDefault(new FunctionDeclaration(true, new BindingIdentifier("a"),
+                new FormalParameters(ImmutableList.nil(), Maybe.nothing()), new FunctionBody(ImmutableList.nil(),
                 ImmutableList.nil()))));
 
         testModule("export default 0;0", new Module(ImmutableList.nil(), ImmutableList.list(new ExportDefault(
                 new LiteralNumericExpression(0.0)), new ExpressionStatement(new LiteralNumericExpression(0.0)))));
 
         testModule("export function f(){};0", new Module(ImmutableList.nil(), ImmutableList.list(new Export(
-                        new FunctionDeclaration(new BindingIdentifier("f"), false, new FormalParameters(ImmutableList.nil(),
+                        new FunctionDeclaration(false, new BindingIdentifier("f"), new FormalParameters(ImmutableList.nil(),
                                 Maybe.nothing()), new FunctionBody(ImmutableList.nil(), ImmutableList.nil()))), new EmptyStatement(),
                 new ExpressionStatement(new LiteralNumericExpression(0.0)))));
 
