@@ -18,14 +18,7 @@ package com.shapesecurity.shift.parser;
 
 import com.shapesecurity.functional.F;
 import com.shapesecurity.functional.F2;
-import com.shapesecurity.shift.ast.BindingIdentifier;
-import com.shapesecurity.shift.ast.BreakStatement;
-import com.shapesecurity.shift.ast.ContinueStatement;
-import com.shapesecurity.shift.ast.IdentifierExpression;
-import com.shapesecurity.shift.ast.LabeledStatement;
-import com.shapesecurity.shift.ast.MemberExpression;
-import com.shapesecurity.shift.ast.Node;
-import com.shapesecurity.shift.ast.Super;
+import com.shapesecurity.shift.ast.*;
 import com.shapesecurity.shift.utils.Utils;
 
 interface ErrorMessages {
@@ -90,6 +83,7 @@ interface ErrorMessages {
     F<BreakStatement, EarlyError> UNBOUND_BREAK = node -> new EarlyError(node, "Break statement must be nested within a statement with label " + Utils.escapeStringLiteral(node.label.just()));
     F<Node, EarlyError> DUPLICATE_CTOR = node -> new EarlyError(node, "Duplicate constructor method in class");
     F<BindingIdentifier, EarlyError> BINDING_IDENTIFIER_STRICT = node -> new EarlyError(node, "The identifier " + Utils.escapeStringLiteral(node.name) + " must not be in binding position in strict mode");
+    F<AssignmentTargetIdentifier, EarlyError> TARGET_IDENTIFIER_STRICT = node -> new EarlyError(node, "The identifier " + Utils.escapeStringLiteral(node.name) + " must not be in binding position in strict mode");
     F<IdentifierExpression, EarlyError> IDENTIFIER_EXP_STRICT = node -> new EarlyError(node, "The identifier " + Utils.escapeStringLiteral(node.name) + " must not be in expression position in strict mode");
     F<Node, EarlyError> CTOR_SPECIAL = node -> new EarlyError(node, "Constructors cannot be generators, getters or setters");
     F<Node, EarlyError> PROTOTYPE_METHOD = node -> new EarlyError(node, "Static class methods cannot be named \"prototype\"");

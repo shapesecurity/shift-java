@@ -1600,6 +1600,8 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
                             }
                             yFlag = true;
                             break;
+                        default:
+                            throw this.createErrorWithLocation(this.getLocation(), "Invalid regular expression flags");
                     }
                 }
                 return Either.left(this.finishNode(startState, new LiteralRegExpExpression(pattern, gFlag, iFlag, mFlag, yFlag, uFlag)));

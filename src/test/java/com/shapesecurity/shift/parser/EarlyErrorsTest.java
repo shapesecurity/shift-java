@@ -69,6 +69,12 @@ public class EarlyErrorsTest extends ParserTestCase {
         testScriptFailure("for(([0]) of 0);", 10, "Invalid left-hand side in for-of");
         testScriptFailure("for((0) in 0);", 8, "Invalid left-hand side in for-in");
         testScriptFailure("for((0) of 0);", 8, "Invalid left-hand side in for-of");
+
+
+        // todo section
+        // It is a Syntax Error if FlagText of RegularExpressionLiteral contains any code points other than "g", "i", "m", "u", or "y", or if it contains the same code point more than once.
+        testScriptFailure("/./a", 4, "Invalid regular expression flags");
+        testScriptFailure("/./ii", 5, "Duplicate regular expression flag 'i'");
     }
 
     @Test
@@ -199,9 +205,6 @@ public class EarlyErrorsTest extends ParserTestCase {
         //testScriptEarlyError("/}?/", "Invalid regular expression pattern");
         //testScriptEarlyError("/{*/", "Invalid regular expression pattern");
         //testScriptEarlyError("/(?=.)*/u", "Invalid regular expression pattern");
-        // It is a Syntax Error if FlagText of RegularExpressionLiteral contains any code points other than "g", "i", "m", "u", or "y", or if it contains the same code point more than once.
-        testScriptEarlyError("/./a", "Invalid regular expression flags");
-        testScriptEarlyError("/./ii", "Invalid regular expression flags");
 
         // 12.5.4.1
         // It is a Syntax Error if the UnaryExpression is contained in strict code and the derived UnaryExpression is PrimaryExpression : IdentifierReference.
