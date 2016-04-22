@@ -472,20 +472,17 @@ public class DeserializerTest {
      ******************/
 
     private void testHelperFromScriptCode(String jsCode) throws JsError, IllegalAccessException, InvocationTargetException, InstantiationException, JSONException, NoSuchMethodException, ClassNotFoundException {
-        Script nodeOriginal = Parser.parseScript(jsCode);
-        testHelperFromAST(nodeOriginal);
+        testHelperFromAST(Parser.parseScript(jsCode));
     }
 
     private void testHelperFromModuleCode(String jsCode) throws JsError, IllegalAccessException, InvocationTargetException, InstantiationException, JSONException, NoSuchMethodException, ClassNotFoundException {
-        Module nodeOriginal = Parser.parseModule(jsCode);
-        testHelperFromAST(nodeOriginal);
+        testHelperFromAST(Parser.parseModule(jsCode));
     }
 
 
-    private void testHelperFromAST(Node nodeOriginal) throws IllegalAccessException, InvocationTargetException, InstantiationException, JSONException, NoSuchMethodException, ClassNotFoundException {
+    private void testHelperFromAST(Program nodeOriginal) throws IllegalAccessException, InvocationTargetException, InstantiationException, JSONException, NoSuchMethodException, ClassNotFoundException {
         String nodeSerialized = Serializer.serialize(nodeOriginal);
-        Deserializer deserializer = new Deserializer();
-        Node nodeDeserialized = deserializer.deserialize(nodeSerialized);
+        Node nodeDeserialized = Deserializer.deserialize(nodeSerialized);
         assertTrue(nodeOriginal.equals(nodeDeserialized));
     }
 

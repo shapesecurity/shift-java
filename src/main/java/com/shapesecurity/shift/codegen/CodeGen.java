@@ -142,17 +142,17 @@ public final class CodeGen implements Reducer<CodeRep> {
 
     @NotNull
     @Override
-    public CodeRep reduceArrayBinding(@NotNull ArrayBinding node, @NotNull ImmutableList<Maybe<CodeRep>> elements, @NotNull Maybe<CodeRep> restElement) {
+    public CodeRep reduceArrayBinding(@NotNull ArrayBinding node, @NotNull ImmutableList<Maybe<CodeRep>> elements, @NotNull Maybe<CodeRep> rest) {
         CodeRep content;
         if (elements.length == 0) {
-            content = restElement.maybe(factory.empty(), r -> seqVA(factory.token("..."), r));
+            content = rest.maybe(factory.empty(), r -> seqVA(factory.token("..."), r));
         } else {
             content = factory.commaSep(elements.map(this::getAssignmentExpr));
-            if (elements.length > 0 && elements.maybeLast().just().isNothing() && restElement.isNothing()) {
+            if (elements.length > 0 && elements.maybeLast().just().isNothing() && rest.isNothing()) {
                 content = seqVA(content, factory.token(","));
             }
-            if (restElement.isJust()) {
-                content = seqVA(content, factory.token(","), factory.token("..."), restElement.just());
+            if (rest.isJust()) {
+                content = seqVA(content, factory.token(","), factory.token("..."), rest.just());
             }
         }
         return factory.bracket(content);
