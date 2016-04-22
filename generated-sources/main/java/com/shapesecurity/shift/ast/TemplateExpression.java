@@ -22,6 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import com.shapesecurity.functional.data.HashCodeBuilder;
 import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.functional.data.Maybe;
+import com.shapesecurity.shift.ast.operators.Precedence;
 
 public class TemplateExpression implements Expression {
     @NotNull
@@ -49,6 +50,18 @@ public class TemplateExpression implements Expression {
         code = HashCodeBuilder.put(code, this.tag);
         code = HashCodeBuilder.put(code, this.elements);
         return code;
+    }
+
+    @Override
+    @NotNull
+    public Precedence getPrecedence() {
+        return this.tag.map(tag -> {
+            Precedence tagPrecedence = tag.getPrecedence();
+            if (tagPrecedence == Precedence.CALL) {
+                return Precedence.CALL;
+            }
+            return Precedence.MEMBER;
+        }).orJust(Precedence.MEMBER);
     }
 
 }

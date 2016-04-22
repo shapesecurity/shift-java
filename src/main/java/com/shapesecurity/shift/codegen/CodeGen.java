@@ -124,6 +124,24 @@ public final class CodeGen implements Reducer<CodeRep> {
 
     @NotNull
     @Override
+    public CodeRep reduceArrayAssignmentTarget(@NotNull ArrayAssignmentTarget node, @NotNull ImmutableList<Maybe<CodeRep>> elements, @NotNull Maybe<CodeRep> rest) {
+        CodeRep content;
+        if (elements.length == 0) {
+            content = rest.maybe(factory.empty(), r -> seqVA(factory.token("..."), r));
+        } else {
+            content = factory.commaSep(elements.map(this::getAssignmentExpr));
+            if (elements.length > 0 && elements.maybeLast().just().isNothing() && rest.isNothing()) {
+                content = seqVA(content, factory.token(","));
+            }
+            if (rest.isJust()) {
+                content = seqVA(content, factory.token(","), factory.token("..."), rest.just());
+            }
+        }
+        return factory.bracket(content);
+    }
+
+    @NotNull
+    @Override
     public CodeRep reduceArrayBinding(@NotNull ArrayBinding node, @NotNull ImmutableList<Maybe<CodeRep>> elements, @NotNull Maybe<CodeRep> restElement) {
         CodeRep content;
         if (elements.length == 0) {
@@ -157,7 +175,7 @@ public final class CodeGen implements Reducer<CodeRep> {
     @NotNull
     @Override
     public CodeRep reduceArrowExpression(@NotNull ArrowExpression node, @NotNull CodeRep params, @NotNull CodeRep body) {
-        if (node.params.rest.isJust() || node.params.items.length != 1 || !(node.params.items.maybeHead().just() instanceof BindingIdentifier)) {
+        if (node.params.rest.isJust() || node.params.items.length != 1 || node.params.items.maybeHead().just().init.isJust() || !(node.params.items.maybeHead().just().binding instanceof BindingIdentifier)) {
             params = factory.paren(params);
         }
         if (node.body instanceof FunctionBody) {
@@ -189,6 +207,30 @@ public final class CodeGen implements Reducer<CodeRep> {
         toReturn.startsWithLetSquareBracket = startsWithLetSquareBracket;
         toReturn.startsWithFunctionOrClass = startsWithFunctionOrClass;
         return toReturn;
+    }
+
+    @NotNull
+    @Override
+    public CodeRep reduceAssignmentTargetIdentifier(@NotNull AssignmentTargetIdentifier node) {
+        return factory.token(node.name);
+    }
+
+    @NotNull
+    @Override
+    public CodeRep reduceAssignmentTargetPropertyIdentifier(@NotNull AssignmentTargetPropertyIdentifier node, @NotNull CodeRep binding, @NotNull Maybe<CodeRep> init) {
+        return init.maybe(binding, i -> seqVA(binding, factory.token("="), i));
+    }
+
+    @NotNull
+    @Override
+    public CodeRep reduceAssignmentTargetPropertyProperty(@NotNull AssignmentTargetPropertyProperty node, @NotNull CodeRep name, @NotNull CodeRep binding) {
+        return seqVA(name, factory.token(":"), binding);
+    }
+
+    @NotNull
+    @Override
+    public CodeRep reduceAssignmentTargetWithDefault(@NotNull AssignmentTargetWithDefault node, @NotNull CodeRep binding, @NotNull CodeRep init) {
+        return seqVA(binding, factory.token("="), init);
     }
 
     @Override
@@ -344,13 +386,30 @@ public final class CodeGen implements Reducer<CodeRep> {
         return toReturn;
     }
 
+    @NotNull
+    @Override
+    public CodeRep reduceComputedMemberAssignmentTarget(@NotNull ComputedMemberAssignmentTarget node, @NotNull CodeRep object, @NotNull CodeRep expression) {
+        boolean startsWithLetSquareBracket = object.startsWithLetSquareBracket || node.object instanceof IdentifierExpression && ((IdentifierExpression) node.object).name.equals("let");
+        CodeRep result;
+        if (node.object instanceof Expression) {
+            result = seqVA(p(node.object, Precedence.MEMBER, object), factory.bracket(expression)); // todo confirm MEMBER is always correct
+        } else {
+            result = seqVA(object, factory.bracket(expression));
+        }
+        result.startsWithLetSquareBracket = startsWithLetSquareBracket;
+        result.startsWithLet = object.startsWithLet;
+        result.startsWithCurly = object.startsWithCurly;
+        result.startsWithFunctionOrClass = object.startsWithFunctionOrClass;
+        return result;
+    }
+
     @Override
     @NotNull
     public CodeRep reduceComputedMemberExpression(@NotNull ComputedMemberExpression node, @NotNull CodeRep object, @NotNull CodeRep expression) {
-        boolean startsWithLetSquareBracket = object.startsWithLetSquareBracket || node._object instanceof IdentifierExpression && ((IdentifierExpression) node._object).name.equals("let");
+        boolean startsWithLetSquareBracket = object.startsWithLetSquareBracket || node.object instanceof IdentifierExpression && ((IdentifierExpression) node.object).name.equals("let");
         CodeRep result;
-        if (node._object instanceof Expression) {
-            result = seqVA(p(node._object, node.getPrecedence(), object), factory.bracket(expression));
+        if (node.object instanceof Expression) {
+            result = seqVA(p(node.object, node.getPrecedence(), object), factory.bracket(expression));
         } else {
             result = seqVA(object, factory.bracket(expression));
         }
@@ -391,7 +450,7 @@ public final class CodeGen implements Reducer<CodeRep> {
 
     @Override
     @NotNull
-    public CodeRep reduceDataProperty(@NotNull DataProperty node, @NotNull CodeRep expression, @NotNull CodeRep name) {
+    public CodeRep reduceDataProperty(@NotNull DataProperty node, @NotNull CodeRep name, @NotNull CodeRep expression) {
         return seqVA(name, factory.token(":"), getAssignmentExpr(Maybe.just(expression)));
     }
 
@@ -454,17 +513,35 @@ public final class CodeGen implements Reducer<CodeRep> {
         return seqVA(
                 factory.token("export"),
                 factory.brace(factory.commaSep(namedExports)),
-                node.moduleSpecifier.maybe(factory.empty(), m -> seqVA(factory.token("from"), factory.token(Utils.escapeStringLiteral(m)), factory.semiOp()))
+                seqVA(factory.token("from"), factory.token(Utils.escapeStringLiteral(node.moduleSpecifier)), factory.semiOp())
         );
     }
 
     @NotNull
     @Override
-    public CodeRep reduceExportSpecifier(@NotNull ExportSpecifier node) {
-        if (node.name.isNothing()) {
-            return factory.token(node.exportedName);
+    public CodeRep reduceExportFromSpecifier(@NotNull ExportFromSpecifier node) {
+        if (node.exportedName.isNothing()) {
+            return factory.token(node.name);
         }
-        return seqVA(factory.token(node.name.just()), factory.token("as"), factory.token(node.exportedName));
+        return seqVA(factory.token(node.name), factory.token("as"), factory.token(node.exportedName.just()));
+    }
+
+    @NotNull
+    @Override
+    public CodeRep reduceExportLocalSpecifier(@NotNull ExportLocalSpecifier node, @NotNull CodeRep name) {
+        if (node.exportedName.isNothing()) {
+            return name;
+        }
+        return seqVA(name, factory.token("as"), factory.token(node.exportedName.just()));
+    }
+
+    @NotNull
+    @Override
+    public CodeRep reduceExportLocals(@NotNull ExportLocals node, @NotNull ImmutableList<CodeRep> namedExports) {
+        return seqVA(
+                factory.token("export"),
+                factory.brace(factory.commaSep(namedExports))
+        );
     }
 
     @Override
@@ -480,8 +557,8 @@ public final class CodeGen implements Reducer<CodeRep> {
         CodeRep leftP = left;
         if (node.left instanceof VariableDeclaration) {
             leftP = factory.noIn(factory.markContainsIn(left));
-        } else if (node.left instanceof BindingIdentifier) {
-            if (((BindingIdentifier) node.left).name.equals("let")) {
+        } else if (node.left instanceof AssignmentTargetIdentifier) {
+            if (((AssignmentTargetIdentifier) node.left).name.equals("let")) {
                 leftP = factory.paren(left);
             }
         }
@@ -666,7 +743,7 @@ public final class CodeGen implements Reducer<CodeRep> {
     @Override
     @NotNull
     public CodeRep reduceLiteralRegExpExpression(@NotNull LiteralRegExpExpression node) {
-        return factory.token("/" + node.pattern + "/" + node.flags);
+        return factory.token("/" + node.pattern + "/" + (node.global ? "g" : "") + (node.ignoreCase ? "i" : "") + (node.multiLine ? "m" : "") + (node.unicode ? "u" : "") + (node.sticky ? "y" : ""));
     }
 
     @Override
@@ -710,6 +787,14 @@ public final class CodeGen implements Reducer<CodeRep> {
 
     @NotNull
     @Override
+    public CodeRep reduceObjectAssignmentTarget(@NotNull ObjectAssignmentTarget node, @NotNull ImmutableList<CodeRep> properties) {
+        CodeRep state = factory.brace(factory.commaSep(properties));
+        state.startsWithCurly = true;
+        return state;
+    }
+
+    @NotNull
+    @Override
     public CodeRep reduceObjectBinding(@NotNull ObjectBinding node, @NotNull ImmutableList<CodeRep> properties) {
         CodeRep state = factory.brace(factory.commaSep(properties));
         state.startsWithCurly = true;
@@ -722,6 +807,12 @@ public final class CodeGen implements Reducer<CodeRep> {
         CodeRep result = factory.brace(factory.commaSep(properties));
         result.startsWithCurly = true;
         return result;
+    }
+
+    @NotNull
+    @Override
+    public CodeRep reduceParameter(@NotNull Parameter node, @NotNull CodeRep binding, @NotNull Maybe<CodeRep> init) {
+        return init.maybe(binding, i -> seqVA(binding, factory.token("="), i));
     }
 
     @Override
@@ -758,8 +849,8 @@ public final class CodeGen implements Reducer<CodeRep> {
 
     @NotNull
     @Override
-    public CodeRep reduceShorthandProperty(@NotNull ShorthandProperty node) {
-        return factory.token(node.name);
+    public CodeRep reduceShorthandProperty(@NotNull ShorthandProperty node, @NotNull CodeRep name) {
+        return name;
     }
 
     @NotNull
@@ -768,12 +859,29 @@ public final class CodeGen implements Reducer<CodeRep> {
         return seqVA(factory.token("..."), p(node.expression, Precedence.ASSIGNMENT, expression));
     }
 
+    @NotNull
+    @Override
+    public CodeRep reduceStaticMemberAssignmentTarget(@NotNull StaticMemberAssignmentTarget node, @NotNull CodeRep object) {
+        CodeRep state;
+        if (node.object instanceof Expression) {
+            state = seqVA(p(node.object, Precedence.MEMBER, object), factory.token("."), factory.token(node.property)); // TODO confirm MEMBMER is always correct
+        } else {
+            // node._object is a Super
+            state = seqVA(object, factory.token("."), factory.token(node.property));
+        }
+        state.startsWithLet = object.startsWithLet;
+        state.startsWithCurly = object.startsWithCurly;
+        state.startsWithLetSquareBracket = object.startsWithLetSquareBracket;
+        state.startsWithFunctionOrClass = object.startsWithFunctionOrClass;
+        return state;
+    }
+
     @Override
     @NotNull
     public CodeRep reduceStaticMemberExpression(@NotNull StaticMemberExpression node, @NotNull CodeRep object) {
         CodeRep state;
-        if (node._object instanceof Expression) {
-            state = seqVA(p(node._object, node.getPrecedence(), object), factory.token("."), factory.token(node.property));
+        if (node.object instanceof Expression) {
+            state = seqVA(p(node.object, node.getPrecedence(), object), factory.token("."), factory.token(node.property));
         } else {
             // node._object is a Super
             state = seqVA(object, factory.token("."), factory.token(node.property));
@@ -929,12 +1037,7 @@ public final class CodeGen implements Reducer<CodeRep> {
         if (node.isPrefix) {
             return seqVA(factory.token(node.operator.getName()), operand);
         } else {
-            CodeRep toReturn;
-            if (node.operand instanceof BindingIdentifier) {
-                toReturn = seqVA(operand, factory.token(node.operator.getName()));
-            } else {
-                toReturn = seqVA(p(node.operand, Precedence.NEW, operand), factory.token(node.operator.getName()));
-            }
+            CodeRep toReturn = toReturn = seqVA(operand, factory.token(node.operator.getName()));
             toReturn.startsWithCurly = operand.startsWithCurly;
             toReturn.startsWithLetSquareBracket = operand.startsWithLetSquareBracket;
             toReturn.startsWithFunctionOrClass = operand.startsWithFunctionOrClass;

@@ -1,9 +1,7 @@
 package com.shapesecurity.shift.reducer;
 
 import com.shapesecurity.shift.ast.Module;
-import com.shapesecurity.shift.ast.Node;
 import com.shapesecurity.shift.ast.Script;
-import com.shapesecurity.shift.codegen.CodeGen;
 import com.shapesecurity.shift.parser.JsError;
 import com.shapesecurity.shift.parser.Parser;
 import com.shapesecurity.shift.visitor.Director;

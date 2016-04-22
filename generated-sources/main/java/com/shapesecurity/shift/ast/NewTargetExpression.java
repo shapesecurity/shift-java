@@ -20,6 +20,7 @@ package com.shapesecurity.shift.ast;
 
 import org.jetbrains.annotations.NotNull;
 import com.shapesecurity.functional.data.HashCodeBuilder;
+import com.shapesecurity.shift.ast.operators.Precedence;
 
 public class NewTargetExpression implements Expression {
 
@@ -37,6 +38,12 @@ public class NewTargetExpression implements Expression {
     public int hashCode() {
         int code = HashCodeBuilder.put(0, "NewTargetExpression");
         return code;
+    }
+
+    @Override
+    @NotNull
+    public Precedence getPrecedence() {
+        return Precedence.MEMBER;
     }
 
 }

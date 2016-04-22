@@ -21,6 +21,7 @@ package com.shapesecurity.shift.ast;
 import org.jetbrains.annotations.NotNull;
 import com.shapesecurity.functional.data.HashCodeBuilder;
 import com.shapesecurity.shift.ast.operators.BinaryOperator;
+import com.shapesecurity.shift.ast.operators.Precedence;
 
 public class BinaryExpression implements Expression {
     @NotNull
@@ -53,6 +54,12 @@ public class BinaryExpression implements Expression {
         code = HashCodeBuilder.put(code, this.operator);
         code = HashCodeBuilder.put(code, this.right);
         return code;
+    }
+
+    @Override
+    @NotNull
+    public Precedence getPrecedence() {
+        return this.operator.getPrecedence();
     }
 
 }

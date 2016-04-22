@@ -20,6 +20,7 @@ package com.shapesecurity.shift.ast;
 
 import org.jetbrains.annotations.NotNull;
 import com.shapesecurity.functional.data.HashCodeBuilder;
+import com.shapesecurity.shift.ast.operators.Precedence;
 
 public class LiteralRegExpExpression implements Expression {
     @NotNull
@@ -67,6 +68,12 @@ public class LiteralRegExpExpression implements Expression {
         code = HashCodeBuilder.put(code, this.sticky);
         code = HashCodeBuilder.put(code, this.unicode);
         return code;
+    }
+
+    @Override
+    @NotNull
+    public Precedence getPrecedence() {
+        return Precedence.PRIMARY;
     }
 
 }

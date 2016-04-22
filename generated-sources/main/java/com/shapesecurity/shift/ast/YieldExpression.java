@@ -21,6 +21,7 @@ package com.shapesecurity.shift.ast;
 import org.jetbrains.annotations.NotNull;
 import com.shapesecurity.functional.data.HashCodeBuilder;
 import com.shapesecurity.functional.data.Maybe;
+import com.shapesecurity.shift.ast.operators.Precedence;
 
 public class YieldExpression implements Expression {
     @NotNull
@@ -43,6 +44,12 @@ public class YieldExpression implements Expression {
         int code = HashCodeBuilder.put(0, "YieldExpression");
         code = HashCodeBuilder.put(code, this.expression);
         return code;
+    }
+
+    @Override
+    @NotNull
+    public Precedence getPrecedence() {
+        return Precedence.ASSIGNMENT;
     }
 
 }

@@ -20,6 +20,7 @@ package com.shapesecurity.shift.ast;
 
 import org.jetbrains.annotations.NotNull;
 import com.shapesecurity.functional.data.HashCodeBuilder;
+import com.shapesecurity.shift.ast.operators.Precedence;
 
 public class ConditionalExpression implements Expression {
     @NotNull
@@ -52,6 +53,12 @@ public class ConditionalExpression implements Expression {
         code = HashCodeBuilder.put(code, this.consequent);
         code = HashCodeBuilder.put(code, this.alternate);
         return code;
+    }
+
+    @Override
+    @NotNull
+    public Precedence getPrecedence() {
+        return Precedence.CONDITIONAL;
     }
 
 }

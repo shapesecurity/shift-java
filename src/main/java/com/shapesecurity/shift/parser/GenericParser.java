@@ -1086,6 +1086,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
             case ASSIGN_MUL:
             case ASSIGN_DIV:
             case ASSIGN_MOD:
+            case ASSIGN_EXP:
                 isAssignmentOperator = true;
                 break;
         }
@@ -1207,7 +1208,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
     @NotNull
     protected Either<Expression, AssignmentTarget> parseBinaryExpression() throws JsError {
         AdditionalStateT startState = this.startNode();
-        Either<Expression, AssignmentTarget> left = this.parseUnaryExpression();
+        Either<Expression, AssignmentTarget> left = this.parseExponentiationExpression();
 
         BinaryOperator operator = lookupBinaryOperator(this.lookahead, this.allowIn);
         if (operator == null) {
@@ -1218,10 +1219,10 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
 
         if (left.isLeft()) {
             this.lex();
+            Either<Expression, AssignmentTarget> expr = this.isolateCoverGrammar(this::parseExponentiationExpression);
             ImmutableList<ExprStackItem<AdditionalStateT>> stack = ImmutableList.nil();
             stack = stack.cons(new ExprStackItem<>(startState, left.left().just(), operator));
             startState = this.startNode();
-            Either<Expression, AssignmentTarget> expr = this.isolateCoverGrammar(this::parseUnaryExpression);
             operator = lookupBinaryOperator(this.lookahead, this.allowIn);
             while (operator != null) {
                 Precedence precedence = operator.getPrecedence();
@@ -1239,7 +1240,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
                 this.lex();
                 stack = stack.cons(new ExprStackItem<>(startState, expr.left().just(), operator));
                 startState = this.startNode();
-                expr = this.isolateCoverGrammar(this::parseUnaryExpression);
+                expr = this.isolateCoverGrammar(this::parseExponentiationExpression);
 
                 operator = lookupBinaryOperator(this.lookahead, this.allowIn);
             }
@@ -1251,6 +1252,20 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
         } else {
             throw this.createError(ErrorMessages.UNEXPECTED_OBJECT_BINDING);
         }
+    }
+
+    @NotNull
+    protected Either<Expression, AssignmentTarget> parseExponentiationExpression() throws JsError {
+        AdditionalStateT startState = this.startNode();
+        Either<Expression, AssignmentTarget> left = this.parseUnaryExpression();
+
+        if (this.lookahead.type != TokenType.EXP) {
+            return left;
+        }
+        this.lex();
+
+        Expression right = this.isolateCoverGrammar(this::parseExponentiationExpression).left().just();
+        return Either.left(this.finishNode(startState, new BinaryExpression(left.left().just(), BinaryOperator.Exp, right)));
     }
 
     @NotNull
@@ -2361,6 +2376,8 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
                 return CompoundAssignmentOperator.AssignDiv;
             case ASSIGN_MOD:
                 return CompoundAssignmentOperator.AssignRem;
+            case ASSIGN_EXP:
+                return CompoundAssignmentOperator.AssignExp;
             default:
                 return null; // should not happen
         }

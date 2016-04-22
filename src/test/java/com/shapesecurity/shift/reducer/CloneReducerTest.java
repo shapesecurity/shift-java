@@ -1,13 +1,6 @@
 package com.shapesecurity.shift.reducer;
 
-import com.shapesecurity.shift.ast.BlockStatement;
-import com.shapesecurity.shift.ast.ComputedMemberExpression;
-import com.shapesecurity.shift.ast.EmptyStatement;
-import com.shapesecurity.shift.ast.Expression;
-import com.shapesecurity.shift.ast.LiteralNullExpression;
-import com.shapesecurity.shift.ast.Node;
-import com.shapesecurity.shift.ast.Script;
-import com.shapesecurity.shift.ast.StaticMemberExpression;
+import com.shapesecurity.shift.ast.*;
 import com.shapesecurity.shift.codegen.CodeGen;
 import com.shapesecurity.shift.parser.JsError;
 import com.shapesecurity.shift.parser.Parser;
@@ -708,7 +701,7 @@ public class CloneReducerTest extends CloneReducerTestCase {
     class ReplaceStaticMemberExpressionWithComputedMemberExpression extends CloneReducer {
         @Override
         @NotNull
-        public ComputedMemberExpression reduceStaticMemberExpression(@NotNull StaticMemberExpression staticMemberExpression, @NotNull Node object) {
+        public ComputedMemberExpression reduceStaticMemberExpression(@NotNull StaticMemberExpression node, @NotNull Node object) {
             return new ComputedMemberExpression(new LiteralNullExpression(), new LiteralNullExpression());
         }
     }

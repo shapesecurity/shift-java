@@ -784,6 +784,10 @@ public class Tokenizer {
                         return TokenType.SHR_UNSIGNED;
                     }
 
+                    if (ch1 == '*' && ch3 == '=') {
+                        return TokenType.ASSIGN_EXP;
+                    }
+
                     if (ch1 == '<' && ch3 == '=') {
                         return TokenType.ASSIGN_SHL;
                     }
@@ -792,8 +796,10 @@ public class Tokenizer {
                         return TokenType.ASSIGN_SHR;
                     }
                 }
-                // Other 2-character punctuators: ++ -- << >> && ||
+                // Other 2-character punctuators: ++ -- << >> && || **
                 switch (ch1) {
+                    case '*':
+                        return TokenType.EXP;
                     case '+':
                         return TokenType.INC;
                     case '-':

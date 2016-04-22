@@ -21,6 +21,7 @@ package com.shapesecurity.shift.ast;
 import org.jetbrains.annotations.NotNull;
 import com.shapesecurity.functional.data.HashCodeBuilder;
 import com.shapesecurity.functional.data.Maybe;
+import com.shapesecurity.shift.ast.operators.Precedence;
 
 public class FunctionExpression extends Function implements Expression {
     @NotNull
@@ -47,6 +48,12 @@ public class FunctionExpression extends Function implements Expression {
         code = HashCodeBuilder.put(code, this.params);
         code = HashCodeBuilder.put(code, this.body);
         return code;
+    }
+
+    @Override
+    @NotNull
+    public Precedence getPrecedence() {
+        return Precedence.PRIMARY;
     }
 
 }

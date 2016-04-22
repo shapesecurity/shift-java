@@ -21,6 +21,7 @@ package com.shapesecurity.shift.ast;
 import org.jetbrains.annotations.NotNull;
 import com.shapesecurity.functional.data.HashCodeBuilder;
 import com.shapesecurity.shift.ast.operators.UnaryOperator;
+import com.shapesecurity.shift.ast.operators.Precedence;
 
 public class UnaryExpression implements Expression {
     @NotNull
@@ -48,6 +49,12 @@ public class UnaryExpression implements Expression {
         code = HashCodeBuilder.put(code, this.operator);
         code = HashCodeBuilder.put(code, this.operand);
         return code;
+    }
+
+    @Override
+    @NotNull
+    public Precedence getPrecedence() {
+        return Precedence.PREFIX;
     }
 
 }

@@ -30,6 +30,7 @@ public enum Precedence {
     SHIFT,
     ADDITIVE,
     MULTIPLICATIVE,
+    EXPONENTIAL,
     PREFIX,
     POSTFIX,
     NEW,

@@ -24,6 +24,7 @@ public enum CompoundAssignmentOperator implements Operator {
     AssignMul("*="),
     AssignDiv("/="),
     AssignRem("%="),
+    AssignExp("**="),
     AssignLeftShift("<<="),
     AssignRightShift(">>="),
     AssignUnsignedRightShift(">>>="),

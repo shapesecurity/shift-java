@@ -18,4 +18,10 @@
 
 package com.shapesecurity.shift.ast;
 
-public interface Expression extends Node, ExpressionSuper, FunctionDeclarationClassDeclarationExpression, SpreadElementExpression, FunctionBodyExpression, ExpressionTemplateElement, VariableDeclarationExpression {}
+import org.jetbrains.annotations.NotNull;
+import com.shapesecurity.shift.ast.operators.Precedence;
+
+public interface Expression extends Node, ExpressionSuper, FunctionDeclarationClassDeclarationExpression, SpreadElementExpression, FunctionBodyExpression, ExpressionTemplateElement, VariableDeclarationExpression {
+    @NotNull
+    public Precedence getPrecedence();
+}

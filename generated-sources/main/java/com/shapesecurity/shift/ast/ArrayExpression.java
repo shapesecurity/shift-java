@@ -22,6 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import com.shapesecurity.functional.data.HashCodeBuilder;
 import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.functional.data.Maybe;
+import com.shapesecurity.shift.ast.operators.Precedence;
 
 public class ArrayExpression implements Expression {
     @NotNull
@@ -44,6 +45,12 @@ public class ArrayExpression implements Expression {
         int code = HashCodeBuilder.put(0, "ArrayExpression");
         code = HashCodeBuilder.put(code, this.elements);
         return code;
+    }
+
+    @Override
+    @NotNull
+    public Precedence getPrecedence() {
+        return Precedence.PRIMARY;
     }
 
 }

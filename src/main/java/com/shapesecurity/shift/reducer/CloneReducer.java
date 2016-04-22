@@ -27,7 +27,7 @@ import org.jetbrains.annotations.NotNull;
 public class CloneReducer implements Reducer<Node> {
     @NotNull
     @Override
-    public ArrayAssignmentTarget reduceArrayAssignmentTarget(
+    public AssignmentTarget reduceArrayAssignmentTarget(
             @NotNull ArrayAssignmentTarget node,
             @NotNull ImmutableList<Maybe<Node>> elements,
             @NotNull Maybe<Node> rest) {
@@ -36,7 +36,7 @@ public class CloneReducer implements Reducer<Node> {
 
     @NotNull
     @Override
-    public ArrayBinding reduceArrayBinding(
+    public Binding reduceArrayBinding(
             @NotNull ArrayBinding node,
             @NotNull ImmutableList<Maybe<Node>> elements,
             @NotNull Maybe<Node> rest) {
@@ -45,7 +45,7 @@ public class CloneReducer implements Reducer<Node> {
 
     @NotNull
     @Override
-    public ArrayExpression reduceArrayExpression(
+    public Expression reduceArrayExpression(
             @NotNull ArrayExpression node,
             @NotNull ImmutableList<Maybe<Node>> elements) {
         return new ArrayExpression(elements.map(x -> x.map(y -> (SpreadElementExpression) y)));
@@ -53,7 +53,7 @@ public class CloneReducer implements Reducer<Node> {
 
     @NotNull
     @Override
-    public ArrowExpression reduceArrowExpression(
+    public Expression reduceArrowExpression(
             @NotNull ArrowExpression node,
             @NotNull Node params,
             @NotNull Node body) {
@@ -62,7 +62,7 @@ public class CloneReducer implements Reducer<Node> {
 
     @NotNull
     @Override
-    public AssignmentExpression reduceAssignmentExpression(
+    public Expression reduceAssignmentExpression(
             @NotNull AssignmentExpression node,
             @NotNull Node binding,
             @NotNull Node expression) {
@@ -77,7 +77,7 @@ public class CloneReducer implements Reducer<Node> {
 
     @NotNull
     @Override
-    public AssignmentTargetPropertyIdentifier reduceAssignmentTargetPropertyIdentifier(
+    public AssignmentTargetProperty reduceAssignmentTargetPropertyIdentifier(
             @NotNull AssignmentTargetPropertyIdentifier node,
             @NotNull Node binding,
             @NotNull Maybe<Node> init) {
@@ -86,7 +86,7 @@ public class CloneReducer implements Reducer<Node> {
 
     @NotNull
     @Override
-    public AssignmentTargetPropertyProperty reduceAssignmentTargetPropertyProperty(
+    public AssignmentTargetProperty reduceAssignmentTargetPropertyProperty(
             @NotNull AssignmentTargetPropertyProperty node,
             @NotNull Node name,
             @NotNull Node binding) {
@@ -95,7 +95,7 @@ public class CloneReducer implements Reducer<Node> {
 
     @NotNull
     @Override
-    public AssignmentTargetWithDefault reduceAssignmentTargetWithDefault(
+    public AssignmentTargetAssignmentTargetWithDefault reduceAssignmentTargetWithDefault(
             @NotNull AssignmentTargetWithDefault node,
             @NotNull Node binding,
             @NotNull Node init) {
@@ -104,7 +104,7 @@ public class CloneReducer implements Reducer<Node> {
 
     @NotNull
     @Override
-    public BinaryExpression reduceBinaryExpression(
+    public Expression reduceBinaryExpression(
             @NotNull BinaryExpression node,
             @NotNull Node left,
             @NotNull Node right) {
@@ -119,7 +119,7 @@ public class CloneReducer implements Reducer<Node> {
 
     @NotNull
     @Override
-    public BindingPropertyIdentifier reduceBindingPropertyIdentifier(
+    public BindingProperty reduceBindingPropertyIdentifier(
             @NotNull BindingPropertyIdentifier node,
             @NotNull Node binding,
             @NotNull Maybe<Node> init) {
@@ -128,7 +128,7 @@ public class CloneReducer implements Reducer<Node> {
 
     @NotNull
     @Override
-    public BindingPropertyProperty reduceBindingPropertyProperty(
+    public BindingProperty reduceBindingPropertyProperty(
             @NotNull BindingPropertyProperty node,
             @NotNull Node name,
             @NotNull Node binding) {
@@ -137,7 +137,7 @@ public class CloneReducer implements Reducer<Node> {
 
     @NotNull
     @Override
-    public BindingWithDefault reduceBindingWithDefault(
+    public BindingBindingWithDefault reduceBindingWithDefault(
             @NotNull BindingWithDefault node,
             @NotNull Node binding,
             @NotNull Node init) {
@@ -154,7 +154,7 @@ public class CloneReducer implements Reducer<Node> {
 
     @NotNull
     @Override
-    public BlockStatement reduceBlockStatement(
+    public Statement reduceBlockStatement(
             @NotNull BlockStatement node,
             @NotNull Node block) {
         return new BlockStatement((Block) block);
@@ -162,13 +162,13 @@ public class CloneReducer implements Reducer<Node> {
 
     @NotNull
     @Override
-    public BreakStatement reduceBreakStatement(@NotNull BreakStatement node) {
+    public Statement reduceBreakStatement(@NotNull BreakStatement node) {
         return new BreakStatement(node.label);
     }
 
     @NotNull
     @Override
-    public CallExpression reduceCallExpression(
+    public Expression reduceCallExpression(
             @NotNull CallExpression node,
             @NotNull Node callee,
             @NotNull ImmutableList<Node> arguments) {
@@ -214,7 +214,7 @@ public class CloneReducer implements Reducer<Node> {
 
     @NotNull
     @Override
-    public CompoundAssignmentExpression reduceCompoundAssignmentExpression(
+    public Expression reduceCompoundAssignmentExpression(
             @NotNull CompoundAssignmentExpression node,
             @NotNull Node binding,
             @NotNull Node expression) {
@@ -223,7 +223,7 @@ public class CloneReducer implements Reducer<Node> {
 
     @NotNull
     @Override
-    public ComputedMemberAssignmentTarget reduceComputedMemberAssignmentTarget(
+    public SimpleAssignmentTarget reduceComputedMemberAssignmentTarget(
             @NotNull ComputedMemberAssignmentTarget node,
             @NotNull Node object,
             @NotNull Node expression) {
@@ -232,7 +232,7 @@ public class CloneReducer implements Reducer<Node> {
 
     @NotNull
     @Override
-    public ComputedMemberExpression reduceComputedMemberExpression(
+    public Expression reduceComputedMemberExpression(
             @NotNull ComputedMemberExpression node,
             @NotNull Node object,
             @NotNull Node expression) {
@@ -241,7 +241,7 @@ public class CloneReducer implements Reducer<Node> {
 
     @NotNull
     @Override
-    public ComputedPropertyName reduceComputedPropertyName(
+    public PropertyName reduceComputedPropertyName(
             @NotNull ComputedPropertyName node,
             @NotNull Node expression) {
         return new ComputedPropertyName((Expression) expression);
@@ -249,7 +249,7 @@ public class CloneReducer implements Reducer<Node> {
 
     @NotNull
     @Override
-    public ConditionalExpression reduceConditionalExpression(
+    public Expression reduceConditionalExpression(
             @NotNull ConditionalExpression node,
             @NotNull Node test,
             @NotNull Node consequent,
@@ -259,13 +259,13 @@ public class CloneReducer implements Reducer<Node> {
 
     @NotNull
     @Override
-    public ContinueStatement reduceContinueStatement(@NotNull ContinueStatement node) {
+    public Statement reduceContinueStatement(@NotNull ContinueStatement node) {
         return new ContinueStatement(node.label);
     }
 
     @NotNull
     @Override
-    public DataProperty reduceDataProperty(
+    public ObjectProperty reduceDataProperty(
             @NotNull DataProperty node,
             @NotNull Node name,
             @NotNull Node expression) {
@@ -274,7 +274,7 @@ public class CloneReducer implements Reducer<Node> {
 
     @NotNull
     @Override
-    public DebuggerStatement reduceDebuggerStatement(@NotNull DebuggerStatement node) {
+    public Statement reduceDebuggerStatement(@NotNull DebuggerStatement node) {
         return new DebuggerStatement();
     }
 
@@ -286,7 +286,7 @@ public class CloneReducer implements Reducer<Node> {
 
     @NotNull
     @Override
-    public DoWhileStatement reduceDoWhileStatement(
+    public Statement reduceDoWhileStatement(
             @NotNull DoWhileStatement node,
             @NotNull Node body,
             @NotNull Node test) {
@@ -295,13 +295,13 @@ public class CloneReducer implements Reducer<Node> {
 
     @NotNull
     @Override
-    public EmptyStatement reduceEmptyStatement(@NotNull EmptyStatement node) {
+    public Statement reduceEmptyStatement(@NotNull EmptyStatement node) {
         return new EmptyStatement();
     }
 
     @NotNull
     @Override
-    public Export reduceExport(
+    public ImportDeclarationExportDeclarationStatement reduceExport(
             @NotNull Export node,
             @NotNull Node declaration) {
         return new Export((FunctionDeclarationClassDeclarationVariableDeclaration) declaration);
@@ -309,13 +309,13 @@ public class CloneReducer implements Reducer<Node> {
 
     @NotNull
     @Override
-    public ExportAllFrom reduceExportAllFrom(@NotNull ExportAllFrom node) {
+    public ImportDeclarationExportDeclarationStatement reduceExportAllFrom(@NotNull ExportAllFrom node) {
         return new ExportAllFrom(node.moduleSpecifier);
     }
 
     @NotNull
     @Override
-    public ExportDefault reduceExportDefault(
+    public ImportDeclarationExportDeclarationStatement reduceExportDefault(
             @NotNull ExportDefault node,
             @NotNull Node body) {
         return new ExportDefault((FunctionDeclarationClassDeclarationExpression) body);
@@ -323,7 +323,7 @@ public class CloneReducer implements Reducer<Node> {
 
     @NotNull
     @Override
-    public ExportFrom reduceExportFrom(
+    public ImportDeclarationExportDeclarationStatement reduceExportFrom(
             @NotNull ExportFrom node,
             @NotNull ImmutableList<Node> namedExports) {
         return new ExportFrom(namedExports.map(x -> (ExportFromSpecifier) x), node.moduleSpecifier);
@@ -345,7 +345,7 @@ public class CloneReducer implements Reducer<Node> {
 
     @NotNull
     @Override
-    public ExportLocals reduceExportLocals(
+    public ImportDeclarationExportDeclarationStatement reduceExportLocals(
             @NotNull ExportLocals node,
             @NotNull ImmutableList<Node> namedExports) {
         return new ExportLocals(namedExports.map(x -> (ExportLocalSpecifier) x));
@@ -353,7 +353,7 @@ public class CloneReducer implements Reducer<Node> {
 
     @NotNull
     @Override
-    public ExpressionStatement reduceExpressionStatement(
+    public Statement reduceExpressionStatement(
             @NotNull ExpressionStatement node,
             @NotNull Node expression) {
         return new ExpressionStatement((Expression) expression);
@@ -361,7 +361,7 @@ public class CloneReducer implements Reducer<Node> {
 
     @NotNull
     @Override
-    public ForInStatement reduceForInStatement(
+    public Statement reduceForInStatement(
             @NotNull ForInStatement node,
             @NotNull Node left,
             @NotNull Node right,
@@ -371,7 +371,7 @@ public class CloneReducer implements Reducer<Node> {
 
     @NotNull
     @Override
-    public ForOfStatement reduceForOfStatement(
+    public Statement reduceForOfStatement(
             @NotNull ForOfStatement node,
             @NotNull Node left,
             @NotNull Node right,
@@ -381,7 +381,7 @@ public class CloneReducer implements Reducer<Node> {
 
     @NotNull
     @Override
-    public ForStatement reduceForStatement(
+    public Statement reduceForStatement(
             @NotNull ForStatement node,
             @NotNull Maybe<Node> init,
             @NotNull Maybe<Node> test,
@@ -430,7 +430,7 @@ public class CloneReducer implements Reducer<Node> {
 
     @NotNull
     @Override
-    public Getter reduceGetter(
+    public MethodDefinition reduceGetter(
             @NotNull Getter node,
             @NotNull Node name,
             @NotNull Node body) {
@@ -445,7 +445,7 @@ public class CloneReducer implements Reducer<Node> {
 
     @NotNull
     @Override
-    public IfStatement reduceIfStatement(
+    public Statement reduceIfStatement(
             @NotNull IfStatement node,
             @NotNull Node test,
             @NotNull Node consequent,
@@ -455,7 +455,7 @@ public class CloneReducer implements Reducer<Node> {
 
     @NotNull
     @Override
-    public Import reduceImport(
+    public ImportDeclarationExportDeclarationStatement reduceImport(
             @NotNull Import node,
             @NotNull Maybe<Node> defaultBinding,
             @NotNull ImmutableList<Node> namedImports) {
@@ -464,7 +464,7 @@ public class CloneReducer implements Reducer<Node> {
 
     @NotNull
     @Override
-    public ImportNamespace reduceImportNamespace(
+    public ImportDeclarationExportDeclarationStatement reduceImportNamespace(
             @NotNull ImportNamespace node,
             @NotNull Maybe<Node> defaultBinding,
             @NotNull Node namespaceBinding) {
@@ -481,7 +481,7 @@ public class CloneReducer implements Reducer<Node> {
 
     @NotNull
     @Override
-    public LabeledStatement reduceLabeledStatement(
+    public Statement reduceLabeledStatement(
             @NotNull LabeledStatement node,
             @NotNull Node body) {
         return new LabeledStatement(node.label, (Statement) body);
@@ -489,43 +489,43 @@ public class CloneReducer implements Reducer<Node> {
 
     @NotNull
     @Override
-    public LiteralBooleanExpression reduceLiteralBooleanExpression(@NotNull LiteralBooleanExpression node) {
+    public Expression reduceLiteralBooleanExpression(@NotNull LiteralBooleanExpression node) {
         return new LiteralBooleanExpression(node.value);
     }
 
     @NotNull
     @Override
-    public LiteralInfinityExpression reduceLiteralInfinityExpression(@NotNull LiteralInfinityExpression node) {
+    public Expression reduceLiteralInfinityExpression(@NotNull LiteralInfinityExpression node) {
         return new LiteralInfinityExpression();
     }
 
     @NotNull
     @Override
-    public LiteralNullExpression reduceLiteralNullExpression(@NotNull LiteralNullExpression node) {
+    public Expression reduceLiteralNullExpression(@NotNull LiteralNullExpression node) {
         return new LiteralNullExpression();
     }
 
     @NotNull
     @Override
-    public LiteralNumericExpression reduceLiteralNumericExpression(@NotNull LiteralNumericExpression node) {
+    public Expression reduceLiteralNumericExpression(@NotNull LiteralNumericExpression node) {
         return new LiteralNumericExpression(node.value);
     }
 
     @NotNull
     @Override
-    public LiteralRegExpExpression reduceLiteralRegExpExpression(@NotNull LiteralRegExpExpression node) {
+    public Expression reduceLiteralRegExpExpression(@NotNull LiteralRegExpExpression node) {
         return new LiteralRegExpExpression(node.pattern, node.global, node.ignoreCase, node.multiLine, node.sticky, node.unicode);
     }
 
     @NotNull
     @Override
-    public LiteralStringExpression reduceLiteralStringExpression(@NotNull LiteralStringExpression node) {
+    public Expression reduceLiteralStringExpression(@NotNull LiteralStringExpression node) {
         return new LiteralStringExpression(node.value);
     }
 
     @NotNull
     @Override
-    public Method reduceMethod(
+    public MethodDefinition reduceMethod(
             @NotNull Method node,
             @NotNull Node name,
             @NotNull Node params,
@@ -535,7 +535,7 @@ public class CloneReducer implements Reducer<Node> {
 
     @NotNull
     @Override
-    public Module reduceModule(
+    public Program reduceModule(
             @NotNull Module node,
             @NotNull ImmutableList<Node> directives,
             @NotNull ImmutableList<Node> items) {
@@ -544,7 +544,7 @@ public class CloneReducer implements Reducer<Node> {
 
     @NotNull
     @Override
-    public NewExpression reduceNewExpression(
+    public Expression reduceNewExpression(
             @NotNull NewExpression node,
             @NotNull Node callee,
             @NotNull ImmutableList<Node> arguments) {
@@ -553,13 +553,13 @@ public class CloneReducer implements Reducer<Node> {
 
     @NotNull
     @Override
-    public NewTargetExpression reduceNewTargetExpression(@NotNull NewTargetExpression node) {
+    public Expression reduceNewTargetExpression(@NotNull NewTargetExpression node) {
         return new NewTargetExpression();
     }
 
     @NotNull
     @Override
-    public ObjectAssignmentTarget reduceObjectAssignmentTarget(
+    public AssignmentTarget reduceObjectAssignmentTarget(
             @NotNull ObjectAssignmentTarget node,
             @NotNull ImmutableList<Node> properties) {
         return new ObjectAssignmentTarget(properties.map(x -> (AssignmentTargetProperty) x));
@@ -567,7 +567,7 @@ public class CloneReducer implements Reducer<Node> {
 
     @NotNull
     @Override
-    public ObjectBinding reduceObjectBinding(
+    public Binding reduceObjectBinding(
             @NotNull ObjectBinding node,
             @NotNull ImmutableList<Node> properties) {
         return new ObjectBinding(properties.map(x -> (BindingProperty) x));
@@ -575,7 +575,7 @@ public class CloneReducer implements Reducer<Node> {
 
     @NotNull
     @Override
-    public ObjectExpression reduceObjectExpression(
+    public Expression reduceObjectExpression(
             @NotNull ObjectExpression node,
             @NotNull ImmutableList<Node> properties) {
         return new ObjectExpression(properties.map(x -> (ObjectProperty) x));
@@ -592,7 +592,7 @@ public class CloneReducer implements Reducer<Node> {
 
     @NotNull
     @Override
-    public ReturnStatement reduceReturnStatement(
+    public Statement reduceReturnStatement(
             @NotNull ReturnStatement node,
             @NotNull Maybe<Node> expression) {
         return new ReturnStatement(expression.map(x -> (Expression) x));
@@ -600,7 +600,7 @@ public class CloneReducer implements Reducer<Node> {
 
     @NotNull
     @Override
-    public Script reduceScript(
+    public Program reduceScript(
             @NotNull Script node,
             @NotNull ImmutableList<Node> directives,
             @NotNull ImmutableList<Node> statements) {
@@ -609,7 +609,7 @@ public class CloneReducer implements Reducer<Node> {
 
     @NotNull
     @Override
-    public Setter reduceSetter(
+    public MethodDefinition reduceSetter(
             @NotNull Setter node,
             @NotNull Node name,
             @NotNull Node param,
@@ -619,7 +619,7 @@ public class CloneReducer implements Reducer<Node> {
 
     @NotNull
     @Override
-    public ShorthandProperty reduceShorthandProperty(
+    public ObjectProperty reduceShorthandProperty(
             @NotNull ShorthandProperty node,
             @NotNull Node name) {
         return new ShorthandProperty((IdentifierExpression) name);
@@ -627,7 +627,7 @@ public class CloneReducer implements Reducer<Node> {
 
     @NotNull
     @Override
-    public SpreadElement reduceSpreadElement(
+    public SpreadElementExpression reduceSpreadElement(
             @NotNull SpreadElement node,
             @NotNull Node expression) {
         return new SpreadElement((Expression) expression);
@@ -635,7 +635,7 @@ public class CloneReducer implements Reducer<Node> {
 
     @NotNull
     @Override
-    public StaticMemberAssignmentTarget reduceStaticMemberAssignmentTarget(
+    public SimpleAssignmentTarget reduceStaticMemberAssignmentTarget(
             @NotNull StaticMemberAssignmentTarget node,
             @NotNull Node object) {
         return new StaticMemberAssignmentTarget((ExpressionSuper) object, node.property);
@@ -643,7 +643,7 @@ public class CloneReducer implements Reducer<Node> {
 
     @NotNull
     @Override
-    public StaticMemberExpression reduceStaticMemberExpression(
+    public Expression reduceStaticMemberExpression(
             @NotNull StaticMemberExpression node,
             @NotNull Node object) {
         return new StaticMemberExpression((ExpressionSuper) object, node.property);
@@ -651,13 +651,13 @@ public class CloneReducer implements Reducer<Node> {
 
     @NotNull
     @Override
-    public StaticPropertyName reduceStaticPropertyName(@NotNull StaticPropertyName node) {
+    public PropertyName reduceStaticPropertyName(@NotNull StaticPropertyName node) {
         return new StaticPropertyName(node.value);
     }
 
     @NotNull
     @Override
-    public Super reduceSuper(@NotNull Super node) {
+    public ExpressionSuper reduceSuper(@NotNull Super node) {
         return new Super();
     }
 
@@ -680,7 +680,7 @@ public class CloneReducer implements Reducer<Node> {
 
     @NotNull
     @Override
-    public SwitchStatement reduceSwitchStatement(
+    public Statement reduceSwitchStatement(
             @NotNull SwitchStatement node,
             @NotNull Node discriminant,
             @NotNull ImmutableList<Node> cases) {
@@ -689,7 +689,7 @@ public class CloneReducer implements Reducer<Node> {
 
     @NotNull
     @Override
-    public SwitchStatementWithDefault reduceSwitchStatementWithDefault(
+    public Statement reduceSwitchStatementWithDefault(
             @NotNull SwitchStatementWithDefault node,
             @NotNull Node discriminant,
             @NotNull ImmutableList<Node> preDefaultCases,
@@ -700,13 +700,13 @@ public class CloneReducer implements Reducer<Node> {
 
     @NotNull
     @Override
-    public TemplateElement reduceTemplateElement(@NotNull TemplateElement node) {
+    public ExpressionTemplateElement reduceTemplateElement(@NotNull TemplateElement node) {
         return new TemplateElement(node.rawValue);
     }
 
     @NotNull
     @Override
-    public TemplateExpression reduceTemplateExpression(
+    public Expression reduceTemplateExpression(
             @NotNull TemplateExpression node,
             @NotNull Maybe<Node> tag,
             @NotNull ImmutableList<Node> elements) {
@@ -715,13 +715,13 @@ public class CloneReducer implements Reducer<Node> {
 
     @NotNull
     @Override
-    public ThisExpression reduceThisExpression(@NotNull ThisExpression node) {
+    public Expression reduceThisExpression(@NotNull ThisExpression node) {
         return new ThisExpression();
     }
 
     @NotNull
     @Override
-    public ThrowStatement reduceThrowStatement(
+    public Statement reduceThrowStatement(
             @NotNull ThrowStatement node,
             @NotNull Node expression) {
         return new ThrowStatement((Expression) expression);
@@ -729,7 +729,7 @@ public class CloneReducer implements Reducer<Node> {
 
     @NotNull
     @Override
-    public TryCatchStatement reduceTryCatchStatement(
+    public Statement reduceTryCatchStatement(
             @NotNull TryCatchStatement node,
             @NotNull Node body,
             @NotNull Node catchClause) {
@@ -738,7 +738,7 @@ public class CloneReducer implements Reducer<Node> {
 
     @NotNull
     @Override
-    public TryFinallyStatement reduceTryFinallyStatement(
+    public Statement reduceTryFinallyStatement(
             @NotNull TryFinallyStatement node,
             @NotNull Node body,
             @NotNull Maybe<Node> catchClause,
@@ -748,7 +748,7 @@ public class CloneReducer implements Reducer<Node> {
 
     @NotNull
     @Override
-    public UnaryExpression reduceUnaryExpression(
+    public Expression reduceUnaryExpression(
             @NotNull UnaryExpression node,
             @NotNull Node operand) {
         return new UnaryExpression(node.operator, (Expression) operand);
@@ -756,7 +756,7 @@ public class CloneReducer implements Reducer<Node> {
 
     @NotNull
     @Override
-    public UpdateExpression reduceUpdateExpression(
+    public Expression reduceUpdateExpression(
             @NotNull UpdateExpression node,
             @NotNull Node operand) {
         return new UpdateExpression(node.isPrefix, node.operator, (SimpleAssignmentTarget) operand);
@@ -772,7 +772,7 @@ public class CloneReducer implements Reducer<Node> {
 
     @NotNull
     @Override
-    public VariableDeclarationStatement reduceVariableDeclarationStatement(
+    public Statement reduceVariableDeclarationStatement(
             @NotNull VariableDeclarationStatement node,
             @NotNull Node declaration) {
         return new VariableDeclarationStatement((VariableDeclaration) declaration);
@@ -789,7 +789,7 @@ public class CloneReducer implements Reducer<Node> {
 
     @NotNull
     @Override
-    public WhileStatement reduceWhileStatement(
+    public Statement reduceWhileStatement(
             @NotNull WhileStatement node,
             @NotNull Node test,
             @NotNull Node body) {
@@ -798,7 +798,7 @@ public class CloneReducer implements Reducer<Node> {
 
     @NotNull
     @Override
-    public WithStatement reduceWithStatement(
+    public Statement reduceWithStatement(
             @NotNull WithStatement node,
             @NotNull Node object,
             @NotNull Node body) {
@@ -807,7 +807,7 @@ public class CloneReducer implements Reducer<Node> {
 
     @NotNull
     @Override
-    public YieldExpression reduceYieldExpression(
+    public Expression reduceYieldExpression(
             @NotNull YieldExpression node,
             @NotNull Maybe<Node> expression) {
         return new YieldExpression(expression.map(x -> (Expression) x));
@@ -815,7 +815,7 @@ public class CloneReducer implements Reducer<Node> {
 
     @NotNull
     @Override
-    public YieldGeneratorExpression reduceYieldGeneratorExpression(
+    public Expression reduceYieldGeneratorExpression(
             @NotNull YieldGeneratorExpression node,
             @NotNull Node expression) {
         return new YieldGeneratorExpression((Expression) expression);

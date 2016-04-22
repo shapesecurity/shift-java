@@ -38,6 +38,8 @@ public enum BinaryOperator implements Operator {
     Div("/", Precedence.MULTIPLICATIVE),
     Rem("%", Precedence.MULTIPLICATIVE),
 
+    Exp("**", Precedence.EXPONENTIAL),
+
     LessThan("<", Precedence.RELATIONAL),
     LessThanEqual("<=", Precedence.RELATIONAL),
     GreaterThan(">", Precedence.RELATIONAL),

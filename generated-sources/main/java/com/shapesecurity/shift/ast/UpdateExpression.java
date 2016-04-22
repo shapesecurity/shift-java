@@ -21,6 +21,7 @@ package com.shapesecurity.shift.ast;
 import org.jetbrains.annotations.NotNull;
 import com.shapesecurity.functional.data.HashCodeBuilder;
 import com.shapesecurity.shift.ast.operators.UpdateOperator;
+import com.shapesecurity.shift.ast.operators.Precedence;
 
 public class UpdateExpression implements Expression {
     @NotNull
@@ -53,6 +54,12 @@ public class UpdateExpression implements Expression {
         code = HashCodeBuilder.put(code, this.operator);
         code = HashCodeBuilder.put(code, this.operand);
         return code;
+    }
+
+    @Override
+    @NotNull
+    public Precedence getPrecedence() {
+        return this.isPrefix ? Precedence.PREFIX : Precedence.POSTFIX;
     }
 
 }

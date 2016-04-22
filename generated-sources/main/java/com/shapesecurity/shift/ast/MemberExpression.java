@@ -20,6 +20,7 @@ package com.shapesecurity.shift.ast;
 
 import org.jetbrains.annotations.NotNull;
 import com.shapesecurity.functional.data.HashCodeBuilder;
+import com.shapesecurity.shift.ast.operators.Precedence;
 
 public abstract class MemberExpression implements Expression {
     @NotNull
@@ -42,6 +43,19 @@ public abstract class MemberExpression implements Expression {
         int code = HashCodeBuilder.put(0, "MemberExpression");
         code = HashCodeBuilder.put(code, this.object);
         return code;
+    }
+
+    @Override
+    @NotNull
+    public Precedence getPrecedence() {
+        if (this.object instanceof Super) {
+          return Precedence.MEMBER;
+        }
+        Precedence p = ((Expression) this.object).getPrecedence();
+        if (p == Precedence.CALL) {
+            return Precedence.CALL;
+        }
+        return Precedence.MEMBER;
     }
 
 }

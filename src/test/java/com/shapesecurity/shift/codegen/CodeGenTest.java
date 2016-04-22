@@ -142,6 +142,7 @@ public class CodeGenTest {
         test("a+=b");
         test("a*=b");
         test("a%=b");
+        test("a**=b");
         test("a<<=b");
         test("a>>=b");
         test("a>>>=b");
@@ -221,6 +222,13 @@ public class CodeGenTest {
         test("a^b");
         test("a^b&b");
         test("(a^b)&b");
+    }
+
+    @Test
+    public void testExponential() throws JsError {
+        test("a**b");
+        test("a%b**c");
+        test("(a^b)**c");
     }
 
     @Test
@@ -423,7 +431,7 @@ public class CodeGenTest {
                 statement(
                         new IfStatement(
                                 IDENT,
-                                new ForInStatement(new BindingIdentifier("a"), IDENT, MISSING_ELSE),
+                                new ForInStatement(new AssignmentTargetIdentifier("a"), IDENT, MISSING_ELSE),
                                 Maybe.<Statement>just(EMPTY))));
     }
 
@@ -546,9 +554,9 @@ public class CodeGenTest {
     public void testLiteralRegExpExpression() throws JsError {
         test("/a/");
         test("/a/i");
-        test("/a/ig");
-        test("/a\\s/ig");
-        test("/a\\r/ig");
+        test("/a/gi");
+        test("/a\\s/gi");
+        test("/a\\r/gi");
         test("/a\\r/ instanceof 3");
         test("/a\\r/g instanceof 3");
     }
@@ -698,9 +706,9 @@ public class CodeGenTest {
         test(";'\"'");
         test("/a/");
         test("/a/i");
-        test("/a/ig");
-        test("/a\\s/ig");
-        test("/a\\r/ig");
+        test("/a/gi");
+        test("/a\\s/gi");
+        test("/a\\r/gi");
         test("/a\\r/ instanceof 3");
         test("/a\\r/g instanceof 3");
         test("3/ /a/g");

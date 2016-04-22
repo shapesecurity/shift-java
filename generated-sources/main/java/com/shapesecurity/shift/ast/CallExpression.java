@@ -21,6 +21,7 @@ package com.shapesecurity.shift.ast;
 import org.jetbrains.annotations.NotNull;
 import com.shapesecurity.functional.data.HashCodeBuilder;
 import com.shapesecurity.functional.data.ImmutableList;
+import com.shapesecurity.shift.ast.operators.Precedence;
 
 public class CallExpression implements Expression {
     @NotNull
@@ -48,6 +49,12 @@ public class CallExpression implements Expression {
         code = HashCodeBuilder.put(code, this.callee);
         code = HashCodeBuilder.put(code, this.arguments);
         return code;
+    }
+
+    @Override
+    @NotNull
+    public Precedence getPrecedence() {
+        return Precedence.CALL;
     }
 
 }

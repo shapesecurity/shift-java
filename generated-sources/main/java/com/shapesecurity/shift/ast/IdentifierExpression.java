@@ -20,6 +20,7 @@ package com.shapesecurity.shift.ast;
 
 import org.jetbrains.annotations.NotNull;
 import com.shapesecurity.functional.data.HashCodeBuilder;
+import com.shapesecurity.shift.ast.operators.Precedence;
 
 public class IdentifierExpression implements Expression {
     @NotNull
@@ -42,6 +43,12 @@ public class IdentifierExpression implements Expression {
         int code = HashCodeBuilder.put(0, "IdentifierExpression");
         code = HashCodeBuilder.put(code, this.name);
         return code;
+    }
+
+    @Override
+    @NotNull
+    public Precedence getPrecedence() {
+        return Precedence.PRIMARY;
     }
 
 }

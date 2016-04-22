@@ -22,6 +22,38 @@ public class BinaryExpressionTest extends ParserTestCase {
         testScript("x | y", new BinaryExpression(new IdentifierExpression("x"), BinaryOperator.BitwiseOr,
                 new IdentifierExpression("y")));
 
+        testScript("x ** y", new BinaryExpression(new IdentifierExpression("x"), BinaryOperator.Exp,
+                new IdentifierExpression("y")));
+
+        testScript("x ** y ** z", new BinaryExpression(new IdentifierExpression("x"), BinaryOperator.Exp, new BinaryExpression(
+                new IdentifierExpression("y"), BinaryOperator.Exp, new IdentifierExpression("z"))));
+
+        testScript("a * b * c ** d ** e * f * g", new BinaryExpression(
+                new BinaryExpression(
+                    new BinaryExpression(
+                            new BinaryExpression(
+                                    new IdentifierExpression("a"),
+                                    BinaryOperator.Mul,
+                                    new IdentifierExpression("b")
+                            ),
+                            BinaryOperator.Mul,
+                            new BinaryExpression(
+                                    new IdentifierExpression("c"),
+                                    BinaryOperator.Exp,
+                                    new BinaryExpression(
+                                            new IdentifierExpression("d"),
+                                            BinaryOperator.Exp,
+                                            new IdentifierExpression("e")
+                                    )
+                            )
+                    ),
+                    BinaryOperator.Mul,
+                    new IdentifierExpression("f")
+                ),
+                BinaryOperator.Mul,
+                new IdentifierExpression("g")
+        ));
+
         testScript("x + y + z", new BinaryExpression(new BinaryExpression(
                 new IdentifierExpression("x"), BinaryOperator.Plus, new IdentifierExpression("y")), BinaryOperator.Plus, new IdentifierExpression("z")));
 

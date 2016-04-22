@@ -22,6 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import com.shapesecurity.functional.data.HashCodeBuilder;
 import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.functional.data.Maybe;
+import com.shapesecurity.shift.ast.operators.Precedence;
 
 public class ClassExpression extends Class implements Expression {
     @NotNull
@@ -47,6 +48,12 @@ public class ClassExpression extends Class implements Expression {
         code = HashCodeBuilder.put(code, this._super);
         code = HashCodeBuilder.put(code, this.elements);
         return code;
+    }
+
+    @Override
+    @NotNull
+    public Precedence getPrecedence() {
+        return Precedence.PRIMARY;
     }
 
 }

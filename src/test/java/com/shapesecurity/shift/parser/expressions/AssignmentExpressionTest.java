@@ -26,6 +26,9 @@ public class AssignmentExpressionTest extends ParserTestCase {
         testScript("x *= 0", new CompoundAssignmentExpression(
                 new AssignmentTargetIdentifier("x"), CompoundAssignmentOperator.AssignMul, new LiteralNumericExpression(0.0)));
 
+        testScript("x **= 0", new CompoundAssignmentExpression(
+                new AssignmentTargetIdentifier("x"), CompoundAssignmentOperator.AssignExp, new LiteralNumericExpression(0.0)));
+
         testScript("x.x *= 0", new CompoundAssignmentExpression(
                 new StaticMemberAssignmentTarget(new IdentifierExpression("x"), "x"), CompoundAssignmentOperator.AssignMul, new LiteralNumericExpression(0.0)));
 
