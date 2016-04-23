@@ -154,6 +154,16 @@ public class Validator extends MonoidalReducer<ValidationContext> {
 
     @NotNull
     @Override
+    public ValidationContext reduceAssignmentTargetIdentifier(@NotNull AssignmentTargetIdentifier node) {
+        ValidationContext s = super.reduceAssignmentTargetIdentifier(node);
+        if (!checkIsValidIdentifierName(node.name)) {
+            s.addError(new ValidationError(node, ValidationErrorMessages.VALID_ASSIGNMENT_TARGET_IDENTIFIER_NAME));
+        }
+        return s;
+    }
+
+    @NotNull
+    @Override
     public ValidationContext reduceBindingIdentifier(@NotNull BindingIdentifier node) {
         ValidationContext s = super.reduceBindingIdentifier(node);
         if (!checkIsValidIdentifierName(node.name)) {
@@ -172,16 +182,6 @@ public class Validator extends MonoidalReducer<ValidationContext> {
         ValidationContext s = super.reduceBreakStatement(node);
         if (node.label.isJust() && !checkIsValidIdentifierName(node.label.just())) {
             s.addError(new ValidationError(node, ValidationErrorMessages.VALID_BREAK_STATEMENT_LABEL));
-        }
-        return s;
-    }
-
-    @NotNull
-    @Override
-    public ValidationContext reduceCatchClause(@NotNull CatchClause node, @NotNull ValidationContext binding, @NotNull ValidationContext body) {
-        ValidationContext s = super.reduceCatchClause(node, binding, body);
-        if (node.binding instanceof MemberExpression) {
-            s.addError(new ValidationError(node, ValidationErrorMessages.CATCH_CLAUSE_BINDING_NOT_MEMBER_EXPRESSION));
         }
         return s;
     }
@@ -218,12 +218,22 @@ public class Validator extends MonoidalReducer<ValidationContext> {
 
     @NotNull
     @Override
-    public ValidationContext reduceExportSpecifier(@NotNull ExportSpecifier node) {
-        ValidationContext s = super.reduceExportSpecifier(node);
-        if (node.name.isJust() && !checkIsValidIdentifierName(node.name.just())) {
+    public ValidationContext reduceExportLocalSpecifier(@NotNull ExportLocalSpecifier node, @NotNull ValidationContext name) {
+        ValidationContext s = super.reduceExportLocalSpecifier(node, name);
+        if (node.exportedName.isJust() && !checkIsValidIdentifierName(node.exportedName.just())) {
+            s.addError(new ValidationError(node, ValidationErrorMessages.VALID_EXPORTED_NAME));
+        }
+        return s;
+    }
+
+    @NotNull
+    @Override
+    public ValidationContext reduceExportFromSpecifier(@NotNull ExportFromSpecifier node) {
+        ValidationContext s = super.reduceExportFromSpecifier(node);
+        if (!checkIsValidIdentifierName(node.name)) {
             s.addError(new ValidationError(node, ValidationErrorMessages.VALID_EXPORT_SPECIFIER_NAME));
         }
-        if (!checkIsValidIdentifierName(node.exportedName)) {
+        if (node.exportedName.isJust() && !checkIsValidIdentifierName(node.exportedName.just())) {
             s.addError(new ValidationError(node, ValidationErrorMessages.VALID_EXPORTED_NAME));
         }
         return s;
@@ -258,24 +268,6 @@ public class Validator extends MonoidalReducer<ValidationContext> {
                 s.addError(new ValidationError(node, ValidationErrorMessages.NO_INIT_IN_VARIABLE_DECLARATOR_IN_FOR_OF));
             }
         }
-        return s;
-    }
-
-    @NotNull
-    @Override
-    public ValidationContext reduceFormalParameters(@NotNull FormalParameters node, @NotNull ImmutableList<ValidationContext> items, @NotNull Maybe<ValidationContext> rest) {
-        ValidationContext s = super.reduceFormalParameters(node, items, rest);
-        node.items.foreach(x -> {
-            if (x instanceof Binding) {
-                if (x instanceof MemberExpression) {
-                    s.addError(new ValidationError(node, ValidationErrorMessages.FORMAL_PARAMETER_ITEMS_NOT_MEMBER_EXPRESSION));
-                }
-            } else if (x instanceof BindingWithDefault) {
-                if (((BindingWithDefault) x).binding instanceof MemberExpression) {
-                    s.addError(new ValidationError(node, ValidationErrorMessages.FORMAL_PARAMETER_ITEMS_BINDING_NOT_MEMBER_EXPRESSION));
-                }
-            }
-        });
         return s;
     }
 
@@ -354,13 +346,13 @@ public class Validator extends MonoidalReducer<ValidationContext> {
     @Override
     public ValidationContext reduceLiteralNumericExpression(@NotNull LiteralNumericExpression node) {
         ValidationContext s = super.reduceLiteralNumericExpression(node);
-        if (node.value.isNaN()) {
+        if (Double.isNaN(node.value)) {
             s.addError(new ValidationError(node, ValidationErrorMessages.LITERAL_NUMERIC_VALUE_NOT_NAN));
         }
         if (node.value < 0) {
             s.addError(new ValidationError(node, ValidationErrorMessages.LITERAL_NUMERIC_VALUE_NOT_NEGATIVE));
         }
-        if (node.value.isInfinite()) {
+        if (Double.isInfinite(node.value)) {
             s.addError(new ValidationError(node, ValidationErrorMessages.LITERAL_NUMERIC_VALUE_NOT_INFINITE));
         }
         return s;
@@ -373,20 +365,6 @@ public class Validator extends MonoidalReducer<ValidationContext> {
         if (!checkIsLiteralRegExpPattern(node.pattern)) {
             s.addError(new ValidationError(node, ValidationErrorMessages.VALID_REG_EX_PATTERN));
         }
-        if (node.flags.length() > 0) {
-            boolean hasValidFlags = node.flags.chars().allMatch(x -> x == 'g' || x == 'i' || x == 'm' || x == 'u' || x == 'y');
-            if (!hasValidFlags) {
-                s.addError(new ValidationError(node, ValidationErrorMessages.VALID_REG_EX_FLAG));
-            }
-        }
-        Map<Integer, Boolean> charMap = new HashMap<>();
-        node.flags.chars().forEach(x -> {
-            if (charMap.containsKey(x)) {
-                s.addError(new ValidationError(node, ValidationErrorMessages.NO_DUPLICATE_REG_EX_FLAG));
-            } else {
-                charMap.put(x, true);
-            }
-        });
         return s;
     }
 
@@ -434,31 +412,6 @@ public class Validator extends MonoidalReducer<ValidationContext> {
         return s;
     }
 
-    @NotNull
-    @Override
-    public ValidationContext reduceSetter(@NotNull Setter node, @NotNull ValidationContext name, @NotNull ValidationContext parameter, @NotNull ValidationContext body) {
-        ValidationContext s = super.reduceSetter(node, name, parameter, body);
-        if (node.param instanceof Binding) {
-            if (node.param instanceof MemberExpression) {
-                s.addError(new ValidationError(node, ValidationErrorMessages.SETTER_PARAM_NOT_MEMBER_EXPRESSION));
-            }
-        } else if (node.param instanceof BindingWithDefault) {
-            if (((BindingWithDefault) node.param).binding instanceof MemberExpression) {
-                s.addError(new ValidationError(node, ValidationErrorMessages.SETTER_PARAM_BINDING_NOT_MEMBER_EXPRESSION));
-            }
-        }
-        return s;
-    }
-
-    @NotNull
-    @Override
-    public ValidationContext reduceShorthandProperty(@NotNull ShorthandProperty node) {
-        ValidationContext s = super.reduceShorthandProperty(node);
-        if (!checkIsValidIdentifierName(node.name)) {
-            s.addError(new ValidationError(node, ValidationErrorMessages.VALID_SHORTHAND_PROPERTY_NAME));
-        }
-        return s;
-    }
 
     @NotNull
     @Override
@@ -521,20 +474,10 @@ public class Validator extends MonoidalReducer<ValidationContext> {
         ValidationContext s = super.reduceVariableDeclarationStatement(node, declaration);
         if (node.declaration.kind.equals(VariableDeclarationKind.Const)) {
             node.declaration.declarators.foreach(x -> {
-                if (x.getInit().isNothing()) {
+                if (x.init.isNothing()) {
                     s.addError(new ValidationError(node, ValidationErrorMessages.CONST_VARIABLE_DECLARATION_MUST_HAVE_INIT));
                 }
             });
-        }
-        return s;
-    }
-
-    @NotNull
-    @Override
-    public ValidationContext reduceVariableDeclarator(@NotNull VariableDeclarator node, @NotNull ValidationContext binding, @NotNull Maybe<ValidationContext> init) {
-        ValidationContext s = super.reduceVariableDeclarator(node, binding, init);
-        if (node.binding instanceof MemberExpression) {
-            s.addError(new ValidationError(node, ValidationErrorMessages.VARIABLE_DECLARATION_BINDING_NOT_MEMBER_EXPRESSION));
         }
         return s;
     }
