@@ -4,19 +4,19 @@ import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.functional.data.Maybe;
 import com.shapesecurity.shift.ast.Node;
 
-public class Getter {
+public class BranchGetter {
     private ImmutableList<Branch> directions;
 
-    public Getter() {
+    public BranchGetter() {
         this.directions = ImmutableList.nil();
     }
 
-    private Getter(ImmutableList<Branch> directions) {
+    private BranchGetter(ImmutableList<Branch> directions) {
         this.directions = directions;
     }
 
-    public Getter d(Branch branch) {
-        return new Getter(this.directions.cons(branch));
+    public BranchGetter d(Branch branch) {
+        return new BranchGetter(this.directions.cons(branch));
     }
 
     public Maybe<? extends Node> apply(Node node) {

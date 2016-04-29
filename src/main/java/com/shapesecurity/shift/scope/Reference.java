@@ -17,32 +17,38 @@
 package com.shapesecurity.shift.scope;
 
 import com.shapesecurity.functional.data.Either;
+import com.shapesecurity.shift.ast.AssignmentTargetIdentifier;
 import com.shapesecurity.shift.ast.BindingIdentifier;
 import com.shapesecurity.shift.ast.IdentifierExpression;
 
+import com.shapesecurity.shift.ast.Node;
 import org.jetbrains.annotations.NotNull;
 
 public final class Reference {
     @NotNull
-    public final Either<BindingIdentifier, IdentifierExpression> node; // TODO should be EitherNode?
+    public final Node node; // one of AssignmentTargetIdentifier, BindingIdentifier, IdentifierExpression
     @NotNull
     public final Accessibility accessibility;
 
-    public Reference(@NotNull Either<BindingIdentifier, IdentifierExpression> node, @NotNull Accessibility accessibility) {
+    private Reference(@NotNull Node node, @NotNull Accessibility accessibility) {
         this.node = node;
         this.accessibility = accessibility;
     }
 
-    public Reference(@NotNull BindingIdentifier node, @NotNull Accessibility accessibility) {
-        this.node = Either.left(node);
-        this.accessibility = accessibility;
+    public Reference(@NotNull BindingIdentifier node) {
+        this.node = node;
+        this.accessibility = Accessibility.Write;
     }
 
     public Reference(@NotNull IdentifierExpression node) {
-        this.node = Either.right(node);
+        this.node = node;
         this.accessibility = Accessibility.Read;
     }
 
+    public Reference(@NotNull AssignmentTargetIdentifier node, @NotNull Accessibility accessibility) {
+        this.node = node;
+        this.accessibility = accessibility;
+    }
 
     @NotNull
     public final Reference withReadability() {

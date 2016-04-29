@@ -89,6 +89,23 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
 
     @NotNull
     @Override
+    public State reduceAssignmentTargetIdentifier(@NotNull AssignmentTargetIdentifier node) {
+        return new State(
+                HashTable.empty(),
+                HashTable.empty(),
+                HashTable.empty(),
+                HashTable.empty(),
+                ImmutableList.nil(),
+                false,
+                ImmutableList.nil(),
+                ImmutableList.list(node),
+                HashTable.empty(),
+                false
+        );
+    }
+
+    @NotNull
+    @Override
     public State reduceBindingIdentifier(@NotNull BindingIdentifier node) {
         if (node.name.equals("*default*")) {
             return new State();
@@ -101,6 +118,7 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
                 ImmutableList.nil(),
                 false,
                 ImmutableList.list(node),
+                ImmutableList.nil(),
                 HashTable.empty(),
                 false
         );
@@ -236,6 +254,7 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
                 ImmutableList.nil(),
                 false,
                 ImmutableList.nil(),
+                ImmutableList.nil(),
                 HashTable.empty(),
                 false
         );
@@ -350,6 +369,8 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
         @NotNull
         public final ImmutableList<BindingIdentifier> bindingsForParent; // either references bubbling up to the AssignmentExpression, ForOfStatement, or ForInStatement which writes to them or declarations bubbling up to the VariableDeclaration, FunctionDeclaration, ClassDeclaration, FormalParameters, Setter, Method, or CatchClause which declares them
         @NotNull
+        public final ImmutableList<AssignmentTargetIdentifier> atsForParent; // references bubbling up to the AssignmentExpression, ForOfStatement, or ForInStatement which writes to them
+        @NotNull
         public final HashTable<String, ImmutableList<Declaration>> potentiallyVarScopedFunctionDeclarations; // for annex B.3.3, which says (essentially) that function declarations are *also* var-scoped if doing so is not an early error (although not at the top level; only within functions).
 
         /*
@@ -363,6 +384,7 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
                 @NotNull ImmutableList<Scope> children,
                 boolean dynamic,
                 @NotNull ImmutableList<BindingIdentifier> bindingsForParent,
+                @NotNull ImmutableList<AssignmentTargetIdentifier> atsForParent,
                 @NotNull HashTable<String, ImmutableList<Declaration>> potentiallyVarScopedFunctionDeclarations,
                 boolean hasParameterExpressions
         ) {
@@ -373,6 +395,7 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
             this.children = children;
             this.dynamic = dynamic;
             this.bindingsForParent = bindingsForParent;
+            this.atsForParent = atsForParent;
             this.potentiallyVarScopedFunctionDeclarations = potentiallyVarScopedFunctionDeclarations;
             this.hasParameterExpressions = hasParameterExpressions;
         }
@@ -388,6 +411,7 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
             this.children = ImmutableList.nil();
             this.dynamic = false;
             this.bindingsForParent = ImmutableList.nil();
+            this.atsForParent = ImmutableList.nil();
             this.potentiallyVarScopedFunctionDeclarations = HashTable.empty();
             this.hasParameterExpressions = false;
         }
@@ -404,6 +428,7 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
             this.children = a.children.append(b.children);
             this.dynamic = a.dynamic || b.dynamic;
             this.bindingsForParent = a.bindingsForParent.append(b.bindingsForParent);
+            this.atsForParent = a.atsForParent.append(b.atsForParent);
             this.potentiallyVarScopedFunctionDeclarations = a.potentiallyVarScopedFunctionDeclarations.merge(b.potentiallyVarScopedFunctionDeclarations, ImmutableList::append);
             this.hasParameterExpressions = a.hasParameterExpressions || b.hasParameterExpressions;
         }
@@ -526,7 +551,7 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
 
             return new State(
                     freeIdentifiers, functionScope, HashTable.empty(), HashTable.empty(),
-                    ImmutableList.list(scope), false, this.bindingsForParent, potentiallyVarScopedFunctionDeclarations, this.hasParameterExpressions);
+                    ImmutableList.list(scope), false, this.bindingsForParent, this.atsForParent, potentiallyVarScopedFunctionDeclarations, this.hasParameterExpressions);
         }
 
         /*
@@ -556,6 +581,7 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
                     this.children,
                     this.dynamic,
                     keepBindingsForParent ? this.bindingsForParent : ImmutableList.nil(),
+                    keepBindingsForParent ? this.atsForParent : ImmutableList.nil(),
                     this.potentiallyVarScopedFunctionDeclarations,
                     this.hasParameterExpressions
             );
@@ -576,6 +602,7 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
                     this.children,
                     this.dynamic,
                     ImmutableList.nil(),
+                    ImmutableList.nil(),
                     this.potentiallyVarScopedFunctionDeclarations,
                     this.hasParameterExpressions
             );
@@ -593,10 +620,17 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
         private State addReferences(@NotNull Accessibility accessibility, boolean keepBindingsForParent) {
             HashTable<String, ImmutableList<Reference>> free = this.freeIdentifiers;
             for (BindingIdentifier binding : this.bindingsForParent) {
-                Reference ref = new Reference(binding, accessibility);
+                assert accessibility.isWrite(); // todo confirm and remove
+                Reference ref = new Reference(binding);
                 ImmutableList<Reference> refs = free.get(binding.name).orJust(ImmutableList.nil());
                 refs = refs.cons(ref);
                 free = free.put(binding.name, refs);
+            }
+            for (AssignmentTargetIdentifier ati : this.atsForParent) {
+                Reference ref = new Reference(ati, accessibility);
+                ImmutableList<Reference> refs = free.get(ati.name).orJust(ImmutableList.nil());
+                refs = refs.cons(ref);
+                free = free.put(ati.name, refs);
             }
             return new State(
                     free,
@@ -606,6 +640,7 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
                     this.children,
                     this.dynamic,
                     keepBindingsForParent ? this.bindingsForParent : ImmutableList.nil(),
+                    keepBindingsForParent ? this.atsForParent : ImmutableList.nil(),
                     this.potentiallyVarScopedFunctionDeclarations,
                     this.hasParameterExpressions
             );
@@ -621,6 +656,7 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
                     this.children,
                     true,
                     this.bindingsForParent,
+                    this.atsForParent,
                     this.potentiallyVarScopedFunctionDeclarations,
                     this.hasParameterExpressions
             );
@@ -635,6 +671,7 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
                     this.functionDeclarations,
                     this.children,
                     this.dynamic,
+                    ImmutableList.nil(),
                     ImmutableList.nil(),
                     this.potentiallyVarScopedFunctionDeclarations,
                     this.hasParameterExpressions
@@ -651,6 +688,7 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
                     this.children,
                     this.dynamic,
                     this.bindingsForParent,
+                    this.atsForParent,
                     this.potentiallyVarScopedFunctionDeclarations,
                     true
             );
@@ -666,6 +704,7 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
                     this.children,
                     this.dynamic,
                     this.bindingsForParent,
+                    this.atsForParent,
                     this.potentiallyVarScopedFunctionDeclarations,
                     false
             );
@@ -686,6 +725,7 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
                     this.children,
                     this.dynamic,
                     this.bindingsForParent,
+                    this.atsForParent,
                     potentiallyVarScopedFunctionDeclarations,
                     this.hasParameterExpressions
             );

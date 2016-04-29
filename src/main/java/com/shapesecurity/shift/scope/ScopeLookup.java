@@ -21,6 +21,8 @@ public class ScopeLookup {
     @NotNull
     private final Map<BindingIdentifier, Variable> bindingIdentifierReferenceCache = new IdentityHashMap<>(); // bi to referenced variable
     @NotNull
+    private final Map<AssignmentTargetIdentifier, Variable> assignmentTargetIdentifierReferenceCache = new IdentityHashMap<>(); // ati to referenced variable
+    @NotNull
     private final Map<IdentifierExpression, Variable> identifierExpressionReferenceCache = new IdentityHashMap<>(); // ie to referenced variable
     @NotNull
     private final Map<Node, Pair<Variable, Maybe<Variable>>> functionDeclarationCache = new IdentityHashMap<>();
@@ -51,16 +53,30 @@ public class ScopeLookup {
             }
         });
         variable.references.foreach(ref -> {
-            ref.node.foreach(
-                    bi -> bindingIdentifierReferenceCache.put(bi, variable),
-                    ie -> identifierExpressionReferenceCache.put(ie, variable)
-            );
+            if (ref.node instanceof AssignmentTargetIdentifier) {
+                assignmentTargetIdentifierReferenceCache.put((AssignmentTargetIdentifier) ref.node, variable);
+            } else if (ref.node instanceof BindingIdentifier) {
+                bindingIdentifierReferenceCache.put((BindingIdentifier) ref.node, variable);
+            } else if (ref.node instanceof IdentifierExpression) {
+                identifierExpressionReferenceCache.put((IdentifierExpression) ref.node, variable);
+            } else {
+                throw new RuntimeException("Not reached");
+            }
         });
     }
 
     @NotNull
     public Maybe<Variable> findVariableDeclaredBy(@NotNull BindingIdentifier bindingIdentifier) { // NB: When used with function declarations, which can declare multiple variables under B.3.3, returns the lexical binding. When used with class declarations, returns the class-local binding.
         return Maybe.fromNullable(bindingIdentifierDeclarationCache.get(bindingIdentifier));
+    }
+
+    @NotNull
+    public Variable findVariableReferencedBy(@NotNull AssignmentTargetIdentifier assignmentTargetIdentifier) {
+        Variable v = assignmentTargetIdentifierReferenceCache.get(assignmentTargetIdentifier);
+        if (v == null) {
+            throw new NoSuchElementException("AssignmentTargetIdentifier not present in AST");
+        }
+        return v;
     }
 
     @NotNull
@@ -72,7 +88,7 @@ public class ScopeLookup {
     public Variable findVariableReferencedBy(@NotNull IdentifierExpression identifierExpression) {
         Variable v = identifierExpressionReferenceCache.get(identifierExpression);
         if (v == null) {
-            throw new NoSuchElementException("Identifier expression not present in AST");
+            throw new NoSuchElementException("IdentifierExpression not present in AST");
         }
         return v;
     }

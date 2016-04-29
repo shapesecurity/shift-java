@@ -59,7 +59,7 @@ public class ScopeSerializer {
             if (comparison != 0) {
                 return comparison;
             }
-            return nodeToID.get(r1.node.either(x->x, x->x)).compareTo(nodeToID.get(r2.node.either(x->x, x->x)));
+            return nodeToID.get(r1.node).compareTo(nodeToID.get(r2.node));
         }
     }
 
@@ -100,7 +100,9 @@ public class ScopeSerializer {
     }
 
     private String serializeNode(Node node) {
-        if (node instanceof IdentifierExpression) {
+        if (node instanceof AssignmentTargetIdentifier) {
+            return node.getClass().getSimpleName() + "(" + ((AssignmentTargetIdentifier) node).name + ")_" + nodeToID.get(node);
+        } else if (node instanceof IdentifierExpression) {
             return node.getClass().getSimpleName() + "(" + ((IdentifierExpression) node).name + ")_" + nodeToID.get(node);
         } else if (node instanceof BindingIdentifier) {
             return node.getClass().getSimpleName() + "(" + ((BindingIdentifier) node).name + ")_" + nodeToID.get(node);
@@ -134,7 +136,7 @@ public class ScopeSerializer {
 
     private String serializeReference(Reference reference) {
         String serialized = "{";
-        serialized += "\"node\": \"" + reference.node.either(this::serializeNode, this::serializeNode) + "\"";
+        serialized += "\"node\": \"" + serializeNode(reference.node) + "\"";
         serialized += ", \"accessibility\": \"" + reference.accessibility + "\"";
         serialized += "}";
         return serialized;

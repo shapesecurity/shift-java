@@ -94,7 +94,7 @@ public class ScopeLookupTest {
                 Maybe<Variable> mv = lookup.findVariableDeclaredBy(bi);
                 TestCase.assertTrue(mv.isNothing() || mv.just().declarations.exists(decl -> decl.node == bi));
                 Maybe<Variable> mv2 = lookup.findVariableReferencedBy(bi);
-                TestCase.assertTrue(mv2.isNothing() || mv2.just().references.exists(ref -> ref.node.isLeft() && ref.node.left().just() == bi));
+                TestCase.assertTrue(mv2.isNothing() || mv2.just().references.exists(ref -> ref.node == bi));
                 if (bi.name.equals("*default*")) {
                     TestCase.assertTrue(mv.isNothing() && mv2.isNothing());
                 } else {
@@ -103,7 +103,7 @@ public class ScopeLookupTest {
             } else if (node instanceof IdentifierExpression) {
                 final IdentifierExpression ie = (IdentifierExpression) node;
                 Variable v = lookup.findVariableReferencedBy(ie);
-                TestCase.assertTrue(v.references.exists(ref -> ref.node.isRight() && ref.node.right().just() == ie));
+                TestCase.assertTrue(v.references.exists(ref -> ref.node == ie));
             } else if (node instanceof FunctionDeclaration) {
                 final FunctionDeclaration func = (FunctionDeclaration) node;
                 if (func.name.name.equals("*default*")) {
@@ -176,12 +176,17 @@ public class ScopeLookupTest {
             }
 
             for (Reference ref : variable.references) {
-                if (ref.node.isLeft()) {
-                    Maybe<Variable> mv = lookup.findVariableReferencedBy(ref.node.left().just());
-                    TestCase.assertTrue(mv.isJust() && variable == mv.just());
+                Maybe<Variable> mv;
+                if (ref.node instanceof AssignmentTargetIdentifier) {
+                    mv = Maybe.just(lookup.findVariableReferencedBy((AssignmentTargetIdentifier) ref.node));
+                } else if (ref.node instanceof BindingIdentifier) {
+                    mv = lookup.findVariableReferencedBy((BindingIdentifier) ref.node);
+                } else if (ref.node instanceof IdentifierExpression) {
+                    mv = Maybe.just(lookup.findVariableReferencedBy((IdentifierExpression) ref.node));
                 } else {
-                    TestCase.assertTrue(variable == lookup.findVariableReferencedBy(ref.node.right().just()));
+                    throw new RuntimeException("Not Reached");
                 }
+                TestCase.assertTrue(mv.isJust() && variable == mv.just());
             }
         }
 

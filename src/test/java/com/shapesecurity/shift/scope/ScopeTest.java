@@ -23,7 +23,7 @@ import com.shapesecurity.functional.data.Maybe;
 import com.shapesecurity.shift.ast.*;
 import com.shapesecurity.shift.parser.JsError;
 import com.shapesecurity.shift.parser.Parser;
-import com.shapesecurity.shift.path.Getter;
+import com.shapesecurity.shift.path.BranchGetter;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -59,10 +59,10 @@ public class ScopeTest extends TestCase {
 
         GlobalScope globalScope = ScopeAnalyzer.analyze(script);
 
-        final BindingIdentifier v1Binding1 = bi(new Getter().d(ScriptStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorBinding_())
+        final BindingIdentifier v1Binding1 = bi(new BranchGetter().d(ScriptStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorBinding_())
                 .apply(script));
 
-        final BindingIdentifier v2Binding1 = bi(new Getter().d(ScriptStatements_(1)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorBinding_())
+        final BindingIdentifier v2Binding1 = bi(new BranchGetter().d(ScriptStatements_(1)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorBinding_())
                 .apply(script));
 
 
@@ -90,10 +90,10 @@ public class ScopeTest extends TestCase {
 
         GlobalScope globalScope = ScopeAnalyzer.analyze(script);
 
-        final BindingIdentifier v1Binding1 = bi(new Getter().d(ScriptStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorBinding_())
+        final BindingIdentifier v1Binding1 = bi(new BranchGetter().d(ScriptStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorBinding_())
                 .apply(script));
 
-        final BindingIdentifier v2Binding1 = bi(new Getter().d(ScriptStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(1)).d(VariableDeclaratorBinding_())
+        final BindingIdentifier v2Binding1 = bi(new BranchGetter().d(ScriptStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(1)).d(VariableDeclaratorBinding_())
                 .apply(script));
 
         { // global scope
@@ -120,14 +120,14 @@ public class ScopeTest extends TestCase {
 
         GlobalScope globalScope = ScopeAnalyzer.analyze(script);
 
-        final BindingIdentifier v1Binding1 = bi(new Getter().d(ScriptStatements_(0)).d(ExpressionStatementExpression_()).d(AssignmentExpressionBinding_())
+        final BindingIdentifier v1Binding1 = bi(new BranchGetter().d(ScriptStatements_(0)).d(ExpressionStatementExpression_()).d(AssignmentExpressionBinding_())
                 .apply(script));
 
-        final IdentifierExpression v1Identifier1 = ie(new Getter().d(ScriptStatements_(1)).d(VariableDeclarationStatementDeclaration_())
+        final IdentifierExpression v1Identifier1 = ie(new BranchGetter().d(ScriptStatements_(1)).d(VariableDeclarationStatementDeclaration_())
                 .d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorInit_()).d(BinaryExpressionLeft_())
                 .apply(script));
 
-        final BindingIdentifier v2Binding1 = bi(new Getter().d(ScriptStatements_(1)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorBinding_())
+        final BindingIdentifier v2Binding1 = bi(new BranchGetter().d(ScriptStatements_(1)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorBinding_())
                 .apply(script));
 
         { // global scope
@@ -156,14 +156,14 @@ public class ScopeTest extends TestCase {
 
         GlobalScope globalScope = ScopeAnalyzer.analyze(script);
 
-        final BindingIdentifier v2Binding1 = bi(new Getter().d(ScriptStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorBinding_())
+        final BindingIdentifier v2Binding1 = bi(new BranchGetter().d(ScriptStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorBinding_())
                 .apply(script));
 
-        final IdentifierExpression v1Identifier1 = ie(new Getter().d(ScriptStatements_(0)).d(VariableDeclarationStatementDeclaration_())
+        final IdentifierExpression v1Identifier1 = ie(new BranchGetter().d(ScriptStatements_(0)).d(VariableDeclarationStatementDeclaration_())
                 .d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorInit_()).d(BinaryExpressionLeft_())
                 .apply(script));
 
-        final BindingIdentifier v1Binding1 = bi(new Getter().d(ScriptStatements_(1)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorBinding_())
+        final BindingIdentifier v1Binding1 = bi(new BranchGetter().d(ScriptStatements_(1)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorBinding_())
                 .apply(script));
 
 
@@ -193,19 +193,19 @@ public class ScopeTest extends TestCase {
 
         GlobalScope globalScope = ScopeAnalyzer.analyze(script);
 
-        final BindingIdentifier v1Binding1 = bi(new Getter().d(ScriptStatements_(0)).d(VariableDeclarationStatementDeclaration_())
+        final BindingIdentifier v1Binding1 = bi(new BranchGetter().d(ScriptStatements_(0)).d(VariableDeclarationStatementDeclaration_())
                 .d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorBinding_())
                 .apply(script));
 
-        final BindingIdentifier v1Binding2 = bi(new Getter().d(ScriptStatements_(1)).d(VariableDeclarationStatementDeclaration_())
+        final BindingIdentifier v1Binding2 = bi(new BranchGetter().d(ScriptStatements_(1)).d(VariableDeclarationStatementDeclaration_())
                 .d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorBinding_())
                 .apply(script));
 
-        final IdentifierExpression v1Identifier1 = ie(new Getter().d(ScriptStatements_(2)).d(VariableDeclarationStatementDeclaration_())
+        final IdentifierExpression v1Identifier1 = ie(new BranchGetter().d(ScriptStatements_(2)).d(VariableDeclarationStatementDeclaration_())
                 .d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorInit_()).d(BinaryExpressionLeft_())
                 .apply(script));
 
-        final BindingIdentifier v2Binding1 = bi(new Getter().d(ScriptStatements_(2)).d(VariableDeclarationStatementDeclaration_())
+        final BindingIdentifier v2Binding1 = bi(new BranchGetter().d(ScriptStatements_(2)).d(VariableDeclarationStatementDeclaration_())
                 .d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorBinding_())
                 .apply(script));
 
@@ -247,66 +247,66 @@ public class ScopeTest extends TestCase {
         Scope f1Scope = topLevelLexicalScope.children.maybeHead().just();
         Scope f2Scope = topLevelLexicalScope.children.maybeHead().just().children.maybeHead().just();
 
-        final BindingIdentifier f1Binding1 = bi(new Getter().d(ScriptStatements_(0)).d(FunctionDeclarationName_())
+        final BindingIdentifier f1Binding1 = bi(new BranchGetter().d(ScriptStatements_(0)).d(FunctionDeclarationName_())
                 .apply(script));
 
-        final IdentifierExpression f1Identifier1 = ie(new Getter().d(ScriptStatements_(1)).d(VariableDeclarationStatementDeclaration_())
+        final IdentifierExpression f1Identifier1 = ie(new BranchGetter().d(ScriptStatements_(1)).d(VariableDeclarationStatementDeclaration_())
                 .d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorInit_()).d(CallExpressionCallee_())
                 .apply(script));
 
-        final BindingIdentifier f2Binding1 = bi(new Getter().d(ScriptStatements_(0)).d(FunctionDeclarationBody_())
+        final BindingIdentifier f2Binding1 = bi(new BranchGetter().d(ScriptStatements_(0)).d(FunctionDeclarationBody_())
                 .d(FunctionBodyStatements_(1)).d(FunctionDeclarationName_())
                 .apply(script));
 
-        final IdentifierExpression f2Identifier1 = ie(new Getter().d(ScriptStatements_(0)).d(FunctionDeclarationBody_())
+        final IdentifierExpression f2Identifier1 = ie(new BranchGetter().d(ScriptStatements_(0)).d(FunctionDeclarationBody_())
                 .d(FunctionBodyStatements_(2)).d(ReturnStatementExpression_())
                 .apply(script));
 
-        final BindingIdentifier p1Binding1 = bi(new Getter().d(ScriptStatements_(0)).d(FunctionDeclarationParams_())
+        final BindingIdentifier p1Binding1 = bi(new BranchGetter().d(ScriptStatements_(0)).d(FunctionDeclarationParams_())
                 .d(FormalParametersItems_(0))
                 .apply(script));
 
-        final BindingIdentifier p1Binding2 = bi(new Getter().d(ScriptStatements_(0)).d(FunctionDeclarationBody_())
+        final BindingIdentifier p1Binding2 = bi(new BranchGetter().d(ScriptStatements_(0)).d(FunctionDeclarationBody_())
                 .d(FunctionBodyStatements_(1)).d(FunctionDeclarationParams_()).d(FormalParametersItems_(0))
                 .apply(script));
 
-        final IdentifierExpression p1Identifier1 = ie(new Getter().d(ScriptStatements_(0)).d(FunctionDeclarationBody_())
+        final IdentifierExpression p1Identifier1 = ie(new BranchGetter().d(ScriptStatements_(0)).d(FunctionDeclarationBody_())
                 .d(FunctionBodyStatements_(1)).d(FunctionDeclarationBody_())
                 .d(FunctionBodyStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0))
                 .d(VariableDeclaratorInit_()).d(BinaryExpressionLeft_()).d(BinaryExpressionLeft_())
                 .apply(script));
 
-        final BindingIdentifier p2Binding1 = bi(new Getter().d(ScriptStatements_(0)).d(FunctionDeclarationParams_())
+        final BindingIdentifier p2Binding1 = bi(new BranchGetter().d(ScriptStatements_(0)).d(FunctionDeclarationParams_())
                 .d(FormalParametersItems_(1))
                 .apply(script));
 
-        final IdentifierExpression p2Identifier1 = ie(new Getter().d(ScriptStatements_(0)).d(FunctionDeclarationBody_())
+        final IdentifierExpression p2Identifier1 = ie(new BranchGetter().d(ScriptStatements_(0)).d(FunctionDeclarationBody_())
                 .d(FunctionBodyStatements_(1)).d(FunctionDeclarationBody_())
                 .d(FunctionBodyStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0))
                 .d(VariableDeclaratorInit_()).d(BinaryExpressionRight_())
                 .apply(script));
 
-        final BindingIdentifier rBinding1 = bi(new Getter().d(ScriptStatements_(1))
+        final BindingIdentifier rBinding1 = bi(new BranchGetter().d(ScriptStatements_(1))
                 .d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorBinding_())
                 .apply(script));
 
-        final BindingIdentifier v1Binding1 = bi(new Getter().d(ScriptStatements_(0)).d(FunctionDeclarationBody_())
+        final BindingIdentifier v1Binding1 = bi(new BranchGetter().d(ScriptStatements_(0)).d(FunctionDeclarationBody_())
                 .d(FunctionBodyStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorBinding_())
                 .apply(script));
 
-        final IdentifierExpression v1Identifier1 = ie(new Getter().d(ScriptStatements_(0)).d(FunctionDeclarationBody_())
+        final IdentifierExpression v1Identifier1 = ie(new BranchGetter().d(ScriptStatements_(0)).d(FunctionDeclarationBody_())
                 .d(FunctionBodyStatements_(1)).d(FunctionDeclarationBody_())
                 .d(FunctionBodyStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0))
                 .d(VariableDeclaratorInit_()).d(BinaryExpressionLeft_()).d(BinaryExpressionRight_())
                 .apply(script));
 
-        final BindingIdentifier v2Binding1 = bi(new Getter().d(ScriptStatements_(0)).d(FunctionDeclarationBody_())
+        final BindingIdentifier v2Binding1 = bi(new BranchGetter().d(ScriptStatements_(0)).d(FunctionDeclarationBody_())
                 .d(FunctionBodyStatements_(1)).d(FunctionDeclarationBody_())
                 .d(FunctionBodyStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0))
                 .d(VariableDeclaratorBinding_())
                 .apply(script));
 
-        final IdentifierExpression v2Identifier1 = ie(new Getter().d(ScriptStatements_(0)).d(FunctionDeclarationBody_())
+        final IdentifierExpression v2Identifier1 = ie(new BranchGetter().d(ScriptStatements_(0)).d(FunctionDeclarationBody_())
                 .d(FunctionBodyStatements_(1)).d(FunctionDeclarationBody_())
                 .d(FunctionBodyStatements_(1)).d(ReturnStatementExpression_())
                 .apply(script));
@@ -381,11 +381,11 @@ public class ScopeTest extends TestCase {
         Scope topLevelLexicalScope = globalScope.children.maybeHead().just();
         Scope fScope = topLevelLexicalScope.children.maybeHead().just();
 
-        final BindingIdentifier fNode1 = bi(new Getter().d(ScriptStatements_(0)).d(FunctionDeclarationName_())
+        final BindingIdentifier fNode1 = bi(new BranchGetter().d(ScriptStatements_(0)).d(FunctionDeclarationName_())
                 .apply(script));
-        final BindingIdentifier fNode2 = bi(new Getter().d(ScriptStatements_(0)).d(FunctionDeclarationBody_()).d(FunctionBodyStatements_(0)).d(ExpressionStatementExpression_()).d(AssignmentExpressionBinding_())
+        final BindingIdentifier fNode2 = bi(new BranchGetter().d(ScriptStatements_(0)).d(FunctionDeclarationBody_()).d(FunctionBodyStatements_(0)).d(ExpressionStatementExpression_()).d(AssignmentExpressionBinding_())
                 .apply(script));
-        final IdentifierExpression fNode3 = ie(new Getter().d(ScriptStatements_(1)).d(ExpressionStatementExpression_()).d(CallExpressionCallee_())
+        final IdentifierExpression fNode3 = ie(new BranchGetter().d(ScriptStatements_(1)).d(ExpressionStatementExpression_()).d(CallExpressionCallee_())
                 .apply(script));
 
         final Either<BindingIdentifier, IdentifierExpression> fNode1E = Either.left(fNode1);
@@ -431,11 +431,11 @@ public class ScopeTest extends TestCase {
         GlobalScope globalScope = ScopeAnalyzer.analyze(script);
         Scope topLevelLexicalScope = globalScope.children.maybeHead().just();
         Scope fScope = topLevelLexicalScope.children.maybeHead().just();
-        final BindingIdentifier fNode1 = bi(new Getter().d(ScriptStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorBinding_())
+        final BindingIdentifier fNode1 = bi(new BranchGetter().d(ScriptStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorBinding_())
                 .apply(script));
-        final BindingIdentifier fNode2 = bi(new Getter().d(ScriptStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorInit_()).d(FunctionExpressionBody_()).d(FunctionBodyStatements_(0)).d(ExpressionStatementExpression_()).d(AssignmentExpressionBinding_())
+        final BindingIdentifier fNode2 = bi(new BranchGetter().d(ScriptStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorInit_()).d(FunctionExpressionBody_()).d(FunctionBodyStatements_(0)).d(ExpressionStatementExpression_()).d(AssignmentExpressionBinding_())
                 .apply(script));
-        final IdentifierExpression fNode3 = ie(new Getter().d(ScriptStatements_(1)).d(ExpressionStatementExpression_()).d(CallExpressionCallee_())
+        final IdentifierExpression fNode3 = ie(new BranchGetter().d(ScriptStatements_(1)).d(ExpressionStatementExpression_()).d(CallExpressionCallee_())
                 .apply(script));
 
         final Either<BindingIdentifier, IdentifierExpression> fNode1E = Either.left(fNode1);
@@ -484,15 +484,15 @@ public class ScopeTest extends TestCase {
         Scope functionNameScope = topLevelLexicalScope.children.maybeHead().just();
         Scope functionScope = functionNameScope.children.maybeHead().just();
 
-        final BindingIdentifier f1Node1 = bi(new Getter().d(ScriptStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorInit_()).d(FunctionExpressionName_())
+        final BindingIdentifier f1Node1 = bi(new BranchGetter().d(ScriptStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorInit_()).d(FunctionExpressionName_())
                 .apply(script));
-        final BindingIdentifier f1Node2 = bi(new Getter().d(ScriptStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorInit_()).d(FunctionExpressionBody_()).d(FunctionBodyStatements_(0)).d(ExpressionStatementExpression_()).d(AssignmentExpressionBinding_())
+        final BindingIdentifier f1Node2 = bi(new BranchGetter().d(ScriptStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorInit_()).d(FunctionExpressionBody_()).d(FunctionBodyStatements_(0)).d(ExpressionStatementExpression_()).d(AssignmentExpressionBinding_())
                 .apply(script));
-        final IdentifierExpression f1Node3 = ie(new Getter().d(ScriptStatements_(1)).d(ExpressionStatementExpression_()).d(CallExpressionCallee_())
+        final IdentifierExpression f1Node3 = ie(new BranchGetter().d(ScriptStatements_(1)).d(ExpressionStatementExpression_()).d(CallExpressionCallee_())
                 .apply(script));
-        final BindingIdentifier f2Node1 = bi(new Getter().d(ScriptStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorBinding_())
+        final BindingIdentifier f2Node1 = bi(new BranchGetter().d(ScriptStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorBinding_())
                 .apply(script));
-        final IdentifierExpression f2Node2 = ie(new Getter().d(ScriptStatements_(2)).d(ExpressionStatementExpression_()).d(CallExpressionCallee_())
+        final IdentifierExpression f2Node2 = ie(new BranchGetter().d(ScriptStatements_(2)).d(ExpressionStatementExpression_()).d(CallExpressionCallee_())
                 .apply(script));
 
         final Either<BindingIdentifier, IdentifierExpression> f1Node1E = Either.left(f1Node1);
@@ -565,17 +565,17 @@ public class ScopeTest extends TestCase {
         Scope functionScope = topLevelLexicalScope.children.maybeHead().just();
         Scope ifBlockScope = functionScope.children.maybeHead().just(); // did not exist in ES5
 
-        final BindingIdentifier fooNode1 = bi(new Getter().d(ScriptStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorBinding_())
+        final BindingIdentifier fooNode1 = bi(new BranchGetter().d(ScriptStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorBinding_())
                 .apply(script));
-        final IdentifierExpression fooNode2 = ie(new Getter().d(ScriptStatements_(1)).d(FunctionDeclarationBody_()).d(FunctionBodyStatements_(0)).d(IfStatementTest_()).d(UnaryExpressionOperand_())
+        final IdentifierExpression fooNode2 = ie(new BranchGetter().d(ScriptStatements_(1)).d(FunctionDeclarationBody_()).d(FunctionBodyStatements_(0)).d(IfStatementTest_()).d(UnaryExpressionOperand_())
                 .apply(script));
-        final BindingIdentifier fooNode3 = bi(new Getter().d(ScriptStatements_(1)).d(FunctionDeclarationBody_()).d(FunctionBodyStatements_(0)).d(IfStatementConsequent_()).d(BlockStatementBlock_()).d(BlockStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorBinding_())
+        final BindingIdentifier fooNode3 = bi(new BranchGetter().d(ScriptStatements_(1)).d(FunctionDeclarationBody_()).d(FunctionBodyStatements_(0)).d(IfStatementConsequent_()).d(BlockStatementBlock_()).d(BlockStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorBinding_())
                 .apply(script));
-        final IdentifierExpression fooNode4 = ie(new Getter().d(ScriptStatements_(1)).d(FunctionDeclarationBody_()).d(FunctionBodyStatements_(1)).d(ExpressionStatementExpression_()).d(CallExpressionArguments_(0))
+        final IdentifierExpression fooNode4 = ie(new BranchGetter().d(ScriptStatements_(1)).d(FunctionDeclarationBody_()).d(FunctionBodyStatements_(1)).d(ExpressionStatementExpression_()).d(CallExpressionArguments_(0))
                 .apply(script));
-        final BindingIdentifier barNode1 = bi(new Getter().d(ScriptStatements_(1)).d(FunctionDeclarationName_())
+        final BindingIdentifier barNode1 = bi(new BranchGetter().d(ScriptStatements_(1)).d(FunctionDeclarationName_())
                 .apply(script));
-        final IdentifierExpression alertNode1 = ie(new Getter().d(ScriptStatements_(1)).d(FunctionDeclarationBody_()).d(FunctionBodyStatements_(1)).d(ExpressionStatementExpression_()).d(CallExpressionCallee_())
+        final IdentifierExpression alertNode1 = ie(new BranchGetter().d(ScriptStatements_(1)).d(FunctionDeclarationBody_()).d(FunctionBodyStatements_(1)).d(ExpressionStatementExpression_()).d(CallExpressionCallee_())
                 .apply(script));
 
         final Either<BindingIdentifier, IdentifierExpression> fooNode1E = Either.left(fooNode1);
@@ -639,19 +639,19 @@ public class ScopeTest extends TestCase {
         Scope bScope = topLevelLexicalScope.children.maybeHead().just();
         Scope aScope = bScope.children.maybeHead().just();
 
-        final BindingIdentifier aNode1 = bi(new Getter().d(ScriptStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorBinding_())
+        final BindingIdentifier aNode1 = bi(new BranchGetter().d(ScriptStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorBinding_())
                 .apply(script));
-        final BindingIdentifier bNode1 = bi(new Getter().d(ScriptStatements_(1)).d(FunctionDeclarationName_())
+        final BindingIdentifier bNode1 = bi(new BranchGetter().d(ScriptStatements_(1)).d(FunctionDeclarationName_())
                 .apply(script));
-        final BindingIdentifier aNode2 = bi(new Getter().d(ScriptStatements_(1)).d(FunctionDeclarationBody_()).d(FunctionBodyStatements_(0)).d(ExpressionStatementExpression_()).d(AssignmentExpressionBinding_())
+        final BindingIdentifier aNode2 = bi(new BranchGetter().d(ScriptStatements_(1)).d(FunctionDeclarationBody_()).d(FunctionBodyStatements_(0)).d(ExpressionStatementExpression_()).d(AssignmentExpressionBinding_())
                 .apply(script));
-        final BindingIdentifier aNode3 = bi(new Getter().d(ScriptStatements_(1)).d(FunctionDeclarationBody_()).d(FunctionBodyStatements_(2)).d(FunctionDeclarationName_())
+        final BindingIdentifier aNode3 = bi(new BranchGetter().d(ScriptStatements_(1)).d(FunctionDeclarationBody_()).d(FunctionBodyStatements_(2)).d(FunctionDeclarationName_())
                 .apply(script));
-        final IdentifierExpression bNode2 = ie(new Getter().d(ScriptStatements_(2)).d(ExpressionStatementExpression_()).d(CallExpressionCallee_())
+        final IdentifierExpression bNode2 = ie(new BranchGetter().d(ScriptStatements_(2)).d(ExpressionStatementExpression_()).d(CallExpressionCallee_())
                 .apply(script));
-        final IdentifierExpression alertNode1 = ie(new Getter().d(ScriptStatements_(3)).d(ExpressionStatementExpression_()).d(CallExpressionCallee_())
+        final IdentifierExpression alertNode1 = ie(new BranchGetter().d(ScriptStatements_(3)).d(ExpressionStatementExpression_()).d(CallExpressionCallee_())
                 .apply(script));
-        final IdentifierExpression aNode4 = ie(new Getter().d(ScriptStatements_(3)).d(ExpressionStatementExpression_()).d(CallExpressionArguments_(0))
+        final IdentifierExpression aNode4 = ie(new BranchGetter().d(ScriptStatements_(3)).d(ExpressionStatementExpression_()).d(CallExpressionArguments_(0))
                 .apply(script));
 
         final Either<BindingIdentifier, IdentifierExpression> aNode1E = Either.left(aNode1);
@@ -732,13 +732,13 @@ public class ScopeTest extends TestCase {
         Scope barScope1 = fooScope.children.maybeHead().just();
         Scope barScope2 = fooScope.children.maybeTail().just().maybeHead().just();
 
-        final BindingIdentifier fooNode1 = bi(new Getter().d(ScriptStatements_(0)).d(FunctionDeclarationName_())
+        final BindingIdentifier fooNode1 = bi(new BranchGetter().d(ScriptStatements_(0)).d(FunctionDeclarationName_())
                 .apply(script));
-        final BindingIdentifier barNode1 = bi(new Getter().d(ScriptStatements_(0)).d(FunctionDeclarationBody_()).d(FunctionBodyStatements_(0)).d(FunctionDeclarationName_())
+        final BindingIdentifier barNode1 = bi(new BranchGetter().d(ScriptStatements_(0)).d(FunctionDeclarationBody_()).d(FunctionBodyStatements_(0)).d(FunctionDeclarationName_())
                 .apply(script));
-        final IdentifierExpression barNode2 = ie(new Getter().d(ScriptStatements_(0)).d(FunctionDeclarationBody_()).d(FunctionBodyStatements_(1)).d(ReturnStatementExpression_()).d(CallExpressionCallee_())
+        final IdentifierExpression barNode2 = ie(new BranchGetter().d(ScriptStatements_(0)).d(FunctionDeclarationBody_()).d(FunctionBodyStatements_(1)).d(ReturnStatementExpression_()).d(CallExpressionCallee_())
                 .apply(script));
-        final BindingIdentifier barNode3 = bi(new Getter().d(ScriptStatements_(0)).d(FunctionDeclarationBody_()).d(FunctionBodyStatements_(2)).d(FunctionDeclarationName_())
+        final BindingIdentifier barNode3 = bi(new BranchGetter().d(ScriptStatements_(0)).d(FunctionDeclarationBody_()).d(FunctionBodyStatements_(2)).d(FunctionDeclarationName_())
                 .apply(script));
 
         final Either<BindingIdentifier, IdentifierExpression> fooNode1E = Either.left(fooNode1);
@@ -813,9 +813,9 @@ public class ScopeTest extends TestCase {
         GlobalScope globalScope = ScopeAnalyzer.analyze(script);
         Scope topLevelLexicalScope = globalScope.children.maybeHead().just();
         Scope fooScope = topLevelLexicalScope.children.maybeHead().just();
-        final IdentifierExpression fooNode1 = ie(new Getter().d(ScriptStatements_(0)).d(ExpressionStatementExpression_()).d(CallExpressionCallee_())
+        final IdentifierExpression fooNode1 = ie(new BranchGetter().d(ScriptStatements_(0)).d(ExpressionStatementExpression_()).d(CallExpressionCallee_())
                 .apply(script));
-        final BindingIdentifier fooNode2 = bi(new Getter().d(ScriptStatements_(1)).d(FunctionDeclarationName_())
+        final BindingIdentifier fooNode2 = bi(new BranchGetter().d(ScriptStatements_(1)).d(FunctionDeclarationName_())
                 .apply(script));
 
         final Either<BindingIdentifier, IdentifierExpression> fooNode1E = Either.right(fooNode1);
@@ -870,13 +870,13 @@ public class ScopeTest extends TestCase {
         Scope barScope1 = fooScope.children.maybeHead().just();
         Scope barScope2 = fooScope.children.maybeTail().just().maybeHead().just();
 
-        final BindingIdentifier fooNode1 = bi(new Getter().d(ScriptStatements_(0)).d(FunctionDeclarationName_())
+        final BindingIdentifier fooNode1 = bi(new BranchGetter().d(ScriptStatements_(0)).d(FunctionDeclarationName_())
                 .apply(script));
-        final IdentifierExpression barNode1 = ie(new Getter().d(ScriptStatements_(0)).d(FunctionDeclarationBody_()).d(FunctionBodyStatements_(0)).d(ReturnStatementExpression_()).d(CallExpressionCallee_())
+        final IdentifierExpression barNode1 = ie(new BranchGetter().d(ScriptStatements_(0)).d(FunctionDeclarationBody_()).d(FunctionBodyStatements_(0)).d(ReturnStatementExpression_()).d(CallExpressionCallee_())
                 .apply(script));
-        final BindingIdentifier barNode2 = bi(new Getter().d(ScriptStatements_(0)).d(FunctionDeclarationBody_()).d(FunctionBodyStatements_(1)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorBinding_())
+        final BindingIdentifier barNode2 = bi(new BranchGetter().d(ScriptStatements_(0)).d(FunctionDeclarationBody_()).d(FunctionBodyStatements_(1)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorBinding_())
                 .apply(script));
-        final BindingIdentifier barNode3 = bi(new Getter().d(ScriptStatements_(0)).d(FunctionDeclarationBody_()).d(FunctionBodyStatements_(2)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorBinding_())
+        final BindingIdentifier barNode3 = bi(new BranchGetter().d(ScriptStatements_(0)).d(FunctionDeclarationBody_()).d(FunctionBodyStatements_(2)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorBinding_())
                 .apply(script));
 
         final Either<BindingIdentifier, IdentifierExpression> fooNode1E = Either.left(fooNode1);
@@ -958,11 +958,11 @@ public class ScopeTest extends TestCase {
         Scope topLevelLexicalScope = globalScope.children.maybeHead().just();
         Scope functionScope = topLevelLexicalScope.children.maybeHead().just();
 
-        final BindingIdentifier f1Node1 = bi(new Getter().d(ScriptStatements_(0)).d(ExpressionStatementExpression_()).d(CallExpressionCallee_()).d(FunctionExpressionBody_()).d(FunctionBodyStatements_(0)).d(ExpressionStatementExpression_()).d(AssignmentExpressionBinding_())
+        final BindingIdentifier f1Node1 = bi(new BranchGetter().d(ScriptStatements_(0)).d(ExpressionStatementExpression_()).d(CallExpressionCallee_()).d(FunctionExpressionBody_()).d(FunctionBodyStatements_(0)).d(ExpressionStatementExpression_()).d(AssignmentExpressionBinding_())
                 .apply(script));
-        final IdentifierExpression alertNode1 = ie(new Getter().d(ScriptStatements_(0)).d(ExpressionStatementExpression_()).d(CallExpressionCallee_()).d(FunctionExpressionBody_()).d(FunctionBodyStatements_(1)).d(ExpressionStatementExpression_()).d(CallExpressionCallee_())
+        final IdentifierExpression alertNode1 = ie(new BranchGetter().d(ScriptStatements_(0)).d(ExpressionStatementExpression_()).d(CallExpressionCallee_()).d(FunctionExpressionBody_()).d(FunctionBodyStatements_(1)).d(ExpressionStatementExpression_()).d(CallExpressionCallee_())
                 .apply(script));
-        final IdentifierExpression f1Node2 = ie(new Getter().d(ScriptStatements_(0)).d(ExpressionStatementExpression_()).d(CallExpressionCallee_()).d(FunctionExpressionBody_()).d(FunctionBodyStatements_(1)).d(ExpressionStatementExpression_()).d(CallExpressionArguments_(0))
+        final IdentifierExpression f1Node2 = ie(new BranchGetter().d(ScriptStatements_(0)).d(ExpressionStatementExpression_()).d(CallExpressionCallee_()).d(FunctionExpressionBody_()).d(FunctionBodyStatements_(1)).d(ExpressionStatementExpression_()).d(CallExpressionArguments_(0))
                 .apply(script));
 
         final Either<BindingIdentifier, IdentifierExpression> f1Node1E = Either.left(f1Node1);
@@ -1011,11 +1011,11 @@ public class ScopeTest extends TestCase {
         Scope topLevelLexicalScope = globalScope.children.maybeHead().just();
         Scope functionScope = topLevelLexicalScope.children.maybeHead().just();
 
-        final BindingIdentifier f1Node1 = bi(new Getter().d(ScriptStatements_(0)).d(ExpressionStatementExpression_()).d(CallExpressionCallee_()).d(FunctionExpressionBody_()).d(FunctionBodyStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorBinding_())
+        final BindingIdentifier f1Node1 = bi(new BranchGetter().d(ScriptStatements_(0)).d(ExpressionStatementExpression_()).d(CallExpressionCallee_()).d(FunctionExpressionBody_()).d(FunctionBodyStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorBinding_())
                 .apply(script));
-        final IdentifierExpression alertNode1 = ie(new Getter().d(ScriptStatements_(0)).d(ExpressionStatementExpression_()).d(CallExpressionCallee_()).d(FunctionExpressionBody_()).d(FunctionBodyStatements_(1)).d(ExpressionStatementExpression_()).d(CallExpressionCallee_())
+        final IdentifierExpression alertNode1 = ie(new BranchGetter().d(ScriptStatements_(0)).d(ExpressionStatementExpression_()).d(CallExpressionCallee_()).d(FunctionExpressionBody_()).d(FunctionBodyStatements_(1)).d(ExpressionStatementExpression_()).d(CallExpressionCallee_())
                 .apply(script));
-        final IdentifierExpression f1Node2 = ie(new Getter().d(ScriptStatements_(0)).d(ExpressionStatementExpression_()).d(CallExpressionCallee_()).d(FunctionExpressionBody_()).d(FunctionBodyStatements_(1)).d(ExpressionStatementExpression_()).d(CallExpressionArguments_(0))
+        final IdentifierExpression f1Node2 = ie(new BranchGetter().d(ScriptStatements_(0)).d(ExpressionStatementExpression_()).d(CallExpressionCallee_()).d(FunctionExpressionBody_()).d(FunctionBodyStatements_(1)).d(ExpressionStatementExpression_()).d(CallExpressionArguments_(0))
                 .apply(script));
 
         final Either<BindingIdentifier, IdentifierExpression> f1Node1E = Either.left(f1Node1);
@@ -1064,17 +1064,17 @@ public class ScopeTest extends TestCase {
         Scope topLevelLexicalScope = globalScope.children.maybeHead().just();
         Scope fScope = topLevelLexicalScope.children.maybeHead().just();
 
-        final BindingIdentifier fNode1 = bi(new Getter().d(ScriptStatements_(0)).d(FunctionDeclarationName_())
+        final BindingIdentifier fNode1 = bi(new BranchGetter().d(ScriptStatements_(0)).d(FunctionDeclarationName_())
                 .apply(script));
-        final BindingIdentifier arg1Node1 = bi(new Getter().d(ScriptStatements_(0)).d(FunctionDeclarationParams_()).d(FormalParametersItems_(0))
+        final BindingIdentifier arg1Node1 = bi(new BranchGetter().d(ScriptStatements_(0)).d(FunctionDeclarationParams_()).d(FormalParametersItems_(0))
                 .apply(script));
-        final BindingIdentifier arg2Node1 = bi(new Getter().d(ScriptStatements_(0)).d(FunctionDeclarationParams_()).d(FormalParametersItems_(1))
+        final BindingIdentifier arg2Node1 = bi(new BranchGetter().d(ScriptStatements_(0)).d(FunctionDeclarationParams_()).d(FormalParametersItems_(1))
                 .apply(script));
-        final BindingIdentifier v1Node1 = bi(new Getter().d(ScriptStatements_(0)).d(FunctionDeclarationBody_()).d(FunctionBodyStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorBinding_())
+        final BindingIdentifier v1Node1 = bi(new BranchGetter().d(ScriptStatements_(0)).d(FunctionDeclarationBody_()).d(FunctionBodyStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorBinding_())
                 .apply(script));
-        final IdentifierExpression arg1Node2 = ie(new Getter().d(ScriptStatements_(0)).d(FunctionDeclarationBody_()).d(FunctionBodyStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorInit_()).d(BinaryExpressionLeft_()).d(BinaryExpressionLeft_())
+        final IdentifierExpression arg1Node2 = ie(new BranchGetter().d(ScriptStatements_(0)).d(FunctionDeclarationBody_()).d(FunctionBodyStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorInit_()).d(BinaryExpressionLeft_()).d(BinaryExpressionLeft_())
                 .apply(script));
-        final IdentifierExpression arg2Node2 = ie(new Getter().d(ScriptStatements_(0)).d(FunctionDeclarationBody_()).d(FunctionBodyStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorInit_()).d(BinaryExpressionLeft_()).d(BinaryExpressionRight_())
+        final IdentifierExpression arg2Node2 = ie(new BranchGetter().d(ScriptStatements_(0)).d(FunctionDeclarationBody_()).d(FunctionBodyStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorInit_()).d(BinaryExpressionLeft_()).d(BinaryExpressionRight_())
                 .apply(script));
 
 
@@ -1129,11 +1129,11 @@ public class ScopeTest extends TestCase {
         Scope topLevelLexicalScope = globalScope.children.maybeHead().just();
         Scope fScope = topLevelLexicalScope.children.maybeHead().just();
 
-        final BindingIdentifier fNode1 = bi(new Getter().d(ScriptStatements_(0)).d(FunctionDeclarationName_())
+        final BindingIdentifier fNode1 = bi(new BranchGetter().d(ScriptStatements_(0)).d(FunctionDeclarationName_())
                 .apply(script));
-        final BindingIdentifier v1Node1 = bi(new Getter().d(ScriptStatements_(0)).d(FunctionDeclarationBody_()).d(FunctionBodyStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorBinding_())
+        final BindingIdentifier v1Node1 = bi(new BranchGetter().d(ScriptStatements_(0)).d(FunctionDeclarationBody_()).d(FunctionBodyStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorBinding_())
                 .apply(script));
-        final IdentifierExpression argumentsNode1 = ie(new Getter().d(ScriptStatements_(0)).d(FunctionDeclarationBody_()).d(FunctionBodyStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorInit_()).d(BinaryExpressionLeft_()).d(ComputedMemberExpressionObject_())
+        final IdentifierExpression argumentsNode1 = ie(new BranchGetter().d(ScriptStatements_(0)).d(FunctionDeclarationBody_()).d(FunctionBodyStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorInit_()).d(BinaryExpressionLeft_()).d(ComputedMemberExpressionObject_())
                 .apply(script));
 
         final Either<BindingIdentifier, IdentifierExpression> fNode1E = Either.left(fNode1);
@@ -1182,17 +1182,17 @@ public class ScopeTest extends TestCase {
         Scope withScope = topLevelLexicalScope.children.maybeHead().just();
         Scope withBlockScope = withScope.children.maybeHead().just(); // did not exist in ES5
 
-        final IdentifierExpression mathNode1 = ie(new Getter().d(ScriptStatements_(0)).d(WithStatementObject_())
+        final IdentifierExpression mathNode1 = ie(new BranchGetter().d(ScriptStatements_(0)).d(WithStatementObject_())
                 .apply(script));
-        final BindingIdentifier xNode1 = bi(new Getter().d(ScriptStatements_(0)).d(WithStatementBody_()).d(BlockStatementBlock_()).d(BlockStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorBinding_())
+        final BindingIdentifier xNode1 = bi(new BranchGetter().d(ScriptStatements_(0)).d(WithStatementBody_()).d(BlockStatementBlock_()).d(BlockStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorBinding_())
                 .apply(script));
-        final IdentifierExpression cosNode1 = ie(new Getter().d(ScriptStatements_(0)).d(WithStatementBody_()).d(BlockStatementBlock_()).d(BlockStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorInit_()).d(CallExpressionCallee_())
+        final IdentifierExpression cosNode1 = ie(new BranchGetter().d(ScriptStatements_(0)).d(WithStatementBody_()).d(BlockStatementBlock_()).d(BlockStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorInit_()).d(CallExpressionCallee_())
                 .apply(script));
-        final IdentifierExpression piNode1 = ie(new Getter().d(ScriptStatements_(0)).d(WithStatementBody_()).d(BlockStatementBlock_()).d(BlockStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorInit_()).d(CallExpressionArguments_(0)).d(BinaryExpressionRight_())
+        final IdentifierExpression piNode1 = ie(new BranchGetter().d(ScriptStatements_(0)).d(WithStatementBody_()).d(BlockStatementBlock_()).d(BlockStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorInit_()).d(CallExpressionArguments_(0)).d(BinaryExpressionRight_())
                 .apply(script));
-        final IdentifierExpression alertNode1 = ie(new Getter().d(ScriptStatements_(0)).d(WithStatementBody_()).d(BlockStatementBlock_()).d(BlockStatements_(1)).d(ExpressionStatementExpression_()).d(CallExpressionCallee_())
+        final IdentifierExpression alertNode1 = ie(new BranchGetter().d(ScriptStatements_(0)).d(WithStatementBody_()).d(BlockStatementBlock_()).d(BlockStatements_(1)).d(ExpressionStatementExpression_()).d(CallExpressionCallee_())
                 .apply(script));
-        final IdentifierExpression xNode2 = ie(new Getter().d(ScriptStatements_(0)).d(WithStatementBody_()).d(BlockStatementBlock_()).d(BlockStatements_(1)).d(ExpressionStatementExpression_()).d(CallExpressionArguments_(0))
+        final IdentifierExpression xNode2 = ie(new BranchGetter().d(ScriptStatements_(0)).d(WithStatementBody_()).d(BlockStatementBlock_()).d(BlockStatements_(1)).d(ExpressionStatementExpression_()).d(CallExpressionArguments_(0))
                 .apply(script));
 
         final Either<BindingIdentifier, IdentifierExpression> mathNode1E = Either.right(mathNode1);
@@ -1261,17 +1261,17 @@ public class ScopeTest extends TestCase {
         Scope withScope = topLevelLexicalScope.children.maybeHead().just();
         Scope withBlockScope = withScope.children.maybeHead().just(); // did not exist in ES5
 
-        final BindingIdentifier oNode1 = bi(new Getter().d(ScriptStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorBinding_())
+        final BindingIdentifier oNode1 = bi(new BranchGetter().d(ScriptStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorBinding_())
                 .apply(script));
-        final IdentifierExpression oNode2 = ie(new Getter().d(ScriptStatements_(1)).d(WithStatementObject_()).d(StaticMemberExpressionObject_()).d(StaticMemberExpressionObject_())
+        final IdentifierExpression oNode2 = ie(new BranchGetter().d(ScriptStatements_(1)).d(WithStatementObject_()).d(StaticMemberExpressionObject_()).d(StaticMemberExpressionObject_())
                 .apply(script));
-        final IdentifierExpression alertNode1 = ie(new Getter().d(ScriptStatements_(1)).d(WithStatementBody_()).d(BlockStatementBlock_()).d(BlockStatements_(0)).d(ExpressionStatementExpression_()).d(CallExpressionCallee_())
+        final IdentifierExpression alertNode1 = ie(new BranchGetter().d(ScriptStatements_(1)).d(WithStatementBody_()).d(BlockStatementBlock_()).d(BlockStatements_(0)).d(ExpressionStatementExpression_()).d(CallExpressionCallee_())
                 .apply(script));
-        final IdentifierExpression fld1Node1 = ie(new Getter().d(ScriptStatements_(1)).d(WithStatementBody_()).d(BlockStatementBlock_()).d(BlockStatements_(0)).d(ExpressionStatementExpression_()).d(CallExpressionArguments_(0))
+        final IdentifierExpression fld1Node1 = ie(new BranchGetter().d(ScriptStatements_(1)).d(WithStatementBody_()).d(BlockStatementBlock_()).d(BlockStatements_(0)).d(ExpressionStatementExpression_()).d(CallExpressionArguments_(0))
                 .apply(script));
-        final IdentifierExpression alertNode2 = ie(new Getter().d(ScriptStatements_(1)).d(WithStatementBody_()).d(BlockStatementBlock_()).d(BlockStatements_(1)).d(ExpressionStatementExpression_()).d(CallExpressionCallee_())
+        final IdentifierExpression alertNode2 = ie(new BranchGetter().d(ScriptStatements_(1)).d(WithStatementBody_()).d(BlockStatementBlock_()).d(BlockStatements_(1)).d(ExpressionStatementExpression_()).d(CallExpressionCallee_())
                 .apply(script));
-        final IdentifierExpression fld2Node1 = ie(new Getter().d(ScriptStatements_(1)).d(WithStatementBody_()).d(BlockStatementBlock_()).d(BlockStatements_(1)).d(ExpressionStatementExpression_()).d(CallExpressionArguments_(0))
+        final IdentifierExpression fld2Node1 = ie(new BranchGetter().d(ScriptStatements_(1)).d(WithStatementBody_()).d(BlockStatementBlock_()).d(BlockStatements_(1)).d(ExpressionStatementExpression_()).d(CallExpressionArguments_(0))
                 .apply(script));
 
         final Either<BindingIdentifier, IdentifierExpression> oNode1E = Either.left(oNode1);
@@ -1330,13 +1330,13 @@ public class ScopeTest extends TestCase {
         Scope catchScope = topLevelLexicalScope.children.index(1).just();
         Scope catchBlockScope = catchScope.children.maybeHead().just(); // did not exist in ES5
 
-        final IdentifierExpression alertNode1 = ie(new Getter().d(ScriptStatements_(0)).d(TryCatchStatementBody_()).d(BlockStatements_(0)).d(ExpressionStatementExpression_()).d(CallExpressionCallee_())
+        final IdentifierExpression alertNode1 = ie(new BranchGetter().d(ScriptStatements_(0)).d(TryCatchStatementBody_()).d(BlockStatements_(0)).d(ExpressionStatementExpression_()).d(CallExpressionCallee_())
                 .apply(script));
-        final BindingIdentifier errNode1 = bi(new Getter().d(ScriptStatements_(0)).d(TryCatchStatementCatchClause_()).d(CatchClauseBinding_())
+        final BindingIdentifier errNode1 = bi(new BranchGetter().d(ScriptStatements_(0)).d(TryCatchStatementCatchClause_()).d(CatchClauseBinding_())
                 .apply(script));
-        final IdentifierExpression alertNode2 = ie(new Getter().d(ScriptStatements_(0)).d(TryCatchStatementCatchClause_()).d(CatchClauseBody_()).d(BlockStatements_(0)).d(ExpressionStatementExpression_()).d(CallExpressionCallee_())
+        final IdentifierExpression alertNode2 = ie(new BranchGetter().d(ScriptStatements_(0)).d(TryCatchStatementCatchClause_()).d(CatchClauseBody_()).d(BlockStatements_(0)).d(ExpressionStatementExpression_()).d(CallExpressionCallee_())
                 .apply(script));
-        final IdentifierExpression errNode2 = ie(new Getter().d(ScriptStatements_(0)).d(TryCatchStatementCatchClause_()).d(CatchClauseBody_()).d(BlockStatements_(0)).d(ExpressionStatementExpression_()).d(CallExpressionArguments_(0))
+        final IdentifierExpression errNode2 = ie(new BranchGetter().d(ScriptStatements_(0)).d(TryCatchStatementCatchClause_()).d(CatchClauseBody_()).d(BlockStatements_(0)).d(ExpressionStatementExpression_()).d(CallExpressionArguments_(0))
                 .apply(script));
 
         final Either<BindingIdentifier, IdentifierExpression> alertNode1E = Either.right(alertNode1);
@@ -1399,21 +1399,21 @@ public class ScopeTest extends TestCase {
         Scope catchScope2 = catchBlockScope1.children.index(1).just();
         Scope catchBlockScope2 = catchScope2.children.maybeHead().just(); // did not exist in ES5
 
-        final IdentifierExpression alertNode1 = ie(new Getter().d(ScriptStatements_(0)).d(TryCatchStatementBody_()).d(BlockStatements_(0)).d(ExpressionStatementExpression_()).d(CallExpressionCallee_())
+        final IdentifierExpression alertNode1 = ie(new BranchGetter().d(ScriptStatements_(0)).d(TryCatchStatementBody_()).d(BlockStatements_(0)).d(ExpressionStatementExpression_()).d(CallExpressionCallee_())
                 .apply(script));
-        final BindingIdentifier err1Node1 = bi(new Getter().d(ScriptStatements_(0)).d(TryCatchStatementCatchClause_()).d(CatchClauseBinding_())
+        final BindingIdentifier err1Node1 = bi(new BranchGetter().d(ScriptStatements_(0)).d(TryCatchStatementCatchClause_()).d(CatchClauseBinding_())
                 .apply(script));
-        final IdentifierExpression err1Node2 = ie(new Getter().d(ScriptStatements_(0)).d(TryCatchStatementCatchClause_()).d(CatchClauseBody_()).d(BlockStatements_(0)).d(TryCatchStatementBody_()).d(BlockStatements_(0)).d(ThrowStatementExpression_()).d(StaticMemberExpressionObject_())
+        final IdentifierExpression err1Node2 = ie(new BranchGetter().d(ScriptStatements_(0)).d(TryCatchStatementCatchClause_()).d(CatchClauseBody_()).d(BlockStatements_(0)).d(TryCatchStatementBody_()).d(BlockStatements_(0)).d(ThrowStatementExpression_()).d(StaticMemberExpressionObject_())
                 .apply(script));
-        final BindingIdentifier err2Node1 = bi(new Getter().d(ScriptStatements_(0)).d(TryCatchStatementCatchClause_()).d(CatchClauseBody_()).d(BlockStatements_(0)).d(TryCatchStatementCatchClause_()).d(CatchClauseBinding_())
+        final BindingIdentifier err2Node1 = bi(new BranchGetter().d(ScriptStatements_(0)).d(TryCatchStatementCatchClause_()).d(CatchClauseBody_()).d(BlockStatements_(0)).d(TryCatchStatementCatchClause_()).d(CatchClauseBinding_())
                 .apply(script));
-        final IdentifierExpression alertNode2 = ie(new Getter().d(ScriptStatements_(0)).d(TryCatchStatementCatchClause_()).d(CatchClauseBody_()).d(BlockStatements_(0)).d(TryCatchStatementCatchClause_()).d(CatchClauseBody_()).d(BlockStatements_(0)).d(ExpressionStatementExpression_()).d(CallExpressionCallee_())
+        final IdentifierExpression alertNode2 = ie(new BranchGetter().d(ScriptStatements_(0)).d(TryCatchStatementCatchClause_()).d(CatchClauseBody_()).d(BlockStatements_(0)).d(TryCatchStatementCatchClause_()).d(CatchClauseBody_()).d(BlockStatements_(0)).d(ExpressionStatementExpression_()).d(CallExpressionCallee_())
                 .apply(script));
-        final IdentifierExpression err1Node3 = ie(new Getter().d(ScriptStatements_(0)).d(TryCatchStatementCatchClause_()).d(CatchClauseBody_()).d(BlockStatements_(0)).d(TryCatchStatementCatchClause_()).d(CatchClauseBody_()).d(BlockStatements_(0)).d(ExpressionStatementExpression_()).d(CallExpressionArguments_(0))
+        final IdentifierExpression err1Node3 = ie(new BranchGetter().d(ScriptStatements_(0)).d(TryCatchStatementCatchClause_()).d(CatchClauseBody_()).d(BlockStatements_(0)).d(TryCatchStatementCatchClause_()).d(CatchClauseBody_()).d(BlockStatements_(0)).d(ExpressionStatementExpression_()).d(CallExpressionArguments_(0))
                 .apply(script));
-        final IdentifierExpression alertNode3 = ie(new Getter().d(ScriptStatements_(0)).d(TryCatchStatementCatchClause_()).d(CatchClauseBody_()).d(BlockStatements_(0)).d(TryCatchStatementCatchClause_()).d(CatchClauseBody_()).d(BlockStatements_(1)).d(ExpressionStatementExpression_()).d(CallExpressionCallee_())
+        final IdentifierExpression alertNode3 = ie(new BranchGetter().d(ScriptStatements_(0)).d(TryCatchStatementCatchClause_()).d(CatchClauseBody_()).d(BlockStatements_(0)).d(TryCatchStatementCatchClause_()).d(CatchClauseBody_()).d(BlockStatements_(1)).d(ExpressionStatementExpression_()).d(CallExpressionCallee_())
                 .apply(script));
-        final IdentifierExpression err2Node2 = ie(new Getter().d(ScriptStatements_(0)).d(TryCatchStatementCatchClause_()).d(CatchClauseBody_()).d(BlockStatements_(0)).d(TryCatchStatementCatchClause_()).d(CatchClauseBody_()).d(BlockStatements_(1)).d(ExpressionStatementExpression_()).d(CallExpressionArguments_(0))
+        final IdentifierExpression err2Node2 = ie(new BranchGetter().d(ScriptStatements_(0)).d(TryCatchStatementCatchClause_()).d(CatchClauseBody_()).d(BlockStatements_(0)).d(TryCatchStatementCatchClause_()).d(CatchClauseBody_()).d(BlockStatements_(1)).d(ExpressionStatementExpression_()).d(CallExpressionArguments_(0))
                 .apply(script));
 
         final Either<BindingIdentifier, IdentifierExpression> alertNode1E = Either.right(alertNode1);
@@ -1485,11 +1485,11 @@ public class ScopeTest extends TestCase {
         Scope catchScope = topLevelLexicalScope.children.index(1).just();
         Scope catchBlockScope = catchScope.children.maybeHead().just(); // did not exist in ES5
 
-        final IdentifierExpression alertNode1 = ie(new Getter().d(ScriptStatements_(0)).d(TryCatchStatementBody_()).d(BlockStatements_(0)).d(ExpressionStatementExpression_()).d(CallExpressionCallee_())
+        final IdentifierExpression alertNode1 = ie(new BranchGetter().d(ScriptStatements_(0)).d(TryCatchStatementBody_()).d(BlockStatements_(0)).d(ExpressionStatementExpression_()).d(CallExpressionCallee_())
                 .apply(script));
-        final BindingIdentifier errNode1 = bi(new Getter().d(ScriptStatements_(0)).d(TryCatchStatementCatchClause_()).d(CatchClauseBinding_())
+        final BindingIdentifier errNode1 = bi(new BranchGetter().d(ScriptStatements_(0)).d(TryCatchStatementCatchClause_()).d(CatchClauseBinding_())
                 .apply(script));
-        final BindingIdentifier errNode2 = bi(new Getter().d(ScriptStatements_(0)).d(TryCatchStatementCatchClause_()).d(CatchClauseBody_()).d(BlockStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorBinding_())
+        final BindingIdentifier errNode2 = bi(new BranchGetter().d(ScriptStatements_(0)).d(TryCatchStatementCatchClause_()).d(CatchClauseBody_()).d(BlockStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorBinding_())
                 .apply(script));
 
         final Either<BindingIdentifier, IdentifierExpression> alertNode1E = Either.right(alertNode1);
@@ -1537,11 +1537,11 @@ public class ScopeTest extends TestCase {
         Scope topLevelLexicalScope = globalScope.children.maybeHead().just();
         Scope aScope = topLevelLexicalScope.children.maybeHead().just();
 
-        final BindingIdentifier xNode1 = bi(new Getter().d(ScriptStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorBinding_())
+        final BindingIdentifier xNode1 = bi(new BranchGetter().d(ScriptStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorBinding_())
                 .apply(script));
-        final BindingIdentifier xNode2 = bi(new Getter().d(ScriptStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorInit_()).d(ArrowExpressionParams_()).d(FormalParametersItems_(0))
+        final BindingIdentifier xNode2 = bi(new BranchGetter().d(ScriptStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorInit_()).d(ArrowExpressionParams_()).d(FormalParametersItems_(0))
                 .apply(script));
-        final BindingIdentifier xNode3 = bi(new Getter().d(ScriptStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorInit_()).d(ArrowExpressionBody_()).d(UpdateExpressionOperand_())
+        final BindingIdentifier xNode3 = bi(new BranchGetter().d(ScriptStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorInit_()).d(ArrowExpressionBody_()).d(UpdateExpressionOperand_())
                 .apply(script));
 
         final Either<BindingIdentifier, IdentifierExpression> xNode1E = Either.left(xNode1);
@@ -1588,7 +1588,7 @@ public class ScopeTest extends TestCase {
         Scope topLevelLexicalScope = globalScope.children.maybeHead().just();
         Scope aScope = topLevelLexicalScope.children.maybeHead().just();
 
-        final IdentifierExpression argumentsNode = ie(new Getter().d(ScriptStatements_(0)).d(ExpressionStatementExpression_()).d(ArrowExpressionBody_())
+        final IdentifierExpression argumentsNode = ie(new BranchGetter().d(ScriptStatements_(0)).d(ExpressionStatementExpression_()).d(ArrowExpressionBody_())
                 .apply(script));
 
         final Either<BindingIdentifier, IdentifierExpression> argumentsNodeE = Either.right(argumentsNode);
@@ -1631,13 +1631,13 @@ public class ScopeTest extends TestCase {
         Scope topLevelLexicalScope = globalScope.children.maybeHead().just();
         Scope gScope = topLevelLexicalScope.children.maybeHead().just();
 
-        final BindingIdentifier xNode1 = bi(new Getter().d(ScriptStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorBinding_())
+        final BindingIdentifier xNode1 = bi(new BranchGetter().d(ScriptStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorBinding_())
                 .apply(script));
-        final IdentifierExpression xNode2 = ie(new Getter().d(ScriptStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorInit_()).d(ObjectExpressionProperties_(0)).d(GetterName_()).d(ComputedPropertyNameExpression_())
+        final IdentifierExpression xNode2 = ie(new BranchGetter().d(ScriptStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorInit_()).d(ObjectExpressionProperties_(0)).d(GetterName_()).d(ComputedPropertyNameExpression_())
                 .apply(script));
-        final IdentifierExpression xNode3 = ie(new Getter().d(ScriptStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorInit_()).d(ObjectExpressionProperties_(0)).d(GetterBody_()).d(FunctionBodyStatements_(0)).d(ReturnStatementExpression_()).d(BinaryExpressionLeft_())
+        final IdentifierExpression xNode3 = ie(new BranchGetter().d(ScriptStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorInit_()).d(ObjectExpressionProperties_(0)).d(GetterBody_()).d(FunctionBodyStatements_(0)).d(ReturnStatementExpression_()).d(BinaryExpressionLeft_())
                 .apply(script));
-        final IdentifierExpression argumentsNode1 = ie(new Getter().d(ScriptStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorInit_()).d(ObjectExpressionProperties_(0)).d(GetterBody_()).d(FunctionBodyStatements_(0)).d(ReturnStatementExpression_()).d(BinaryExpressionRight_())
+        final IdentifierExpression argumentsNode1 = ie(new BranchGetter().d(ScriptStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorInit_()).d(ObjectExpressionProperties_(0)).d(GetterBody_()).d(FunctionBodyStatements_(0)).d(ReturnStatementExpression_()).d(BinaryExpressionRight_())
                 .apply(script));
 
         final Either<BindingIdentifier, IdentifierExpression> xNode1E = Either.left(xNode1);
@@ -1686,15 +1686,15 @@ public class ScopeTest extends TestCase {
         Scope topLevelLexicalScope = globalScope.children.maybeHead().just();
         Scope blockScope = topLevelLexicalScope.children.maybeHead().just();
 
-        final IdentifierExpression xNode1 = ie(new Getter().d(ScriptStatements_(0)).d(ExpressionStatementExpression_())
+        final IdentifierExpression xNode1 = ie(new BranchGetter().d(ScriptStatements_(0)).d(ExpressionStatementExpression_())
                 .apply(script));
-        final BindingIdentifier xNode2 = bi(new Getter().d(ScriptStatements_(1)).d(BlockStatementBlock_()).d(BlockStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorBinding_())
+        final BindingIdentifier xNode2 = bi(new BranchGetter().d(ScriptStatements_(1)).d(BlockStatementBlock_()).d(BlockStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorBinding_())
                 .apply(script));
-        final IdentifierExpression yNode1 = ie(new Getter().d(ScriptStatements_(1)).d(BlockStatementBlock_()).d(BlockStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorInit_())
+        final IdentifierExpression yNode1 = ie(new BranchGetter().d(ScriptStatements_(1)).d(BlockStatementBlock_()).d(BlockStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorInit_())
                 .apply(script));
-        final BindingIdentifier xNode3 = bi(new Getter().d(ScriptStatements_(1)).d(BlockStatementBlock_()).d(BlockStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorBinding_())
+        final BindingIdentifier xNode3 = bi(new BranchGetter().d(ScriptStatements_(1)).d(BlockStatementBlock_()).d(BlockStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorBinding_())
                 .apply(script));
-        final BindingIdentifier yNode2 = bi(new Getter().d(ScriptStatements_(3)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(1)).d(VariableDeclaratorBinding_())
+        final BindingIdentifier yNode2 = bi(new BranchGetter().d(ScriptStatements_(3)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(1)).d(VariableDeclaratorBinding_())
                 .apply(script));
 
         final Either<BindingIdentifier, IdentifierExpression> xNode1E = Either.right(xNode1);
@@ -1744,15 +1744,15 @@ public class ScopeTest extends TestCase {
         GlobalScope globalScope = ScopeAnalyzer.analyze(script);
         Scope topLevelLexicalScope = globalScope.children.maybeHead().just();
 
-        final BindingIdentifier xNode1 = bi( new Getter().d(ScriptStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorBinding_()).d(ObjectBindingProperties_(0)).d(BindingPropertyIdentifierBinding_())
+        final BindingIdentifier xNode1 = bi( new BranchGetter().d(ScriptStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorBinding_()).d(ObjectBindingProperties_(0)).d(BindingPropertyIdentifierBinding_())
                 .apply(script) );
-        final BindingIdentifier yNode1 = bi( new Getter().d(ScriptStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorBinding_()).d(ObjectBindingProperties_(1)).d(BindingPropertyPropertyBinding_()).d(ObjectBindingProperties_(0)).d(BindingPropertyPropertyBinding_()).d(BindingWithDefaultBinding_())
+        final BindingIdentifier yNode1 = bi( new BranchGetter().d(ScriptStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorBinding_()).d(ObjectBindingProperties_(1)).d(BindingPropertyPropertyBinding_()).d(ObjectBindingProperties_(0)).d(BindingPropertyPropertyBinding_()).d(BindingWithDefaultBinding_())
                 .apply(script) );
-        final IdentifierExpression zNode1 = ie( new Getter().d(ScriptStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorBinding_()).d(ObjectBindingProperties_(1)).d(BindingPropertyPropertyBinding_()).d(ObjectBindingProperties_(0)).d(BindingPropertyPropertyBinding_()).d(BindingWithDefaultInit_())
+        final IdentifierExpression zNode1 = ie( new BranchGetter().d(ScriptStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorBinding_()).d(ObjectBindingProperties_(1)).d(BindingPropertyPropertyBinding_()).d(ObjectBindingProperties_(0)).d(BindingPropertyPropertyBinding_()).d(BindingWithDefaultInit_())
                 .apply(script) );
-        final BindingIdentifier zNode2 = bi( new Getter().d(ScriptStatements_(1)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorBinding_()).d(ArrayBindingElements_(0))
+        final BindingIdentifier zNode2 = bi( new BranchGetter().d(ScriptStatements_(1)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorBinding_()).d(ArrayBindingElements_(0))
                 .apply(script) );
-        final IdentifierExpression yNode2 = ie( new Getter().d(ScriptStatements_(1)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorInit_())
+        final IdentifierExpression yNode2 = ie( new BranchGetter().d(ScriptStatements_(1)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorInit_())
                 .apply(script) );
 
         final Either<BindingIdentifier, IdentifierExpression> xNode1E = Either.left(xNode1);
@@ -1973,6 +1973,17 @@ public class ScopeTest extends TestCase {
         );
     }
 
+    private static String getIdentifierName(@NotNull Node node) {
+        if (node instanceof AssignmentTargetIdentifier) {
+            return ((AssignmentTargetIdentifier) node).name;
+        } else if (node instanceof BindingIdentifier) {
+            return ((BindingIdentifier) node).name;
+        } else if (node instanceof IdentifierExpression) {
+            return ((IdentifierExpression) node).name;
+        } else {
+            throw new RuntimeException("Not reached");
+        }
+    }
     /**
      * Check the given scope is correct based on the information provided
      */
@@ -1996,7 +2007,7 @@ public class ScopeTest extends TestCase {
         through.foreach(name -> {
             ImmutableList<Reference> references = scope.through.get(name).just();
             Assert.assertNotNull(references);
-            assertTrue(references.find(ref -> ref.node.either(bi -> bi.name, ie -> ie.name).equals(name)).isJust());
+            assertTrue(references.find(ref -> getIdentifierName(ref.node).equals(name)).isJust());
         });
 
         Assert.assertEquals(scope.variables().size(), variables.size());
