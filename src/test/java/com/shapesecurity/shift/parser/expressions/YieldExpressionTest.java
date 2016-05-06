@@ -18,7 +18,7 @@ public class YieldExpressionTest extends ParserTestCase {
                 ImmutableList.list(new ExpressionStatement(new YieldExpression(Maybe.nothing())), new ExpressionStatement(
                         new IdentifierExpression("a"))))));
 
-        testScript("({set a(yield){}})", new ObjectExpression(ImmutableList.list(new Setter(new StaticPropertyName("a"), new Parameter(new BindingIdentifier("yield"), Maybe.nothing()),
+        testScript("({set a(yield){}})", new ObjectExpression(ImmutableList.list(new Setter(new StaticPropertyName("a"), new BindingIdentifier("yield"),
                 new FunctionBody(ImmutableList.nil(), ImmutableList.nil())))));
 
         testScript("function *a(){yield 0}", new FunctionDeclaration(true, new BindingIdentifier("a"),

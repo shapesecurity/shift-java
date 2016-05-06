@@ -445,12 +445,6 @@ public class Flattener extends MonoidalReducer<ImmutableList<Node>> {
 
     @NotNull
     @Override
-    public ImmutableList<Node> reduceParameter(@NotNull Parameter node, @NotNull ImmutableList<Node> binding, @NotNull Maybe<ImmutableList<Node>> init) {
-        return ImmutableList.<Node>list(node).append(super.reduceParameter(node, binding, init));
-    }
-
-    @NotNull
-    @Override
     public ImmutableList<Node> reduceReturnStatement(@NotNull ReturnStatement node, @NotNull Maybe<ImmutableList<Node>> expression) {
         return ImmutableList.<Node>list(node).append(super.reduceReturnStatement(node, expression));
     }

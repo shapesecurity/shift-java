@@ -16,22 +16,22 @@ public class NewTargetExpressionTest extends ParserTestCase {
                 ImmutableList.list(new ExpressionStatement(new NewTargetExpression())))));
 
         testScript("function f(a = new.target){}", new FunctionDeclaration(false, new BindingIdentifier("f"),
-                new FormalParameters(ImmutableList.list(new Parameter(new BindingIdentifier("a"),
-                        Maybe.just(new NewTargetExpression()))), Maybe.nothing()), new FunctionBody(ImmutableList.nil(),
+                new FormalParameters(ImmutableList.list(new BindingWithDefault(new BindingIdentifier("a"),
+                        new NewTargetExpression())), Maybe.nothing()), new FunctionBody(ImmutableList.nil(),
                 ImmutableList.nil())));
 
         testScript("(function f(a = new.target){})", new FunctionExpression(false, Maybe.just(new BindingIdentifier("f")),
-                new FormalParameters(ImmutableList.list(new Parameter(new BindingIdentifier("a"),
-                        Maybe.just(new NewTargetExpression()))), Maybe.nothing()), new FunctionBody(ImmutableList.nil(),
+                new FormalParameters(ImmutableList.list(new BindingWithDefault(new BindingIdentifier("a"),
+                        new NewTargetExpression())), Maybe.nothing()), new FunctionBody(ImmutableList.nil(),
                 ImmutableList.nil())));
 
         testScript("({ set m(a = new.target){} })", new ObjectExpression(ImmutableList.list(new Setter(new StaticPropertyName("m"),
-                new Parameter(new BindingIdentifier("a"), Maybe.just(new NewTargetExpression())), new FunctionBody(
+                new BindingWithDefault(new BindingIdentifier("a"), new NewTargetExpression()), new FunctionBody(
                 ImmutableList.nil(), ImmutableList.nil())))));
 
         testScript("({ m(a = new.target){} })", new ObjectExpression(ImmutableList.list(new Method(false, new StaticPropertyName("m"),
-                new FormalParameters(ImmutableList.list(new Parameter(new BindingIdentifier("a"),
-                        Maybe.just(new NewTargetExpression()))), Maybe.nothing()), new FunctionBody(ImmutableList.nil(),
+                new FormalParameters(ImmutableList.list(new BindingWithDefault(new BindingIdentifier("a"),
+                        new NewTargetExpression())), Maybe.nothing()), new FunctionBody(ImmutableList.nil(),
                 ImmutableList.nil())))));
 
         testScript("({ get m(){ new.target } })", new ObjectExpression(ImmutableList.list(new Getter(new StaticPropertyName("m"), new FunctionBody(

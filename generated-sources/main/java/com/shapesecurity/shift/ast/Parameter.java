@@ -18,36 +18,4 @@
 
 package com.shapesecurity.shift.ast;
 
-import org.jetbrains.annotations.NotNull;
-import com.shapesecurity.functional.data.HashCodeBuilder;
-import com.shapesecurity.functional.data.Maybe;
-
-public class Parameter implements Node {
-    @NotNull
-    public final Binding binding;
-
-    @NotNull
-    public final Maybe<Expression> init;
-
-
-    public Parameter (@NotNull Binding binding, @NotNull Maybe<Expression> init) {
-        this.binding = binding;
-        this.init = init;
-    }
-
-
-    @Override
-    public boolean equals(Object object) {
-        return object instanceof Parameter && this.binding.equals(((Parameter) object).binding) && this.init.equals(((Parameter) object).init);
-    }
-
-
-    @Override
-    public int hashCode() {
-        int code = HashCodeBuilder.put(0, "Parameter");
-        code = HashCodeBuilder.put(code, this.binding);
-        code = HashCodeBuilder.put(code, this.init);
-        return code;
-    }
-
-}
+public interface Parameter extends Node {}

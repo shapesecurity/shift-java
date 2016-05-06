@@ -18,4 +18,4 @@
 
 package com.shapesecurity.shift.ast;
 
-public interface Binding extends BindingBindingWithDefault {}
+public interface Binding extends Parameter, BindingBindingWithDefault {}

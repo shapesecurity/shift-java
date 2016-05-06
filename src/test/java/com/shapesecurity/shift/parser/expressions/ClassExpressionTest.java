@@ -33,7 +33,7 @@ public class ClassExpressionTest extends ParserTestCase {
                         new FunctionBody(ImmutableList.nil(), ImmutableList.nil()))))));
 
         testScript("(class {set a(b) {}})", new ClassExpression(Maybe.nothing(), Maybe.nothing(), ImmutableList.list(
-                new ClassElement(false, new Setter(new StaticPropertyName("a"), new Parameter(new BindingIdentifier("b"), Maybe.nothing()), new FunctionBody(ImmutableList.nil(),
+                new ClassElement(false, new Setter(new StaticPropertyName("a"), new BindingIdentifier("b"), new FunctionBody(ImmutableList.nil(),
                         ImmutableList.nil()))))));
 
         testScript("(class {get a() {}})", new ClassExpression(Maybe.nothing(), Maybe.nothing(), ImmutableList.list(
@@ -41,11 +41,11 @@ public class ClassExpressionTest extends ParserTestCase {
                         )))));
 
         testScript("(class {set a(b) {'use strict';}})", new ClassExpression(Maybe.nothing(), Maybe.nothing(),
-                ImmutableList.list(new ClassElement(false, new Setter(new StaticPropertyName("a"), new Parameter(new BindingIdentifier("b"), Maybe.nothing()), new FunctionBody(
+                ImmutableList.list(new ClassElement(false, new Setter(new StaticPropertyName("a"), new BindingIdentifier("b"), new FunctionBody(
                         ImmutableList.list(new Directive("use strict")), ImmutableList.nil()))))));
 
         testScript("(class {a(b) {'use strict';}})", new ClassExpression(Maybe.nothing(), Maybe.nothing(), ImmutableList.list(
-                new ClassElement(false, new Method(false, new StaticPropertyName("a"), new FormalParameters(ImmutableList.list(new Parameter(new BindingIdentifier("b"), Maybe.nothing())),
+                new ClassElement(false, new Method(false, new StaticPropertyName("a"), new FormalParameters(ImmutableList.list(new BindingIdentifier("b")),
                         Maybe.nothing()), new FunctionBody(ImmutableList.list(new Directive("use strict")), ImmutableList.nil())
                         )))));
 

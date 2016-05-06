@@ -31,8 +31,8 @@ public class SuperExpressionTest extends ParserTestCase {
 
         testScript("class A extends B { constructor(a = super()){} }", new ClassDeclaration(new BindingIdentifier("A"),
                 Maybe.just(new IdentifierExpression("B")), ImmutableList.list(new ClassElement(false, new Method(false, new StaticPropertyName("constructor"),
-                new FormalParameters(ImmutableList.list(new Parameter(new BindingIdentifier("a"),
-                    Maybe.just(new CallExpression(new Super(), ImmutableList.nil())))), Maybe.nothing()), new FunctionBody(ImmutableList.nil(),
+                new FormalParameters(ImmutableList.list(new BindingWithDefault(new BindingIdentifier("a"),
+                    new CallExpression(new Super(), ImmutableList.nil()))), Maybe.nothing()), new FunctionBody(ImmutableList.nil(),
                 ImmutableList.nil()))))));
 
         testScript("class A extends B { constructor() { ({a: super()}); } }", new ClassDeclaration(new BindingIdentifier("A"),
@@ -73,7 +73,7 @@ public class SuperExpressionTest extends ParserTestCase {
                 new LiteralNumericExpression(1.0)))))))));
 
         testScript("({ set a(x) { super.b[0] = 1; } });", new ObjectExpression(ImmutableList.list(new Setter(new StaticPropertyName("a"),
-                new Parameter(new BindingIdentifier("x"), Maybe.nothing()), new FunctionBody(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(
+                new BindingIdentifier("x"), new FunctionBody(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(
                 new AssignmentExpression(new ComputedMemberAssignmentTarget(
                         new StaticMemberExpression(new Super(), "b"), new LiteralNumericExpression(0.0)), new LiteralNumericExpression(1.0)))))
                 ))));

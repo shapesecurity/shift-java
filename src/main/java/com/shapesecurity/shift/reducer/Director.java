@@ -1097,7 +1097,13 @@ public final class Director {
     public static <State> State reduceParameter(
       @NotNull Reducer<State> reducer,
       @NotNull Parameter node) {
-        return reducer.reduceParameter(node, reduceBinding(reducer, node.binding), reduceMaybeExpression(reducer, node.init));
+        if (node instanceof Binding) {
+            return reduceBinding(reducer, (Binding) node);
+        } else if (node instanceof BindingWithDefault) {
+            return reduceBindingWithDefault(reducer, (BindingWithDefault) node);
+        } else {
+            throw new RuntimeException("Not reached");
+        }
     }
 
     @NotNull

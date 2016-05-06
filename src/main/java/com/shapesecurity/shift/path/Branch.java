@@ -413,14 +413,6 @@ public abstract class Branch {
         return new ObjectExpressionProperties(index);
     }
 
-    public static ParameterBinding ParameterBinding_() {
-        return new ParameterBinding();
-    }
-
-    public static ParameterInit ParameterInit_() {
-        return new ParameterInit();
-    }
-
     public static ReturnStatementExpression ReturnStatementExpression_() {
         return new ReturnStatementExpression();
     }
@@ -1437,22 +1429,6 @@ abstract class IndexedBranch extends Branch {
     public Maybe<? extends Node> step(Node node) {
         if (!(node instanceof ObjectExpression)) return Maybe.nothing();
         return ((ObjectExpression) node).properties.index(index);
-    }
-}
-@SuppressWarnings("ConstantConditions")
-    class ParameterBinding extends Branch {
-    @Override
-    public Maybe<? extends Node> step(Node node) {
-        if (!(node instanceof Parameter)) return Maybe.nothing();
-        return Maybe.just(((Parameter) node).binding);
-    }
-}
-@SuppressWarnings("ConstantConditions")
-    class ParameterInit extends Branch {
-    @Override
-    public Maybe<? extends Node> step(Node node) {
-        if (!(node instanceof Parameter)) return Maybe.nothing();
-        return ((Parameter) node).init;
     }
 }
 @SuppressWarnings("ConstantConditions")

@@ -137,7 +137,7 @@ public class ReconstructingReducer implements Reducer<Node> {
 
     @NotNull
     @Override
-    public BindingBindingWithDefault reduceBindingWithDefault(
+    public BindingWithDefault reduceBindingWithDefault(
             @NotNull BindingWithDefault node,
             @NotNull Node binding,
             @NotNull Node init) {
@@ -579,15 +579,6 @@ public class ReconstructingReducer implements Reducer<Node> {
             @NotNull ObjectExpression node,
             @NotNull ImmutableList<Node> properties) {
         return new ObjectExpression(properties.map(x -> (ObjectProperty) x));
-    }
-
-    @NotNull
-    @Override
-    public Parameter reduceParameter(
-            @NotNull Parameter node,
-            @NotNull Node binding,
-            @NotNull Maybe<Node> init) {
-        return new Parameter((Binding) binding, init.map(x -> (Expression) x));
     }
 
     @NotNull

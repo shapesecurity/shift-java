@@ -79,6 +79,10 @@ public class EarlyErrorChecker extends MonoidalReducer<EarlyErrorState> {
         return ((Method) methodDefinition).isGenerator;
     }
 
+    private boolean isSimpleParameterList(@NotNull FormalParameters params) {
+        return params.rest.isNothing() && !params.items.exists(i -> !(i instanceof BindingIdentifier));
+    }
+
     @NotNull
     private EarlyErrorState enforceDuplicateConstructorMethods(@NotNull ImmutableList<ClassElement> elements, @NotNull EarlyErrorState s) {
         elements = elements.filter(e ->
@@ -418,8 +422,7 @@ public class EarlyErrorChecker extends MonoidalReducer<EarlyErrorState> {
     @NotNull
     @Override // TODO de-dup code between this and below
     public EarlyErrorState reduceFunctionDeclaration(@NotNull FunctionDeclaration node, @NotNull EarlyErrorState name, @NotNull EarlyErrorState params, @NotNull EarlyErrorState body) {
-        boolean isSimpleParameterList = node.params.rest.isNothing() && !node.params.items.exists(i -> !(i.binding instanceof BindingIdentifier) || i.init.isJust());
-        boolean dupParamIsNonstrictError = !isSimpleParameterList || node.isGenerator;
+        boolean dupParamIsNonstrictError = !isSimpleParameterList(node.params) || node.isGenerator;
 
         ImmutableList<EarlyError> errors = params.lexicallyDeclaredNames.values().flatMap(nodes ->
                         nodes.length > 1 ?
@@ -450,8 +453,7 @@ public class EarlyErrorChecker extends MonoidalReducer<EarlyErrorState> {
     @NotNull
     @Override
     public EarlyErrorState reduceFunctionExpression(@NotNull FunctionExpression node, @NotNull Maybe<EarlyErrorState> name, @NotNull EarlyErrorState params, @NotNull EarlyErrorState body) {
-        boolean isSimpleParameterList = node.params.rest.isNothing() && !node.params.items.exists(i -> !(i.binding instanceof BindingIdentifier) || i.init.isJust());
-        boolean dupParamIsNonstrictError = !isSimpleParameterList || node.isGenerator;
+        boolean dupParamIsNonstrictError = !isSimpleParameterList(node.params) || node.isGenerator;
 
         ImmutableList<EarlyError> errors = params.lexicallyDeclaredNames.values().flatMap(nodes ->
                         nodes.length > 1 ?

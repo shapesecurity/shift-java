@@ -378,12 +378,6 @@ public interface Reducer<State> {
             @NotNull ImmutableList<State> properties);
 
     @NotNull
-    State reduceParameter(
-            @NotNull Parameter node,
-            @NotNull State binding,
-            @NotNull Maybe<State> init);
-
-    @NotNull
     State reduceReturnStatement(
             @NotNull ReturnStatement node,
             @NotNull Maybe<State> expression);

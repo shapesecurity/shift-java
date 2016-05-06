@@ -618,8 +618,6 @@ public class Deserializer {
                         return new ObjectBinding(deserializeListBindingProperty(jsonObject.get("properties")));
                     case "ObjectExpression":
                         return new ObjectExpression(deserializeListObjectProperty(jsonObject.get("properties")));
-                    case "Parameter":
-                        return new Parameter((Binding) deserializeNode(jsonObject.get("binding")), deserializeMaybeExpression(jsonObject.get("init")));
                     case "ReturnStatement":
                         return new ReturnStatement(deserializeMaybeExpression(jsonObject.get("expression")));
                     case "Script":

@@ -618,15 +618,6 @@ public class MonoidalReducer<State> implements Reducer<State> {
 
     @NotNull
     @Override
-    public State reduceParameter(
-            @NotNull Parameter node,
-            @NotNull State binding,
-            @NotNull Maybe<State> init) {
-        return append(binding, o(init));
-    }
-
-    @NotNull
-    @Override
     public State reduceReturnStatement(
             @NotNull ReturnStatement node,
             @NotNull Maybe<State> expression) {

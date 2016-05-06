@@ -586,12 +586,6 @@ public class Serializer implements Reducer<StringBuilder> {
 
     @NotNull
     @Override
-    public StringBuilder reduceParameter(@NotNull Parameter node, @NotNull StringBuilder binding, @NotNull Maybe<StringBuilder> init) {
-        return b("Parameter").add("binding", binding).add("init", init).done();
-    }
-
-    @NotNull
-    @Override
     public StringBuilder reduceReturnStatement(@NotNull ReturnStatement node, @NotNull Maybe<StringBuilder> expression) {
         return b("ReturnStatement").add("expression", expression).done();
     }

@@ -26,12 +26,12 @@ public class GeneratorDeclarationTest extends ParserTestCase {
                 ImmutableList.nil(), Maybe.nothing()), new FunctionBody(ImmutableList.nil(), ImmutableList.nil())));
 
         testScript("function* a(a=yield){}", new FunctionDeclaration(true, new BindingIdentifier("a"), new FormalParameters(
-                ImmutableList.list(new Parameter(new BindingIdentifier("a"), Maybe.just(new YieldExpression(Maybe.nothing())))),
+                ImmutableList.list(new BindingWithDefault(new BindingIdentifier("a"), new YieldExpression(Maybe.nothing()))),
                 Maybe.nothing()), new FunctionBody(ImmutableList.nil(), ImmutableList.nil())));
 
         testScript("function* a({[yield]:a}){}", new FunctionDeclaration(true, new BindingIdentifier("a"),
-                new FormalParameters(ImmutableList.list(new Parameter(new ObjectBinding(ImmutableList.list(new BindingPropertyProperty(
-                        new ComputedPropertyName(new YieldExpression(Maybe.nothing())), new BindingIdentifier("a")))), Maybe.nothing())),
+                new FormalParameters(ImmutableList.list(new ObjectBinding(ImmutableList.list(new BindingPropertyProperty(
+                        new ComputedPropertyName(new YieldExpression(Maybe.nothing())), new BindingIdentifier("a"))))),
                         Maybe.nothing()), new FunctionBody(ImmutableList.nil(), ImmutableList.nil())));
 
         testScript("function* a(){({[yield]:a}=0)}", new FunctionDeclaration(true, new BindingIdentifier("a"),
@@ -55,7 +55,7 @@ public class GeneratorDeclarationTest extends ParserTestCase {
 
         testScript("function*g() { (function*(x = yield){}); }", new FunctionDeclaration(true, new BindingIdentifier("g"), new FormalParameters(ImmutableList.nil(), Maybe.nothing()),
                 new FunctionBody(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(new FunctionExpression(true, Maybe.nothing(),
-                        new FormalParameters(ImmutableList.list(new Parameter(new BindingIdentifier("x"), Maybe.just(new YieldExpression(Maybe.nothing())))), Maybe.nothing()),
+                        new FormalParameters(ImmutableList.list(new BindingWithDefault(new BindingIdentifier("x"), new YieldExpression(Maybe.nothing()))), Maybe.nothing()),
                         new FunctionBody(ImmutableList.nil(), ImmutableList.nil()))
                 )))));
 

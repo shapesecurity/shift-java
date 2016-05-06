@@ -95,14 +95,8 @@ public class Validator extends MonoidalReducer<ValidationContext> {
         return name.length() > 0 && Utils.isIdentifierStart(name.charAt(0)) && name.chars().allMatch(Utils::isIdentifierPart);
     }
 
-    public static ImmutableList<ValidationError> validate(Script script) {
-        List<ValidationError> errors = Director.reduceScript(new Validator(), script).errors;
-        return ImmutableList.from(Director.reduceScript(new Validator(), script).errors);
-    }
-
-    public static ImmutableList<ValidationError> validate(Module module) {
-        List<ValidationError> errors = Director.reduceModule(new Validator(), module).errors;
-        return ImmutableList.from(Director.reduceModule(new Validator(), module).errors);
+    public static ImmutableList<ValidationError> validate(Program program) {
+        return ImmutableList.from(Director.reduceProgram(new Validator(), program).errors);
     }
 
     private boolean checkIsStringLiteral(String rawValue) {

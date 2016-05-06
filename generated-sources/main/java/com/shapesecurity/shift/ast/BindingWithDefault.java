@@ -21,7 +21,7 @@ package com.shapesecurity.shift.ast;
 import org.jetbrains.annotations.NotNull;
 import com.shapesecurity.functional.data.HashCodeBuilder;
 
-public class BindingWithDefault implements Node, BindingBindingWithDefault {
+public class BindingWithDefault implements Node, Parameter, BindingBindingWithDefault {
     @NotNull
     public final Binding binding;
 

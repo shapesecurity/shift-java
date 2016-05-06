@@ -684,10 +684,9 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
     @NotNull
     protected Parameter bindingToParameter(@NotNull BindingBindingWithDefault binding) {
         if (binding instanceof Binding) {
-            return new Parameter((Binding) binding, Maybe.nothing());
+            return (Binding) binding;
         } else {
-            BindingWithDefault bd = (BindingWithDefault) binding;
-            return new Parameter(bd.binding, Maybe.just(bd.init));
+            return (BindingWithDefault) binding;
         }
     }
 
@@ -1984,22 +1983,12 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
                     name = this.parsePropertyName().a;
                     this.expect(TokenType.LPAREN);
                     BindingBindingWithDefault param = this.parseBindingElement();
-                    Binding binding;
-                    Maybe<Expression> init;
-                    if (param instanceof Binding) {
-                        binding = (Binding) param;
-                        init = Maybe.nothing();
-                    } else {
-                        BindingWithDefault bindingWithDefault = (BindingWithDefault) param;
-                        binding = bindingWithDefault.binding;
-                        init = Maybe.just(bindingWithDefault.init);
-                    }
                     this.expect(TokenType.RPAREN);
                     boolean previousYield = this.allowYieldExpression;
                     this.allowYieldExpression = false;
                     FunctionBody body = this.parseFunctionBody();
                     this.allowYieldExpression = previousYield;
-                    return Either.right(this.finishNode(startState, new Setter(name, new Parameter(binding, init), body)));
+                    return Either.right(this.finishNode(startState, new Setter(name, bindingToParameter(param), body)));
                 }
             }
         }

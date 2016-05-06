@@ -109,6 +109,10 @@ public final class CodeGen implements Reducer<CodeRep> {
         return true;
     }
 
+    private boolean isComplexArrowHead(@NotNull FormalParameters params) {
+        return (params.rest.isJust() || params.items.length != 1 || !(params.items.maybeHead().just() instanceof BindingIdentifier));
+    }
+
     private CodeRep p(Node node, Precedence precedence, CodeRep a) {
         return ((Expression) node).getPrecedence().ordinal() < precedence.ordinal() ? factory.paren(a) : a;
     }
@@ -175,7 +179,7 @@ public final class CodeGen implements Reducer<CodeRep> {
     @NotNull
     @Override
     public CodeRep reduceArrowExpression(@NotNull ArrowExpression node, @NotNull CodeRep params, @NotNull CodeRep body) {
-        if (node.params.rest.isJust() || node.params.items.length != 1 || node.params.items.maybeHead().just().init.isJust() || !(node.params.items.maybeHead().just().binding instanceof BindingIdentifier)) {
+        if (isComplexArrowHead(node.params)) {
             params = factory.paren(params);
         }
         if (node.body instanceof FunctionBody) {
@@ -807,12 +811,6 @@ public final class CodeGen implements Reducer<CodeRep> {
         CodeRep result = factory.brace(factory.commaSep(properties));
         result.startsWithCurly = true;
         return result;
-    }
-
-    @NotNull
-    @Override
-    public CodeRep reduceParameter(@NotNull Parameter node, @NotNull CodeRep binding, @NotNull Maybe<CodeRep> init) {
-        return init.maybe(binding, i -> seqVA(binding, factory.token("="), i));
     }
 
     @Override

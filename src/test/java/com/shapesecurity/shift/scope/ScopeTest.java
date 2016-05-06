@@ -267,11 +267,11 @@ public class ScopeTest extends TestCase {
                 .apply(script));
 
         final BindingIdentifier p1Binding1 = bi(new BranchGetter().d(ScriptStatements_(0)).d(FunctionDeclarationParams_())
-                .d(FormalParametersItems_(0)).d(ParameterBinding_())
+                .d(FormalParametersItems_(0))
                 .apply(script));
 
         final BindingIdentifier p1Binding2 = bi(new BranchGetter().d(ScriptStatements_(0)).d(FunctionDeclarationBody_())
-                .d(FunctionBodyStatements_(1)).d(FunctionDeclarationParams_()).d(FormalParametersItems_(0)).d(ParameterBinding_())
+                .d(FunctionBodyStatements_(1)).d(FunctionDeclarationParams_()).d(FormalParametersItems_(0))
                 .apply(script));
 
         final IdentifierExpression p1Identifier1 = ie(new BranchGetter().d(ScriptStatements_(0)).d(FunctionDeclarationBody_())
@@ -281,7 +281,7 @@ public class ScopeTest extends TestCase {
                 .apply(script));
 
         final BindingIdentifier p2Binding1 = bi(new BranchGetter().d(ScriptStatements_(0)).d(FunctionDeclarationParams_())
-                .d(FormalParametersItems_(1)).d(ParameterBinding_())
+                .d(FormalParametersItems_(1))
                 .apply(script));
 
         final IdentifierExpression p2Identifier1 = ie(new BranchGetter().d(ScriptStatements_(0)).d(FunctionDeclarationBody_())
@@ -1020,9 +1020,9 @@ public class ScopeTest extends TestCase {
 
         final BindingIdentifier fNode1 = bi(new BranchGetter().d(ScriptStatements_(0)).d(FunctionDeclarationName_())
                 .apply(script));
-        final BindingIdentifier arg1Node1 = bi(new BranchGetter().d(ScriptStatements_(0)).d(FunctionDeclarationParams_()).d(FormalParametersItems_(0)).d(ParameterBinding_())
+        final BindingIdentifier arg1Node1 = bi(new BranchGetter().d(ScriptStatements_(0)).d(FunctionDeclarationParams_()).d(FormalParametersItems_(0))
                 .apply(script));
-        final BindingIdentifier arg2Node1 = bi(new BranchGetter().d(ScriptStatements_(0)).d(FunctionDeclarationParams_()).d(FormalParametersItems_(1)).d(ParameterBinding_())
+        final BindingIdentifier arg2Node1 = bi(new BranchGetter().d(ScriptStatements_(0)).d(FunctionDeclarationParams_()).d(FormalParametersItems_(1))
                 .apply(script));
         final BindingIdentifier v1Node1 = bi(new BranchGetter().d(ScriptStatements_(0)).d(FunctionDeclarationBody_()).d(FunctionBodyStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorBinding_())
                 .apply(script));
@@ -1448,7 +1448,7 @@ public class ScopeTest extends TestCase {
 
         final BindingIdentifier xNode1 = bi(new BranchGetter().d(ScriptStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorBinding_())
                 .apply(script));
-        final BindingIdentifier xNode2 = bi(new BranchGetter().d(ScriptStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorInit_()).d(ArrowExpressionParams_()).d(FormalParametersItems_(0)).d(ParameterBinding_())
+        final BindingIdentifier xNode2 = bi(new BranchGetter().d(ScriptStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorInit_()).d(ArrowExpressionParams_()).d(FormalParametersItems_(0))
                 .apply(script));
         final AssignmentTargetIdentifier xNode3 = ati(new BranchGetter().d(ScriptStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorInit_()).d(ArrowExpressionBody_()).d(UpdateExpressionOperand_())
                 .apply(script));
