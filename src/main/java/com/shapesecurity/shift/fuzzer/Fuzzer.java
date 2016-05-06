@@ -181,7 +181,8 @@ public class Fuzzer {
             Fuzzer::randomExport,
             Fuzzer::randomExportAllFrom,
             Fuzzer::randomExportDefault,
-            Fuzzer::randomExportFrom
+            Fuzzer::randomExportFrom,
+            Fuzzer::randomExportLocals
     );
     private final static Gen<Statement>[] nonIterationStatementGens = Fuzzer.<Gen<Statement>>array(
             Fuzzer::randomBlockStatement,
@@ -223,8 +224,8 @@ public class Fuzzer {
     }
 
     @NotNull
-    public static Node generate(@NotNull Random random, int depth) {
-        return random.nextInt() % 2 == 0 ? randomScript(new GenCtx(random), depth) : randomModule(new GenCtx(random), depth);
+    public static Program generate(@NotNull Random random, int depth) {
+        return random.nextBoolean() ? randomScript(new GenCtx(random), depth) : randomModule(new GenCtx(random), depth);
     }
 
     private static boolean isFunctionBodyStrict(FunctionBody body) {
@@ -552,6 +553,16 @@ public class Fuzzer {
     }
 
     @NotNull
+    private static ExportLocals randomExportLocals(@NotNull GenCtx ctx, int depth) {
+        return new ExportLocals(many(Fuzzer::randomExportLocalSpecifier).apply(ctx, depth - 1));
+    }
+
+    @NotNull
+    private static ExportLocalSpecifier randomExportLocalSpecifier(@NotNull GenCtx ctx, int depth) {
+        return new ExportLocalSpecifier(randomIdentifierExpression(ctx, depth-1), optional(Fuzzer::randomIdentifierString).apply(ctx, depth - 1));
+    }
+
+    @NotNull
     private static Expression randomExpression(@NotNull GenCtx ctx, int depth) {
         if (depth < 0) {
             return randomLiteralStringExpression(ctx, depth - 1);
@@ -602,7 +613,7 @@ public class Fuzzer {
 
     @NotNull
     private static FormalParameters randomFormalParameters(@NotNull GenCtx ctx, int depth) {
-        return new FormalParameters(many(Fuzzer::randomParameter).apply(ctx, depth - 1), optional(Fuzzer::randomBindingIdentifier).apply(ctx, depth - 1));
+        return new FormalParameters(many(Fuzzer::randomParameter).apply(ctx, depth - 1), optional(Fuzzer::randomBinding).apply(ctx, depth - 1));
     }
 
     @NotNull
@@ -646,7 +657,7 @@ public class Fuzzer {
         if (isGenerator) {
             ctx = ctx.inGeneratorFunction();
         }
-        return new FunctionDeclaration(randomBindingIdentifier(ctx, depth - 1), isGenerator, randomFormalParameters(ctx, depth - 1), body);
+        return new FunctionDeclaration(isGenerator, randomBindingIdentifier(ctx, depth - 1), randomFormalParameters(ctx, depth - 1), body);
     }
 
     @NotNull
@@ -683,7 +694,7 @@ public class Fuzzer {
         if (isGenerator) {
             ctx = ctx.inGeneratorFunction();
         }
-        return new FunctionExpression(optional(Fuzzer::randomBindingIdentifier).apply(ctx, depth - 1), isGenerator, randomFormalParameters(ctx, depth - 1), body);
+        return new FunctionExpression(isGenerator, optional(Fuzzer::randomBindingIdentifier).apply(ctx, depth - 1), randomFormalParameters(ctx, depth - 1), body);
     }
 
     @NotNull
@@ -692,7 +703,7 @@ public class Fuzzer {
         if (isFunctionBodyStrict(body)) {
             ctx = ctx.enterStrictMode();
         }
-        return new Getter(body, randomPropertyName(ctx, depth - 1));
+        return new Getter(randomPropertyName(ctx, depth - 1), body);
     }
 
     @NotNull
@@ -814,7 +825,7 @@ public class Fuzzer {
 
     @NotNull
     private static LiteralRegExpExpression randomLiteralRegExpExpression(@NotNull GenCtx ctx, int depth) {
-        return new LiteralRegExpExpression(randomRegExpString(ctx, depth - 1), ""); // TODO flags
+        return new LiteralRegExpExpression(randomRegExpString(ctx, depth - 1), ctx.random.nextBoolean(), ctx.random.nextBoolean(), ctx.random.nextBoolean(), ctx.random.nextBoolean(), ctx.random.nextBoolean());
     }
 
     @NotNull
@@ -834,7 +845,7 @@ public class Fuzzer {
 
     @NotNull
     private static Method randomMethod(@NotNull GenCtx ctx, int depth) {
-        return new Method(false, randomFormalParameters(ctx, depth - 1), randomFunctionBody(ctx, depth - 1), randomPropertyName(ctx, depth - 1));
+        return new Method(false, randomPropertyName(ctx, depth - 1), randomFormalParameters(ctx, depth - 1), randomFunctionBody(ctx, depth - 1));
     }
 
     @NotNull
@@ -932,12 +943,12 @@ public class Fuzzer {
         if (isFunctionBodyStrict(body)) {
             ctx = ctx.enterStrictMode();
         }
-        return new Setter(randomParameter(ctx, depth - 1), body, randomPropertyName(ctx, depth - 1));
+        return new Setter(randomPropertyName(ctx, depth - 1), randomParameter(ctx, depth - 1), body);
     }
 
     @NotNull
     private static ShorthandProperty randomShorthandProperty(@NotNull GenCtx ctx, int depth) {
-        return new ShorthandProperty(randomIdentifierString(ctx, depth - 1));
+        return new ShorthandProperty(randomIdentifierExpression(ctx, depth - 1));
     }
 
     @NotNull
@@ -1156,7 +1167,7 @@ public class Fuzzer {
     @NotNull
     private static UpdateExpression randomUpdateExpression(@NotNull GenCtx ctx, int depth) {
         UpdateOperator operator = choice(UpdateOperator.values()).apply(ctx, depth - 1);
-        return new UpdateExpression(false, operator, randomBindingIdentifierMemberExpression(ctx, depth - 1));
+        return new UpdateExpression(false, operator, randomSimpleAssignmentTarget(ctx, depth - 1));
     }
 
     @NotNull

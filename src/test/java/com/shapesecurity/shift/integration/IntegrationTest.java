@@ -3,6 +3,7 @@ package com.shapesecurity.shift.integration;
 import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.shift.ast.Module;
 import com.shapesecurity.shift.ast.Node;
+import com.shapesecurity.shift.ast.Program;
 import com.shapesecurity.shift.ast.Script;
 import com.shapesecurity.shift.codegen.CodeGen;
 import com.shapesecurity.shift.fuzzer.Fuzzer;
@@ -16,8 +17,8 @@ import org.junit.Test;
 
 import java.util.Random;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class IntegrationTest {
     @Test
@@ -102,7 +103,7 @@ public class IntegrationTest {
     }
 
     private void testFuzzerToCodeGenToParserSerializationHelper(long seed, int depth) throws JsError {
-        Node generated = Fuzzer.generate(new Random(seed), depth);
+        Program generated = Fuzzer.generate(new Random(seed), depth);
         String originalSerialized = Serializer.serialize(generated);
         if (generated instanceof Script) {
             String code = CodeGen.codeGen((Script) generated);
