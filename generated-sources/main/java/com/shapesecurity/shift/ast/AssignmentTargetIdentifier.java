@@ -21,13 +21,11 @@ package com.shapesecurity.shift.ast;
 import org.jetbrains.annotations.NotNull;
 import com.shapesecurity.functional.data.HashCodeBuilder;
 
-public class AssignmentTargetIdentifier implements Node, SimpleAssignmentTarget {
-    @NotNull
-    public final String name;
+public class AssignmentTargetIdentifier extends VariableReference implements SimpleAssignmentTarget {
 
 
     public AssignmentTargetIdentifier (@NotNull String name) {
-        this.name = name;
+        super(name);
     }
 
 

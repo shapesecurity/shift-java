@@ -21,13 +21,11 @@ package com.shapesecurity.shift.ast;
 import org.jetbrains.annotations.NotNull;
 import com.shapesecurity.functional.data.HashCodeBuilder;
 
-public class BindingIdentifier implements Node, Binding {
-    @NotNull
-    public final String name;
+public class BindingIdentifier extends VariableReference implements Binding {
 
 
     public BindingIdentifier (@NotNull String name) {
-        this.name = name;
+        super(name);
     }
 
 

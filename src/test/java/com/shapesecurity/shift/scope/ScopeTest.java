@@ -17,7 +17,6 @@
 package com.shapesecurity.shift.scope;
 
 import com.shapesecurity.functional.Pair;
-import com.shapesecurity.functional.data.Either;
 import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.functional.data.Maybe;
 import com.shapesecurity.shift.ast.*;
@@ -38,9 +37,14 @@ import static com.shapesecurity.shift.path.Branch.*;
 
 public class ScopeTest extends TestCase {
 
-    private static final ImmutableList<Either<BindingIdentifier, IdentifierExpression>> NO_REFERENCES = ImmutableList.nil();
+    private static final ImmutableList<VariableReference> NO_REFERENCES = ImmutableList.nil();
     private static final ImmutableList<BindingIdentifier> NO_DECLARATIONS = ImmutableList.nil();
 
+
+    private static AssignmentTargetIdentifier ati(Maybe<? extends Node> n) {
+        assertTrue("Node not located!", n.isJust());
+        return (AssignmentTargetIdentifier) n.just();
+    }
 
     private static BindingIdentifier bi(Maybe<? extends Node> n) {
         assertTrue("Node not located!", n.isJust());
@@ -72,12 +76,12 @@ public class ScopeTest extends TestCase {
             ImmutableList<String> through = ImmutableList.nil();
 
             // mapping of variable names from this scope object to the list of their declarations and their references
-            Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<Either<BindingIdentifier, IdentifierExpression>>>> variables = new HashMap<>();
+            Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<VariableReference>>> variables = new HashMap<>();
             variables.put("v1", new Pair<>(ImmutableList.list(v1Binding1), NO_REFERENCES));
-            variables.put("v2", new Pair<>(ImmutableList.list(v2Binding1), ImmutableList.list(Either.left(v2Binding1))));
+            variables.put("v2", new Pair<>(ImmutableList.list(v2Binding1), ImmutableList.list(v2Binding1)));
 
-            Map<Either<BindingIdentifier, IdentifierExpression>, Accessibility> referenceTypes = new HashMap<>();
-            referenceTypes.put(Either.left(v2Binding1), Accessibility.Write);
+            Map<VariableReference, Accessibility> referenceTypes = new HashMap<>();
+            referenceTypes.put(v2Binding1, Accessibility.Write);
 
             checkScope(globalScope, Scope.Type.Global, true, children, through, variables, referenceTypes);
         }
@@ -102,12 +106,12 @@ public class ScopeTest extends TestCase {
             ImmutableList<String> through = ImmutableList.nil();
 
             // mapping of variable names from this scope object to the list of their declarations and their references
-            Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<Either<BindingIdentifier, IdentifierExpression>>>> variables = new HashMap<>();
+            Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<VariableReference>>> variables = new HashMap<>();
             variables.put("v1", new Pair<>(ImmutableList.list(v1Binding1), NO_REFERENCES));
-            variables.put("v2", new Pair<>(ImmutableList.list(v2Binding1), ImmutableList.list(Either.left(v2Binding1))));
+            variables.put("v2", new Pair<>(ImmutableList.list(v2Binding1), ImmutableList.list(v2Binding1)));
 
-            Map<Either<BindingIdentifier, IdentifierExpression>, Accessibility> referenceTypes = new HashMap<>();
-            referenceTypes.put(Either.left(v2Binding1), Accessibility.Write);
+            Map<VariableReference, Accessibility> referenceTypes = new HashMap<>();
+            referenceTypes.put(v2Binding1, Accessibility.Write);
 
             checkScope(globalScope, Scope.Type.Global, true, children, through, variables, referenceTypes);
         }
@@ -120,7 +124,7 @@ public class ScopeTest extends TestCase {
 
         GlobalScope globalScope = ScopeAnalyzer.analyze(script);
 
-        final BindingIdentifier v1Binding1 = bi(new BranchGetter().d(ScriptStatements_(0)).d(ExpressionStatementExpression_()).d(AssignmentExpressionBinding_())
+        final AssignmentTargetIdentifier v1Binding1 = ati(new BranchGetter().d(ScriptStatements_(0)).d(ExpressionStatementExpression_()).d(AssignmentExpressionBinding_())
                 .apply(script));
 
         final IdentifierExpression v1Identifier1 = ie(new BranchGetter().d(ScriptStatements_(1)).d(VariableDeclarationStatementDeclaration_())
@@ -136,14 +140,14 @@ public class ScopeTest extends TestCase {
             ImmutableList<String> through = ImmutableList.list("v1");
 
             // mapping of variable names from this scope object to the list of their declarations and their references
-            Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<Either<BindingIdentifier, IdentifierExpression>>>> variables = new HashMap<>();
-            variables.put("v1", new Pair<>(NO_DECLARATIONS, ImmutableList.list(Either.left(v1Binding1), Either.right(v1Identifier1))));
-            variables.put("v2", new Pair<>(ImmutableList.list(v2Binding1), ImmutableList.list(Either.left(v2Binding1))));
+            Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<VariableReference>>> variables = new HashMap<>();
+            variables.put("v1", new Pair<>(NO_DECLARATIONS, ImmutableList.list(v1Binding1, v1Identifier1)));
+            variables.put("v2", new Pair<>(ImmutableList.list(v2Binding1), ImmutableList.list(v2Binding1)));
 
-            Map<Either<BindingIdentifier, IdentifierExpression>, Accessibility> referenceTypes = new HashMap<>();
-            referenceTypes.put(Either.left(v1Binding1), Accessibility.Write);
-            referenceTypes.put(Either.right(v1Identifier1), Accessibility.Read);
-            referenceTypes.put(Either.left(v2Binding1), Accessibility.Write);
+            Map<VariableReference, Accessibility> referenceTypes = new HashMap<>();
+            referenceTypes.put(v1Binding1, Accessibility.Write);
+            referenceTypes.put(v1Identifier1, Accessibility.Read);
+            referenceTypes.put(v2Binding1, Accessibility.Write);
 
             checkScope(globalScope, Scope.Type.Global, true, children, through, variables, referenceTypes);
         }
@@ -173,14 +177,14 @@ public class ScopeTest extends TestCase {
             ImmutableList<String> through = ImmutableList.nil();
 
             // mapping of variable names from this scope object to the list of their declarations and their references
-            Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<Either<BindingIdentifier, IdentifierExpression>>>> variables = new HashMap<>();
-            variables.put("v1", new Pair<>(ImmutableList.list(v1Binding1), ImmutableList.list(Either.left(v1Binding1), Either.right(v1Identifier1))));
-            variables.put("v2", new Pair<>(ImmutableList.list(v2Binding1), ImmutableList.list(Either.left(v2Binding1))));
+            Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<VariableReference>>> variables = new HashMap<>();
+            variables.put("v1", new Pair<>(ImmutableList.list(v1Binding1), ImmutableList.list(v1Binding1, v1Identifier1)));
+            variables.put("v2", new Pair<>(ImmutableList.list(v2Binding1), ImmutableList.list(v2Binding1)));
 
-            Map<Either<BindingIdentifier, IdentifierExpression>, Accessibility> referenceTypes = new HashMap<>();
-            referenceTypes.put(Either.left(v1Binding1), Accessibility.Write);
-            referenceTypes.put(Either.right(v1Identifier1), Accessibility.Read);
-            referenceTypes.put(Either.left(v2Binding1), Accessibility.Write);
+            Map<VariableReference, Accessibility> referenceTypes = new HashMap<>();
+            referenceTypes.put((v1Binding1), Accessibility.Write);
+            referenceTypes.put((v1Identifier1), Accessibility.Read);
+            referenceTypes.put((v2Binding1), Accessibility.Write);
 
             checkScope(globalScope, Scope.Type.Global, true, children, through, variables, referenceTypes);
         }
@@ -216,14 +220,14 @@ public class ScopeTest extends TestCase {
             ImmutableList<String> through = ImmutableList.list();
 
             // mapping of variable names from this scope object to the list of their declarations and their references
-            Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<Either<BindingIdentifier, IdentifierExpression>>>> variables = new HashMap<>();
-            variables.put("v1", new Pair<>(ImmutableList.list(v1Binding1, v1Binding2), ImmutableList.list(Either.left(v1Binding2), Either.right(v1Identifier1))));
-            variables.put("v2", new Pair<>(ImmutableList.list(v2Binding1), ImmutableList.list(Either.left(v2Binding1))));
+            Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<VariableReference>>> variables = new HashMap<>();
+            variables.put("v1", new Pair<>(ImmutableList.list(v1Binding1, v1Binding2), ImmutableList.list((v1Binding2), (v1Identifier1))));
+            variables.put("v2", new Pair<>(ImmutableList.list(v2Binding1), ImmutableList.list((v2Binding1))));
 
-            Map<Either<BindingIdentifier, IdentifierExpression>, Accessibility> referenceTypes = new HashMap<>();
-            referenceTypes.put(Either.left(v1Binding2), Accessibility.Write);
-            referenceTypes.put(Either.right(v1Identifier1), Accessibility.Read);
-            referenceTypes.put(Either.left(v2Binding1), Accessibility.Write);
+            Map<VariableReference, Accessibility> referenceTypes = new HashMap<>();
+            referenceTypes.put((v1Binding2), Accessibility.Write);
+            referenceTypes.put((v1Identifier1), Accessibility.Read);
+            referenceTypes.put((v2Binding1), Accessibility.Write);
 
             checkScope(globalScope, Scope.Type.Global, true, children, through, variables, referenceTypes);
         }
@@ -263,11 +267,11 @@ public class ScopeTest extends TestCase {
                 .apply(script));
 
         final BindingIdentifier p1Binding1 = bi(new BranchGetter().d(ScriptStatements_(0)).d(FunctionDeclarationParams_())
-                .d(FormalParametersItems_(0))
+                .d(FormalParametersItems_(0)).d(ParameterBinding_())
                 .apply(script));
 
         final BindingIdentifier p1Binding2 = bi(new BranchGetter().d(ScriptStatements_(0)).d(FunctionDeclarationBody_())
-                .d(FunctionBodyStatements_(1)).d(FunctionDeclarationParams_()).d(FormalParametersItems_(0))
+                .d(FunctionBodyStatements_(1)).d(FunctionDeclarationParams_()).d(FormalParametersItems_(0)).d(ParameterBinding_())
                 .apply(script));
 
         final IdentifierExpression p1Identifier1 = ie(new BranchGetter().d(ScriptStatements_(0)).d(FunctionDeclarationBody_())
@@ -277,7 +281,7 @@ public class ScopeTest extends TestCase {
                 .apply(script));
 
         final BindingIdentifier p2Binding1 = bi(new BranchGetter().d(ScriptStatements_(0)).d(FunctionDeclarationParams_())
-                .d(FormalParametersItems_(1))
+                .d(FormalParametersItems_(1)).d(ParameterBinding_())
                 .apply(script));
 
         final IdentifierExpression p2Identifier1 = ie(new BranchGetter().d(ScriptStatements_(0)).d(FunctionDeclarationBody_())
@@ -318,13 +322,13 @@ public class ScopeTest extends TestCase {
             ImmutableList<String> through = ImmutableList.nil();
 
             // mapping of variable names from this scope object to the list of their declarations and their references
-            Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<Either<BindingIdentifier, IdentifierExpression>>>> variables = new HashMap<>();
-            variables.put("f1", new Pair<>(ImmutableList.list(f1Binding1), ImmutableList.list(Either.right(f1Identifier1))));
-            variables.put("r", new Pair<>(ImmutableList.list(rBinding1), ImmutableList.list(Either.left(rBinding1))));
+            Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<VariableReference>>> variables = new HashMap<>();
+            variables.put("f1", new Pair<>(ImmutableList.list(f1Binding1), ImmutableList.list(f1Identifier1)));
+            variables.put("r", new Pair<>(ImmutableList.list(rBinding1), ImmutableList.list((rBinding1))));
 
-            Map<Either<BindingIdentifier, IdentifierExpression>, Accessibility> referenceTypes = new HashMap<>();
-            referenceTypes.put(Either.right(f1Identifier1), Accessibility.Read);
-            referenceTypes.put(Either.left(rBinding1), Accessibility.Write);
+            Map<VariableReference, Accessibility> referenceTypes = new HashMap<>();
+            referenceTypes.put(f1Identifier1, Accessibility.Read);
+            referenceTypes.put(rBinding1, Accessibility.Write);
 
             checkScope(globalScope, Scope.Type.Global, true, children, through, variables, referenceTypes);
         }
@@ -335,18 +339,18 @@ public class ScopeTest extends TestCase {
             ImmutableList<String> through = ImmutableList.nil();
 
             // mapping of variable names from this scope object to the list of their declarations and their references
-            Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<Either<BindingIdentifier, IdentifierExpression>>>> variables = new HashMap<>();
-            variables.put("v1", new Pair<>(ImmutableList.list(v1Binding1), ImmutableList.list(Either.left(v1Binding1), Either.right(v1Identifier1))));
+            Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<VariableReference>>> variables = new HashMap<>();
+            variables.put("v1", new Pair<>(ImmutableList.list(v1Binding1), ImmutableList.list(v1Binding1, v1Identifier1)));
             variables.put("p1", new Pair<>(ImmutableList.list(p1Binding1), NO_REFERENCES));
-            variables.put("p2", new Pair<>(ImmutableList.list(p2Binding1), ImmutableList.list(Either.right(p2Identifier1))));
-            variables.put("f2", new Pair<>(ImmutableList.list(f2Binding1), ImmutableList.list(Either.right(f2Identifier1))));
+            variables.put("p2", new Pair<>(ImmutableList.list(p2Binding1), ImmutableList.list(p2Identifier1)));
+            variables.put("f2", new Pair<>(ImmutableList.list(f2Binding1), ImmutableList.list(f2Identifier1)));
             variables.put("arguments", new Pair<>(NO_DECLARATIONS, NO_REFERENCES));
 
-            Map<Either<BindingIdentifier, IdentifierExpression>, Accessibility> referenceTypes = new HashMap<>();
-            referenceTypes.put(Either.left(v1Binding1), Accessibility.Write);
-            referenceTypes.put(Either.right(v1Identifier1), Accessibility.Read);
-            referenceTypes.put(Either.right(p2Identifier1), Accessibility.Read);
-            referenceTypes.put(Either.right(f2Identifier1), Accessibility.Read);
+            Map<VariableReference, Accessibility> referenceTypes = new HashMap<>();
+            referenceTypes.put(v1Binding1, Accessibility.Write);
+            referenceTypes.put(v1Identifier1, Accessibility.Read);
+            referenceTypes.put(p2Identifier1, Accessibility.Read);
+            referenceTypes.put(f2Identifier1, Accessibility.Read);
 
             checkScope(f1Scope, Scope.Type.Function, false, children, through, variables, referenceTypes);
         }
@@ -357,15 +361,15 @@ public class ScopeTest extends TestCase {
             ImmutableList<String> through = ImmutableList.list("v1", "p2");
 
             // mapping of variable names from this scope object to the list of their declarations and their references
-            Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<Either<BindingIdentifier, IdentifierExpression>>>> variables = new HashMap<>();
-            variables.put("p1", new Pair<>(ImmutableList.list(p1Binding2), ImmutableList.list(Either.right(p1Identifier1))));
-            variables.put("v2", new Pair<>(ImmutableList.list(v2Binding1), ImmutableList.list(Either.left(v2Binding1), Either.right(v2Identifier1))));
+            Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<VariableReference>>> variables = new HashMap<>();
+            variables.put("p1", new Pair<>(ImmutableList.list(p1Binding2), ImmutableList.list(p1Identifier1)));
+            variables.put("v2", new Pair<>(ImmutableList.list(v2Binding1), ImmutableList.list(v2Binding1, v2Identifier1)));
             variables.put("arguments", new Pair<>(NO_DECLARATIONS, NO_REFERENCES));
 
-            Map<Either<BindingIdentifier, IdentifierExpression>, Accessibility> referenceTypes = new HashMap<>();
-            referenceTypes.put(Either.right(p1Identifier1), Accessibility.Read);
-            referenceTypes.put(Either.left(v2Binding1), Accessibility.Write);
-            referenceTypes.put(Either.right(v2Identifier1), Accessibility.Read);
+            Map<VariableReference, Accessibility> referenceTypes = new HashMap<>();
+            referenceTypes.put(p1Identifier1, Accessibility.Read);
+            referenceTypes.put(v2Binding1, Accessibility.Write);
+            referenceTypes.put(v2Identifier1, Accessibility.Read);
 
             checkScope(f2Scope, Scope.Type.Function, false, children, through, variables, referenceTypes);
         }
@@ -383,14 +387,10 @@ public class ScopeTest extends TestCase {
 
         final BindingIdentifier fNode1 = bi(new BranchGetter().d(ScriptStatements_(0)).d(FunctionDeclarationName_())
                 .apply(script));
-        final BindingIdentifier fNode2 = bi(new BranchGetter().d(ScriptStatements_(0)).d(FunctionDeclarationBody_()).d(FunctionBodyStatements_(0)).d(ExpressionStatementExpression_()).d(AssignmentExpressionBinding_())
+        final AssignmentTargetIdentifier fNode2 = ati(new BranchGetter().d(ScriptStatements_(0)).d(FunctionDeclarationBody_()).d(FunctionBodyStatements_(0)).d(ExpressionStatementExpression_()).d(AssignmentExpressionBinding_())
                 .apply(script));
         final IdentifierExpression fNode3 = ie(new BranchGetter().d(ScriptStatements_(1)).d(ExpressionStatementExpression_()).d(CallExpressionCallee_())
                 .apply(script));
-
-        final Either<BindingIdentifier, IdentifierExpression> fNode1E = Either.left(fNode1);
-        final Either<BindingIdentifier, IdentifierExpression> fNode2E = Either.left(fNode2);
-        final Either<BindingIdentifier, IdentifierExpression> fNode3E = Either.right(fNode3);
 
         { // global scope
 
@@ -399,12 +399,12 @@ public class ScopeTest extends TestCase {
             ImmutableList<String> through = ImmutableList.nil();
 
             // mapping of variable names from this scope object to the list of their declarations and their references
-            Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<Either<BindingIdentifier, IdentifierExpression>>>> variables = new HashMap<>();
-            variables.put("f", new Pair<>(ImmutableList.list(fNode1), ImmutableList.list(fNode2E, fNode3E)));
+            Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<VariableReference>>> variables = new HashMap<>();
+            variables.put("f", new Pair<>(ImmutableList.list(fNode1), ImmutableList.list(fNode2, fNode3)));
 
-            Map<Either<BindingIdentifier, IdentifierExpression>, Accessibility> referenceTypes = new HashMap<>();
-            referenceTypes.put(fNode2E, Accessibility.Write);
-            referenceTypes.put(fNode3E, Accessibility.Read);
+            Map<VariableReference, Accessibility> referenceTypes = new HashMap<>();
+            referenceTypes.put(fNode2, Accessibility.Write);
+            referenceTypes.put(fNode3, Accessibility.Read);
 
             checkScope(globalScope, Scope.Type.Global, true, children, through, variables, referenceTypes);
         }
@@ -415,10 +415,10 @@ public class ScopeTest extends TestCase {
             ImmutableList<String> through = ImmutableList.list("f");
 
             // mapping of variable names from this scope object to the list of their declarations and their references
-            Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<Either<BindingIdentifier, IdentifierExpression>>>> variables = new HashMap<>();
+            Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<VariableReference>>> variables = new HashMap<>();
             variables.put("arguments", new Pair<>(NO_DECLARATIONS, NO_REFERENCES));
 
-            Map<Either<BindingIdentifier, IdentifierExpression>, Accessibility> referenceTypes = new HashMap<>();
+            Map<VariableReference, Accessibility> referenceTypes = new HashMap<>();
 
             checkScope(fScope, Scope.Type.Function, false, children, through, variables, referenceTypes);
         }
@@ -433,14 +433,10 @@ public class ScopeTest extends TestCase {
         Scope fScope = topLevelLexicalScope.children.maybeHead().just();
         final BindingIdentifier fNode1 = bi(new BranchGetter().d(ScriptStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorBinding_())
                 .apply(script));
-        final BindingIdentifier fNode2 = bi(new BranchGetter().d(ScriptStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorInit_()).d(FunctionExpressionBody_()).d(FunctionBodyStatements_(0)).d(ExpressionStatementExpression_()).d(AssignmentExpressionBinding_())
+        final AssignmentTargetIdentifier fNode2 = ati(new BranchGetter().d(ScriptStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorInit_()).d(FunctionExpressionBody_()).d(FunctionBodyStatements_(0)).d(ExpressionStatementExpression_()).d(AssignmentExpressionBinding_())
                 .apply(script));
         final IdentifierExpression fNode3 = ie(new BranchGetter().d(ScriptStatements_(1)).d(ExpressionStatementExpression_()).d(CallExpressionCallee_())
                 .apply(script));
-
-        final Either<BindingIdentifier, IdentifierExpression> fNode1E = Either.left(fNode1);
-        final Either<BindingIdentifier, IdentifierExpression> fNode2E = Either.left(fNode2);
-        final Either<BindingIdentifier, IdentifierExpression> fNode3E = Either.right(fNode3);
 
         { // global scope
 
@@ -449,13 +445,13 @@ public class ScopeTest extends TestCase {
             ImmutableList<String> through = ImmutableList.nil();
 
             // mapping of variable names from this scope object to the list of their declarations and their references
-            Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<Either<BindingIdentifier, IdentifierExpression>>>> variables = new HashMap<>();
-            variables.put("f", new Pair<>(ImmutableList.list(fNode1), ImmutableList.list(fNode1E, fNode2E, fNode3E)));
+            Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<VariableReference>>> variables = new HashMap<>();
+            variables.put("f", new Pair<>(ImmutableList.list(fNode1), ImmutableList.list(fNode1, fNode2, fNode3)));
 
-            Map<Either<BindingIdentifier, IdentifierExpression>, Accessibility> referenceTypes = new HashMap<>();
-            referenceTypes.put(fNode1E, Accessibility.Write);
-            referenceTypes.put(fNode2E, Accessibility.Write);
-            referenceTypes.put(fNode3E, Accessibility.Read);
+            Map<VariableReference, Accessibility> referenceTypes = new HashMap<>();
+            referenceTypes.put(fNode1, Accessibility.Write);
+            referenceTypes.put(fNode2, Accessibility.Write);
+            referenceTypes.put(fNode3, Accessibility.Read);
 
             checkScope(globalScope, Scope.Type.Global, true, children, through, variables, referenceTypes);
         }
@@ -466,10 +462,10 @@ public class ScopeTest extends TestCase {
             ImmutableList<String> through = ImmutableList.list("f");
 
             // mapping of variable names from this scope object to the list of their declarations and their references
-            Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<Either<BindingIdentifier, IdentifierExpression>>>> variables = new HashMap<>();
+            Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<VariableReference>>> variables = new HashMap<>();
             variables.put("arguments", new Pair<>(NO_DECLARATIONS, NO_REFERENCES));
 
-            Map<Either<BindingIdentifier, IdentifierExpression>, Accessibility> referenceTypes = new HashMap<>();
+            Map<VariableReference, Accessibility> referenceTypes = new HashMap<>();
 
             checkScope(fScope, Scope.Type.Function, false, children, through, variables, referenceTypes);
         }
@@ -486,7 +482,7 @@ public class ScopeTest extends TestCase {
 
         final BindingIdentifier f1Node1 = bi(new BranchGetter().d(ScriptStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorInit_()).d(FunctionExpressionName_())
                 .apply(script));
-        final BindingIdentifier f1Node2 = bi(new BranchGetter().d(ScriptStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorInit_()).d(FunctionExpressionBody_()).d(FunctionBodyStatements_(0)).d(ExpressionStatementExpression_()).d(AssignmentExpressionBinding_())
+        final AssignmentTargetIdentifier f1Node2 = ati(new BranchGetter().d(ScriptStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorInit_()).d(FunctionExpressionBody_()).d(FunctionBodyStatements_(0)).d(ExpressionStatementExpression_()).d(AssignmentExpressionBinding_())
                 .apply(script));
         final IdentifierExpression f1Node3 = ie(new BranchGetter().d(ScriptStatements_(1)).d(ExpressionStatementExpression_()).d(CallExpressionCallee_())
                 .apply(script));
@@ -495,12 +491,6 @@ public class ScopeTest extends TestCase {
         final IdentifierExpression f2Node2 = ie(new BranchGetter().d(ScriptStatements_(2)).d(ExpressionStatementExpression_()).d(CallExpressionCallee_())
                 .apply(script));
 
-        final Either<BindingIdentifier, IdentifierExpression> f1Node1E = Either.left(f1Node1);
-        final Either<BindingIdentifier, IdentifierExpression> f1Node2E = Either.left(f1Node2);
-        final Either<BindingIdentifier, IdentifierExpression> f1Node3E = Either.right(f1Node3);
-        final Either<BindingIdentifier, IdentifierExpression> f2Node1E = Either.left(f2Node1);
-        final Either<BindingIdentifier, IdentifierExpression> f2Node2E = Either.right(f2Node2);
-
         { // global scope
 
             ImmutableList<Scope> children = ImmutableList.list(topLevelLexicalScope);
@@ -508,14 +498,14 @@ public class ScopeTest extends TestCase {
             ImmutableList<String> through = ImmutableList.list("f1");
 
             // mapping of variable names from this scope object to the list of their declarations and their references
-            Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<Either<BindingIdentifier, IdentifierExpression>>>> variables = new HashMap<>();
-            variables.put("f2", new Pair<>(ImmutableList.list(f2Node1), ImmutableList.list(f2Node1E, f2Node2E)));
-            variables.put("f1", new Pair<>(NO_DECLARATIONS, ImmutableList.list(f1Node3E)));
+            Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<VariableReference>>> variables = new HashMap<>();
+            variables.put("f2", new Pair<>(ImmutableList.list(f2Node1), ImmutableList.list(f2Node1, f2Node2)));
+            variables.put("f1", new Pair<>(NO_DECLARATIONS, ImmutableList.list(f1Node3)));
 
-            Map<Either<BindingIdentifier, IdentifierExpression>, Accessibility> referenceTypes = new HashMap<>();
-            referenceTypes.put(f2Node1E, Accessibility.Write);
-            referenceTypes.put(f2Node2E, Accessibility.Read);
-            referenceTypes.put(f1Node3E, Accessibility.Read);
+            Map<VariableReference, Accessibility> referenceTypes = new HashMap<>();
+            referenceTypes.put(f2Node1, Accessibility.Write);
+            referenceTypes.put(f2Node2, Accessibility.Read);
+            referenceTypes.put(f1Node3, Accessibility.Read);
 
             checkScope(globalScope, Scope.Type.Global, true, children, through, variables, referenceTypes);
         }
@@ -526,11 +516,11 @@ public class ScopeTest extends TestCase {
             ImmutableList<String> through = ImmutableList.nil();
 
             // mapping of variable names from this scope object to the list of their declarations and their references
-            Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<Either<BindingIdentifier, IdentifierExpression>>>> variables = new HashMap<>();
-            variables.put("f1", new Pair<>(ImmutableList.list(f1Node1), ImmutableList.list(f1Node2E)));
+            Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<VariableReference>>> variables = new HashMap<>();
+            variables.put("f1", new Pair<>(ImmutableList.list(f1Node1), ImmutableList.list(f1Node2)));
 
-            Map<Either<BindingIdentifier, IdentifierExpression>, Accessibility> referenceTypes = new HashMap<>();
-            referenceTypes.put(f1Node2E, Accessibility.Write);
+            Map<VariableReference, Accessibility> referenceTypes = new HashMap<>();
+            referenceTypes.put(f1Node2, Accessibility.Write);
 
             checkScope(functionNameScope, Scope.Type.FunctionName, false, children, through, variables, referenceTypes);
         }
@@ -541,10 +531,10 @@ public class ScopeTest extends TestCase {
             ImmutableList<String> through = ImmutableList.list("f1");
 
             // mapping of variable names from this scope object to the list of their declarations and their references
-            Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<Either<BindingIdentifier, IdentifierExpression>>>> variables = new HashMap<>();
+            Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<VariableReference>>> variables = new HashMap<>();
             variables.put("arguments", new Pair<>(NO_DECLARATIONS, NO_REFERENCES));
 
-            Map<Either<BindingIdentifier, IdentifierExpression>, Accessibility> referenceTypes = new HashMap<>();
+            Map<VariableReference, Accessibility> referenceTypes = new HashMap<>();
 
             checkScope(functionScope, Scope.Type.Function, false, children, through, variables, referenceTypes);
         }
@@ -578,13 +568,6 @@ public class ScopeTest extends TestCase {
         final IdentifierExpression alertNode1 = ie(new BranchGetter().d(ScriptStatements_(1)).d(FunctionDeclarationBody_()).d(FunctionBodyStatements_(1)).d(ExpressionStatementExpression_()).d(CallExpressionCallee_())
                 .apply(script));
 
-        final Either<BindingIdentifier, IdentifierExpression> fooNode1E = Either.left(fooNode1);
-        final Either<BindingIdentifier, IdentifierExpression> fooNode2E = Either.right(fooNode2);
-        final Either<BindingIdentifier, IdentifierExpression> fooNode3E = Either.left(fooNode3);
-        final Either<BindingIdentifier, IdentifierExpression> fooNode4E = Either.right(fooNode4);
-        final Either<BindingIdentifier, IdentifierExpression> barNode1E = Either.left(barNode1);
-        final Either<BindingIdentifier, IdentifierExpression> alertNode1E = Either.right(alertNode1);
-
         { // global scope
 
             ImmutableList<Scope> children = ImmutableList.list(topLevelLexicalScope);
@@ -592,14 +575,14 @@ public class ScopeTest extends TestCase {
             ImmutableList<String> through = ImmutableList.list("alert");
 
             // mapping of variable names from this scope object to the list of their declarations and their references
-            Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<Either<BindingIdentifier, IdentifierExpression>>>> variables = new HashMap<>();
-            variables.put("foo", new Pair<>(ImmutableList.list(fooNode1), ImmutableList.list(fooNode1E)));
+            Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<VariableReference>>> variables = new HashMap<>();
+            variables.put("foo", new Pair<>(ImmutableList.list(fooNode1), ImmutableList.list(fooNode1)));
             variables.put("bar", new Pair<>(ImmutableList.list(barNode1), NO_REFERENCES));
-            variables.put("alert", new Pair<>(NO_DECLARATIONS, ImmutableList.list(alertNode1E)));
+            variables.put("alert", new Pair<>(NO_DECLARATIONS, ImmutableList.list(alertNode1)));
 
-            Map<Either<BindingIdentifier, IdentifierExpression>, Accessibility> referenceTypes = new HashMap<>();
-            referenceTypes.put(fooNode1E, Accessibility.Write);
-            referenceTypes.put(alertNode1E, Accessibility.Read);
+            Map<VariableReference, Accessibility> referenceTypes = new HashMap<>();
+            referenceTypes.put(fooNode1, Accessibility.Write);
+            referenceTypes.put(alertNode1, Accessibility.Read);
 
             checkScope(globalScope, Scope.Type.Global, true, children, through, variables, referenceTypes);
         }
@@ -610,14 +593,14 @@ public class ScopeTest extends TestCase {
             ImmutableList<String> through = ImmutableList.list("alert");
 
             // mapping of variable names from this scope object to the list of their declarations and their references
-            Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<Either<BindingIdentifier, IdentifierExpression>>>> variables = new HashMap<>();
-            variables.put("foo", new Pair<>(ImmutableList.list(fooNode3), ImmutableList.list(fooNode2E, fooNode3E, fooNode4E)));
+            Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<VariableReference>>> variables = new HashMap<>();
+            variables.put("foo", new Pair<>(ImmutableList.list(fooNode3), ImmutableList.list(fooNode2, fooNode3, fooNode4)));
             variables.put("arguments", new Pair<>(NO_DECLARATIONS, NO_REFERENCES));
 
-            Map<Either<BindingIdentifier, IdentifierExpression>, Accessibility> referenceTypes = new HashMap<>();
-            referenceTypes.put(fooNode2E, Accessibility.Read);
-            referenceTypes.put(fooNode3E, Accessibility.Write);
-            referenceTypes.put(fooNode4E, Accessibility.Read);
+            Map<VariableReference, Accessibility> referenceTypes = new HashMap<>();
+            referenceTypes.put(fooNode2, Accessibility.Read);
+            referenceTypes.put(fooNode3, Accessibility.Write);
+            referenceTypes.put(fooNode4, Accessibility.Read);
 
             checkScope(functionScope, Scope.Type.Function, false, children, through, variables, referenceTypes);
         }
@@ -643,7 +626,7 @@ public class ScopeTest extends TestCase {
                 .apply(script));
         final BindingIdentifier bNode1 = bi(new BranchGetter().d(ScriptStatements_(1)).d(FunctionDeclarationName_())
                 .apply(script));
-        final BindingIdentifier aNode2 = bi(new BranchGetter().d(ScriptStatements_(1)).d(FunctionDeclarationBody_()).d(FunctionBodyStatements_(0)).d(ExpressionStatementExpression_()).d(AssignmentExpressionBinding_())
+        final AssignmentTargetIdentifier aNode2 = ati(new BranchGetter().d(ScriptStatements_(1)).d(FunctionDeclarationBody_()).d(FunctionBodyStatements_(0)).d(ExpressionStatementExpression_()).d(AssignmentExpressionBinding_())
                 .apply(script));
         final BindingIdentifier aNode3 = bi(new BranchGetter().d(ScriptStatements_(1)).d(FunctionDeclarationBody_()).d(FunctionBodyStatements_(2)).d(FunctionDeclarationName_())
                 .apply(script));
@@ -654,14 +637,6 @@ public class ScopeTest extends TestCase {
         final IdentifierExpression aNode4 = ie(new BranchGetter().d(ScriptStatements_(3)).d(ExpressionStatementExpression_()).d(CallExpressionArguments_(0))
                 .apply(script));
 
-        final Either<BindingIdentifier, IdentifierExpression> aNode1E = Either.left(aNode1);
-        final Either<BindingIdentifier, IdentifierExpression> bNode1E = Either.left(bNode1);
-        final Either<BindingIdentifier, IdentifierExpression> aNode2E = Either.left(aNode2);
-        final Either<BindingIdentifier, IdentifierExpression> aNode3E = Either.left(aNode3);
-        final Either<BindingIdentifier, IdentifierExpression> bNode2E = Either.right(bNode2);
-        final Either<BindingIdentifier, IdentifierExpression> alertNode1E = Either.right(alertNode1);
-        final Either<BindingIdentifier, IdentifierExpression> aNode4E = Either.right(aNode4);
-
         { // global scope
 
             ImmutableList<Scope> children = ImmutableList.list(topLevelLexicalScope);
@@ -669,16 +644,16 @@ public class ScopeTest extends TestCase {
             ImmutableList<String> through = ImmutableList.list("alert");
 
             // mapping of variable names from this scope object to the list of their declarations and their references
-            Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<Either<BindingIdentifier, IdentifierExpression>>>> variables = new HashMap<>();
-            variables.put("a", new Pair<>(ImmutableList.list(aNode1), ImmutableList.list(aNode1E, aNode4E)));
-            variables.put("b", new Pair<>(ImmutableList.list(bNode1), ImmutableList.list(bNode2E)));
-            variables.put("alert", new Pair<>(NO_DECLARATIONS, ImmutableList.list(alertNode1E)));
+            Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<VariableReference>>> variables = new HashMap<>();
+            variables.put("a", new Pair<>(ImmutableList.list(aNode1), ImmutableList.list(aNode1, aNode4)));
+            variables.put("b", new Pair<>(ImmutableList.list(bNode1), ImmutableList.list(bNode2)));
+            variables.put("alert", new Pair<>(NO_DECLARATIONS, ImmutableList.list(alertNode1)));
 
-            Map<Either<BindingIdentifier, IdentifierExpression>, Accessibility> referenceTypes = new HashMap<>();
-            referenceTypes.put(aNode1E, Accessibility.Write);
-            referenceTypes.put(aNode4E, Accessibility.Read);
-            referenceTypes.put(bNode2E, Accessibility.Read);
-            referenceTypes.put(alertNode1E, Accessibility.Read);
+            Map<VariableReference, Accessibility> referenceTypes = new HashMap<>();
+            referenceTypes.put(aNode1, Accessibility.Write);
+            referenceTypes.put(aNode4, Accessibility.Read);
+            referenceTypes.put(bNode2, Accessibility.Read);
+            referenceTypes.put(alertNode1, Accessibility.Read);
 
             checkScope(globalScope, Scope.Type.Global, true, children, through, variables, referenceTypes);
         }
@@ -689,12 +664,12 @@ public class ScopeTest extends TestCase {
             ImmutableList<String> through = ImmutableList.nil();
 
             // mapping of variable names from this scope object to the list of their declarations and their references
-            Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<Either<BindingIdentifier, IdentifierExpression>>>> variables = new HashMap<>();
-            variables.put("a", new Pair<>(ImmutableList.list(aNode3), ImmutableList.list(aNode2E)));
+            Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<VariableReference>>> variables = new HashMap<>();
+            variables.put("a", new Pair<>(ImmutableList.list(aNode3), ImmutableList.list(aNode2)));
             variables.put("arguments", new Pair<>(NO_DECLARATIONS, NO_REFERENCES));
 
-            Map<Either<BindingIdentifier, IdentifierExpression>, Accessibility> referenceTypes = new HashMap<>();
-            referenceTypes.put(aNode2E, Accessibility.Write);
+            Map<VariableReference, Accessibility> referenceTypes = new HashMap<>();
+            referenceTypes.put(aNode2, Accessibility.Write);
 
             checkScope(bScope, Scope.Type.Function, false, children, through, variables, referenceTypes);
         }
@@ -705,10 +680,10 @@ public class ScopeTest extends TestCase {
             ImmutableList<String> through = ImmutableList.nil();
 
             // mapping of variable names from this scope object to the list of their declarations and their references
-            Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<Either<BindingIdentifier, IdentifierExpression>>>> variables = new HashMap<>();
+            Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<VariableReference>>> variables = new HashMap<>();
             variables.put("arguments", new Pair<>(NO_DECLARATIONS, NO_REFERENCES));
 
-            Map<Either<BindingIdentifier, IdentifierExpression>, Accessibility> referenceTypes = new HashMap<>();
+            Map<VariableReference, Accessibility> referenceTypes = new HashMap<>();
 
             checkScope(aScope, Scope.Type.Function, false, children, through, variables, referenceTypes);
         }
@@ -741,11 +716,6 @@ public class ScopeTest extends TestCase {
         final BindingIdentifier barNode3 = bi(new BranchGetter().d(ScriptStatements_(0)).d(FunctionDeclarationBody_()).d(FunctionBodyStatements_(2)).d(FunctionDeclarationName_())
                 .apply(script));
 
-        final Either<BindingIdentifier, IdentifierExpression> fooNode1E = Either.left(fooNode1);
-        final Either<BindingIdentifier, IdentifierExpression> barNode1E = Either.left(barNode1);
-        final Either<BindingIdentifier, IdentifierExpression> barNode2E = Either.right(barNode2);
-        final Either<BindingIdentifier, IdentifierExpression> barNode3E = Either.left(barNode3);
-
         { // global scope
 
             ImmutableList<Scope> children = ImmutableList.list(topLevelLexicalScope);
@@ -753,10 +723,10 @@ public class ScopeTest extends TestCase {
             ImmutableList<String> through = ImmutableList.nil();
 
             // mapping of variable names from this scope object to the list of their declarations and their references
-            Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<Either<BindingIdentifier, IdentifierExpression>>>> variables = new HashMap<>();
+            Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<VariableReference>>> variables = new HashMap<>();
             variables.put("foo", new Pair<>(ImmutableList.list(fooNode1), NO_REFERENCES));
 
-            Map<Either<BindingIdentifier, IdentifierExpression>, Accessibility> referenceTypes = new HashMap<>();
+            Map<VariableReference, Accessibility> referenceTypes = new HashMap<>();
 
             checkScope(globalScope, Scope.Type.Global, true, children, through, variables, referenceTypes);
         }
@@ -767,12 +737,12 @@ public class ScopeTest extends TestCase {
             ImmutableList<String> through = ImmutableList.nil();
 
             // mapping of variable names from this scope object to the list of their declarations and their references
-            Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<Either<BindingIdentifier, IdentifierExpression>>>> variables = new HashMap<>();
-            variables.put("bar", new Pair<>(ImmutableList.list(barNode1, barNode3), ImmutableList.list(barNode2E)));
+            Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<VariableReference>>> variables = new HashMap<>();
+            variables.put("bar", new Pair<>(ImmutableList.list(barNode1, barNode3), ImmutableList.list(barNode2)));
             variables.put("arguments", new Pair<>(NO_DECLARATIONS, NO_REFERENCES));
 
-            Map<Either<BindingIdentifier, IdentifierExpression>, Accessibility> referenceTypes = new HashMap<>();
-            referenceTypes.put(barNode2E, Accessibility.Read);
+            Map<VariableReference, Accessibility> referenceTypes = new HashMap<>();
+            referenceTypes.put(barNode2, Accessibility.Read);
 
             checkScope(fooScope, Scope.Type.Function, false, children, through, variables, referenceTypes);
         }
@@ -783,10 +753,10 @@ public class ScopeTest extends TestCase {
             ImmutableList<String> through = ImmutableList.nil();
 
             // mapping of variable names from this scope object to the list of their declarations and their references
-            Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<Either<BindingIdentifier, IdentifierExpression>>>> variables = new HashMap<>();
+            Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<VariableReference>>> variables = new HashMap<>();
             variables.put("arguments", new Pair<>(NO_DECLARATIONS, NO_REFERENCES));
 
-            Map<Either<BindingIdentifier, IdentifierExpression>, Accessibility> referenceTypes = new HashMap<>();
+            Map<VariableReference, Accessibility> referenceTypes = new HashMap<>();
 
             checkScope(barScope1, Scope.Type.Function, false, children, through, variables, referenceTypes);
         }
@@ -797,10 +767,10 @@ public class ScopeTest extends TestCase {
             ImmutableList<String> through = ImmutableList.nil();
 
             // mapping of variable names from this scope object to the list of their declarations and their references
-            Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<Either<BindingIdentifier, IdentifierExpression>>>> variables = new HashMap<>();
+            Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<VariableReference>>> variables = new HashMap<>();
             variables.put("arguments", new Pair<>(NO_DECLARATIONS, NO_REFERENCES));
 
-            Map<Either<BindingIdentifier, IdentifierExpression>, Accessibility> referenceTypes = new HashMap<>();
+            Map<VariableReference, Accessibility> referenceTypes = new HashMap<>();
 
             checkScope(barScope2, Scope.Type.Function, false, children, through, variables, referenceTypes);
         }
@@ -818,9 +788,6 @@ public class ScopeTest extends TestCase {
         final BindingIdentifier fooNode2 = bi(new BranchGetter().d(ScriptStatements_(1)).d(FunctionDeclarationName_())
                 .apply(script));
 
-        final Either<BindingIdentifier, IdentifierExpression> fooNode1E = Either.right(fooNode1);
-        final Either<BindingIdentifier, IdentifierExpression> fooNode2E = Either.left(fooNode2);
-
         { // global scope
 
             ImmutableList<Scope> children = ImmutableList.list(topLevelLexicalScope);
@@ -828,11 +795,11 @@ public class ScopeTest extends TestCase {
             ImmutableList<String> through = ImmutableList.nil();
 
             // mapping of variable names from this scope object to the list of their declarations and their references
-            Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<Either<BindingIdentifier, IdentifierExpression>>>> variables = new HashMap<>();
-            variables.put("foo", new Pair<>(ImmutableList.list(fooNode2), ImmutableList.list(fooNode1E)));
+            Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<VariableReference>>> variables = new HashMap<>();
+            variables.put("foo", new Pair<>(ImmutableList.list(fooNode2), ImmutableList.list(fooNode1)));
 
-            Map<Either<BindingIdentifier, IdentifierExpression>, Accessibility> referenceTypes = new HashMap<>();
-            referenceTypes.put(fooNode1E, Accessibility.Read);
+            Map<VariableReference, Accessibility> referenceTypes = new HashMap<>();
+            referenceTypes.put(fooNode1, Accessibility.Read);
 
             checkScope(globalScope, Scope.Type.Global, true, children, through, variables, referenceTypes);
         }
@@ -843,10 +810,10 @@ public class ScopeTest extends TestCase {
             ImmutableList<String> through = ImmutableList.nil();
 
             // mapping of variable names from this scope object to the list of their declarations and their references
-            Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<Either<BindingIdentifier, IdentifierExpression>>>> variables = new HashMap<>();
+            Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<VariableReference>>> variables = new HashMap<>();
             variables.put("arguments", new Pair<>(NO_DECLARATIONS, NO_REFERENCES));
 
-            Map<Either<BindingIdentifier, IdentifierExpression>, Accessibility> referenceTypes = new HashMap<>();
+            Map<VariableReference, Accessibility> referenceTypes = new HashMap<>();
 
             checkScope(fooScope, Scope.Type.Function, false, children, through, variables, referenceTypes);
         }
@@ -879,11 +846,6 @@ public class ScopeTest extends TestCase {
         final BindingIdentifier barNode3 = bi(new BranchGetter().d(ScriptStatements_(0)).d(FunctionDeclarationBody_()).d(FunctionBodyStatements_(2)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorBinding_())
                 .apply(script));
 
-        final Either<BindingIdentifier, IdentifierExpression> fooNode1E = Either.left(fooNode1);
-        final Either<BindingIdentifier, IdentifierExpression> barNode1E = Either.right(barNode1);
-        final Either<BindingIdentifier, IdentifierExpression> barNode2E = Either.left(barNode2);
-        final Either<BindingIdentifier, IdentifierExpression> barNode3E = Either.left(barNode3);
-
         { // global scope
 
             ImmutableList<Scope> children = ImmutableList.list(topLevelLexicalScope);
@@ -891,10 +853,10 @@ public class ScopeTest extends TestCase {
             ImmutableList<String> through = ImmutableList.nil();
 
             // mapping of variable names from this scope object to the list of their declarations and their references
-            Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<Either<BindingIdentifier, IdentifierExpression>>>> variables = new HashMap<>();
+            Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<VariableReference>>> variables = new HashMap<>();
             variables.put("foo", new Pair<>(ImmutableList.list(fooNode1), NO_REFERENCES));
 
-            Map<Either<BindingIdentifier, IdentifierExpression>, Accessibility> referenceTypes = new HashMap<>();
+            Map<VariableReference, Accessibility> referenceTypes = new HashMap<>();
 
             checkScope(globalScope, Scope.Type.Global, true, children, through, variables, referenceTypes);
         }
@@ -905,18 +867,18 @@ public class ScopeTest extends TestCase {
             ImmutableList<String> through = ImmutableList.nil();
 
             // mapping of variable names from this scope object to the list of their declarations and their references
-            Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<Either<BindingIdentifier, IdentifierExpression>>>> variables = new HashMap<>();
+            Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<VariableReference>>> variables = new HashMap<>();
             variables.put("bar", new Pair<>(
                     ImmutableList.list(barNode2, barNode3), ImmutableList.list(
-                    barNode1E,
-                    barNode2E,
-                    barNode3E)));
+                    barNode1,
+                    barNode2,
+                    barNode3)));
             variables.put("arguments", new Pair<>(NO_DECLARATIONS, NO_REFERENCES));
 
-            Map<Either<BindingIdentifier, IdentifierExpression>, Accessibility> referenceTypes = new HashMap<>();
-            referenceTypes.put(barNode1E, Accessibility.Read);
-            referenceTypes.put(barNode2E, Accessibility.Write);
-            referenceTypes.put(barNode3E, Accessibility.Write);
+            Map<VariableReference, Accessibility> referenceTypes = new HashMap<>();
+            referenceTypes.put(barNode1, Accessibility.Read);
+            referenceTypes.put(barNode2, Accessibility.Write);
+            referenceTypes.put(barNode3, Accessibility.Write);
 
             checkScope(fooScope, Scope.Type.Function, false, children, through, variables, referenceTypes);
         }
@@ -927,10 +889,10 @@ public class ScopeTest extends TestCase {
             ImmutableList<String> through = ImmutableList.nil();
 
             // mapping of variable names from this scope object to the list of their declarations and their references
-            Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<Either<BindingIdentifier, IdentifierExpression>>>> variables = new HashMap<>();
+            Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<VariableReference>>> variables = new HashMap<>();
             variables.put("arguments", new Pair<>(NO_DECLARATIONS, NO_REFERENCES));
 
-            Map<Either<BindingIdentifier, IdentifierExpression>, Accessibility> referenceTypes = new HashMap<>();
+            Map<VariableReference, Accessibility> referenceTypes = new HashMap<>();
 
             checkScope(barScope1, Scope.Type.Function, false, children, through, variables, referenceTypes);
         }
@@ -941,10 +903,10 @@ public class ScopeTest extends TestCase {
             ImmutableList<String> through = ImmutableList.nil();
 
             // mapping of variable names from this scope object to the list of their declarations and their references
-            Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<Either<BindingIdentifier, IdentifierExpression>>>> variables = new HashMap<>();
+            Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<VariableReference>>> variables = new HashMap<>();
             variables.put("arguments", new Pair<>(NO_DECLARATIONS, NO_REFERENCES));
 
-            Map<Either<BindingIdentifier, IdentifierExpression>, Accessibility> referenceTypes = new HashMap<>();
+            Map<VariableReference, Accessibility> referenceTypes = new HashMap<>();
 
             checkScope(barScope2, Scope.Type.Function, false, children, through, variables, referenceTypes);
         }
@@ -958,16 +920,12 @@ public class ScopeTest extends TestCase {
         Scope topLevelLexicalScope = globalScope.children.maybeHead().just();
         Scope functionScope = topLevelLexicalScope.children.maybeHead().just();
 
-        final BindingIdentifier f1Node1 = bi(new BranchGetter().d(ScriptStatements_(0)).d(ExpressionStatementExpression_()).d(CallExpressionCallee_()).d(FunctionExpressionBody_()).d(FunctionBodyStatements_(0)).d(ExpressionStatementExpression_()).d(AssignmentExpressionBinding_())
+        final AssignmentTargetIdentifier f1Node1 = ati(new BranchGetter().d(ScriptStatements_(0)).d(ExpressionStatementExpression_()).d(CallExpressionCallee_()).d(FunctionExpressionBody_()).d(FunctionBodyStatements_(0)).d(ExpressionStatementExpression_()).d(AssignmentExpressionBinding_())
                 .apply(script));
         final IdentifierExpression alertNode1 = ie(new BranchGetter().d(ScriptStatements_(0)).d(ExpressionStatementExpression_()).d(CallExpressionCallee_()).d(FunctionExpressionBody_()).d(FunctionBodyStatements_(1)).d(ExpressionStatementExpression_()).d(CallExpressionCallee_())
                 .apply(script));
         final IdentifierExpression f1Node2 = ie(new BranchGetter().d(ScriptStatements_(0)).d(ExpressionStatementExpression_()).d(CallExpressionCallee_()).d(FunctionExpressionBody_()).d(FunctionBodyStatements_(1)).d(ExpressionStatementExpression_()).d(CallExpressionArguments_(0))
                 .apply(script));
-
-        final Either<BindingIdentifier, IdentifierExpression> f1Node1E = Either.left(f1Node1);
-        final Either<BindingIdentifier, IdentifierExpression> alertNode1E = Either.right(alertNode1);
-        final Either<BindingIdentifier, IdentifierExpression> f1Node2E = Either.right(f1Node2);
 
         { // global scope
 
@@ -976,14 +934,14 @@ public class ScopeTest extends TestCase {
             ImmutableList<String> through = ImmutableList.list("f1", "alert");
 
             // mapping of variable names from this scope object to the list of their declarations and their references
-            Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<Either<BindingIdentifier, IdentifierExpression>>>> variables = new HashMap<>();
-            variables.put("f1", new Pair<>(NO_DECLARATIONS, ImmutableList.list(f1Node1E, f1Node2E)));
-            variables.put("alert", new Pair<>(NO_DECLARATIONS, ImmutableList.list(alertNode1E)));
+            Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<VariableReference>>> variables = new HashMap<>();
+            variables.put("f1", new Pair<>(NO_DECLARATIONS, ImmutableList.list(f1Node1, f1Node2)));
+            variables.put("alert", new Pair<>(NO_DECLARATIONS, ImmutableList.list(alertNode1)));
 
-            Map<Either<BindingIdentifier, IdentifierExpression>, Accessibility> referenceTypes = new HashMap<>();
-            referenceTypes.put(f1Node1E, Accessibility.Write);
-            referenceTypes.put(f1Node2E, Accessibility.Read);
-            referenceTypes.put(alertNode1E, Accessibility.Read);
+            Map<VariableReference, Accessibility> referenceTypes = new HashMap<>();
+            referenceTypes.put(f1Node1, Accessibility.Write);
+            referenceTypes.put(f1Node2, Accessibility.Read);
+            referenceTypes.put(alertNode1, Accessibility.Read);
 
             checkScope(globalScope, Scope.Type.Global, true, children, through, variables, referenceTypes);
         }
@@ -994,10 +952,10 @@ public class ScopeTest extends TestCase {
             ImmutableList<String> through = ImmutableList.list("f1", "alert");
 
             // mapping of variable names from this scope object to the list of their declarations and their references
-            Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<Either<BindingIdentifier, IdentifierExpression>>>> variables = new HashMap<>();
+            Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<VariableReference>>> variables = new HashMap<>();
             variables.put("arguments", new Pair<>(NO_DECLARATIONS, NO_REFERENCES));
 
-            Map<Either<BindingIdentifier, IdentifierExpression>, Accessibility> referenceTypes = new HashMap<>();
+            Map<VariableReference, Accessibility> referenceTypes = new HashMap<>();
 
             checkScope(functionScope, Scope.Type.Function, false, children, through, variables, referenceTypes);
         }
@@ -1018,10 +976,6 @@ public class ScopeTest extends TestCase {
         final IdentifierExpression f1Node2 = ie(new BranchGetter().d(ScriptStatements_(0)).d(ExpressionStatementExpression_()).d(CallExpressionCallee_()).d(FunctionExpressionBody_()).d(FunctionBodyStatements_(1)).d(ExpressionStatementExpression_()).d(CallExpressionArguments_(0))
                 .apply(script));
 
-        final Either<BindingIdentifier, IdentifierExpression> f1Node1E = Either.left(f1Node1);
-        final Either<BindingIdentifier, IdentifierExpression> alertNode1E = Either.right(alertNode1);
-        final Either<BindingIdentifier, IdentifierExpression> f1Node2E = Either.right(f1Node2);
-
         { // global scope
 
             ImmutableList<Scope> children = ImmutableList.list(topLevelLexicalScope);
@@ -1029,11 +983,11 @@ public class ScopeTest extends TestCase {
             ImmutableList<String> through = ImmutableList.list("alert");
 
             // mapping of variable names from this scope object to the list of their declarations and their references
-            Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<Either<BindingIdentifier, IdentifierExpression>>>> variables = new HashMap<>();
-            variables.put("alert", new Pair<>(NO_DECLARATIONS, ImmutableList.list(alertNode1E)));
+            Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<VariableReference>>> variables = new HashMap<>();
+            variables.put("alert", new Pair<>(NO_DECLARATIONS, ImmutableList.list(alertNode1)));
 
-            Map<Either<BindingIdentifier, IdentifierExpression>, Accessibility> referenceTypes = new HashMap<>();
-            referenceTypes.put(alertNode1E, Accessibility.Read);
+            Map<VariableReference, Accessibility> referenceTypes = new HashMap<>();
+            referenceTypes.put(alertNode1, Accessibility.Read);
 
             checkScope(globalScope, Scope.Type.Global, true, children, through, variables, referenceTypes);
         }
@@ -1044,13 +998,13 @@ public class ScopeTest extends TestCase {
             ImmutableList<String> through = ImmutableList.list("alert");
 
             // mapping of variable names from this scope object to the list of their declarations and their references
-            Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<Either<BindingIdentifier, IdentifierExpression>>>> variables = new HashMap<>();
-            variables.put("f1", new Pair<>(ImmutableList.list(f1Node1), ImmutableList.list(f1Node1E, f1Node2E)));
+            Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<VariableReference>>> variables = new HashMap<>();
+            variables.put("f1", new Pair<>(ImmutableList.list(f1Node1), ImmutableList.list(f1Node1, f1Node2)));
             variables.put("arguments", new Pair<>(NO_DECLARATIONS, NO_REFERENCES));
 
-            Map<Either<BindingIdentifier, IdentifierExpression>, Accessibility> referenceTypes = new HashMap<>();
-            referenceTypes.put(f1Node1E, Accessibility.Write);
-            referenceTypes.put(f1Node2E, Accessibility.Read);
+            Map<VariableReference, Accessibility> referenceTypes = new HashMap<>();
+            referenceTypes.put(f1Node1, Accessibility.Write);
+            referenceTypes.put(f1Node2, Accessibility.Read);
 
             checkScope(functionScope, Scope.Type.Function, false, children, through, variables, referenceTypes);
         }
@@ -1066,9 +1020,9 @@ public class ScopeTest extends TestCase {
 
         final BindingIdentifier fNode1 = bi(new BranchGetter().d(ScriptStatements_(0)).d(FunctionDeclarationName_())
                 .apply(script));
-        final BindingIdentifier arg1Node1 = bi(new BranchGetter().d(ScriptStatements_(0)).d(FunctionDeclarationParams_()).d(FormalParametersItems_(0))
+        final BindingIdentifier arg1Node1 = bi(new BranchGetter().d(ScriptStatements_(0)).d(FunctionDeclarationParams_()).d(FormalParametersItems_(0)).d(ParameterBinding_())
                 .apply(script));
-        final BindingIdentifier arg2Node1 = bi(new BranchGetter().d(ScriptStatements_(0)).d(FunctionDeclarationParams_()).d(FormalParametersItems_(1))
+        final BindingIdentifier arg2Node1 = bi(new BranchGetter().d(ScriptStatements_(0)).d(FunctionDeclarationParams_()).d(FormalParametersItems_(1)).d(ParameterBinding_())
                 .apply(script));
         final BindingIdentifier v1Node1 = bi(new BranchGetter().d(ScriptStatements_(0)).d(FunctionDeclarationBody_()).d(FunctionBodyStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorBinding_())
                 .apply(script));
@@ -1077,14 +1031,6 @@ public class ScopeTest extends TestCase {
         final IdentifierExpression arg2Node2 = ie(new BranchGetter().d(ScriptStatements_(0)).d(FunctionDeclarationBody_()).d(FunctionBodyStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorInit_()).d(BinaryExpressionLeft_()).d(BinaryExpressionRight_())
                 .apply(script));
 
-
-        final Either<BindingIdentifier, IdentifierExpression> fNode1E = Either.left(fNode1);
-        final Either<BindingIdentifier, IdentifierExpression> arg1Node1E = Either.left(arg1Node1);
-        final Either<BindingIdentifier, IdentifierExpression> arg2Node1E = Either.left(arg2Node1);
-        final Either<BindingIdentifier, IdentifierExpression> v1Node1E = Either.left(v1Node1);
-        final Either<BindingIdentifier, IdentifierExpression> arg1Node2E = Either.right(arg1Node2);
-        final Either<BindingIdentifier, IdentifierExpression> arg2Node2E = Either.right(arg2Node2);
-
         { // global scope
 
             ImmutableList<Scope> children = ImmutableList.list(topLevelLexicalScope);
@@ -1092,10 +1038,10 @@ public class ScopeTest extends TestCase {
             ImmutableList<String> through = ImmutableList.nil();
 
             // mapping of variable names from this scope object to the list of their declarations and their references
-            Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<Either<BindingIdentifier, IdentifierExpression>>>> variables = new HashMap<>();
+            Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<VariableReference>>> variables = new HashMap<>();
             variables.put("f", new Pair<>(ImmutableList.list(fNode1), NO_REFERENCES));
 
-            Map<Either<BindingIdentifier, IdentifierExpression>, Accessibility> referenceTypes = new HashMap<>();
+            Map<VariableReference, Accessibility> referenceTypes = new HashMap<>();
 
             checkScope(globalScope, Scope.Type.Global, true, children, through, variables, referenceTypes);
         }
@@ -1106,16 +1052,16 @@ public class ScopeTest extends TestCase {
             ImmutableList<String> through = ImmutableList.nil();
 
             // mapping of variable names from this scope object to the list of their declarations and their references
-            Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<Either<BindingIdentifier, IdentifierExpression>>>> variables = new HashMap<>();
-            variables.put("arg1", new Pair<>(ImmutableList.list(arg1Node1), ImmutableList.list(arg1Node2E)));
-            variables.put("arg2", new Pair<>(ImmutableList.list(arg2Node1), ImmutableList.list(arg2Node2E)));
-            variables.put("v1", new Pair<>(ImmutableList.list(v1Node1), ImmutableList.list(v1Node1E)));
+            Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<VariableReference>>> variables = new HashMap<>();
+            variables.put("arg1", new Pair<>(ImmutableList.list(arg1Node1), ImmutableList.list(arg1Node2)));
+            variables.put("arg2", new Pair<>(ImmutableList.list(arg2Node1), ImmutableList.list(arg2Node2)));
+            variables.put("v1", new Pair<>(ImmutableList.list(v1Node1), ImmutableList.list(v1Node1)));
             variables.put("arguments", new Pair<>(NO_DECLARATIONS, NO_REFERENCES));
 
-            Map<Either<BindingIdentifier, IdentifierExpression>, Accessibility> referenceTypes = new HashMap<>();
-            referenceTypes.put(arg1Node2E, Accessibility.Read);
-            referenceTypes.put(arg2Node2E, Accessibility.Read);
-            referenceTypes.put(v1Node1E, Accessibility.Write);
+            Map<VariableReference, Accessibility> referenceTypes = new HashMap<>();
+            referenceTypes.put(arg1Node2, Accessibility.Read);
+            referenceTypes.put(arg2Node2, Accessibility.Read);
+            referenceTypes.put(v1Node1, Accessibility.Write);
 
             checkScope(fScope, Scope.Type.Function, false, children, through, variables, referenceTypes);
         }
@@ -1136,10 +1082,6 @@ public class ScopeTest extends TestCase {
         final IdentifierExpression argumentsNode1 = ie(new BranchGetter().d(ScriptStatements_(0)).d(FunctionDeclarationBody_()).d(FunctionBodyStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorInit_()).d(BinaryExpressionLeft_()).d(ComputedMemberExpressionObject_())
                 .apply(script));
 
-        final Either<BindingIdentifier, IdentifierExpression> fNode1E = Either.left(fNode1);
-        final Either<BindingIdentifier, IdentifierExpression> v1Node1E = Either.left(v1Node1);
-        final Either<BindingIdentifier, IdentifierExpression> argumentsNode1E = Either.right(argumentsNode1);
-
         { // global scope
 
             ImmutableList<Scope> children = ImmutableList.list(topLevelLexicalScope);
@@ -1147,10 +1089,10 @@ public class ScopeTest extends TestCase {
             ImmutableList<String> through = ImmutableList.nil();
 
             // mapping of variable names from this scope object to the list of their declarations and their references
-            Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<Either<BindingIdentifier, IdentifierExpression>>>> variables = new HashMap<>();
+            Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<VariableReference>>> variables = new HashMap<>();
             variables.put("f", new Pair<>(ImmutableList.list(fNode1), NO_REFERENCES));
 
-            Map<Either<BindingIdentifier, IdentifierExpression>, Accessibility> referenceTypes = new HashMap<>();
+            Map<VariableReference, Accessibility> referenceTypes = new HashMap<>();
 
             checkScope(globalScope, Scope.Type.Global, true, children, through, variables, referenceTypes);
         }
@@ -1161,13 +1103,13 @@ public class ScopeTest extends TestCase {
             ImmutableList<String> through = ImmutableList.nil();
 
             // mapping of variable names from this scope object to the list of their declarations and their references
-            Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<Either<BindingIdentifier, IdentifierExpression>>>> variables = new HashMap<>();
-            variables.put("v1", new Pair<>(ImmutableList.list(v1Node1), ImmutableList.list(v1Node1E)));
-            variables.put("arguments", new Pair<>(NO_DECLARATIONS, ImmutableList.list(argumentsNode1E)));
+            Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<VariableReference>>> variables = new HashMap<>();
+            variables.put("v1", new Pair<>(ImmutableList.list(v1Node1), ImmutableList.list(v1Node1)));
+            variables.put("arguments", new Pair<>(NO_DECLARATIONS, ImmutableList.list(argumentsNode1)));
 
-            Map<Either<BindingIdentifier, IdentifierExpression>, Accessibility> referenceTypes = new HashMap<>();
-            referenceTypes.put(v1Node1E, Accessibility.Write);
-            referenceTypes.put(argumentsNode1E, Accessibility.Read);
+            Map<VariableReference, Accessibility> referenceTypes = new HashMap<>();
+            referenceTypes.put(v1Node1, Accessibility.Write);
+            referenceTypes.put(argumentsNode1, Accessibility.Read);
 
             checkScope(fScope, Scope.Type.Function, false, children, through, variables, referenceTypes);
         }
@@ -1195,13 +1137,6 @@ public class ScopeTest extends TestCase {
         final IdentifierExpression xNode2 = ie(new BranchGetter().d(ScriptStatements_(0)).d(WithStatementBody_()).d(BlockStatementBlock_()).d(BlockStatements_(1)).d(ExpressionStatementExpression_()).d(CallExpressionArguments_(0))
                 .apply(script));
 
-        final Either<BindingIdentifier, IdentifierExpression> mathNode1E = Either.right(mathNode1);
-        final Either<BindingIdentifier, IdentifierExpression> xNode1E = Either.left(xNode1);
-        final Either<BindingIdentifier, IdentifierExpression> cosNode1E = Either.right(cosNode1);
-        final Either<BindingIdentifier, IdentifierExpression> piNode1E = Either.right(piNode1);
-        final Either<BindingIdentifier, IdentifierExpression> alertNode1E = Either.right(alertNode1);
-        final Either<BindingIdentifier, IdentifierExpression> xNode2E = Either.right(xNode2);
-
         { // global scope
 
             ImmutableList<Scope> children = ImmutableList.list(topLevelLexicalScope);
@@ -1209,20 +1144,20 @@ public class ScopeTest extends TestCase {
             ImmutableList<String> through = ImmutableList.list("Math", "cos", "PI", "alert");
 
             // mapping of variable names from this scope object to the list of their declarations and their references
-            Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<Either<BindingIdentifier, IdentifierExpression>>>> variables = new HashMap<>();
-            variables.put("Math", new Pair<>(NO_DECLARATIONS, ImmutableList.list(mathNode1E)));
-            variables.put("cos", new Pair<>(NO_DECLARATIONS, ImmutableList.list(cosNode1E)));
-            variables.put("PI", new Pair<>(NO_DECLARATIONS, ImmutableList.list(piNode1E)));
-            variables.put("alert", new Pair<>(NO_DECLARATIONS, ImmutableList.list(alertNode1E)));
-            variables.put("x", new Pair<>(ImmutableList.list(xNode1), ImmutableList.list(xNode1E, xNode2E)));
+            Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<VariableReference>>> variables = new HashMap<>();
+            variables.put("Math", new Pair<>(NO_DECLARATIONS, ImmutableList.list(mathNode1)));
+            variables.put("cos", new Pair<>(NO_DECLARATIONS, ImmutableList.list(cosNode1)));
+            variables.put("PI", new Pair<>(NO_DECLARATIONS, ImmutableList.list(piNode1)));
+            variables.put("alert", new Pair<>(NO_DECLARATIONS, ImmutableList.list(alertNode1)));
+            variables.put("x", new Pair<>(ImmutableList.list(xNode1), ImmutableList.list(xNode1, xNode2)));
 
-            Map<Either<BindingIdentifier, IdentifierExpression>, Accessibility> referenceTypes = new HashMap<>();
-            referenceTypes.put(mathNode1E, Accessibility.Read);
-            referenceTypes.put(cosNode1E, Accessibility.Read);
-            referenceTypes.put(piNode1E, Accessibility.Read);
-            referenceTypes.put(alertNode1E, Accessibility.Read);
-            referenceTypes.put(xNode1E, Accessibility.Write);
-            referenceTypes.put(xNode2E, Accessibility.Read);
+            Map<VariableReference, Accessibility> referenceTypes = new HashMap<>();
+            referenceTypes.put(mathNode1, Accessibility.Read);
+            referenceTypes.put(cosNode1, Accessibility.Read);
+            referenceTypes.put(piNode1, Accessibility.Read);
+            referenceTypes.put(alertNode1, Accessibility.Read);
+            referenceTypes.put(xNode1, Accessibility.Write);
+            referenceTypes.put(xNode2, Accessibility.Read);
 
             checkScope(globalScope, Scope.Type.Global, true, children, through, variables, referenceTypes);
         }
@@ -1233,9 +1168,9 @@ public class ScopeTest extends TestCase {
             ImmutableList<String> through = ImmutableList.list("x", "cos", "PI", "alert");
 
             // mapping of variable names from this scope object to the list of their declarations and their references
-            Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<Either<BindingIdentifier, IdentifierExpression>>>> variables = new HashMap<>();
+            Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<VariableReference>>> variables = new HashMap<>();
 
-            Map<Either<BindingIdentifier, IdentifierExpression>, Accessibility> referenceTypes = new HashMap<>();
+            Map<VariableReference, Accessibility> referenceTypes = new HashMap<>();
 
             checkScope(withScope, Scope.Type.With, true, children, through, variables, referenceTypes);
         }
@@ -1274,14 +1209,6 @@ public class ScopeTest extends TestCase {
         final IdentifierExpression fld2Node1 = ie(new BranchGetter().d(ScriptStatements_(1)).d(WithStatementBody_()).d(BlockStatementBlock_()).d(BlockStatements_(1)).d(ExpressionStatementExpression_()).d(CallExpressionArguments_(0))
                 .apply(script));
 
-        final Either<BindingIdentifier, IdentifierExpression> oNode1E = Either.left(oNode1);
-        final Either<BindingIdentifier, IdentifierExpression> oNode2E = Either.right(oNode2);
-        final Either<BindingIdentifier, IdentifierExpression> alertNode1E = Either.right(alertNode1);
-        final Either<BindingIdentifier, IdentifierExpression> fld1Node1E = Either.right(fld1Node1);
-        final Either<BindingIdentifier, IdentifierExpression> alertNode2E = Either.right(alertNode2);
-        final Either<BindingIdentifier, IdentifierExpression> fld2Node1E = Either.right(fld2Node1);
-
-
         { // global scope
 
             ImmutableList<Scope> children = ImmutableList.list(topLevelLexicalScope);
@@ -1289,19 +1216,19 @@ public class ScopeTest extends TestCase {
             ImmutableList<String> through = ImmutableList.list("alert", "fld1", "fld2");
 
             // mapping of variable names from this scope object to the list of their declarations and their references
-            Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<Either<BindingIdentifier, IdentifierExpression>>>> variables = new HashMap<>();
-            variables.put("alert", new Pair<>(NO_DECLARATIONS, ImmutableList.list(alertNode1E, alertNode2E)));
-            variables.put("fld1", new Pair<>(NO_DECLARATIONS, ImmutableList.list(fld1Node1E)));
-            variables.put("fld2", new Pair<>(NO_DECLARATIONS, ImmutableList.list(fld2Node1E)));
-            variables.put("o", new Pair<>(ImmutableList.list(oNode1), ImmutableList.list(oNode1E, oNode2E)));
+            Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<VariableReference>>> variables = new HashMap<>();
+            variables.put("alert", new Pair<>(NO_DECLARATIONS, ImmutableList.list(alertNode1, alertNode2)));
+            variables.put("fld1", new Pair<>(NO_DECLARATIONS, ImmutableList.list(fld1Node1)));
+            variables.put("fld2", new Pair<>(NO_DECLARATIONS, ImmutableList.list(fld2Node1)));
+            variables.put("o", new Pair<>(ImmutableList.list(oNode1), ImmutableList.list(oNode1, oNode2)));
 
-            Map<Either<BindingIdentifier, IdentifierExpression>, Accessibility> referenceTypes = new HashMap<>();
-            referenceTypes.put(alertNode1E, Accessibility.Read);
-            referenceTypes.put(alertNode2E, Accessibility.Read);
-            referenceTypes.put(fld1Node1E, Accessibility.Read);
-            referenceTypes.put(fld2Node1E, Accessibility.Read);
-            referenceTypes.put(oNode1E, Accessibility.Write);
-            referenceTypes.put(oNode2E, Accessibility.Read);
+            Map<VariableReference, Accessibility> referenceTypes = new HashMap<>();
+            referenceTypes.put(alertNode1, Accessibility.Read);
+            referenceTypes.put(alertNode2, Accessibility.Read);
+            referenceTypes.put(fld1Node1, Accessibility.Read);
+            referenceTypes.put(fld2Node1, Accessibility.Read);
+            referenceTypes.put(oNode1, Accessibility.Write);
+            referenceTypes.put(oNode2, Accessibility.Read);
 
             checkScope(globalScope, Scope.Type.Global, true, children, through, variables, referenceTypes);
         }
@@ -1312,9 +1239,9 @@ public class ScopeTest extends TestCase {
             ImmutableList<String> through = ImmutableList.list("alert", "fld1", "fld2");
 
             // mapping of variable names from this scope object to the list of their declarations and their references
-            Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<Either<BindingIdentifier, IdentifierExpression>>>> variables = new HashMap<>();
+            Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<VariableReference>>> variables = new HashMap<>();
 
-            Map<Either<BindingIdentifier, IdentifierExpression>, Accessibility> referenceTypes = new HashMap<>();
+            Map<VariableReference, Accessibility> referenceTypes = new HashMap<>();
 
             checkScope(withScope, Scope.Type.With, true, children, through, variables, referenceTypes);
         }
@@ -1339,11 +1266,6 @@ public class ScopeTest extends TestCase {
         final IdentifierExpression errNode2 = ie(new BranchGetter().d(ScriptStatements_(0)).d(TryCatchStatementCatchClause_()).d(CatchClauseBody_()).d(BlockStatements_(0)).d(ExpressionStatementExpression_()).d(CallExpressionArguments_(0))
                 .apply(script));
 
-        final Either<BindingIdentifier, IdentifierExpression> alertNode1E = Either.right(alertNode1);
-        final Either<BindingIdentifier, IdentifierExpression> errNode1E = Either.left(errNode1);
-        final Either<BindingIdentifier, IdentifierExpression> alertNode2E = Either.right(alertNode2);
-        final Either<BindingIdentifier, IdentifierExpression> errNode2E = Either.right(errNode2);
-
         { // global scope
 
             ImmutableList<Scope> children = ImmutableList.list(topLevelLexicalScope);
@@ -1351,12 +1273,12 @@ public class ScopeTest extends TestCase {
             ImmutableList<String> through = ImmutableList.list("alert");
 
             // mapping of variable names from this scope object to the list of their declarations and their references
-            Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<Either<BindingIdentifier, IdentifierExpression>>>> variables = new HashMap<>();
-            variables.put("alert", new Pair<>(NO_DECLARATIONS, ImmutableList.list(alertNode1E, alertNode2E)));
+            Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<VariableReference>>> variables = new HashMap<>();
+            variables.put("alert", new Pair<>(NO_DECLARATIONS, ImmutableList.list(alertNode1, alertNode2)));
 
-            Map<Either<BindingIdentifier, IdentifierExpression>, Accessibility> referenceTypes = new HashMap<>();
-            referenceTypes.put(alertNode1E, Accessibility.Read);
-            referenceTypes.put(alertNode2E, Accessibility.Read);
+            Map<VariableReference, Accessibility> referenceTypes = new HashMap<>();
+            referenceTypes.put(alertNode1, Accessibility.Read);
+            referenceTypes.put(alertNode2, Accessibility.Read);
 
             checkScope(globalScope, Scope.Type.Global, true, children, through, variables, referenceTypes);
         }
@@ -1367,11 +1289,11 @@ public class ScopeTest extends TestCase {
             ImmutableList<String> through = ImmutableList.list("alert");
 
             // mapping of variable names from this scope object to the list of their declarations and their references
-            Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<Either<BindingIdentifier, IdentifierExpression>>>> variables = new HashMap<>();
-            variables.put("err", new Pair<>(ImmutableList.list(errNode1), ImmutableList.list(errNode2E)));
+            Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<VariableReference>>> variables = new HashMap<>();
+            variables.put("err", new Pair<>(ImmutableList.list(errNode1), ImmutableList.list(errNode2)));
 
-            Map<Either<BindingIdentifier, IdentifierExpression>, Accessibility> referenceTypes = new HashMap<>();
-            referenceTypes.put(errNode2E, Accessibility.Read);
+            Map<VariableReference, Accessibility> referenceTypes = new HashMap<>();
+            referenceTypes.put(errNode2, Accessibility.Read);
 
             checkScope(catchScope, Scope.Type.Catch, false, children, through, variables, referenceTypes);
         }
@@ -1416,15 +1338,6 @@ public class ScopeTest extends TestCase {
         final IdentifierExpression err2Node2 = ie(new BranchGetter().d(ScriptStatements_(0)).d(TryCatchStatementCatchClause_()).d(CatchClauseBody_()).d(BlockStatements_(0)).d(TryCatchStatementCatchClause_()).d(CatchClauseBody_()).d(BlockStatements_(1)).d(ExpressionStatementExpression_()).d(CallExpressionArguments_(0))
                 .apply(script));
 
-        final Either<BindingIdentifier, IdentifierExpression> alertNode1E = Either.right(alertNode1);
-        final Either<BindingIdentifier, IdentifierExpression> err1Node1E = Either.left(err1Node1);
-        final Either<BindingIdentifier, IdentifierExpression> err1Node2E = Either.right(err1Node2);
-        final Either<BindingIdentifier, IdentifierExpression> err2Node1E = Either.left(err2Node1);
-        final Either<BindingIdentifier, IdentifierExpression> alertNode2E = Either.right(alertNode2);
-        final Either<BindingIdentifier, IdentifierExpression> err1Node3E = Either.right(err1Node3);
-        final Either<BindingIdentifier, IdentifierExpression> alertNode3E = Either.right(alertNode3);
-        final Either<BindingIdentifier, IdentifierExpression> err2Node2E = Either.right(err2Node2);
-
         { // global scope
 
             ImmutableList<Scope> children = ImmutableList.list(topLevelLexicalScope);
@@ -1432,13 +1345,13 @@ public class ScopeTest extends TestCase {
             ImmutableList<String> through = ImmutableList.list("alert");
 
             // mapping of variable names from this scope object to the list of their declarations and their references
-            Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<Either<BindingIdentifier, IdentifierExpression>>>> variables = new HashMap<>();
-            variables.put("alert", new Pair<>(NO_DECLARATIONS, ImmutableList.list(alertNode1E, alertNode2E, alertNode3E)));
+            Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<VariableReference>>> variables = new HashMap<>();
+            variables.put("alert", new Pair<>(NO_DECLARATIONS, ImmutableList.list(alertNode1, alertNode2, alertNode3)));
 
-            Map<Either<BindingIdentifier, IdentifierExpression>, Accessibility> referenceTypes = new HashMap<>();
-            referenceTypes.put(alertNode1E, Accessibility.Read);
-            referenceTypes.put(alertNode2E, Accessibility.Read);
-            referenceTypes.put(alertNode3E, Accessibility.Read);
+            Map<VariableReference, Accessibility> referenceTypes = new HashMap<>();
+            referenceTypes.put(alertNode1, Accessibility.Read);
+            referenceTypes.put(alertNode2, Accessibility.Read);
+            referenceTypes.put(alertNode3, Accessibility.Read);
 
             checkScope(globalScope, Scope.Type.Global, true, children, through, variables, referenceTypes);
         }
@@ -1449,12 +1362,12 @@ public class ScopeTest extends TestCase {
             ImmutableList<String> through = ImmutableList.list("alert");
 
             // mapping of variable names from this scope object to the list of their declarations and their references
-            Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<Either<BindingIdentifier, IdentifierExpression>>>> variables = new HashMap<>();
-            variables.put("err1", new Pair<>(ImmutableList.list(err1Node1), ImmutableList.list(err1Node2E, err1Node3E)));
+            Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<VariableReference>>> variables = new HashMap<>();
+            variables.put("err1", new Pair<>(ImmutableList.list(err1Node1), ImmutableList.list(err1Node2, err1Node3)));
 
-            Map<Either<BindingIdentifier, IdentifierExpression>, Accessibility> referenceTypes = new HashMap<>();
-            referenceTypes.put(err1Node2E, Accessibility.Read);
-            referenceTypes.put(err1Node3E, Accessibility.Read);
+            Map<VariableReference, Accessibility> referenceTypes = new HashMap<>();
+            referenceTypes.put(err1Node2, Accessibility.Read);
+            referenceTypes.put(err1Node3, Accessibility.Read);
 
             checkScope(catchScope1, Scope.Type.Catch, false, children, through, variables, referenceTypes);
         }
@@ -1465,11 +1378,11 @@ public class ScopeTest extends TestCase {
             ImmutableList<String> through = ImmutableList.list("alert", "err1");
 
             // mapping of variable names from this scope object to the list of their declarations and their references
-            Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<Either<BindingIdentifier, IdentifierExpression>>>> variables = new HashMap<>();
-            variables.put("err2", new Pair<>(ImmutableList.list(err2Node1), ImmutableList.list(err2Node2E)));
+            Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<VariableReference>>> variables = new HashMap<>();
+            variables.put("err2", new Pair<>(ImmutableList.list(err2Node1), ImmutableList.list(err2Node2)));
 
-            Map<Either<BindingIdentifier, IdentifierExpression>, Accessibility> referenceTypes = new HashMap<>();
-            referenceTypes.put(err2Node2E, Accessibility.Read);
+            Map<VariableReference, Accessibility> referenceTypes = new HashMap<>();
+            referenceTypes.put(err2Node2, Accessibility.Read);
 
             checkScope(catchScope2, Scope.Type.Catch, false, children, through, variables, referenceTypes);
         }
@@ -1492,10 +1405,6 @@ public class ScopeTest extends TestCase {
         final BindingIdentifier errNode2 = bi(new BranchGetter().d(ScriptStatements_(0)).d(TryCatchStatementCatchClause_()).d(CatchClauseBody_()).d(BlockStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorBinding_())
                 .apply(script));
 
-        final Either<BindingIdentifier, IdentifierExpression> alertNode1E = Either.right(alertNode1);
-        final Either<BindingIdentifier, IdentifierExpression> errNode1E = Either.left(errNode1);
-        final Either<BindingIdentifier, IdentifierExpression> errNode2E = Either.left(errNode2);
-
         { // global scope
 
             ImmutableList<Scope> children = ImmutableList.list(topLevelLexicalScope);
@@ -1503,12 +1412,12 @@ public class ScopeTest extends TestCase {
             ImmutableList<String> through = ImmutableList.list("alert");
 
             // mapping of variable names from this scope object to the list of their declarations and their references
-            Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<Either<BindingIdentifier, IdentifierExpression>>>> variables = new HashMap<>();
+            Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<VariableReference>>> variables = new HashMap<>();
             variables.put("err", new Pair<>(ImmutableList.list(errNode2), NO_REFERENCES));
-            variables.put("alert", new Pair<>(NO_DECLARATIONS, ImmutableList.list(alertNode1E)));
+            variables.put("alert", new Pair<>(NO_DECLARATIONS, ImmutableList.list(alertNode1)));
 
-            Map<Either<BindingIdentifier, IdentifierExpression>, Accessibility> referenceTypes = new HashMap<>();
-            referenceTypes.put(alertNode1E, Accessibility.Read);
+            Map<VariableReference, Accessibility> referenceTypes = new HashMap<>();
+            referenceTypes.put(alertNode1, Accessibility.Read);
 
             checkScope(globalScope, Scope.Type.Global, true, children, through, variables, referenceTypes);
         }
@@ -1519,11 +1428,11 @@ public class ScopeTest extends TestCase {
             ImmutableList<String> through = ImmutableList.nil();
 
             // mapping of variable names from this scope object to the list of their declarations and their references
-            Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<Either<BindingIdentifier, IdentifierExpression>>>> variables = new HashMap<>();
-            variables.put("err", new Pair<>(ImmutableList.list(errNode1), ImmutableList.list(errNode2E)));
+            Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<VariableReference>>> variables = new HashMap<>();
+            variables.put("err", new Pair<>(ImmutableList.list(errNode1), ImmutableList.list(errNode2)));
 
-            Map<Either<BindingIdentifier, IdentifierExpression>, Accessibility> referenceTypes = new HashMap<>();
-            referenceTypes.put(errNode2E, Accessibility.Write);
+            Map<VariableReference, Accessibility> referenceTypes = new HashMap<>();
+            referenceTypes.put(errNode2, Accessibility.Write);
 
             checkScope(catchScope, Scope.Type.Catch, false, children, through, variables, referenceTypes);
         }
@@ -1539,14 +1448,10 @@ public class ScopeTest extends TestCase {
 
         final BindingIdentifier xNode1 = bi(new BranchGetter().d(ScriptStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorBinding_())
                 .apply(script));
-        final BindingIdentifier xNode2 = bi(new BranchGetter().d(ScriptStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorInit_()).d(ArrowExpressionParams_()).d(FormalParametersItems_(0))
+        final BindingIdentifier xNode2 = bi(new BranchGetter().d(ScriptStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorInit_()).d(ArrowExpressionParams_()).d(FormalParametersItems_(0)).d(ParameterBinding_())
                 .apply(script));
-        final BindingIdentifier xNode3 = bi(new BranchGetter().d(ScriptStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorInit_()).d(ArrowExpressionBody_()).d(UpdateExpressionOperand_())
+        final AssignmentTargetIdentifier xNode3 = ati(new BranchGetter().d(ScriptStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorInit_()).d(ArrowExpressionBody_()).d(UpdateExpressionOperand_())
                 .apply(script));
-
-        final Either<BindingIdentifier, IdentifierExpression> xNode1E = Either.left(xNode1);
-        final Either<BindingIdentifier, IdentifierExpression> xNode2E = Either.left(xNode2);
-        final Either<BindingIdentifier, IdentifierExpression> xNode3E = Either.left(xNode3);
 
         { // global scope
 
@@ -1555,11 +1460,11 @@ public class ScopeTest extends TestCase {
             ImmutableList<String> through = ImmutableList.nil();
 
             // mapping of variable names from this scope object to the list of their declarations and their references
-            Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<Either<BindingIdentifier, IdentifierExpression>>>> variables = new HashMap<>();
-            variables.put("x", new Pair<>(ImmutableList.list(xNode1), ImmutableList.list(xNode1E)));
+            Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<VariableReference>>> variables = new HashMap<>();
+            variables.put("x", new Pair<>(ImmutableList.list(xNode1), ImmutableList.list(xNode1)));
 
-            Map<Either<BindingIdentifier, IdentifierExpression>, Accessibility> referenceTypes = new HashMap<>();
-            referenceTypes.put(xNode1E, Accessibility.Write);
+            Map<VariableReference, Accessibility> referenceTypes = new HashMap<>();
+            referenceTypes.put(xNode1, Accessibility.Write);
 
             checkScope(globalScope, Scope.Type.Global, true, children, through, variables, referenceTypes);
         }
@@ -1570,11 +1475,11 @@ public class ScopeTest extends TestCase {
             ImmutableList<String> through = ImmutableList.nil();
 
             // mapping of variable names from this scope object to the list of their declarations and their references
-            Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<Either<BindingIdentifier, IdentifierExpression>>>> variables = new HashMap<>();
-            variables.put("x", new Pair<>(ImmutableList.list(xNode2), ImmutableList.list(xNode2E)));
+            Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<VariableReference>>> variables = new HashMap<>();
+            variables.put("x", new Pair<>(ImmutableList.list(xNode2), ImmutableList.list(xNode3)));
 
-            Map<Either<BindingIdentifier, IdentifierExpression>, Accessibility> referenceTypes = new HashMap<>();
-            referenceTypes.put(xNode2E, Accessibility.ReadWrite);
+            Map<VariableReference, Accessibility> referenceTypes = new HashMap<>();
+            referenceTypes.put(xNode3, Accessibility.ReadWrite);
 
             checkScope(aScope, Scope.Type.ArrowFunction, false, children, through, variables, referenceTypes);
         }
@@ -1591,8 +1496,6 @@ public class ScopeTest extends TestCase {
         final IdentifierExpression argumentsNode = ie(new BranchGetter().d(ScriptStatements_(0)).d(ExpressionStatementExpression_()).d(ArrowExpressionBody_())
                 .apply(script));
 
-        final Either<BindingIdentifier, IdentifierExpression> argumentsNodeE = Either.right(argumentsNode);
-
         { // global scope
 
             ImmutableList<Scope> children = ImmutableList.list(topLevelLexicalScope);
@@ -1600,11 +1503,11 @@ public class ScopeTest extends TestCase {
             ImmutableList<String> through = ImmutableList.list("arguments");
 
             // mapping of variable names from this scope object to the list of their declarations and their references
-            Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<Either<BindingIdentifier, IdentifierExpression>>>> variables = new HashMap<>();
-            variables.put("arguments", new Pair<>(NO_DECLARATIONS, ImmutableList.list(argumentsNodeE)));
+            Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<VariableReference>>> variables = new HashMap<>();
+            variables.put("arguments", new Pair<>(NO_DECLARATIONS, ImmutableList.list(argumentsNode)));
 
-            Map<Either<BindingIdentifier, IdentifierExpression>, Accessibility> referenceTypes = new HashMap<>();
-            referenceTypes.put(argumentsNodeE, Accessibility.Read);
+            Map<VariableReference, Accessibility> referenceTypes = new HashMap<>();
+            referenceTypes.put(argumentsNode, Accessibility.Read);
 
             checkScope(globalScope, Scope.Type.Global, true, children, through, variables, referenceTypes);
         }
@@ -1615,9 +1518,9 @@ public class ScopeTest extends TestCase {
             ImmutableList<String> through = ImmutableList.list("arguments");
 
             // mapping of variable names from this scope object to the list of their declarations and their references
-            Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<Either<BindingIdentifier, IdentifierExpression>>>> variables = new HashMap<>();
+            Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<VariableReference>>> variables = new HashMap<>();
 
-            Map<Either<BindingIdentifier, IdentifierExpression>, Accessibility> referenceTypes = new HashMap<>();
+            Map<VariableReference, Accessibility> referenceTypes = new HashMap<>();
 
             checkScope(aScope, Scope.Type.ArrowFunction, false, children, through, variables, referenceTypes);
         }
@@ -1640,11 +1543,6 @@ public class ScopeTest extends TestCase {
         final IdentifierExpression argumentsNode1 = ie(new BranchGetter().d(ScriptStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorInit_()).d(ObjectExpressionProperties_(0)).d(GetterBody_()).d(FunctionBodyStatements_(0)).d(ReturnStatementExpression_()).d(BinaryExpressionRight_())
                 .apply(script));
 
-        final Either<BindingIdentifier, IdentifierExpression> xNode1E = Either.left(xNode1);
-        final Either<BindingIdentifier, IdentifierExpression> xNode2E = Either.right(xNode2);
-        final Either<BindingIdentifier, IdentifierExpression> xNode3E = Either.right(xNode3);
-        final Either<BindingIdentifier, IdentifierExpression> argumentsNode1E = Either.right(argumentsNode1);
-
         { // global scope
 
             ImmutableList<Scope> children = ImmutableList.list(topLevelLexicalScope);
@@ -1652,12 +1550,12 @@ public class ScopeTest extends TestCase {
             ImmutableList<String> through = ImmutableList.nil();
 
             // mapping of variable names from this scope object to the list of their declarations and their references
-            Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<Either<BindingIdentifier, IdentifierExpression>>>> variables = new HashMap<>();
-            variables.put("x", new Pair<>(ImmutableList.list(xNode1), ImmutableList.list(xNode1E, xNode2E, xNode3E)));
+            Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<VariableReference>>> variables = new HashMap<>();
+            variables.put("x", new Pair<>(ImmutableList.list(xNode1), ImmutableList.list(xNode1, xNode2, xNode3)));
 
-            Map<Either<BindingIdentifier, IdentifierExpression>, Accessibility> referenceTypes = new HashMap<>();
-            referenceTypes.put(xNode1E, Accessibility.Write);
-            referenceTypes.put(xNode2E, Accessibility.Read);
+            Map<VariableReference, Accessibility> referenceTypes = new HashMap<>();
+            referenceTypes.put(xNode1, Accessibility.Write);
+            referenceTypes.put(xNode2, Accessibility.Read);
 
             checkScope(globalScope, Scope.Type.Global, true, children, through, variables, referenceTypes);
         }
@@ -1668,11 +1566,11 @@ public class ScopeTest extends TestCase {
             ImmutableList<String> through = ImmutableList.list("x");
 
             // mapping of variable names from this scope object to the list of their declarations and their references
-            Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<Either<BindingIdentifier, IdentifierExpression>>>> variables = new HashMap<>();
-            variables.put("arguments", new Pair<>(NO_DECLARATIONS, ImmutableList.list(argumentsNode1E)));
+            Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<VariableReference>>> variables = new HashMap<>();
+            variables.put("arguments", new Pair<>(NO_DECLARATIONS, ImmutableList.list(argumentsNode1)));
 
-            Map<Either<BindingIdentifier, IdentifierExpression>, Accessibility> referenceTypes = new HashMap<>();
-            referenceTypes.put(argumentsNode1E, Accessibility.Read);
+            Map<VariableReference, Accessibility> referenceTypes = new HashMap<>();
+            referenceTypes.put(argumentsNode1, Accessibility.Read);
 
             checkScope(gScope, Scope.Type.Function, false, children, through, variables, referenceTypes);
         }
@@ -1697,12 +1595,6 @@ public class ScopeTest extends TestCase {
         final BindingIdentifier yNode2 = bi(new BranchGetter().d(ScriptStatements_(3)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(1)).d(VariableDeclaratorBinding_())
                 .apply(script));
 
-        final Either<BindingIdentifier, IdentifierExpression> xNode1E = Either.right(xNode1);
-        final Either<BindingIdentifier, IdentifierExpression> xNode2E = Either.left(xNode2);
-        final Either<BindingIdentifier, IdentifierExpression> yNode1E = Either.right(yNode1);
-        final Either<BindingIdentifier, IdentifierExpression> xNode3E = Either.left(xNode3);
-        final Either<BindingIdentifier, IdentifierExpression> yNode2E = Either.left(yNode2);
-
         { // global scope
 
             ImmutableList<Scope> children = ImmutableList.list(topLevelLexicalScope);
@@ -1710,13 +1602,13 @@ public class ScopeTest extends TestCase {
             ImmutableList<String> through = ImmutableList.nil();
 
             // mapping of variable names from this scope object to the list of their declarations and their references
-            Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<Either<BindingIdentifier, IdentifierExpression>>>> variables = new HashMap<>();
-            variables.put("x", new Pair<>(ImmutableList.list(xNode3), ImmutableList.list(xNode1E)));
-            variables.put("y", new Pair<>(ImmutableList.list(yNode2), ImmutableList.list(yNode1E)));
+            Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<VariableReference>>> variables = new HashMap<>();
+            variables.put("x", new Pair<>(ImmutableList.list(xNode3), ImmutableList.list(xNode1)));
+            variables.put("y", new Pair<>(ImmutableList.list(yNode2), ImmutableList.list(yNode1)));
 
-            Map<Either<BindingIdentifier, IdentifierExpression>, Accessibility> referenceTypes = new HashMap<>();
-            referenceTypes.put(xNode1E, Accessibility.Read);
-            referenceTypes.put(yNode1E, Accessibility.Read);
+            Map<VariableReference, Accessibility> referenceTypes = new HashMap<>();
+            referenceTypes.put(xNode1, Accessibility.Read);
+            referenceTypes.put(yNode1, Accessibility.Read);
 
             checkScope(globalScope, Scope.Type.Global, true, children, through, variables, referenceTypes);
         }
@@ -1727,11 +1619,11 @@ public class ScopeTest extends TestCase {
             ImmutableList<String> through = ImmutableList.list("y");
 
             // mapping of variable names from this scope object to the list of their declarations and their references
-            Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<Either<BindingIdentifier, IdentifierExpression>>>> variables = new HashMap<>();
-            variables.put("x", new Pair<>(ImmutableList.list(xNode2), ImmutableList.list(xNode2E)));
+            Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<VariableReference>>> variables = new HashMap<>();
+            variables.put("x", new Pair<>(ImmutableList.list(xNode2), ImmutableList.list(xNode2)));
 
-            Map<Either<BindingIdentifier, IdentifierExpression>, Accessibility> referenceTypes = new HashMap<>();
-            referenceTypes.put(xNode2E, Accessibility.Write);
+            Map<VariableReference, Accessibility> referenceTypes = new HashMap<>();
+            referenceTypes.put(xNode2, Accessibility.Write);
 
             checkScope(blockScope, Scope.Type.Block, false, children, through, variables, referenceTypes);
         }
@@ -1744,22 +1636,16 @@ public class ScopeTest extends TestCase {
         GlobalScope globalScope = ScopeAnalyzer.analyze(script);
         Scope topLevelLexicalScope = globalScope.children.maybeHead().just();
 
-        final BindingIdentifier xNode1 = bi( new BranchGetter().d(ScriptStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorBinding_()).d(ObjectBindingProperties_(0)).d(BindingPropertyIdentifierBinding_())
-                .apply(script) );
-        final BindingIdentifier yNode1 = bi( new BranchGetter().d(ScriptStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorBinding_()).d(ObjectBindingProperties_(1)).d(BindingPropertyPropertyBinding_()).d(ObjectBindingProperties_(0)).d(BindingPropertyPropertyBinding_()).d(BindingWithDefaultBinding_())
-                .apply(script) );
-        final IdentifierExpression zNode1 = ie( new BranchGetter().d(ScriptStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorBinding_()).d(ObjectBindingProperties_(1)).d(BindingPropertyPropertyBinding_()).d(ObjectBindingProperties_(0)).d(BindingPropertyPropertyBinding_()).d(BindingWithDefaultInit_())
-                .apply(script) );
-        final BindingIdentifier zNode2 = bi( new BranchGetter().d(ScriptStatements_(1)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorBinding_()).d(ArrayBindingElements_(0))
-                .apply(script) );
-        final IdentifierExpression yNode2 = ie( new BranchGetter().d(ScriptStatements_(1)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorInit_())
-                .apply(script) );
-
-        final Either<BindingIdentifier, IdentifierExpression> xNode1E = Either.left(xNode1);
-        final Either<BindingIdentifier, IdentifierExpression> yNode1E = Either.left(yNode1);
-        final Either<BindingIdentifier, IdentifierExpression> zNode1E = Either.right(zNode1);
-        final Either<BindingIdentifier, IdentifierExpression> zNode2E = Either.left(zNode2);
-        final Either<BindingIdentifier, IdentifierExpression> yNode2E = Either.right(yNode2);
+        final BindingIdentifier xNode1 = bi(new BranchGetter().d(ScriptStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorBinding_()).d(ObjectBindingProperties_(0)).d(BindingPropertyIdentifierBinding_())
+                .apply(script));
+        final BindingIdentifier yNode1 = bi(new BranchGetter().d(ScriptStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorBinding_()).d(ObjectBindingProperties_(1)).d(BindingPropertyPropertyBinding_()).d(ObjectBindingProperties_(0)).d(BindingPropertyPropertyBinding_()).d(BindingWithDefaultBinding_())
+                .apply(script));
+        final IdentifierExpression zNode1 = ie(new BranchGetter().d(ScriptStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorBinding_()).d(ObjectBindingProperties_(1)).d(BindingPropertyPropertyBinding_()).d(ObjectBindingProperties_(0)).d(BindingPropertyPropertyBinding_()).d(BindingWithDefaultInit_())
+                .apply(script));
+        final BindingIdentifier zNode2 = bi(new BranchGetter().d(ScriptStatements_(1)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorBinding_()).d(ArrayBindingElements_(0))
+                .apply(script));
+        final IdentifierExpression yNode2 = ie(new BranchGetter().d(ScriptStatements_(1)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorInit_())
+                .apply(script));
 
         { // global scope
 
@@ -1768,17 +1654,17 @@ public class ScopeTest extends TestCase {
             ImmutableList<String> through = ImmutableList.nil();
 
             // mapping of variable names from this scope object to the list of their declarations and their references
-            Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<Either<BindingIdentifier, IdentifierExpression>>>> variables = new HashMap<>();
-            variables.put("x", new Pair<>(ImmutableList.list(xNode1), ImmutableList.list(xNode1E)));
-            variables.put("y", new Pair<>(ImmutableList.list(yNode1), ImmutableList.list(yNode1E, yNode2E)));
-            variables.put("z", new Pair<>(ImmutableList.list(zNode2), ImmutableList.list(zNode1E, zNode2E)));
+            Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<VariableReference>>> variables = new HashMap<>();
+            variables.put("x", new Pair<>(ImmutableList.list(xNode1), ImmutableList.list(xNode1)));
+            variables.put("y", new Pair<>(ImmutableList.list(yNode1), ImmutableList.list(yNode1, yNode2)));
+            variables.put("z", new Pair<>(ImmutableList.list(zNode2), ImmutableList.list(zNode1, zNode2)));
 
-            Map<Either<BindingIdentifier, IdentifierExpression>, Accessibility> referenceTypes = new HashMap<>();
-            referenceTypes.put(xNode1E, Accessibility.Write);
-            referenceTypes.put(yNode1E, Accessibility.Write);
-            referenceTypes.put(yNode2E, Accessibility.Read);
-            referenceTypes.put(zNode1E, Accessibility.Read);
-            referenceTypes.put(zNode2E, Accessibility.Write);
+            Map<VariableReference, Accessibility> referenceTypes = new HashMap<>();
+            referenceTypes.put(xNode1, Accessibility.Write);
+            referenceTypes.put(yNode1, Accessibility.Write);
+            referenceTypes.put(yNode2, Accessibility.Read);
+            referenceTypes.put(zNode1, Accessibility.Read);
+            referenceTypes.put(zNode2, Accessibility.Write);
 
             checkScope(globalScope, Scope.Type.Global, true, children, through, variables, referenceTypes);
         }
@@ -1789,12 +1675,20 @@ public class ScopeTest extends TestCase {
     public void testScope_binding() throws JsError {
         checkScopeSerialization(
                 "function foo(b){function r(){for(var b=0;;);}}",
-                "{\"node\": \"Script_0\", \"type\": \"Global\", \"isDynamic\": true, \"through\": [], \"variables\": [{\"name\": \"foo\", \"references\": [], \"declarations\": [{\"node\": \"BindingIdentifier(foo)_2\", \"kind\": \"FunctionDeclaration\"}]}], \"children\": [{\"node\": \"Script_0\", \"type\": \"Script\", \"isDynamic\": false, \"through\": [], \"variables\": [], \"children\": [{\"node\": \"FunctionDeclaration_1\", \"type\": \"Function\", \"isDynamic\": false, \"through\": [], \"variables\": [{\"name\": \"arguments\", \"references\": [], \"declarations\": []}, {\"name\": \"b\", \"references\": [], \"declarations\": [{\"node\": \"BindingIdentifier(b)_4\", \"kind\": \"Parameter\"}]}, {\"name\": \"r\", \"references\": [], \"declarations\": [{\"node\": \"BindingIdentifier(r)_7\", \"kind\": \"FunctionDeclaration\"}]}], \"children\": [{\"node\": \"FunctionDeclaration_6\", \"type\": \"Function\", \"isDynamic\": false, \"through\": [], \"variables\": [{\"name\": \"arguments\", \"references\": [], \"declarations\": []}, {\"name\": \"b\", \"references\": [{\"node\": \"BindingIdentifier(b)_13\", \"accessibility\": \"Write\"}], \"declarations\": [{\"node\": \"BindingIdentifier(b)_13\", \"kind\": \"Var\"}]}], \"children\": [{\"node\": \"ForStatement_10\", \"type\": \"Block\", \"isDynamic\": false, \"through\": [{\"node\": \"BindingIdentifier(b)_13\", \"accessibility\": \"Write\"}], \"variables\": [], \"children\": []}]}]}]}]}"
+                "{\"node\": \"Script_0\", \"type\": \"Global\", \"isDynamic\": true, \"through\": [], \"variables\": [{\"name\": \"foo\", \"references\": [], \"declarations\": [{\"node\": \"BindingIdentifier(foo)_2\", \"kind\": \"FunctionDeclaration\"}]}], \"children\": [{\"node\": \"Script_0\", \"type\": \"Script\", \"isDynamic\": false, \"through\": [], \"variables\": [], \"children\": [{\"node\": \"FunctionDeclaration_1\", \"type\": \"Function\", \"isDynamic\": false, \"through\": [], \"variables\": [{\"name\": \"arguments\", \"references\": [], \"declarations\": []}, {\"name\": \"b\", \"references\": [], \"declarations\": [{\"node\": \"BindingIdentifier(b)_5\", \"kind\": \"Parameter\"}]}, {\"name\": \"r\", \"references\": [], \"declarations\": [{\"node\": \"BindingIdentifier(r)_8\", \"kind\": \"FunctionDeclaration\"}]}], \"children\": [{\"node\": \"FunctionDeclaration_7\", \"type\": \"Function\", \"isDynamic\": false, \"through\": [], \"variables\": [{\"name\": \"arguments\", \"references\": [], \"declarations\": []}, {\"name\": \"b\", \"references\": [{\"node\": \"BindingIdentifier(b)_14\", \"accessibility\": \"Write\"}], \"declarations\": [{\"node\": \"BindingIdentifier(b)_14\", \"kind\": \"Var\"}]}], \"children\": [{\"node\": \"ForStatement_11\", \"type\": \"Block\", \"isDynamic\": false, \"through\": [{\"node\": \"BindingIdentifier(b)_14\", \"accessibility\": \"Write\"}], \"variables\": [], \"children\": []}]}]}]}]}"
         );
     }
 
     @Test
-    public void testFunctionDoubleDeclaration() throws JsError{
+    public void testScope_shorthand() throws JsError {
+        checkScopeSerialization(
+                "({x})",
+                "{\"node\": \"Script_0\", \"type\": \"Global\", \"isDynamic\": true, \"through\": [{\"node\": \"IdentifierExpression(x)_4\", \"accessibility\": \"Read\"}], \"variables\": [{\"name\": \"x\", \"references\": [{\"node\": \"IdentifierExpression(x)_4\", \"accessibility\": \"Read\"}], \"declarations\": []}], \"children\": [{\"node\": \"Script_0\", \"type\": \"Script\", \"isDynamic\": false, \"through\": [{\"node\": \"IdentifierExpression(x)_4\", \"accessibility\": \"Read\"}], \"variables\": [], \"children\": []}]}"
+        );
+    }
+
+    @Test
+    public void testFunctionDoubleDeclaration() throws JsError {
         checkScopeSerialization(
                 "{let x; function x(){}}",
                 "{\"node\": \"Script_0\", \"type\": \"Global\", \"isDynamic\": true, \"through\": [], \"variables\": [], \"children\": [{\"node\": \"Script_0\", \"type\": \"Script\", \"isDynamic\": false, \"through\": [], \"variables\": [], \"children\": [{\"node\": \"Block_2\", \"type\": \"Block\", \"isDynamic\": false, \"through\": [], \"variables\": [{\"name\": \"x\", \"references\": [], \"declarations\": [{\"node\": \"BindingIdentifier(x)_6\", \"kind\": \"Let\"}, {\"node\": \"BindingIdentifier(x)_8\", \"kind\": \"FunctionDeclaration\"}]}], \"children\": [{\"node\": \"FunctionDeclaration_7\", \"type\": \"Function\", \"isDynamic\": false, \"through\": [], \"variables\": [{\"name\": \"arguments\", \"references\": [], \"declarations\": []}], \"children\": []}]}]}]}"
@@ -1802,7 +1696,7 @@ public class ScopeTest extends TestCase {
 
         checkScopeSerialization(
                 "function f1(x){return x; function x(){}}",
-                "{\"node\": \"Script_0\", \"type\": \"Global\", \"isDynamic\": true, \"through\": [], \"variables\": [{\"name\": \"f1\", \"references\": [], \"declarations\": [{\"node\": \"BindingIdentifier(f1)_2\", \"kind\": \"FunctionDeclaration\"}]}], \"children\": [{\"node\": \"Script_0\", \"type\": \"Script\", \"isDynamic\": false, \"through\": [], \"variables\": [], \"children\": [{\"node\": \"FunctionDeclaration_1\", \"type\": \"Function\", \"isDynamic\": false, \"through\": [], \"variables\": [{\"name\": \"arguments\", \"references\": [], \"declarations\": []}, {\"name\": \"x\", \"references\": [{\"node\": \"IdentifierExpression(x)_7\", \"accessibility\": \"Read\"}], \"declarations\": [{\"node\": \"BindingIdentifier(x)_4\", \"kind\": \"Parameter\"}, {\"node\": \"BindingIdentifier(x)_9\", \"kind\": \"FunctionDeclaration\"}]}], \"children\": [{\"node\": \"FunctionDeclaration_8\", \"type\": \"Function\", \"isDynamic\": false, \"through\": [], \"variables\": [{\"name\": \"arguments\", \"references\": [], \"declarations\": []}], \"children\": []}]}]}]}"
+                "{\"node\": \"Script_0\", \"type\": \"Global\", \"isDynamic\": true, \"through\": [], \"variables\": [{\"name\": \"f1\", \"references\": [], \"declarations\": [{\"node\": \"BindingIdentifier(f1)_2\", \"kind\": \"FunctionDeclaration\"}]}], \"children\": [{\"node\": \"Script_0\", \"type\": \"Script\", \"isDynamic\": false, \"through\": [], \"variables\": [], \"children\": [{\"node\": \"FunctionDeclaration_1\", \"type\": \"Function\", \"isDynamic\": false, \"through\": [], \"variables\": [{\"name\": \"arguments\", \"references\": [], \"declarations\": []}, {\"name\": \"x\", \"references\": [{\"node\": \"IdentifierExpression(x)_8\", \"accessibility\": \"Read\"}], \"declarations\": [{\"node\": \"BindingIdentifier(x)_5\", \"kind\": \"Parameter\"}, {\"node\": \"BindingIdentifier(x)_10\", \"kind\": \"FunctionDeclaration\"}]}], \"children\": [{\"node\": \"FunctionDeclaration_9\", \"type\": \"Function\", \"isDynamic\": false, \"through\": [], \"variables\": [{\"name\": \"arguments\", \"references\": [], \"declarations\": []}], \"children\": []}]}]}]}"
         );
 
         checkScopeSerialization(
@@ -1820,17 +1714,17 @@ public class ScopeTest extends TestCase {
     public void testParameterScope() throws JsError {
         checkScopeSerialization(
                 "!function(x){let y;};",
-                "{\"node\": \"Script_0\", \"type\": \"Global\", \"isDynamic\": true, \"through\": [], \"variables\": [], \"children\": [{\"node\": \"Script_0\", \"type\": \"Script\", \"isDynamic\": false, \"through\": [], \"variables\": [], \"children\": [{\"node\": \"FunctionExpression_3\", \"type\": \"Function\", \"isDynamic\": false, \"through\": [], \"variables\": [{\"name\": \"arguments\", \"references\": [], \"declarations\": []}, {\"name\": \"x\", \"references\": [], \"declarations\": [{\"node\": \"BindingIdentifier(x)_5\", \"kind\": \"Parameter\"}]}, {\"name\": \"y\", \"references\": [], \"declarations\": [{\"node\": \"BindingIdentifier(y)_10\", \"kind\": \"Let\"}]}], \"children\": []}]}]}"
+                "{\"node\": \"Script_0\", \"type\": \"Global\", \"isDynamic\": true, \"through\": [], \"variables\": [], \"children\": [{\"node\": \"Script_0\", \"type\": \"Script\", \"isDynamic\": false, \"through\": [], \"variables\": [], \"children\": [{\"node\": \"FunctionExpression_3\", \"type\": \"Function\", \"isDynamic\": false, \"through\": [], \"variables\": [{\"name\": \"arguments\", \"references\": [], \"declarations\": []}, {\"name\": \"x\", \"references\": [], \"declarations\": [{\"node\": \"BindingIdentifier(x)_6\", \"kind\": \"Parameter\"}]}, {\"name\": \"y\", \"references\": [], \"declarations\": [{\"node\": \"BindingIdentifier(y)_11\", \"kind\": \"Let\"}]}], \"children\": []}]}]}"
         );
 
         checkScopeSerialization(
                 "!function(x = 1){let y;};",
-                "{\"node\": \"Script_0\", \"type\": \"Global\", \"isDynamic\": true, \"through\": [], \"variables\": [], \"children\": [{\"node\": \"Script_0\", \"type\": \"Script\", \"isDynamic\": false, \"through\": [], \"variables\": [], \"children\": [{\"node\": \"FunctionExpression_3\", \"type\": \"Parameters\", \"isDynamic\": false, \"through\": [], \"variables\": [{\"name\": \"x\", \"references\": [], \"declarations\": [{\"node\": \"BindingIdentifier(x)_6\", \"kind\": \"Parameter\"}]}], \"children\": [{\"node\": \"BindingWithDefault_5\", \"type\": \"ParameterExpression\", \"isDynamic\": false, \"through\": [], \"variables\": [], \"children\": []}, {\"node\": \"FunctionExpression_3\", \"type\": \"Function\", \"isDynamic\": false, \"through\": [], \"variables\": [{\"name\": \"arguments\", \"references\": [], \"declarations\": []}, {\"name\": \"y\", \"references\": [], \"declarations\": [{\"node\": \"BindingIdentifier(y)_12\", \"kind\": \"Let\"}]}], \"children\": []}]}]}]}"
+                "{\"node\": \"Script_0\", \"type\": \"Global\", \"isDynamic\": true, \"through\": [], \"variables\": [], \"children\": [{\"node\": \"Script_0\", \"type\": \"Script\", \"isDynamic\": false, \"through\": [], \"variables\": [], \"children\": [{\"node\": \"FunctionExpression_3\", \"type\": \"Parameters\", \"isDynamic\": false, \"through\": [], \"variables\": [{\"name\": \"x\", \"references\": [], \"declarations\": [{\"node\": \"BindingIdentifier(x)_6\", \"kind\": \"Parameter\"}]}], \"children\": [{\"node\": \"Parameter_5\", \"type\": \"ParameterExpression\", \"isDynamic\": false, \"through\": [], \"variables\": [], \"children\": []}, {\"node\": \"FunctionExpression_3\", \"type\": \"Function\", \"isDynamic\": false, \"through\": [], \"variables\": [{\"name\": \"arguments\", \"references\": [], \"declarations\": []}, {\"name\": \"y\", \"references\": [], \"declarations\": [{\"node\": \"BindingIdentifier(y)_12\", \"kind\": \"Let\"}]}], \"children\": []}]}]}]}"
         );
 
         checkScopeSerialization(
                 "!function(x, y = () => (x,y,z)){let z;};",
-                "{\"node\": \"Script_0\", \"type\": \"Global\", \"isDynamic\": true, \"through\": [{\"node\": \"IdentifierExpression(z)_14\", \"accessibility\": \"Read\"}], \"variables\": [{\"name\": \"z\", \"references\": [{\"node\": \"IdentifierExpression(z)_14\", \"accessibility\": \"Read\"}], \"declarations\": []}], \"children\": [{\"node\": \"Script_0\", \"type\": \"Script\", \"isDynamic\": false, \"through\": [{\"node\": \"IdentifierExpression(z)_14\", \"accessibility\": \"Read\"}], \"variables\": [], \"children\": [{\"node\": \"FunctionExpression_3\", \"type\": \"Parameters\", \"isDynamic\": false, \"through\": [{\"node\": \"IdentifierExpression(z)_14\", \"accessibility\": \"Read\"}], \"variables\": [{\"name\": \"x\", \"references\": [{\"node\": \"IdentifierExpression(x)_12\", \"accessibility\": \"Read\"}], \"declarations\": [{\"node\": \"BindingIdentifier(x)_5\", \"kind\": \"Parameter\"}]}, {\"name\": \"y\", \"references\": [{\"node\": \"IdentifierExpression(y)_13\", \"accessibility\": \"Read\"}], \"declarations\": [{\"node\": \"BindingIdentifier(y)_7\", \"kind\": \"Parameter\"}]}], \"children\": [{\"node\": \"BindingWithDefault_6\", \"type\": \"ParameterExpression\", \"isDynamic\": false, \"through\": [{\"node\": \"IdentifierExpression(x)_12\", \"accessibility\": \"Read\"}, {\"node\": \"IdentifierExpression(y)_13\", \"accessibility\": \"Read\"}, {\"node\": \"IdentifierExpression(z)_14\", \"accessibility\": \"Read\"}], \"variables\": [], \"children\": [{\"node\": \"ArrowExpression_8\", \"type\": \"ArrowFunction\", \"isDynamic\": false, \"through\": [{\"node\": \"IdentifierExpression(x)_12\", \"accessibility\": \"Read\"}, {\"node\": \"IdentifierExpression(y)_13\", \"accessibility\": \"Read\"}, {\"node\": \"IdentifierExpression(z)_14\", \"accessibility\": \"Read\"}], \"variables\": [], \"children\": []}]}, {\"node\": \"FunctionExpression_3\", \"type\": \"Function\", \"isDynamic\": false, \"through\": [], \"variables\": [{\"name\": \"arguments\", \"references\": [], \"declarations\": []}, {\"name\": \"z\", \"references\": [], \"declarations\": [{\"node\": \"BindingIdentifier(z)_19\", \"kind\": \"Let\"}]}], \"children\": []}]}]}]}"
+                "{\"node\": \"Script_0\", \"type\": \"Global\", \"isDynamic\": true, \"through\": [{\"node\": \"IdentifierExpression(z)_15\", \"accessibility\": \"Read\"}], \"variables\": [{\"name\": \"z\", \"references\": [{\"node\": \"IdentifierExpression(z)_15\", \"accessibility\": \"Read\"}], \"declarations\": []}], \"children\": [{\"node\": \"Script_0\", \"type\": \"Script\", \"isDynamic\": false, \"through\": [{\"node\": \"IdentifierExpression(z)_15\", \"accessibility\": \"Read\"}], \"variables\": [], \"children\": [{\"node\": \"FunctionExpression_3\", \"type\": \"Parameters\", \"isDynamic\": false, \"through\": [{\"node\": \"IdentifierExpression(z)_15\", \"accessibility\": \"Read\"}], \"variables\": [{\"name\": \"x\", \"references\": [{\"node\": \"IdentifierExpression(x)_13\", \"accessibility\": \"Read\"}], \"declarations\": [{\"node\": \"BindingIdentifier(x)_6\", \"kind\": \"Parameter\"}]}, {\"name\": \"y\", \"references\": [{\"node\": \"IdentifierExpression(y)_14\", \"accessibility\": \"Read\"}], \"declarations\": [{\"node\": \"BindingIdentifier(y)_8\", \"kind\": \"Parameter\"}]}], \"children\": [{\"node\": \"Parameter_7\", \"type\": \"ParameterExpression\", \"isDynamic\": false, \"through\": [{\"node\": \"IdentifierExpression(x)_13\", \"accessibility\": \"Read\"}, {\"node\": \"IdentifierExpression(y)_14\", \"accessibility\": \"Read\"}, {\"node\": \"IdentifierExpression(z)_15\", \"accessibility\": \"Read\"}], \"variables\": [], \"children\": [{\"node\": \"ArrowExpression_9\", \"type\": \"ArrowFunction\", \"isDynamic\": false, \"through\": [{\"node\": \"IdentifierExpression(x)_13\", \"accessibility\": \"Read\"}, {\"node\": \"IdentifierExpression(y)_14\", \"accessibility\": \"Read\"}, {\"node\": \"IdentifierExpression(z)_15\", \"accessibility\": \"Read\"}], \"variables\": [], \"children\": []}]}, {\"node\": \"FunctionExpression_3\", \"type\": \"Function\", \"isDynamic\": false, \"through\": [], \"variables\": [{\"name\": \"arguments\", \"references\": [], \"declarations\": []}, {\"name\": \"z\", \"references\": [], \"declarations\": [{\"node\": \"BindingIdentifier(z)_20\", \"kind\": \"Let\"}]}], \"children\": []}]}]}]}"
         );
     }
 
@@ -1846,7 +1740,7 @@ public class ScopeTest extends TestCase {
                         "   g = f;" +
                         "}" +
                         "})();",
-                "{\"node\": \"Script_0\", \"type\": \"Global\", \"isDynamic\": true, \"through\": [], \"variables\": [], \"children\": [{\"node\": \"Script_0\", \"type\": \"Script\", \"isDynamic\": false, \"through\": [], \"variables\": [], \"children\": [{\"node\": \"FunctionExpression_3\", \"type\": \"Function\", \"isDynamic\": false, \"through\": [], \"variables\": [{\"name\": \"arguments\", \"references\": [], \"declarations\": []}, {\"name\": \"f\", \"references\": [{\"node\": \"IdentifierExpression(f)_11\", \"accessibility\": \"Read\"}], \"declarations\": [{\"node\": \"BindingIdentifier(f)_23\", \"kind\": \"FunctionB33\"}]}, {\"name\": \"g\", \"references\": [{\"node\": \"BindingIdentifier(g)_28\", \"accessibility\": \"Write\"}], \"declarations\": [{\"node\": \"BindingIdentifier(g)_15\", \"kind\": \"Var\"}]}, {\"name\": \"getOuter\", \"references\": [], \"declarations\": [{\"node\": \"BindingIdentifier(getOuter)_7\", \"kind\": \"FunctionDeclaration\"}]}], \"children\": [{\"node\": \"FunctionDeclaration_6\", \"type\": \"Function\", \"isDynamic\": false, \"through\": [{\"node\": \"IdentifierExpression(f)_11\", \"accessibility\": \"Read\"}], \"variables\": [{\"name\": \"arguments\", \"references\": [], \"declarations\": []}], \"children\": []}, {\"node\": \"Block_17\", \"type\": \"Block\", \"isDynamic\": false, \"through\": [{\"node\": \"BindingIdentifier(g)_28\", \"accessibility\": \"Write\"}], \"variables\": [{\"name\": \"f\", \"references\": [{\"node\": \"BindingIdentifier(f)_20\", \"accessibility\": \"Write\"}, {\"node\": \"IdentifierExpression(f)_29\", \"accessibility\": \"Read\"}], \"declarations\": [{\"node\": \"BindingIdentifier(f)_23\", \"kind\": \"FunctionDeclaration\"}]}], \"children\": [{\"node\": \"FunctionDeclaration_22\", \"type\": \"Function\", \"isDynamic\": false, \"through\": [], \"variables\": [{\"name\": \"arguments\", \"references\": [], \"declarations\": []}], \"children\": []}]}]}]}]}"
+                "{\"node\": \"Script_0\", \"type\": \"Global\", \"isDynamic\": true, \"through\": [], \"variables\": [], \"children\": [{\"node\": \"Script_0\", \"type\": \"Script\", \"isDynamic\": false, \"through\": [], \"variables\": [], \"children\": [{\"node\": \"FunctionExpression_3\", \"type\": \"Function\", \"isDynamic\": false, \"through\": [], \"variables\": [{\"name\": \"arguments\", \"references\": [], \"declarations\": []}, {\"name\": \"f\", \"references\": [{\"node\": \"IdentifierExpression(f)_11\", \"accessibility\": \"Read\"}], \"declarations\": [{\"node\": \"BindingIdentifier(f)_23\", \"kind\": \"FunctionB33\"}]}, {\"name\": \"g\", \"references\": [{\"node\": \"AssignmentTargetIdentifier(g)_28\", \"accessibility\": \"Write\"}], \"declarations\": [{\"node\": \"BindingIdentifier(g)_15\", \"kind\": \"Var\"}]}, {\"name\": \"getOuter\", \"references\": [], \"declarations\": [{\"node\": \"BindingIdentifier(getOuter)_7\", \"kind\": \"FunctionDeclaration\"}]}], \"children\": [{\"node\": \"FunctionDeclaration_6\", \"type\": \"Function\", \"isDynamic\": false, \"through\": [{\"node\": \"IdentifierExpression(f)_11\", \"accessibility\": \"Read\"}], \"variables\": [{\"name\": \"arguments\", \"references\": [], \"declarations\": []}], \"children\": []}, {\"node\": \"Block_17\", \"type\": \"Block\", \"isDynamic\": false, \"through\": [{\"node\": \"AssignmentTargetIdentifier(g)_28\", \"accessibility\": \"Write\"}], \"variables\": [{\"name\": \"f\", \"references\": [{\"node\": \"AssignmentTargetIdentifier(f)_20\", \"accessibility\": \"Write\"}, {\"node\": \"IdentifierExpression(f)_29\", \"accessibility\": \"Read\"}], \"declarations\": [{\"node\": \"BindingIdentifier(f)_23\", \"kind\": \"FunctionDeclaration\"}]}], \"children\": [{\"node\": \"FunctionDeclaration_22\", \"type\": \"Function\", \"isDynamic\": false, \"through\": [], \"variables\": [{\"name\": \"arguments\", \"references\": [], \"declarations\": []}], \"children\": []}]}]}]}]}"
         );
 
         checkScopeSerialization(
@@ -1973,6 +1867,49 @@ public class ScopeTest extends TestCase {
         );
     }
 
+    @Test
+    public void testExport() throws JsError {
+        checkScopeSerialization(
+                "export {a}",
+                "{\"node\": \"Module_0\", \"type\": \"Global\", \"isDynamic\": true, \"through\": [{\"node\": \"IdentifierExpression(a)_3\", \"accessibility\": \"Read\"}], \"variables\": [{\"name\": \"a\", \"references\": [{\"node\": \"IdentifierExpression(a)_3\", \"accessibility\": \"Read\"}], \"declarations\": []}], \"children\": [{\"node\": \"Module_0\", \"type\": \"Module\", \"isDynamic\": false, \"through\": [{\"node\": \"IdentifierExpression(a)_3\", \"accessibility\": \"Read\"}], \"variables\": [], \"children\": []}]}",
+                false
+        );
+
+        checkScopeSerialization(
+                "export {a as b}",
+                "{\"node\": \"Module_0\", \"type\": \"Global\", \"isDynamic\": true, \"through\": [{\"node\": \"IdentifierExpression(a)_3\", \"accessibility\": \"Read\"}], \"variables\": [{\"name\": \"a\", \"references\": [{\"node\": \"IdentifierExpression(a)_3\", \"accessibility\": \"Read\"}], \"declarations\": []}], \"children\": [{\"node\": \"Module_0\", \"type\": \"Module\", \"isDynamic\": false, \"through\": [{\"node\": \"IdentifierExpression(a)_3\", \"accessibility\": \"Read\"}], \"variables\": [], \"children\": []}]}",
+                false
+        );
+    }
+
+    @Test
+    public void testAssignmentTarget() throws JsError {
+        checkScopeSerialization(
+                "x = 0",
+                "{\"node\": \"Script_0\", \"type\": \"Global\", \"isDynamic\": true, \"through\": [{\"node\": \"AssignmentTargetIdentifier(x)_3\", \"accessibility\": \"Write\"}], \"variables\": [{\"name\": \"x\", \"references\": [{\"node\": \"AssignmentTargetIdentifier(x)_3\", \"accessibility\": \"Write\"}], \"declarations\": []}], \"children\": [{\"node\": \"Script_0\", \"type\": \"Script\", \"isDynamic\": false, \"through\": [{\"node\": \"AssignmentTargetIdentifier(x)_3\", \"accessibility\": \"Write\"}], \"variables\": [], \"children\": []}]}"
+        );
+
+        checkScopeSerialization(
+                "[x] = 0",
+                "{\"node\": \"Script_0\", \"type\": \"Global\", \"isDynamic\": true, \"through\": [{\"node\": \"AssignmentTargetIdentifier(x)_4\", \"accessibility\": \"Write\"}], \"variables\": [{\"name\": \"x\", \"references\": [{\"node\": \"AssignmentTargetIdentifier(x)_4\", \"accessibility\": \"Write\"}], \"declarations\": []}], \"children\": [{\"node\": \"Script_0\", \"type\": \"Script\", \"isDynamic\": false, \"through\": [{\"node\": \"AssignmentTargetIdentifier(x)_4\", \"accessibility\": \"Write\"}], \"variables\": [], \"children\": []}]}"
+        );
+
+        checkScopeSerialization(
+                "({x} = 0)",
+                "{\"node\": \"Script_0\", \"type\": \"Global\", \"isDynamic\": true, \"through\": [{\"node\": \"AssignmentTargetIdentifier(x)_5\", \"accessibility\": \"Write\"}], \"variables\": [{\"name\": \"x\", \"references\": [{\"node\": \"AssignmentTargetIdentifier(x)_5\", \"accessibility\": \"Write\"}], \"declarations\": []}], \"children\": [{\"node\": \"Script_0\", \"type\": \"Script\", \"isDynamic\": false, \"through\": [{\"node\": \"AssignmentTargetIdentifier(x)_5\", \"accessibility\": \"Write\"}], \"variables\": [], \"children\": []}]}"
+        );
+
+        checkScopeSerialization(
+                "[x = x] = 0",
+                "{\"node\": \"Script_0\", \"type\": \"Global\", \"isDynamic\": true, \"through\": [{\"node\": \"IdentifierExpression(x)_6\", \"accessibility\": \"Read\"}, {\"node\": \"AssignmentTargetIdentifier(x)_5\", \"accessibility\": \"Write\"}], \"variables\": [{\"name\": \"x\", \"references\": [{\"node\": \"AssignmentTargetIdentifier(x)_5\", \"accessibility\": \"Write\"}, {\"node\": \"IdentifierExpression(x)_6\", \"accessibility\": \"Read\"}], \"declarations\": []}], \"children\": [{\"node\": \"Script_0\", \"type\": \"Script\", \"isDynamic\": false, \"through\": [{\"node\": \"IdentifierExpression(x)_6\", \"accessibility\": \"Read\"}, {\"node\": \"AssignmentTargetIdentifier(x)_5\", \"accessibility\": \"Write\"}], \"variables\": [], \"children\": []}]}"
+        );
+
+        checkScopeSerialization(
+                "for (x in 0) ;",
+                "{\"node\": \"Script_0\", \"type\": \"Global\", \"isDynamic\": true, \"through\": [{\"node\": \"AssignmentTargetIdentifier(x)_2\", \"accessibility\": \"Write\"}], \"variables\": [{\"name\": \"x\", \"references\": [{\"node\": \"AssignmentTargetIdentifier(x)_2\", \"accessibility\": \"Write\"}], \"declarations\": []}], \"children\": [{\"node\": \"Script_0\", \"type\": \"Script\", \"isDynamic\": false, \"through\": [{\"node\": \"AssignmentTargetIdentifier(x)_2\", \"accessibility\": \"Write\"}], \"variables\": [], \"children\": [{\"node\": \"ForInStatement_1\", \"type\": \"Block\", \"isDynamic\": false, \"through\": [{\"node\": \"AssignmentTargetIdentifier(x)_2\", \"accessibility\": \"Write\"}], \"variables\": [], \"children\": []}]}]}"
+        );
+    }
+
     private static String getIdentifierName(@NotNull Node node) {
         if (node instanceof AssignmentTargetIdentifier) {
             return ((AssignmentTargetIdentifier) node).name;
@@ -1984,6 +1921,7 @@ public class ScopeTest extends TestCase {
             throw new RuntimeException("Not reached");
         }
     }
+
     /**
      * Check the given scope is correct based on the information provided
      */
@@ -1993,8 +1931,8 @@ public class ScopeTest extends TestCase {
             final boolean isDynamic,
             @NotNull final ImmutableList<Scope> children,
             @NotNull final ImmutableList<String> through,
-            @NotNull final Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<Either<BindingIdentifier, IdentifierExpression>>>> variables,
-            @NotNull final Map<Either<BindingIdentifier, IdentifierExpression>, Accessibility> referenceTypes) {
+            @NotNull final Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<VariableReference>>> variables,
+            @NotNull final Map<VariableReference, Accessibility> referenceTypes) {
         Assert.assertEquals(scope.type, scopeType);
         Assert.assertEquals(scope.dynamic, isDynamic);
 
@@ -2011,7 +1949,7 @@ public class ScopeTest extends TestCase {
         });
 
         Assert.assertEquals(scope.variables().size(), variables.size());
-        for (Map.Entry<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<Either<BindingIdentifier, IdentifierExpression>>>> variableEntry : variables.entrySet()) {
+        for (Map.Entry<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<VariableReference>>> variableEntry : variables.entrySet()) {
             Maybe<Variable> maybeVariable = scope.lookupVariable(variableEntry.getKey());
             assertTrue(maybeVariable.isJust());
             Variable variable = maybeVariable.just();
@@ -2022,9 +1960,9 @@ public class ScopeTest extends TestCase {
                 assertTrue(variable.declarations.find(decl -> decl.node.equals(node)).isJust());
             }
 
-            ImmutableList<Either<BindingIdentifier, IdentifierExpression>> refs = variableEntry.getValue().b;
+            ImmutableList<VariableReference> refs = variableEntry.getValue().b;
             Assert.assertEquals(variable.references.length, refs.length);
-            for (final Either<BindingIdentifier, IdentifierExpression> nodeE : refs) {
+            for (final VariableReference nodeE : refs) {
                 Maybe<Reference> maybeRef = variable.references.find(
                         ref -> ref.node.equals(nodeE));
                 assertTrue(maybeRef.isJust());

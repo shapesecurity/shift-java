@@ -22,13 +22,11 @@ import org.jetbrains.annotations.NotNull;
 import com.shapesecurity.functional.data.HashCodeBuilder;
 import com.shapesecurity.shift.ast.operators.Precedence;
 
-public class IdentifierExpression implements Expression {
-    @NotNull
-    public final String name;
+public class IdentifierExpression extends VariableReference implements Expression {
 
 
     public IdentifierExpression (@NotNull String name) {
-        this.name = name;
+        super(name);
     }
 
 

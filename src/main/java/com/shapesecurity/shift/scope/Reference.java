@@ -16,21 +16,17 @@
 
 package com.shapesecurity.shift.scope;
 
-import com.shapesecurity.functional.data.Either;
-import com.shapesecurity.shift.ast.AssignmentTargetIdentifier;
-import com.shapesecurity.shift.ast.BindingIdentifier;
-import com.shapesecurity.shift.ast.IdentifierExpression;
+import com.shapesecurity.shift.ast.*;
 
-import com.shapesecurity.shift.ast.Node;
 import org.jetbrains.annotations.NotNull;
 
 public final class Reference {
     @NotNull
-    public final Node node; // one of AssignmentTargetIdentifier, BindingIdentifier, IdentifierExpression
+    public final VariableReference node;
     @NotNull
     public final Accessibility accessibility;
 
-    private Reference(@NotNull Node node, @NotNull Accessibility accessibility) {
+    private Reference(@NotNull VariableReference node, @NotNull Accessibility accessibility) {
         this.node = node;
         this.accessibility = accessibility;
     }

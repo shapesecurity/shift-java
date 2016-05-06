@@ -289,6 +289,16 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
 
     @NotNull
     @Override
+    public State reduceParameter(@NotNull Parameter node, @NotNull State binding, @NotNull Maybe<State> init) {
+        State s = super.reduceParameter(node, binding, init);
+        if (init.isJust()) {
+            return s.withParameterExpressions();
+        }
+        return s;
+    }
+
+    @NotNull
+    @Override
     public State reduceScript(@NotNull Script node, @NotNull ImmutableList<State> directives, @NotNull ImmutableList<State> statements) {
         return super.reduceScript(node, directives, statements).finish(node, Scope.Type.Script);
     }
