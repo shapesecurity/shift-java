@@ -7,8 +7,8 @@ import com.shapesecurity.functional.data.Maybe;
 import com.shapesecurity.shift.ast.*;
 import com.shapesecurity.shift.ast.operators.UnaryOperator;
 import com.shapesecurity.shift.utils.Utils;
-import com.shapesecurity.shift.visitor.Director;
-import com.shapesecurity.shift.visitor.MonoidalReducer;
+import com.shapesecurity.shift.reducer.Director;
+import com.shapesecurity.shift.reducer.MonoidalReducer;
 
 import org.jetbrains.annotations.NotNull;
 

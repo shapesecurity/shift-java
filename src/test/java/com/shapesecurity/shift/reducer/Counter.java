@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.shapesecurity.shift.visitor;
+package com.shapesecurity.shift.reducer;
 
 import com.shapesecurity.functional.data.Monoid;
 import com.shapesecurity.shift.ast.IdentifierExpression;

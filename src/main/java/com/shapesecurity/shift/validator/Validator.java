@@ -25,8 +25,8 @@ import com.shapesecurity.shift.parser.Tokenizer;
 import com.shapesecurity.shift.parser.token.EOFToken;
 import com.shapesecurity.shift.parser.token.StringLiteralToken;
 import com.shapesecurity.shift.utils.Utils;
-import com.shapesecurity.shift.visitor.Director;
-import com.shapesecurity.shift.visitor.MonoidalReducer;
+import com.shapesecurity.shift.reducer.Director;
+import com.shapesecurity.shift.reducer.MonoidalReducer;
 
 import org.jetbrains.annotations.NotNull;
 

@@ -21,10 +21,10 @@ package com.shapesecurity.shift.reducer;
 import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.functional.data.Maybe;
 import com.shapesecurity.shift.ast.*;
-import com.shapesecurity.shift.visitor.Reducer;
+import com.shapesecurity.shift.reducer.Reducer;
 import org.jetbrains.annotations.NotNull;
 
-public class CloneReducer implements Reducer<Node> {
+public class ReconstructingReducer implements Reducer<Node> {
     @NotNull
     @Override
     public AssignmentTarget reduceArrayAssignmentTarget(

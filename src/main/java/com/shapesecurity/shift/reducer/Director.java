@@ -17,7 +17,7 @@
  */
 
 
-package com.shapesecurity.shift.visitor;
+package com.shapesecurity.shift.reducer;
 
 import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.functional.data.Maybe;

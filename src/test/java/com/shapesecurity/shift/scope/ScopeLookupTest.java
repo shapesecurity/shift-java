@@ -24,7 +24,7 @@ import com.shapesecurity.functional.data.Maybe;
 import com.shapesecurity.shift.ast.*;
 import com.shapesecurity.shift.parser.JsError;
 import com.shapesecurity.shift.parser.Parser;
-import com.shapesecurity.shift.visitor.Flattener;
+import com.shapesecurity.shift.reducer.Flattener;
 import junit.framework.TestCase;
 
 import org.junit.Test;

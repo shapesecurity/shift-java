@@ -21,10 +21,10 @@ import com.shapesecurity.functional.Pair;
 import com.shapesecurity.functional.data.*;
 import com.shapesecurity.shift.ast.*;
 import com.shapesecurity.shift.scope.Declaration.Kind;
-import com.shapesecurity.shift.visitor.Director;
-import com.shapesecurity.shift.visitor.MonoidalReducer;
+import com.shapesecurity.shift.reducer.Director;
+import com.shapesecurity.shift.reducer.MonoidalReducer;
 
-import com.shapesecurity.shift.visitor.StrictnessReducer;
+import com.shapesecurity.shift.reducer.StrictnessReducer;
 import org.jetbrains.annotations.NotNull;
 
 public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {

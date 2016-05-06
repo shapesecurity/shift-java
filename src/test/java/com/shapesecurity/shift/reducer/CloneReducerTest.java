@@ -4,7 +4,7 @@ import com.shapesecurity.shift.ast.*;
 import com.shapesecurity.shift.codegen.CodeGen;
 import com.shapesecurity.shift.parser.JsError;
 import com.shapesecurity.shift.parser.Parser;
-import com.shapesecurity.shift.visitor.Director;
+import com.shapesecurity.shift.reducer.Director;
 
 import static org.junit.Assert.assertEquals;
 
@@ -698,7 +698,7 @@ public class CloneReducerTest extends CloneReducerTestCase {
         assertEquals(CodeGen.codeGen(clone), "null[null]");
     }
 
-    class ReplaceStaticMemberExpressionWithComputedMemberExpression extends CloneReducer {
+    class ReplaceStaticMemberExpressionWithComputedMemberExpression extends ReconstructingReducer {
         @Override
         @NotNull
         public ComputedMemberExpression reduceStaticMemberExpression(@NotNull StaticMemberExpression node, @NotNull Node object) {
@@ -709,7 +709,7 @@ public class CloneReducerTest extends CloneReducerTestCase {
     // TODO: replace MemberExpression with some other Binding
     // TODO: replace MemberExpression with some non-MemberExpression Expression
 
-    class ReplaceBlockStatementsWithEmptyStatements extends CloneReducer {
+    class ReplaceBlockStatementsWithEmptyStatements extends ReconstructingReducer {
         @Override
         @NotNull
         public EmptyStatement reduceBlockStatement(@NotNull BlockStatement blockStatement, @NotNull Node block) {

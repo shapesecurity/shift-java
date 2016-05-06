@@ -1,4 +1,4 @@
-package com.shapesecurity.shift.visitor;
+package com.shapesecurity.shift.reducer;
 
 import junit.framework.TestCase;
 

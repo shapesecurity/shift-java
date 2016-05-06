@@ -27,8 +27,8 @@ import com.shapesecurity.shift.ast.operators.CompoundAssignmentOperator;
 import com.shapesecurity.shift.ast.operators.UnaryOperator;
 import com.shapesecurity.shift.ast.operators.UpdateOperator;
 import com.shapesecurity.shift.utils.Utils;
-import com.shapesecurity.shift.visitor.Director;
-import com.shapesecurity.shift.visitor.Reducer;
+import com.shapesecurity.shift.reducer.Director;
+import com.shapesecurity.shift.reducer.Reducer;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -37,8 +37,7 @@ public class Serializer implements Reducer<StringBuilder> {
 
     public static final Serializer INSTANCE = new Serializer();
 
-    protected Serializer() {
-    }
+    protected Serializer() {}
 
     public static String serialize(@NotNull Program program) {
         return Director.reduceProgram(INSTANCE, program).toString();

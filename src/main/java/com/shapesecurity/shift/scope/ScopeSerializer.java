@@ -4,7 +4,7 @@ import com.shapesecurity.functional.Pair;
 import com.shapesecurity.functional.data.HashTable;
 import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.shift.ast.*;
-import com.shapesecurity.shift.visitor.Flattener;
+import com.shapesecurity.shift.reducer.Flattener;
 
 import java.util.*;
 

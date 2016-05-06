@@ -23,8 +23,8 @@ import com.shapesecurity.shift.ast.*;
 import com.shapesecurity.shift.ast.operators.BinaryOperator;
 import com.shapesecurity.shift.ast.operators.Precedence;
 import com.shapesecurity.shift.utils.Utils;
-import com.shapesecurity.shift.visitor.Director;
-import com.shapesecurity.shift.visitor.Reducer;
+import com.shapesecurity.shift.reducer.Director;
+import com.shapesecurity.shift.reducer.Reducer;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;

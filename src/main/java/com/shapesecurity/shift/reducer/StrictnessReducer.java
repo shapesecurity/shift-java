@@ -1,4 +1,4 @@
-package com.shapesecurity.shift.visitor;
+package com.shapesecurity.shift.reducer;
 
 import com.shapesecurity.functional.data.*;
 import com.shapesecurity.shift.ast.ArrowExpression;
@@ -13,8 +13,8 @@ import com.shapesecurity.shift.ast.Method;
 import com.shapesecurity.shift.ast.Node;
 import com.shapesecurity.shift.ast.Script;
 import com.shapesecurity.shift.ast.Setter;
-import com.shapesecurity.shift.visitor.Director;
-import com.shapesecurity.shift.visitor.MonoidalReducer;
+import com.shapesecurity.shift.reducer.Director;
+import com.shapesecurity.shift.reducer.MonoidalReducer;
 
 import org.jetbrains.annotations.NotNull;
 
