@@ -82,7 +82,9 @@ public final class Utils {
             if (ch == delim) {
                 result.append("\\").append(delim);
             } else if (ch == '\0') {
-                result.append("\\u0000");
+                // NOTE: this is not minimal; "\x00a" can be written as "\0a"
+                // WARN: this must not be replaced by unconditionally generating \0 because it may be followed by an OctalDigit
+                result.append("\\x00");
             } else if (ch == '\b') {
                 result.append("\\b");
             } else if (ch == '\t') {
