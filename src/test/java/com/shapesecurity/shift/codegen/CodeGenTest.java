@@ -556,6 +556,8 @@ public class CodeGenTest {
     @Test
     public void testLiteralStringExpression() throws JsError {
         test("(\"\")");
+        test("(\"\\u00005\")", "(\"\0" + "5\")");
+        testShift("(\"\\u00005\")", statement(new ExpressionStatement(new LiteralStringExpression("\u00005"))));
         test("(\"\")", "('')");
         test("(\"a\")", "('a')");
         test("('\"')", "(\"\\\"\")");
@@ -563,7 +565,7 @@ public class CodeGenTest {
         test("(\"'\")", "('\\'')");
         test("(\"a\")");
         test("('\"')");
-        test("(\"\\0\\b\\n\\r\\t\\v\\f\\\\\\\"'\\u2028\\u2029日本\")");
+        test("(\"\\u0000\\b\\n\\r\\t\\v\\f\\\\\\\"'\\u2028\\u2029日本\")", "(\"\\0\\b\\n\\r\\t\\v\\f\\\\\\\"'\\u2028\\u2029日本\")");
     }
 
     @Test
