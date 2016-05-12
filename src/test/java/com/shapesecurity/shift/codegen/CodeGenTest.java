@@ -21,7 +21,6 @@ import com.shapesecurity.functional.data.Maybe;
 import com.shapesecurity.shift.ast.*;
 import com.shapesecurity.shift.parser.JsError;
 import com.shapesecurity.shift.parser.Parser;
-
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 
@@ -556,8 +555,7 @@ public class CodeGenTest {
     @Test
     public void testLiteralStringExpression() throws JsError {
         test("(\"\")");
-        test("(\"\\x005\")", "(\"\0" + "5\")");
-        testShift("(\"\\x005\")", statement(new ExpressionStatement(new LiteralStringExpression("\u00005"))));
+        testShift("(\"\0" + "5\")", statement(new ExpressionStatement(new LiteralStringExpression("\u00005"))));
         test("(\"\")", "('')");
         test("(\"a\")", "('a')");
         test("('\"')", "(\"\\\"\")");
@@ -565,7 +563,7 @@ public class CodeGenTest {
         test("(\"'\")", "('\\'')");
         test("(\"a\")");
         test("('\"')");
-        test("(\"\\x00\\b\\n\\r\\t\\v\\f\\\\\\\"'\\u2028\\u2029日本\")", "(\"\\0\\b\\n\\r\\t\\v\\f\\\\\\\"'\\u2028\\u2029日本\")");
+        test("(\"\0\\b\\n\\r\\t\\v\\f\\\\\\\"'\\u2028\\u2029日本\")", "(\"\\0\\b\\n\\r\\t\\v\\f\\\\\\\"'\\u2028\\u2029日本\")");
     }
 
     @Test
