@@ -51,6 +51,7 @@ interface ErrorMessages {
     String STRICT_RESERVED_WORD = "Use of future reserved word in strict mode";
     String UNEXPECTED_OBJECT_BINDING = "Unexpected ObjectBinding in place of Expression";
     String INVALID_REST = "Invalid rest";
+    String INVALID_STRICT_OCTAL = "Unexpected legacy octal escape sequence: \\";
 
     // not in error.js, not used
     String INVALID_REGULAR_EXPRESSION = "Invalid regular expression";

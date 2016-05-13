@@ -64,10 +64,10 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
 
     protected void consumeSemicolon() throws JsError {
         // Catch the very common case first: immediately a semicolon (U+003B).
-        if (this.hasLineTerminatorBeforeNext) {
+        if (this.eat(TokenType.SEMICOLON)) {
             return;
         }
-        if (this.eat(TokenType.SEMICOLON)) {
+        if (this.hasLineTerminatorBeforeNext) {
             return;
         }
         if (!this.eof() && !this.match(TokenType.RBRACE)) {
@@ -137,6 +137,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
         ArrayList<Directive> directives = new ArrayList<>();
         ArrayList<A> statements = new ArrayList<>();
         boolean parsingDirectives = true;
+        JsError directiveOctal = null;
 
         while (true) {
             if (this.eof() || this.match(TokenType.RBRACE)) {
@@ -151,6 +152,9 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
 
             if (parsingDirectives) {
                 if (isStringLiteral && stmt instanceof ExpressionStatement && ((ExpressionStatement) stmt).expression instanceof LiteralStringExpression) {
+                    if (directiveOctal == null && ((StringLiteralToken) token).octal != null) {
+                        directiveOctal = createErrorWithLocation(this.getLocation(), ErrorMessages.INVALID_STRICT_OCTAL + ((StringLiteralToken) token).octal);
+                    }
                     String rawValue = text.substring(1, text.length() - 1);
                     if (rawValue.equals("use strict")) {
                         this.strict = true;
@@ -158,11 +162,17 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
                     directives.add(this.finishNode(directiveLocation, new Directive(rawValue)));
                 } else {
                     parsingDirectives = false;
+                    if (directiveOctal != null && this.strict) {
+                        throw directiveOctal;
+                    }
                     statements.add(stmt);
                 }
             } else {
                 statements.add(stmt);
             }
+        }
+        if (directiveOctal != null && this.strict) {
+            throw directiveOctal;
         }
 
         B node = constructor.apply(ImmutableList.from(directives), ImmutableList.from(statements));
@@ -176,7 +186,6 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
         boolean oldStrict = this.strict;
         this.inFunctionBody = true;
         this.module = false;
-        this.strict = false;
 
         this.expect(TokenType.LBRACE);
         FunctionBody body = this.parseBody(this::parseStatementListItem, FunctionBody::new);
@@ -372,16 +381,11 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
 
         FormalParameters paramsNode = this.finishNode(startState, new FormalParameters(ImmutableList.from(params).map(this::bindingToParameter), rest));
 
-        if (this.match(TokenType.LBRACE)) {
-            boolean previousYield = this.allowYieldExpression;
-            this.allowYieldExpression = false;
-            FunctionBody body = this.parseFunctionBody();
-            this.allowYieldExpression = previousYield;
-            return this.finishNode(startState, new ArrowExpression(paramsNode, body));
-        } else {
-            Either<Expression, AssignmentTarget> body = this.parseAssignmentExpression();
-            return this.finishNode(startState, new ArrowExpression(paramsNode, body.left().just()));
-        }
+        boolean previousYield = this.allowYieldExpression;
+        this.allowYieldExpression = false;
+        FunctionBodyExpression body = this.match(TokenType.LBRACE) ? this.parseFunctionBody() : this.parseAssignmentExpression().left().just();
+        this.allowYieldExpression = previousYield;
+        return this.finishNode(startState, new ArrowExpression(paramsNode, body));
     }
 
     @NotNull
@@ -619,28 +623,37 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
             } else {
                 boolean previousAllowIn = this.allowIn;
                 this.allowIn = false;
-                Either<Expression, AssignmentTarget> fromParseAssignmentOrBinding = this.parseAssignmentExpressionOrTarget();
-                Expression expr;
-                if (fromParseAssignmentOrBinding.isLeft()) {
-                    expr = fromParseAssignmentOrBinding.left().just();
-                } else {
-                    throw this.createError(ErrorMessages.ILLEGAL_PROPERTY);
-                }
+                Either<Expression, AssignmentTarget> fromParseAssignmentOrTarget = this.parseAssignmentExpressionOrTarget();
                 this.allowIn = previousAllowIn;
-                if (this.isAssignmentTarget && !(expr instanceof AssignmentExpression) && (this.match(TokenType.IN) || this.matchContextualKeyword("of"))) {
+                if (this.isAssignmentTarget && fromParseAssignmentOrTarget.left().map(expr -> !(expr instanceof AssignmentExpression)).orJust(true) && (this.match(TokenType.IN) || this.matchContextualKeyword("of"))) {
+                    if (fromParseAssignmentOrTarget.isRight()) {
+                        this.firstExprError = null;
+                    }
+                    AssignmentTarget target; // = fromParseAssignmentOrTarget.either(this::transformDestructuring, x -> x);
+                    if (fromParseAssignmentOrTarget.isLeft()) {
+                        target = transformDestructuring(fromParseAssignmentOrTarget.left().just());
+                    } else {
+                        target = fromParseAssignmentOrTarget.right().just();
+                    }
                     if (startsWithLet && this.matchContextualKeyword("of")) {
                         throw this.createError(ErrorMessages.INVALID_LHS_IN_FOR_OF);
                     }
                     if (this.match(TokenType.IN)) {
                         this.lex();
                         right = this.parseExpression().left();
-                        return new ForInStatement(this.transformDestructuring(expr), right.just(), this.getIteratorStatementEpilogue());
+                        return new ForInStatement(target, right.just(), this.getIteratorStatementEpilogue());
                     } else {
                         this.lex();
                         right = this.parseExpression().left();
-                        return new ForOfStatement(this.transformDestructuring(expr), right.just(), this.getIteratorStatementEpilogue());
+                        return new ForOfStatement(target, right.just(), this.getIteratorStatementEpilogue());
                     }
                 } else {
+                    Expression expr;
+                    if (fromParseAssignmentOrTarget.isLeft()) {
+                        expr = fromParseAssignmentOrTarget.left().just();
+                    } else {
+                        throw this.createError(ErrorMessages.ILLEGAL_PROPERTY);
+                    }
                     if (this.firstExprError != null) {
                         throw this.firstExprError;
                     }
@@ -670,6 +683,9 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
 
     @NotNull
     protected AssignmentTargetProperty transformDestructuring(ObjectProperty objectProperty) throws JsError {
+        if (this.firstExprError != null) {
+            throw this.firstExprError;
+        }
         if (objectProperty instanceof DataProperty) {
             DataProperty dataProperty = (DataProperty) objectProperty;
             return new AssignmentTargetPropertyProperty(dataProperty.name, this.transformDestructuringWithDefault(dataProperty.expression));
@@ -925,13 +941,13 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
 
         this.lex();
 
-        if (this.hasLineTerminatorBeforeNext) {
+        if (this.eat(TokenType.SEMICOLON) || this.hasLineTerminatorBeforeNext) {
             return new ReturnStatement(Maybe.nothing());
         }
 
         Maybe<Expression> expression = Maybe.nothing();
 
-        if (!this.match(TokenType.SEMICOLON) && !this.match(TokenType.RBRACE) && !this.eof()) {
+        if (!this.match(TokenType.RBRACE) && !this.eof()) {
             expression = this.parseExpression().left();
         }
 
@@ -1208,6 +1224,10 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
     protected Either<Expression, AssignmentTarget> parseBinaryExpression() throws JsError {
         AdditionalStateT startState = this.startNode();
         Either<Expression, AssignmentTarget> left = this.parseExponentiationExpression();
+
+        if (this.firstExprError != null) {
+            return left;
+        }
 
         BinaryOperator operator = lookupBinaryOperator(this.lookahead, this.allowIn);
         if (operator == null) {
@@ -1903,6 +1923,9 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
         } else {
             // Ensure assignment pattern:
             this.isBindingElement = false;
+            if (!isValidSimpleAssignmentTarget(group.either(x -> x, x -> x))) {
+                this.isAssignmentTarget = false;
+            }
             return group;
         }
     }
@@ -2186,14 +2209,20 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
             case LET:
                 defaultBinding = Maybe.just(this.parseBindingIdentifier());
                 if (!this.eat(TokenType.COMMA)) {
-                    return this.finishNode(startState, new Import(defaultBinding, ImmutableList.nil(), this.parseFromClause()));
+                    Import decl = new Import(defaultBinding, ImmutableList.nil(), this.parseFromClause());
+                    this.consumeSemicolon();
+                    return this.finishNode(startState, decl);
                 }
                 break;
         }
         if (this.match(TokenType.MUL)) {
-            return this.finishNode(startState, new ImportNamespace(defaultBinding, this.parseNameSpaceBinding(), this.parseFromClause()));
+            ImportNamespace decl = new ImportNamespace(defaultBinding, this.parseNameSpaceBinding(), this.parseFromClause());
+            this.consumeSemicolon();
+            return this.finishNode(startState, decl);
         } else if (this.match(TokenType.LBRACE)) {
-            return this.finishNode(startState, new Import(defaultBinding, this.parseNamedImports(), this.parseFromClause()));
+            Import decl = this.finishNode(startState, new Import(defaultBinding, this.parseNamedImports(), this.parseFromClause()));
+            this.consumeSemicolon();
+            return this.finishNode(startState, decl);
         } else {
             throw this.createUnexpected(this.lookahead);
         }
@@ -2251,7 +2280,6 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
     protected String parseFromClause() throws JsError {
         this.expectContextualKeyword("from");
         String value = this.expect(TokenType.STRING).getValueString().toString();
-        this.consumeSemicolon();
         return value;
     }
 
@@ -2273,6 +2301,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
             case MUL:
                 this.lex();
                 decl = new ExportAllFrom(this.parseFromClause());
+                this.consumeSemicolon();
                 break;
             case LBRACE:
                 ImmutableList<ExportFromSpecifier> namedExports = this.parseExportClause();
@@ -2281,6 +2310,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
                 } else {
                     decl = new ExportLocals(namedExports.map(x -> new ExportLocalSpecifier(new IdentifierExpression(x.name), x.exportedName)));
                 }
+                this.consumeSemicolon();
                 break;
             case CLASS:
                 decl = new Export(this.parseClass(false));

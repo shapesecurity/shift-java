@@ -436,7 +436,7 @@ public class CloneReducerTest extends CloneReducerTestCase {
         cloneTestScript("while (i-->0) {}");
         cloneTestScript("var x = 1<!--foo");
         cloneTestScript("class A extends B { a() { [super.b] = c } }");
-        cloneTestScript("class A extends B { a() { ({b: super[c]}) = d } }");
+        cloneTestScript("class A extends B { a() { ({b: super[c]} = d) } }");
     }
 
     @Test

@@ -33,5 +33,12 @@ public class DirectiveTest extends ParserTestCase {
         testScript("(function a() {'use strict';return 0;});", new FunctionExpression(false, Maybe.just(new BindingIdentifier("a")), new FormalParameters(ImmutableList.nil(), Maybe.nothing()), new FunctionBody(ImmutableList.list(new Directive("use strict")), ImmutableList.list(new ReturnStatement(Maybe.just(new LiteralNumericExpression(0.0)))))));
         testScript("\"use strict\" + 0", new BinaryExpression(new LiteralStringExpression("use strict"), BinaryOperator.Plus, new LiteralNumericExpression(0.0)));
         testModule("\"use strict\";", new Module(ImmutableList.list(new Directive("use strict")), ImmutableList.nil()));
+
+        testScriptFailure("\"\\1\"; \"use strict\";", 6, "Unexpected legacy octal escape sequence: \\1");
+        testScriptFailure("\"\\1\"; \"use strict\"; null;", 6, "Unexpected legacy octal escape sequence: \\1");
+        testScriptFailure("\"use strict\"; \"\\1\";", 14, "Unexpected legacy octal escape sequence: \\1");
+        testScriptFailure("\"use strict\"; \"\\1\"; null;", 14, "Unexpected legacy octal escape sequence: \\1");
+
+        testScriptFailure("\"use strict\"; function f(){\"\\1\";}", 27, "Unexpected legacy octal escape sequence: \\1");
     }
 }

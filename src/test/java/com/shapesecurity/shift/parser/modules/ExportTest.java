@@ -108,7 +108,7 @@ public class ExportTest extends ParserTestCase {
                 new ExpressionStatement(new LiteralNumericExpression(0.0)))));
 
         testModule("export {};0", new Module(ImmutableList.nil(), ImmutableList.list(new ExportLocals(ImmutableList.nil()),
-                new EmptyStatement(), new ExpressionStatement(new LiteralNumericExpression(0.0)))));
+                new ExpressionStatement(new LiteralNumericExpression(0.0)))));
 
         testScriptFailure("export * from \"a\"", 0, "Unexpected token \"export\"");
         testModuleFailure("{export default 3;}", 1, "Unexpected token \"export\"");

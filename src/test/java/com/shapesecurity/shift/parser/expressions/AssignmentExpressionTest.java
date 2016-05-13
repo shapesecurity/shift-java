@@ -86,5 +86,11 @@ public class AssignmentExpressionTest extends ParserTestCase {
         testScript("([0].length) = 0", new AssignmentExpression(new StaticMemberAssignmentTarget(
                 new ArrayExpression(ImmutableList.list(Maybe.just(new LiteralNumericExpression(0.0)))), "length"),
                 new LiteralNumericExpression(0.0)));
+
+        testScriptFailure("({a: (b = 0)} = {})", 14, "Invalid left-hand side in assignment");
+        testScriptFailure("([(a = b)] = []", 11, "Invalid left-hand side in assignment");
+        testScriptFailure("(({a})=0);", 6, "Invalid left-hand side in assignment");
+        testScriptFailure("(([a])=0);", 6, "Invalid left-hand side in assignment");
+
     }
 }

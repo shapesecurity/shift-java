@@ -79,6 +79,7 @@ public class LiteralNumericExpressionTest extends ParserTestCase {
         testScript("018", new LiteralNumericExpression(18.0));
         testScript("'use strict'; 0o0", new LiteralNumericExpression(0.0));
         testScript("09", new LiteralNumericExpression(9.0));
+        testScript("09.0", new LiteralNumericExpression(9.0));
 
         testScriptFailure("0o", 2, "Unexpected end of input");
         testScriptFailure("0o1a", 3, "Unexpected \"a\"");
@@ -87,6 +88,7 @@ public class LiteralNumericExpressionTest extends ParserTestCase {
         testScriptFailure("0O", 2, "Unexpected end of input");
         testScriptFailure("0O1a", 3, "Unexpected \"a\"");
         testScriptFailure("0O9", 2, "Unexpected \"9\"");
+        testScriptFailure("09.x", 3, "Unexpected identifier");
         testScriptFailure("0O18", 3, "Unexpected \"8\"");
     }
 }

@@ -508,11 +508,6 @@ public class EarlyErrorsTest extends ParserTestCase {
         testScriptEarlyError("function* g(){ ({a = yield}) => 0; }", "Arrow parameters must not contain yield expressions");
         testScriptEarlyError("function* g(){ ([a = yield]) => 0; }", "Arrow parameters must not contain yield expressions");
         // TODO: testScriptEarlyError("function* g(){ (...{a = yield}) => 0; }", "Arrow parameters must not contain yield expressions");
-        // It is a Syntax Error if ConciseBody Contains YieldExpression is true.
-        testScriptEarlyError("function* g(){ () => yield; }", "Concise arrow bodies must not contain yield expressions");
-        testScriptEarlyError("function* g(){ () => yield b; }", "Concise arrow bodies must not contain yield expressions");
-        testScriptEarlyError("function* g(){ () => yield* b; }", "Concise arrow bodies must not contain yield expressions");
-        testScriptEarlyError("function* g(){ () => f(x + (yield)); }", "Concise arrow bodies must not contain yield expressions");
         // It is a Syntax Error if any element of the BoundNames of ArrowParameters also occurs in the LexicallyDeclaredNames of ConciseBody.
         testScriptEarlyError("(a) => { let a; }", "Duplicate binding \"a\"");
         testScriptEarlyError("([a]) => { let a; }", "Duplicate binding \"a\"");

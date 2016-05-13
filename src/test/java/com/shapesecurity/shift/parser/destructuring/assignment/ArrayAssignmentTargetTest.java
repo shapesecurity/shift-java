@@ -28,6 +28,8 @@ public class ArrayAssignmentTargetTest extends ParserTestCase {
         testScript("[{a=0},{a=0}] = 0", new AssignmentExpression(new ArrayAssignmentTarget(ImmutableList.list(Maybe.just(new ObjectAssignmentTarget(ImmutableList.list(new AssignmentTargetPropertyIdentifier(new AssignmentTargetIdentifier("a"), Maybe.just(new LiteralNumericExpression(0.0)))))), Maybe.just(new ObjectAssignmentTarget(ImmutableList.list(new AssignmentTargetPropertyIdentifier(new AssignmentTargetIdentifier("a"), Maybe.just(new LiteralNumericExpression(0.0))))))), Maybe.nothing()), new LiteralNumericExpression(0.0)));
         testScript("[,...a]=0", new AssignmentExpression(new ArrayAssignmentTarget(ImmutableList.list(Maybe.nothing()), Maybe.just(new AssignmentTargetIdentifier("a"))), new LiteralNumericExpression(0.0)));
 
+        testScript("[(a)] = 0", new AssignmentExpression(new ArrayAssignmentTarget(ImmutableList.list(Maybe.just(new AssignmentTargetIdentifier("a"))), Maybe.nothing()), new LiteralNumericExpression(0.0)));
+
         testScriptFailure("[x] += 0", 4, "Invalid left-hand side in assignment");
         testScriptFailure("[, x, ...y,] = 0", 13, "Invalid left-hand side in assignment");
         testScriptFailure("[...x, ...y] = 0", 13, "Invalid left-hand side in assignment");
@@ -40,6 +42,7 @@ public class ArrayAssignmentTargetTest extends ParserTestCase {
         testScriptFailure("[...0,{a=0}]=0", 11, "Invalid left-hand side in assignment");
         testScriptFailure("[...{a=0},]", 9, "Unexpected token \",\"");
         testScriptFailure("[...{a=0},]=0", 9, "Unexpected token \",\"");
+        testScriptFailure("([a]) = 0", 6, "Invalid left-hand side in assignment");
 
         // TODO: new tests added
         testScriptFailure("[0] = 0", 4, "Invalid left-hand side in assignment");

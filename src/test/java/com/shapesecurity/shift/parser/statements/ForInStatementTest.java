@@ -43,6 +43,15 @@ public class ForInStatementTest extends ParserTestCase {
                 ImmutableList.list(new VariableDeclarator(new BindingIdentifier("a"), Maybe.nothing()))),
                 new IdentifierExpression("b"), new EmptyStatement()));
 
+        testScript("for([{a=0}] in b);", new ForInStatement(
+                new ArrayAssignmentTarget(ImmutableList.list(Maybe.just(
+                        new ObjectAssignmentTarget(ImmutableList.list(new AssignmentTargetPropertyIdentifier(new AssignmentTargetIdentifier("a"), Maybe.just(new LiteralNumericExpression(0)))))
+                )), Maybe.nothing()),
+                new IdentifierExpression("b"),
+                new EmptyStatement()
+        ));
+
+
         testScriptFailure("for(let a = 0 in b);", 14, "Invalid variable declaration in for-in statement");
         testScriptFailure("for(const a = 0 in b);", 16, "Invalid variable declaration in for-in statement");
         testScriptFailure("for(let ? b : c in 0);", 16, "Invalid left-hand side in for-in");

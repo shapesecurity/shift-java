@@ -4,6 +4,7 @@ import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.functional.data.Maybe;
 import com.shapesecurity.shift.ast.*;
 import com.shapesecurity.shift.ast.operators.BinaryOperator;
+import com.shapesecurity.shift.ast.operators.CompoundAssignmentOperator;
 import com.shapesecurity.shift.ast.operators.UpdateOperator;
 import com.shapesecurity.shift.parser.ParserTestCase;
 import com.shapesecurity.shift.parser.JsError;
@@ -189,13 +190,27 @@ public class InteractionsTest extends ParserTestCase {
                         Maybe.just(new StaticMemberAssignmentTarget(new Super(), "b"))), Maybe.nothing()),
                         new IdentifierExpression("c"))))))))));
 
-        testScript("class A extends B { a() { ({b: super[c]}) = d } }", new ClassDeclaration(new BindingIdentifier("A"),
+        testScript("class A extends B { a() { ({b: super[c]} = d) } }", new ClassDeclaration(new BindingIdentifier("A"),
                 Maybe.just(new IdentifierExpression("B")), ImmutableList.list(new ClassElement(false, new Method(false, new StaticPropertyName("a"),
                 new FormalParameters(ImmutableList.nil(), Maybe.nothing()), new FunctionBody(ImmutableList.nil(),
                 ImmutableList.list(new ExpressionStatement(new AssignmentExpression(new ObjectAssignmentTarget(ImmutableList.list(
                         new AssignmentTargetPropertyProperty(new StaticPropertyName("b"), new ComputedMemberAssignmentTarget(
                                 new Super(), new IdentifierExpression("c"))))), new IdentifierExpression("d")))))
                 )))));
+
+        // Consise arrow bodies may contain yield as an identifier even in generators.
+        testScript("function* f(){ () => yield; }", new FunctionDeclaration(true, new BindingIdentifier("f"),
+                new FormalParameters(ImmutableList.nil(), Maybe.nothing()),
+                new FunctionBody(ImmutableList.nil(), ImmutableList.list(new ExpressionStatement(
+                        new ArrowExpression(new FormalParameters(ImmutableList.nil(), Maybe.nothing()), new IdentifierExpression("yield"))
+                )))));
+
+        // CompoundAssignmentExpressions are not valid binding targets
+        testScript("null && (x += null)", new ExpressionStatement(new BinaryExpression(
+                new LiteralNullExpression(),
+                BinaryOperator.LogicalAnd,
+                new CompoundAssignmentExpression(new AssignmentTargetIdentifier("x"), CompoundAssignmentOperator.AssignPlus, new LiteralNullExpression())
+                )));
 
         testScriptFailure("0.toString", 2, "Unexpected \"t\"");
     }

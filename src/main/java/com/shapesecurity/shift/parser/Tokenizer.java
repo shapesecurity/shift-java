@@ -1110,11 +1110,26 @@ public class Tokenizer {
             }
         }
 
+        this.eatDecimalLiteralSuffix();
+
+        if (this.index != this.source.length() && Utils.isIdentifierStart(this.source.charAt(index))) {
+            throw this.createILLEGAL();
+        }
+
+        SourceRange slice = this.getSlice(start);
+        return new NumericLiteralToken(slice, Double.parseDouble(slice.toString()));
+    }
+
+    @NotNull
+    private void eatDecimalLiteralSuffix() throws JsError {
+        if (this.index == this.source.length()) {
+            return;
+        }
+        char ch = this.source.charAt(this.index);
         if (ch == '.') {
             this.index++;
             if (this.index == this.source.length()) {
-                SourceRange slice = this.getSlice(start);
-                return new NumericLiteralToken(slice, Double.parseDouble(slice.toString()));
+                return;
             }
         }
 
@@ -1122,8 +1137,7 @@ public class Tokenizer {
         while ('0' <= ch && ch <= '9') {
             this.index++;
             if (this.index == this.source.length()) {
-                SourceRange slice = this.getSlice(start);
-                return new NumericLiteralToken(slice, Double.parseDouble(slice.toString()));
+                return;
             }
             ch = this.source.charAt(this.index);
         }
@@ -1152,13 +1166,6 @@ public class Tokenizer {
                 throw this.createILLEGAL();
             }
         }
-
-        if (Utils.isIdentifierStart(ch)) {
-            throw this.createILLEGAL();
-        }
-
-        SourceRange slice = this.getSlice(start);
-        return new NumericLiteralToken(slice, Double.parseDouble(slice.toString()));
     }
 
     private NumericLiteralToken scanLegacyOctalLiteral(int start) throws JsError {
@@ -1178,7 +1185,13 @@ public class Tokenizer {
             }
         }
 
-        return new NumericLiteralToken(this.getSlice(start), Integer.parseInt(this.getSlice(start).getString().toString().substring(1), isOctal ? 8 : 10), true, !isOctal);
+        SourceRange slice = this.getSlice(start);
+        if (!isOctal) {
+            this.eatDecimalLiteralSuffix();
+            return new NumericLiteralToken(slice, Integer.parseInt(slice.getString().toString()), true, true);
+        }
+
+        return new NumericLiteralToken(slice, Integer.parseInt(slice.getString().toString().substring(1), 8), true, false);
     }
 
     private NumericLiteralToken scanBinaryLiteral(int start) throws JsError {
@@ -1309,6 +1322,9 @@ public class Tokenizer {
     }
 
     private int scanUnicode() throws JsError {
+        if (this.index == this.source.length()) {
+            throw this.createILLEGAL();
+        }
         if (this.source.charAt(this.index) == '{') {
             // \ u { HexDigits }
             int i = this.index + 1;
@@ -1331,12 +1347,16 @@ public class Tokenizer {
             if (ch != '}') {
                 throw this.createILLEGAL();
             }
+            if (i == this.index + 1) {
+                ++this.index; // This is so that the error is 'Unexpected "}"' instead of 'Unexpected "{"'.
+                throw this.createILLEGAL();
+            }
             this.index = i + 1;
             return hexDigits;
         } else {
             // \ u Hex4Digits
             if (this.index + 4 > this.source.length()) {
-                return -1;
+                throw this.createILLEGAL();
             }
             try {
                 int x = Integer.valueOf(new String(new char[]{
