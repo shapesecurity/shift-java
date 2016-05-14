@@ -81,8 +81,6 @@ public final class Utils {
             char ch = stringValue.charAt(i);
             if (ch == delim) {
                 result.append("\\").append(delim);
-            } else if (ch == '\0') {
-                result.append("\\0");
             } else if (ch == '\b') {
                 result.append("\\b");
             } else if (ch == '\t') {

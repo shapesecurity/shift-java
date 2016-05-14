@@ -571,7 +571,8 @@ public class CodeGenTest {
         test("(\"'\")", "('\\'')");
         test("(\"a\")");
         test("('\"')");
-        test("(\"\\0\\b\\n\\r\\t\\v\\f\\\\\\\"'\\u2028\\u2029日本\")");
+        test("(\"\0\\b\\n\\r\\t\\v\\f\\\\\\\"'\\u2028\\u2029日本\")", "(\"\\0\\b\\n\\r\\t\\v\\f\\\\\\\"'\\u2028\\u2029日本\")");
+        testShift("(\"\0" + "5\")", statement(new ExpressionStatement(new LiteralStringExpression("\u00005"))));
     }
 
     @Test
