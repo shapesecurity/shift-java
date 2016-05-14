@@ -4,6 +4,7 @@ import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.functional.data.Maybe;
 import com.shapesecurity.shift.ast.*;
 
+import com.shapesecurity.shift.reducer.Director;
 import junit.framework.TestCase;
 
 import org.jetbrains.annotations.NotNull;
@@ -19,12 +20,23 @@ public abstract class ParserTestCase extends TestCase {
     public static void testScript(String source, Script expected) throws JsError {
         Script node = Parser.parseScript(source);
         assertEquals(expected, node);
+
+        ParserWithLocation parserWithLocation = new ParserWithLocation();
+        node = parserWithLocation.parseScript(source);
+        assertEquals(expected, node);
+        Director.reduceScript(new RangeCheckerReducer(parserWithLocation), node);
     }
 
     public static void testScript(String source, Statement expected) throws JsError {
         Script node = Parser.parseScript(source);
         assert (node.statements.isNotEmpty());
         assertEquals(expected, node.statements.maybeHead().just());
+
+        ParserWithLocation parserWithLocation = new ParserWithLocation();
+        node = parserWithLocation.parseScript(source);
+        assert (node.statements.isNotEmpty());
+        assertEquals(expected, node.statements.maybeHead().just());
+        Director.reduceScript(new RangeCheckerReducer(parserWithLocation), node);
     }
 
     public static void testScript(String source, Expression expected) throws JsError {
@@ -33,6 +45,14 @@ public abstract class ParserTestCase extends TestCase {
         Statement stmt = node.statements.maybeHead().just();
         assert (stmt instanceof ExpressionStatement);
         assertEquals(expected, ((ExpressionStatement) stmt).expression);
+
+        ParserWithLocation parserWithLocation = new ParserWithLocation();
+        node = parserWithLocation.parseScript(source);
+        assert (node.statements.isNotEmpty());
+        stmt = node.statements.maybeHead().just();
+        assert (stmt instanceof ExpressionStatement);
+        assertEquals(expected, ((ExpressionStatement) stmt).expression);
+        Director.reduceScript(new RangeCheckerReducer(parserWithLocation), node);
     }
 
 
@@ -43,12 +63,23 @@ public abstract class ParserTestCase extends TestCase {
     public static void testModule(String source, Module expected) throws JsError {
         Module node = Parser.parseModule(source);
         assertEquals(expected, node);
+
+        ParserWithLocation parserWithLocation = new ParserWithLocation();
+        node = parserWithLocation.parseModule(source);
+        assertEquals(expected, node);
+        Director.reduceModule(new RangeCheckerReducer(parserWithLocation), node);
     }
 
     public static void testModule(String source, ImportDeclarationExportDeclarationStatement expected) throws JsError {
         Module node = Parser.parseModule(source);
         assert (node.items.isNotEmpty());
         assertEquals(expected, node.items.maybeHead().just());
+
+        ParserWithLocation parserWithLocation = new ParserWithLocation();
+        node = parserWithLocation.parseModule(source);
+        assert (node.items.isNotEmpty());
+        assertEquals(expected, node.items.maybeHead().just());
+        Director.reduceModule(new RangeCheckerReducer(parserWithLocation), node);
     }
 
     public static void testModule(String source, Expression expected) throws JsError {
@@ -57,6 +88,14 @@ public abstract class ParserTestCase extends TestCase {
         ImportDeclarationExportDeclarationStatement stmt = node.items.maybeHead().just();
         assert (stmt instanceof ExpressionStatement);
         assertEquals(expected, ((ExpressionStatement) stmt).expression);
+
+        ParserWithLocation parserWithLocation = new ParserWithLocation();
+        node = parserWithLocation.parseModule(source);
+        assert (node.items.isNotEmpty());
+        stmt = node.items.maybeHead().just();
+        assert (stmt instanceof ExpressionStatement);
+        assertEquals(expected, ((ExpressionStatement) stmt).expression);
+        Director.reduceModule(new RangeCheckerReducer(parserWithLocation), node);
     }
 
     public static void testScriptFailureML(@NotNull String source, int line, int column, int index, @NotNull String error) {

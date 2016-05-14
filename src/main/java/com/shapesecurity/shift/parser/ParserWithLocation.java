@@ -12,14 +12,12 @@ public class ParserWithLocation {
 
 	@NotNull
 	public Script parseScript(@NotNull String text) throws JsError {
-		ParserWithLocationInternal p = new ParserWithLocationInternal(text, false);
-		return p.parseTopLevel(p::parseStatementListItem, Script::new);
+		return new ParserWithLocationInternal(text, false).parseScript();
 	}
 
 	@NotNull
 	public Module parseModule(@NotNull String text) throws JsError {
-		ParserWithLocationInternal p = new ParserWithLocationInternal(text, true);
-		return p.parseTopLevel(p::parseModuleItem, Module::new);
+		return new ParserWithLocationInternal(text, true).parseModule();
 	}
 
 	@NotNull
@@ -34,7 +32,7 @@ public class ParserWithLocation {
 
 		@NotNull
 		protected <T extends Node> T finishNode(@NotNull SourceLocation startLocation, @NotNull T node) {
-			SourceLocation endLocation = new SourceLocation(this.lastLine + 1, this.lastIndex - this.lastLineStart, this.lastIndex);
+			SourceLocation endLocation = this.getLocation();
 			locations = locations.put(node, new SourceSpan(Maybe.nothing(), startLocation, endLocation));
 			return node;
 		}
@@ -44,5 +42,15 @@ public class ParserWithLocation {
 		protected SourceLocation startNode() {
 			return this.getLocation();
 		}
+
+		@NotNull
+		@Override
+		protected <T extends Node> T copyNode(@NotNull Node src, @NotNull T dest) {
+			locations.get(src).foreach(srcSpan -> {
+				locations = locations.put(dest, srcSpan);
+			});
+			return dest;
+		}
+
 	}
 }
