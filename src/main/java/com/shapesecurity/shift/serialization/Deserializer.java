@@ -456,7 +456,7 @@ public class Deserializer {
 
     private <A> ImmutableList<A> deserializeList(JsonArray jsonArray) throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
         if (jsonArray.size() == 0) {
-            return ImmutableList.nil();
+            return ImmutableList.empty();
         } else {
             ArrayList<A> deserializedElements = new ArrayList<>();
             for (JsonElement jsonElement : jsonArray) {
@@ -469,14 +469,14 @@ public class Deserializer {
 
     private <A> ImmutableList<Maybe<A>> deserializeMaybeList(JsonArray jsonArray) throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
         if (jsonArray.size() == 0) {
-            return ImmutableList.nil();
+            return ImmutableList.empty();
         } else {
             ArrayList<Maybe<A>> deserializedElements = new ArrayList<>();
             for (JsonElement jsonElement : jsonArray) {
                 if (jsonElement.isJsonNull()) {
-                    deserializedElements.add(Maybe.nothing());
+                    deserializedElements.add(Maybe.empty());
                 } else {
-                    deserializedElements.add(Maybe.just((A) deserializeASTNode(jsonElement)));
+                    deserializedElements.add(Maybe.of((A) deserializeASTNode(jsonElement)));
                 }
             }
             return ImmutableList.from(deserializedElements);
@@ -485,58 +485,58 @@ public class Deserializer {
 
     private Maybe<Binding> deserializeMaybeBinding(JsonElement jsonElement) throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
         if (jsonElement.isJsonNull()) {
-            return Maybe.nothing();
+            return Maybe.empty();
         }
         Node node = deserializeASTNode(jsonElement);
-        return Maybe.just(separateBinding(node));
+        return Maybe.of(separateBinding(node));
     }
 
     private Maybe<BindingIdentifier> deserializeMaybeBindingIdentifier(JsonElement jsonElement) throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
         if (jsonElement.isJsonNull()) {
-            return Maybe.nothing();
+            return Maybe.empty();
         } else {
-            return Maybe.just((BindingIdentifier) deserializeASTNode(jsonElement));
+            return Maybe.of((BindingIdentifier) deserializeASTNode(jsonElement));
         }
     }
 
     private Maybe<CatchClause> deserializeMaybeCatchClause(JsonElement jsonElement) throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
         if (jsonElement.isJsonNull()) {
-            return Maybe.nothing();
+            return Maybe.empty();
         } else {
-            return Maybe.just((CatchClause) deserializeASTNode(jsonElement));
+            return Maybe.of((CatchClause) deserializeASTNode(jsonElement));
         }
     }
 
     private Maybe<Expression> deserializeMaybeExpression(JsonElement jsonElement) throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
         if (jsonElement.isJsonNull()) {
-            return Maybe.nothing();
+            return Maybe.empty();
         } else {
-            return Maybe.just((Expression) deserializeASTNode(jsonElement));
+            return Maybe.of((Expression) deserializeASTNode(jsonElement));
         }
     }
 
     private Maybe<Statement> deserializeMaybeStatement(JsonElement jsonElement) throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
         if (jsonElement.isJsonNull()) {
-            return Maybe.nothing();
+            return Maybe.empty();
         } else {
-            return Maybe.just((Statement) deserializeASTNode(jsonElement));
+            return Maybe.of((Statement) deserializeASTNode(jsonElement));
         }
     }
 
     private Maybe<String> deserializeMaybeString(JsonElement jsonElement) {
         if (jsonElement.getAsString().equals("null")) {
-            return Maybe.nothing();
+            return Maybe.empty();
         } else {
-            return Maybe.just(jsonElement.getAsString());
+            return Maybe.of(jsonElement.getAsString());
         }
     }
 
     private Maybe<VariableDeclarationExpression> deserializeMaybeVariableDeclarationExpression(JsonElement jsonElement) throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
         if (jsonElement.isJsonNull()) {
-            return Maybe.nothing();
+            return Maybe.empty();
         } else {
             Node node = deserializeASTNode(jsonElement);
-            return Maybe.just(separateVariableDeclarationExpression(node));
+            return Maybe.of(separateVariableDeclarationExpression(node));
         }
     }
 

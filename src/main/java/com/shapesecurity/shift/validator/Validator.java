@@ -141,9 +141,9 @@ public class Validator extends MonoidalReducer<ValidationContext> {
         if (node.alternate.isNothing()) {
             return false;
         }
-        Maybe<Statement> current = Maybe.just(node.consequent);
+        Maybe<Statement> current = Maybe.of(node.consequent);
         do {
-            Statement currentStmt = current.just();
+            Statement currentStmt = current.fromJust();
             if (currentStmt instanceof IfStatement && ((IfStatement) currentStmt).alternate.isNothing()) {
                 return true;
             }
@@ -170,7 +170,7 @@ public class Validator extends MonoidalReducer<ValidationContext> {
     @Override
     public ValidationContext reduceBreakStatement(@NotNull BreakStatement node) {
         ValidationContext s = super.reduceBreakStatement(node);
-        if (node.label.isJust() && !checkIsValidIdentifierName(node.label.just())) {
+        if (node.label.isJust() && !checkIsValidIdentifierName(node.label.fromJust())) {
             s.addError(new ValidationError(node, ValidationErrorMessages.VALID_BREAK_STATEMENT_LABEL));
         }
         return s;
@@ -190,7 +190,7 @@ public class Validator extends MonoidalReducer<ValidationContext> {
     @Override
     public ValidationContext reduceContinueStatement(@NotNull ContinueStatement node) {
         ValidationContext s = super.reduceContinueStatement(node);
-        if (node.label.isJust() && !checkIsValidIdentifierName(node.label.just())) {
+        if (node.label.isJust() && !checkIsValidIdentifierName(node.label.fromJust())) {
             s.addError(new ValidationError(node, ValidationErrorMessages.VALID_CONTINUE_STATEMENT_LABEL));
         }
         return s;
@@ -220,7 +220,7 @@ public class Validator extends MonoidalReducer<ValidationContext> {
     @Override
     public ValidationContext reduceExportSpecifier(@NotNull ExportSpecifier node) {
         ValidationContext s = super.reduceExportSpecifier(node);
-        if (node.name.isJust() && !checkIsValidIdentifierName(node.name.just())) {
+        if (node.name.isJust() && !checkIsValidIdentifierName(node.name.fromJust())) {
             s.addError(new ValidationError(node, ValidationErrorMessages.VALID_EXPORT_SPECIFIER_NAME));
         }
         if (!checkIsValidIdentifierName(node.exportedName)) {
@@ -238,7 +238,7 @@ public class Validator extends MonoidalReducer<ValidationContext> {
             if (varDec.declarators.length != 1) {
                 s.addError(new ValidationError(node, ValidationErrorMessages.ONE_VARIABLE_DECLARATOR_IN_FOR_IN));
             }
-            if (varDec.declarators.maybeHead().just().init.isJust()) {
+            if (varDec.declarators.maybeHead().fromJust().init.isJust()) {
                 s.addError(new ValidationError(node, ValidationErrorMessages.NO_INIT_IN_VARIABLE_DECLARATOR_IN_FOR_IN));
             }
         }
@@ -254,7 +254,7 @@ public class Validator extends MonoidalReducer<ValidationContext> {
             if (varDec.declarators.length != 1) {
                 s.addError(new ValidationError(node, ValidationErrorMessages.ONE_VARIABLE_DECLARATOR_IN_FOR_OF));
             }
-            if (varDec.declarators.maybeHead().just().init.isJust()) {
+            if (varDec.declarators.maybeHead().fromJust().init.isJust()) {
                 s.addError(new ValidationError(node, ValidationErrorMessages.NO_INIT_IN_VARIABLE_DECLARATOR_IN_FOR_OF));
             }
         }
@@ -334,7 +334,7 @@ public class Validator extends MonoidalReducer<ValidationContext> {
     @Override
     public ValidationContext reduceImportSpecifier(@NotNull ImportSpecifier node, @NotNull ValidationContext binding) {
         ValidationContext s = super.reduceImportSpecifier(node, binding);
-        if (node.name.isJust() && !checkIsValidIdentifierName(node.name.just())) {
+        if (node.name.isJust() && !checkIsValidIdentifierName(node.name.fromJust())) {
             s.addError(new ValidationError(node, ValidationErrorMessages.VALID_IMPORT_SPECIFIER_NAME));
         }
         return s;
@@ -558,12 +558,12 @@ public class Validator extends MonoidalReducer<ValidationContext> {
     @NotNull
     private Maybe<Statement> trailingStatement(Statement node) {
         if (node instanceof IfStatement) {
-            return Maybe.just(((IfStatement) node).alternate.orJust(((IfStatement) node).consequent));
+            return Maybe.of(((IfStatement) node).alternate.orJust(((IfStatement) node).consequent));
         } else if (node instanceof LabeledStatement) {
-            return Maybe.just(((LabeledStatement) node).body);
+            return Maybe.of(((LabeledStatement) node).body);
         } else if (node instanceof IterationStatement) {
-            return Maybe.just(((IterationStatement) node).body);
+            return Maybe.of(((IterationStatement) node).body);
         }
-        return Maybe.nothing();
+        return Maybe.empty();
     }
 }

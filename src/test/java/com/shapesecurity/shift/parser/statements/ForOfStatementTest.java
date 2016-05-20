@@ -12,28 +12,28 @@ public class ForOfStatementTest extends ParserTestCase {
     @Test
     public void testForOfStatement() throws JsError {
         testScript("for (var x of list) process(x);", new ForOfStatement(new VariableDeclaration(VariableDeclarationKind.Var,
-                ImmutableList.list(new VariableDeclarator(new BindingIdentifier("x"), Maybe.nothing()))),
+                ImmutableList.of(new VariableDeclarator(new BindingIdentifier("x"), Maybe.empty()))),
                 new IdentifierExpression("list"), new ExpressionStatement(new CallExpression(
-                new IdentifierExpression("process"), ImmutableList.list(new IdentifierExpression("x"))))));
+                new IdentifierExpression("process"), ImmutableList.of(new IdentifierExpression("x"))))));
 
         testScript("for(var a of b);", new ForOfStatement(new VariableDeclaration(VariableDeclarationKind.Var,
-                ImmutableList.list(new VariableDeclarator(new BindingIdentifier("a"), Maybe.nothing()))),
+                ImmutableList.of(new VariableDeclarator(new BindingIdentifier("a"), Maybe.empty()))),
                 new IdentifierExpression("b"), new EmptyStatement()));
 
         testScript("for(a of b);", new ForOfStatement(new BindingIdentifier("a"), new IdentifierExpression("b"),
                 new EmptyStatement()));
 
         testScript("for(let [a] of b);", new ForOfStatement(new VariableDeclaration(VariableDeclarationKind.Let,
-                ImmutableList.list(new VariableDeclarator(new ArrayBinding(ImmutableList.list(Maybe.just(
-                        new BindingIdentifier("a"))), Maybe.nothing()), Maybe.nothing()))), new IdentifierExpression("b"),
+                ImmutableList.of(new VariableDeclarator(new ArrayBinding(ImmutableList.of(Maybe.of(
+                        new BindingIdentifier("a"))), Maybe.empty()), Maybe.empty()))), new IdentifierExpression("b"),
                 new EmptyStatement()));
 
         testScript("for(let of of b);", new ForOfStatement(new VariableDeclaration(VariableDeclarationKind.Let,
-                ImmutableList.list(new VariableDeclarator(new BindingIdentifier("of"), Maybe.nothing()))),
+                ImmutableList.of(new VariableDeclarator(new BindingIdentifier("of"), Maybe.empty()))),
                 new IdentifierExpression("b"), new EmptyStatement()));
 
         testScript("for(const a of b);", new ForOfStatement(new VariableDeclaration(VariableDeclarationKind.Const,
-                ImmutableList.list(new VariableDeclarator(new BindingIdentifier("a"), Maybe.nothing()))),
+                ImmutableList.of(new VariableDeclarator(new BindingIdentifier("a"), Maybe.empty()))),
                 new IdentifierExpression("b"), new EmptyStatement()));
 
         testScriptFailure("for(let of 0);", 11, "Unexpected number");

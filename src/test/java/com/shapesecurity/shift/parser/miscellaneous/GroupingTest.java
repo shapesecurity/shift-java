@@ -32,9 +32,9 @@ public class GroupingTest extends ParserTestCase {
 
         testScript("((a))", new IdentifierExpression("a"));
 
-        testScript("((a))()", new CallExpression(new IdentifierExpression("a"), ImmutableList.nil()));
+        testScript("((a))()", new CallExpression(new IdentifierExpression("a"), ImmutableList.empty()));
 
-        testScript("((a))((a))", new CallExpression(new IdentifierExpression("a"), ImmutableList.list(
+        testScript("((a))((a))", new CallExpression(new IdentifierExpression("a"), ImmutableList.of(
                 new IdentifierExpression("a"))));
 
         testScript("(a) = 0", new AssignmentExpression(new BindingIdentifier("a"), new LiteralNumericExpression(0.0)));

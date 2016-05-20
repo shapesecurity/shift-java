@@ -11,16 +11,16 @@ import org.junit.Test;
 public class LabeledStatementTest extends ParserTestCase {
     @Test
     public void testLabeledStatement() throws JsError {
-        testScript("start: for (;;) break start", new LabeledStatement("start", new ForStatement(Maybe.nothing(),
-                Maybe.nothing(), Maybe.nothing(), new BreakStatement(Maybe.just("start")))));
+        testScript("start: for (;;) break start", new LabeledStatement("start", new ForStatement(Maybe.empty(),
+                Maybe.empty(), Maybe.empty(), new BreakStatement(Maybe.of("start")))));
 
         testScript("start: while (true) break start", new LabeledStatement("start", new WhileStatement(
-                new LiteralBooleanExpression(true), new BreakStatement(Maybe.just("start")))));
+                new LiteralBooleanExpression(true), new BreakStatement(Maybe.of("start")))));
 
         testScript("__proto__: test", new LabeledStatement("__proto__", new ExpressionStatement(
                 new IdentifierExpression("test"))));
 
-        testScript("a:{break a;}", new LabeledStatement("a", new BlockStatement(new Block(ImmutableList.list(
-                new BreakStatement(Maybe.just("a")))))));
+        testScript("a:{break a;}", new LabeledStatement("a", new BlockStatement(new Block(ImmutableList.of(
+                new BreakStatement(Maybe.of("a")))))));
     }
 }

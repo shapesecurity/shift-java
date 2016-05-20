@@ -12,7 +12,7 @@ import org.junit.Test;
 public class ClassDeclarationTest extends ParserTestCase {
     @Test
     public void testClassDeclarations() throws JsError {
-        testScript("class A{}", new ClassDeclaration(new BindingIdentifier("A"), Maybe.nothing(), ImmutableList.nil()));
+        testScript("class A{}", new ClassDeclaration(new BindingIdentifier("A"), Maybe.empty(), ImmutableList.empty()));
 
         testScriptFailure("class {}", 6, "Unexpected token \"{\"");
         testScriptFailure("class extends A{}", 6, "Unexpected token \"extends\"");

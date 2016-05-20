@@ -36,7 +36,7 @@ public class RangeCheckerReducer extends MonoidalReducer<RangeCheckerReducer.Ran
 	private RangeChecker accept(Node node, RangeChecker innerBounds) {
 		Maybe<SourceSpan> span = this.parserWithLocation.getLocation(node);
 		assertTrue(span.isJust());
-		RangeChecker outerBounds = new RangeChecker(span.just());
+		RangeChecker outerBounds = new RangeChecker(span.fromJust());
 		assertTrue(outerBounds.start <= outerBounds.end);
 
 		assertTrue(outerBounds.start <= innerBounds.start);

@@ -32,7 +32,7 @@
 //  @NotNull
 //  @Override
 //  public DirtyState<Statement> transform(@NotNull WhileStatement node) {
-//    return DirtyState.dirty(new ForStatement(Maybe.nothing(), Maybe.just(node.test), Maybe.nothing(),
+//    return DirtyState.dirty(new ForStatement(Maybe.empty(), Maybe.of(node.test), Maybe.empty(),
 //        node.body));
 //  }
 //}

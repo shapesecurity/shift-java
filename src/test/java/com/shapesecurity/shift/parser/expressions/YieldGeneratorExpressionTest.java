@@ -13,12 +13,12 @@ public class YieldGeneratorExpressionTest extends ParserTestCase {
     @Test
     public void testYieldGeneratorExpression() throws JsError {
         testScript("function*a(){yield*a}", new FunctionDeclaration(new BindingIdentifier("a"),
-                true, new FormalParameters(ImmutableList.nil(), Maybe.nothing()), new FunctionBody(ImmutableList.nil(),
-                ImmutableList.list(new ExpressionStatement(new YieldGeneratorExpression(new IdentifierExpression("a")))))));
+                true, new FormalParameters(ImmutableList.empty(), Maybe.empty()), new FunctionBody(ImmutableList.empty(),
+                ImmutableList.of(new ExpressionStatement(new YieldGeneratorExpression(new IdentifierExpression("a")))))));
 
         testScript("function a(){yield*a}", new FunctionDeclaration(new BindingIdentifier("a"),
-                false, new FormalParameters(ImmutableList.nil(), Maybe.nothing()), new FunctionBody(ImmutableList.nil(),
-                ImmutableList.list(new ExpressionStatement(new BinaryExpression(BinaryOperator.Mul,
+                false, new FormalParameters(ImmutableList.empty(), Maybe.empty()), new FunctionBody(ImmutableList.empty(),
+                ImmutableList.of(new ExpressionStatement(new BinaryExpression(BinaryOperator.Mul,
                         new IdentifierExpression("yield"), new IdentifierExpression("a")))))));
 
         testScriptFailure("function *a(){yield\n*a}", 2, 0, 20, "Unexpected token \"*\"");

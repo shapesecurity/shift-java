@@ -18,6 +18,6 @@ public class ThrowStatementTest extends ParserTestCase {
         testScript("throw x * y", new ThrowStatement(new BinaryExpression(BinaryOperator.Mul, new IdentifierExpression("x"),
                 new IdentifierExpression("y"))));
 
-        testScript("throw {}", new ThrowStatement(new ObjectExpression(ImmutableList.nil())));
+        testScript("throw {}", new ThrowStatement(new ObjectExpression(ImmutableList.empty())));
     }
 }

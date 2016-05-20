@@ -12,50 +12,50 @@ public class ObjectBindingTest extends ParserTestCase {
     @Test
     public void testObjectBinding() throws JsError {
         testScript("var {a} = 0;", new VariableDeclarationStatement(new VariableDeclaration(VariableDeclarationKind.Var,
-                ImmutableList.list(new VariableDeclarator(new ObjectBinding(ImmutableList.list(new BindingPropertyIdentifier(
-                        new BindingIdentifier("a"), Maybe.nothing()))), Maybe.just(new LiteralNumericExpression(0.0)))))));
+                ImmutableList.of(new VariableDeclarator(new ObjectBinding(ImmutableList.of(new BindingPropertyIdentifier(
+                        new BindingIdentifier("a"), Maybe.empty()))), Maybe.of(new LiteralNumericExpression(0.0)))))));
 
         testScript("var [{a = 0}] = 0;", new VariableDeclarationStatement(new VariableDeclaration(VariableDeclarationKind.Var,
-                ImmutableList.list(new VariableDeclarator(new ArrayBinding(ImmutableList.list(Maybe.just(new ObjectBinding(
-                        ImmutableList.list(new BindingPropertyIdentifier(new BindingIdentifier("a"), Maybe.just(
-                                new LiteralNumericExpression(0.0))))))), Maybe.nothing()), Maybe.just(
+                ImmutableList.of(new VariableDeclarator(new ArrayBinding(ImmutableList.of(Maybe.of(new ObjectBinding(
+                        ImmutableList.of(new BindingPropertyIdentifier(new BindingIdentifier("a"), Maybe.of(
+                                new LiteralNumericExpression(0.0))))))), Maybe.empty()), Maybe.of(
                         new LiteralNumericExpression(0.0)))))));
 
         testScript("var [{__proto__:a, __proto__:b}] = 0;", new VariableDeclarationStatement(new VariableDeclaration(
-                VariableDeclarationKind.Var, ImmutableList.list(new VariableDeclarator(new ArrayBinding(ImmutableList.list(
-                Maybe.just(new ObjectBinding(ImmutableList.list(new BindingPropertyProperty(new StaticPropertyName("__proto__"),
+                VariableDeclarationKind.Var, ImmutableList.of(new VariableDeclarator(new ArrayBinding(ImmutableList.of(
+                Maybe.of(new ObjectBinding(ImmutableList.of(new BindingPropertyProperty(new StaticPropertyName("__proto__"),
                         new BindingIdentifier("a")), new BindingPropertyProperty(new StaticPropertyName("__proto__"),
-                        new BindingIdentifier("b")))))), Maybe.nothing()), Maybe.just(new LiteralNumericExpression(0.0)))))));
+                        new BindingIdentifier("b")))))), Maybe.empty()), Maybe.of(new LiteralNumericExpression(0.0)))))));
 
         testScript("var {a, x: {y: a}} = 0;", new VariableDeclarationStatement(new VariableDeclaration(
-                VariableDeclarationKind.Var, ImmutableList.list(new VariableDeclarator(new ObjectBinding(ImmutableList.list(
-                new BindingPropertyIdentifier(new BindingIdentifier("a"), Maybe.nothing()), new BindingPropertyProperty(
-                        new StaticPropertyName("x"), new ObjectBinding(ImmutableList.list(new BindingPropertyProperty(
-                        new StaticPropertyName("y"), new BindingIdentifier("a"))))))), Maybe.just(new LiteralNumericExpression(0.0)))))));
+                VariableDeclarationKind.Var, ImmutableList.of(new VariableDeclarator(new ObjectBinding(ImmutableList.of(
+                new BindingPropertyIdentifier(new BindingIdentifier("a"), Maybe.empty()), new BindingPropertyProperty(
+                        new StaticPropertyName("x"), new ObjectBinding(ImmutableList.of(new BindingPropertyProperty(
+                        new StaticPropertyName("y"), new BindingIdentifier("a"))))))), Maybe.of(new LiteralNumericExpression(0.0)))))));
 
 
         testScript("var a, {x: {y: a}} = 0;", new VariableDeclarationStatement(new VariableDeclaration(
-                VariableDeclarationKind.Var, ImmutableList.list(new VariableDeclarator(new BindingIdentifier("a"),
-                Maybe.nothing()), new VariableDeclarator(new ObjectBinding(ImmutableList.list(new BindingPropertyProperty(
-                new StaticPropertyName("x"), new ObjectBinding(ImmutableList.list(new BindingPropertyProperty(
-                new StaticPropertyName("y"), new BindingIdentifier("a"))))))), Maybe.just(new LiteralNumericExpression(0.0)))))));
+                VariableDeclarationKind.Var, ImmutableList.of(new VariableDeclarator(new BindingIdentifier("a"),
+                Maybe.empty()), new VariableDeclarator(new ObjectBinding(ImmutableList.of(new BindingPropertyProperty(
+                new StaticPropertyName("x"), new ObjectBinding(ImmutableList.of(new BindingPropertyProperty(
+                new StaticPropertyName("y"), new BindingIdentifier("a"))))))), Maybe.of(new LiteralNumericExpression(0.0)))))));
 
         testScript("var {let, yield} = 0;", new VariableDeclarationStatement(new VariableDeclaration(VariableDeclarationKind.Var,
-            ImmutableList.list(new VariableDeclarator(new ObjectBinding(ImmutableList.list(new BindingPropertyIdentifier(
-                new BindingIdentifier("let"), Maybe.nothing()), new BindingPropertyIdentifier(
-                new BindingIdentifier("yield"), Maybe.nothing()))), Maybe.just(new LiteralNumericExpression(0.0)))))));
+            ImmutableList.of(new VariableDeclarator(new ObjectBinding(ImmutableList.of(new BindingPropertyIdentifier(
+                new BindingIdentifier("let"), Maybe.empty()), new BindingPropertyIdentifier(
+                new BindingIdentifier("yield"), Maybe.empty()))), Maybe.of(new LiteralNumericExpression(0.0)))))));
 
-        testScript("(a, b, [c]) => 0", new ArrowExpression(new FormalParameters(ImmutableList.list(new BindingIdentifier("a"),
-                new BindingIdentifier("b"), new ArrayBinding(ImmutableList.list(Maybe.just(new BindingIdentifier("c"))),
-                        Maybe.nothing())), Maybe.nothing()), new LiteralNumericExpression(0.0)));
+        testScript("(a, b, [c]) => 0", new ArrowExpression(new FormalParameters(ImmutableList.of(new BindingIdentifier("a"),
+                new BindingIdentifier("b"), new ArrayBinding(ImmutableList.of(Maybe.of(new BindingIdentifier("c"))),
+                        Maybe.empty())), Maybe.empty()), new LiteralNumericExpression(0.0)));
 
-        testScript("try {} catch ({e}) {}", new TryCatchStatement(new Block(ImmutableList.nil()), new CatchClause(
-                new ObjectBinding(ImmutableList.list(new BindingPropertyIdentifier(new BindingIdentifier("e"), Maybe.nothing()))),
-                new Block(ImmutableList.nil()))));
+        testScript("try {} catch ({e}) {}", new TryCatchStatement(new Block(ImmutableList.empty()), new CatchClause(
+                new ObjectBinding(ImmutableList.of(new BindingPropertyIdentifier(new BindingIdentifier("e"), Maybe.empty()))),
+                new Block(ImmutableList.empty()))));
 
-        testScript("try {} catch ({e = 0}) {}", new TryCatchStatement(new Block(ImmutableList.nil()), new CatchClause(
-                new ObjectBinding(ImmutableList.list(new BindingPropertyIdentifier(new BindingIdentifier("e"), Maybe.just(
-                        new LiteralNumericExpression(0.0))))), new Block(ImmutableList.nil()))));
+        testScript("try {} catch ({e = 0}) {}", new TryCatchStatement(new Block(ImmutableList.empty()), new CatchClause(
+                new ObjectBinding(ImmutableList.of(new BindingPropertyIdentifier(new BindingIdentifier("e"), Maybe.of(
+                        new LiteralNumericExpression(0.0))))), new Block(ImmutableList.empty()))));
 
         testScriptFailure("var {a: b.c} = 0;", 9, "Unexpected token \".\"");
         testScriptFailure("({e: a.b}) => 0", 0, "Illegal arrow function parameter list");

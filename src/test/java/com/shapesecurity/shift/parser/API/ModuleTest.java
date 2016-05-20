@@ -10,7 +10,7 @@ import org.junit.Test;
 public class ModuleTest extends ParserTestCase {
     @Test
     public void testModule() throws JsError {
-        testModule("", new Module(ImmutableList.nil(), ImmutableList.nil()));
+        testModule("", new Module(ImmutableList.empty(), ImmutableList.empty()));
         testModuleFailure("/*", 2, "Unexpected end of input");
     }
 }

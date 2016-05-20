@@ -42,7 +42,7 @@ public class Serializer implements Reducer<StringBuilder> {
 
     @NotNull
     private static CharSequence e(@NotNull Either<StringBuilder, StringBuilder> el) {
-        return olist(ImmutableList.list(el.left(), el.right()));
+        return olist(ImmutableList.of(el.left(), el.right()));
     }
 
     @NotNull

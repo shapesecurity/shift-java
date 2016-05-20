@@ -49,12 +49,12 @@
 //
 //public class AstHelper extends TestBase {
 //  public static final EmptyStatement STMT = new EmptyStatement();
-//  public static final Block BLOCK = new Block(ImmutableList.nil());
+//  public static final Block BLOCK = new Block(ImmutableList.empty());
 //  public static final BlockStatement BLOCK_STMT = new BlockStatement(BLOCK);
 //  public static final FunctionBody EMPTY_BODY =
-//      new FunctionBody(ImmutableList.nil(), ImmutableList.nil());
+//      new FunctionBody(ImmutableList.empty(), ImmutableList.empty());
 //  public static final FunctionBody BLOCK_WRAPPED =
-//      new FunctionBody(ImmutableList.nil(), ImmutableList.list(BLOCK_STMT));
+//      new FunctionBody(ImmutableList.empty(), ImmutableList.of(BLOCK_STMT));
 //  public static final LiteralNullExpression EXPR = new LiteralNullExpression();
 //  public static final LiteralNumericExpression NUM = new LiteralNumericExpression(0);
 //  public static final Identifier ID = new Identifier("a");
@@ -62,7 +62,7 @@
 //
 //  // wrap a statement in a program
 //  public static Script wrapProgram(Statement s) {
-//    return new Script(new FunctionBody(ImmutableList.nil(), ImmutableList.list(s)));
+//    return new Script(new FunctionBody(ImmutableList.empty(), ImmutableList.of(s)));
 //  }
 //
 //  // wrap a statement in an iteration statement
@@ -71,7 +71,7 @@
 //  }
 //
 //  protected FunctionBody body(Statement... statements) {
-//    return new FunctionBody(ImmutableList.nil(), ImmutableList.from(statements));
+//    return new FunctionBody(ImmutableList.empty(), ImmutableList.from(statements));
 //  }
 //
 //  protected IdentifierExpression identExpr(String name) {
@@ -83,7 +83,7 @@
 //  }
 //
 //  public static VariableDeclarator declarator(String d) {
-//    return new VariableDeclarator(new Identifier(d), Maybe.nothing());
+//    return new VariableDeclarator(new Identifier(d), Maybe.empty());
 //  }
 //
 //  public static VariableDeclarationStatement varss(
@@ -94,19 +94,19 @@
 //  }
 //
 //  public static VariableDeclaration vars(VariableDeclaration.VariableDeclarationKind kind, String d0, String... d) {
-//    return new VariableDeclaration(kind, ImmutableList.list(d0, d).map(AstHelper::declarator));
+//    return new VariableDeclaration(kind, ImmutableList.of(d0, d).map(AstHelper::declarator));
 //  }
 //
 //  // wrap zero or more statements in a function expression
 //  public static FunctionExpression FE(Statement s) {
-//    return new FunctionExpression(Maybe.just(ID), ImmutableList.nil(), new FunctionBody(
-//        ImmutableList.nil(),
-//        ImmutableList.list(s)));
+//    return new FunctionExpression(Maybe.of(ID), ImmutableList.empty(), new FunctionBody(
+//        ImmutableList.empty(),
+//        ImmutableList.of(s)));
 //  }
 //
 //  // wrap zero or more statements in a function declaration
 //  public static FunctionDeclaration FD(Statement s) {
-//    return new FunctionDeclaration(ID, ImmutableList.nil(), new FunctionBody(ImmutableList.nil(), ImmutableList.list(s)));
+//    return new FunctionDeclaration(ID, ImmutableList.empty(), new FunctionBody(ImmutableList.empty(), ImmutableList.of(s)));
 //  }
 //
 //  // wrap a statement in a LabeledStatement

@@ -38,18 +38,18 @@ import static com.shapesecurity.shift.path.Branch.*;
 
 public class ScopeTest extends TestCase {
 
-    private static final ImmutableList<Either<BindingIdentifier, IdentifierExpression>> NO_REFERENCES = ImmutableList.nil();
-    private static final ImmutableList<BindingIdentifier> NO_DECLARATIONS = ImmutableList.nil();
+    private static final ImmutableList<Either<BindingIdentifier, IdentifierExpression>> NO_REFERENCES = ImmutableList.empty();
+    private static final ImmutableList<BindingIdentifier> NO_DECLARATIONS = ImmutableList.empty();
 
 
     private static BindingIdentifier bi(Maybe<? extends Node> n) {
         assertTrue("Node not located!", n.isJust());
-        return (BindingIdentifier) n.just();
+        return (BindingIdentifier) n.fromJust();
     }
 
     private static IdentifierExpression ie(Maybe<? extends Node> n) {
         assertTrue("Node not located!", n.isJust());
-        return (IdentifierExpression) n.just();
+        return (IdentifierExpression) n.fromJust();
     }
 
     @Test
@@ -67,14 +67,14 @@ public class ScopeTest extends TestCase {
 
 
         { // global scope
-            ImmutableList<Scope> children = ImmutableList.list(globalScope.children.maybeHead().just());
+            ImmutableList<Scope> children = ImmutableList.of(globalScope.children.maybeHead().fromJust());
 
-            ImmutableList<String> through = ImmutableList.nil();
+            ImmutableList<String> through = ImmutableList.empty();
 
             // mapping of variable names from this scope object to the list of their declarations and their references
             Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<Either<BindingIdentifier, IdentifierExpression>>>> variables = new HashMap<>();
-            variables.put("v1", new Pair<>(ImmutableList.list(v1Binding1), NO_REFERENCES));
-            variables.put("v2", new Pair<>(ImmutableList.list(v2Binding1), ImmutableList.list(Either.left(v2Binding1))));
+            variables.put("v1", new Pair<>(ImmutableList.of(v1Binding1), NO_REFERENCES));
+            variables.put("v2", new Pair<>(ImmutableList.of(v2Binding1), ImmutableList.of(Either.left(v2Binding1))));
 
             Map<Either<BindingIdentifier, IdentifierExpression>, Accessibility> referenceTypes = new HashMap<>();
             referenceTypes.put(Either.left(v2Binding1), Accessibility.Write);
@@ -97,14 +97,14 @@ public class ScopeTest extends TestCase {
                 .apply(script));
 
         { // global scope
-            ImmutableList<Scope> children = ImmutableList.list(globalScope.children.maybeHead().just());
+            ImmutableList<Scope> children = ImmutableList.of(globalScope.children.maybeHead().fromJust());
 
-            ImmutableList<String> through = ImmutableList.nil();
+            ImmutableList<String> through = ImmutableList.empty();
 
             // mapping of variable names from this scope object to the list of their declarations and their references
             Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<Either<BindingIdentifier, IdentifierExpression>>>> variables = new HashMap<>();
-            variables.put("v1", new Pair<>(ImmutableList.list(v1Binding1), NO_REFERENCES));
-            variables.put("v2", new Pair<>(ImmutableList.list(v2Binding1), ImmutableList.list(Either.left(v2Binding1))));
+            variables.put("v1", new Pair<>(ImmutableList.of(v1Binding1), NO_REFERENCES));
+            variables.put("v2", new Pair<>(ImmutableList.of(v2Binding1), ImmutableList.of(Either.left(v2Binding1))));
 
             Map<Either<BindingIdentifier, IdentifierExpression>, Accessibility> referenceTypes = new HashMap<>();
             referenceTypes.put(Either.left(v2Binding1), Accessibility.Write);
@@ -131,14 +131,14 @@ public class ScopeTest extends TestCase {
                 .apply(script));
 
         { // global scope
-            ImmutableList<Scope> children = ImmutableList.list(globalScope.children.maybeHead().just());
+            ImmutableList<Scope> children = ImmutableList.of(globalScope.children.maybeHead().fromJust());
 
-            ImmutableList<String> through = ImmutableList.list("v1");
+            ImmutableList<String> through = ImmutableList.of("v1");
 
             // mapping of variable names from this scope object to the list of their declarations and their references
             Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<Either<BindingIdentifier, IdentifierExpression>>>> variables = new HashMap<>();
-            variables.put("v1", new Pair<>(NO_DECLARATIONS, ImmutableList.list(Either.left(v1Binding1), Either.right(v1Identifier1))));
-            variables.put("v2", new Pair<>(ImmutableList.list(v2Binding1), ImmutableList.list(Either.left(v2Binding1))));
+            variables.put("v1", new Pair<>(NO_DECLARATIONS, ImmutableList.of(Either.left(v1Binding1), Either.right(v1Identifier1))));
+            variables.put("v2", new Pair<>(ImmutableList.of(v2Binding1), ImmutableList.of(Either.left(v2Binding1))));
 
             Map<Either<BindingIdentifier, IdentifierExpression>, Accessibility> referenceTypes = new HashMap<>();
             referenceTypes.put(Either.left(v1Binding1), Accessibility.Write);
@@ -168,14 +168,14 @@ public class ScopeTest extends TestCase {
 
 
         { // global scope
-            ImmutableList<Scope> children = ImmutableList.list(globalScope.children.maybeHead().just());
+            ImmutableList<Scope> children = ImmutableList.of(globalScope.children.maybeHead().fromJust());
 
-            ImmutableList<String> through = ImmutableList.nil();
+            ImmutableList<String> through = ImmutableList.empty();
 
             // mapping of variable names from this scope object to the list of their declarations and their references
             Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<Either<BindingIdentifier, IdentifierExpression>>>> variables = new HashMap<>();
-            variables.put("v1", new Pair<>(ImmutableList.list(v1Binding1), ImmutableList.list(Either.left(v1Binding1), Either.right(v1Identifier1))));
-            variables.put("v2", new Pair<>(ImmutableList.list(v2Binding1), ImmutableList.list(Either.left(v2Binding1))));
+            variables.put("v1", new Pair<>(ImmutableList.of(v1Binding1), ImmutableList.of(Either.left(v1Binding1), Either.right(v1Identifier1))));
+            variables.put("v2", new Pair<>(ImmutableList.of(v2Binding1), ImmutableList.of(Either.left(v2Binding1))));
 
             Map<Either<BindingIdentifier, IdentifierExpression>, Accessibility> referenceTypes = new HashMap<>();
             referenceTypes.put(Either.left(v1Binding1), Accessibility.Write);
@@ -211,14 +211,14 @@ public class ScopeTest extends TestCase {
 
 
         { // global scope
-            ImmutableList<Scope> children = ImmutableList.list(globalScope.children.maybeHead().just());
+            ImmutableList<Scope> children = ImmutableList.of(globalScope.children.maybeHead().fromJust());
 
-            ImmutableList<String> through = ImmutableList.list();
+            ImmutableList<String> through = ImmutableList.empty();
 
             // mapping of variable names from this scope object to the list of their declarations and their references
             Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<Either<BindingIdentifier, IdentifierExpression>>>> variables = new HashMap<>();
-            variables.put("v1", new Pair<>(ImmutableList.list(v1Binding1, v1Binding2), ImmutableList.list(Either.left(v1Binding2), Either.right(v1Identifier1))));
-            variables.put("v2", new Pair<>(ImmutableList.list(v2Binding1), ImmutableList.list(Either.left(v2Binding1))));
+            variables.put("v1", new Pair<>(ImmutableList.of(v1Binding1, v1Binding2), ImmutableList.of(Either.left(v1Binding2), Either.right(v1Identifier1))));
+            variables.put("v2", new Pair<>(ImmutableList.of(v2Binding1), ImmutableList.of(Either.left(v2Binding1))));
 
             Map<Either<BindingIdentifier, IdentifierExpression>, Accessibility> referenceTypes = new HashMap<>();
             referenceTypes.put(Either.left(v1Binding2), Accessibility.Write);
@@ -243,9 +243,9 @@ public class ScopeTest extends TestCase {
         Script script = parse(js);
 
         GlobalScope globalScope = ScopeAnalyzer.analyze(script);
-        Scope topLevelLexicalScope = globalScope.children.maybeHead().just();
-        Scope f1Scope = topLevelLexicalScope.children.maybeHead().just();
-        Scope f2Scope = topLevelLexicalScope.children.maybeHead().just().children.maybeHead().just();
+        Scope topLevelLexicalScope = globalScope.children.maybeHead().fromJust();
+        Scope f1Scope = topLevelLexicalScope.children.maybeHead().fromJust();
+        Scope f2Scope = topLevelLexicalScope.children.maybeHead().fromJust().children.maybeHead().fromJust();
 
         final BindingIdentifier f1Binding1 = bi(new Getter().d(ScriptStatements_(0)).d(FunctionDeclarationName_())
                 .apply(script));
@@ -313,14 +313,14 @@ public class ScopeTest extends TestCase {
 
 
         { // global scope
-            ImmutableList<Scope> children = ImmutableList.list(topLevelLexicalScope);
+            ImmutableList<Scope> children = ImmutableList.of(topLevelLexicalScope);
 
-            ImmutableList<String> through = ImmutableList.nil();
+            ImmutableList<String> through = ImmutableList.empty();
 
             // mapping of variable names from this scope object to the list of their declarations and their references
             Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<Either<BindingIdentifier, IdentifierExpression>>>> variables = new HashMap<>();
-            variables.put("f1", new Pair<>(ImmutableList.list(f1Binding1), ImmutableList.list(Either.right(f1Identifier1))));
-            variables.put("r", new Pair<>(ImmutableList.list(rBinding1), ImmutableList.list(Either.left(rBinding1))));
+            variables.put("f1", new Pair<>(ImmutableList.of(f1Binding1), ImmutableList.of(Either.right(f1Identifier1))));
+            variables.put("r", new Pair<>(ImmutableList.of(rBinding1), ImmutableList.of(Either.left(rBinding1))));
 
             Map<Either<BindingIdentifier, IdentifierExpression>, Accessibility> referenceTypes = new HashMap<>();
             referenceTypes.put(Either.right(f1Identifier1), Accessibility.Read);
@@ -330,16 +330,16 @@ public class ScopeTest extends TestCase {
         }
         { // f1 scope
 
-            ImmutableList<Scope> children = ImmutableList.list(f2Scope);
+            ImmutableList<Scope> children = ImmutableList.of(f2Scope);
 
-            ImmutableList<String> through = ImmutableList.nil();
+            ImmutableList<String> through = ImmutableList.empty();
 
             // mapping of variable names from this scope object to the list of their declarations and their references
             Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<Either<BindingIdentifier, IdentifierExpression>>>> variables = new HashMap<>();
-            variables.put("v1", new Pair<>(ImmutableList.list(v1Binding1), ImmutableList.list(Either.left(v1Binding1), Either.right(v1Identifier1))));
-            variables.put("p1", new Pair<>(ImmutableList.list(p1Binding1), NO_REFERENCES));
-            variables.put("p2", new Pair<>(ImmutableList.list(p2Binding1), ImmutableList.list(Either.right(p2Identifier1))));
-            variables.put("f2", new Pair<>(ImmutableList.list(f2Binding1), ImmutableList.list(Either.right(f2Identifier1))));
+            variables.put("v1", new Pair<>(ImmutableList.of(v1Binding1), ImmutableList.of(Either.left(v1Binding1), Either.right(v1Identifier1))));
+            variables.put("p1", new Pair<>(ImmutableList.of(p1Binding1), NO_REFERENCES));
+            variables.put("p2", new Pair<>(ImmutableList.of(p2Binding1), ImmutableList.of(Either.right(p2Identifier1))));
+            variables.put("f2", new Pair<>(ImmutableList.of(f2Binding1), ImmutableList.of(Either.right(f2Identifier1))));
             variables.put("arguments", new Pair<>(NO_DECLARATIONS, NO_REFERENCES));
 
             Map<Either<BindingIdentifier, IdentifierExpression>, Accessibility> referenceTypes = new HashMap<>();
@@ -352,14 +352,14 @@ public class ScopeTest extends TestCase {
         }
         { // f2 scope
 
-            ImmutableList<Scope> children = ImmutableList.nil();
+            ImmutableList<Scope> children = ImmutableList.empty();
 
-            ImmutableList<String> through = ImmutableList.list("v1", "p2");
+            ImmutableList<String> through = ImmutableList.of("v1", "p2");
 
             // mapping of variable names from this scope object to the list of their declarations and their references
             Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<Either<BindingIdentifier, IdentifierExpression>>>> variables = new HashMap<>();
-            variables.put("p1", new Pair<>(ImmutableList.list(p1Binding2), ImmutableList.list(Either.right(p1Identifier1))));
-            variables.put("v2", new Pair<>(ImmutableList.list(v2Binding1), ImmutableList.list(Either.left(v2Binding1), Either.right(v2Identifier1))));
+            variables.put("p1", new Pair<>(ImmutableList.of(p1Binding2), ImmutableList.of(Either.right(p1Identifier1))));
+            variables.put("v2", new Pair<>(ImmutableList.of(v2Binding1), ImmutableList.of(Either.left(v2Binding1), Either.right(v2Identifier1))));
             variables.put("arguments", new Pair<>(NO_DECLARATIONS, NO_REFERENCES));
 
             Map<Either<BindingIdentifier, IdentifierExpression>, Accessibility> referenceTypes = new HashMap<>();
@@ -378,8 +378,8 @@ public class ScopeTest extends TestCase {
         Script script = parse(js);
 
         GlobalScope globalScope = ScopeAnalyzer.analyze(script);
-        Scope topLevelLexicalScope = globalScope.children.maybeHead().just();
-        Scope fScope = topLevelLexicalScope.children.maybeHead().just();
+        Scope topLevelLexicalScope = globalScope.children.maybeHead().fromJust();
+        Scope fScope = topLevelLexicalScope.children.maybeHead().fromJust();
 
         final BindingIdentifier fNode1 = bi(new Getter().d(ScriptStatements_(0)).d(FunctionDeclarationName_())
                 .apply(script));
@@ -394,13 +394,13 @@ public class ScopeTest extends TestCase {
 
         { // global scope
 
-            ImmutableList<Scope> children = ImmutableList.list(topLevelLexicalScope);
+            ImmutableList<Scope> children = ImmutableList.of(topLevelLexicalScope);
 
-            ImmutableList<String> through = ImmutableList.nil();
+            ImmutableList<String> through = ImmutableList.empty();
 
             // mapping of variable names from this scope object to the list of their declarations and their references
             Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<Either<BindingIdentifier, IdentifierExpression>>>> variables = new HashMap<>();
-            variables.put("f", new Pair<>(ImmutableList.list(fNode1), ImmutableList.list(fNode2E, fNode3E)));
+            variables.put("f", new Pair<>(ImmutableList.of(fNode1), ImmutableList.of(fNode2E, fNode3E)));
 
             Map<Either<BindingIdentifier, IdentifierExpression>, Accessibility> referenceTypes = new HashMap<>();
             referenceTypes.put(fNode2E, Accessibility.Write);
@@ -410,9 +410,9 @@ public class ScopeTest extends TestCase {
         }
         { // f scope
 
-            ImmutableList<Scope> children = ImmutableList.nil();
+            ImmutableList<Scope> children = ImmutableList.empty();
 
-            ImmutableList<String> through = ImmutableList.list("f");
+            ImmutableList<String> through = ImmutableList.of("f");
 
             // mapping of variable names from this scope object to the list of their declarations and their references
             Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<Either<BindingIdentifier, IdentifierExpression>>>> variables = new HashMap<>();
@@ -429,8 +429,8 @@ public class ScopeTest extends TestCase {
         String js = "var f = function() {f = 'hello';}; f();";
         Script script = parse(js);
         GlobalScope globalScope = ScopeAnalyzer.analyze(script);
-        Scope topLevelLexicalScope = globalScope.children.maybeHead().just();
-        Scope fScope = topLevelLexicalScope.children.maybeHead().just();
+        Scope topLevelLexicalScope = globalScope.children.maybeHead().fromJust();
+        Scope fScope = topLevelLexicalScope.children.maybeHead().fromJust();
         final BindingIdentifier fNode1 = bi(new Getter().d(ScriptStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorBinding_())
                 .apply(script));
         final BindingIdentifier fNode2 = bi(new Getter().d(ScriptStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorInit_()).d(FunctionExpressionBody_()).d(FunctionBodyStatements_(0)).d(ExpressionStatementExpression_()).d(AssignmentExpressionBinding_())
@@ -444,13 +444,13 @@ public class ScopeTest extends TestCase {
 
         { // global scope
 
-            ImmutableList<Scope> children = ImmutableList.list(topLevelLexicalScope);
+            ImmutableList<Scope> children = ImmutableList.of(topLevelLexicalScope);
 
-            ImmutableList<String> through = ImmutableList.nil();
+            ImmutableList<String> through = ImmutableList.empty();
 
             // mapping of variable names from this scope object to the list of their declarations and their references
             Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<Either<BindingIdentifier, IdentifierExpression>>>> variables = new HashMap<>();
-            variables.put("f", new Pair<>(ImmutableList.list(fNode1), ImmutableList.list(fNode1E, fNode2E, fNode3E)));
+            variables.put("f", new Pair<>(ImmutableList.of(fNode1), ImmutableList.of(fNode1E, fNode2E, fNode3E)));
 
             Map<Either<BindingIdentifier, IdentifierExpression>, Accessibility> referenceTypes = new HashMap<>();
             referenceTypes.put(fNode1E, Accessibility.Write);
@@ -461,9 +461,9 @@ public class ScopeTest extends TestCase {
         }
         { // f scope
 
-            ImmutableList<Scope> children = ImmutableList.nil();
+            ImmutableList<Scope> children = ImmutableList.empty();
 
-            ImmutableList<String> through = ImmutableList.list("f");
+            ImmutableList<String> through = ImmutableList.of("f");
 
             // mapping of variable names from this scope object to the list of their declarations and their references
             Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<Either<BindingIdentifier, IdentifierExpression>>>> variables = new HashMap<>();
@@ -480,9 +480,9 @@ public class ScopeTest extends TestCase {
         String js = "var f2 = function f1() {f1 = 'hello';}; f1(); f2();";
         Script script = parse(js);
         GlobalScope globalScope = ScopeAnalyzer.analyze(script);
-        Scope topLevelLexicalScope = globalScope.children.maybeHead().just();
-        Scope functionNameScope = topLevelLexicalScope.children.maybeHead().just();
-        Scope functionScope = functionNameScope.children.maybeHead().just();
+        Scope topLevelLexicalScope = globalScope.children.maybeHead().fromJust();
+        Scope functionNameScope = topLevelLexicalScope.children.maybeHead().fromJust();
+        Scope functionScope = functionNameScope.children.maybeHead().fromJust();
 
         final BindingIdentifier f1Node1 = bi(new Getter().d(ScriptStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorInit_()).d(FunctionExpressionName_())
                 .apply(script));
@@ -503,14 +503,14 @@ public class ScopeTest extends TestCase {
 
         { // global scope
 
-            ImmutableList<Scope> children = ImmutableList.list(topLevelLexicalScope);
+            ImmutableList<Scope> children = ImmutableList.of(topLevelLexicalScope);
 
-            ImmutableList<String> through = ImmutableList.list("f1");
+            ImmutableList<String> through = ImmutableList.of("f1");
 
             // mapping of variable names from this scope object to the list of their declarations and their references
             Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<Either<BindingIdentifier, IdentifierExpression>>>> variables = new HashMap<>();
-            variables.put("f2", new Pair<>(ImmutableList.list(f2Node1), ImmutableList.list(f2Node1E, f2Node2E)));
-            variables.put("f1", new Pair<>(NO_DECLARATIONS, ImmutableList.list(f1Node3E)));
+            variables.put("f2", new Pair<>(ImmutableList.of(f2Node1), ImmutableList.of(f2Node1E, f2Node2E)));
+            variables.put("f1", new Pair<>(NO_DECLARATIONS, ImmutableList.of(f1Node3E)));
 
             Map<Either<BindingIdentifier, IdentifierExpression>, Accessibility> referenceTypes = new HashMap<>();
             referenceTypes.put(f2Node1E, Accessibility.Write);
@@ -521,13 +521,13 @@ public class ScopeTest extends TestCase {
         }
         { // function name scope
 
-            ImmutableList<Scope> children = ImmutableList.list(functionScope);
+            ImmutableList<Scope> children = ImmutableList.of(functionScope);
 
-            ImmutableList<String> through = ImmutableList.nil();
+            ImmutableList<String> through = ImmutableList.empty();
 
             // mapping of variable names from this scope object to the list of their declarations and their references
             Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<Either<BindingIdentifier, IdentifierExpression>>>> variables = new HashMap<>();
-            variables.put("f1", new Pair<>(ImmutableList.list(f1Node1), ImmutableList.list(f1Node2E)));
+            variables.put("f1", new Pair<>(ImmutableList.of(f1Node1), ImmutableList.of(f1Node2E)));
 
             Map<Either<BindingIdentifier, IdentifierExpression>, Accessibility> referenceTypes = new HashMap<>();
             referenceTypes.put(f1Node2E, Accessibility.Write);
@@ -536,9 +536,9 @@ public class ScopeTest extends TestCase {
         }
         { // function scope
 
-            ImmutableList<Scope> children = ImmutableList.nil();
+            ImmutableList<Scope> children = ImmutableList.empty();
 
-            ImmutableList<String> through = ImmutableList.list("f1");
+            ImmutableList<String> through = ImmutableList.of("f1");
 
             // mapping of variable names from this scope object to the list of their declarations and their references
             Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<Either<BindingIdentifier, IdentifierExpression>>>> variables = new HashMap<>();
@@ -561,9 +561,9 @@ public class ScopeTest extends TestCase {
                 '}';
         Script script = parse(js);
         GlobalScope globalScope = ScopeAnalyzer.analyze(script);
-        Scope topLevelLexicalScope = globalScope.children.maybeHead().just();
-        Scope functionScope = topLevelLexicalScope.children.maybeHead().just();
-        Scope ifBlockScope = functionScope.children.maybeHead().just(); // did not exist in ES5
+        Scope topLevelLexicalScope = globalScope.children.maybeHead().fromJust();
+        Scope functionScope = topLevelLexicalScope.children.maybeHead().fromJust();
+        Scope ifBlockScope = functionScope.children.maybeHead().fromJust(); // did not exist in ES5
 
         final BindingIdentifier fooNode1 = bi(new Getter().d(ScriptStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorBinding_())
                 .apply(script));
@@ -587,15 +587,15 @@ public class ScopeTest extends TestCase {
 
         { // global scope
 
-            ImmutableList<Scope> children = ImmutableList.list(topLevelLexicalScope);
+            ImmutableList<Scope> children = ImmutableList.of(topLevelLexicalScope);
 
-            ImmutableList<String> through = ImmutableList.list("alert");
+            ImmutableList<String> through = ImmutableList.of("alert");
 
             // mapping of variable names from this scope object to the list of their declarations and their references
             Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<Either<BindingIdentifier, IdentifierExpression>>>> variables = new HashMap<>();
-            variables.put("foo", new Pair<>(ImmutableList.list(fooNode1), ImmutableList.list(fooNode1E)));
-            variables.put("bar", new Pair<>(ImmutableList.list(barNode1), NO_REFERENCES));
-            variables.put("alert", new Pair<>(NO_DECLARATIONS, ImmutableList.list(alertNode1E)));
+            variables.put("foo", new Pair<>(ImmutableList.of(fooNode1), ImmutableList.of(fooNode1E)));
+            variables.put("bar", new Pair<>(ImmutableList.of(barNode1), NO_REFERENCES));
+            variables.put("alert", new Pair<>(NO_DECLARATIONS, ImmutableList.of(alertNode1E)));
 
             Map<Either<BindingIdentifier, IdentifierExpression>, Accessibility> referenceTypes = new HashMap<>();
             referenceTypes.put(fooNode1E, Accessibility.Write);
@@ -605,13 +605,13 @@ public class ScopeTest extends TestCase {
         }
         { // function scope
 
-            ImmutableList<Scope> children = ImmutableList.list(ifBlockScope);
+            ImmutableList<Scope> children = ImmutableList.of(ifBlockScope);
 
-            ImmutableList<String> through = ImmutableList.list("alert");
+            ImmutableList<String> through = ImmutableList.of("alert");
 
             // mapping of variable names from this scope object to the list of their declarations and their references
             Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<Either<BindingIdentifier, IdentifierExpression>>>> variables = new HashMap<>();
-            variables.put("foo", new Pair<>(ImmutableList.list(fooNode3), ImmutableList.list(fooNode2E, fooNode3E, fooNode4E)));
+            variables.put("foo", new Pair<>(ImmutableList.of(fooNode3), ImmutableList.of(fooNode2E, fooNode3E, fooNode4E)));
             variables.put("arguments", new Pair<>(NO_DECLARATIONS, NO_REFERENCES));
 
             Map<Either<BindingIdentifier, IdentifierExpression>, Accessibility> referenceTypes = new HashMap<>();
@@ -635,9 +635,9 @@ public class ScopeTest extends TestCase {
                 "alert(a);";
         Script script = parse(js);
         GlobalScope globalScope = ScopeAnalyzer.analyze(script);
-        Scope topLevelLexicalScope = globalScope.children.maybeHead().just();
-        Scope bScope = topLevelLexicalScope.children.maybeHead().just();
-        Scope aScope = bScope.children.maybeHead().just();
+        Scope topLevelLexicalScope = globalScope.children.maybeHead().fromJust();
+        Scope bScope = topLevelLexicalScope.children.maybeHead().fromJust();
+        Scope aScope = bScope.children.maybeHead().fromJust();
 
         final BindingIdentifier aNode1 = bi(new Getter().d(ScriptStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorBinding_())
                 .apply(script));
@@ -664,15 +664,15 @@ public class ScopeTest extends TestCase {
 
         { // global scope
 
-            ImmutableList<Scope> children = ImmutableList.list(topLevelLexicalScope);
+            ImmutableList<Scope> children = ImmutableList.of(topLevelLexicalScope);
 
-            ImmutableList<String> through = ImmutableList.list("alert");
+            ImmutableList<String> through = ImmutableList.of("alert");
 
             // mapping of variable names from this scope object to the list of their declarations and their references
             Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<Either<BindingIdentifier, IdentifierExpression>>>> variables = new HashMap<>();
-            variables.put("a", new Pair<>(ImmutableList.list(aNode1), ImmutableList.list(aNode1E, aNode4E)));
-            variables.put("b", new Pair<>(ImmutableList.list(bNode1), ImmutableList.list(bNode2E)));
-            variables.put("alert", new Pair<>(NO_DECLARATIONS, ImmutableList.list(alertNode1E)));
+            variables.put("a", new Pair<>(ImmutableList.of(aNode1), ImmutableList.of(aNode1E, aNode4E)));
+            variables.put("b", new Pair<>(ImmutableList.of(bNode1), ImmutableList.of(bNode2E)));
+            variables.put("alert", new Pair<>(NO_DECLARATIONS, ImmutableList.of(alertNode1E)));
 
             Map<Either<BindingIdentifier, IdentifierExpression>, Accessibility> referenceTypes = new HashMap<>();
             referenceTypes.put(aNode1E, Accessibility.Write);
@@ -684,13 +684,13 @@ public class ScopeTest extends TestCase {
         }
         { // b scope
 
-            ImmutableList<Scope> children = ImmutableList.list(aScope);
+            ImmutableList<Scope> children = ImmutableList.of(aScope);
 
-            ImmutableList<String> through = ImmutableList.nil();
+            ImmutableList<String> through = ImmutableList.empty();
 
             // mapping of variable names from this scope object to the list of their declarations and their references
             Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<Either<BindingIdentifier, IdentifierExpression>>>> variables = new HashMap<>();
-            variables.put("a", new Pair<>(ImmutableList.list(aNode3), ImmutableList.list(aNode2E)));
+            variables.put("a", new Pair<>(ImmutableList.of(aNode3), ImmutableList.of(aNode2E)));
             variables.put("arguments", new Pair<>(NO_DECLARATIONS, NO_REFERENCES));
 
             Map<Either<BindingIdentifier, IdentifierExpression>, Accessibility> referenceTypes = new HashMap<>();
@@ -700,9 +700,9 @@ public class ScopeTest extends TestCase {
         }
         { // a scope
 
-            ImmutableList<Scope> children = ImmutableList.nil();
+            ImmutableList<Scope> children = ImmutableList.empty();
 
-            ImmutableList<String> through = ImmutableList.nil();
+            ImmutableList<String> through = ImmutableList.empty();
 
             // mapping of variable names from this scope object to the list of their declarations and their references
             Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<Either<BindingIdentifier, IdentifierExpression>>>> variables = new HashMap<>();
@@ -727,10 +727,10 @@ public class ScopeTest extends TestCase {
                 '}';
         Script script = parse(js);
         GlobalScope globalScope = ScopeAnalyzer.analyze(script);
-        Scope topLevelLexicalScope = globalScope.children.maybeHead().just();
-        Scope fooScope = topLevelLexicalScope.children.maybeHead().just();
-        Scope barScope1 = fooScope.children.maybeHead().just();
-        Scope barScope2 = fooScope.children.maybeTail().just().maybeHead().just();
+        Scope topLevelLexicalScope = globalScope.children.maybeHead().fromJust();
+        Scope fooScope = topLevelLexicalScope.children.maybeHead().fromJust();
+        Scope barScope1 = fooScope.children.maybeHead().fromJust();
+        Scope barScope2 = fooScope.children.maybeTail().fromJust().maybeHead().fromJust();
 
         final BindingIdentifier fooNode1 = bi(new Getter().d(ScriptStatements_(0)).d(FunctionDeclarationName_())
                 .apply(script));
@@ -748,13 +748,13 @@ public class ScopeTest extends TestCase {
 
         { // global scope
 
-            ImmutableList<Scope> children = ImmutableList.list(topLevelLexicalScope);
+            ImmutableList<Scope> children = ImmutableList.of(topLevelLexicalScope);
 
-            ImmutableList<String> through = ImmutableList.nil();
+            ImmutableList<String> through = ImmutableList.empty();
 
             // mapping of variable names from this scope object to the list of their declarations and their references
             Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<Either<BindingIdentifier, IdentifierExpression>>>> variables = new HashMap<>();
-            variables.put("foo", new Pair<>(ImmutableList.list(fooNode1), NO_REFERENCES));
+            variables.put("foo", new Pair<>(ImmutableList.of(fooNode1), NO_REFERENCES));
 
             Map<Either<BindingIdentifier, IdentifierExpression>, Accessibility> referenceTypes = new HashMap<>();
 
@@ -762,13 +762,13 @@ public class ScopeTest extends TestCase {
         }
         { // foo scope
 
-            ImmutableList<Scope> children = ImmutableList.list(barScope1, barScope2);
+            ImmutableList<Scope> children = ImmutableList.of(barScope1, barScope2);
 
-            ImmutableList<String> through = ImmutableList.nil();
+            ImmutableList<String> through = ImmutableList.empty();
 
             // mapping of variable names from this scope object to the list of their declarations and their references
             Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<Either<BindingIdentifier, IdentifierExpression>>>> variables = new HashMap<>();
-            variables.put("bar", new Pair<>(ImmutableList.list(barNode1, barNode3), ImmutableList.list(barNode2E)));
+            variables.put("bar", new Pair<>(ImmutableList.of(barNode1, barNode3), ImmutableList.of(barNode2E)));
             variables.put("arguments", new Pair<>(NO_DECLARATIONS, NO_REFERENCES));
 
             Map<Either<BindingIdentifier, IdentifierExpression>, Accessibility> referenceTypes = new HashMap<>();
@@ -778,9 +778,9 @@ public class ScopeTest extends TestCase {
         }
         { // bar1 scope
 
-            ImmutableList<Scope> children = ImmutableList.nil();
+            ImmutableList<Scope> children = ImmutableList.empty();
 
-            ImmutableList<String> through = ImmutableList.nil();
+            ImmutableList<String> through = ImmutableList.empty();
 
             // mapping of variable names from this scope object to the list of their declarations and their references
             Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<Either<BindingIdentifier, IdentifierExpression>>>> variables = new HashMap<>();
@@ -792,9 +792,9 @@ public class ScopeTest extends TestCase {
         }
         { // bar2 scope
 
-            ImmutableList<Scope> children = ImmutableList.nil();
+            ImmutableList<Scope> children = ImmutableList.empty();
 
-            ImmutableList<String> through = ImmutableList.nil();
+            ImmutableList<String> through = ImmutableList.empty();
 
             // mapping of variable names from this scope object to the list of their declarations and their references
             Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<Either<BindingIdentifier, IdentifierExpression>>>> variables = new HashMap<>();
@@ -811,8 +811,8 @@ public class ScopeTest extends TestCase {
         String js = "foo(); function foo() {}";
         Script script = parse(js);
         GlobalScope globalScope = ScopeAnalyzer.analyze(script);
-        Scope topLevelLexicalScope = globalScope.children.maybeHead().just();
-        Scope fooScope = topLevelLexicalScope.children.maybeHead().just();
+        Scope topLevelLexicalScope = globalScope.children.maybeHead().fromJust();
+        Scope fooScope = topLevelLexicalScope.children.maybeHead().fromJust();
         final IdentifierExpression fooNode1 = ie(new Getter().d(ScriptStatements_(0)).d(ExpressionStatementExpression_()).d(CallExpressionCallee_())
                 .apply(script));
         final BindingIdentifier fooNode2 = bi(new Getter().d(ScriptStatements_(1)).d(FunctionDeclarationName_())
@@ -823,13 +823,13 @@ public class ScopeTest extends TestCase {
 
         { // global scope
 
-            ImmutableList<Scope> children = ImmutableList.list(topLevelLexicalScope);
+            ImmutableList<Scope> children = ImmutableList.of(topLevelLexicalScope);
 
-            ImmutableList<String> through = ImmutableList.nil();
+            ImmutableList<String> through = ImmutableList.empty();
 
             // mapping of variable names from this scope object to the list of their declarations and their references
             Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<Either<BindingIdentifier, IdentifierExpression>>>> variables = new HashMap<>();
-            variables.put("foo", new Pair<>(ImmutableList.list(fooNode2), ImmutableList.list(fooNode1E)));
+            variables.put("foo", new Pair<>(ImmutableList.of(fooNode2), ImmutableList.of(fooNode1E)));
 
             Map<Either<BindingIdentifier, IdentifierExpression>, Accessibility> referenceTypes = new HashMap<>();
             referenceTypes.put(fooNode1E, Accessibility.Read);
@@ -838,9 +838,9 @@ public class ScopeTest extends TestCase {
         }
         { // foo scope
 
-            ImmutableList<Scope> children = ImmutableList.nil();
+            ImmutableList<Scope> children = ImmutableList.empty();
 
-            ImmutableList<String> through = ImmutableList.nil();
+            ImmutableList<String> through = ImmutableList.empty();
 
             // mapping of variable names from this scope object to the list of their declarations and their references
             Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<Either<BindingIdentifier, IdentifierExpression>>>> variables = new HashMap<>();
@@ -865,10 +865,10 @@ public class ScopeTest extends TestCase {
                 '}';
         Script script = parse(js);
         GlobalScope globalScope = ScopeAnalyzer.analyze(script);
-        Scope topLevelLexicalScope = globalScope.children.maybeHead().just();
-        Scope fooScope = topLevelLexicalScope.children.maybeHead().just();
-        Scope barScope1 = fooScope.children.maybeHead().just();
-        Scope barScope2 = fooScope.children.maybeTail().just().maybeHead().just();
+        Scope topLevelLexicalScope = globalScope.children.maybeHead().fromJust();
+        Scope fooScope = topLevelLexicalScope.children.maybeHead().fromJust();
+        Scope barScope1 = fooScope.children.maybeHead().fromJust();
+        Scope barScope2 = fooScope.children.maybeTail().fromJust().maybeHead().fromJust();
 
         final BindingIdentifier fooNode1 = bi(new Getter().d(ScriptStatements_(0)).d(FunctionDeclarationName_())
                 .apply(script));
@@ -886,13 +886,13 @@ public class ScopeTest extends TestCase {
 
         { // global scope
 
-            ImmutableList<Scope> children = ImmutableList.list(topLevelLexicalScope);
+            ImmutableList<Scope> children = ImmutableList.of(topLevelLexicalScope);
 
-            ImmutableList<String> through = ImmutableList.nil();
+            ImmutableList<String> through = ImmutableList.empty();
 
             // mapping of variable names from this scope object to the list of their declarations and their references
             Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<Either<BindingIdentifier, IdentifierExpression>>>> variables = new HashMap<>();
-            variables.put("foo", new Pair<>(ImmutableList.list(fooNode1), NO_REFERENCES));
+            variables.put("foo", new Pair<>(ImmutableList.of(fooNode1), NO_REFERENCES));
 
             Map<Either<BindingIdentifier, IdentifierExpression>, Accessibility> referenceTypes = new HashMap<>();
 
@@ -900,14 +900,14 @@ public class ScopeTest extends TestCase {
         }
         { // foo scope
 
-            ImmutableList<Scope> children = ImmutableList.list(barScope1, barScope2);
+            ImmutableList<Scope> children = ImmutableList.of(barScope1, barScope2);
 
-            ImmutableList<String> through = ImmutableList.nil();
+            ImmutableList<String> through = ImmutableList.empty();
 
             // mapping of variable names from this scope object to the list of their declarations and their references
             Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<Either<BindingIdentifier, IdentifierExpression>>>> variables = new HashMap<>();
             variables.put("bar", new Pair<>(
-                    ImmutableList.list(barNode2, barNode3), ImmutableList.list(
+                    ImmutableList.of(barNode2, barNode3), ImmutableList.of(
                     barNode1E,
                     barNode2E,
                     barNode3E)));
@@ -922,9 +922,9 @@ public class ScopeTest extends TestCase {
         }
         { // bar scope 1
 
-            ImmutableList<Scope> children = ImmutableList.nil();
+            ImmutableList<Scope> children = ImmutableList.empty();
 
-            ImmutableList<String> through = ImmutableList.nil();
+            ImmutableList<String> through = ImmutableList.empty();
 
             // mapping of variable names from this scope object to the list of their declarations and their references
             Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<Either<BindingIdentifier, IdentifierExpression>>>> variables = new HashMap<>();
@@ -936,9 +936,9 @@ public class ScopeTest extends TestCase {
         }
         { // bar scope 2
 
-            ImmutableList<Scope> children = ImmutableList.nil();
+            ImmutableList<Scope> children = ImmutableList.empty();
 
-            ImmutableList<String> through = ImmutableList.nil();
+            ImmutableList<String> through = ImmutableList.empty();
 
             // mapping of variable names from this scope object to the list of their declarations and their references
             Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<Either<BindingIdentifier, IdentifierExpression>>>> variables = new HashMap<>();
@@ -955,8 +955,8 @@ public class ScopeTest extends TestCase {
         String js = "(function() {f1 = 'hello'; alert(f1);})();";
         Script script = parse(js);
         GlobalScope globalScope = ScopeAnalyzer.analyze(script);
-        Scope topLevelLexicalScope = globalScope.children.maybeHead().just();
-        Scope functionScope = topLevelLexicalScope.children.maybeHead().just();
+        Scope topLevelLexicalScope = globalScope.children.maybeHead().fromJust();
+        Scope functionScope = topLevelLexicalScope.children.maybeHead().fromJust();
 
         final BindingIdentifier f1Node1 = bi(new Getter().d(ScriptStatements_(0)).d(ExpressionStatementExpression_()).d(CallExpressionCallee_()).d(FunctionExpressionBody_()).d(FunctionBodyStatements_(0)).d(ExpressionStatementExpression_()).d(AssignmentExpressionBinding_())
                 .apply(script));
@@ -971,14 +971,14 @@ public class ScopeTest extends TestCase {
 
         { // global scope
 
-            ImmutableList<Scope> children = ImmutableList.list(topLevelLexicalScope);
+            ImmutableList<Scope> children = ImmutableList.of(topLevelLexicalScope);
 
-            ImmutableList<String> through = ImmutableList.list("f1", "alert");
+            ImmutableList<String> through = ImmutableList.of("f1", "alert");
 
             // mapping of variable names from this scope object to the list of their declarations and their references
             Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<Either<BindingIdentifier, IdentifierExpression>>>> variables = new HashMap<>();
-            variables.put("f1", new Pair<>(NO_DECLARATIONS, ImmutableList.list(f1Node1E, f1Node2E)));
-            variables.put("alert", new Pair<>(NO_DECLARATIONS, ImmutableList.list(alertNode1E)));
+            variables.put("f1", new Pair<>(NO_DECLARATIONS, ImmutableList.of(f1Node1E, f1Node2E)));
+            variables.put("alert", new Pair<>(NO_DECLARATIONS, ImmutableList.of(alertNode1E)));
 
             Map<Either<BindingIdentifier, IdentifierExpression>, Accessibility> referenceTypes = new HashMap<>();
             referenceTypes.put(f1Node1E, Accessibility.Write);
@@ -989,9 +989,9 @@ public class ScopeTest extends TestCase {
         }
         { // function scope
 
-            ImmutableList<Scope> children = ImmutableList.nil();
+            ImmutableList<Scope> children = ImmutableList.empty();
 
-            ImmutableList<String> through = ImmutableList.list("f1", "alert");
+            ImmutableList<String> through = ImmutableList.of("f1", "alert");
 
             // mapping of variable names from this scope object to the list of their declarations and their references
             Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<Either<BindingIdentifier, IdentifierExpression>>>> variables = new HashMap<>();
@@ -1008,8 +1008,8 @@ public class ScopeTest extends TestCase {
         String js = "(function() {var f1 = 'hello'; alert(f1);})();";
         Script script = parse(js);
         GlobalScope globalScope = ScopeAnalyzer.analyze(script);
-        Scope topLevelLexicalScope = globalScope.children.maybeHead().just();
-        Scope functionScope = topLevelLexicalScope.children.maybeHead().just();
+        Scope topLevelLexicalScope = globalScope.children.maybeHead().fromJust();
+        Scope functionScope = topLevelLexicalScope.children.maybeHead().fromJust();
 
         final BindingIdentifier f1Node1 = bi(new Getter().d(ScriptStatements_(0)).d(ExpressionStatementExpression_()).d(CallExpressionCallee_()).d(FunctionExpressionBody_()).d(FunctionBodyStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorBinding_())
                 .apply(script));
@@ -1024,13 +1024,13 @@ public class ScopeTest extends TestCase {
 
         { // global scope
 
-            ImmutableList<Scope> children = ImmutableList.list(topLevelLexicalScope);
+            ImmutableList<Scope> children = ImmutableList.of(topLevelLexicalScope);
 
-            ImmutableList<String> through = ImmutableList.list("alert");
+            ImmutableList<String> through = ImmutableList.of("alert");
 
             // mapping of variable names from this scope object to the list of their declarations and their references
             Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<Either<BindingIdentifier, IdentifierExpression>>>> variables = new HashMap<>();
-            variables.put("alert", new Pair<>(NO_DECLARATIONS, ImmutableList.list(alertNode1E)));
+            variables.put("alert", new Pair<>(NO_DECLARATIONS, ImmutableList.of(alertNode1E)));
 
             Map<Either<BindingIdentifier, IdentifierExpression>, Accessibility> referenceTypes = new HashMap<>();
             referenceTypes.put(alertNode1E, Accessibility.Read);
@@ -1039,13 +1039,13 @@ public class ScopeTest extends TestCase {
         }
         { // function scope
 
-            ImmutableList<Scope> children = ImmutableList.nil();
+            ImmutableList<Scope> children = ImmutableList.empty();
 
-            ImmutableList<String> through = ImmutableList.list("alert");
+            ImmutableList<String> through = ImmutableList.of("alert");
 
             // mapping of variable names from this scope object to the list of their declarations and their references
             Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<Either<BindingIdentifier, IdentifierExpression>>>> variables = new HashMap<>();
-            variables.put("f1", new Pair<>(ImmutableList.list(f1Node1), ImmutableList.list(f1Node1E, f1Node2E)));
+            variables.put("f1", new Pair<>(ImmutableList.of(f1Node1), ImmutableList.of(f1Node1E, f1Node2E)));
             variables.put("arguments", new Pair<>(NO_DECLARATIONS, NO_REFERENCES));
 
             Map<Either<BindingIdentifier, IdentifierExpression>, Accessibility> referenceTypes = new HashMap<>();
@@ -1061,8 +1061,8 @@ public class ScopeTest extends TestCase {
         String js = "function f(arg1, arg2) {var v1 = arg1 + arg2 + ' world';}";
         Script script = parse(js);
         GlobalScope globalScope = ScopeAnalyzer.analyze(script);
-        Scope topLevelLexicalScope = globalScope.children.maybeHead().just();
-        Scope fScope = topLevelLexicalScope.children.maybeHead().just();
+        Scope topLevelLexicalScope = globalScope.children.maybeHead().fromJust();
+        Scope fScope = topLevelLexicalScope.children.maybeHead().fromJust();
 
         final BindingIdentifier fNode1 = bi(new Getter().d(ScriptStatements_(0)).d(FunctionDeclarationName_())
                 .apply(script));
@@ -1087,13 +1087,13 @@ public class ScopeTest extends TestCase {
 
         { // global scope
 
-            ImmutableList<Scope> children = ImmutableList.list(topLevelLexicalScope);
+            ImmutableList<Scope> children = ImmutableList.of(topLevelLexicalScope);
 
-            ImmutableList<String> through = ImmutableList.nil();
+            ImmutableList<String> through = ImmutableList.empty();
 
             // mapping of variable names from this scope object to the list of their declarations and their references
             Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<Either<BindingIdentifier, IdentifierExpression>>>> variables = new HashMap<>();
-            variables.put("f", new Pair<>(ImmutableList.list(fNode1), NO_REFERENCES));
+            variables.put("f", new Pair<>(ImmutableList.of(fNode1), NO_REFERENCES));
 
             Map<Either<BindingIdentifier, IdentifierExpression>, Accessibility> referenceTypes = new HashMap<>();
 
@@ -1101,15 +1101,15 @@ public class ScopeTest extends TestCase {
         }
         { // function scope
 
-            ImmutableList<Scope> children = ImmutableList.nil();
+            ImmutableList<Scope> children = ImmutableList.empty();
 
-            ImmutableList<String> through = ImmutableList.nil();
+            ImmutableList<String> through = ImmutableList.empty();
 
             // mapping of variable names from this scope object to the list of their declarations and their references
             Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<Either<BindingIdentifier, IdentifierExpression>>>> variables = new HashMap<>();
-            variables.put("arg1", new Pair<>(ImmutableList.list(arg1Node1), ImmutableList.list(arg1Node2E)));
-            variables.put("arg2", new Pair<>(ImmutableList.list(arg2Node1), ImmutableList.list(arg2Node2E)));
-            variables.put("v1", new Pair<>(ImmutableList.list(v1Node1), ImmutableList.list(v1Node1E)));
+            variables.put("arg1", new Pair<>(ImmutableList.of(arg1Node1), ImmutableList.of(arg1Node2E)));
+            variables.put("arg2", new Pair<>(ImmutableList.of(arg2Node1), ImmutableList.of(arg2Node2E)));
+            variables.put("v1", new Pair<>(ImmutableList.of(v1Node1), ImmutableList.of(v1Node1E)));
             variables.put("arguments", new Pair<>(NO_DECLARATIONS, NO_REFERENCES));
 
             Map<Either<BindingIdentifier, IdentifierExpression>, Accessibility> referenceTypes = new HashMap<>();
@@ -1126,8 +1126,8 @@ public class ScopeTest extends TestCase {
         String js = "function f() {var v1 = arguments[0] + ' world';}";
         Script script = parse(js);
         GlobalScope globalScope = ScopeAnalyzer.analyze(script);
-        Scope topLevelLexicalScope = globalScope.children.maybeHead().just();
-        Scope fScope = topLevelLexicalScope.children.maybeHead().just();
+        Scope topLevelLexicalScope = globalScope.children.maybeHead().fromJust();
+        Scope fScope = topLevelLexicalScope.children.maybeHead().fromJust();
 
         final BindingIdentifier fNode1 = bi(new Getter().d(ScriptStatements_(0)).d(FunctionDeclarationName_())
                 .apply(script));
@@ -1142,13 +1142,13 @@ public class ScopeTest extends TestCase {
 
         { // global scope
 
-            ImmutableList<Scope> children = ImmutableList.list(topLevelLexicalScope);
+            ImmutableList<Scope> children = ImmutableList.of(topLevelLexicalScope);
 
-            ImmutableList<String> through = ImmutableList.nil();
+            ImmutableList<String> through = ImmutableList.empty();
 
             // mapping of variable names from this scope object to the list of their declarations and their references
             Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<Either<BindingIdentifier, IdentifierExpression>>>> variables = new HashMap<>();
-            variables.put("f", new Pair<>(ImmutableList.list(fNode1), NO_REFERENCES));
+            variables.put("f", new Pair<>(ImmutableList.of(fNode1), NO_REFERENCES));
 
             Map<Either<BindingIdentifier, IdentifierExpression>, Accessibility> referenceTypes = new HashMap<>();
 
@@ -1156,14 +1156,14 @@ public class ScopeTest extends TestCase {
         }
         { // function scope
 
-            ImmutableList<Scope> children = ImmutableList.nil();
+            ImmutableList<Scope> children = ImmutableList.empty();
 
-            ImmutableList<String> through = ImmutableList.nil();
+            ImmutableList<String> through = ImmutableList.empty();
 
             // mapping of variable names from this scope object to the list of their declarations and their references
             Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<Either<BindingIdentifier, IdentifierExpression>>>> variables = new HashMap<>();
-            variables.put("v1", new Pair<>(ImmutableList.list(v1Node1), ImmutableList.list(v1Node1E)));
-            variables.put("arguments", new Pair<>(NO_DECLARATIONS, ImmutableList.list(argumentsNode1E)));
+            variables.put("v1", new Pair<>(ImmutableList.of(v1Node1), ImmutableList.of(v1Node1E)));
+            variables.put("arguments", new Pair<>(NO_DECLARATIONS, ImmutableList.of(argumentsNode1E)));
 
             Map<Either<BindingIdentifier, IdentifierExpression>, Accessibility> referenceTypes = new HashMap<>();
             referenceTypes.put(v1Node1E, Accessibility.Write);
@@ -1178,9 +1178,9 @@ public class ScopeTest extends TestCase {
         String js = "with (Math) {" + "  var x = cos(3 * PI);" + "  alert(x);" + '}';
         Script script = parse(js);
         GlobalScope globalScope = ScopeAnalyzer.analyze(script);
-        Scope topLevelLexicalScope = globalScope.children.maybeHead().just();
-        Scope withScope = topLevelLexicalScope.children.maybeHead().just();
-        Scope withBlockScope = withScope.children.maybeHead().just(); // did not exist in ES5
+        Scope topLevelLexicalScope = globalScope.children.maybeHead().fromJust();
+        Scope withScope = topLevelLexicalScope.children.maybeHead().fromJust();
+        Scope withBlockScope = withScope.children.maybeHead().fromJust(); // did not exist in ES5
 
         final IdentifierExpression mathNode1 = ie(new Getter().d(ScriptStatements_(0)).d(WithStatementObject_())
                 .apply(script));
@@ -1204,17 +1204,17 @@ public class ScopeTest extends TestCase {
 
         { // global scope
 
-            ImmutableList<Scope> children = ImmutableList.list(topLevelLexicalScope);
+            ImmutableList<Scope> children = ImmutableList.of(topLevelLexicalScope);
 
-            ImmutableList<String> through = ImmutableList.list("Math", "cos", "PI", "alert");
+            ImmutableList<String> through = ImmutableList.of("Math", "cos", "PI", "alert");
 
             // mapping of variable names from this scope object to the list of their declarations and their references
             Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<Either<BindingIdentifier, IdentifierExpression>>>> variables = new HashMap<>();
-            variables.put("Math", new Pair<>(NO_DECLARATIONS, ImmutableList.list(mathNode1E)));
-            variables.put("cos", new Pair<>(NO_DECLARATIONS, ImmutableList.list(cosNode1E)));
-            variables.put("PI", new Pair<>(NO_DECLARATIONS, ImmutableList.list(piNode1E)));
-            variables.put("alert", new Pair<>(NO_DECLARATIONS, ImmutableList.list(alertNode1E)));
-            variables.put("x", new Pair<>(ImmutableList.list(xNode1), ImmutableList.list(xNode1E, xNode2E)));
+            variables.put("Math", new Pair<>(NO_DECLARATIONS, ImmutableList.of(mathNode1E)));
+            variables.put("cos", new Pair<>(NO_DECLARATIONS, ImmutableList.of(cosNode1E)));
+            variables.put("PI", new Pair<>(NO_DECLARATIONS, ImmutableList.of(piNode1E)));
+            variables.put("alert", new Pair<>(NO_DECLARATIONS, ImmutableList.of(alertNode1E)));
+            variables.put("x", new Pair<>(ImmutableList.of(xNode1), ImmutableList.of(xNode1E, xNode2E)));
 
             Map<Either<BindingIdentifier, IdentifierExpression>, Accessibility> referenceTypes = new HashMap<>();
             referenceTypes.put(mathNode1E, Accessibility.Read);
@@ -1228,9 +1228,9 @@ public class ScopeTest extends TestCase {
         }
         { // with scope
 
-            ImmutableList<Scope> children = ImmutableList.list(withBlockScope);
+            ImmutableList<Scope> children = ImmutableList.of(withBlockScope);
 
-            ImmutableList<String> through = ImmutableList.list("x", "cos", "PI", "alert");
+            ImmutableList<String> through = ImmutableList.of("x", "cos", "PI", "alert");
 
             // mapping of variable names from this scope object to the list of their declarations and their references
             Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<Either<BindingIdentifier, IdentifierExpression>>>> variables = new HashMap<>();
@@ -1257,9 +1257,9 @@ public class ScopeTest extends TestCase {
                 '}';
         Script script = parse(js);
         GlobalScope globalScope = ScopeAnalyzer.analyze(script);
-        Scope topLevelLexicalScope = globalScope.children.maybeHead().just();
-        Scope withScope = topLevelLexicalScope.children.maybeHead().just();
-        Scope withBlockScope = withScope.children.maybeHead().just(); // did not exist in ES5
+        Scope topLevelLexicalScope = globalScope.children.maybeHead().fromJust();
+        Scope withScope = topLevelLexicalScope.children.maybeHead().fromJust();
+        Scope withBlockScope = withScope.children.maybeHead().fromJust(); // did not exist in ES5
 
         final BindingIdentifier oNode1 = bi(new Getter().d(ScriptStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorBinding_())
                 .apply(script));
@@ -1284,16 +1284,16 @@ public class ScopeTest extends TestCase {
 
         { // global scope
 
-            ImmutableList<Scope> children = ImmutableList.list(topLevelLexicalScope);
+            ImmutableList<Scope> children = ImmutableList.of(topLevelLexicalScope);
 
-            ImmutableList<String> through = ImmutableList.list("alert", "fld1", "fld2");
+            ImmutableList<String> through = ImmutableList.of("alert", "fld1", "fld2");
 
             // mapping of variable names from this scope object to the list of their declarations and their references
             Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<Either<BindingIdentifier, IdentifierExpression>>>> variables = new HashMap<>();
-            variables.put("alert", new Pair<>(NO_DECLARATIONS, ImmutableList.list(alertNode1E, alertNode2E)));
-            variables.put("fld1", new Pair<>(NO_DECLARATIONS, ImmutableList.list(fld1Node1E)));
-            variables.put("fld2", new Pair<>(NO_DECLARATIONS, ImmutableList.list(fld2Node1E)));
-            variables.put("o", new Pair<>(ImmutableList.list(oNode1), ImmutableList.list(oNode1E, oNode2E)));
+            variables.put("alert", new Pair<>(NO_DECLARATIONS, ImmutableList.of(alertNode1E, alertNode2E)));
+            variables.put("fld1", new Pair<>(NO_DECLARATIONS, ImmutableList.of(fld1Node1E)));
+            variables.put("fld2", new Pair<>(NO_DECLARATIONS, ImmutableList.of(fld2Node1E)));
+            variables.put("o", new Pair<>(ImmutableList.of(oNode1), ImmutableList.of(oNode1E, oNode2E)));
 
             Map<Either<BindingIdentifier, IdentifierExpression>, Accessibility> referenceTypes = new HashMap<>();
             referenceTypes.put(alertNode1E, Accessibility.Read);
@@ -1307,9 +1307,9 @@ public class ScopeTest extends TestCase {
         }
         { // with scope
 
-            ImmutableList<Scope> children = ImmutableList.list(withBlockScope);
+            ImmutableList<Scope> children = ImmutableList.of(withBlockScope);
 
-            ImmutableList<String> through = ImmutableList.list("alert", "fld1", "fld2");
+            ImmutableList<String> through = ImmutableList.of("alert", "fld1", "fld2");
 
             // mapping of variable names from this scope object to the list of their declarations and their references
             Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<Either<BindingIdentifier, IdentifierExpression>>>> variables = new HashMap<>();
@@ -1325,10 +1325,10 @@ public class ScopeTest extends TestCase {
         String js = "try {" + "  alert('Welcome guest!');" + "} catch(err) {" + "  alert(err);" + '}';
         Script script = parse(js);
         GlobalScope globalScope = ScopeAnalyzer.analyze(script);
-        Scope topLevelLexicalScope = globalScope.children.maybeHead().just();
-        Scope tryBlockScope = topLevelLexicalScope.children.maybeHead().just(); // did not exist in ES5
-        Scope catchScope = topLevelLexicalScope.children.index(1).just();
-        Scope catchBlockScope = catchScope.children.maybeHead().just(); // did not exist in ES5
+        Scope topLevelLexicalScope = globalScope.children.maybeHead().fromJust();
+        Scope tryBlockScope = topLevelLexicalScope.children.maybeHead().fromJust(); // did not exist in ES5
+        Scope catchScope = topLevelLexicalScope.children.index(1).fromJust();
+        Scope catchBlockScope = catchScope.children.maybeHead().fromJust(); // did not exist in ES5
 
         final IdentifierExpression alertNode1 = ie(new Getter().d(ScriptStatements_(0)).d(TryCatchStatementBody_()).d(BlockStatements_(0)).d(ExpressionStatementExpression_()).d(CallExpressionCallee_())
                 .apply(script));
@@ -1346,13 +1346,13 @@ public class ScopeTest extends TestCase {
 
         { // global scope
 
-            ImmutableList<Scope> children = ImmutableList.list(topLevelLexicalScope);
+            ImmutableList<Scope> children = ImmutableList.of(topLevelLexicalScope);
 
-            ImmutableList<String> through = ImmutableList.list("alert");
+            ImmutableList<String> through = ImmutableList.of("alert");
 
             // mapping of variable names from this scope object to the list of their declarations and their references
             Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<Either<BindingIdentifier, IdentifierExpression>>>> variables = new HashMap<>();
-            variables.put("alert", new Pair<>(NO_DECLARATIONS, ImmutableList.list(alertNode1E, alertNode2E)));
+            variables.put("alert", new Pair<>(NO_DECLARATIONS, ImmutableList.of(alertNode1E, alertNode2E)));
 
             Map<Either<BindingIdentifier, IdentifierExpression>, Accessibility> referenceTypes = new HashMap<>();
             referenceTypes.put(alertNode1E, Accessibility.Read);
@@ -1362,13 +1362,13 @@ public class ScopeTest extends TestCase {
         }
         { // catch scope
 
-            ImmutableList<Scope> children = ImmutableList.list(catchBlockScope);
+            ImmutableList<Scope> children = ImmutableList.of(catchBlockScope);
 
-            ImmutableList<String> through = ImmutableList.list("alert");
+            ImmutableList<String> through = ImmutableList.of("alert");
 
             // mapping of variable names from this scope object to the list of their declarations and their references
             Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<Either<BindingIdentifier, IdentifierExpression>>>> variables = new HashMap<>();
-            variables.put("err", new Pair<>(ImmutableList.list(errNode1), ImmutableList.list(errNode2E)));
+            variables.put("err", new Pair<>(ImmutableList.of(errNode1), ImmutableList.of(errNode2E)));
 
             Map<Either<BindingIdentifier, IdentifierExpression>, Accessibility> referenceTypes = new HashMap<>();
             referenceTypes.put(errNode2E, Accessibility.Read);
@@ -1391,13 +1391,13 @@ public class ScopeTest extends TestCase {
                 '}';
         Script script = parse(js);
         GlobalScope globalScope = ScopeAnalyzer.analyze(script);
-        Scope topLevelLexicalScope = globalScope.children.maybeHead().just();
-        Scope tryBlockScope1 = topLevelLexicalScope.children.maybeHead().just(); // did not exist in ES5
-        Scope catchScope1 = topLevelLexicalScope.children.index(1).just();
-        Scope catchBlockScope1 = catchScope1.children.maybeHead().just(); // did not exist in ES5
-        Scope tryBlockScope2 = catchBlockScope1.children.maybeHead().just(); // did not exist in ES5
-        Scope catchScope2 = catchBlockScope1.children.index(1).just();
-        Scope catchBlockScope2 = catchScope2.children.maybeHead().just(); // did not exist in ES5
+        Scope topLevelLexicalScope = globalScope.children.maybeHead().fromJust();
+        Scope tryBlockScope1 = topLevelLexicalScope.children.maybeHead().fromJust(); // did not exist in ES5
+        Scope catchScope1 = topLevelLexicalScope.children.index(1).fromJust();
+        Scope catchBlockScope1 = catchScope1.children.maybeHead().fromJust(); // did not exist in ES5
+        Scope tryBlockScope2 = catchBlockScope1.children.maybeHead().fromJust(); // did not exist in ES5
+        Scope catchScope2 = catchBlockScope1.children.index(1).fromJust();
+        Scope catchBlockScope2 = catchScope2.children.maybeHead().fromJust(); // did not exist in ES5
 
         final IdentifierExpression alertNode1 = ie(new Getter().d(ScriptStatements_(0)).d(TryCatchStatementBody_()).d(BlockStatements_(0)).d(ExpressionStatementExpression_()).d(CallExpressionCallee_())
                 .apply(script));
@@ -1427,13 +1427,13 @@ public class ScopeTest extends TestCase {
 
         { // global scope
 
-            ImmutableList<Scope> children = ImmutableList.list(topLevelLexicalScope);
+            ImmutableList<Scope> children = ImmutableList.of(topLevelLexicalScope);
 
-            ImmutableList<String> through = ImmutableList.list("alert");
+            ImmutableList<String> through = ImmutableList.of("alert");
 
             // mapping of variable names from this scope object to the list of their declarations and their references
             Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<Either<BindingIdentifier, IdentifierExpression>>>> variables = new HashMap<>();
-            variables.put("alert", new Pair<>(NO_DECLARATIONS, ImmutableList.list(alertNode1E, alertNode2E, alertNode3E)));
+            variables.put("alert", new Pair<>(NO_DECLARATIONS, ImmutableList.of(alertNode1E, alertNode2E, alertNode3E)));
 
             Map<Either<BindingIdentifier, IdentifierExpression>, Accessibility> referenceTypes = new HashMap<>();
             referenceTypes.put(alertNode1E, Accessibility.Read);
@@ -1444,13 +1444,13 @@ public class ScopeTest extends TestCase {
         }
         { // catch scope 1
 
-            ImmutableList<Scope> children = ImmutableList.list(catchBlockScope1);
+            ImmutableList<Scope> children = ImmutableList.of(catchBlockScope1);
 
-            ImmutableList<String> through = ImmutableList.list("alert");
+            ImmutableList<String> through = ImmutableList.of("alert");
 
             // mapping of variable names from this scope object to the list of their declarations and their references
             Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<Either<BindingIdentifier, IdentifierExpression>>>> variables = new HashMap<>();
-            variables.put("err1", new Pair<>(ImmutableList.list(err1Node1), ImmutableList.list(err1Node2E, err1Node3E)));
+            variables.put("err1", new Pair<>(ImmutableList.of(err1Node1), ImmutableList.of(err1Node2E, err1Node3E)));
 
             Map<Either<BindingIdentifier, IdentifierExpression>, Accessibility> referenceTypes = new HashMap<>();
             referenceTypes.put(err1Node2E, Accessibility.Read);
@@ -1460,13 +1460,13 @@ public class ScopeTest extends TestCase {
         }
         { // catch scope 2
 
-            ImmutableList<Scope> children = ImmutableList.list(catchBlockScope2);
+            ImmutableList<Scope> children = ImmutableList.of(catchBlockScope2);
 
-            ImmutableList<String> through = ImmutableList.list("alert", "err1");
+            ImmutableList<String> through = ImmutableList.of("alert", "err1");
 
             // mapping of variable names from this scope object to the list of their declarations and their references
             Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<Either<BindingIdentifier, IdentifierExpression>>>> variables = new HashMap<>();
-            variables.put("err2", new Pair<>(ImmutableList.list(err2Node1), ImmutableList.list(err2Node2E)));
+            variables.put("err2", new Pair<>(ImmutableList.of(err2Node1), ImmutableList.of(err2Node2E)));
 
             Map<Either<BindingIdentifier, IdentifierExpression>, Accessibility> referenceTypes = new HashMap<>();
             referenceTypes.put(err2Node2E, Accessibility.Read);
@@ -1480,10 +1480,10 @@ public class ScopeTest extends TestCase {
         String js = "try {" + "  alert('Welcome guest!');" + "} catch(err) {" + "  var err = 1;" + '}';
         Script script = parse(js);
         GlobalScope globalScope = ScopeAnalyzer.analyze(script);
-        Scope topLevelLexicalScope = globalScope.children.maybeHead().just();
-        Scope tryBlockScope = topLevelLexicalScope.children.maybeHead().just(); // did not exist in ES5
-        Scope catchScope = topLevelLexicalScope.children.index(1).just();
-        Scope catchBlockScope = catchScope.children.maybeHead().just(); // did not exist in ES5
+        Scope topLevelLexicalScope = globalScope.children.maybeHead().fromJust();
+        Scope tryBlockScope = topLevelLexicalScope.children.maybeHead().fromJust(); // did not exist in ES5
+        Scope catchScope = topLevelLexicalScope.children.index(1).fromJust();
+        Scope catchBlockScope = catchScope.children.maybeHead().fromJust(); // did not exist in ES5
 
         final IdentifierExpression alertNode1 = ie(new Getter().d(ScriptStatements_(0)).d(TryCatchStatementBody_()).d(BlockStatements_(0)).d(ExpressionStatementExpression_()).d(CallExpressionCallee_())
                 .apply(script));
@@ -1498,14 +1498,14 @@ public class ScopeTest extends TestCase {
 
         { // global scope
 
-            ImmutableList<Scope> children = ImmutableList.list(topLevelLexicalScope);
+            ImmutableList<Scope> children = ImmutableList.of(topLevelLexicalScope);
 
-            ImmutableList<String> through = ImmutableList.list("alert");
+            ImmutableList<String> through = ImmutableList.of("alert");
 
             // mapping of variable names from this scope object to the list of their declarations and their references
             Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<Either<BindingIdentifier, IdentifierExpression>>>> variables = new HashMap<>();
-            variables.put("err", new Pair<>(ImmutableList.list(errNode2), NO_REFERENCES));
-            variables.put("alert", new Pair<>(NO_DECLARATIONS, ImmutableList.list(alertNode1E)));
+            variables.put("err", new Pair<>(ImmutableList.of(errNode2), NO_REFERENCES));
+            variables.put("alert", new Pair<>(NO_DECLARATIONS, ImmutableList.of(alertNode1E)));
 
             Map<Either<BindingIdentifier, IdentifierExpression>, Accessibility> referenceTypes = new HashMap<>();
             referenceTypes.put(alertNode1E, Accessibility.Read);
@@ -1514,13 +1514,13 @@ public class ScopeTest extends TestCase {
         }
         { // catch scope
 
-            ImmutableList<Scope> children = ImmutableList.list(catchBlockScope);
+            ImmutableList<Scope> children = ImmutableList.of(catchBlockScope);
 
-            ImmutableList<String> through = ImmutableList.nil();
+            ImmutableList<String> through = ImmutableList.empty();
 
             // mapping of variable names from this scope object to the list of their declarations and their references
             Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<Either<BindingIdentifier, IdentifierExpression>>>> variables = new HashMap<>();
-            variables.put("err", new Pair<>(ImmutableList.list(errNode1), ImmutableList.list(errNode2E)));
+            variables.put("err", new Pair<>(ImmutableList.of(errNode1), ImmutableList.of(errNode2E)));
 
             Map<Either<BindingIdentifier, IdentifierExpression>, Accessibility> referenceTypes = new HashMap<>();
             referenceTypes.put(errNode2E, Accessibility.Write);
@@ -1534,8 +1534,8 @@ public class ScopeTest extends TestCase {
         String js = "var x = x => ++x";
         Script script = parse(js);
         GlobalScope globalScope = ScopeAnalyzer.analyze(script);
-        Scope topLevelLexicalScope = globalScope.children.maybeHead().just();
-        Scope aScope = topLevelLexicalScope.children.maybeHead().just();
+        Scope topLevelLexicalScope = globalScope.children.maybeHead().fromJust();
+        Scope aScope = topLevelLexicalScope.children.maybeHead().fromJust();
 
         final BindingIdentifier xNode1 = bi(new Getter().d(ScriptStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorBinding_())
                 .apply(script));
@@ -1550,13 +1550,13 @@ public class ScopeTest extends TestCase {
 
         { // global scope
 
-            ImmutableList<Scope> children = ImmutableList.list(topLevelLexicalScope);
+            ImmutableList<Scope> children = ImmutableList.of(topLevelLexicalScope);
 
-            ImmutableList<String> through = ImmutableList.nil();
+            ImmutableList<String> through = ImmutableList.empty();
 
             // mapping of variable names from this scope object to the list of their declarations and their references
             Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<Either<BindingIdentifier, IdentifierExpression>>>> variables = new HashMap<>();
-            variables.put("x", new Pair<>(ImmutableList.list(xNode1), ImmutableList.list(xNode1E)));
+            variables.put("x", new Pair<>(ImmutableList.of(xNode1), ImmutableList.of(xNode1E)));
 
             Map<Either<BindingIdentifier, IdentifierExpression>, Accessibility> referenceTypes = new HashMap<>();
             referenceTypes.put(xNode1E, Accessibility.Write);
@@ -1565,13 +1565,13 @@ public class ScopeTest extends TestCase {
         }
         { // arrow scope
 
-            ImmutableList<Scope> children = ImmutableList.nil();
+            ImmutableList<Scope> children = ImmutableList.empty();
 
-            ImmutableList<String> through = ImmutableList.nil();
+            ImmutableList<String> through = ImmutableList.empty();
 
             // mapping of variable names from this scope object to the list of their declarations and their references
             Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<Either<BindingIdentifier, IdentifierExpression>>>> variables = new HashMap<>();
-            variables.put("x", new Pair<>(ImmutableList.list(xNode2), ImmutableList.list(xNode2E)));
+            variables.put("x", new Pair<>(ImmutableList.of(xNode2), ImmutableList.of(xNode2E)));
 
             Map<Either<BindingIdentifier, IdentifierExpression>, Accessibility> referenceTypes = new HashMap<>();
             referenceTypes.put(xNode2E, Accessibility.ReadWrite);
@@ -1585,8 +1585,8 @@ public class ScopeTest extends TestCase {
         String js = "() => arguments";
         Script script = parse(js);
         GlobalScope globalScope = ScopeAnalyzer.analyze(script);
-        Scope topLevelLexicalScope = globalScope.children.maybeHead().just();
-        Scope aScope = topLevelLexicalScope.children.maybeHead().just();
+        Scope topLevelLexicalScope = globalScope.children.maybeHead().fromJust();
+        Scope aScope = topLevelLexicalScope.children.maybeHead().fromJust();
 
         final IdentifierExpression argumentsNode = ie(new Getter().d(ScriptStatements_(0)).d(ExpressionStatementExpression_()).d(ArrowExpressionBody_())
                 .apply(script));
@@ -1595,13 +1595,13 @@ public class ScopeTest extends TestCase {
 
         { // global scope
 
-            ImmutableList<Scope> children = ImmutableList.list(topLevelLexicalScope);
+            ImmutableList<Scope> children = ImmutableList.of(topLevelLexicalScope);
 
-            ImmutableList<String> through = ImmutableList.list("arguments");
+            ImmutableList<String> through = ImmutableList.of("arguments");
 
             // mapping of variable names from this scope object to the list of their declarations and their references
             Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<Either<BindingIdentifier, IdentifierExpression>>>> variables = new HashMap<>();
-            variables.put("arguments", new Pair<>(NO_DECLARATIONS, ImmutableList.list(argumentsNodeE)));
+            variables.put("arguments", new Pair<>(NO_DECLARATIONS, ImmutableList.of(argumentsNodeE)));
 
             Map<Either<BindingIdentifier, IdentifierExpression>, Accessibility> referenceTypes = new HashMap<>();
             referenceTypes.put(argumentsNodeE, Accessibility.Read);
@@ -1610,9 +1610,9 @@ public class ScopeTest extends TestCase {
         }
         { // arrow scope
 
-            ImmutableList<Scope> children = ImmutableList.nil();
+            ImmutableList<Scope> children = ImmutableList.empty();
 
-            ImmutableList<String> through = ImmutableList.list("arguments");
+            ImmutableList<String> through = ImmutableList.of("arguments");
 
             // mapping of variable names from this scope object to the list of their declarations and their references
             Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<Either<BindingIdentifier, IdentifierExpression>>>> variables = new HashMap<>();
@@ -1628,8 +1628,8 @@ public class ScopeTest extends TestCase {
         String js = "var x = {get [x]() {return x + arguments;}};";
         Script script = parse(js);
         GlobalScope globalScope = ScopeAnalyzer.analyze(script);
-        Scope topLevelLexicalScope = globalScope.children.maybeHead().just();
-        Scope gScope = topLevelLexicalScope.children.maybeHead().just();
+        Scope topLevelLexicalScope = globalScope.children.maybeHead().fromJust();
+        Scope gScope = topLevelLexicalScope.children.maybeHead().fromJust();
 
         final BindingIdentifier xNode1 = bi(new Getter().d(ScriptStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorBinding_())
                 .apply(script));
@@ -1647,13 +1647,13 @@ public class ScopeTest extends TestCase {
 
         { // global scope
 
-            ImmutableList<Scope> children = ImmutableList.list(topLevelLexicalScope);
+            ImmutableList<Scope> children = ImmutableList.of(topLevelLexicalScope);
 
-            ImmutableList<String> through = ImmutableList.nil();
+            ImmutableList<String> through = ImmutableList.empty();
 
             // mapping of variable names from this scope object to the list of their declarations and their references
             Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<Either<BindingIdentifier, IdentifierExpression>>>> variables = new HashMap<>();
-            variables.put("x", new Pair<>(ImmutableList.list(xNode1), ImmutableList.list(xNode1E, xNode2E, xNode3E)));
+            variables.put("x", new Pair<>(ImmutableList.of(xNode1), ImmutableList.of(xNode1E, xNode2E, xNode3E)));
 
             Map<Either<BindingIdentifier, IdentifierExpression>, Accessibility> referenceTypes = new HashMap<>();
             referenceTypes.put(xNode1E, Accessibility.Write);
@@ -1663,13 +1663,13 @@ public class ScopeTest extends TestCase {
         }
         { // getter scope
 
-            ImmutableList<Scope> children = ImmutableList.nil();
+            ImmutableList<Scope> children = ImmutableList.empty();
 
-            ImmutableList<String> through = ImmutableList.list("x");
+            ImmutableList<String> through = ImmutableList.of("x");
 
             // mapping of variable names from this scope object to the list of their declarations and their references
             Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<Either<BindingIdentifier, IdentifierExpression>>>> variables = new HashMap<>();
-            variables.put("arguments", new Pair<>(NO_DECLARATIONS, ImmutableList.list(argumentsNode1E)));
+            variables.put("arguments", new Pair<>(NO_DECLARATIONS, ImmutableList.of(argumentsNode1E)));
 
             Map<Either<BindingIdentifier, IdentifierExpression>, Accessibility> referenceTypes = new HashMap<>();
             referenceTypes.put(argumentsNode1E, Accessibility.Read);
@@ -1683,8 +1683,8 @@ public class ScopeTest extends TestCase {
         String js = "x; {const x = y;}; var x, y;";
         Script script = parse(js);
         GlobalScope globalScope = ScopeAnalyzer.analyze(script);
-        Scope topLevelLexicalScope = globalScope.children.maybeHead().just();
-        Scope blockScope = topLevelLexicalScope.children.maybeHead().just();
+        Scope topLevelLexicalScope = globalScope.children.maybeHead().fromJust();
+        Scope blockScope = topLevelLexicalScope.children.maybeHead().fromJust();
 
         final IdentifierExpression xNode1 = ie(new Getter().d(ScriptStatements_(0)).d(ExpressionStatementExpression_())
                 .apply(script));
@@ -1705,14 +1705,14 @@ public class ScopeTest extends TestCase {
 
         { // global scope
 
-            ImmutableList<Scope> children = ImmutableList.list(topLevelLexicalScope);
+            ImmutableList<Scope> children = ImmutableList.of(topLevelLexicalScope);
 
-            ImmutableList<String> through = ImmutableList.nil();
+            ImmutableList<String> through = ImmutableList.empty();
 
             // mapping of variable names from this scope object to the list of their declarations and their references
             Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<Either<BindingIdentifier, IdentifierExpression>>>> variables = new HashMap<>();
-            variables.put("x", new Pair<>(ImmutableList.list(xNode3), ImmutableList.list(xNode1E)));
-            variables.put("y", new Pair<>(ImmutableList.list(yNode2), ImmutableList.list(yNode1E)));
+            variables.put("x", new Pair<>(ImmutableList.of(xNode3), ImmutableList.of(xNode1E)));
+            variables.put("y", new Pair<>(ImmutableList.of(yNode2), ImmutableList.of(yNode1E)));
 
             Map<Either<BindingIdentifier, IdentifierExpression>, Accessibility> referenceTypes = new HashMap<>();
             referenceTypes.put(xNode1E, Accessibility.Read);
@@ -1722,13 +1722,13 @@ public class ScopeTest extends TestCase {
         }
         { // block scope
 
-            ImmutableList<Scope> children = ImmutableList.nil();
+            ImmutableList<Scope> children = ImmutableList.empty();
 
-            ImmutableList<String> through = ImmutableList.list("y");
+            ImmutableList<String> through = ImmutableList.of("y");
 
             // mapping of variable names from this scope object to the list of their declarations and their references
             Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<Either<BindingIdentifier, IdentifierExpression>>>> variables = new HashMap<>();
-            variables.put("x", new Pair<>(ImmutableList.list(xNode2), ImmutableList.list(xNode2E)));
+            variables.put("x", new Pair<>(ImmutableList.of(xNode2), ImmutableList.of(xNode2E)));
 
             Map<Either<BindingIdentifier, IdentifierExpression>, Accessibility> referenceTypes = new HashMap<>();
             referenceTypes.put(xNode2E, Accessibility.Write);
@@ -1742,7 +1742,7 @@ public class ScopeTest extends TestCase {
         String js = "var {x, a:{b:y = z}} = null; var [z] = y;";
         Script script = parse(js);
         GlobalScope globalScope = ScopeAnalyzer.analyze(script);
-        Scope topLevelLexicalScope = globalScope.children.maybeHead().just();
+        Scope topLevelLexicalScope = globalScope.children.maybeHead().fromJust();
 
         final BindingIdentifier xNode1 = bi( new Getter().d(ScriptStatements_(0)).d(VariableDeclarationStatementDeclaration_()).d(VariableDeclarationDeclarators_(0)).d(VariableDeclaratorBinding_()).d(ObjectBindingProperties_(0)).d(BindingPropertyIdentifierBinding_())
                 .apply(script) );
@@ -1763,15 +1763,15 @@ public class ScopeTest extends TestCase {
 
         { // global scope
 
-            ImmutableList<Scope> children = ImmutableList.list(topLevelLexicalScope);
+            ImmutableList<Scope> children = ImmutableList.of(topLevelLexicalScope);
 
-            ImmutableList<String> through = ImmutableList.nil();
+            ImmutableList<String> through = ImmutableList.empty();
 
             // mapping of variable names from this scope object to the list of their declarations and their references
             Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<Either<BindingIdentifier, IdentifierExpression>>>> variables = new HashMap<>();
-            variables.put("x", new Pair<>(ImmutableList.list(xNode1), ImmutableList.list(xNode1E)));
-            variables.put("y", new Pair<>(ImmutableList.list(yNode1), ImmutableList.list(yNode1E, yNode2E)));
-            variables.put("z", new Pair<>(ImmutableList.list(zNode2), ImmutableList.list(zNode1E, zNode2E)));
+            variables.put("x", new Pair<>(ImmutableList.of(xNode1), ImmutableList.of(xNode1E)));
+            variables.put("y", new Pair<>(ImmutableList.of(yNode1), ImmutableList.of(yNode1E, yNode2E)));
+            variables.put("z", new Pair<>(ImmutableList.of(zNode2), ImmutableList.of(zNode1E, zNode2E)));
 
             Map<Either<BindingIdentifier, IdentifierExpression>, Accessibility> referenceTypes = new HashMap<>();
             referenceTypes.put(xNode1E, Accessibility.Write);
@@ -1994,7 +1994,7 @@ public class ScopeTest extends TestCase {
 
         Assert.assertEquals(scope.through.length, through.length);
         through.foreach(name -> {
-            ImmutableList<Reference> references = scope.through.get(name).just();
+            ImmutableList<Reference> references = scope.through.get(name).fromJust();
             Assert.assertNotNull(references);
             assertTrue(references.find(ref -> ref.node.either(bi -> bi.name, ie -> ie.name).equals(name)).isJust());
         });
@@ -2003,21 +2003,21 @@ public class ScopeTest extends TestCase {
         for (Map.Entry<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<Either<BindingIdentifier, IdentifierExpression>>>> variableEntry : variables.entrySet()) {
             Maybe<Variable> maybeVariable = scope.lookupVariable(variableEntry.getKey());
             assertTrue(maybeVariable.isJust());
-            Variable variable = maybeVariable.just();
+            Variable variable = maybeVariable.fromJust();
 
-            ImmutableList<BindingIdentifier> declarations = variableEntry.getValue().a;
+            ImmutableList<BindingIdentifier> declarations = variableEntry.getValue().left;
             Assert.assertEquals(variable.declarations.length, declarations.length);
             for (final BindingIdentifier node : declarations) {
                 assertTrue(variable.declarations.find(decl -> decl.node.equals(node)).isJust());
             }
 
-            ImmutableList<Either<BindingIdentifier, IdentifierExpression>> refs = variableEntry.getValue().b;
+            ImmutableList<Either<BindingIdentifier, IdentifierExpression>> refs = variableEntry.getValue().right;
             Assert.assertEquals(variable.references.length, refs.length);
             for (final Either<BindingIdentifier, IdentifierExpression> nodeE : refs) {
                 Maybe<Reference> maybeRef = variable.references.find(
                         ref -> ref.node.equals(nodeE));
                 assertTrue(maybeRef.isJust());
-                Reference ref = maybeRef.just();
+                Reference ref = maybeRef.fromJust();
                 Assert.assertEquals(ref.node, nodeE); // comparing Eithers does the correct thing
                 Accessibility type = referenceTypes.get(nodeE);
                 Assert.assertNotNull(type);
