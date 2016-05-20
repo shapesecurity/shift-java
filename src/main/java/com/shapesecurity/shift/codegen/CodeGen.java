@@ -31,10 +31,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 @SuppressWarnings("UnqualifiedFieldAccess")
-public final class CodeGen implements Reducer<CodeRep> {
+public class CodeGen implements Reducer<CodeRep> {
     public static final CodeGen COMPACT = new CodeGen(new CodeRepFactory());
     public static final CodeGen PRETTY = new CodeGen(new FormattedCodeRepFactory());
-    private final CodeRepFactory factory;
+    protected final CodeRepFactory factory;
 
     protected CodeGen(@NotNull CodeRepFactory factory) {
         this.factory = factory;
@@ -42,31 +42,41 @@ public final class CodeGen implements Reducer<CodeRep> {
 
     @NotNull
     public static String codeGen(@NotNull Script script) {
-        return codeGen(script, false);
+        return codeGen(script, COMPACT);
     }
 
     @NotNull
     public static String codeGen(@NotNull Module module) {
-        return codeGen(module, false);
+        return codeGen(module, COMPACT);
     }
 
+    protected static String codeGen(@NotNull Script script, @NotNull CodeGen codeGen) {
+        StringBuilder sb = new StringBuilder();
+        TokenStream ts = new TokenStream(sb);
+        Director.reduceScript(codeGen, script).emit(ts, false);
+        return sb.toString();
+    }
+
+    protected static String codeGen(@NotNull Module module, @NotNull CodeGen codeGen) {
+        StringBuilder sb = new StringBuilder();
+        TokenStream ts = new TokenStream(sb);
+        Director.reduceModule(codeGen, module).emit(ts, false);
+        return sb.toString();
+    }
+
+    @Deprecated
     @NotNull
     public static String codeGen(@NotNull Script script, boolean pretty) {
-        StringBuilder sb = new StringBuilder();
-        TokenStream ts = new TokenStream(sb);
-        Director.reduceScript(pretty ? PRETTY : COMPACT, script).emit(ts, false);
-        return sb.toString();
+        return codeGen(script, pretty ? PRETTY : COMPACT);
     }
 
+    @Deprecated
     @NotNull
     public static String codeGen(@NotNull Module module, boolean pretty) {
-        StringBuilder sb = new StringBuilder();
-        TokenStream ts = new TokenStream(sb);
-        Director.reduceModule(pretty ? PRETTY : COMPACT, module).emit(ts, false);
-        return sb.toString();
+        return codeGen(module, pretty ? PRETTY : COMPACT);
     }
 
-    private char decodeUtf16(char lead, char trail) {
+    private static char decodeUtf16(char lead, char trail) {
         return (char) ((lead - 0xD800) * 0x400 + (trail - 0xDC00) + 0x10000);
     }
 
@@ -113,12 +123,12 @@ public final class CodeGen implements Reducer<CodeRep> {
         return (params.rest.isJust() || params.items.length != 1 || !(params.items.maybeHead().fromJust() instanceof BindingIdentifier));
     }
 
-    private CodeRep p(Node node, Precedence precedence, CodeRep a) {
+    protected CodeRep p(Node node, Precedence precedence, CodeRep a) {
         return ((Expression) node).getPrecedence().ordinal() < precedence.ordinal() ? factory.paren(a) : a;
     }
 
     @NotNull
-    private CodeRep parenToAvoidBeingDirective(@NotNull ImportDeclarationExportDeclarationStatement element, @NotNull CodeRep original) {
+    protected CodeRep parenToAvoidBeingDirective(@NotNull ImportDeclarationExportDeclarationStatement element, @NotNull CodeRep original) {
         if (element instanceof ExpressionStatement &&
                 ((ExpressionStatement) element).expression instanceof LiteralStringExpression) {
             return seqVA(factory.paren(((CodeRep.Seq) original).children[0]), factory.semiOp());
@@ -467,7 +477,7 @@ public final class CodeGen implements Reducer<CodeRep> {
     @NotNull
     @Override
     public CodeRep reduceDirective(@NotNull Directive node) {
-        String delim = node.rawValue.matches("^(?:[^\"]|.)*$") ? "\"" : "\'";
+        String delim = node.rawValue.matches("^(?:[^\"]|\\\\.)*$") ? "\"" : "\'";
         return seqVA(factory.token(delim + node.rawValue + delim), factory.semiOp());
     }
 
@@ -747,7 +757,12 @@ public final class CodeGen implements Reducer<CodeRep> {
     @Override
     @NotNull
     public CodeRep reduceLiteralRegExpExpression(@NotNull LiteralRegExpExpression node) {
-        return factory.token("/" + node.pattern + "/" + (node.global ? "g" : "") + (node.ignoreCase ? "i" : "") + (node.multiLine ? "m" : "") + (node.unicode ? "u" : "") + (node.sticky ? "y" : ""));
+        return factory.token("/" + node.pattern + "/" + buildFlags(node));
+    }
+
+    @NotNull
+    protected static String buildFlags(@NotNull LiteralRegExpExpression node) {
+        return (node.global ? "g" : "") + (node.ignoreCase ? "i" : "") + (node.multiLine ? "m" : "") + (node.unicode ? "u" : "") + (node.sticky ? "y" : "");
     }
 
     @Override
@@ -1105,7 +1120,7 @@ public final class CodeGen implements Reducer<CodeRep> {
     }
 
     @NotNull
-    private CodeRep seqVA(@NotNull CodeRep... reps) {
+    protected CodeRep seqVA(@NotNull CodeRep... reps) {
         return factory.seq(reps);
     }
 

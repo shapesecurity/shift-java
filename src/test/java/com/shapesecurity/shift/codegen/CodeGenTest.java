@@ -33,14 +33,14 @@ public class CodeGenTest {
         return new Script(ImmutableList.empty(), ImmutableList.of(stmt));
     }
 
-    private void test(String source) throws JsError {
+    private static void test(String source) throws JsError {
         Module module = Parser.parseModule(source);
         String code = CodeGen.codeGen(module);
         assertEquals(source, code);
         assertEquals(module, Parser.parseModule(code));
     }
 
-    private void test(String expected, String source) throws JsError {
+    private static void test(String expected, String source) throws JsError {
         Module module = Parser.parseModule(source);
         String code = CodeGen.codeGen(module);
         assertEquals(expected, code);
@@ -134,6 +134,8 @@ public class CodeGenTest {
         test("\"use strict\"");
         test("\"use\u0020strict\"");
         testShift("\"use\u0020strict\"", new Script(ImmutableList.of(new Directive("use strict")), ImmutableList.empty()));
+        testShift("'\"'", new Script(ImmutableList.of(new Directive("\"")), ImmutableList.empty()));
+        testShift("\"\\\"\"", new Script(ImmutableList.of(new Directive("\\\"")), ImmutableList.empty()));
     }
 
     @Test
