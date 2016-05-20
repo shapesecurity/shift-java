@@ -12,15 +12,15 @@ public class LexicalDeclarationTest extends ParserTestCase {
     @Test
     public void testLexicalDeclaration() throws JsError {
         testScript("let a", new VariableDeclarationStatement(new VariableDeclaration(VariableDeclarationKind.Let,
-                ImmutableList.list(new VariableDeclarator(new BindingIdentifier("a"), Maybe.nothing())))));
+                ImmutableList.of(new VariableDeclarator(new BindingIdentifier("a"), Maybe.empty())))));
 
-        testScript("{ let a; }", new BlockStatement(new Block(ImmutableList.list(new VariableDeclarationStatement(
-                new VariableDeclaration(VariableDeclarationKind.Let, ImmutableList.list(new VariableDeclarator(
-                        new BindingIdentifier("a"), Maybe.nothing()))))))));
+        testScript("{ let a; }", new BlockStatement(new Block(ImmutableList.of(new VariableDeclarationStatement(
+                new VariableDeclaration(VariableDeclarationKind.Let, ImmutableList.of(new VariableDeclarator(
+                        new BindingIdentifier("a"), Maybe.empty()))))))));
 
         testScript("while(true) var a", new WhileStatement(new LiteralBooleanExpression(true),
-                new VariableDeclarationStatement(new VariableDeclaration(VariableDeclarationKind.Var, ImmutableList.list(
-                        new VariableDeclarator(new BindingIdentifier("a"), Maybe.nothing()))))));
+                new VariableDeclarationStatement(new VariableDeclaration(VariableDeclarationKind.Var, ImmutableList.of(
+                        new VariableDeclarator(new BindingIdentifier("a"), Maybe.empty()))))));
 
         testScriptFailure("while(true) let a", 12, "Unexpected token \"let\"");
         testScriptFailure("while(true) const a", 12, "Unexpected token \"const\"");

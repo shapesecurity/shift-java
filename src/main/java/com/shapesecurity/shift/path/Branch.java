@@ -624,8 +624,8 @@ class ArrayBindingElements extends IndexedBranch {
 
     @Override
     public Maybe<? extends Node> step(Node node) {
-        if (!(node instanceof ArrayBinding)) Maybe.nothing();
-        Maybe<BindingBindingWithDefault> element = ((ArrayBinding) node).elements.index(index).orJust(Maybe.nothing());
+        if (!(node instanceof ArrayBinding)) Maybe.empty();
+        Maybe<BindingBindingWithDefault> element = ((ArrayBinding) node).elements.index(index).orJust(Maybe.empty());
         return element.map(Coercer::coerce);
     }
 }
@@ -634,7 +634,7 @@ class ArrayBindingElements extends IndexedBranch {
 class ArrayBindingRestElement extends Branch {
     @Override
     public Maybe<? extends Node> step(Node node) {
-        if (!(node instanceof ArrayBinding)) Maybe.nothing();
+        if (!(node instanceof ArrayBinding)) Maybe.empty();
         return ((ArrayBinding) node).restElement.map(Coercer::coerce);
     }
 }
@@ -647,8 +647,8 @@ class ArrayExpressionElements extends IndexedBranch {
 
     @Override
     public Maybe<? extends Node> step(Node node) {
-        if (!(node instanceof ArrayExpression)) Maybe.nothing();
-        Maybe<com.shapesecurity.shift.ast.SpreadElementExpression> element = ((ArrayExpression) node).elements.index(index).orJust(Maybe.nothing());
+        if (!(node instanceof ArrayExpression)) Maybe.empty();
+        Maybe<com.shapesecurity.shift.ast.SpreadElementExpression> element = ((ArrayExpression) node).elements.index(index).orJust(Maybe.empty());
         return element.map(Coercer::coerce);
     }
 }
@@ -657,8 +657,8 @@ class ArrayExpressionElements extends IndexedBranch {
 class ArrowExpressionParams extends Branch {
     @Override
     public Maybe<? extends Node> step(Node node) {
-        if (!(node instanceof ArrowExpression)) Maybe.nothing();
-        return Maybe.just(((ArrowExpression) node).params);
+        if (!(node instanceof ArrowExpression)) Maybe.empty();
+        return Maybe.of(((ArrowExpression) node).params);
     }
 }
 
@@ -666,8 +666,8 @@ class ArrowExpressionParams extends Branch {
 class ArrowExpressionBody extends Branch {
     @Override
     public Maybe<? extends Node> step(Node node) {
-        if (!(node instanceof ArrowExpression)) Maybe.nothing();
-        return Maybe.just(Coercer.coerce(((ArrowExpression) node).body));
+        if (!(node instanceof ArrowExpression)) Maybe.empty();
+        return Maybe.of(Coercer.coerce(((ArrowExpression) node).body));
     }
 }
 
@@ -675,8 +675,8 @@ class ArrowExpressionBody extends Branch {
 class AssignmentExpressionBinding extends Branch {
     @Override
     public Maybe<? extends Node> step(Node node) {
-        if (!(node instanceof AssignmentExpression)) Maybe.nothing();
-        return Maybe.just(Coercer.coerce(((AssignmentExpression) node).binding));
+        if (!(node instanceof AssignmentExpression)) Maybe.empty();
+        return Maybe.of(Coercer.coerce(((AssignmentExpression) node).binding));
     }
 }
 
@@ -684,8 +684,8 @@ class AssignmentExpressionBinding extends Branch {
 class AssignmentExpressionExpression extends Branch {
     @Override
     public Maybe<? extends Node> step(Node node) {
-        if (!(node instanceof AssignmentExpression)) Maybe.nothing();
-        return Maybe.just(((AssignmentExpression) node).expression);
+        if (!(node instanceof AssignmentExpression)) Maybe.empty();
+        return Maybe.of(((AssignmentExpression) node).expression);
     }
 }
 
@@ -693,8 +693,8 @@ class AssignmentExpressionExpression extends Branch {
 class BinaryExpressionLeft extends Branch {
     @Override
     public Maybe<? extends Node> step(Node node) {
-        if (!(node instanceof BinaryExpression)) Maybe.nothing();
-        return Maybe.just(((BinaryExpression) node).left);
+        if (!(node instanceof BinaryExpression)) Maybe.empty();
+        return Maybe.of(((BinaryExpression) node).left);
     }
 }
 
@@ -702,8 +702,8 @@ class BinaryExpressionLeft extends Branch {
 class BinaryExpressionRight extends Branch {
     @Override
     public Maybe<? extends Node> step(Node node) {
-        if (!(node instanceof BinaryExpression)) Maybe.nothing();
-        return Maybe.just(((BinaryExpression) node).right);
+        if (!(node instanceof BinaryExpression)) Maybe.empty();
+        return Maybe.of(((BinaryExpression) node).right);
     }
 }
 
@@ -711,8 +711,8 @@ class BinaryExpressionRight extends Branch {
 class BindingPropertyIdentifierBinding extends Branch {
     @Override
     public Maybe<? extends Node> step(Node node) {
-        if (!(node instanceof BindingPropertyIdentifier)) Maybe.nothing();
-        return Maybe.just(((BindingPropertyIdentifier) node).binding);
+        if (!(node instanceof BindingPropertyIdentifier)) Maybe.empty();
+        return Maybe.of(((BindingPropertyIdentifier) node).binding);
     }
 }
 
@@ -720,7 +720,7 @@ class BindingPropertyIdentifierBinding extends Branch {
 class BindingPropertyIdentifierInit extends Branch {
     @Override
     public Maybe<? extends Node> step(Node node) {
-        if (!(node instanceof BindingPropertyIdentifier)) Maybe.nothing();
+        if (!(node instanceof BindingPropertyIdentifier)) Maybe.empty();
         return ((BindingPropertyIdentifier) node).init;
     }
 }
@@ -729,8 +729,8 @@ class BindingPropertyIdentifierInit extends Branch {
 class BindingPropertyPropertyBinding extends Branch {
     @Override
     public Maybe<? extends Node> step(Node node) {
-        if (!(node instanceof BindingPropertyProperty)) Maybe.nothing();
-        return Maybe.just(Coercer.coerce(((BindingPropertyProperty) node).binding));
+        if (!(node instanceof BindingPropertyProperty)) Maybe.empty();
+        return Maybe.of(Coercer.coerce(((BindingPropertyProperty) node).binding));
     }
 }
 
@@ -738,8 +738,8 @@ class BindingPropertyPropertyBinding extends Branch {
 class BindingWithDefaultBinding extends Branch {
     @Override
     public Maybe<? extends Node> step(Node node) {
-        if (!(node instanceof BindingWithDefault)) Maybe.nothing();
-        return Maybe.just(Coercer.coerce(((BindingWithDefault) node).binding));
+        if (!(node instanceof BindingWithDefault)) Maybe.empty();
+        return Maybe.of(Coercer.coerce(((BindingWithDefault) node).binding));
     }
 }
 
@@ -747,8 +747,8 @@ class BindingWithDefaultBinding extends Branch {
 class BindingWithDefaultInit extends Branch {
     @Override
     public Maybe<? extends Node> step(Node node) {
-        if (!(node instanceof BindingWithDefault)) Maybe.nothing();
-        return Maybe.just(((BindingWithDefault) node).init);
+        if (!(node instanceof BindingWithDefault)) Maybe.empty();
+        return Maybe.of(((BindingWithDefault) node).init);
     }
 }
 
@@ -760,7 +760,7 @@ class BlockStatements extends IndexedBranch {
 
     @Override
     public Maybe<? extends Node> step(Node node) {
-        if (!(node instanceof Block)) Maybe.nothing();
+        if (!(node instanceof Block)) Maybe.empty();
         return ((Block) node).statements.index(this.index);
     }
 }
@@ -769,8 +769,8 @@ class BlockStatements extends IndexedBranch {
 class BlockStatementBlock extends Branch {
     @Override
     public Maybe<? extends Node> step(Node node) {
-        if (!(node instanceof BlockStatement)) Maybe.nothing();
-        return Maybe.just(((BlockStatement) node).block);
+        if (!(node instanceof BlockStatement)) Maybe.empty();
+        return Maybe.of(((BlockStatement) node).block);
     }
 }
 
@@ -778,8 +778,8 @@ class BlockStatementBlock extends Branch {
 class CallExpressionCallee extends Branch {
     @Override
     public Maybe<? extends Node> step(Node node) {
-        if (!(node instanceof CallExpression)) Maybe.nothing();
-        return Maybe.just(Coercer.coerce(((CallExpression) node).callee));
+        if (!(node instanceof CallExpression)) Maybe.empty();
+        return Maybe.of(Coercer.coerce(((CallExpression) node).callee));
     }
 }
 
@@ -791,7 +791,7 @@ class CallExpressionArguments extends IndexedBranch {
 
     @Override
     public Maybe<? extends Node> step(Node node) {
-        if (!(node instanceof CallExpression)) Maybe.nothing();
+        if (!(node instanceof CallExpression)) Maybe.empty();
         return ((CallExpression) node).arguments.index(this.index).map(Coercer::coerce);
     }
 }
@@ -800,8 +800,8 @@ class CallExpressionArguments extends IndexedBranch {
 class CatchClauseBinding extends Branch {
     @Override
     public Maybe<? extends Node> step(Node node) {
-        if (!(node instanceof CatchClause)) Maybe.nothing();
-        return Maybe.just(Coercer.coerce(((CatchClause) node).binding));
+        if (!(node instanceof CatchClause)) Maybe.empty();
+        return Maybe.of(Coercer.coerce(((CatchClause) node).binding));
     }
 }
 
@@ -809,8 +809,8 @@ class CatchClauseBinding extends Branch {
 class CatchClauseBody extends Branch {
     @Override
     public Maybe<? extends Node> step(Node node) {
-        if (!(node instanceof CatchClause)) Maybe.nothing();
-        return Maybe.just(((CatchClause) node).body);
+        if (!(node instanceof CatchClause)) Maybe.empty();
+        return Maybe.of(((CatchClause) node).body);
     }
 }
 
@@ -818,8 +818,8 @@ class CatchClauseBody extends Branch {
 class ClassDeclarationName extends Branch {
     @Override
     public Maybe<? extends Node> step(Node node) {
-        if (!(node instanceof ClassDeclaration)) Maybe.nothing();
-        return Maybe.just(((ClassDeclaration) node).name);
+        if (!(node instanceof ClassDeclaration)) Maybe.empty();
+        return Maybe.of(((ClassDeclaration) node).name);
     }
 }
 
@@ -827,7 +827,7 @@ class ClassDeclarationName extends Branch {
 class ClassDeclarationSuper extends Branch {
     @Override
     public Maybe<? extends Node> step(Node node) {
-        if (!(node instanceof ClassDeclaration)) Maybe.nothing();
+        if (!(node instanceof ClassDeclaration)) Maybe.empty();
         return ((ClassDeclaration) node)._super;
     }
 }
@@ -840,7 +840,7 @@ class ClassDeclarationElements extends IndexedBranch {
 
     @Override
     public Maybe<? extends Node> step(Node node) {
-        if (!(node instanceof ClassDeclaration)) Maybe.nothing();
+        if (!(node instanceof ClassDeclaration)) Maybe.empty();
         return ((ClassDeclaration) node).elements.index(this.index);
     }
 }
@@ -849,8 +849,8 @@ class ClassDeclarationElements extends IndexedBranch {
 class ClassElementMethod extends Branch {
     @Override
     public Maybe<? extends Node> step(Node node) {
-        if (!(node instanceof ClassElement)) Maybe.nothing();
-        return Maybe.just(((ClassElement) node).method);
+        if (!(node instanceof ClassElement)) Maybe.empty();
+        return Maybe.of(((ClassElement) node).method);
     }
 }
 
@@ -858,7 +858,7 @@ class ClassElementMethod extends Branch {
 class ClassExpressionName extends Branch {
     @Override
     public Maybe<? extends Node> step(Node node) {
-        if (!(node instanceof ClassExpression)) Maybe.nothing();
+        if (!(node instanceof ClassExpression)) Maybe.empty();
         return ((ClassExpression) node).name;
     }
 }
@@ -867,7 +867,7 @@ class ClassExpressionName extends Branch {
 class ClassExpressionSuper extends Branch {
     @Override
     public Maybe<? extends Node> step(Node node) {
-        if (!(node instanceof ClassDeclaration)) Maybe.nothing();
+        if (!(node instanceof ClassDeclaration)) Maybe.empty();
         return ((ClassDeclaration) node)._super;
     }
 }
@@ -880,7 +880,7 @@ class ClassExpressionElements extends IndexedBranch {
 
     @Override
     public Maybe<? extends Node> step(Node node) {
-        if (!(node instanceof ClassExpression)) Maybe.nothing();
+        if (!(node instanceof ClassExpression)) Maybe.empty();
         return ((ClassExpression) node).elements.index(this.index);
     }
 }
@@ -889,8 +889,8 @@ class ClassExpressionElements extends IndexedBranch {
 class CompoundAssignmentExpressionBinding extends Branch {
     @Override
     public Maybe<? extends Node> step(Node node) {
-        if (!(node instanceof CompoundAssignmentExpression)) Maybe.nothing();
-        return Maybe.just(Coercer.coerce(((CompoundAssignmentExpression) node).binding));
+        if (!(node instanceof CompoundAssignmentExpression)) Maybe.empty();
+        return Maybe.of(Coercer.coerce(((CompoundAssignmentExpression) node).binding));
     }
 }
 
@@ -898,8 +898,8 @@ class CompoundAssignmentExpressionBinding extends Branch {
 class CompoundAssignmentExpressionExpression extends Branch {
     @Override
     public Maybe<? extends Node> step(Node node) {
-        if (!(node instanceof CompoundAssignmentExpression)) Maybe.nothing();
-        return Maybe.just(((CompoundAssignmentExpression) node).expression);
+        if (!(node instanceof CompoundAssignmentExpression)) Maybe.empty();
+        return Maybe.of(((CompoundAssignmentExpression) node).expression);
     }
 }
 
@@ -907,8 +907,8 @@ class CompoundAssignmentExpressionExpression extends Branch {
 class ComputedMemberExpressionExpression extends Branch {
     @Override
     public Maybe<? extends Node> step(Node node) {
-        if (!(node instanceof ComputedMemberExpression)) Maybe.nothing();
-        return Maybe.just(((ComputedMemberExpression) node).expression);
+        if (!(node instanceof ComputedMemberExpression)) Maybe.empty();
+        return Maybe.of(((ComputedMemberExpression) node).expression);
     }
 }
 
@@ -916,8 +916,8 @@ class ComputedMemberExpressionExpression extends Branch {
 class ComputedMemberExpressionObject extends Branch {
     @Override
     public Maybe<? extends Node> step(Node node) {
-        if (!(node instanceof ComputedMemberExpression)) Maybe.nothing();
-        return Maybe.just(Coercer.coerce(((ComputedMemberExpression) node)._object));
+        if (!(node instanceof ComputedMemberExpression)) Maybe.empty();
+        return Maybe.of(Coercer.coerce(((ComputedMemberExpression) node)._object));
     }
 }
 
@@ -925,8 +925,8 @@ class ComputedMemberExpressionObject extends Branch {
 class ComputedPropertyNameExpression extends Branch {
     @Override
     public Maybe<? extends Node> step(Node node) {
-        if (!(node instanceof ComputedPropertyName)) Maybe.nothing();
-        return Maybe.just(((ComputedPropertyName) node).expression);
+        if (!(node instanceof ComputedPropertyName)) Maybe.empty();
+        return Maybe.of(((ComputedPropertyName) node).expression);
     }
 }
 
@@ -934,8 +934,8 @@ class ComputedPropertyNameExpression extends Branch {
 class ConditionalExpressionTest extends Branch {
     @Override
     public Maybe<? extends Node> step(Node node) {
-        if (!(node instanceof ConditionalExpression)) Maybe.nothing();
-        return Maybe.just(((ConditionalExpression) node).test);
+        if (!(node instanceof ConditionalExpression)) Maybe.empty();
+        return Maybe.of(((ConditionalExpression) node).test);
     }
 }
 
@@ -943,8 +943,8 @@ class ConditionalExpressionTest extends Branch {
 class ConditionalExpressionConsequent extends Branch {
     @Override
     public Maybe<? extends Node> step(Node node) {
-        if (!(node instanceof ConditionalExpression)) Maybe.nothing();
-        return Maybe.just(((ConditionalExpression) node).consequent);
+        if (!(node instanceof ConditionalExpression)) Maybe.empty();
+        return Maybe.of(((ConditionalExpression) node).consequent);
     }
 }
 
@@ -952,8 +952,8 @@ class ConditionalExpressionConsequent extends Branch {
 class ConditionalExpressionAlternate extends Branch {
     @Override
     public Maybe<? extends Node> step(Node node) {
-        if (!(node instanceof ConditionalExpression)) Maybe.nothing();
-        return Maybe.just(((ConditionalExpression) node).alternate);
+        if (!(node instanceof ConditionalExpression)) Maybe.empty();
+        return Maybe.of(((ConditionalExpression) node).alternate);
     }
 }
 
@@ -961,8 +961,8 @@ class ConditionalExpressionAlternate extends Branch {
 class DataPropertyExpression extends Branch {
     @Override
     public Maybe<? extends Node> step(Node node) {
-        if (!(node instanceof DataProperty)) Maybe.nothing();
-        return Maybe.just(((DataProperty) node).expression);
+        if (!(node instanceof DataProperty)) Maybe.empty();
+        return Maybe.of(((DataProperty) node).expression);
     }
 }
 
@@ -970,8 +970,8 @@ class DataPropertyExpression extends Branch {
 class DataPropertyName extends Branch {
     @Override
     public Maybe<? extends Node> step(Node node) {
-        if (!(node instanceof DataProperty)) Maybe.nothing();
-        return Maybe.just(((DataProperty) node).name);
+        if (!(node instanceof DataProperty)) Maybe.empty();
+        return Maybe.of(((DataProperty) node).name);
     }
 }
 
@@ -979,8 +979,8 @@ class DataPropertyName extends Branch {
 class DoWhileStatementTest extends Branch {
     @Override
     public Maybe<? extends Node> step(Node node) {
-        if (!(node instanceof DoWhileStatement)) Maybe.nothing();
-        return Maybe.just(((DoWhileStatement) node).test);
+        if (!(node instanceof DoWhileStatement)) Maybe.empty();
+        return Maybe.of(((DoWhileStatement) node).test);
     }
 }
 
@@ -988,8 +988,8 @@ class DoWhileStatementTest extends Branch {
 class DoWhileStatementBody extends Branch {
     @Override
     public Maybe<? extends Node> step(Node node) {
-        if (!(node instanceof DoWhileStatement)) Maybe.nothing();
-        return Maybe.just(((DoWhileStatement) node).body);
+        if (!(node instanceof DoWhileStatement)) Maybe.empty();
+        return Maybe.of(((DoWhileStatement) node).body);
     }
 }
 
@@ -997,8 +997,8 @@ class DoWhileStatementBody extends Branch {
 class ExportDeclaration extends Branch {
     @Override
     public Maybe<? extends Node> step(Node node) {
-        if (!(node instanceof Export)) Maybe.nothing();
-        return Maybe.just(Coercer.coerce(((Export) node).declaration));
+        if (!(node instanceof Export)) Maybe.empty();
+        return Maybe.of(Coercer.coerce(((Export) node).declaration));
     }
 }
 
@@ -1006,8 +1006,8 @@ class ExportDeclaration extends Branch {
 class ExportDefaultBody extends Branch {
     @Override
     public Maybe<? extends Node> step(Node node) {
-        if (!(node instanceof ExportDefault)) Maybe.nothing();
-        return Maybe.just(Coercer.coerce(((ExportDefault) node).body));
+        if (!(node instanceof ExportDefault)) Maybe.empty();
+        return Maybe.of(Coercer.coerce(((ExportDefault) node).body));
     }
 }
 
@@ -1015,8 +1015,8 @@ class ExportDefaultBody extends Branch {
 class ExpressionStatementExpression extends Branch {
     @Override
     public Maybe<? extends Node> step(Node node) {
-        if (!(node instanceof ExpressionStatement)) Maybe.nothing();
-        return Maybe.just(((ExpressionStatement) node).expression);
+        if (!(node instanceof ExpressionStatement)) Maybe.empty();
+        return Maybe.of(((ExpressionStatement) node).expression);
     }
 }
 
@@ -1024,8 +1024,8 @@ class ExpressionStatementExpression extends Branch {
 class ForInStatementLeft extends Branch {
     @Override
     public Maybe<? extends Node> step(Node node) {
-        if (!(node instanceof ForInStatement)) Maybe.nothing();
-        return Maybe.just(Coercer.coerce(((ForInStatement) node).left));
+        if (!(node instanceof ForInStatement)) Maybe.empty();
+        return Maybe.of(Coercer.coerce(((ForInStatement) node).left));
     }
 }
 
@@ -1033,8 +1033,8 @@ class ForInStatementLeft extends Branch {
 class ForInStatementRight extends Branch {
     @Override
     public Maybe<? extends Node> step(Node node) {
-        if (!(node instanceof ForInStatement)) Maybe.nothing();
-        return Maybe.just(((ForInStatement) node).right);
+        if (!(node instanceof ForInStatement)) Maybe.empty();
+        return Maybe.of(((ForInStatement) node).right);
     }
 }
 
@@ -1042,8 +1042,8 @@ class ForInStatementRight extends Branch {
 class ForInStatementBody extends Branch {
     @Override
     public Maybe<? extends Node> step(Node node) {
-        if (!(node instanceof ForInStatement)) Maybe.nothing();
-        return Maybe.just(((ForInStatement) node).body);
+        if (!(node instanceof ForInStatement)) Maybe.empty();
+        return Maybe.of(((ForInStatement) node).body);
     }
 }
 
@@ -1055,7 +1055,7 @@ class FormalParametersItems extends IndexedBranch {
 
     @Override
     public Maybe<? extends Node> step(Node node) {
-        if (!(node instanceof FormalParameters)) Maybe.nothing();
+        if (!(node instanceof FormalParameters)) Maybe.empty();
         return ((FormalParameters) node).items.index(this.index).map(Coercer::coerce);
     }
 }
@@ -1064,7 +1064,7 @@ class FormalParametersItems extends IndexedBranch {
 class FormalParametersRest extends Branch {
     @Override
     public Maybe<? extends Node> step(Node node) {
-        if (!(node instanceof FormalParameters)) Maybe.nothing();
+        if (!(node instanceof FormalParameters)) Maybe.empty();
         return ((FormalParameters) node).rest;
     }
 }
@@ -1073,8 +1073,8 @@ class FormalParametersRest extends Branch {
 class ForOfStatementLeft extends Branch {
     @Override
     public Maybe<? extends Node> step(Node node) {
-        if (!(node instanceof ForOfStatement)) Maybe.nothing();
-        return Maybe.just(Coercer.coerce(((ForOfStatement) node).left));
+        if (!(node instanceof ForOfStatement)) Maybe.empty();
+        return Maybe.of(Coercer.coerce(((ForOfStatement) node).left));
     }
 }
 
@@ -1082,8 +1082,8 @@ class ForOfStatementLeft extends Branch {
 class ForOfStatementRight extends Branch {
     @Override
     public Maybe<? extends Node> step(Node node) {
-        if (!(node instanceof ForOfStatement)) Maybe.nothing();
-        return Maybe.just(((ForOfStatement) node).right);
+        if (!(node instanceof ForOfStatement)) Maybe.empty();
+        return Maybe.of(((ForOfStatement) node).right);
     }
 }
 
@@ -1091,8 +1091,8 @@ class ForOfStatementRight extends Branch {
 class ForOfStatementBody extends Branch {
     @Override
     public Maybe<? extends Node> step(Node node) {
-        if (!(node instanceof ForOfStatement)) Maybe.nothing();
-        return Maybe.just(((ForOfStatement) node).body);
+        if (!(node instanceof ForOfStatement)) Maybe.empty();
+        return Maybe.of(((ForOfStatement) node).body);
     }
 }
 
@@ -1100,7 +1100,7 @@ class ForOfStatementBody extends Branch {
 class ForStatementInit extends Branch {
     @Override
     public Maybe<? extends Node> step(Node node) {
-        if (!(node instanceof ForStatement)) Maybe.nothing();
+        if (!(node instanceof ForStatement)) Maybe.empty();
         return ((ForStatement) node).init.map(Coercer::coerce);
     }
 }
@@ -1109,7 +1109,7 @@ class ForStatementInit extends Branch {
 class ForStatementTest extends Branch {
     @Override
     public Maybe<? extends Node> step(Node node) {
-        if (!(node instanceof ForStatement)) Maybe.nothing();
+        if (!(node instanceof ForStatement)) Maybe.empty();
         return ((ForStatement) node).test;
     }
 }
@@ -1122,7 +1122,7 @@ class FunctionBodyDirectives extends IndexedBranch {
 
     @Override
     public Maybe<? extends Node> step(Node node) {
-        if (!(node instanceof FunctionBody)) Maybe.nothing();
+        if (!(node instanceof FunctionBody)) Maybe.empty();
         return ((FunctionBody) node).directives.index(this.index);
     }
 }
@@ -1135,7 +1135,7 @@ class FunctionBodyStatements extends IndexedBranch {
 
     @Override
     public Maybe<? extends Node> step(Node node) {
-        if (!(node instanceof FunctionBody)) Maybe.nothing();
+        if (!(node instanceof FunctionBody)) Maybe.empty();
         return ((FunctionBody) node).statements.index(this.index);
     }
 }
@@ -1144,8 +1144,8 @@ class FunctionBodyStatements extends IndexedBranch {
 class FunctionDeclarationName extends Branch {
     @Override
     public Maybe<? extends Node> step(Node node) {
-        if (!(node instanceof FunctionDeclaration)) Maybe.nothing();
-        return Maybe.just(((FunctionDeclaration) node).name);
+        if (!(node instanceof FunctionDeclaration)) Maybe.empty();
+        return Maybe.of(((FunctionDeclaration) node).name);
     }
 }
 
@@ -1153,8 +1153,8 @@ class FunctionDeclarationName extends Branch {
 class FunctionDeclarationParams extends Branch {
     @Override
     public Maybe<? extends Node> step(Node node) {
-        if (!(node instanceof FunctionDeclaration)) Maybe.nothing();
-        return Maybe.just(((FunctionDeclaration) node).params);
+        if (!(node instanceof FunctionDeclaration)) Maybe.empty();
+        return Maybe.of(((FunctionDeclaration) node).params);
     }
 }
 
@@ -1162,8 +1162,8 @@ class FunctionDeclarationParams extends Branch {
 class FunctionDeclarationBody extends Branch {
     @Override
     public Maybe<? extends Node> step(Node node) {
-        if (!(node instanceof FunctionDeclaration)) Maybe.nothing();
-        return Maybe.just(((FunctionDeclaration) node).body);
+        if (!(node instanceof FunctionDeclaration)) Maybe.empty();
+        return Maybe.of(((FunctionDeclaration) node).body);
     }
 }
 
@@ -1171,7 +1171,7 @@ class FunctionDeclarationBody extends Branch {
 class FunctionExpressionName extends Branch {
     @Override
     public Maybe<? extends Node> step(Node node) {
-        if (!(node instanceof FunctionExpression)) Maybe.nothing();
+        if (!(node instanceof FunctionExpression)) Maybe.empty();
         return ((FunctionExpression) node).name;
     }
 }
@@ -1180,8 +1180,8 @@ class FunctionExpressionName extends Branch {
 class FunctionExpressionParams extends Branch {
     @Override
     public Maybe<? extends Node> step(Node node) {
-        if (!(node instanceof FunctionExpression)) Maybe.nothing();
-        return Maybe.just(((FunctionExpression) node).params);
+        if (!(node instanceof FunctionExpression)) Maybe.empty();
+        return Maybe.of(((FunctionExpression) node).params);
     }
 }
 
@@ -1189,8 +1189,8 @@ class FunctionExpressionParams extends Branch {
 class FunctionExpressionBody extends Branch {
     @Override
     public Maybe<? extends Node> step(Node node) {
-        if (!(node instanceof FunctionExpression)) Maybe.nothing();
-        return Maybe.just(((FunctionExpression) node).body);
+        if (!(node instanceof FunctionExpression)) Maybe.empty();
+        return Maybe.of(((FunctionExpression) node).body);
     }
 }
 
@@ -1198,8 +1198,8 @@ class FunctionExpressionBody extends Branch {
 class GetterBody extends Branch {
     @Override
     public Maybe<? extends Node> step(Node node) {
-        if (!(node instanceof com.shapesecurity.shift.ast.Getter)) Maybe.nothing();
-        return Maybe.just(((com.shapesecurity.shift.ast.Getter) node).body);
+        if (!(node instanceof com.shapesecurity.shift.ast.Getter)) Maybe.empty();
+        return Maybe.of(((com.shapesecurity.shift.ast.Getter) node).body);
     }
 }
 
@@ -1207,8 +1207,8 @@ class GetterBody extends Branch {
 class GetterName extends Branch {
     @Override
     public Maybe<? extends Node> step(Node node) {
-        if (!(node instanceof com.shapesecurity.shift.ast.Getter)) Maybe.nothing();
-        return Maybe.just(((com.shapesecurity.shift.ast.Getter) node).name);
+        if (!(node instanceof com.shapesecurity.shift.ast.Getter)) Maybe.empty();
+        return Maybe.of(((com.shapesecurity.shift.ast.Getter) node).name);
     }
 }
 
@@ -1216,8 +1216,8 @@ class GetterName extends Branch {
 class IfStatementTest extends Branch {
     @Override
     public Maybe<? extends Node> step(Node node) {
-        if (!(node instanceof IfStatement)) Maybe.nothing();
-        return Maybe.just(((IfStatement) node).test);
+        if (!(node instanceof IfStatement)) Maybe.empty();
+        return Maybe.of(((IfStatement) node).test);
     }
 }
 
@@ -1225,8 +1225,8 @@ class IfStatementTest extends Branch {
 class IfStatementConsequent extends Branch {
     @Override
     public Maybe<? extends Node> step(Node node) {
-        if (!(node instanceof IfStatement)) Maybe.nothing();
-        return Maybe.just(((IfStatement) node).consequent);
+        if (!(node instanceof IfStatement)) Maybe.empty();
+        return Maybe.of(((IfStatement) node).consequent);
     }
 }
 
@@ -1234,7 +1234,7 @@ class IfStatementConsequent extends Branch {
 class IfStatementAlternate extends Branch {
     @Override
     public Maybe<? extends Node> step(Node node) {
-        if (!(node instanceof IfStatement)) Maybe.nothing();
+        if (!(node instanceof IfStatement)) Maybe.empty();
         return ((IfStatement) node).alternate;
     }
 }
@@ -1243,7 +1243,7 @@ class IfStatementAlternate extends Branch {
 class ImportDefaultBinding extends Branch {
     @Override
     public Maybe<? extends Node> step(Node node) {
-        if (!(node instanceof Import)) Maybe.nothing();
+        if (!(node instanceof Import)) Maybe.empty();
         return ((Import) node).defaultBinding;
     }
 }
@@ -1256,7 +1256,7 @@ class ImportNamedImports extends IndexedBranch {
 
     @Override
     public Maybe<? extends Node> step(Node node) {
-        if (!(node instanceof Import)) Maybe.nothing();
+        if (!(node instanceof Import)) Maybe.empty();
         return ((Import) node).namedImports.index(this.index);
     }
 }
@@ -1265,7 +1265,7 @@ class ImportNamedImports extends IndexedBranch {
 class ImportNamespaceDefaultBinding extends Branch {
     @Override
     public Maybe<? extends Node> step(Node node) {
-        if (!(node instanceof ImportNamespace)) Maybe.nothing();
+        if (!(node instanceof ImportNamespace)) Maybe.empty();
         return ((ImportNamespace) node).defaultBinding;
     }
 }
@@ -1274,8 +1274,8 @@ class ImportNamespaceDefaultBinding extends Branch {
 class ImportNamespaceNamespaceBinding extends Branch {
     @Override
     public Maybe<? extends Node> step(Node node) {
-        if (!(node instanceof ImportNamespace)) Maybe.nothing();
-        return Maybe.just(((ImportNamespace) node).namespaceBinding);
+        if (!(node instanceof ImportNamespace)) Maybe.empty();
+        return Maybe.of(((ImportNamespace) node).namespaceBinding);
     }
 }
 
@@ -1283,8 +1283,8 @@ class ImportNamespaceNamespaceBinding extends Branch {
 class ImportSpecifierBinding extends Branch {
     @Override
     public Maybe<? extends Node> step(Node node) {
-        if (!(node instanceof ImportSpecifier)) Maybe.nothing();
-        return Maybe.just(((ImportSpecifier) node).binding);
+        if (!(node instanceof ImportSpecifier)) Maybe.empty();
+        return Maybe.of(((ImportSpecifier) node).binding);
     }
 }
 
@@ -1292,8 +1292,8 @@ class ImportSpecifierBinding extends Branch {
 class IterationStatementBody extends Branch {
     @Override
     public Maybe<? extends Node> step(Node node) {
-        if (!(node instanceof IterationStatement)) Maybe.nothing();
-        return Maybe.just(((IterationStatement) node).body);
+        if (!(node instanceof IterationStatement)) Maybe.empty();
+        return Maybe.of(((IterationStatement) node).body);
     }
 }
 
@@ -1301,8 +1301,8 @@ class IterationStatementBody extends Branch {
 class LabeledStatementBody extends Branch {
     @Override
     public Maybe<? extends Node> step(Node node) {
-        if (!(node instanceof LabeledStatement)) Maybe.nothing();
-        return Maybe.just(((LabeledStatement) node).body);
+        if (!(node instanceof LabeledStatement)) Maybe.empty();
+        return Maybe.of(((LabeledStatement) node).body);
     }
 }
 
@@ -1310,8 +1310,8 @@ class LabeledStatementBody extends Branch {
 class MemberExpressionObject extends Branch {
     @Override
     public Maybe<? extends Node> step(Node node) {
-        if (!(node instanceof MemberExpression)) Maybe.nothing();
-        return Maybe.just(Coercer.coerce(((MemberExpression) node)._object));
+        if (!(node instanceof MemberExpression)) Maybe.empty();
+        return Maybe.of(Coercer.coerce(((MemberExpression) node)._object));
     }
 }
 
@@ -1319,8 +1319,8 @@ class MemberExpressionObject extends Branch {
 class MethodName extends Branch {
     @Override
     public Maybe<? extends Node> step(Node node) {
-        if (!(node instanceof Method)) Maybe.nothing();
-        return Maybe.just(((Method) node).name);
+        if (!(node instanceof Method)) Maybe.empty();
+        return Maybe.of(((Method) node).name);
     }
 }
 
@@ -1328,8 +1328,8 @@ class MethodName extends Branch {
 class MethodParams extends Branch {
     @Override
     public Maybe<? extends Node> step(Node node) {
-        if (!(node instanceof Method)) Maybe.nothing();
-        return Maybe.just(((Method) node).params);
+        if (!(node instanceof Method)) Maybe.empty();
+        return Maybe.of(((Method) node).params);
     }
 }
 
@@ -1337,8 +1337,8 @@ class MethodParams extends Branch {
 class MethodBody extends Branch {
     @Override
     public Maybe<? extends Node> step(Node node) {
-        if (!(node instanceof Method)) Maybe.nothing();
-        return Maybe.just(((Method) node).body);
+        if (!(node instanceof Method)) Maybe.empty();
+        return Maybe.of(((Method) node).body);
     }
 }
 
@@ -1346,8 +1346,8 @@ class MethodBody extends Branch {
 class MethodDefinitionName extends Branch {
     @Override
     public Maybe<? extends Node> step(Node node) {
-        if (!(node instanceof MethodDefinition)) Maybe.nothing();
-        return Maybe.just(((MethodDefinition) node).name);
+        if (!(node instanceof MethodDefinition)) Maybe.empty();
+        return Maybe.of(((MethodDefinition) node).name);
     }
 }
 
@@ -1355,8 +1355,8 @@ class MethodDefinitionName extends Branch {
 class MethodDefinitionBody extends Branch {
     @Override
     public Maybe<? extends Node> step(Node node) {
-        if (!(node instanceof MethodDefinition)) Maybe.nothing();
-        return Maybe.just(((MethodDefinition) node).body);
+        if (!(node instanceof MethodDefinition)) Maybe.empty();
+        return Maybe.of(((MethodDefinition) node).body);
     }
 }
 
@@ -1368,7 +1368,7 @@ class ModuleItems extends IndexedBranch {
 
     @Override
     public Maybe<? extends Node> step(Node node) {
-        if (!(node instanceof Module)) Maybe.nothing();
+        if (!(node instanceof Module)) Maybe.empty();
         return ((Module) node).items.index(this.index).map(Coercer::coerce);
     }
 }
@@ -1377,8 +1377,8 @@ class ModuleItems extends IndexedBranch {
 class NamedObjectPropertyName extends Branch {
     @Override
     public Maybe<? extends Node> step(Node node) {
-        if (!(node instanceof NamedObjectProperty)) Maybe.nothing();
-        return Maybe.just(((NamedObjectProperty) node).name);
+        if (!(node instanceof NamedObjectProperty)) Maybe.empty();
+        return Maybe.of(((NamedObjectProperty) node).name);
     }
 }
 
@@ -1386,8 +1386,8 @@ class NamedObjectPropertyName extends Branch {
 class NewExpressionCallee extends Branch {
     @Override
     public Maybe<? extends Node> step(Node node) {
-        if (!(node instanceof NewExpression)) Maybe.nothing();
-        return Maybe.just(((NewExpression) node).callee);
+        if (!(node instanceof NewExpression)) Maybe.empty();
+        return Maybe.of(((NewExpression) node).callee);
     }
 }
 
@@ -1399,7 +1399,7 @@ class NewExpressionArguments extends IndexedBranch {
 
     @Override
     public Maybe<? extends Node> step(Node node) {
-        if (!(node instanceof NewExpression)) Maybe.nothing();
+        if (!(node instanceof NewExpression)) Maybe.empty();
         return ((NewExpression) node).arguments.index(this.index).map(Coercer::coerce);
     }
 }
@@ -1412,7 +1412,7 @@ class ObjectBindingProperties extends IndexedBranch {
 
     @Override
     public Maybe<? extends Node> step(Node node) {
-        if (!(node instanceof ObjectBinding)) Maybe.nothing();
+        if (!(node instanceof ObjectBinding)) Maybe.empty();
         return ((ObjectBinding) node).properties.index(this.index);
     }
 }
@@ -1425,7 +1425,7 @@ class ObjectExpressionProperties extends IndexedBranch {
 
     @Override
     public Maybe<? extends Node> step(Node node) {
-        if (!(node instanceof ObjectExpression)) Maybe.nothing();
+        if (!(node instanceof ObjectExpression)) Maybe.empty();
         return ((ObjectExpression) node).properties.index(this.index);
     }
 }
@@ -1434,7 +1434,7 @@ class ObjectExpressionProperties extends IndexedBranch {
 class ReturnStatementExpression extends Branch {
     @Override
     public Maybe<? extends Node> step(Node node) {
-        if (!(node instanceof ReturnStatement)) Maybe.nothing();
+        if (!(node instanceof ReturnStatement)) Maybe.empty();
         return ((ReturnStatement) node).expression;
     }
 }
@@ -1447,7 +1447,7 @@ class ScriptStatements extends IndexedBranch {
 
     @Override
     public Maybe<? extends Node> step(Node node) {
-        if (!(node instanceof Script)) Maybe.nothing();
+        if (!(node instanceof Script)) Maybe.empty();
         return ((Script) node).statements.index(this.index);
     }
 }
@@ -1456,8 +1456,8 @@ class ScriptStatements extends IndexedBranch {
 class SetterName extends Branch {
     @Override
     public Maybe<? extends Node> step(Node node) {
-        if (!(node instanceof Setter)) Maybe.nothing();
-        return Maybe.just(((Setter) node).name);
+        if (!(node instanceof Setter)) Maybe.empty();
+        return Maybe.of(((Setter) node).name);
     }
 }
 
@@ -1465,8 +1465,8 @@ class SetterName extends Branch {
 class SetterParam extends Branch {
     @Override
     public Maybe<? extends Node> step(Node node) {
-        if (!(node instanceof Setter)) Maybe.nothing();
-        return Maybe.just(Coercer.coerce(((Setter) node).param));
+        if (!(node instanceof Setter)) Maybe.empty();
+        return Maybe.of(Coercer.coerce(((Setter) node).param));
     }
 }
 
@@ -1474,8 +1474,8 @@ class SetterParam extends Branch {
 class SetterBody extends Branch {
     @Override
     public Maybe<? extends Node> step(Node node) {
-        if (!(node instanceof Setter)) Maybe.nothing();
-        return Maybe.just(((Setter) node).body);
+        if (!(node instanceof Setter)) Maybe.empty();
+        return Maybe.of(((Setter) node).body);
     }
 }
 
@@ -1483,8 +1483,8 @@ class SetterBody extends Branch {
 class SpreadElementExpression extends Branch {
     @Override
     public Maybe<? extends Node> step(Node node) {
-        if (!(node instanceof SpreadElement)) Maybe.nothing();
-        return Maybe.just(((SpreadElement) node).expression);
+        if (!(node instanceof SpreadElement)) Maybe.empty();
+        return Maybe.of(((SpreadElement) node).expression);
     }
 }
 
@@ -1492,8 +1492,8 @@ class SpreadElementExpression extends Branch {
 class StaticMemberExpressionObject extends Branch {
     @Override
     public Maybe<? extends Node> step(Node node) {
-        if (!(node instanceof StaticMemberExpression)) Maybe.nothing();
-        return Maybe.just(Coercer.coerce(((StaticMemberExpression) node)._object));
+        if (!(node instanceof StaticMemberExpression)) Maybe.empty();
+        return Maybe.of(Coercer.coerce(((StaticMemberExpression) node)._object));
     }
 }
 
@@ -1501,8 +1501,8 @@ class StaticMemberExpressionObject extends Branch {
 class SwitchCaseTest extends Branch {
     @Override
     public Maybe<? extends Node> step(Node node) {
-        if (!(node instanceof SwitchCase)) Maybe.nothing();
-        return Maybe.just(((SwitchCase) node).test);
+        if (!(node instanceof SwitchCase)) Maybe.empty();
+        return Maybe.of(((SwitchCase) node).test);
     }
 }
 
@@ -1514,7 +1514,7 @@ class SwitchDefaultConsequent extends IndexedBranch {
 
     @Override
     public Maybe<? extends Node> step(Node node) {
-        if (!(node instanceof SwitchDefault)) Maybe.nothing();
+        if (!(node instanceof SwitchDefault)) Maybe.empty();
         return ((SwitchDefault) node).consequent.index(this.index);
     }
 }
@@ -1523,8 +1523,8 @@ class SwitchDefaultConsequent extends IndexedBranch {
 class SwitchStatementDiscriminant extends Branch {
     @Override
     public Maybe<? extends Node> step(Node node) {
-        if (!(node instanceof SwitchStatement)) Maybe.nothing();
-        return Maybe.just(((SwitchStatement) node).discriminant);
+        if (!(node instanceof SwitchStatement)) Maybe.empty();
+        return Maybe.of(((SwitchStatement) node).discriminant);
     }
 }
 
@@ -1536,7 +1536,7 @@ class SwitchStatementCases extends IndexedBranch {
 
     @Override
     public Maybe<? extends Node> step(Node node) {
-        if (!(node instanceof SwitchStatement)) Maybe.nothing();
+        if (!(node instanceof SwitchStatement)) Maybe.empty();
         return ((SwitchStatement) node).cases.index(this.index);
     }
 }
@@ -1545,8 +1545,8 @@ class SwitchStatementCases extends IndexedBranch {
 class SwitchStatementWithDefaultDiscriminant extends Branch {
     @Override
     public Maybe<? extends Node> step(Node node) {
-        if (!(node instanceof SwitchStatementWithDefault)) Maybe.nothing();
-        return Maybe.just(((SwitchStatementWithDefault) node).discriminant);
+        if (!(node instanceof SwitchStatementWithDefault)) Maybe.empty();
+        return Maybe.of(((SwitchStatementWithDefault) node).discriminant);
     }
 }
 
@@ -1558,7 +1558,7 @@ class SwitchStatementWithDefaultPreDefaultCases extends IndexedBranch {
 
     @Override
     public Maybe<? extends Node> step(Node node) {
-        if (!(node instanceof SwitchStatementWithDefault)) Maybe.nothing();
+        if (!(node instanceof SwitchStatementWithDefault)) Maybe.empty();
         return ((SwitchStatementWithDefault) node).preDefaultCases.index(this.index);
     }
 }
@@ -1567,8 +1567,8 @@ class SwitchStatementWithDefaultPreDefaultCases extends IndexedBranch {
 class SwitchStatementWithDefaultDefaultCase extends Branch {
     @Override
     public Maybe<? extends Node> step(Node node) {
-        if (!(node instanceof SwitchStatementWithDefault)) Maybe.nothing();
-        return Maybe.just(((SwitchStatementWithDefault) node).defaultCase);
+        if (!(node instanceof SwitchStatementWithDefault)) Maybe.empty();
+        return Maybe.of(((SwitchStatementWithDefault) node).defaultCase);
     }
 }
 
@@ -1580,7 +1580,7 @@ class SwitchStatementWithDefaultPostDefaultCases extends IndexedBranch {
 
     @Override
     public Maybe<? extends Node> step(Node node) {
-        if (!(node instanceof SwitchStatementWithDefault)) Maybe.nothing();
+        if (!(node instanceof SwitchStatementWithDefault)) Maybe.empty();
         return ((SwitchStatementWithDefault) node).postDefaultCases.index(this.index);
     }
 }
@@ -1589,7 +1589,7 @@ class SwitchStatementWithDefaultPostDefaultCases extends IndexedBranch {
 class TemplateExpressionTag extends Branch {
     @Override
     public Maybe<? extends Node> step(Node node) {
-        if (!(node instanceof TemplateExpression)) Maybe.nothing();
+        if (!(node instanceof TemplateExpression)) Maybe.empty();
         return ((TemplateExpression) node).tag;
     }
 }
@@ -1602,7 +1602,7 @@ class TemplateExpressionElements extends IndexedBranch {
 
     @Override
     public Maybe<? extends Node> step(Node node) {
-        if (!(node instanceof TemplateExpression)) Maybe.nothing();
+        if (!(node instanceof TemplateExpression)) Maybe.empty();
         return ((TemplateExpression) node).elements.index(this.index).map(Coercer::coerce);
     }
 }
@@ -1611,8 +1611,8 @@ class TemplateExpressionElements extends IndexedBranch {
 class ThrowStatementExpression extends Branch {
     @Override
     public Maybe<? extends Node> step(Node node) {
-        if (!(node instanceof ThrowStatement)) Maybe.nothing();
-        return Maybe.just(((ThrowStatement) node).expression);
+        if (!(node instanceof ThrowStatement)) Maybe.empty();
+        return Maybe.of(((ThrowStatement) node).expression);
     }
 }
 
@@ -1620,8 +1620,8 @@ class ThrowStatementExpression extends Branch {
 class TryCatchStatementBody extends Branch {
     @Override
     public Maybe<? extends Node> step(Node node) {
-        if (!(node instanceof TryCatchStatement)) Maybe.nothing();
-        return Maybe.just(((TryCatchStatement) node).body);
+        if (!(node instanceof TryCatchStatement)) Maybe.empty();
+        return Maybe.of(((TryCatchStatement) node).body);
     }
 }
 
@@ -1629,8 +1629,8 @@ class TryCatchStatementBody extends Branch {
 class TryCatchStatementCatchClause extends Branch {
     @Override
     public Maybe<? extends Node> step(Node node) {
-        if (!(node instanceof TryCatchStatement)) Maybe.nothing();
-        return Maybe.just(((TryCatchStatement) node).catchClause);
+        if (!(node instanceof TryCatchStatement)) Maybe.empty();
+        return Maybe.of(((TryCatchStatement) node).catchClause);
     }
 }
 
@@ -1638,8 +1638,8 @@ class TryCatchStatementCatchClause extends Branch {
 class TryFinallyStatementBody extends Branch {
     @Override
     public Maybe<? extends Node> step(Node node) {
-        if (!(node instanceof TryFinallyStatement)) Maybe.nothing();
-        return Maybe.just(((TryFinallyStatement) node).body);
+        if (!(node instanceof TryFinallyStatement)) Maybe.empty();
+        return Maybe.of(((TryFinallyStatement) node).body);
     }
 }
 
@@ -1647,7 +1647,7 @@ class TryFinallyStatementBody extends Branch {
 class TryFinallyStatementCatchClause extends Branch {
     @Override
     public Maybe<? extends Node> step(Node node) {
-        if (!(node instanceof TryFinallyStatement)) Maybe.nothing();
+        if (!(node instanceof TryFinallyStatement)) Maybe.empty();
         return ((TryFinallyStatement) node).catchClause;
     }
 }
@@ -1656,8 +1656,8 @@ class TryFinallyStatementCatchClause extends Branch {
 class TryFinallyStatementFinalizer extends Branch {
     @Override
     public Maybe<? extends Node> step(Node node) {
-        if (!(node instanceof TryFinallyStatement)) Maybe.nothing();
-        return Maybe.just(((TryFinallyStatement) node).finalizer);
+        if (!(node instanceof TryFinallyStatement)) Maybe.empty();
+        return Maybe.of(((TryFinallyStatement) node).finalizer);
     }
 }
 
@@ -1665,8 +1665,8 @@ class TryFinallyStatementFinalizer extends Branch {
 class UnaryExpressionOperand extends Branch {
     @Override
     public Maybe<? extends Node> step(Node node) {
-        if (!(node instanceof UnaryExpression)) Maybe.nothing();
-        return Maybe.just(((UnaryExpression) node).operand);
+        if (!(node instanceof UnaryExpression)) Maybe.empty();
+        return Maybe.of(((UnaryExpression) node).operand);
     }
 }
 
@@ -1674,8 +1674,8 @@ class UnaryExpressionOperand extends Branch {
 class UpdateExpressionOperand extends Branch {
     @Override
     public Maybe<? extends Node> step(Node node) {
-        if (!(node instanceof UpdateExpression)) Maybe.nothing();
-        return Maybe.just(Coercer.coerce(((UpdateExpression) node).operand));
+        if (!(node instanceof UpdateExpression)) Maybe.empty();
+        return Maybe.of(Coercer.coerce(((UpdateExpression) node).operand));
     }
 }
 
@@ -1687,7 +1687,7 @@ class VariableDeclarationDeclarators extends IndexedBranch {
 
     @Override
     public Maybe<? extends Node> step(Node node) {
-        if (!(node instanceof VariableDeclaration)) Maybe.nothing();
+        if (!(node instanceof VariableDeclaration)) Maybe.empty();
         return ((VariableDeclaration) node).declarators.index(this.index);
     }
 }
@@ -1696,8 +1696,8 @@ class VariableDeclarationDeclarators extends IndexedBranch {
 class VariableDeclarationStatementDeclaration extends Branch {
     @Override
     public Maybe<? extends Node> step(Node node) {
-        if (!(node instanceof VariableDeclarationStatement)) Maybe.nothing();
-        return Maybe.just(((VariableDeclarationStatement) node).declaration);
+        if (!(node instanceof VariableDeclarationStatement)) Maybe.empty();
+        return Maybe.of(((VariableDeclarationStatement) node).declaration);
     }
 }
 
@@ -1705,8 +1705,8 @@ class VariableDeclarationStatementDeclaration extends Branch {
 class VariableDeclaratorBinding extends Branch {
     @Override
     public Maybe<? extends Node> step(Node node) {
-        if (!(node instanceof VariableDeclarator)) Maybe.nothing();
-        return Maybe.just(Coercer.coerce(((VariableDeclarator) node).binding));
+        if (!(node instanceof VariableDeclarator)) Maybe.empty();
+        return Maybe.of(Coercer.coerce(((VariableDeclarator) node).binding));
     }
 }
 
@@ -1714,7 +1714,7 @@ class VariableDeclaratorBinding extends Branch {
 class VariableDeclaratorInit extends Branch {
     @Override
     public Maybe<? extends Node> step(Node node) {
-        if (!(node instanceof VariableDeclarator)) Maybe.nothing();
+        if (!(node instanceof VariableDeclarator)) Maybe.empty();
         return ((VariableDeclarator) node).init;
     }
 }
@@ -1723,8 +1723,8 @@ class VariableDeclaratorInit extends Branch {
 class WhileStatementTest extends Branch {
     @Override
     public Maybe<? extends Node> step(Node node) {
-        if (!(node instanceof WhileStatement)) Maybe.nothing();
-        return Maybe.just(((WhileStatement) node).test);
+        if (!(node instanceof WhileStatement)) Maybe.empty();
+        return Maybe.of(((WhileStatement) node).test);
     }
 }
 
@@ -1732,8 +1732,8 @@ class WhileStatementTest extends Branch {
 class WhileStatementBody extends Branch {
     @Override
     public Maybe<? extends Node> step(Node node) {
-        if (!(node instanceof WhileStatement)) Maybe.nothing();
-        return Maybe.just(((WhileStatement) node).body);
+        if (!(node instanceof WhileStatement)) Maybe.empty();
+        return Maybe.of(((WhileStatement) node).body);
     }
 }
 
@@ -1741,8 +1741,8 @@ class WhileStatementBody extends Branch {
 class WithStatementObject extends Branch {
     @Override
     public Maybe<? extends Node> step(Node node) {
-        if (!(node instanceof WithStatement)) Maybe.nothing();
-        return Maybe.just(((WithStatement) node)._object);
+        if (!(node instanceof WithStatement)) Maybe.empty();
+        return Maybe.of(((WithStatement) node)._object);
     }
 }
 
@@ -1750,8 +1750,8 @@ class WithStatementObject extends Branch {
 class WithStatementBody extends Branch {
     @Override
     public Maybe<? extends Node> step(Node node) {
-        if (!(node instanceof WithStatement)) Maybe.nothing();
-        return Maybe.just(((WithStatement) node).body);
+        if (!(node instanceof WithStatement)) Maybe.empty();
+        return Maybe.of(((WithStatement) node).body);
     }
 }
 
@@ -1759,7 +1759,7 @@ class WithStatementBody extends Branch {
 class YieldExpressionExpression extends Branch {
     @Override
     public Maybe<? extends Node> step(Node node) {
-        if (!(node instanceof YieldExpression)) Maybe.nothing();
+        if (!(node instanceof YieldExpression)) Maybe.empty();
         return ((YieldExpression) node).expression;
     }
 }
@@ -1768,7 +1768,7 @@ class YieldExpressionExpression extends Branch {
 class YieldGeneratorExpressionExpression extends Branch {
     @Override
     public Maybe<? extends Node> step(Node node) {
-        if (!(node instanceof YieldGeneratorExpression)) Maybe.nothing();
-        return Maybe.just(((YieldGeneratorExpression) node).expression);
+        if (!(node instanceof YieldGeneratorExpression)) Maybe.empty();
+        return Maybe.of(((YieldGeneratorExpression) node).expression);
     }
 }

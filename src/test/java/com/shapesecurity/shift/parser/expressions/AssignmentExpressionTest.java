@@ -77,11 +77,11 @@ public class AssignmentExpressionTest extends ParserTestCase {
                         new LiteralNumericExpression(0.0)));
 
         testScript("[0].length = 0", new AssignmentExpression(new StaticMemberExpression("length",
-                new ArrayExpression(ImmutableList.list(Maybe.just(new LiteralNumericExpression(0.0))))),
+                new ArrayExpression(ImmutableList.of(Maybe.of(new LiteralNumericExpression(0.0))))),
                 new LiteralNumericExpression(0.0)));
 
         testScript("([0].length) = 0", new AssignmentExpression(new StaticMemberExpression("length",
-                new ArrayExpression(ImmutableList.list(Maybe.just(new LiteralNumericExpression(0.0))))),
+                new ArrayExpression(ImmutableList.of(Maybe.of(new LiteralNumericExpression(0.0))))),
                 new LiteralNumericExpression(0.0)));
     }
 }

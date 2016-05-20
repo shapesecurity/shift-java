@@ -19,7 +19,7 @@ public class IdentifierExpressionTest extends ParserTestCase {
 
         testScript("let", new IdentifierExpression("let"));
 
-        testScript("let()", new CallExpression(new IdentifierExpression("let"), ImmutableList.nil()));
+        testScript("let()", new CallExpression(new IdentifierExpression("let"), ImmutableList.empty()));
 
         testScript("let.let", new StaticMemberExpression("let", new IdentifierExpression("let")));
 
@@ -27,13 +27,13 @@ public class IdentifierExpressionTest extends ParserTestCase {
 
         testScript("(let[a])", new ComputedMemberExpression(new IdentifierExpression("a"), new IdentifierExpression("let")));
 
-        testScript("for(let;;);", new ForStatement(Maybe.just(new IdentifierExpression("let")), Maybe.nothing(), Maybe.nothing(), new EmptyStatement()));
+        testScript("for(let;;);", new ForStatement(Maybe.of(new IdentifierExpression("let")), Maybe.empty(), Maybe.empty(), new EmptyStatement()));
 
-        testScript("for(let();;);", new ForStatement(Maybe.just(new CallExpression(new IdentifierExpression("let"),
-                ImmutableList.nil())), Maybe.nothing(), Maybe.nothing(), new EmptyStatement()));
+        testScript("for(let();;);", new ForStatement(Maybe.of(new CallExpression(new IdentifierExpression("let"),
+                ImmutableList.empty())), Maybe.empty(), Maybe.empty(), new EmptyStatement()));
 
         testScript("for(let yield in 0);", new ForInStatement(new VariableDeclaration(VariableDeclarationKind.Let,
-                ImmutableList.list(new VariableDeclarator(new BindingIdentifier("yield"), Maybe.nothing()))),
+                ImmutableList.of(new VariableDeclarator(new BindingIdentifier("yield"), Maybe.empty()))),
                 new LiteralNumericExpression(0.0), new EmptyStatement()));
 
         testScript("for(let.let in 0);", new ForInStatement(new StaticMemberExpression("let", new IdentifierExpression("let")),

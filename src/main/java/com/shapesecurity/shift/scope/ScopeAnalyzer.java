@@ -37,17 +37,17 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
 
     private ScopeAnalyzer(@NotNull Module module) {
         super(new StateMonoid());
-        sloppySet = ImmutableSet.emptyP();
+        sloppySet = ImmutableSet.emptyUsingIdentity();
     }
 
     @NotNull
     public static GlobalScope analyze(@NotNull Script script) {
-        return (GlobalScope) Director.reduceScript(new ScopeAnalyzer(script), script).children.maybeHead().just();
+        return (GlobalScope) Director.reduceScript(new ScopeAnalyzer(script), script).children.maybeHead().fromJust();
     }
 
     @NotNull
     public static GlobalScope analyze(@NotNull Module module) {
-        return (GlobalScope) Director.reduceModule(new ScopeAnalyzer(module), module).children.maybeHead().just();
+        return (GlobalScope) Director.reduceModule(new ScopeAnalyzer(module), module).children.maybeHead().fromJust();
     }
 
     @NotNull
@@ -65,7 +65,7 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
     @NotNull
     // TODO you'd think you'd need to do this for labelled function declarations too, but the spec actually doesn't say so...
     private ImmutableList<BindingIdentifier> getFunctionDeclarations(@NotNull ImmutableList<Statement> statements) { // get the names of functions declared in the statement list
-        ImmutableList<BindingIdentifier> potentiallyVarScopedFunctionDeclarations = ImmutableList.nil();
+        ImmutableList<BindingIdentifier> potentiallyVarScopedFunctionDeclarations = ImmutableList.empty();
         for (Statement statement : statements) { // TODO this is not a very clean way of doing this
             if (statement instanceof FunctionDeclaration) {
                 FunctionDeclaration f = (FunctionDeclaration) statement;
@@ -94,14 +94,14 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
             return new State();
         }
         return new State(
-                HashTable.empty(),
-                HashTable.empty(),
-                HashTable.empty(),
-                HashTable.empty(),
-                ImmutableList.nil(),
+                HashTable.emptyUsingEquality(),
+                HashTable.emptyUsingEquality(),
+                HashTable.emptyUsingEquality(),
+                HashTable.emptyUsingEquality(),
+                ImmutableList.empty(),
                 false,
-                ImmutableList.list(node),
-                HashTable.empty(),
+                ImmutableList.of(node),
+                HashTable.emptyUsingEquality(),
                 false
         );
     }
@@ -192,7 +192,7 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
     public State reduceFormalParameters(@NotNull FormalParameters node, @NotNull ImmutableList<State> items, @NotNull Maybe<State> rest) {
         return items.mapWithIndex((F2<Integer, State, Pair>) Pair::new)
                 .foldLeft((x, y) ->
-                        new State(x, ((State) y.b).hasParameterExpressions ? ((State) y.b).finish(node.items.index((Integer) y.a).just(), Scope.Type.ParameterExpression) : ((State) y.b)),
+                        new State(x, ((State) y.right).hasParameterExpressions ? ((State) y.right).finish(node.items.index((Integer) y.left).fromJust(), Scope.Type.ParameterExpression) : ((State) y.right)),
                 rest.orJust(new State()))
                 .addDeclarations(Kind.Parameter);
     }
@@ -211,7 +211,7 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
     public State reduceFunctionExpression(@NotNull FunctionExpression node, @NotNull Maybe<State> name, @NotNull State params, @NotNull State body) {
         State primary = finishFunction(node, params, body);
         if (name.isJust()) {
-            return new State(name.just(), primary).addDeclarations(Kind.FunctionExpressionName).finish(node, Scope.Type.FunctionName);
+            return new State(name.fromJust(), primary).addDeclarations(Kind.FunctionExpressionName).finish(node, Scope.Type.FunctionName);
         } else {
             return primary; // per spec, no function name scope is created for unnamed expressions.
         }
@@ -229,14 +229,14 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
     public State reduceIdentifierExpression(@NotNull IdentifierExpression node) {
         Reference ref = new Reference(node);
         return new State(
-                HashTable.<String, ImmutableList<Reference>>empty().put(node.name, ImmutableList.list(ref)),
-                HashTable.empty(),
-                HashTable.empty(),
-                HashTable.empty(),
-                ImmutableList.nil(),
+                HashTable.<String, ImmutableList<Reference>>emptyUsingEquality().put(node.name, ImmutableList.of(ref)),
+                HashTable.emptyUsingEquality(),
+                HashTable.emptyUsingEquality(),
+                HashTable.emptyUsingEquality(),
+                ImmutableList.empty(),
                 false,
-                ImmutableList.nil(),
-                HashTable.empty(),
+                ImmutableList.empty(),
+                HashTable.emptyUsingEquality(),
                 false
         );
     }
@@ -244,9 +244,9 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
     @NotNull
     @Override
     public State reduceIfStatement(@NotNull IfStatement node, @NotNull State test, @NotNull State consequent, @NotNull Maybe<State> alternate) {
-        ImmutableList<Statement> statements = ImmutableList.list(node.consequent);
+        ImmutableList<Statement> statements = ImmutableList.of(node.consequent);
         if (node.alternate.isJust()) {
-            statements = statements.cons(node.alternate.just());
+            statements = statements.cons(node.alternate.fromJust());
         }
         return super.reduceIfStatement(node, test, consequent, alternate).withPotentialVarFunctions(getFunctionDeclarations(statements));
     }
@@ -381,14 +381,14 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
          * Identity constructor
          */
         private State() {
-            this.freeIdentifiers = HashTable.empty();
-            this.functionScopedDeclarations = HashTable.empty();
-            this.blockScopedDeclarations = HashTable.empty();
-            this.functionDeclarations = HashTable.empty();
-            this.children = ImmutableList.nil();
+            this.freeIdentifiers = HashTable.emptyUsingEquality();
+            this.functionScopedDeclarations = HashTable.emptyUsingEquality();
+            this.blockScopedDeclarations = HashTable.emptyUsingEquality();
+            this.functionDeclarations = HashTable.emptyUsingEquality();
+            this.children = ImmutableList.empty();
             this.dynamic = false;
-            this.bindingsForParent = ImmutableList.nil();
-            this.potentiallyVarScopedFunctionDeclarations = HashTable.empty();
+            this.bindingsForParent = ImmutableList.empty();
+            this.potentiallyVarScopedFunctionDeclarations = HashTable.emptyUsingEquality();
             this.hasParameterExpressions = false;
         }
 
@@ -419,23 +419,23 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
         }
 
         private State finish(@NotNull Node astNode, @NotNull Scope.Type scopeType, boolean resolveArguments, boolean shouldB33) {
-            ImmutableList<Variable> variables = ImmutableList.nil();
+            ImmutableList<Variable> variables = ImmutableList.empty();
 
-            HashTable<String, ImmutableList<Declaration>> functionScope = HashTable.empty();
+            HashTable<String, ImmutableList<Declaration>> functionScope = HashTable.emptyUsingEquality();
             HashTable<String, ImmutableList<Reference>> freeIdentifiers = this.freeIdentifiers;
             HashTable<String, ImmutableList<Declaration>> potentiallyVarScopedFunctionDeclarations = this.potentiallyVarScopedFunctionDeclarations;
             ImmutableList<Scope> children = this.children;
 
             for (Pair<String, ImmutableList<Declaration>> name :  this.blockScopedDeclarations.entries()) {
-                potentiallyVarScopedFunctionDeclarations = potentiallyVarScopedFunctionDeclarations.remove(name.a);
+                potentiallyVarScopedFunctionDeclarations = potentiallyVarScopedFunctionDeclarations.remove(name.left);
             }
             for (Pair<String, ImmutableList<Declaration>> fdecl :  this.functionDeclarations.entries()) {
-                Maybe<ImmutableList<Declaration>> maybeConflict = this.potentiallyVarScopedFunctionDeclarations.get(fdecl.a);
+                Maybe<ImmutableList<Declaration>> maybeConflict = this.potentiallyVarScopedFunctionDeclarations.get(fdecl.left);
                 if (maybeConflict.isJust()) {
-                    ImmutableList<Declaration> existingDeclarations = maybeConflict.just();
-                    ImmutableList<Declaration> newDeclarations = fdecl.b;
-                    if (existingDeclarations.length != 1 || existingDeclarations.maybeHead().just().node != newDeclarations.maybeHead().just().node) { // don't conflict with your own lexical declaration
-                        potentiallyVarScopedFunctionDeclarations = potentiallyVarScopedFunctionDeclarations.remove(fdecl.a);
+                    ImmutableList<Declaration> existingDeclarations = maybeConflict.fromJust();
+                    ImmutableList<Declaration> newDeclarations = fdecl.right;
+                    if (existingDeclarations.length != 1 || existingDeclarations.maybeHead().fromJust().node != newDeclarations.maybeHead().fromJust().node) { // don't conflict with your own lexical declaration
+                        potentiallyVarScopedFunctionDeclarations = potentiallyVarScopedFunctionDeclarations.remove(fdecl.left);
                     }
                 }
             }
@@ -451,9 +451,9 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
                     // resolve only block-scoped free declarations
                     ImmutableList<Variable> variables3 = variables;
                     for (Pair<String, ImmutableList<Declaration>> entry2 : this.blockScopedDeclarations.merge(this.functionDeclarations, ImmutableList::append).entries()) {
-                        String name2 = entry2.a;
-                        ImmutableList<Declaration> declarations2 = entry2.b;
-                        ImmutableList<Reference> references2 = freeIdentifiers.get(name2).orJust(ImmutableList.nil());
+                        String name2 = entry2.left;
+                        ImmutableList<Declaration> declarations2 = entry2.right;
+                        ImmutableList<Reference> references2 = freeIdentifiers.get(name2).orJust(ImmutableList.empty());
                         variables3 = ImmutableList.cons(new Variable(name2, references2, declarations2), variables3);
                         freeIdentifiers = freeIdentifiers.remove(name2);
                     }
@@ -473,23 +473,23 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
                     // top-level lexical declarations in scripts are not globals, so create a separate scope for them
                     if (scopeType == Scope.Type.Script) {
                         for (Pair<String, ImmutableList<Declaration>> entry : newDeclarations.entries()) {
-                            String name = entry.a;
-                            ImmutableList<Declaration> declarations = entry.b;
-                            ImmutableList<Reference> references = freeIdentifiers.get(name).orJust(ImmutableList.nil());
+                            String name = entry.left;
+                            ImmutableList<Declaration> declarations = entry.right;
+                            ImmutableList<Reference> references = freeIdentifiers.get(name).orJust(ImmutableList.empty());
                             variables = ImmutableList.cons(new Variable(name, references, declarations), variables);
                             freeIdentifiers = freeIdentifiers.remove(name);
                         }
-                        children = ImmutableList.list(
+                        children = ImmutableList.of(
                                 new Scope(children, variables, freeIdentifiers, scopeType, this.dynamic, astNode)
                         );
-                        variables = ImmutableList.nil();
-                        newDeclarations = HashTable.empty();
+                        variables = ImmutableList.empty();
+                        newDeclarations = HashTable.emptyUsingEquality();
                     }
 
 
                     // then, var-scope declarations
                     if (resolveArguments) {
-                        newDeclarations = newDeclarations.merge(HashTable.<String, ImmutableList<Declaration>>empty().put("arguments", ImmutableList.nil()));
+                        newDeclarations = newDeclarations.merge(HashTable.<String, ImmutableList<Declaration>>emptyUsingEquality().put("arguments", ImmutableList.empty()));
                     }
                     newDeclarations = newDeclarations.merge(this.functionScopedDeclarations, ImmutableList::append).merge(this.functionDeclarations, ImmutableList::append);
 
@@ -500,21 +500,21 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
                     }
 
                     for (Pair<String, ImmutableList<Declaration>> entry : newDeclarations.entries()) {
-                        String name = entry.a;
-                        ImmutableList<Declaration> declarations = entry.b;
-                        ImmutableList<Reference> references = freeIdentifiers.get(name).orJust(ImmutableList.nil());
+                        String name = entry.left;
+                        ImmutableList<Declaration> declarations = entry.right;
+                        ImmutableList<Reference> references = freeIdentifiers.get(name).orJust(ImmutableList.empty());
                         variables = ImmutableList.cons(new Variable(name, references, declarations), variables);
                         freeIdentifiers = freeIdentifiers.remove(name);
                     }
 
                     if (scopeType == Scope.Type.Module) { // no declarations in a module are global
-                        children = ImmutableList.list(
+                        children = ImmutableList.of(
                                 new Scope(children, variables, freeIdentifiers, scopeType, this.dynamic, astNode)
                         );
-                        variables = ImmutableList.nil();
+                        variables = ImmutableList.empty();
                     }
 
-                    potentiallyVarScopedFunctionDeclarations = HashTable.empty();
+                    potentiallyVarScopedFunctionDeclarations = HashTable.emptyUsingEquality();
                     break;
                 default:
                     throw new RuntimeException("Not reached");
@@ -525,8 +525,8 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
                     new Scope(children, variables, freeIdentifiers, scopeType, this.dynamic, astNode);
 
             return new State(
-                    freeIdentifiers, functionScope, HashTable.empty(), HashTable.empty(),
-                    ImmutableList.list(scope), false, this.bindingsForParent, potentiallyVarScopedFunctionDeclarations, this.hasParameterExpressions);
+                    freeIdentifiers, functionScope, HashTable.emptyUsingEquality(), HashTable.emptyUsingEquality(),
+                    ImmutableList.of(scope), false, this.bindingsForParent, potentiallyVarScopedFunctionDeclarations, this.hasParameterExpressions);
         }
 
         /*
@@ -544,7 +544,7 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
 
             for (BindingIdentifier binding : this.bindingsForParent) {
                 Declaration decl = new Declaration(binding, kind);
-                ImmutableList<Declaration> decls = declMap.get(binding.name).orJust(ImmutableList.nil());
+                ImmutableList<Declaration> decls = declMap.get(binding.name).orJust(ImmutableList.empty());
                 decls = decls.cons(decl);
                 declMap = declMap.put(binding.name, decls);
             }
@@ -555,7 +555,7 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
                     this.functionDeclarations,
                     this.children,
                     this.dynamic,
-                    keepBindingsForParent ? this.bindingsForParent : ImmutableList.nil(),
+                    keepBindingsForParent ? this.bindingsForParent : ImmutableList.empty(),
                     this.potentiallyVarScopedFunctionDeclarations,
                     this.hasParameterExpressions
             );
@@ -566,16 +566,16 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
             if (this.bindingsForParent.length == 0) { // i.e., this is `export default function () {...}`
                 return this;
             }
-            BindingIdentifier binding = this.bindingsForParent.index(0).just();
+            BindingIdentifier binding = this.bindingsForParent.index(0).fromJust();
             Declaration decl = new Declaration(binding, Kind.FunctionDeclaration);
             return new State(
                     this.freeIdentifiers,
                     this.functionScopedDeclarations,
                     this.blockScopedDeclarations,
-                    HashTable.<String, ImmutableList<Declaration>>empty().put(binding.name, ImmutableList.list(decl)),
+                    HashTable.<String, ImmutableList<Declaration>>emptyUsingEquality().put(binding.name, ImmutableList.of(decl)),
                     this.children,
                     this.dynamic,
-                    ImmutableList.nil(),
+                    ImmutableList.empty(),
                     this.potentiallyVarScopedFunctionDeclarations,
                     this.hasParameterExpressions
             );
@@ -594,7 +594,7 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
             HashTable<String, ImmutableList<Reference>> free = this.freeIdentifiers;
             for (BindingIdentifier binding : this.bindingsForParent) {
                 Reference ref = new Reference(binding, accessibility);
-                ImmutableList<Reference> refs = free.get(binding.name).orJust(ImmutableList.nil());
+                ImmutableList<Reference> refs = free.get(binding.name).orJust(ImmutableList.empty());
                 refs = refs.cons(ref);
                 free = free.put(binding.name, refs);
             }
@@ -605,7 +605,7 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
                     this.functionDeclarations,
                     this.children,
                     this.dynamic,
-                    keepBindingsForParent ? this.bindingsForParent : ImmutableList.nil(),
+                    keepBindingsForParent ? this.bindingsForParent : ImmutableList.empty(),
                     this.potentiallyVarScopedFunctionDeclarations,
                     this.hasParameterExpressions
             );
@@ -635,7 +635,7 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
                     this.functionDeclarations,
                     this.children,
                     this.dynamic,
-                    ImmutableList.nil(),
+                    ImmutableList.empty(),
                     this.potentiallyVarScopedFunctionDeclarations,
                     this.hasParameterExpressions
             );
@@ -675,7 +675,7 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
         public State withPotentialVarFunctions(@NotNull ImmutableList<BindingIdentifier> funcs) {
             HashTable<String, ImmutableList<Declaration>> potentiallyVarScopedFunctionDeclarations = this.potentiallyVarScopedFunctionDeclarations;
             for (BindingIdentifier bi : funcs) {
-                ImmutableList<Declaration> existing = potentiallyVarScopedFunctionDeclarations.get(bi.name).orJust(ImmutableList.nil());
+                ImmutableList<Declaration> existing = potentiallyVarScopedFunctionDeclarations.get(bi.name).orJust(ImmutableList.empty());
                 potentiallyVarScopedFunctionDeclarations = potentiallyVarScopedFunctionDeclarations.put(bi.name, existing.cons(new Declaration(bi, Kind.FunctionB33)));
             }
             return new State(

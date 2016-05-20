@@ -6,7 +6,7 @@ import com.shapesecurity.shift.ast.*;
 import org.jetbrains.annotations.NotNull;
 
 public class ParserWithLocation {
-	protected HashTable<Node, SourceSpan> locations = HashTable.emptyP();
+	protected HashTable<Node, SourceSpan> locations = HashTable.emptyUsingIdentity();
 
 	public ParserWithLocation() {}
 
@@ -34,7 +34,7 @@ public class ParserWithLocation {
 		@Override
 		protected <T extends Node> T finishNode(@NotNull SourceLocation startLocation, @NotNull T node) {
 			SourceLocation endLocation = this.getLocation();
-			locations = locations.put(node, new SourceSpan(Maybe.nothing(), startLocation, endLocation));
+			locations = locations.put(node, new SourceSpan(Maybe.empty(), startLocation, endLocation));
 			return node;
 		}
 

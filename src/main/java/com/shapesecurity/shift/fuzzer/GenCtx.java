@@ -48,7 +48,7 @@ class GenCtx {
 
 
     GenCtx(@NotNull Random random) {
-        this(random, ImmutableList.nil(), ImmutableList.nil(), ImmutableList.nil(), ImmutableList.nil(), false, false, false, false, true, false, false, false, false);
+        this(random, ImmutableList.empty(), ImmutableList.empty(), ImmutableList.empty(), ImmutableList.empty(), false, false, false, false, true, false, false, false, false);
     }
 
     private GenCtx(@NotNull Random random,
@@ -172,8 +172,8 @@ class GenCtx {
                 this.random,
                 this.labels,
                 this.iterationLabels,
-                ImmutableList.nil(),
-                ImmutableList.nil(),
+                ImmutableList.empty(),
+                ImmutableList.empty(),
                 false,
                 false,
                 this.inStrictMode,
@@ -189,10 +189,10 @@ class GenCtx {
     GenCtx clearLabels() {
         return new GenCtx(
                 this.random,
-                ImmutableList.nil(),
-                ImmutableList.nil(),
-                ImmutableList.nil(),
-                ImmutableList.nil(),
+                ImmutableList.empty(),
+                ImmutableList.empty(),
+                ImmutableList.empty(),
+                ImmutableList.empty(),
                 this.inIteration,
                 this.inSwitch,
                 this.inStrictMode,

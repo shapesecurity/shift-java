@@ -56,7 +56,7 @@
 //  public void testSimple() throws JsError {
 //    Script node = Parser.parse("this");
 //    assertEquals(1, node.body.statements.length);
-//    Statement stmt = node.body.statements.maybeHead().just();
+//    Statement stmt = node.body.statements.maybeHead().fromJust();
 //    assertTrue(stmt instanceof ExpressionStatement);
 //    assertTrue(((ExpressionStatement) stmt).expression instanceof ThisExpression);
 //  }

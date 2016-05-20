@@ -235,10 +235,10 @@ public class Fuzzer {
     private static <T> Gen<ImmutableList<T>> many(final int bound, @NotNull Gen<T> gen) {
         return (ctx, depth) -> {
             if (depth <= 0) {
-                return ImmutableList.nil();
+                return ImmutableList.empty();
             }
             int number = ctx.random.nextInt(bound);
-            ImmutableList<T> result = ImmutableList.nil();
+            ImmutableList<T> result = ImmutableList.empty();
             for (int i = 0; i < number; i++) {
                 result = result.cons(gen.apply(ctx, depth));
             }
@@ -260,12 +260,12 @@ public class Fuzzer {
     private static <T> Gen<Maybe<T>> optional(@NotNull Gen<T> gen) {
         return (ctx, depth) -> {
             if (depth <= 0) {
-                return Maybe.nothing();
+                return Maybe.empty();
             }
             if (ctx.random.nextBoolean()) {
-                return Maybe.nothing();
+                return Maybe.empty();
             }
-            return Maybe.just(gen.apply(ctx, depth));
+            return Maybe.of(gen.apply(ctx, depth));
         };
     }
 
@@ -355,7 +355,7 @@ public class Fuzzer {
     @NotNull
     private static Block randomBlock(@NotNull GenCtx ctx, int depth) {
         if (depth < 1) {
-            return new Block(ImmutableList.nil());
+            return new Block(ImmutableList.empty());
         }
         return new Block(many(Fuzzer::randomStatement).apply(ctx.allowMissingElse(), depth - 1));
     }
@@ -516,7 +516,7 @@ public class Fuzzer {
 
     @NotNull
     private static ImmutableList<ExpressionTemplateElement> randomAlternatingTemplateElementExpression(@NotNull GenCtx ctx, int depth) {
-        return ImmutableList.list(randomTemplateElement(ctx, depth - 1), randomExpression(ctx, depth - 1), randomTemplateElement(ctx, depth - 1));
+        return ImmutableList.of(randomTemplateElement(ctx, depth - 1), randomExpression(ctx, depth - 1), randomTemplateElement(ctx, depth - 1));
     }
 
     @NotNull
@@ -678,10 +678,10 @@ public class Fuzzer {
         if (ctx.allowMissingElse) {
             boolean missElse = ctx.random.nextBoolean();
             if (missElse) {
-                return new IfStatement(randomExpression(ctx, depth - 1), randomStatement(ctx, depth - 1), Maybe.nothing());
+                return new IfStatement(randomExpression(ctx, depth - 1), randomStatement(ctx, depth - 1), Maybe.empty());
             }
         }
-        return new IfStatement(randomExpression(ctx, depth - 1), randomStatement(ctx.forbidMissingElse(), depth - 1), Maybe.just(randomStatement(ctx, depth - 1)));
+        return new IfStatement(randomExpression(ctx, depth - 1), randomStatement(ctx.forbidMissingElse(), depth - 1), Maybe.of(randomStatement(ctx, depth - 1)));
     }
 
     @NotNull
@@ -940,7 +940,7 @@ public class Fuzzer {
                     Maybe<String> label = optional(Fuzzer::randomIdentifierString).apply(ctx, depth);
                     return new BreakStatement(label);
                 } else {
-                    return new BreakStatement(Maybe.nothing());
+                    return new BreakStatement(Maybe.empty());
                 }
             case kGenContinueStatement:
                 if (ctx.iterationLabelsInFunctionBoundary.length > 0 && ctx.random.nextBoolean()) {
@@ -950,16 +950,16 @@ public class Fuzzer {
                     Maybe<String> label = optional(Fuzzer::randomIdentifierString).apply(ctx, depth);
                     return new ContinueStatement(label);
                 } else {
-                    return new ContinueStatement(Maybe.nothing());
+                    return new ContinueStatement(Maybe.empty());
                 }
             case kGenWithStatement:
                 return new WithStatement(randomExpression(ctx, depth - 1), randomStatement(ctx, depth - 1));
             case kGenReturnStatement:
                 if (ctx.allowReturn) {
                     if (ctx.random.nextBoolean()) {
-                        return new ReturnStatement(Maybe.just(randomExpression(ctx, depth - 1)));
+                        return new ReturnStatement(Maybe.of(randomExpression(ctx, depth - 1)));
                     } else {
-                        return new ReturnStatement(Maybe.nothing());
+                        return new ReturnStatement(Maybe.empty());
                     }
                 } else {
                     return new EmptyStatement();
@@ -1089,7 +1089,7 @@ public class Fuzzer {
         if (kind.name.equals("const")) {
             ctx = ctx.variableDeclarationKindIsConst();
         }
-        return new VariableDeclaration(ctx.inStrictMode ? VariableDeclarationKind.Var : kind, ctx.inForInOfStatement ? ImmutableList.list(randomVariableDeclaratorWithoutInit(ctx, depth - 1)) : many1(Fuzzer::randomVariableDeclarator).apply(ctx, depth - 1));
+        return new VariableDeclaration(ctx.inStrictMode ? VariableDeclarationKind.Var : kind, ctx.inForInOfStatement ? ImmutableList.of(randomVariableDeclaratorWithoutInit(ctx, depth - 1)) : many1(Fuzzer::randomVariableDeclarator).apply(ctx, depth - 1));
     }
 
     @NotNull
@@ -1106,7 +1106,7 @@ public class Fuzzer {
     @NotNull
     private static VariableDeclarator randomVariableDeclaratorWithoutInit(@NotNull GenCtx ctx, int depth) {
         Binding binding = (Binding) randomParameter(ctx, depth - 1);
-        return new VariableDeclarator(binding, Maybe.nothing());
+        return new VariableDeclarator(binding, Maybe.empty());
     }
 
     @NotNull
@@ -1130,7 +1130,7 @@ public class Fuzzer {
         if (binding instanceof BindingIdentifier && !ctx.isVariableDeclarationKindConst) {
             return new VariableDeclarator(binding, optional(Fuzzer::randomExpression).apply(ctx, depth - 1));
         } else {
-            return new VariableDeclarator(binding, Maybe.just(randomExpression(ctx, depth - 1)));
+            return new VariableDeclarator(binding, Maybe.of(randomExpression(ctx, depth - 1)));
         }
     }
 

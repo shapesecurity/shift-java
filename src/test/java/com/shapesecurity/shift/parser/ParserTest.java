@@ -32,7 +32,7 @@ public class ParserTest {
     public void testSimple() throws JsError {
         Script node = Parser.parseScript("this");
         assertEquals(1, node.statements.length);
-        Statement stmt = node.statements.maybeHead().just();
+        Statement stmt = node.statements.maybeHead().fromJust();
         assertTrue(stmt instanceof ExpressionStatement);
         assertTrue(((ExpressionStatement) stmt).expression instanceof ThisExpression);
     }

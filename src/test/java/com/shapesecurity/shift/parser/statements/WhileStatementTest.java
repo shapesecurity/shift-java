@@ -18,12 +18,12 @@ public class WhileStatementTest extends ParserTestCase {
 
         testScript("while(true) doSomething()", new WhileStatement(
                 new LiteralBooleanExpression(true),
-                new ExpressionStatement(new CallExpression(new IdentifierExpression("doSomething"), ImmutableList.nil())
+                new ExpressionStatement(new CallExpression(new IdentifierExpression("doSomething"), ImmutableList.empty())
                 )));
 
         testScript("while (x < 10) {x++; y--; }", new WhileStatement(new BinaryExpression(BinaryOperator.LessThan,
                 new IdentifierExpression("x"), new LiteralNumericExpression(10.0)), new BlockStatement(new Block(
-                ImmutableList.list(new ExpressionStatement(new UpdateExpression(false, UpdateOperator.Increment,
+                ImmutableList.of(new ExpressionStatement(new UpdateExpression(false, UpdateOperator.Increment,
                         new BindingIdentifier("x"))), new ExpressionStatement(new UpdateExpression(false, UpdateOperator.Decrement,
                         new BindingIdentifier("y"))))
         ))));

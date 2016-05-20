@@ -11,16 +11,16 @@ import org.junit.Test;
 public class GeneratorMethodTest extends ParserTestCase {
     @Test
     public void testGeneratorMethod() throws JsError {
-        testScript("({*a(){}})", new ObjectExpression(ImmutableList.list(new Method(true, new FormalParameters(
-                ImmutableList.nil(), Maybe.nothing()), new FunctionBody(ImmutableList.nil(), ImmutableList.nil()),
+        testScript("({*a(){}})", new ObjectExpression(ImmutableList.of(new Method(true, new FormalParameters(
+                ImmutableList.empty(), Maybe.empty()), new FunctionBody(ImmutableList.empty(), ImmutableList.empty()),
                 new StaticPropertyName("a")))));
 
-        testScript("({*yield(){}})", new ObjectExpression(ImmutableList.list(new Method(true, new FormalParameters(
-                ImmutableList.nil(), Maybe.nothing()), new FunctionBody(ImmutableList.nil(), ImmutableList.nil()),
+        testScript("({*yield(){}})", new ObjectExpression(ImmutableList.of(new Method(true, new FormalParameters(
+                ImmutableList.empty(), Maybe.empty()), new FunctionBody(ImmutableList.empty(), ImmutableList.empty()),
                 new StaticPropertyName("yield")))));
 
-        testScript("({*[yield](){}})", new ObjectExpression(ImmutableList.list(new Method(true, new FormalParameters(
-                ImmutableList.nil(), Maybe.nothing()), new FunctionBody(ImmutableList.nil(), ImmutableList.nil()),
+        testScript("({*[yield](){}})", new ObjectExpression(ImmutableList.of(new Method(true, new FormalParameters(
+                ImmutableList.empty(), Maybe.empty()), new FunctionBody(ImmutableList.empty(), ImmutableList.empty()),
                 new ComputedPropertyName(new IdentifierExpression("yield"))))));
     }
 }

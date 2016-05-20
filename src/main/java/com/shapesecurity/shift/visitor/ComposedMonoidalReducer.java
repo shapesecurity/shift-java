@@ -32,27 +32,27 @@ public class ComposedMonoidalReducer<A, B> extends MonoidalReducer<Pair<A, B>> {
     }
 
     private A a(Pair<A, B> pair) {
-        return pair.a;
+        return pair.left;
     }
 
     private B b(Pair<A, B> pair) {
-        return pair.b;
+        return pair.right;
     }
 
     private ImmutableList<A> a(ImmutableList<Pair<A, B>> list) {
-        return list.map(x -> x.a);
+        return list.map(x -> x.left);
     }
 
     private ImmutableList<B> b(ImmutableList<Pair<A, B>> list) {
-        return list.map(x -> x.b);
+        return list.map(x -> x.right);
     }
 
     private Maybe<A> a(Maybe<Pair<A, B>> maybe) {
-        return maybe.map(x -> x.a);
+        return maybe.map(x -> x.left);
     }
 
     private Maybe<B> b(Maybe<Pair<A, B>> maybe) {
-        return maybe.map(x -> x.b);
+        return maybe.map(x -> x.right);
     }
 
 

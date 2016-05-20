@@ -58,7 +58,7 @@
 //
 //public class ScopeTest extends TestCase {
 //
-//  private static final ImmutableList<IdentifierP> NO_REFERENCES = ImmutableList.nil();
+//  private static final ImmutableList<IdentifierP> NO_REFERENCES = ImmutableList.empty();
 //  private static final ImmutableList<IdentifierP> NO_DECLARATIONS = NO_REFERENCES;
 //
 //
@@ -74,14 +74,14 @@
 //    }
 //
 //    public Getter(@NotNull Node node) {
-//      this(node, ImmutableList.nil());
+//      this(node, ImmutableList.empty());
 //    }
 //
 //    @NotNull
 //    private Getter d(@NotNull Branch branch) {
 //      Maybe<? extends Node> maybe = node.get(branch);
 //      assertTrue("Failed to follow branches.", maybe.isJust());
-//      return new Getter(maybe.just(), from.cons(branch));
+//      return new Getter(Maybe.of(), from.cons(branch));
 //    }
 //
 //    @NotNull
@@ -116,14 +116,14 @@
 //
 //    { // global scope
 //
-//      ImmutableList<Scope> children = ImmutableList.nil();
+//      ImmutableList<Scope> children = ImmutableList.empty();
 //
-//      ImmutableList<String> through = ImmutableList.nil();
+//      ImmutableList<String> through = ImmutableList.empty();
 //
 //      // mapping of variable names from this scope object to the list of their declarations and their references
 //      Map<String, Pair<ImmutableList<IdentifierP>, ImmutableList<IdentifierP>>> variables = new HashMap<>();
-//      variables.put("v1", new Pair<>(ImmutableList.list(v1Node1), NO_REFERENCES));
-//      variables.put("v2", new Pair<>(ImmutableList.list(v2Node1), ImmutableList.list(v2Node1)));
+//      variables.put("v1", new Pair<>(ImmutableList.of(v1Node1), NO_REFERENCES));
+//      variables.put("v2", new Pair<>(ImmutableList.of(v2Node1), ImmutableList.of(v2Node1)));
 //
 //      Map<IdentifierP, Accessibility> referenceTypes = new HashMap<>();
 //      referenceTypes.put(v2Node1, Accessibility.Write);
@@ -143,14 +143,14 @@
 //        .done();
 //    { // global scope
 //
-//      ImmutableList<Scope> children = ImmutableList.nil();
+//      ImmutableList<Scope> children = ImmutableList.empty();
 //
-//      ImmutableList<String> through = ImmutableList.nil();
+//      ImmutableList<String> through = ImmutableList.empty();
 //
 //      // mapping of variable names from this scope object to the list of their declarations and their references
 //      Map<String, Pair<ImmutableList<IdentifierP>, ImmutableList<IdentifierP>>> variables = new HashMap<>();
-//      variables.put("v1", new Pair<>(ImmutableList.list(v1Node1), NO_REFERENCES));
-//      variables.put("v2", new Pair<>(ImmutableList.list(v2Node1), ImmutableList.list(v2Node1)));
+//      variables.put("v1", new Pair<>(ImmutableList.of(v1Node1), NO_REFERENCES));
+//      variables.put("v2", new Pair<>(ImmutableList.of(v2Node1), ImmutableList.of(v2Node1)));
 //
 //      Map<IdentifierP, Accessibility> referenceTypes = new HashMap<>();
 //      referenceTypes.put(v2Node1, Accessibility.Write);
@@ -172,14 +172,14 @@
 //        .done();
 //    { // global scope
 //
-//      ImmutableList<Scope> children = ImmutableList.nil();
+//      ImmutableList<Scope> children = ImmutableList.empty();
 //
-//      ImmutableList<String> through = ImmutableList.list("v1");
+//      ImmutableList<String> through = ImmutableList.of("v1");
 //
 //      // mapping of variable names from this scope object to the list of their declarations and their references
 //      Map<String, Pair<ImmutableList<IdentifierP>, ImmutableList<IdentifierP>>> variables = new HashMap<>();
-//      variables.put("v1", new Pair<>(NO_DECLARATIONS, ImmutableList.list(v1Node1, v1Node2)));
-//      variables.put("v2", new Pair<>(ImmutableList.list(v2Node1), ImmutableList.list(v2Node1)));
+//      variables.put("v1", new Pair<>(NO_DECLARATIONS, ImmutableList.of(v1Node1, v1Node2)));
+//      variables.put("v2", new Pair<>(ImmutableList.of(v2Node1), ImmutableList.of(v2Node1)));
 //
 //      Map<IdentifierP, Accessibility> referenceTypes = new HashMap<>();
 //      referenceTypes.put(v1Node1, Accessibility.Write);
@@ -203,14 +203,14 @@
 //        .done();
 //    { // global scope
 //
-//      ImmutableList<Scope> children = ImmutableList.nil();
+//      ImmutableList<Scope> children = ImmutableList.empty();
 //
-//      ImmutableList<String> through = ImmutableList.nil();
+//      ImmutableList<String> through = ImmutableList.empty();
 //
 //      // mapping of variable names from this scope object to the list of their declarations and their references
 //      Map<String, Pair<ImmutableList<IdentifierP>, ImmutableList<IdentifierP>>> variables = new HashMap<>();
-//      variables.put("v1", new Pair<>(ImmutableList.list(v1Node2), ImmutableList.list(v1Node1, v1Node2)));
-//      variables.put("v2", new Pair<>(ImmutableList.list(v2Node1), ImmutableList.list(v2Node1)));
+//      variables.put("v1", new Pair<>(ImmutableList.of(v1Node2), ImmutableList.of(v1Node1, v1Node2)));
+//      variables.put("v2", new Pair<>(ImmutableList.of(v2Node1), ImmutableList.of(v2Node1)));
 //
 //      Map<IdentifierP, Accessibility> referenceTypes = new HashMap<>();
 //      referenceTypes.put(v1Node1, Accessibility.Read);
@@ -236,14 +236,14 @@
 //        .done();
 //    { // global scope
 //
-//      ImmutableList<Scope> children = ImmutableList.nil();
+//      ImmutableList<Scope> children = ImmutableList.empty();
 //
-//      ImmutableList<String> through = ImmutableList.nil();
+//      ImmutableList<String> through = ImmutableList.empty();
 //
 //      // mapping of variable names from this scope object to the list of their declarations and their references
 //      Map<String, Pair<ImmutableList<IdentifierP>, ImmutableList<IdentifierP>>> variables = new HashMap<>();
-//      variables.put("v1", new Pair<>(ImmutableList.list(v1Node1, v1Node2), ImmutableList.list(v1Node2, v1Node3)));
-//      variables.put("v2", new Pair<>(ImmutableList.list(v2Node1), ImmutableList.list(v2Node1)));
+//      variables.put("v1", new Pair<>(ImmutableList.of(v1Node1, v1Node2), ImmutableList.of(v1Node2, v1Node3)));
+//      variables.put("v2", new Pair<>(ImmutableList.of(v2Node1), ImmutableList.of(v2Node1)));
 //
 //      Map<IdentifierP, Accessibility> referenceTypes = new HashMap<>();
 //      referenceTypes.put(v1Node2, Accessibility.Write);
@@ -268,8 +268,8 @@
 //    Script script = parse(js);
 //
 //    GlobalScope globalScope = ScopeAnalyzer.analyze(script);
-//    Scope f1Scope = globalScope.children.maybeHead().just();
-//    Scope f2Scope = globalScope.children.maybeHead().just().children.maybeHead().just();
+//    Scope f1Scope = globalScope.children.maybeHead().fromJust();
+//    Scope f2Scope = globalScope.children.maybeHead().fromJust().children.maybeHead().fromJust();
 //
 //    final IdentifierP f1Node1 = new Getter(script).d(BODY).d(STATEMENTS, 0).d(NAME).done();
 //    final IdentifierP f1Node2 = new Getter(script).d(BODY).d(STATEMENTS, 1).d(DECLARATION).d(DECLARATORS, 0).d(INIT).d(
@@ -298,14 +298,14 @@
 //
 //    { // global scope
 //
-//      ImmutableList<Scope> children = ImmutableList.list(f1Scope);
+//      ImmutableList<Scope> children = ImmutableList.of(f1Scope);
 //
-//      ImmutableList<String> through = ImmutableList.nil();
+//      ImmutableList<String> through = ImmutableList.empty();
 //
 //      // mapping of variable names from this scope object to the list of their declarations and their references
 //      Map<String, Pair<ImmutableList<IdentifierP>, ImmutableList<IdentifierP>>> variables = new HashMap<>();
-//      variables.put("f1", new Pair<>(ImmutableList.list(f1Node1), ImmutableList.list(f1Node2)));
-//      variables.put("r", new Pair<>(ImmutableList.list(rNode1), ImmutableList.list(rNode1)));
+//      variables.put("f1", new Pair<>(ImmutableList.of(f1Node1), ImmutableList.of(f1Node2)));
+//      variables.put("r", new Pair<>(ImmutableList.of(rNode1), ImmutableList.of(rNode1)));
 //
 //      Map<IdentifierP, Accessibility> referenceTypes = new HashMap<>();
 //      referenceTypes.put(f1Node2, Accessibility.Read);
@@ -316,16 +316,16 @@
 //
 //    { // f1 scope
 //
-//      ImmutableList<Scope> children = ImmutableList.list(f2Scope);
+//      ImmutableList<Scope> children = ImmutableList.of(f2Scope);
 //
-//      ImmutableList<String> through = ImmutableList.nil();
+//      ImmutableList<String> through = ImmutableList.empty();
 //
 //      // mapping of variable names from this scope object to the list of their declarations and their references
 //      Map<String, Pair<ImmutableList<IdentifierP>, ImmutableList<IdentifierP>>> variables = new HashMap<>();
-//      variables.put("v1", new Pair<>(ImmutableList.list(v1Node1), ImmutableList.list(v1Node1, v1Node2)));
-//      variables.put("p1", new Pair<>(ImmutableList.list(p1Node1), NO_REFERENCES));
-//      variables.put("p2", new Pair<>(ImmutableList.list(p2Node1), ImmutableList.list(p2Node2)));
-//      variables.put("f2", new Pair<>(ImmutableList.list(f2Node1), ImmutableList.list(f2Node2)));
+//      variables.put("v1", new Pair<>(ImmutableList.of(v1Node1), ImmutableList.of(v1Node1, v1Node2)));
+//      variables.put("p1", new Pair<>(ImmutableList.of(p1Node1), NO_REFERENCES));
+//      variables.put("p2", new Pair<>(ImmutableList.of(p2Node1), ImmutableList.of(p2Node2)));
+//      variables.put("f2", new Pair<>(ImmutableList.of(f2Node1), ImmutableList.of(f2Node2)));
 //      variables.put("arguments", new Pair<>(NO_DECLARATIONS, NO_REFERENCES));
 //
 //      Map<IdentifierP, Accessibility> referenceTypes = new HashMap<>();
@@ -339,14 +339,14 @@
 //
 //    { // f2 scope
 //
-//      ImmutableList<Scope> children = ImmutableList.nil();
+//      ImmutableList<Scope> children = ImmutableList.empty();
 //
-//      ImmutableList<String> through = ImmutableList.list("v1", "p2");
+//      ImmutableList<String> through = ImmutableList.of("v1", "p2");
 //
 //      // mapping of variable names from this scope object to the list of their declarations and their references
 //      Map<String, Pair<ImmutableList<IdentifierP>, ImmutableList<IdentifierP>>> variables = new HashMap<>();
-//      variables.put("p1", new Pair<>(ImmutableList.list(p1Node2), ImmutableList.list(p1Node3)));
-//      variables.put("v2", new Pair<>(ImmutableList.list(v2Node1), ImmutableList.list(v2Node1, v2Node2)));
+//      variables.put("p1", new Pair<>(ImmutableList.of(p1Node2), ImmutableList.of(p1Node3)));
+//      variables.put("v2", new Pair<>(ImmutableList.of(v2Node1), ImmutableList.of(v2Node1, v2Node2)));
 //      variables.put("arguments", new Pair<>(NO_DECLARATIONS, NO_REFERENCES));
 //
 //      Map<IdentifierP, Accessibility> referenceTypes = new HashMap<>();
@@ -364,7 +364,7 @@
 //    Script script = parse(js);
 //
 //    GlobalScope globalScope = ScopeAnalyzer.analyze(script);
-//    Scope fScope = globalScope.children.maybeHead().just();
+//    Scope fScope = globalScope.children.maybeHead().fromJust();
 //
 //    final IdentifierP fNode1 = new Getter(script).d(BODY).d(STATEMENTS, 0).d(NAME).done();
 //    final IdentifierP fNode2 = new Getter(script).d(BODY).d(STATEMENTS, 0).d(BODY).d(STATEMENTS, 0).d(EXPRESSION).d(
@@ -372,13 +372,13 @@
 //    final IdentifierP fNode3 = new Getter(script).d(BODY).d(STATEMENTS, 1).d(EXPRESSION).d(CALLEE).d(IDENTIFIER).done();
 //    { // global scope
 //
-//      ImmutableList<Scope> children = ImmutableList.list(fScope);
+//      ImmutableList<Scope> children = ImmutableList.of(fScope);
 //
-//      ImmutableList<String> through = ImmutableList.nil();
+//      ImmutableList<String> through = ImmutableList.empty();
 //
 //      // mapping of variable names from this scope object to the list of their declarations and their references
 //      Map<String, Pair<ImmutableList<IdentifierP>, ImmutableList<IdentifierP>>> variables = new HashMap<>();
-//      variables.put("f", new Pair<>(ImmutableList.list(fNode1), ImmutableList.list(fNode2, fNode3)));
+//      variables.put("f", new Pair<>(ImmutableList.of(fNode1), ImmutableList.of(fNode2, fNode3)));
 //
 //      Map<IdentifierP, Accessibility> referenceTypes = new HashMap<>();
 //      referenceTypes.put(fNode2, Accessibility.Write);
@@ -388,9 +388,9 @@
 //    }
 //    { // f scope
 //
-//      ImmutableList<Scope> children = ImmutableList.nil();
+//      ImmutableList<Scope> children = ImmutableList.empty();
 //
-//      ImmutableList<String> through = ImmutableList.list("f");
+//      ImmutableList<String> through = ImmutableList.of("f");
 //
 //      // mapping of variable names from this scope object to the list of their declarations and their references
 //      Map<String, Pair<ImmutableList<IdentifierP>, ImmutableList<IdentifierP>>> variables = new HashMap<>();
@@ -407,7 +407,7 @@
 //    String js = "var f = function() {f = 'hello';}; f();";
 //    Script script = parse(js);
 //    GlobalScope globalScope = ScopeAnalyzer.analyze(script);
-//    Scope fScope = globalScope.children.maybeHead().just();
+//    Scope fScope = globalScope.children.maybeHead().fromJust();
 //    final IdentifierP fNode1 = new Getter(script).d(BODY).d(STATEMENTS, 0).d(DECLARATION).d(DECLARATORS, 0).d(BINDING)
 //        .done();
 //    final IdentifierP fNode2 = new Getter(script).d(BODY).d(STATEMENTS, 0).d(DECLARATION).d(DECLARATORS, 0).d(INIT).d(
@@ -416,13 +416,13 @@
 //    final IdentifierP fNode3 = new Getter(script).d(BODY).d(STATEMENTS, 1).d(EXPRESSION).d(CALLEE).d(IDENTIFIER).done();
 //    { // global scope
 //
-//      ImmutableList<Scope> children = ImmutableList.list(fScope);
+//      ImmutableList<Scope> children = ImmutableList.of(fScope);
 //
-//      ImmutableList<String> through = ImmutableList.nil();
+//      ImmutableList<String> through = ImmutableList.empty();
 //
 //      // mapping of variable names from this scope object to the list of their declarations and their references
 //      Map<String, Pair<ImmutableList<IdentifierP>, ImmutableList<IdentifierP>>> variables = new HashMap<>();
-//      variables.put("f", new Pair<>(ImmutableList.list(fNode1), ImmutableList.list(fNode1, fNode2, fNode3)));
+//      variables.put("f", new Pair<>(ImmutableList.of(fNode1), ImmutableList.of(fNode1, fNode2, fNode3)));
 //
 //      Map<IdentifierP, Accessibility> referenceTypes = new HashMap<>();
 //      referenceTypes.put(fNode1, Accessibility.Write);
@@ -433,9 +433,9 @@
 //    }
 //    { // f scope
 //
-//      ImmutableList<Scope> children = ImmutableList.nil();
+//      ImmutableList<Scope> children = ImmutableList.empty();
 //
-//      ImmutableList<String> through = ImmutableList.list("f");
+//      ImmutableList<String> through = ImmutableList.of("f");
 //
 //      // mapping of variable names from this scope object to the list of their declarations and their references
 //      Map<String, Pair<ImmutableList<IdentifierP>, ImmutableList<IdentifierP>>> variables = new HashMap<>();
@@ -452,8 +452,8 @@
 //    String js = "var f2 = function f1() {f1 = 'hello';}; f1(); f2();";
 //    Script script = parse(js);
 //    GlobalScope globalScope = ScopeAnalyzer.analyze(script);
-//    Scope functionNameScope = globalScope.children.maybeHead().just();
-//    Scope functionScope = functionNameScope.children.maybeHead().just();
+//    Scope functionNameScope = globalScope.children.maybeHead().fromJust();
+//    Scope functionScope = functionNameScope.children.maybeHead().fromJust();
 //    final IdentifierP f1Node1 = new Getter(script).d(BODY).d(STATEMENTS, 0).d(DECLARATION).d(DECLARATORS, 0).d(INIT).d(
 //        JUST).d(NAME).d(JUST).done();
 //    final IdentifierP f1Node2 = new Getter(script).d(BODY).d(STATEMENTS, 0).d(DECLARATION).d(DECLARATORS, 0).d(INIT).d(
@@ -466,14 +466,14 @@
 //        .done();
 //    { // global scope
 //
-//      ImmutableList<Scope> children = ImmutableList.list(functionNameScope);
+//      ImmutableList<Scope> children = ImmutableList.of(functionNameScope);
 //
-//      ImmutableList<String> through = ImmutableList.list("f1");
+//      ImmutableList<String> through = ImmutableList.of("f1");
 //
 //      // mapping of variable names from this scope object to the list of their declarations and their references
 //      Map<String, Pair<ImmutableList<IdentifierP>, ImmutableList<IdentifierP>>> variables = new HashMap<>();
-//      variables.put("f2", new Pair<>(ImmutableList.list(f2Node1), ImmutableList.list(f2Node1, f2Node2)));
-//      variables.put("f1", new Pair<>(NO_DECLARATIONS, ImmutableList.list(f1Node3)));
+//      variables.put("f2", new Pair<>(ImmutableList.of(f2Node1), ImmutableList.of(f2Node1, f2Node2)));
+//      variables.put("f1", new Pair<>(NO_DECLARATIONS, ImmutableList.of(f1Node3)));
 //
 //      Map<IdentifierP, Accessibility> referenceTypes = new HashMap<>();
 //      referenceTypes.put(f2Node1, Accessibility.Write);
@@ -484,13 +484,13 @@
 //    }
 //    { // function name scope
 //
-//      ImmutableList<Scope> children = ImmutableList.list(functionScope);
+//      ImmutableList<Scope> children = ImmutableList.of(functionScope);
 //
-//      ImmutableList<String> through = ImmutableList.nil();
+//      ImmutableList<String> through = ImmutableList.empty();
 //
 //      // mapping of variable names from this scope object to the list of their declarations and their references
 //      Map<String, Pair<ImmutableList<IdentifierP>, ImmutableList<IdentifierP>>> variables = new HashMap<>();
-//      variables.put("f1", new Pair<>(ImmutableList.list(f1Node1), ImmutableList.list(f1Node2)));
+//      variables.put("f1", new Pair<>(ImmutableList.of(f1Node1), ImmutableList.of(f1Node2)));
 //
 //      Map<IdentifierP, Accessibility> referenceTypes = new HashMap<>();
 //      referenceTypes.put(f1Node2, Accessibility.Write);
@@ -499,9 +499,9 @@
 //    }
 //    { // function scope
 //
-//      ImmutableList<Scope> children = ImmutableList.nil();
+//      ImmutableList<Scope> children = ImmutableList.empty();
 //
-//      ImmutableList<String> through = ImmutableList.list("f1");
+//      ImmutableList<String> through = ImmutableList.of("f1");
 //
 //      // mapping of variable names from this scope object to the list of their declarations and their references
 //      Map<String, Pair<ImmutableList<IdentifierP>, ImmutableList<IdentifierP>>> variables = new HashMap<>();
@@ -524,7 +524,7 @@
 //        '}';
 //    Script script = parse(js);
 //    GlobalScope globalScope = ScopeAnalyzer.analyze(script);
-//    Scope functionScope = globalScope.children.maybeHead().just();
+//    Scope functionScope = globalScope.children.maybeHead().fromJust();
 //    final IdentifierP fooNode1 = new Getter(script).d(BODY).d(STATEMENTS, 0).d(DECLARATION).d(DECLARATORS, 0).d(BINDING)
 //        .done();
 //    final IdentifierP fooNode2 = new Getter(script).d(BODY).d(STATEMENTS, 1).d(BODY).d(STATEMENTS, 0).d(TEST).d(OPERAND)
@@ -538,15 +538,15 @@
 //        CALLEE).d(IDENTIFIER).done();
 //    { // global scope
 //
-//      ImmutableList<Scope> children = ImmutableList.list(functionScope);
+//      ImmutableList<Scope> children = ImmutableList.of(functionScope);
 //
-//      ImmutableList<String> through = ImmutableList.list("alert");
+//      ImmutableList<String> through = ImmutableList.of("alert");
 //
 //      // mapping of variable names from this scope object to the list of their declarations and their references
 //      Map<String, Pair<ImmutableList<IdentifierP>, ImmutableList<IdentifierP>>> variables = new HashMap<>();
-//      variables.put("foo", new Pair<>(ImmutableList.list(fooNode1), ImmutableList.list(fooNode1)));
-//      variables.put("bar", new Pair<>(ImmutableList.list(barNode1), NO_REFERENCES));
-//      variables.put("alert", new Pair<>(NO_DECLARATIONS, ImmutableList.list(alertNode1)));
+//      variables.put("foo", new Pair<>(ImmutableList.of(fooNode1), ImmutableList.of(fooNode1)));
+//      variables.put("bar", new Pair<>(ImmutableList.of(barNode1), NO_REFERENCES));
+//      variables.put("alert", new Pair<>(NO_DECLARATIONS, ImmutableList.of(alertNode1)));
 //
 //      Map<IdentifierP, Accessibility> referenceTypes = new HashMap<>();
 //      referenceTypes.put(fooNode1, Accessibility.Write);
@@ -556,13 +556,13 @@
 //    }
 //    { // function scope
 //
-//      ImmutableList<Scope> children = ImmutableList.nil();
+//      ImmutableList<Scope> children = ImmutableList.empty();
 //
-//      ImmutableList<String> through = ImmutableList.list("alert");
+//      ImmutableList<String> through = ImmutableList.of("alert");
 //
 //      // mapping of variable names from this scope object to the list of their declarations and their references
 //      Map<String, Pair<ImmutableList<IdentifierP>, ImmutableList<IdentifierP>>> variables = new HashMap<>();
-//      variables.put("foo", new Pair<>(ImmutableList.list(fooNode3), ImmutableList.list(fooNode2, fooNode3, fooNode4)));
+//      variables.put("foo", new Pair<>(ImmutableList.of(fooNode3), ImmutableList.of(fooNode2, fooNode3, fooNode4)));
 //      variables.put("arguments", new Pair<>(NO_DECLARATIONS, NO_REFERENCES));
 //
 //      Map<IdentifierP, Accessibility> referenceTypes = new HashMap<>();
@@ -586,8 +586,8 @@
 //        "alert(a);";
 //    Script script = parse(js);
 //    GlobalScope globalScope = ScopeAnalyzer.analyze(script);
-//    Scope bScope = globalScope.children.maybeHead().just();
-//    Scope aScope = bScope.children.maybeHead().just();
+//    Scope bScope = globalScope.children.maybeHead().fromJust();
+//    Scope aScope = bScope.children.maybeHead().fromJust();
 //    final IdentifierP aNode1 = new Getter(script).d(BODY).d(STATEMENTS, 0).d(DECLARATION).d(DECLARATORS, 0).d(BINDING)
 //        .done();
 //    final IdentifierP bNode1 = new Getter(script).d(BODY).d(STATEMENTS, 1).d(NAME).done();
@@ -601,15 +601,15 @@
 //        .done();
 //    { // global scope
 //
-//      ImmutableList<Scope> children = ImmutableList.list(bScope);
+//      ImmutableList<Scope> children = ImmutableList.of(bScope);
 //
-//      ImmutableList<String> through = ImmutableList.list("alert");
+//      ImmutableList<String> through = ImmutableList.of("alert");
 //
 //      // mapping of variable names from this scope object to the list of their declarations and their references
 //      Map<String, Pair<ImmutableList<IdentifierP>, ImmutableList<IdentifierP>>> variables = new HashMap<>();
-//      variables.put("a", new Pair<>(ImmutableList.list(aNode1), ImmutableList.list(aNode1, aNode4)));
-//      variables.put("b", new Pair<>(ImmutableList.list(bNode1), ImmutableList.list(bNode2)));
-//      variables.put("alert", new Pair<>(NO_DECLARATIONS, ImmutableList.list(alertNode1)));
+//      variables.put("a", new Pair<>(ImmutableList.of(aNode1), ImmutableList.of(aNode1, aNode4)));
+//      variables.put("b", new Pair<>(ImmutableList.of(bNode1), ImmutableList.of(bNode2)));
+//      variables.put("alert", new Pair<>(NO_DECLARATIONS, ImmutableList.of(alertNode1)));
 //
 //      Map<IdentifierP, Accessibility> referenceTypes = new HashMap<>();
 //      referenceTypes.put(aNode1, Accessibility.Write);
@@ -621,13 +621,13 @@
 //    }
 //    { // b scope
 //
-//      ImmutableList<Scope> children = ImmutableList.list(aScope);
+//      ImmutableList<Scope> children = ImmutableList.of(aScope);
 //
-//      ImmutableList<String> through = ImmutableList.nil();
+//      ImmutableList<String> through = ImmutableList.empty();
 //
 //      // mapping of variable names from this scope object to the list of their declarations and their references
 //      Map<String, Pair<ImmutableList<IdentifierP>, ImmutableList<IdentifierP>>> variables = new HashMap<>();
-//      variables.put("a", new Pair<>(ImmutableList.list(aNode3), ImmutableList.list(aNode2)));
+//      variables.put("a", new Pair<>(ImmutableList.of(aNode3), ImmutableList.of(aNode2)));
 //      variables.put("arguments", new Pair<>(NO_DECLARATIONS, NO_REFERENCES));
 //
 //      Map<IdentifierP, Accessibility> referenceTypes = new HashMap<>();
@@ -637,9 +637,9 @@
 //    }
 //    { // a scope
 //
-//      ImmutableList<Scope> children = ImmutableList.nil();
+//      ImmutableList<Scope> children = ImmutableList.empty();
 //
-//      ImmutableList<String> through = ImmutableList.nil();
+//      ImmutableList<String> through = ImmutableList.empty();
 //
 //      // mapping of variable names from this scope object to the list of their declarations and their references
 //      Map<String, Pair<ImmutableList<IdentifierP>, ImmutableList<IdentifierP>>> variables = new HashMap<>();
@@ -664,9 +664,9 @@
 //        '}';
 //    Script script = parse(js);
 //    GlobalScope globalScope = ScopeAnalyzer.analyze(script);
-//    Scope fooScope = globalScope.children.maybeHead().just();
-//    Scope barScope1 = fooScope.children.maybeHead().just();
-//    Scope barScope2 = fooScope.children.maybeTail().just().maybeHead().just();
+//    Scope fooScope = globalScope.children.maybeHead().fromJust();
+//    Scope barScope1 = fooScope.children.maybeHead().fromJust();
+//    Scope barScope2 = fooScope.children.maybeTail().fromJust().maybeHead().fromJust();
 //    final IdentifierP fooNode1 = new Getter(script).d(BODY).d(STATEMENTS, 0).d(NAME).done();
 //    final IdentifierP barNode1 = new Getter(script).d(BODY).d(STATEMENTS, 0).d(BODY).d(STATEMENTS, 0).d(NAME).done();
 //    final IdentifierP barNode2 = new Getter(script).d(BODY).d(STATEMENTS, 0).d(BODY).d(STATEMENTS, 1).d(EXPRESSION).d(
@@ -675,13 +675,13 @@
 //    final IdentifierP barNode3 = new Getter(script).d(BODY).d(STATEMENTS, 0).d(BODY).d(STATEMENTS, 2).d(NAME).done();
 //    { // global scope
 //
-//      ImmutableList<Scope> children = ImmutableList.list(fooScope);
+//      ImmutableList<Scope> children = ImmutableList.of(fooScope);
 //
-//      ImmutableList<String> through = ImmutableList.nil();
+//      ImmutableList<String> through = ImmutableList.empty();
 //
 //      // mapping of variable names from this scope object to the list of their declarations and their references
 //      Map<String, Pair<ImmutableList<IdentifierP>, ImmutableList<IdentifierP>>> variables = new HashMap<>();
-//      variables.put("foo", new Pair<>(ImmutableList.list(fooNode1), NO_REFERENCES));
+//      variables.put("foo", new Pair<>(ImmutableList.of(fooNode1), NO_REFERENCES));
 //
 //      Map<IdentifierP, Accessibility> referenceTypes = new HashMap<>();
 //
@@ -689,13 +689,13 @@
 //    }
 //    { // foo scope
 //
-//      ImmutableList<Scope> children = ImmutableList.list(barScope1, barScope2);
+//      ImmutableList<Scope> children = ImmutableList.of(barScope1, barScope2);
 //
-//      ImmutableList<String> through = ImmutableList.nil();
+//      ImmutableList<String> through = ImmutableList.empty();
 //
 //      // mapping of variable names from this scope object to the list of their declarations and their references
 //      Map<String, Pair<ImmutableList<IdentifierP>, ImmutableList<IdentifierP>>> variables = new HashMap<>();
-//      variables.put("bar", new Pair<>(ImmutableList.list(barNode1, barNode3), ImmutableList.list(barNode2)));
+//      variables.put("bar", new Pair<>(ImmutableList.of(barNode1, barNode3), ImmutableList.of(barNode2)));
 //      variables.put("arguments", new Pair<>(NO_DECLARATIONS, NO_REFERENCES));
 //
 //      Map<IdentifierP, Accessibility> referenceTypes = new HashMap<>();
@@ -705,9 +705,9 @@
 //    }
 //    { // bar1 scope
 //
-//      ImmutableList<Scope> children = ImmutableList.nil();
+//      ImmutableList<Scope> children = ImmutableList.empty();
 //
-//      ImmutableList<String> through = ImmutableList.nil();
+//      ImmutableList<String> through = ImmutableList.empty();
 //
 //      // mapping of variable names from this scope object to the list of their declarations and their references
 //      Map<String, Pair<ImmutableList<IdentifierP>, ImmutableList<IdentifierP>>> variables = new HashMap<>();
@@ -719,9 +719,9 @@
 //    }
 //    { // bar2 scope
 //
-//      ImmutableList<Scope> children = ImmutableList.nil();
+//      ImmutableList<Scope> children = ImmutableList.empty();
 //
-//      ImmutableList<String> through = ImmutableList.nil();
+//      ImmutableList<String> through = ImmutableList.empty();
 //
 //      // mapping of variable names from this scope object to the list of their declarations and their references
 //      Map<String, Pair<ImmutableList<IdentifierP>, ImmutableList<IdentifierP>>> variables = new HashMap<>();
@@ -738,19 +738,19 @@
 //    String js = "foo(); function foo() {}";
 //    Script script = parse(js);
 //    GlobalScope globalScope = ScopeAnalyzer.analyze(script);
-//    Scope fooScope = globalScope.children.maybeHead().just();
+//    Scope fooScope = globalScope.children.maybeHead().fromJust();
 //    final IdentifierP fooNode1 = new Getter(script).d(BODY).d(STATEMENTS, 0).d(EXPRESSION).d(CALLEE).d(IDENTIFIER)
 //        .done();
 //    final IdentifierP fooNode2 = new Getter(script).d(BODY).d(STATEMENTS, 1).d(NAME).done();
 //    { // global scope
 //
-//      ImmutableList<Scope> children = ImmutableList.list(fooScope);
+//      ImmutableList<Scope> children = ImmutableList.of(fooScope);
 //
-//      ImmutableList<String> through = ImmutableList.nil();
+//      ImmutableList<String> through = ImmutableList.empty();
 //
 //      // mapping of variable names from this scope object to the list of their declarations and their references
 //      Map<String, Pair<ImmutableList<IdentifierP>, ImmutableList<IdentifierP>>> variables = new HashMap<>();
-//      variables.put("foo", new Pair<>(ImmutableList.list(fooNode2), ImmutableList.list(fooNode1)));
+//      variables.put("foo", new Pair<>(ImmutableList.of(fooNode2), ImmutableList.of(fooNode1)));
 //
 //      Map<IdentifierP, Accessibility> referenceTypes = new HashMap<>();
 //      referenceTypes.put(fooNode1, Accessibility.Read);
@@ -759,9 +759,9 @@
 //    }
 //    { // foo scope
 //
-//      ImmutableList<Scope> children = ImmutableList.nil();
+//      ImmutableList<Scope> children = ImmutableList.empty();
 //
-//      ImmutableList<String> through = ImmutableList.nil();
+//      ImmutableList<String> through = ImmutableList.empty();
 //
 //      // mapping of variable names from this scope object to the list of their declarations and their references
 //      Map<String, Pair<ImmutableList<IdentifierP>, ImmutableList<IdentifierP>>> variables = new HashMap<>();
@@ -786,9 +786,9 @@
 //        '}';
 //    Script script = parse(js);
 //    GlobalScope globalScope = ScopeAnalyzer.analyze(script);
-//    Scope fooScope = globalScope.children.maybeHead().just();
-//    Scope barScope1 = fooScope.children.maybeHead().just();
-//    Scope barScope2 = fooScope.children.maybeTail().just().maybeHead().just();
+//    Scope fooScope = globalScope.children.maybeHead().fromJust();
+//    Scope barScope1 = fooScope.children.maybeHead().fromJust();
+//    Scope barScope2 = fooScope.children.maybeTail().fromJust().maybeHead().fromJust();
 //    final IdentifierP fooNode1 = new Getter(script).d(BODY).d(STATEMENTS, 0).d(NAME).done();
 //    final IdentifierP barNode1 = new Getter(script).d(BODY).d(STATEMENTS, 0).d(BODY).d(STATEMENTS, 0).d(EXPRESSION).d(
 //        JUST).d(CALLEE).d(IDENTIFIER).done();
@@ -798,13 +798,13 @@
 //        DECLARATORS, 0).d(BINDING).done();
 //    { // global scope
 //
-//      ImmutableList<Scope> children = ImmutableList.list(fooScope);
+//      ImmutableList<Scope> children = ImmutableList.of(fooScope);
 //
-//      ImmutableList<String> through = ImmutableList.nil();
+//      ImmutableList<String> through = ImmutableList.empty();
 //
 //      // mapping of variable names from this scope object to the list of their declarations and their references
 //      Map<String, Pair<ImmutableList<IdentifierP>, ImmutableList<IdentifierP>>> variables = new HashMap<>();
-//      variables.put("foo", new Pair<>(ImmutableList.list(fooNode1), NO_REFERENCES));
+//      variables.put("foo", new Pair<>(ImmutableList.of(fooNode1), NO_REFERENCES));
 //
 //      Map<IdentifierP, Accessibility> referenceTypes = new HashMap<>();
 //
@@ -812,14 +812,14 @@
 //    }
 //    { // foo scope
 //
-//      ImmutableList<Scope> children = ImmutableList.list(barScope1, barScope2);
+//      ImmutableList<Scope> children = ImmutableList.of(barScope1, barScope2);
 //
-//      ImmutableList<String> through = ImmutableList.nil();
+//      ImmutableList<String> through = ImmutableList.empty();
 //
 //      // mapping of variable names from this scope object to the list of their declarations and their references
 //      Map<String, Pair<ImmutableList<IdentifierP>, ImmutableList<IdentifierP>>> variables = new HashMap<>();
 //      variables.put("bar", new Pair<>(
-//          ImmutableList.list(barNode2, barNode3), ImmutableList.list(
+//          ImmutableList.of(barNode2, barNode3), ImmutableList.of(
 //          barNode1,
 //          barNode2,
 //          barNode3)));
@@ -834,9 +834,9 @@
 //    }
 //    { // bar scope 1
 //
-//      ImmutableList<Scope> children = ImmutableList.nil();
+//      ImmutableList<Scope> children = ImmutableList.empty();
 //
-//      ImmutableList<String> through = ImmutableList.nil();
+//      ImmutableList<String> through = ImmutableList.empty();
 //
 //      // mapping of variable names from this scope object to the list of their declarations and their references
 //      Map<String, Pair<ImmutableList<IdentifierP>, ImmutableList<IdentifierP>>> variables = new HashMap<>();
@@ -848,9 +848,9 @@
 //    }
 //    { // bar scope 2
 //
-//      ImmutableList<Scope> children = ImmutableList.nil();
+//      ImmutableList<Scope> children = ImmutableList.empty();
 //
-//      ImmutableList<String> through = ImmutableList.nil();
+//      ImmutableList<String> through = ImmutableList.empty();
 //
 //      // mapping of variable names from this scope object to the list of their declarations and their references
 //      Map<String, Pair<ImmutableList<IdentifierP>, ImmutableList<IdentifierP>>> variables = new HashMap<>();
@@ -867,7 +867,7 @@
 //    String js = "(function() {f1 = 'hello'; alert(f1);})();";
 //    Script script = parse(js);
 //    GlobalScope globalScope = ScopeAnalyzer.analyze(script);
-//    Scope functionScope = globalScope.children.maybeHead().just();
+//    Scope functionScope = globalScope.children.maybeHead().fromJust();
 //    final IdentifierP f1Node1 = new Getter(script).d(BODY).d(STATEMENTS, 0).d(EXPRESSION).d(CALLEE).d(BODY).d(
 //        STATEMENTS, 0).d(EXPRESSION).d(BINDING).d(IDENTIFIER).done();
 //    final IdentifierP alertNode1 = new Getter(script).d(BODY).d(STATEMENTS, 0).d(EXPRESSION).d(CALLEE).d(BODY).d(
@@ -876,14 +876,14 @@
 //        STATEMENTS, 1).d(EXPRESSION).d(ARGUMENTS, 0).d(IDENTIFIER).done();
 //    { // global scope
 //
-//      ImmutableList<Scope> children = ImmutableList.list(functionScope);
+//      ImmutableList<Scope> children = ImmutableList.of(functionScope);
 //
-//      ImmutableList<String> through = ImmutableList.list("f1", "alert");
+//      ImmutableList<String> through = ImmutableList.of("f1", "alert");
 //
 //      // mapping of variable names from this scope object to the list of their declarations and their references
 //      Map<String, Pair<ImmutableList<IdentifierP>, ImmutableList<IdentifierP>>> variables = new HashMap<>();
-//      variables.put("f1", new Pair<>(NO_DECLARATIONS, ImmutableList.list(f1Node1, f1Node2)));
-//      variables.put("alert", new Pair<>(NO_DECLARATIONS, ImmutableList.list(alertNode1)));
+//      variables.put("f1", new Pair<>(NO_DECLARATIONS, ImmutableList.of(f1Node1, f1Node2)));
+//      variables.put("alert", new Pair<>(NO_DECLARATIONS, ImmutableList.of(alertNode1)));
 //
 //      Map<IdentifierP, Accessibility> referenceTypes = new HashMap<>();
 //      referenceTypes.put(f1Node1, Accessibility.Write);
@@ -894,9 +894,9 @@
 //    }
 //    { // function scope
 //
-//      ImmutableList<Scope> children = ImmutableList.nil();
+//      ImmutableList<Scope> children = ImmutableList.empty();
 //
-//      ImmutableList<String> through = ImmutableList.list("f1", "alert");
+//      ImmutableList<String> through = ImmutableList.of("f1", "alert");
 //
 //      // mapping of variable names from this scope object to the list of their declarations and their references
 //      Map<String, Pair<ImmutableList<IdentifierP>, ImmutableList<IdentifierP>>> variables = new HashMap<>();
@@ -913,7 +913,7 @@
 //    String js = "(function() {var f1 = 'hello'; alert(f1);})();";
 //    Script script = parse(js);
 //    GlobalScope globalScope = ScopeAnalyzer.analyze(script);
-//    Scope functionScope = globalScope.children.maybeHead().just();
+//    Scope functionScope = globalScope.children.maybeHead().fromJust();
 //    final IdentifierP f1Node1 = new Getter(script).d(BODY).d(STATEMENTS, 0).d(EXPRESSION).d(CALLEE).d(BODY).d(
 //        STATEMENTS, 0).d(DECLARATION).d(DECLARATORS, 0).d(BINDING).done();
 //    final IdentifierP alertNode1 = new Getter(script).d(BODY).d(STATEMENTS, 0).d(EXPRESSION).d(CALLEE).d(BODY).d(
@@ -922,13 +922,13 @@
 //        STATEMENTS, 1).d(EXPRESSION).d(ARGUMENTS, 0).d(IDENTIFIER).done();
 //    { // global scope
 //
-//      ImmutableList<Scope> children = ImmutableList.list(functionScope);
+//      ImmutableList<Scope> children = ImmutableList.of(functionScope);
 //
-//      ImmutableList<String> through = ImmutableList.list("alert");
+//      ImmutableList<String> through = ImmutableList.of("alert");
 //
 //      // mapping of variable names from this scope object to the list of their declarations and their references
 //      Map<String, Pair<ImmutableList<IdentifierP>, ImmutableList<IdentifierP>>> variables = new HashMap<>();
-//      variables.put("alert", new Pair<>(NO_DECLARATIONS, ImmutableList.list(alertNode1)));
+//      variables.put("alert", new Pair<>(NO_DECLARATIONS, ImmutableList.of(alertNode1)));
 //
 //      Map<IdentifierP, Accessibility> referenceTypes = new HashMap<>();
 //      referenceTypes.put(alertNode1, Accessibility.Read);
@@ -937,13 +937,13 @@
 //    }
 //    { // function scope
 //
-//      ImmutableList<Scope> children = ImmutableList.nil();
+//      ImmutableList<Scope> children = ImmutableList.empty();
 //
-//      ImmutableList<String> through = ImmutableList.list("alert");
+//      ImmutableList<String> through = ImmutableList.of("alert");
 //
 //      // mapping of variable names from this scope object to the list of their declarations and their references
 //      Map<String, Pair<ImmutableList<IdentifierP>, ImmutableList<IdentifierP>>> variables = new HashMap<>();
-//      variables.put("f1", new Pair<>(ImmutableList.list(f1Node1), ImmutableList.list(f1Node1, f1Node2)));
+//      variables.put("f1", new Pair<>(ImmutableList.of(f1Node1), ImmutableList.of(f1Node1, f1Node2)));
 //      variables.put("arguments", new Pair<>(NO_DECLARATIONS, NO_REFERENCES));
 //
 //      Map<IdentifierP, Accessibility> referenceTypes = new HashMap<>();
@@ -959,7 +959,7 @@
 //    String js = "function f(arg1, arg2) {var v1 = arg1 + arg2 + ' world';}";
 //    Script script = parse(js);
 //    GlobalScope globalScope = ScopeAnalyzer.analyze(script);
-//    Scope fScope = globalScope.children.maybeHead().just();
+//    Scope fScope = globalScope.children.maybeHead().fromJust();
 //    final IdentifierP fNode1 = new Getter(script).d(BODY).d(STATEMENTS, 0).d(NAME).done();
 //    final IdentifierP arg1Node1 = new Getter(script).d(BODY).d(STATEMENTS, 0).d(PARAMETERS, 0).done();
 //    final IdentifierP arg2Node1 = new Getter(script).d(BODY).d(STATEMENTS, 0).d(PARAMETERS, 1).done();
@@ -972,13 +972,13 @@
 //
 //    { // global scope
 //
-//      ImmutableList<Scope> children = ImmutableList.list(fScope);
+//      ImmutableList<Scope> children = ImmutableList.of(fScope);
 //
-//      ImmutableList<String> through = ImmutableList.nil();
+//      ImmutableList<String> through = ImmutableList.empty();
 //
 //      // mapping of variable names from this scope object to the list of their declarations and their references
 //      Map<String, Pair<ImmutableList<IdentifierP>, ImmutableList<IdentifierP>>> variables = new HashMap<>();
-//      variables.put("f", new Pair<>(ImmutableList.list(fNode1), NO_REFERENCES));
+//      variables.put("f", new Pair<>(ImmutableList.of(fNode1), NO_REFERENCES));
 //
 //      Map<IdentifierP, Accessibility> referenceTypes = new HashMap<>();
 //
@@ -986,15 +986,15 @@
 //    }
 //    { // function scope
 //
-//      ImmutableList<Scope> children = ImmutableList.nil();
+//      ImmutableList<Scope> children = ImmutableList.empty();
 //
-//      ImmutableList<String> through = ImmutableList.nil();
+//      ImmutableList<String> through = ImmutableList.empty();
 //
 //      // mapping of variable names from this scope object to the list of their declarations and their references
 //      Map<String, Pair<ImmutableList<IdentifierP>, ImmutableList<IdentifierP>>> variables = new HashMap<>();
-//      variables.put("arg1", new Pair<>(ImmutableList.list(arg1Node1), ImmutableList.list(arg1Node2)));
-//      variables.put("arg2", new Pair<>(ImmutableList.list(arg2Node1), ImmutableList.list(arg2Node2)));
-//      variables.put("v1", new Pair<>(ImmutableList.list(v1Node1), ImmutableList.list(v1Node1)));
+//      variables.put("arg1", new Pair<>(ImmutableList.of(arg1Node1), ImmutableList.of(arg1Node2)));
+//      variables.put("arg2", new Pair<>(ImmutableList.of(arg2Node1), ImmutableList.of(arg2Node2)));
+//      variables.put("v1", new Pair<>(ImmutableList.of(v1Node1), ImmutableList.of(v1Node1)));
 //      variables.put("arguments", new Pair<>(NO_DECLARATIONS, NO_REFERENCES));
 //
 //      Map<IdentifierP, Accessibility> referenceTypes = new HashMap<>();
@@ -1011,7 +1011,7 @@
 //    String js = "function f() {var v1 = arguments[0] + ' world';}";
 //    Script script = parse(js);
 //    GlobalScope globalScope = ScopeAnalyzer.analyze(script);
-//    Scope fScope = globalScope.children.maybeHead().just();
+//    Scope fScope = globalScope.children.maybeHead().fromJust();
 //    final IdentifierP fNode1 = new Getter(script).d(BODY).d(STATEMENTS, 0).d(NAME).done();
 //    final IdentifierP v1Node1 = new Getter(script).d(BODY).d(STATEMENTS, 0).d(BODY).d(STATEMENTS, 0).d(DECLARATION).d(
 //        DECLARATORS, 0).d(BINDING).done();
@@ -1019,13 +1019,13 @@
 //        DECLARATION).d(DECLARATORS, 0).d(INIT).d(JUST).d(LEFT).d(OBJECT).d(IDENTIFIER).done();
 //    { // global scope
 //
-//      ImmutableList<Scope> children = ImmutableList.list(fScope);
+//      ImmutableList<Scope> children = ImmutableList.of(fScope);
 //
-//      ImmutableList<String> through = ImmutableList.nil();
+//      ImmutableList<String> through = ImmutableList.empty();
 //
 //      // mapping of variable names from this scope object to the list of their declarations and their references
 //      Map<String, Pair<ImmutableList<IdentifierP>, ImmutableList<IdentifierP>>> variables = new HashMap<>();
-//      variables.put("f", new Pair<>(ImmutableList.list(fNode1), NO_REFERENCES));
+//      variables.put("f", new Pair<>(ImmutableList.of(fNode1), NO_REFERENCES));
 //
 //      Map<IdentifierP, Accessibility> referenceTypes = new HashMap<>();
 //
@@ -1033,14 +1033,14 @@
 //    }
 //    { // function scope
 //
-//      ImmutableList<Scope> children = ImmutableList.nil();
+//      ImmutableList<Scope> children = ImmutableList.empty();
 //
-//      ImmutableList<String> through = ImmutableList.nil();
+//      ImmutableList<String> through = ImmutableList.empty();
 //
 //      // mapping of variable names from this scope object to the list of their declarations and their references
 //      Map<String, Pair<ImmutableList<IdentifierP>, ImmutableList<IdentifierP>>> variables = new HashMap<>();
-//      variables.put("v1", new Pair<>(ImmutableList.list(v1Node1), ImmutableList.list(v1Node1)));
-//      variables.put("arguments", new Pair<>(NO_DECLARATIONS, ImmutableList.list(argumentsNode1)));
+//      variables.put("v1", new Pair<>(ImmutableList.of(v1Node1), ImmutableList.of(v1Node1)));
+//      variables.put("arguments", new Pair<>(NO_DECLARATIONS, ImmutableList.of(argumentsNode1)));
 //
 //      Map<IdentifierP, Accessibility> referenceTypes = new HashMap<>();
 //      referenceTypes.put(v1Node1, Accessibility.Write);
@@ -1055,7 +1055,7 @@
 //    String js = "with (Math) {" + "  var x = cos(3 * PI);" + "  alert(x);" + '}';
 //    Script script = parse(js);
 //    GlobalScope globalScope = ScopeAnalyzer.analyze(script);
-//    Scope withScope = globalScope.children.maybeHead().just();
+//    Scope withScope = globalScope.children.maybeHead().fromJust();
 //    final IdentifierP mathNode1 = new Getter(script).d(BODY).d(STATEMENTS, 0).d(OBJECT).d(IDENTIFIER).done();
 //    final IdentifierP xNode1 = new Getter(script).d(BODY).d(STATEMENTS, 0).d(BODY).d(BLOCK).d(STATEMENTS, 0).d(
 //        DECLARATION).d(DECLARATORS, 0).d(BINDING).done();
@@ -1070,17 +1070,17 @@
 //
 //    { // global scope
 //
-//      ImmutableList<Scope> children = ImmutableList.list(withScope);
+//      ImmutableList<Scope> children = ImmutableList.of(withScope);
 //
-//      ImmutableList<String> through = ImmutableList.list("Math", "cos", "PI", "alert");
+//      ImmutableList<String> through = ImmutableList.of("Math", "cos", "PI", "alert");
 //
 //      // mapping of variable names from this scope object to the list of their declarations and their references
 //      Map<String, Pair<ImmutableList<IdentifierP>, ImmutableList<IdentifierP>>> variables = new HashMap<>();
-//      variables.put("Math", new Pair<>(NO_DECLARATIONS, ImmutableList.list(mathNode1)));
-//      variables.put("cos", new Pair<>(NO_DECLARATIONS, ImmutableList.list(cosNode1)));
-//      variables.put("PI", new Pair<>(NO_DECLARATIONS, ImmutableList.list(piNode1)));
-//      variables.put("alert", new Pair<>(NO_DECLARATIONS, ImmutableList.list(alertNode1)));
-//      variables.put("x", new Pair<>(ImmutableList.list(xNode1), ImmutableList.list(xNode1, xNode2)));
+//      variables.put("Math", new Pair<>(NO_DECLARATIONS, ImmutableList.of(mathNode1)));
+//      variables.put("cos", new Pair<>(NO_DECLARATIONS, ImmutableList.of(cosNode1)));
+//      variables.put("PI", new Pair<>(NO_DECLARATIONS, ImmutableList.of(piNode1)));
+//      variables.put("alert", new Pair<>(NO_DECLARATIONS, ImmutableList.of(alertNode1)));
+//      variables.put("x", new Pair<>(ImmutableList.of(xNode1), ImmutableList.of(xNode1, xNode2)));
 //
 //      Map<IdentifierP, Accessibility> referenceTypes = new HashMap<>();
 //      referenceTypes.put(mathNode1, Accessibility.Read);
@@ -1094,9 +1094,9 @@
 //    }
 //    { // with scope
 //
-//      ImmutableList<Scope> children = ImmutableList.nil();
+//      ImmutableList<Scope> children = ImmutableList.empty();
 //
-//      ImmutableList<String> through = ImmutableList.list("x", "cos", "PI", "alert");
+//      ImmutableList<String> through = ImmutableList.of("x", "cos", "PI", "alert");
 //
 //      // mapping of variable names from this scope object to the list of their declarations and their references
 //      Map<String, Pair<ImmutableList<IdentifierP>, ImmutableList<IdentifierP>>> variables = new HashMap<>();
@@ -1123,7 +1123,7 @@
 //        '}';
 //    Script script = parse(js);
 //    GlobalScope globalScope = ScopeAnalyzer.analyze(script);
-//    Scope withScope = globalScope.children.maybeHead().just();
+//    Scope withScope = globalScope.children.maybeHead().fromJust();
 //    final IdentifierP oNode1 = new Getter(script).d(BODY).d(STATEMENTS, 0).d(DECLARATION).d(DECLARATORS, 0).d(BINDING)
 //        .done();
 //    final IdentifierP oNode2 = new Getter(script).d(BODY).d(STATEMENTS, 1).d(OBJECT).d(OBJECT).d(OBJECT).d(IDENTIFIER)
@@ -1138,16 +1138,16 @@
 //        EXPRESSION).d(ARGUMENTS, 0).d(IDENTIFIER).done();
 //    { // global scope
 //
-//      ImmutableList<Scope> children = ImmutableList.list(withScope);
+//      ImmutableList<Scope> children = ImmutableList.of(withScope);
 //
-//      ImmutableList<String> through = ImmutableList.list("alert", "fld1", "fld2");
+//      ImmutableList<String> through = ImmutableList.of("alert", "fld1", "fld2");
 //
 //      // mapping of variable names from this scope object to the list of their declarations and their references
 //      Map<String, Pair<ImmutableList<IdentifierP>, ImmutableList<IdentifierP>>> variables = new HashMap<>();
-//      variables.put("alert", new Pair<>(NO_DECLARATIONS, ImmutableList.list(alertNode1, alertNode2)));
-//      variables.put("fld1", new Pair<>(NO_DECLARATIONS, ImmutableList.list(fld1Node1)));
-//      variables.put("fld2", new Pair<>(NO_DECLARATIONS, ImmutableList.list(fld2Node1)));
-//      variables.put("o", new Pair<>(ImmutableList.list(oNode1), ImmutableList.list(oNode1, oNode2)));
+//      variables.put("alert", new Pair<>(NO_DECLARATIONS, ImmutableList.of(alertNode1, alertNode2)));
+//      variables.put("fld1", new Pair<>(NO_DECLARATIONS, ImmutableList.of(fld1Node1)));
+//      variables.put("fld2", new Pair<>(NO_DECLARATIONS, ImmutableList.of(fld2Node1)));
+//      variables.put("o", new Pair<>(ImmutableList.of(oNode1), ImmutableList.of(oNode1, oNode2)));
 //
 //      Map<IdentifierP, Accessibility> referenceTypes = new HashMap<>();
 //      referenceTypes.put(alertNode1, Accessibility.Read);
@@ -1161,9 +1161,9 @@
 //    }
 //    { // with scope
 //
-//      ImmutableList<Scope> children = ImmutableList.nil();
+//      ImmutableList<Scope> children = ImmutableList.empty();
 //
-//      ImmutableList<String> through = ImmutableList.list("alert", "fld1", "fld2");
+//      ImmutableList<String> through = ImmutableList.of("alert", "fld1", "fld2");
 //
 //      // mapping of variable names from this scope object to the list of their declarations and their references
 //      Map<String, Pair<ImmutableList<IdentifierP>, ImmutableList<IdentifierP>>> variables = new HashMap<>();
@@ -1179,7 +1179,7 @@
 //    String js = "try {" + "  alert('Welcome guest!');" + "} catch(err) {" + "  alert(err);" + '}';
 //    Script script = parse(js);
 //    GlobalScope globalScope = ScopeAnalyzer.analyze(script);
-//    Scope catchScope = globalScope.children.maybeHead().just();
+//    Scope catchScope = globalScope.children.maybeHead().fromJust();
 //    final IdentifierP alertNode1 = new Getter(script).d(BODY).d(STATEMENTS, 0).d(BODY).d(STATEMENTS, 0).d(EXPRESSION).d(
 //        CALLEE).d(IDENTIFIER).done();
 //    final IdentifierP errNode1 = new Getter(script).d(BODY).d(STATEMENTS, 0).d(CATCHCLAUSE).d(BINDING).done();
@@ -1194,13 +1194,13 @@
 //        EXPRESSION).d(ARGUMENTS, 0).d(IDENTIFIER).done();
 //    { // global scope
 //
-//      ImmutableList<Scope> children = ImmutableList.list(catchScope);
+//      ImmutableList<Scope> children = ImmutableList.of(catchScope);
 //
-//      ImmutableList<String> through = ImmutableList.list("alert");
+//      ImmutableList<String> through = ImmutableList.of("alert");
 //
 //      // mapping of variable names from this scope object to the list of their declarations and their references
 //      Map<String, Pair<ImmutableList<IdentifierP>, ImmutableList<IdentifierP>>> variables = new HashMap<>();
-//      variables.put("alert", new Pair<>(NO_DECLARATIONS, ImmutableList.list(alertNode1, alertNode2)));
+//      variables.put("alert", new Pair<>(NO_DECLARATIONS, ImmutableList.of(alertNode1, alertNode2)));
 //
 //      Map<IdentifierP, Accessibility> referenceTypes = new HashMap<>();
 //      referenceTypes.put(alertNode1, Accessibility.Read);
@@ -1210,13 +1210,13 @@
 //    }
 //    { // catch scope
 //
-//      ImmutableList<Scope> children = ImmutableList.nil();
+//      ImmutableList<Scope> children = ImmutableList.empty();
 //
-//      ImmutableList<String> through = ImmutableList.list("alert");
+//      ImmutableList<String> through = ImmutableList.of("alert");
 //
 //      // mapping of variable names from this scope object to the list of their declarations and their references
 //      Map<String, Pair<ImmutableList<IdentifierP>, ImmutableList<IdentifierP>>> variables = new HashMap<>();
-//      variables.put("err", new Pair<>(ImmutableList.list(errNode1), ImmutableList.list(errNode2)));
+//      variables.put("err", new Pair<>(ImmutableList.of(errNode1), ImmutableList.of(errNode2)));
 //
 //      Map<IdentifierP, Accessibility> referenceTypes = new HashMap<>();
 //      referenceTypes.put(errNode2, Accessibility.Read);
@@ -1239,8 +1239,8 @@
 //        '}';
 //    Script script = parse(js);
 //    GlobalScope globalScope = ScopeAnalyzer.analyze(script);
-//    Scope catchScope1 = globalScope.children.maybeHead().just();
-//    Scope catchScope2 = catchScope1.children.maybeHead().just();
+//    Scope catchScope1 = globalScope.children.maybeHead().fromJust();
+//    Scope catchScope2 = catchScope1.children.maybeHead().fromJust();
 //    final IdentifierP alertNode1 = new Getter(script).d(BODY).d(STATEMENTS, 0).d(BODY).d(STATEMENTS, 0).d(EXPRESSION).d(
 //        CALLEE).d(IDENTIFIER).done();
 //    final IdentifierP err1Node1 = new Getter(script).d(BODY).d(STATEMENTS, 0).d(CATCHCLAUSE).d(BINDING).done();
@@ -1284,13 +1284,13 @@
 //        .d(BODY).d(STATEMENTS, 1).d(EXPRESSION).d(ARGUMENTS, 0).d(IDENTIFIER).done();
 //    { // global scope
 //
-//      ImmutableList<Scope> children = ImmutableList.list(catchScope1);
+//      ImmutableList<Scope> children = ImmutableList.of(catchScope1);
 //
-//      ImmutableList<String> through = ImmutableList.list("alert");
+//      ImmutableList<String> through = ImmutableList.of("alert");
 //
 //      // mapping of variable names from this scope object to the list of their declarations and their references
 //      Map<String, Pair<ImmutableList<IdentifierP>, ImmutableList<IdentifierP>>> variables = new HashMap<>();
-//      variables.put("alert", new Pair<>(NO_DECLARATIONS, ImmutableList.list(alertNode1, alertNode2, alertNode3)));
+//      variables.put("alert", new Pair<>(NO_DECLARATIONS, ImmutableList.of(alertNode1, alertNode2, alertNode3)));
 //
 //      Map<IdentifierP, Accessibility> referenceTypes = new HashMap<>();
 //      referenceTypes.put(alertNode1, Accessibility.Read);
@@ -1301,13 +1301,13 @@
 //    }
 //    { // catch scope 1
 //
-//      ImmutableList<Scope> children = ImmutableList.list(catchScope2);
+//      ImmutableList<Scope> children = ImmutableList.of(catchScope2);
 //
-//      ImmutableList<String> through = ImmutableList.list("alert");
+//      ImmutableList<String> through = ImmutableList.of("alert");
 //
 //      // mapping of variable names from this scope object to the list of their declarations and their references
 //      Map<String, Pair<ImmutableList<IdentifierP>, ImmutableList<IdentifierP>>> variables = new HashMap<>();
-//      variables.put("err1", new Pair<>(ImmutableList.list(err1Node1), ImmutableList.list(err1Node2, err1Node3)));
+//      variables.put("err1", new Pair<>(ImmutableList.of(err1Node1), ImmutableList.of(err1Node2, err1Node3)));
 //
 //      Map<IdentifierP, Accessibility> referenceTypes = new HashMap<>();
 //      referenceTypes.put(err1Node2, Accessibility.Read);
@@ -1317,13 +1317,13 @@
 //    }
 //    { // catch scope 2
 //
-//      ImmutableList<Scope> children = ImmutableList.nil();
+//      ImmutableList<Scope> children = ImmutableList.empty();
 //
-//      ImmutableList<String> through = ImmutableList.list("alert", "err1");
+//      ImmutableList<String> through = ImmutableList.of("alert", "err1");
 //
 //      // mapping of variable names from this scope object to the list of their declarations and their references
 //      Map<String, Pair<ImmutableList<IdentifierP>, ImmutableList<IdentifierP>>> variables = new HashMap<>();
-//      variables.put("err2", new Pair<>(ImmutableList.list(err2Node1), ImmutableList.list(err2Node2)));
+//      variables.put("err2", new Pair<>(ImmutableList.of(err2Node1), ImmutableList.of(err2Node2)));
 //
 //      Map<IdentifierP, Accessibility> referenceTypes = new HashMap<>();
 //      referenceTypes.put(err2Node2, Accessibility.Read);
@@ -1337,7 +1337,7 @@
 //    String js = "try {" + "  alert('Welcome guest!');" + "} catch(err) {" + "  var err = 1;" + '}';
 //    Script script = parse(js);
 //    GlobalScope globalScope = ScopeAnalyzer.analyze(script);
-//    Scope catchScope = globalScope.children.maybeHead().just();
+//    Scope catchScope = globalScope.children.maybeHead().fromJust();
 //    final IdentifierP alertNode1 = new Getter(script).d(BODY).d(STATEMENTS, 0).d(BODY).d(STATEMENTS, 0).d(EXPRESSION).d(
 //        CALLEE).d(IDENTIFIER).done();
 //    final IdentifierP errNode1 = new Getter(script).d(BODY).d(STATEMENTS, 0).d(CATCHCLAUSE).d(BINDING).done();
@@ -1345,14 +1345,14 @@
 //        DECLARATION).d(DECLARATORS, 0).d(BINDING).done();
 //    { // global scope
 //
-//      ImmutableList<Scope> children = ImmutableList.list(catchScope);
+//      ImmutableList<Scope> children = ImmutableList.of(catchScope);
 //
-//      ImmutableList<String> through = ImmutableList.list("alert");
+//      ImmutableList<String> through = ImmutableList.of("alert");
 //
 //      // mapping of variable names from this scope object to the list of their declarations and their references
 //      Map<String, Pair<ImmutableList<IdentifierP>, ImmutableList<IdentifierP>>> variables = new HashMap<>();
-//      variables.put("err", new Pair<>(ImmutableList.list(errNode2), NO_REFERENCES));
-//      variables.put("alert", new Pair<>(NO_DECLARATIONS, ImmutableList.list(alertNode1)));
+//      variables.put("err", new Pair<>(ImmutableList.of(errNode2), NO_REFERENCES));
+//      variables.put("alert", new Pair<>(NO_DECLARATIONS, ImmutableList.of(alertNode1)));
 //
 //      Map<IdentifierP, Accessibility> referenceTypes = new HashMap<>();
 //      referenceTypes.put(alertNode1, Accessibility.Read);
@@ -1361,13 +1361,13 @@
 //    }
 //    { // catch scope
 //
-//      ImmutableList<Scope> children = ImmutableList.nil();
+//      ImmutableList<Scope> children = ImmutableList.empty();
 //
-//      ImmutableList<String> through = ImmutableList.nil();
+//      ImmutableList<String> through = ImmutableList.empty();
 //
 //      // mapping of variable names from this scope object to the list of their declarations and their references
 //      Map<String, Pair<ImmutableList<IdentifierP>, ImmutableList<IdentifierP>>> variables = new HashMap<>();
-//      variables.put("err", new Pair<>(ImmutableList.list(errNode1), ImmutableList.list(errNode2)));
+//      variables.put("err", new Pair<>(ImmutableList.of(errNode1), ImmutableList.of(errNode2)));
 //
 //      Map<IdentifierP, Accessibility> referenceTypes = new HashMap<>();
 //      referenceTypes.put(errNode2, Accessibility.Write);
@@ -1395,7 +1395,7 @@
 //
 //    Assert.assertEquals(scope.through.length, through.length);
 //    through.foreach(name -> {
-//      HashTable<ImmutableList<Branch>, Reference> references = scope.through.get(name).just();
+//      HashTable<ImmutableList<Branch>, Reference> references = scope.through.get(name).fromJust();
 //      Assert.assertNotNull(references);
 //      assertTrue(references.find(pair -> pair.b.node.name.equals(name)).isJust());
 //    });
@@ -1404,7 +1404,7 @@
 //    for (Map.Entry<String, Pair<ImmutableList<IdentifierP>, ImmutableList<IdentifierP>>> variableEntry : variables.entrySet()) {
 //      Maybe<Variable> maybeVariable = scope.lookupVariable(variableEntry.getKey());
 //      assertTrue(maybeVariable.isJust());
-//      Variable variable = maybeVariable.just();
+//      Variable variable = maybeVariable.fromJust();
 //
 //      ImmutableList<IdentifierP> declarations = variableEntry.getValue().a;
 //      Assert.assertEquals(variable.declarations.length, declarations.length);
@@ -1420,7 +1420,7 @@
 //            pair -> pair.b.path.equals(node.from)
 //                && pair.b.node.equals(node.node)).map(pair -> pair.b);
 //        assertTrue(maybeRef.isJust());
-//        Reference ref = maybeRef.just();
+//        Reference ref = maybeRef.fromJust();
 //        Assert.assertEquals(ref.node, node.node);
 //        assertTrue(ref.path.equals(node.from));
 //        Accessibility type = referenceTypes.get(new IdentifierP(ref.path, ref.node));

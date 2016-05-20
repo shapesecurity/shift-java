@@ -43,7 +43,7 @@
 //
 //  @NotNull
 //  public static Script minify(@NotNull Script script) {
-//    return EXPANSION.transform(REDUCTION.transform(script, ImmutableList.nil()), ImmutableList.nil());
+//    return EXPANSION.transform(REDUCTION.transform(script, ImmutableList.empty()), ImmutableList.empty());
 //  }
 //
 //  public static Script minify(
@@ -52,7 +52,7 @@
 //      @NotNull ExpansionRule[] expansionRules) {
 //    FixPointTransformer reduction = new FixPointTransformer(new ComposedRule<>(reductionRules));
 //    FixPointTransformer expansion = new FixPointTransformer(new ComposedRule<>(expansionRules));
-//    return expansion.transform(reduction.transform(script, ImmutableList.nil()), ImmutableList.nil());
+//    return expansion.transform(reduction.transform(script, ImmutableList.empty()), ImmutableList.empty());
 //  }
 //
 //  public static Script minify(
@@ -63,6 +63,6 @@
 //    ExpansionRule[] expansionRulesArray = expansionRules.toArray(new ExpansionRule[expansionRules.length]);
 //    FixPointTransformer reduction = new FixPointTransformer(new ComposedRule<>(reductionRulesArray));
 //    FixPointTransformer expansion = new FixPointTransformer(new ComposedRule<>(expansionRulesArray));
-//    return expansion.transform(reduction.transform(script, ImmutableList.nil()), ImmutableList.nil());
+//    return expansion.transform(reduction.transform(script, ImmutableList.empty()), ImmutableList.empty());
 //  }
 //}

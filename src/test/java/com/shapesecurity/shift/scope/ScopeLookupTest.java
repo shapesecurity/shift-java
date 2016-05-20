@@ -92,9 +92,9 @@ public class ScopeLookupTest {
             if (node instanceof BindingIdentifier) {
                 final BindingIdentifier bi = (BindingIdentifier) node;
                 Maybe<Variable> mv = lookup.findVariableDeclaredBy(bi);
-                TestCase.assertTrue(mv.isNothing() || mv.just().declarations.exists(decl -> decl.node == bi));
+                TestCase.assertTrue(mv.isNothing() || mv.fromJust().declarations.exists(decl -> decl.node == bi));
                 Maybe<Variable> mv2 = lookup.findVariableReferencedBy(bi);
-                TestCase.assertTrue(mv2.isNothing() || mv2.just().references.exists(ref -> ref.node.isLeft() && ref.node.left().just() == bi));
+                TestCase.assertTrue(mv2.isNothing() || mv2.fromJust().references.exists(ref -> ref.node.isLeft() && ref.node.left().fromJust() == bi));
                 if (bi.name.equals("*default*")) {
                     TestCase.assertTrue(mv.isNothing() && mv2.isNothing());
                 } else {
@@ -103,16 +103,16 @@ public class ScopeLookupTest {
             } else if (node instanceof IdentifierExpression) {
                 final IdentifierExpression ie = (IdentifierExpression) node;
                 Variable v = lookup.findVariableReferencedBy(ie);
-                TestCase.assertTrue(v.references.exists(ref -> ref.node.isRight() && ref.node.right().just() == ie));
+                TestCase.assertTrue(v.references.exists(ref -> ref.node.isRight() && ref.node.right().fromJust() == ie));
             } else if (node instanceof FunctionDeclaration) {
                 final FunctionDeclaration func = (FunctionDeclaration) node;
                 if (func.name.name.equals("*default*")) {
                     assertThrows(Unit -> lookup.findVariablesForFuncDecl(func));
                 } else {
                     Pair<Variable, Maybe<Variable>> vars = lookup.findVariablesForFuncDecl(func);
-                    TestCase.assertTrue(vars.a.declarations.exists(decl -> decl.node == func.name));
-                    if (vars.b.isJust()) {
-                        TestCase.assertTrue(vars.b.just().declarations.exists(decl -> decl.node == func.name));
+                    TestCase.assertTrue(vars.left.declarations.exists(decl -> decl.node == func.name));
+                    if (vars.right.isJust()) {
+                        TestCase.assertTrue(vars.right.fromJust().declarations.exists(decl -> decl.node == func.name));
                     }
                 }
             } else if (node instanceof ClassDeclaration) {
@@ -121,14 +121,14 @@ public class ScopeLookupTest {
                     assertThrows(Unit -> lookup.findVariablesForClassDecl(cl));
                 } else {
                     Pair<Variable, Variable> vars = lookup.findVariablesForClassDecl(cl);
-                    TestCase.assertTrue(vars.a.declarations.exists(decl -> decl.node == cl.name));
-                    TestCase.assertTrue(vars.b.declarations.exists(decl -> decl.node == cl.name));
+                    TestCase.assertTrue(vars.left.declarations.exists(decl -> decl.node == cl.name));
+                    TestCase.assertTrue(vars.right.declarations.exists(decl -> decl.node == cl.name));
                 }
             }
 
             Maybe<Scope> sc = lookup.findScopeFor(node);
             if (sc.isJust()) {
-                TestCase.assertTrue(sc.just().astNode == node);
+                TestCase.assertTrue(sc.fromJust().astNode == node);
             }
         }
 
@@ -146,9 +146,9 @@ public class ScopeLookupTest {
 
                     Pair<Variable, Maybe<Variable>> vars = lookup.findVariablesForFuncDecl(func);
                     if (decl.kind == Declaration.Kind.FunctionB33) {
-                        TestCase.assertTrue(vars.b.isJust() && vars.b.just() == variable);
+                        TestCase.assertTrue(vars.right.isJust() && vars.right.fromJust() == variable);
                     } else {
-                        TestCase.assertTrue(vars.a == variable);
+                        TestCase.assertTrue(vars.left == variable);
                     }
                 } else if (decl.kind == Declaration.Kind.ClassDeclaration || decl.kind == Declaration.Kind.ClassName) {
                     ClassDeclaration cl = null;
@@ -157,40 +157,40 @@ public class ScopeLookupTest {
                         if (node instanceof ClassDeclaration && ((ClassDeclaration) node).name == decl.node) {
                             cl = (ClassDeclaration) node;
                             break;
-                        } else if (node instanceof ClassExpression && ((ClassExpression) node).name.isJust() && ((ClassExpression) node).name.just() == decl.node) {
+                        } else if (node instanceof ClassExpression && ((ClassExpression) node).name.isJust() && ((ClassExpression) node).name.fromJust() == decl.node) {
                             isClassExpr = true;
                             break;
                         }
                     }
 
                     if (isClassExpr) {
-                        TestCase.assertTrue(variable == lookup.findVariableDeclaredBy(decl.node).just());
+                        TestCase.assertTrue(variable == lookup.findVariableDeclaredBy(decl.node).fromJust());
                     } else {
                         TestCase.assertNotNull(cl);
                         Pair<Variable, Variable> vars = lookup.findVariablesForClassDecl(cl);
-                        TestCase.assertTrue(vars.a == variable || vars.b == variable);
+                        TestCase.assertTrue(vars.left == variable || vars.right == variable);
                     }
                 } else {
-                    TestCase.assertTrue(variable == lookup.findVariableDeclaredBy(decl.node).just());
+                    TestCase.assertTrue(variable == lookup.findVariableDeclaredBy(decl.node).fromJust());
                 }
             }
 
             for (Reference ref : variable.references) {
                 if (ref.node.isLeft()) {
-                    Maybe<Variable> mv = lookup.findVariableReferencedBy(ref.node.left().just());
-                    TestCase.assertTrue(mv.isJust() && variable == mv.just());
+                    Maybe<Variable> mv = lookup.findVariableReferencedBy(ref.node.left().fromJust());
+                    TestCase.assertTrue(mv.isJust() && variable == mv.fromJust());
                 } else {
-                    TestCase.assertTrue(variable == lookup.findVariableReferencedBy(ref.node.right().just()));
+                    TestCase.assertTrue(variable == lookup.findVariableReferencedBy(ref.node.right().fromJust()));
                 }
             }
         }
 
         for (Scope sc : scopes) {
-            TestCase.assertTrue(isDescendant(lookup.findScopeFor(sc.astNode).just(), sc));
+            TestCase.assertTrue(isDescendant(lookup.findScopeFor(sc.astNode).fromJust(), sc));
             /*
             findScopeFor returns the outermost scope associated with a node, so it is not necessarily
-            the case that sc.astNode == lookup.findScopeFor(sc.astNode).just(). However, there should
-            be a unique outermost scope, so sc should be a descendant of lookup.findScopeFor(sc.astNode).just().
+            the case that sc.astNode == lookup.findScopeFor(sc.astNode).fromJust(). However, there should
+            be a unique outermost scope, so sc should be a descendant of lookup.findScopeFor(sc.astNode).fromJust().
              */
         }
     }
