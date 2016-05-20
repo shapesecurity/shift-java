@@ -24,11 +24,11 @@ import org.jetbrains.annotations.Nullable;
 
 class TokenStream {
     @NotNull
-    private final StringBuilder writer;
-    private char lastChar = (char) -1;
+    protected final StringBuilder writer;
+    protected char lastChar = (char) -1;
     @Nullable
-    private String lastNumber;
-    private boolean optionalSemi;
+    protected String lastNumber;
+    protected boolean optionalSemi;
 
     public TokenStream(@NotNull StringBuilder writer) {
         this.writer = writer;
