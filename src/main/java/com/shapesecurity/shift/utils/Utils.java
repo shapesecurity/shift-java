@@ -58,6 +58,7 @@ public final class Utils {
         return true;
     }
 
+    @NotNull
     public static String escapeStringLiteral(@NotNull String stringValue) {
         int nSingle = 0;
         int nDouble = 0;
