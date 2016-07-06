@@ -109,6 +109,11 @@ public final class D2A {
             return "Infinity";
         }
 
+        long numLong = (long) number;
+        if ((double) numLong == number) {
+            return Long.toString(numLong);
+        }
+
         DtoAInfo info = formatNumberHelper(number);
         if (info.exp >= 21 || info.exp <= -7) {
             String part2 = info.digits.substring(1);
