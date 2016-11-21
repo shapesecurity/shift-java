@@ -73,7 +73,7 @@ public final class CodeGen implements Reducer<CodeRep> {
     @NotNull
     private CodeRep getAssignmentExpr(@NotNull Maybe<CodeRep> state) {
         if (state.isJust()) {
-            return state.just().containsGroup ? factory.paren(state.just()) : state.just();
+            return state.fromJust().containsGroup ? factory.paren(state.fromJust()) : state.fromJust();
         } else {
             return factory.empty();
         }
@@ -110,7 +110,7 @@ public final class CodeGen implements Reducer<CodeRep> {
     }
 
     private boolean isComplexArrowHead(@NotNull FormalParameters params) {
-        return (params.rest.isJust() || params.items.length != 1 || !(params.items.maybeHead().just() instanceof BindingIdentifier));
+        return (params.rest.isJust() || params.items.length != 1 || !(params.items.maybeHead().fromJust() instanceof BindingIdentifier));
     }
 
     private CodeRep p(Node node, Precedence precedence, CodeRep a) {
@@ -134,11 +134,11 @@ public final class CodeGen implements Reducer<CodeRep> {
             content = rest.maybe(factory.empty(), r -> seqVA(factory.token("..."), r));
         } else {
             content = factory.commaSep(elements.map(this::getAssignmentExpr));
-            if (elements.length > 0 && elements.maybeLast().just().isNothing() && rest.isNothing()) {
+            if (elements.length > 0 && elements.maybeLast().fromJust().isNothing() && rest.isNothing()) {
                 content = seqVA(content, factory.token(","));
             }
             if (rest.isJust()) {
-                content = seqVA(content, factory.token(","), factory.token("..."), rest.just());
+                content = seqVA(content, factory.token(","), factory.token("..."), rest.fromJust());
             }
         }
         return factory.bracket(content);
@@ -152,11 +152,11 @@ public final class CodeGen implements Reducer<CodeRep> {
             content = rest.maybe(factory.empty(), r -> seqVA(factory.token("..."), r));
         } else {
             content = factory.commaSep(elements.map(this::getAssignmentExpr));
-            if (elements.length > 0 && elements.maybeLast().just().isNothing() && rest.isNothing()) {
+            if (elements.length > 0 && elements.maybeLast().fromJust().isNothing() && rest.isNothing()) {
                 content = seqVA(content, factory.token(","));
             }
             if (rest.isJust()) {
-                content = seqVA(content, factory.token(","), factory.token("..."), rest.just());
+                content = seqVA(content, factory.token(","), factory.token("..."), rest.fromJust());
             }
         }
         return factory.bracket(content);
@@ -170,7 +170,7 @@ public final class CodeGen implements Reducer<CodeRep> {
         }
 
         CodeRep content = factory.commaSep(elements.map(this::getAssignmentExpr));
-        if (elements.length > 0 && elements.maybeLast().just().isNothing()) {
+        if (elements.length > 0 && elements.maybeLast().fromJust().isNothing()) {
             content = seqVA(content, factory.token(","));
         }
         return factory.bracket(content);
@@ -340,7 +340,7 @@ public final class CodeGen implements Reducer<CodeRep> {
     public CodeRep reduceClassDeclaration(@NotNull ClassDeclaration node, @NotNull CodeRep name, @NotNull Maybe<CodeRep> _super, @NotNull ImmutableList<CodeRep> elements) {
         CodeRep state = seqVA(factory.token("class"), name);
         if (_super.isJust()) {
-            state = seqVA(state, factory.token("extends"), _super.just());
+            state = seqVA(state, factory.token("extends"), _super.fromJust());
         }
         state = seqVA(state, factory.token("{"), factory.seq(elements), factory.token("}"));
         return state;
@@ -360,10 +360,10 @@ public final class CodeGen implements Reducer<CodeRep> {
     public CodeRep reduceClassExpression(@NotNull ClassExpression node, @NotNull Maybe<CodeRep> name, @NotNull Maybe<CodeRep> _super, @NotNull ImmutableList<CodeRep> elements) {
         CodeRep state = factory.token("class");
         if (name.isJust()) {
-            state = seqVA(state, name.just());
+            state = seqVA(state, name.fromJust());
         }
         if (_super.isJust()) {
-            state = seqVA(state, factory.token("extends"), _super.just());
+            state = seqVA(state, factory.token("extends"), _super.fromJust());
         }
         state = seqVA(state, factory.token("{"), factory.seq(elements), factory.token("}"));
         state.startsWithFunctionOrClass = true;
@@ -455,7 +455,7 @@ public final class CodeGen implements Reducer<CodeRep> {
     @Override
     @NotNull
     public CodeRep reduceDataProperty(@NotNull DataProperty node, @NotNull CodeRep name, @NotNull CodeRep expression) {
-        return seqVA(name, factory.token(":"), getAssignmentExpr(Maybe.just(expression)));
+        return seqVA(name, factory.token(":"), getAssignmentExpr(Maybe.of(expression)));
     }
 
     @Override
@@ -527,7 +527,7 @@ public final class CodeGen implements Reducer<CodeRep> {
         if (node.exportedName.isNothing()) {
             return factory.token(node.name);
         }
-        return seqVA(factory.token(node.name), factory.token("as"), factory.token(node.exportedName.just()));
+        return seqVA(factory.token(node.name), factory.token("as"), factory.token(node.exportedName.fromJust()));
     }
 
     @NotNull
@@ -536,7 +536,7 @@ public final class CodeGen implements Reducer<CodeRep> {
         if (node.exportedName.isNothing()) {
             return name;
         }
-        return seqVA(name, factory.token("as"), factory.token(node.exportedName.just()));
+        return seqVA(name, factory.token("as"), factory.token(node.exportedName.fromJust()));
     }
 
     @NotNull
@@ -604,7 +604,7 @@ public final class CodeGen implements Reducer<CodeRep> {
     @NotNull
     @Override
     public CodeRep reduceFormalParameters(@NotNull FormalParameters node, @NotNull ImmutableList<CodeRep> items, @NotNull Maybe<CodeRep> rest) {
-        return factory.commaSep(rest.maybe(items, r -> items.append(ImmutableList.list(seqVA(factory.token("..."), r)))));
+        return factory.commaSep(rest.maybe(items, r -> items.append(ImmutableList.of(seqVA(factory.token("..."), r)))));
     }
 
     @Override
@@ -633,7 +633,7 @@ public final class CodeGen implements Reducer<CodeRep> {
     @Override
     @NotNull
     public CodeRep reduceFunctionExpression(@NotNull FunctionExpression node, @NotNull Maybe<CodeRep> name, @NotNull CodeRep params, @NotNull CodeRep body) {
-        CodeRep state = seqVA(factory.token("function"), node.isGenerator ? factory.token("*") : factory.empty(), name.isJust() ? name.just() : factory.empty(), factory.paren(params), factory.brace(body));
+        CodeRep state = seqVA(factory.token("function"), node.isGenerator ? factory.token("*") : factory.empty(), name.isJust() ? name.fromJust() : factory.empty(), factory.paren(params), factory.brace(body));
         state.startsWithFunctionOrClass = true;
         return state;
     }
@@ -679,7 +679,7 @@ public final class CodeGen implements Reducer<CodeRep> {
     public CodeRep reduceImport(@NotNull Import node, @NotNull Maybe<CodeRep> defaultBinding, @NotNull ImmutableList<CodeRep> namedImports) {
         List<CodeRep> bindings = new ArrayList<>();
         if (defaultBinding.isJust()) {
-            bindings.add(defaultBinding.just());
+            bindings.add(defaultBinding.fromJust());
         }
         if (namedImports.length > 0) {
             bindings.add(factory.brace(factory.commaSep(namedImports)));
@@ -961,15 +961,15 @@ public final class CodeGen implements Reducer<CodeRep> {
     @NotNull
     @Override
     public CodeRep reduceTemplateExpression(@NotNull TemplateExpression node, @NotNull Maybe<CodeRep> tag, @NotNull ImmutableList<CodeRep> elements) {
-        CodeRep state = node.tag.maybe(factory.empty(), t -> p(t, node.getPrecedence(), tag.just()));
+        CodeRep state = node.tag.maybe(factory.empty(), t -> p(t, node.getPrecedence(), tag.fromJust()));
         state = seqVA(state, factory.token("`"));
         for (int i = 0, l = node.elements.length; i < l; ++i) {
-            if (node.elements.index(i).just() instanceof TemplateElement) {
+            if (node.elements.index(i).fromJust() instanceof TemplateElement) {
                 String d = "";
                 if (i > 0) {
                     d += "}";
                 }
-                d += ((TemplateElement) node.elements.index(i).just()).rawValue;
+                d += ((TemplateElement) node.elements.index(i).fromJust()).rawValue;
                 if (i < l - 1) {
                     d += "${";
                 }
@@ -977,14 +977,14 @@ public final class CodeGen implements Reducer<CodeRep> {
                     state = seqVA(state, factory.token(d));
                 }
             } else {
-                state = seqVA(state, elements.index(i).just());
+                state = seqVA(state, elements.index(i).fromJust());
             }
         }
         state = seqVA(state, factory.token("`"));
         if (node.tag.isJust()) {
-            state.startsWithCurly = tag.just().startsWithCurly;
-            state.startsWithLetSquareBracket = tag.just().startsWithLetSquareBracket;
-            state.startsWithFunctionOrClass = tag.just().startsWithFunctionOrClass;
+            state.startsWithCurly = tag.fromJust().startsWithCurly;
+            state.startsWithLetSquareBracket = tag.fromJust().startsWithLetSquareBracket;
+            state.startsWithFunctionOrClass = tag.fromJust().startsWithFunctionOrClass;
         }
         return state;
     }
@@ -1095,7 +1095,7 @@ public final class CodeGen implements Reducer<CodeRep> {
         if (node.expression.isNothing()) {
             return factory.token("yield");
         }
-        return seqVA(factory.token("yield"), p(node.expression.just(), node.getPrecedence(), expression.just()));
+        return seqVA(factory.token("yield"), p(node.expression.fromJust(), node.getPrecedence(), expression.fromJust()));
     }
 
     @NotNull

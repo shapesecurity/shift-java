@@ -66,7 +66,7 @@
 //      assertEquals(node.getClass().getSimpleName(), node.type().name());
 //      Maybe<? extends Node> maybe = node.get(branch);
 //      if (maybe.isJust()) {
-//        Node replicate = node.set(ImmutableList.list(new ReplacementChild(branch, maybe.just())));
+//        Node replicate = node.set(ImmutableList.of(new ReplacementChild(branch, maybe.fromJust())));
 //        assertTrue(replicate != node);
 //        assertEquals(node, replicate);
 //      }
@@ -76,7 +76,7 @@
 //  private Node track(ImmutableList<Branch> path) {
 //    Node node = script;
 //    for (Branch branch : path.reverse()) {
-//      node = node.get(branch).just();
+//      node = node.get(branch).fromJust();
 //    }
 //    return node;
 //  }

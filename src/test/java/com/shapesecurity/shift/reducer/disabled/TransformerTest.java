@@ -99,7 +99,7 @@
 //
 //  @Test
 //  public void testCloneLibrary() throws IOException, JsError {
-//    ImmutableList<String> jsFiles = ImmutableList.nil();
+//    ImmutableList<String> jsFiles = ImmutableList.empty();
 //    setFatal(false); // Collect the failures in an ErrorCollector
 //
 //    // Get a list of the js files within the resources directory to process

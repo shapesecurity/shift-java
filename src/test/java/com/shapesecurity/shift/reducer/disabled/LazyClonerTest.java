@@ -37,7 +37,7 @@
 //public class LazyClonerTest extends TestBase {
 //  @Test
 //  public void testLibraries() throws IOException, JsError {
-//    ImmutableList<String> jsFiles = ImmutableList.nil();
+//    ImmutableList<String> jsFiles = ImmutableList.empty();
 //    setFatal(true); // Collect the failures in an ErrorCollector
 //
 //    // Get a list of the js files within the resources directory to process

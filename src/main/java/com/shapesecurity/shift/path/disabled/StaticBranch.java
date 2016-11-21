@@ -155,7 +155,7 @@
 //      if (parent instanceof MaybeNode) {
 //        MaybeNode typed = ((MaybeNode) parent);
 //        if (typed.maybe.isJust()) {
-//          return wrap(typed.maybe.just(), typed.genType.elementType);
+//          return wrap(typed.maybe.fromJust(), typed.genType.elementType);
 //        }
 //      }
 //      return null;
@@ -167,7 +167,7 @@
 //      if (parent instanceof MaybeNode) {
 //        MaybeType type = (MaybeType) parent.genType();
 //        if (((MaybeNode) parent).maybe.isJust() && type.isAssignableFrom(child.genType())) {
-//          return new MaybeNode<>(Maybe.just(child), type);
+//          return new MaybeNode<>(Maybe.of(child), type);
 //        }
 //      }
 //      return parent;
@@ -180,7 +180,7 @@
 //    public Node view(@NotNull Node parent) {
 //      if (parent instanceof EitherNode) {
 //        if (((EitherNode) parent).either.isLeft()) {
-//          return wrap(((EitherNode) parent).either.left().just(), ((EitherNode) parent).genType.leftType);
+//          return wrap(((EitherNode) parent).either.left().fromJust(), ((EitherNode) parent).genType.leftType);
 //        } else {
 //          return null;
 //        }
@@ -217,7 +217,7 @@
 //    public Node view(@NotNull Node parent) {
 //      if (parent instanceof EitherNode) {
 //        if (((EitherNode) parent).either.isRight()) {
-//          return wrap(((EitherNode) parent).either.right().just(), ((EitherNode) parent).genType.rightType);
+//          return wrap(((EitherNode) parent).either.right().fromJust(), ((EitherNode) parent).genType.rightType);
 //        } else {
 //          return null;
 //        }

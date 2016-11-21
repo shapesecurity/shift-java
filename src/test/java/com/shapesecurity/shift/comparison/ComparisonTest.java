@@ -101,19 +101,19 @@
 //
 //  @Test
 //  public void testArrayExpressionEquality() {
-//    ImmutableList<LiteralStringExpression> a = ImmutableList.list(
+//    ImmutableList<LiteralStringExpression> a = ImmutableList.of(
 //        new LiteralStringExpression("a"),
 //        new LiteralStringExpression("r"),
 //        new LiteralStringExpression("r"),
 //        new LiteralStringExpression("a"),
 //        new LiteralStringExpression("y"));
-//    ImmutableList<LiteralStringExpression> a1 = ImmutableList.list(
+//    ImmutableList<LiteralStringExpression> a1 = ImmutableList.of(
 //        new LiteralStringExpression("a"),
 //        new LiteralStringExpression("r"),
 //        new LiteralStringExpression("r"),
 //        new LiteralStringExpression("a"),
 //        new LiteralStringExpression("y"));
-//    ImmutableList<LiteralStringExpression> a2 = ImmutableList.list(
+//    ImmutableList<LiteralStringExpression> a2 = ImmutableList.of(
 //        new LiteralStringExpression("n"),
 //        new LiteralStringExpression("o"),
 //        new LiteralStringExpression("t"),
@@ -151,21 +151,21 @@
 //
 //    assertTrue(c.equals(dupC));
 //    assertFalse(c.equals(new CallExpression(identExpr("notCallee"), args)));
-//    assertFalse(c.equals(dupC.arguments.maybeLast().just()));
+//    assertFalse(c.equals(dupC.arguments.maybeLast().fromJust()));
 //  }
 //
 //  @Test
 //  public void testComputedMemberEquality() {
-//    ComputedMemberExpression cm = new ComputedMemberExpression(new ObjectExpression(ImmutableList.nil()), identExpr("a"));
-//    ComputedMemberExpression cm1 = new ComputedMemberExpression(new ObjectExpression(ImmutableList.nil()), identExpr("a"));
+//    ComputedMemberExpression cm = new ComputedMemberExpression(new ObjectExpression(ImmutableList.empty()), identExpr("a"));
+//    ComputedMemberExpression cm1 = new ComputedMemberExpression(new ObjectExpression(ImmutableList.empty()), identExpr("a"));
 //    ComputedMemberExpression cm2 = new ComputedMemberExpression(
 //        new ObjectExpression(
-//            ImmutableList.list(
+//            ImmutableList.of(
 //                new Getter(
 //                    new PropertyName("prop"), new FunctionBody(
-//                    ImmutableList.nil(),
-//                    ImmutableList.nil())))), identExpr("a"));
-//    ComputedMemberExpression cm3 = new ComputedMemberExpression(new ObjectExpression(ImmutableList.nil()), identExpr("b"));
+//                    ImmutableList.empty(),
+//                    ImmutableList.empty())))), identExpr("a"));
+//    ComputedMemberExpression cm3 = new ComputedMemberExpression(new ObjectExpression(ImmutableList.empty()), identExpr("b"));
 //    assertTrue(cm.equals(cm1));
 //    assertFalse(cm.equals(cm2));
 //    assertFalse(cm.equals(cm3));
@@ -201,13 +201,13 @@
 //
 //  @Test
 //  public void testFunctionExpressionEquality() {
-//    ImmutableList<Identifier> params = ImmutableList.list(new Identifier("a"), new Identifier("b"));
-//    FunctionExpression fe = new FunctionExpression(Maybe.nothing(), params, body());
-//    FunctionExpression fe1 = new FunctionExpression(Maybe.nothing(), params, body());
-//    FunctionExpression fe2 = new FunctionExpression(Maybe.nothing(), params.maybeTail().just(), body());
-//    FunctionExpression fe3 = new FunctionExpression(Maybe.nothing(), params, body(new BlockStatement(new Block(
-//        ImmutableList.list(new ContinueStatement(Maybe.nothing()))))));
-//    FunctionExpression fe4 = new FunctionExpression(Maybe.just(new Identifier("a")), params, body());
+//    ImmutableList<Identifier> params = ImmutableList.of(new Identifier("a"), new Identifier("b"));
+//    FunctionExpression fe = new FunctionExpression(Maybe.empty(), params, body());
+//    FunctionExpression fe1 = new FunctionExpression(Maybe.empty(), params, body());
+//    FunctionExpression fe2 = new FunctionExpression(Maybe.empty(), params.maybeTail().fromJust(), body());
+//    FunctionExpression fe3 = new FunctionExpression(Maybe.empty(), params, body(new BlockStatement(new Block(
+//        ImmutableList.of(new ContinueStatement(Maybe.empty()))))));
+//    FunctionExpression fe4 = new FunctionExpression(Maybe.of(new Identifier("a")), params, body());
 //
 //    assertTrue(fe.equals(fe1));
 //    assertFalse(fe.equals(fe2));
@@ -273,10 +273,10 @@
 //
 //  @Test
 //  public void testNewExpressionEquality() {
-//    NewExpression ne = new NewExpression(identExpr("callee"), ImmutableList.nil());
-//    NewExpression ne1 = new NewExpression(identExpr("callee"), ImmutableList.nil());
-//    NewExpression ne2 = new NewExpression(identExpr("notCallee"), ImmutableList.nil());
-//    NewExpression ne3 = new NewExpression(identExpr("callee"), ImmutableList.list(
+//    NewExpression ne = new NewExpression(identExpr("callee"), ImmutableList.empty());
+//    NewExpression ne1 = new NewExpression(identExpr("callee"), ImmutableList.empty());
+//    NewExpression ne2 = new NewExpression(identExpr("notCallee"), ImmutableList.empty());
+//    NewExpression ne3 = new NewExpression(identExpr("callee"), ImmutableList.of(
 //        identExpr(
 //            "arg")));
 //
@@ -287,9 +287,9 @@
 //
 //  @Test
 //  public void testObjectExpressionEquality() {
-//    ObjectExpression obj = new ObjectExpression(ImmutableList.nil());
-//    ObjectExpression obj1 = new ObjectExpression(ImmutableList.nil());
-//    ObjectExpression obj2 = new ObjectExpression(ImmutableList.list(new Getter(new PropertyName("prop"), body())));
+//    ObjectExpression obj = new ObjectExpression(ImmutableList.empty());
+//    ObjectExpression obj1 = new ObjectExpression(ImmutableList.empty());
+//    ObjectExpression obj2 = new ObjectExpression(ImmutableList.of(new Getter(new PropertyName("prop"), body())));
 //
 //    assertTrue(obj.equals(obj1));
 //    assertFalse(obj.equals(obj2));
@@ -321,14 +321,14 @@
 //
 //  @Test
 //  public void testStaticMemberExpressionEquality() {
-//    StaticMemberExpression sme = new StaticMemberExpression(new ObjectExpression(ImmutableList.nil()), new Identifier("prop"));
-//    StaticMemberExpression sme1 = new StaticMemberExpression(new ObjectExpression(ImmutableList.nil()), new Identifier("prop"));
+//    StaticMemberExpression sme = new StaticMemberExpression(new ObjectExpression(ImmutableList.empty()), new Identifier("prop"));
+//    StaticMemberExpression sme1 = new StaticMemberExpression(new ObjectExpression(ImmutableList.empty()), new Identifier("prop"));
 //    StaticMemberExpression sme2 = new StaticMemberExpression(new ObjectExpression(
-//        ImmutableList.list(
+//        ImmutableList.of(
 //            new Getter(
 //                new PropertyName(
 //                    "get"), body()))), new Identifier("prop"));
-//    StaticMemberExpression sme3 = new StaticMemberExpression(new ObjectExpression(ImmutableList.nil()), new Identifier(
+//    StaticMemberExpression sme3 = new StaticMemberExpression(new ObjectExpression(ImmutableList.empty()), new Identifier(
 //        "notProp"));
 //
 //    assertTrue(sme.equals(sme1));
@@ -394,9 +394,9 @@
 //
 //  @Test
 //  public void testBlockStatementEquality() {
-//    BlockStatement bs = new BlockStatement(new Block(ImmutableList.nil()));
-//    BlockStatement bs1 = new BlockStatement(new Block(ImmutableList.nil()));
-//    BlockStatement bs2 = new BlockStatement(new Block(ImmutableList.list(new EmptyStatement())));
+//    BlockStatement bs = new BlockStatement(new Block(ImmutableList.empty()));
+//    BlockStatement bs1 = new BlockStatement(new Block(ImmutableList.empty()));
+//    BlockStatement bs2 = new BlockStatement(new Block(ImmutableList.of(new EmptyStatement())));
 //
 //    assertTrue(bs.equals(bs1));
 //    assertFalse(bs.equals(bs2));
@@ -406,9 +406,9 @@
 //  public void testBreakStatementEquality() {
 //    BreakStatement bs = new BreakStatement();
 //    BreakStatement bs1 = new BreakStatement();
-//    BreakStatement bs2 = new BreakStatement(Maybe.just(new Identifier("label")));
-//    BreakStatement bs3 = new BreakStatement(Maybe.just(new Identifier("label")));
-//    BreakStatement bs4 = new BreakStatement(Maybe.just(new Identifier("notLabel")));
+//    BreakStatement bs2 = new BreakStatement(Maybe.of(new Identifier("label")));
+//    BreakStatement bs3 = new BreakStatement(Maybe.of(new Identifier("label")));
+//    BreakStatement bs4 = new BreakStatement(Maybe.of(new Identifier("notLabel")));
 //
 //    assertTrue(bs.equals(bs1));
 //    assertFalse(bs.equals(bs2));
@@ -420,9 +420,9 @@
 //  public void testContinueStatementEquality() {
 //    ContinueStatement cs = new ContinueStatement();
 //    ContinueStatement cs1 = new ContinueStatement();
-//    ContinueStatement cs2 = new ContinueStatement(Maybe.just(new Identifier("label")));
-//    ContinueStatement cs3 = new ContinueStatement(Maybe.just(new Identifier("label")));
-//    ContinueStatement cs4 = new ContinueStatement(Maybe.just(new Identifier("notLabel")));
+//    ContinueStatement cs2 = new ContinueStatement(Maybe.of(new Identifier("label")));
+//    ContinueStatement cs3 = new ContinueStatement(Maybe.of(new Identifier("label")));
+//    ContinueStatement cs4 = new ContinueStatement(Maybe.of(new Identifier("notLabel")));
 //
 //    assertTrue(cs.equals(cs1));
 //    assertFalse(cs.equals(cs2));
@@ -494,30 +494,30 @@
 //    {
 //      ForInStatement fivs = new ForInStatement(Either.left(new VariableDeclaration(VariableDeclarationKind.Var, ImmutableList
 //              .list(
-//                  new VariableDeclarator(new Identifier("declarator"), Maybe.nothing())))), identExpr("right"), new BlockStatement(
-//                    new Block(ImmutableList.nil())));
+//                  new VariableDeclarator(new Identifier("declarator"), Maybe.empty())))), identExpr("right"), new BlockStatement(
+//                    new Block(ImmutableList.empty())));
 //      ForInStatement fivs1 = new ForInStatement(Either.left(new VariableDeclaration(VariableDeclarationKind.Var, ImmutableList
 //              .list(
-//                  new VariableDeclarator(new Identifier("declarator"), Maybe.nothing())))), identExpr("right"), new BlockStatement(
-//                    new Block(ImmutableList.nil())));
+//                  new VariableDeclarator(new Identifier("declarator"), Maybe.empty())))), identExpr("right"), new BlockStatement(
+//                    new Block(ImmutableList.empty())));
 //      ForInStatement fivs2 = new ForInStatement(Either.left(new VariableDeclaration(VariableDeclarationKind.Var, ImmutableList
 //              .list(
-//                  new VariableDeclarator(new Identifier("notDeclarator"), Maybe.nothing())))),
+//                  new VariableDeclarator(new Identifier("notDeclarator"), Maybe.empty())))),
 //          identExpr("right"),
-//          new BlockStatement(new Block(ImmutableList.nil())));
+//          new BlockStatement(new Block(ImmutableList.empty())));
 //      ForInStatement fivs3 = new ForInStatement(Either.left(new VariableDeclaration(VariableDeclarationKind.Let, ImmutableList
 //              .list(
-//                  new VariableDeclarator(new Identifier("declarator"), Maybe.nothing())))), identExpr("right"), new BlockStatement(
-//                    new Block(ImmutableList.nil())));
+//                  new VariableDeclarator(new Identifier("declarator"), Maybe.empty())))), identExpr("right"), new BlockStatement(
+//                    new Block(ImmutableList.empty())));
 //      ForInStatement fivs4 = new ForInStatement(Either.left(new VariableDeclaration(VariableDeclarationKind.Var, ImmutableList
 //              .list(
-//                  new VariableDeclarator(new Identifier("declarator"), Maybe.nothing())))),
+//                  new VariableDeclarator(new Identifier("declarator"), Maybe.empty())))),
 //          identExpr("notRight"),
-//          new BlockStatement(new Block(ImmutableList.nil())));
+//          new BlockStatement(new Block(ImmutableList.empty())));
 //      ForInStatement fivs5 = new ForInStatement(Either.left(new VariableDeclaration(VariableDeclarationKind.Var, ImmutableList
 //              .list(
-//                  new VariableDeclarator(new Identifier("declarator"), Maybe.nothing())))), identExpr("right"), new BlockStatement(
-//                    new Block(ImmutableList.list(new EmptyStatement()))));
+//                  new VariableDeclarator(new Identifier("declarator"), Maybe.empty())))), identExpr("right"), new BlockStatement(
+//                    new Block(ImmutableList.of(new EmptyStatement()))));
 //
 //      assertTrue(fivs.equals(fivs1));
 //      assertFalse(fivs.equals(fivs2));
@@ -529,19 +529,19 @@
 //
 //  @Test
 //  public void testForStatementEquality() {
-//    BlockStatement block = new BlockStatement(new Block(ImmutableList.nil()));
+//    BlockStatement block = new BlockStatement(new Block(ImmutableList.empty()));
 //
 //    {
-//      ForStatement fs = new ForStatement(Maybe.nothing(), Maybe.nothing(), Maybe.nothing(), block);
-//      ForStatement fs1 = new ForStatement(Maybe.nothing(), Maybe.nothing(), Maybe.nothing(), block);
-//      ForStatement fs2 = new ForStatement(Maybe.just(Either.right(identExpr("init"))), Maybe.nothing(), Maybe.nothing(),
+//      ForStatement fs = new ForStatement(Maybe.empty(), Maybe.empty(), Maybe.empty(), block);
+//      ForStatement fs1 = new ForStatement(Maybe.empty(), Maybe.empty(), Maybe.empty(), block);
+//      ForStatement fs2 = new ForStatement(Maybe.of(Either.right(identExpr("init"))), Maybe.empty(), Maybe.empty(),
 //          block);
-//      ForStatement fs3 = new ForStatement(Maybe.nothing(), Maybe.just(new LiteralBooleanExpression(true)),
-//          Maybe.nothing(), block);
-//      ForStatement fs4 = new ForStatement(Maybe.nothing(), Maybe.nothing(), Maybe.just(new PostfixExpression(
+//      ForStatement fs3 = new ForStatement(Maybe.empty(), Maybe.of(new LiteralBooleanExpression(true)),
+//          Maybe.empty(), block);
+//      ForStatement fs4 = new ForStatement(Maybe.empty(), Maybe.empty(), Maybe.of(new PostfixExpression(
 //          PostfixOperator.Increment, identExpr("operand"))), block);
-//      ForStatement fs5 = new ForStatement(Maybe.nothing(), Maybe.nothing(), Maybe.nothing(), new BlockStatement(
-//          new Block(ImmutableList.list(new EmptyStatement()))));
+//      ForStatement fs5 = new ForStatement(Maybe.empty(), Maybe.empty(), Maybe.empty(), new BlockStatement(
+//          new Block(ImmutableList.of(new EmptyStatement()))));
 //
 //      assertTrue(fs.equals(fs1));
 //      assertFalse(fs.equals(fs2));
@@ -551,28 +551,28 @@
 //    }
 //
 //    {
-//      VariableDeclarator notInit = new VariableDeclarator(new Identifier("notInit"), Maybe.nothing());
-//      VariableDeclarator init = new VariableDeclarator(new Identifier("init"), Maybe.nothing());
+//      VariableDeclarator notInit = new VariableDeclarator(new Identifier("notInit"), Maybe.empty());
+//      VariableDeclarator init = new VariableDeclarator(new Identifier("init"), Maybe.empty());
 //
 //      Maybe<Either<VariableDeclaration, Expression>> declnotInit =
-//          Maybe.just(Either.left(new VariableDeclaration(VariableDeclarationKind.Var, ImmutableList.list(notInit))));
+//          Maybe.of(Either.left(new VariableDeclaration(VariableDeclarationKind.Var, ImmutableList.of(notInit))));
 //      Maybe<Either<VariableDeclaration, Expression>> decl =
-//          Maybe.just(Either.left(new VariableDeclaration(VariableDeclarationKind.Var, ImmutableList.list(init))));
+//          Maybe.of(Either.left(new VariableDeclaration(VariableDeclarationKind.Var, ImmutableList.of(init))));
 //
 //
-//      ForStatement fs0 = new ForStatement(decl, Maybe.nothing(), Maybe.nothing(), block);
-//      ForStatement fs1 = new ForStatement(decl, Maybe.nothing(), Maybe.nothing(), block);
-//      ForStatement fs2 = new ForStatement(declnotInit, Maybe.nothing(), Maybe.nothing(), block);
+//      ForStatement fs0 = new ForStatement(decl, Maybe.empty(), Maybe.empty(), block);
+//      ForStatement fs1 = new ForStatement(decl, Maybe.empty(), Maybe.empty(), block);
+//      ForStatement fs2 = new ForStatement(declnotInit, Maybe.empty(), Maybe.empty(), block);
 //      ForStatement fs3 = new ForStatement(decl,
-//          Maybe.just(new LiteralBooleanExpression(true)),
+//          Maybe.of(new LiteralBooleanExpression(true)),
 //          Maybe.<Expression>nothing(),
 //          block);
 //      ForStatement fs4 = new ForStatement(decl,
-//          Maybe.nothing(),
-//          Maybe.just(new PostfixExpression(PostfixOperator.Increment, identExpr("operand"))),
+//          Maybe.empty(),
+//          Maybe.of(new PostfixExpression(PostfixOperator.Increment, identExpr("operand"))),
 //          block);
-//      ForStatement fs5 = new ForStatement(decl, Maybe.nothing(), Maybe.nothing(),
-//          new BlockStatement(new Block(ImmutableList.list(new EmptyStatement()))));
+//      ForStatement fs5 = new ForStatement(decl, Maybe.empty(), Maybe.empty(),
+//          new BlockStatement(new Block(ImmutableList.of(new EmptyStatement()))));
 //
 //      assertTrue(fs0.equals(fs1));
 //      assertFalse(fs0.equals(fs2));
@@ -584,11 +584,11 @@
 //
 //  @Test
 //  public void testFunctionDeclarationEquality() {
-//    FunctionDeclaration fd = new FunctionDeclaration(new Identifier("name"), ImmutableList.nil(), body());
-//    FunctionDeclaration fd1 = new FunctionDeclaration(new Identifier("name"), ImmutableList.nil(), body());
-//    FunctionDeclaration fd2 = new FunctionDeclaration(new Identifier("notId"), ImmutableList.nil(), body());
-//    FunctionDeclaration fd3 = new FunctionDeclaration(new Identifier("name"), ImmutableList.list(ident("notParams")), body());
-//    FunctionDeclaration fd4 = new FunctionDeclaration(new Identifier("name"), ImmutableList.nil(), body(new EmptyStatement()));
+//    FunctionDeclaration fd = new FunctionDeclaration(new Identifier("name"), ImmutableList.empty(), body());
+//    FunctionDeclaration fd1 = new FunctionDeclaration(new Identifier("name"), ImmutableList.empty(), body());
+//    FunctionDeclaration fd2 = new FunctionDeclaration(new Identifier("notId"), ImmutableList.empty(), body());
+//    FunctionDeclaration fd3 = new FunctionDeclaration(new Identifier("name"), ImmutableList.of(ident("notParams")), body());
+//    FunctionDeclaration fd4 = new FunctionDeclaration(new Identifier("name"), ImmutableList.empty(), body(new EmptyStatement()));
 //
 //    assertTrue(fd.equals(fd1));
 //    assertFalse(fd.equals(fd2));
@@ -599,19 +599,19 @@
 //  @Test
 //  public void testIfStatementEquality() {
 //    IfStatement is = new IfStatement(new LiteralBooleanExpression(true), new BlockStatement(new Block(
-//        ImmutableList.nil())),
+//        ImmutableList.empty())),
 //        Maybe.<Statement>nothing());
 //    IfStatement is1 = new IfStatement(new LiteralBooleanExpression(true), new BlockStatement(new Block(
-//        ImmutableList.nil())),
+//        ImmutableList.empty())),
 //        Maybe.<Statement>nothing());
 //    IfStatement is2 = new IfStatement(new LiteralBooleanExpression(false), new BlockStatement(new Block(
-//        ImmutableList.nil())),
+//        ImmutableList.empty())),
 //        Maybe.<Statement>nothing());
 //    IfStatement is3 = new IfStatement(new LiteralBooleanExpression(true), new BlockStatement(new Block(
-//        ImmutableList.list(
+//        ImmutableList.of(
 //            new EmptyStatement()))), Maybe.<Statement>nothing());
 //    IfStatement is4 = new IfStatement(new LiteralBooleanExpression(true), new BlockStatement(new Block(
-//        ImmutableList.nil())),
+//        ImmutableList.empty())),
 //        Maybe.<Statement>just(new EmptyStatement()));
 //
 //    assertTrue(is.equals(is1));
@@ -622,13 +622,13 @@
 //
 //  @Test
 //  public void testLabeledStatementEquality() {
-//    LabeledStatement ls = new LabeledStatement(new Identifier("label"), new BlockStatement(new Block(ImmutableList.nil())));
+//    LabeledStatement ls = new LabeledStatement(new Identifier("label"), new BlockStatement(new Block(ImmutableList.empty())));
 //    LabeledStatement ls1 = new LabeledStatement(new Identifier("label"), new BlockStatement(new Block(
-//        ImmutableList.nil())));
+//        ImmutableList.empty())));
 //    LabeledStatement ls2 = new LabeledStatement(new Identifier("notLabel"), new BlockStatement(new Block(
-//        ImmutableList.nil())));
+//        ImmutableList.empty())));
 //    LabeledStatement ls3 = new LabeledStatement(new Identifier("label"), new BlockStatement(new Block(
-//        ImmutableList.list(
+//        ImmutableList.of(
 //            new EmptyStatement()))));
 //
 //    assertTrue(ls.equals(ls1));
@@ -648,12 +648,12 @@
 //
 //  @Test
 //  public void testSwitchStatementEquality() {
-//    SwitchStatement ss = new SwitchStatement(new LiteralStringExpression("discriminant"), ImmutableList.nil());
-//    SwitchStatement ss1 = new SwitchStatement(new LiteralStringExpression("discriminant"), ImmutableList.nil());
-//    SwitchStatement ss2 = new SwitchStatement(new LiteralStringExpression("notDiscriminant"), ImmutableList.nil());
-//    SwitchStatement ss3 = new SwitchStatement(new LiteralStringExpression("discriminant"), ImmutableList.list(
+//    SwitchStatement ss = new SwitchStatement(new LiteralStringExpression("discriminant"), ImmutableList.empty());
+//    SwitchStatement ss1 = new SwitchStatement(new LiteralStringExpression("discriminant"), ImmutableList.empty());
+//    SwitchStatement ss2 = new SwitchStatement(new LiteralStringExpression("notDiscriminant"), ImmutableList.empty());
+//    SwitchStatement ss3 = new SwitchStatement(new LiteralStringExpression("discriminant"), ImmutableList.of(
 //        new SwitchCase(
-//            new LiteralStringExpression("value"), ImmutableList.list(new BreakStatement()))));
+//            new LiteralStringExpression("value"), ImmutableList.of(new BreakStatement()))));
 //
 //    assertTrue(ss.equals(ss1));
 //    assertFalse(ss.equals(ss2));
@@ -663,23 +663,23 @@
 //  @Test
 //  public void testSwitchStatementWithDefaultEquality() {
 //    SwitchStatementWithDefault sswd = new SwitchStatementWithDefault(new LiteralStringExpression("discriminant"),
-//        ImmutableList.nil(), new SwitchDefault(ImmutableList.list(new EmptyStatement())), ImmutableList.nil());
+//        ImmutableList.empty(), new SwitchDefault(ImmutableList.of(new EmptyStatement())), ImmutableList.empty());
 //    SwitchStatementWithDefault sswd1 = new SwitchStatementWithDefault(new LiteralStringExpression("discriminant"),
-//        ImmutableList.nil(), new SwitchDefault(ImmutableList.list(new EmptyStatement())), ImmutableList.nil());
+//        ImmutableList.empty(), new SwitchDefault(ImmutableList.of(new EmptyStatement())), ImmutableList.empty());
 //    SwitchStatementWithDefault sswd2 = new SwitchStatementWithDefault(new LiteralStringExpression("notDiscriminant"),
-//        ImmutableList.nil(), new SwitchDefault(ImmutableList.list(new EmptyStatement())), ImmutableList.nil());
+//        ImmutableList.empty(), new SwitchDefault(ImmutableList.of(new EmptyStatement())), ImmutableList.empty());
 //    SwitchStatementWithDefault sswd3 = new SwitchStatementWithDefault(new LiteralStringExpression("discriminant"),
-//        ImmutableList.list(
+//        ImmutableList.of(
 //            new SwitchCase(
 //                new LiteralStringExpression("test"),
-//                ImmutableList.list(new EmptyStatement()))),
-//        new SwitchDefault(ImmutableList.list(new EmptyStatement())), ImmutableList.nil());
+//                ImmutableList.of(new EmptyStatement()))),
+//        new SwitchDefault(ImmutableList.of(new EmptyStatement())), ImmutableList.empty());
 //    SwitchStatementWithDefault sswd4 = new SwitchStatementWithDefault(new LiteralStringExpression("discriminant"),
-//        ImmutableList.nil(), new SwitchDefault(ImmutableList.list(new BreakStatement())), ImmutableList.nil());
+//        ImmutableList.empty(), new SwitchDefault(ImmutableList.of(new BreakStatement())), ImmutableList.empty());
 //    SwitchStatementWithDefault sswd5 = new SwitchStatementWithDefault(new LiteralStringExpression("discriminant"),
-//        ImmutableList.nil(), new SwitchDefault(ImmutableList.list(new EmptyStatement())), ImmutableList.list(
+//        ImmutableList.empty(), new SwitchDefault(ImmutableList.of(new EmptyStatement())), ImmutableList.of(
 //        new SwitchCase(
-//            new LiteralStringExpression("test"), ImmutableList.list(new EmptyStatement()))));
+//            new LiteralStringExpression("test"), ImmutableList.of(new EmptyStatement()))));
 //
 //    assertTrue(sswd.equals(sswd1));
 //    assertFalse(sswd.equals(sswd2));
@@ -700,16 +700,16 @@
 //
 //  @Test
 //  public void testTryStatementEquality() {
-//    TryFinallyStatement ts = new TryFinallyStatement(new Block(ImmutableList.nil()), Maybe.just(new CatchClause(new Identifier(
-//        "param"), new Block(ImmutableList.nil()))), new Block(ImmutableList.nil()));
-//    TryFinallyStatement ts1 = new TryFinallyStatement(new Block(ImmutableList.nil()), Maybe.just(new CatchClause(new Identifier(
-//        "param"), new Block(ImmutableList.nil()))), new Block(ImmutableList.nil()));
-//    TryFinallyStatement ts2 = new TryFinallyStatement(new Block(ImmutableList.list(new EmptyStatement())), Maybe.just(
-//        new CatchClause(new Identifier("param"), new Block(ImmutableList.nil()))), new Block(ImmutableList.nil()));
-//    TryFinallyStatement ts3 = new TryFinallyStatement(new Block(ImmutableList.nil()), Maybe.just(new CatchClause(new Identifier(
-//        "notParam"), new Block(ImmutableList.nil()))), new Block(ImmutableList.nil()));
-//    TryFinallyStatement ts4 = new TryFinallyStatement(new Block(ImmutableList.nil()), Maybe.just(new CatchClause(new Identifier(
-//        "param"), new Block(ImmutableList.nil()))), new Block(ImmutableList.list(new EmptyStatement())));
+//    TryFinallyStatement ts = new TryFinallyStatement(new Block(ImmutableList.empty()), Maybe.of(new CatchClause(new Identifier(
+//        "param"), new Block(ImmutableList.empty()))), new Block(ImmutableList.empty()));
+//    TryFinallyStatement ts1 = new TryFinallyStatement(new Block(ImmutableList.empty()), Maybe.of(new CatchClause(new Identifier(
+//        "param"), new Block(ImmutableList.empty()))), new Block(ImmutableList.empty()));
+//    TryFinallyStatement ts2 = new TryFinallyStatement(new Block(ImmutableList.of(new EmptyStatement())), Maybe.of(
+//        new CatchClause(new Identifier("param"), new Block(ImmutableList.empty()))), new Block(ImmutableList.empty()));
+//    TryFinallyStatement ts3 = new TryFinallyStatement(new Block(ImmutableList.empty()), Maybe.of(new CatchClause(new Identifier(
+//        "notParam"), new Block(ImmutableList.empty()))), new Block(ImmutableList.empty()));
+//    TryFinallyStatement ts4 = new TryFinallyStatement(new Block(ImmutableList.empty()), Maybe.of(new CatchClause(new Identifier(
+//        "param"), new Block(ImmutableList.empty()))), new Block(ImmutableList.of(new EmptyStatement())));
 //
 //    assertTrue(ts.equals(ts1));
 //    assertFalse(ts.equals(ts2));
@@ -752,15 +752,15 @@
 //
 //  @Test
 //  public void testWithStatementEquality() {
-//    WithStatement ws = new WithStatement(new ObjectExpression(ImmutableList.nil()), new EmptyStatement());
-//    WithStatement ws1 = new WithStatement(new ObjectExpression(ImmutableList.nil()), new EmptyStatement());
+//    WithStatement ws = new WithStatement(new ObjectExpression(ImmutableList.empty()), new EmptyStatement());
+//    WithStatement ws1 = new WithStatement(new ObjectExpression(ImmutableList.empty()), new EmptyStatement());
 //    WithStatement ws2 = new WithStatement(new ObjectExpression(
-//        ImmutableList.list(
+//        ImmutableList.of(
 //            new Getter(
 //                new PropertyName("prop"),
 //                body()))), new EmptyStatement());
-//    WithStatement ws3 = new WithStatement(new ObjectExpression(ImmutableList.nil()), new BlockStatement(new Block(
-//        ImmutableList.nil())));
+//    WithStatement ws3 = new WithStatement(new ObjectExpression(ImmutableList.empty()), new BlockStatement(new Block(
+//        ImmutableList.empty())));
 //
 //    assertTrue(ws.equals(ws1));
 //    assertFalse(ws.equals(ws2));
@@ -769,10 +769,10 @@
 //
 //  @Test
 //  public void testCatchClauseEquality() {
-//    CatchClause cc = new CatchClause(new Identifier("binding"), new Block(ImmutableList.nil()));
-//    CatchClause cc1 = new CatchClause(new Identifier("binding"), new Block(ImmutableList.nil()));
-//    CatchClause cc2 = new CatchClause(new Identifier("notParam"), new Block(ImmutableList.nil()));
-//    CatchClause cc3 = new CatchClause(new Identifier("binding"), new Block(ImmutableList.list(new EmptyStatement())));
+//    CatchClause cc = new CatchClause(new Identifier("binding"), new Block(ImmutableList.empty()));
+//    CatchClause cc1 = new CatchClause(new Identifier("binding"), new Block(ImmutableList.empty()));
+//    CatchClause cc2 = new CatchClause(new Identifier("notParam"), new Block(ImmutableList.empty()));
+//    CatchClause cc3 = new CatchClause(new Identifier("binding"), new Block(ImmutableList.of(new EmptyStatement())));
 //
 //    assertTrue(cc.equals(cc1));
 //    assertFalse(cc.equals(cc2));
@@ -805,7 +805,7 @@
 //    FunctionBody pb1 = body(new EmptyStatement());
 //    FunctionBody pb2 = body(new EmptyStatement(), new EmptyStatement());
 //    FunctionBody pb3 = new FunctionBody(
-//        ImmutableList.list(new UnknownDirective("directive")), ImmutableList.list(new EmptyStatement()));
+//        ImmutableList.of(new UnknownDirective("directive")), ImmutableList.of(new EmptyStatement()));
 //
 //    assertTrue(pb.equals(pb1));
 //    assertFalse(pb.equals(pb2));
@@ -814,10 +814,10 @@
 //
 //  @Test
 //  public void testSwitchCaseEquality() {
-//    SwitchCase sc = new SwitchCase(new LiteralStringExpression("test"), ImmutableList.list(new EmptyStatement()));
-//    SwitchCase sc1 = new SwitchCase(new LiteralStringExpression("test"), ImmutableList.list(new EmptyStatement()));
-//    SwitchCase sc2 = new SwitchCase(new LiteralStringExpression("notTest"), ImmutableList.list(new EmptyStatement()));
-//    SwitchCase sc3 = new SwitchCase(new LiteralStringExpression("test"), ImmutableList.list(
+//    SwitchCase sc = new SwitchCase(new LiteralStringExpression("test"), ImmutableList.of(new EmptyStatement()));
+//    SwitchCase sc1 = new SwitchCase(new LiteralStringExpression("test"), ImmutableList.of(new EmptyStatement()));
+//    SwitchCase sc2 = new SwitchCase(new LiteralStringExpression("notTest"), ImmutableList.of(new EmptyStatement()));
+//    SwitchCase sc3 = new SwitchCase(new LiteralStringExpression("test"), ImmutableList.of(
 //        new EmptyStatement(),
 //        new EmptyStatement()));
 //
@@ -828,9 +828,9 @@
 //
 //  @Test
 //  public void testSwitchDefaultEquality() {
-//    SwitchDefault sd = new SwitchDefault(ImmutableList.list(new EmptyStatement()));
-//    SwitchDefault sd1 = new SwitchDefault(ImmutableList.list(new EmptyStatement()));
-//    SwitchDefault sd2 = new SwitchDefault(ImmutableList.list(new EmptyStatement(), new EmptyStatement()));
+//    SwitchDefault sd = new SwitchDefault(ImmutableList.of(new EmptyStatement()));
+//    SwitchDefault sd1 = new SwitchDefault(ImmutableList.of(new EmptyStatement()));
+//    SwitchDefault sd2 = new SwitchDefault(ImmutableList.of(new EmptyStatement(), new EmptyStatement()));
 //
 //    assertTrue(sd.equals(sd1));
 //    assertFalse(sd.equals(sd2));

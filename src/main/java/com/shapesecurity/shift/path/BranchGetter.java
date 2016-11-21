@@ -8,7 +8,7 @@ public class BranchGetter {
     private ImmutableList<Branch> directions;
 
     public BranchGetter() {
-        this.directions = ImmutableList.nil();
+        this.directions = ImmutableList.empty();
     }
 
     private BranchGetter(ImmutableList<Branch> directions) {
@@ -21,11 +21,11 @@ public class BranchGetter {
 
     public Maybe<? extends Node> apply(Node node) {
         ImmutableList<Branch> directions = this.directions.reverse(); // a bit silly, but it works
-        Maybe<? extends Node> n = Maybe.just(node);
+        Maybe<? extends Node> n = Maybe.of(node);
         while (n.isJust() && directions.isNotEmpty()) {
-            node = n.just();
-            n = directions.maybeHead().just().step(node);
-            directions = directions.maybeTail().just();
+            node = n.fromJust();
+            n = directions.maybeHead().fromJust().step(node);
+            directions = directions.maybeTail().fromJust();
         }
         return n;
     }

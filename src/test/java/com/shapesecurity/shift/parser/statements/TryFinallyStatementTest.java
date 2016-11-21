@@ -12,20 +12,20 @@ public class TryFinallyStatementTest extends ParserTestCase {
 
     @Test
     public void testTryFinallyStatement() throws JsError {
-        testScript("try { } finally { cleanup(stuff) }", new TryFinallyStatement(new Block(ImmutableList.nil()),
-                Maybe.nothing(), new Block(ImmutableList.list(new ExpressionStatement(new CallExpression(
-                new IdentifierExpression("cleanup"), ImmutableList.list(new IdentifierExpression("stuff"))))))));
+        testScript("try { } finally { cleanup(stuff) }", new TryFinallyStatement(new Block(ImmutableList.empty()),
+                Maybe.empty(), new Block(ImmutableList.of(new ExpressionStatement(new CallExpression(
+                new IdentifierExpression("cleanup"), ImmutableList.of(new IdentifierExpression("stuff"))))))));
 
-        testScript("try{}catch(a){}finally{}", new TryFinallyStatement(new Block(ImmutableList.nil()),
-                Maybe.just(new CatchClause(new BindingIdentifier("a"), new Block(ImmutableList.nil()))),
-                new Block(ImmutableList.nil())));
+        testScript("try{}catch(a){}finally{}", new TryFinallyStatement(new Block(ImmutableList.empty()),
+                Maybe.of(new CatchClause(new BindingIdentifier("a"), new Block(ImmutableList.empty()))),
+                new Block(ImmutableList.empty())));
 
         testScript("try { doThat(); } catch (e) { say(e) } finally { cleanup(stuff) }", new TryFinallyStatement(
-                new Block(ImmutableList.list(new ExpressionStatement(new CallExpression(new IdentifierExpression("doThat"),
-                        ImmutableList.nil())))),
-                Maybe.just(new CatchClause(new BindingIdentifier("e"), new Block(ImmutableList.list(new ExpressionStatement(
-                        new CallExpression(new IdentifierExpression("say"), ImmutableList.list(new IdentifierExpression("e")))))))),
-                new Block(ImmutableList.list(new ExpressionStatement(new CallExpression(new IdentifierExpression("cleanup"),
-                        ImmutableList.list(new IdentifierExpression("stuff"))))))));
+                new Block(ImmutableList.of(new ExpressionStatement(new CallExpression(new IdentifierExpression("doThat"),
+                        ImmutableList.empty())))),
+                Maybe.of(new CatchClause(new BindingIdentifier("e"), new Block(ImmutableList.of(new ExpressionStatement(
+                        new CallExpression(new IdentifierExpression("say"), ImmutableList.of(new IdentifierExpression("e")))))))),
+                new Block(ImmutableList.of(new ExpressionStatement(new CallExpression(new IdentifierExpression("cleanup"),
+                        ImmutableList.of(new IdentifierExpression("stuff"))))))));
     }
 }

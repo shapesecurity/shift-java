@@ -21,7 +21,7 @@ public class WithStatementTest extends ParserTestCase {
         )));
 
         testScript("with (x) { foo }", new WithStatement(new IdentifierExpression("x"), new BlockStatement(
-                new Block(ImmutableList.list(new ExpressionStatement(new IdentifierExpression("foo"))))
+                new Block(ImmutableList.of(new ExpressionStatement(new IdentifierExpression("foo"))))
         )));
     }
 }

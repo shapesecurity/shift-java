@@ -13,23 +13,23 @@ public class ReturnStatementTest extends ParserTestCase {
 
     @Test
     public void testReturnStatement() throws JsError {
-        testScript("(function(){ return })", new FunctionExpression(false, Maybe.nothing(), NO_PARAMETERS,
-                new FunctionBody(ImmutableList.nil(), ImmutableList.list(new ReturnStatement(Maybe.nothing())))));
+        testScript("(function(){ return })", new FunctionExpression(false, Maybe.empty(), NO_PARAMETERS,
+                new FunctionBody(ImmutableList.empty(), ImmutableList.of(new ReturnStatement(Maybe.empty())))));
 
-        testScript("(function(){ return; })", new FunctionExpression(false, Maybe.nothing(), NO_PARAMETERS,
-                new FunctionBody(ImmutableList.nil(), ImmutableList.list(new ReturnStatement(Maybe.nothing())))));
+        testScript("(function(){ return; })", new FunctionExpression(false, Maybe.empty(), NO_PARAMETERS,
+                new FunctionBody(ImmutableList.empty(), ImmutableList.of(new ReturnStatement(Maybe.empty())))));
 
-        testScript("(function(){ return x; })", new FunctionExpression(false, Maybe.nothing(), NO_PARAMETERS,
-                new FunctionBody(ImmutableList.nil(), ImmutableList.list(new ReturnStatement(Maybe.just(new IdentifierExpression("x")))))));
+        testScript("(function(){ return x; })", new FunctionExpression(false, Maybe.empty(), NO_PARAMETERS,
+                new FunctionBody(ImmutableList.empty(), ImmutableList.of(new ReturnStatement(Maybe.of(new IdentifierExpression("x")))))));
 
-        testScript("(function(){ return x * y })", new FunctionExpression(false, Maybe.nothing(), NO_PARAMETERS,
-                new FunctionBody(ImmutableList.nil(), ImmutableList.list(new ReturnStatement(
-                        Maybe.just(new BinaryExpression(new IdentifierExpression("x"), BinaryOperator.Mul, new IdentifierExpression("y")))
+        testScript("(function(){ return x * y })", new FunctionExpression(false, Maybe.empty(), NO_PARAMETERS,
+                new FunctionBody(ImmutableList.empty(), ImmutableList.of(new ReturnStatement(
+                        Maybe.of(new BinaryExpression(new IdentifierExpression("x"), BinaryOperator.Mul, new IdentifierExpression("y")))
                 )))));
 
-        testScript("_ => { return 0; }", new ArrowExpression(new FormalParameters(ImmutableList.list(
-                new BindingIdentifier("_")), Maybe.nothing()), new FunctionBody(ImmutableList.nil(), ImmutableList.list(
-                new ReturnStatement(Maybe.just(new LiteralNumericExpression(0.0)))))));
+        testScript("_ => { return 0; }", new ArrowExpression(new FormalParameters(ImmutableList.of(
+                new BindingIdentifier("_")), Maybe.empty()), new FunctionBody(ImmutableList.empty(), ImmutableList.of(
+                new ReturnStatement(Maybe.of(new LiteralNumericExpression(0.0)))))));
 
         testScriptFailure("return;", 0, "Illegal return statement");
         testScriptFailure("{ return; }", 2, "Illegal return statement");

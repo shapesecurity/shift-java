@@ -11,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
 
 public abstract class ParserTestCase extends TestCase {
 
-    protected static FormalParameters NO_PARAMETERS = new FormalParameters(ImmutableList.nil(), Maybe.nothing());
+    protected static FormalParameters NO_PARAMETERS = new FormalParameters(ImmutableList.empty(), Maybe.empty());
 
     public static void testScript(String source) throws JsError {
         Parser.parseScript(source);
@@ -30,26 +30,26 @@ public abstract class ParserTestCase extends TestCase {
     public static void testScript(String source, Statement expected) throws JsError {
         Script node = Parser.parseScript(source);
         assert (node.statements.isNotEmpty());
-        assertEquals(expected, node.statements.maybeHead().just());
+        assertEquals(expected, node.statements.maybeHead().fromJust());
 
         ParserWithLocation parserWithLocation = new ParserWithLocation();
         node = parserWithLocation.parseScript(source);
         assert (node.statements.isNotEmpty());
-        assertEquals(expected, node.statements.maybeHead().just());
+        assertEquals(expected, node.statements.maybeHead().fromJust());
         Director.reduceScript(new RangeCheckerReducer(parserWithLocation), node);
     }
 
     public static void testScript(String source, Expression expected) throws JsError {
         Script node = Parser.parseScript(source);
         assert (node.statements.isNotEmpty());
-        Statement stmt = node.statements.maybeHead().just();
+        Statement stmt = node.statements.maybeHead().fromJust();
         assert (stmt instanceof ExpressionStatement);
         assertEquals(expected, ((ExpressionStatement) stmt).expression);
 
         ParserWithLocation parserWithLocation = new ParserWithLocation();
         node = parserWithLocation.parseScript(source);
         assert (node.statements.isNotEmpty());
-        stmt = node.statements.maybeHead().just();
+        stmt = node.statements.maybeHead().fromJust();
         assert (stmt instanceof ExpressionStatement);
         assertEquals(expected, ((ExpressionStatement) stmt).expression);
         Director.reduceScript(new RangeCheckerReducer(parserWithLocation), node);
@@ -73,26 +73,26 @@ public abstract class ParserTestCase extends TestCase {
     public static void testModule(String source, ImportDeclarationExportDeclarationStatement expected) throws JsError {
         Module node = Parser.parseModule(source);
         assert (node.items.isNotEmpty());
-        assertEquals(expected, node.items.maybeHead().just());
+        assertEquals(expected, node.items.maybeHead().fromJust());
 
         ParserWithLocation parserWithLocation = new ParserWithLocation();
         node = parserWithLocation.parseModule(source);
         assert (node.items.isNotEmpty());
-        assertEquals(expected, node.items.maybeHead().just());
+        assertEquals(expected, node.items.maybeHead().fromJust());
         Director.reduceModule(new RangeCheckerReducer(parserWithLocation), node);
     }
 
     public static void testModule(String source, Expression expected) throws JsError {
         Module node = Parser.parseModule(source);
         assert (node.items.isNotEmpty());
-        ImportDeclarationExportDeclarationStatement stmt = node.items.maybeHead().just();
+        ImportDeclarationExportDeclarationStatement stmt = node.items.maybeHead().fromJust();
         assert (stmt instanceof ExpressionStatement);
         assertEquals(expected, ((ExpressionStatement) stmt).expression);
 
         ParserWithLocation parserWithLocation = new ParserWithLocation();
         node = parserWithLocation.parseModule(source);
         assert (node.items.isNotEmpty());
-        stmt = node.items.maybeHead().just();
+        stmt = node.items.maybeHead().fromJust();
         assert (stmt instanceof ExpressionStatement);
         assertEquals(expected, ((ExpressionStatement) stmt).expression);
         Director.reduceModule(new RangeCheckerReducer(parserWithLocation), node);
@@ -141,7 +141,7 @@ public abstract class ParserTestCase extends TestCase {
         Script script = Parser.parseScript(source);
         ImmutableList<EarlyError> errors = EarlyErrorChecker.validate(script);
         assertEquals(1, errors.length);
-        assertEquals(error, errors.maybeHead().just().message);
+        assertEquals(error, errors.maybeHead().fromJust().message);
     }
 
 
@@ -149,6 +149,6 @@ public abstract class ParserTestCase extends TestCase {
         Module module = Parser.parseModule(source);
         ImmutableList<EarlyError> errors = EarlyErrorChecker.validate(module);
         assertEquals(1, errors.length);
-        assertEquals(error, errors.maybeHead().just().message);
+        assertEquals(error, errors.maybeHead().fromJust().message);
     }
 }

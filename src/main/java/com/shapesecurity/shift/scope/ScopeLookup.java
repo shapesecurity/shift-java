@@ -47,7 +47,7 @@ public class ScopeLookup {
     private void variableHelper(@NotNull Variable variable) {
         variable.declarations.foreach(decl -> {
             if (bindingIdentifierDeclarationCache.containsKey(decl.node)) {
-                functionDeclarationCache.put(decl.node, new Pair<>(bindingIdentifierDeclarationCache.get(decl.node), Maybe.just(variable)));
+                functionDeclarationCache.put(decl.node, new Pair<>(bindingIdentifierDeclarationCache.get(decl.node), Maybe.of(variable)));
             } else {
                 bindingIdentifierDeclarationCache.put(decl.node, variable);
             }
@@ -111,7 +111,7 @@ public class ScopeLookup {
             if (v == null) {
                 throw new NoSuchElementException("Function declaration present in AST");
             }
-            return new Pair<>(v, Maybe.nothing());
+            return new Pair<>(v, Maybe.empty());
         }
     }
 
@@ -125,7 +125,7 @@ public class ScopeLookup {
         if (vs == null) {
             throw new NoSuchElementException("Class declaration not present in AST");
         }
-        return new Pair<>(vs.a, vs.b.just());
+        return new Pair<>(vs.left(), vs.right().fromJust());
     }
 
     public boolean isGlobal(@NotNull Variable variable) {

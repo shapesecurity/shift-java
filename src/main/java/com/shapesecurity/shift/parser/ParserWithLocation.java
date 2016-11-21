@@ -33,7 +33,7 @@ public class ParserWithLocation {
 		@NotNull
 		protected <T extends Node> T finishNode(@NotNull SourceLocation startLocation, @NotNull T node) {
 			SourceLocation endLocation = this.getLocation();
-			locations = locations.put(node, new SourceSpan(Maybe.nothing(), startLocation, endLocation));
+			locations = locations.put(node, new SourceSpan(Maybe.empty(), startLocation, endLocation));
 			return node;
 		}
 

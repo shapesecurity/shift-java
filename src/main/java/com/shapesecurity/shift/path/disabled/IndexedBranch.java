@@ -90,7 +90,7 @@
 //      if (list.genType.elementType.isAssignableFrom(child.genType())) {
 //        if (this.index <= list.list.length) {
 //          return new ListNode<>(
-//              list.list.patch(this.index, 1, ImmutableList.list(child)),
+//              list.list.patch(this.index, 1, ImmutableList.of(child)),
 //              list.genType);
 //        }
 //      }
@@ -99,7 +99,7 @@
 //      if (list.genType.elementType.isAssignableFrom(child.genType())) {
 //        if (this.index <= list.list.length) {
 //          return new NonEmptyListNode<>(
-//              (NonEmptyImmutableList<Node>) list.list.patch(this.index, 1, ImmutableList.list(child)),
+//              (NonEmptyImmutableList<Node>) list.list.patch(this.index, 1, ImmutableList.of(child)),
 //              list.genType);
 //        }
 //      }

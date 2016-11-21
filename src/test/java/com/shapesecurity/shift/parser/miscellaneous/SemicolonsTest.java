@@ -12,33 +12,33 @@ import org.junit.Test;
 public class SemicolonsTest extends ParserTestCase {
     @Test
     public void testStatements() throws JsError {
-        testScript("function f() { return\n; }", new FunctionDeclaration(false, new BindingIdentifier("f"), new FormalParameters(ImmutableList.nil(), Maybe.nothing()),
-                new FunctionBody(ImmutableList.nil(), ImmutableList.list(new ReturnStatement(Maybe.nothing())))));
+        testScript("function f() { return\n; }", new FunctionDeclaration(false, new BindingIdentifier("f"), new FormalParameters(ImmutableList.empty(), Maybe.empty()),
+                new FunctionBody(ImmutableList.empty(), ImmutableList.of(new ReturnStatement(Maybe.empty())))));
 
         testScript("if(null) null\n;else null;", new IfStatement(
                 new LiteralNullExpression(),
                 new ExpressionStatement(new LiteralNullExpression()),
-                Maybe.just(new ExpressionStatement(new LiteralNullExpression()))
+                Maybe.of(new ExpressionStatement(new LiteralNullExpression()))
         ));
     }
 
     @Test
     public void testImportExport() throws JsError {
         testModule("import \"a\"\n;", new Module(
-                ImmutableList.nil(),
-                ImmutableList.list(
-                new Import(Maybe.nothing(), ImmutableList.nil(), "a"))));
+                ImmutableList.empty(),
+                ImmutableList.of(
+                new Import(Maybe.empty(), ImmutableList.empty(), "a"))));
 
         testModule("export {}\n;", new Module(
-                ImmutableList.nil(),
-                ImmutableList.list(
-                        new ExportLocals(ImmutableList.nil()))));
+                ImmutableList.empty(),
+                ImmutableList.of(
+                        new ExportLocals(ImmutableList.empty()))));
 
         testModule("export function f(){}\n;", new Module(
-                ImmutableList.nil(),
-                ImmutableList.list(
-                        new Export(new FunctionDeclaration(false, new BindingIdentifier("f"), new FormalParameters(ImmutableList.nil(), Maybe.nothing()),
-                                new FunctionBody(ImmutableList.nil(), ImmutableList.nil()))),
+                ImmutableList.empty(),
+                ImmutableList.of(
+                        new Export(new FunctionDeclaration(false, new BindingIdentifier("f"), new FormalParameters(ImmutableList.empty(), Maybe.empty()),
+                                new FunctionBody(ImmutableList.empty(), ImmutableList.empty()))),
                         new EmptyStatement())));
     }
 }
