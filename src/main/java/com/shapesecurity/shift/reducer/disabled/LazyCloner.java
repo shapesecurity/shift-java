@@ -102,10 +102,10 @@
 //
 //  private static <T> DirtyState<Maybe<T>> op(@NotNull Maybe<DirtyState<T>> node) {
 //    if (node.isJust()) {
-//      DirtyState<T> s = node.just();
-//      return new DirtyState<>(Maybe.just(s.node), s.dirty);
+//      DirtyState<T> s = node.fromJust();
+//      return new DirtyState<>(Maybe.of(s.node), s.dirty);
 //    } else {
-//      return clean(Maybe.nothing());
+//      return clean(Maybe.empty());
 //    }
 //  }
 //
@@ -397,8 +397,8 @@
 //      @NotNull BreakStatement node,
 //      @NotNull ImmutableList<Branch> path,
 //      @NotNull Maybe<DirtyState<Identifier>> label) {
-//    if (label.isJust() && label.just().dirty) {
-//      return dirty((Statement) new BreakStatement(Maybe.just(label.just().node)));
+//    if (label.isJust() && label.fromJust().dirty) {
+//      return dirty((Statement) new BreakStatement(Maybe.of(label.fromJust().node)));
 //    }
 //    return clean((Statement) node);
 //  }
@@ -419,8 +419,8 @@
 //      @NotNull ContinueStatement node,
 //      @NotNull ImmutableList<Branch> path,
 //      @NotNull Maybe<DirtyState<Identifier>> label) {
-//    if (label.isJust() && label.just().dirty) {
-//      return dirty((Statement) new ContinueStatement(Maybe.just(label.just().node)));
+//    if (label.isJust() && label.fromJust().dirty) {
+//      return dirty((Statement) new ContinueStatement(Maybe.of(label.fromJust().node)));
 //    }
 //    return clean((Statement) node);
 //  }
@@ -521,10 +521,10 @@
 //      @NotNull ReturnStatement node,
 //      @NotNull ImmutableList<Branch> path,
 //      @NotNull Maybe<DirtyState<Expression>> expression) {
-//    if (expression.isNothing() || !expression.just().dirty) {
+//    if (expression.isNothing() || !expression.fromJust().dirty) {
 //      return clean((Statement) node);
 //    }
-//    return DirtyState.dirty((Statement) new ReturnStatement(Maybe.just(expression.just().node)));
+//    return DirtyState.dirty((Statement) new ReturnStatement(Maybe.of(expression.fromJust().node)));
 //  }
 //
 //  @NotNull
@@ -728,8 +728,8 @@
 //    if (binding.dirty) {
 //      return dirty(new VariableDeclarator(binding.node, init.map(expr -> expr.node)));
 //    }
-//    if (init.isJust() && init.just().dirty) {
-//      return dirty(new VariableDeclarator(binding.node, Maybe.just(init.just().node)));
+//    if (init.isJust() && init.fromJust().dirty) {
+//      return dirty(new VariableDeclarator(binding.node, Maybe.of(init.fromJust().node)));
 //    }
 //    return clean(node);
 //  }

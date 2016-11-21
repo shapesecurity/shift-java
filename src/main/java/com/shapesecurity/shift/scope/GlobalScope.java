@@ -35,7 +35,7 @@ public class GlobalScope extends Scope {
             @NotNull Node astNode) {
         super(children, variables, through, Type.Global, true, astNode);
         for (Pair<String, ImmutableList<Reference>> var : through.entries()) {
-            this.variables.put(var.a, new Variable(var.a, var.b, ImmutableList.nil()));
+            this.variables.put(var.left(), new Variable(var.left(), var.right(), ImmutableList.empty()));
         }
     }
 }

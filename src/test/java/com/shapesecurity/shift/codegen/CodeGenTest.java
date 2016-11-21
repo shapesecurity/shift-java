@@ -31,7 +31,7 @@ public class CodeGenTest {
 
     @NotNull
     private static Script statement(@NotNull Statement stmt) {
-        return new Script(ImmutableList.<Directive>nil(), ImmutableList.list(stmt));
+        return new Script(ImmutableList.empty(), ImmutableList.of(stmt));
     }
 
     private void test(String source) throws JsError {
@@ -134,7 +134,7 @@ public class CodeGenTest {
     public void testCodeGenDirectives() throws JsError {
         test("\"use strict\"");
         test("\"use\u0020strict\"");
-        testShift("\"use\u0020strict\"", new Script(ImmutableList.list(new Directive("use strict")), ImmutableList.nil()));
+        testShift("\"use\u0020strict\"", new Script(ImmutableList.of(new Directive("use strict")), ImmutableList.empty()));
     }
 
     @Test
@@ -362,26 +362,26 @@ public class CodeGenTest {
         test("");
         test("\"use strict\"");
         test(";\"use strict\"");
-        testShift("\"use strict\"", new Script(ImmutableList.list(new Directive("use strict")), ImmutableList.nil()));
+        testShift("\"use strict\"", new Script(ImmutableList.of(new Directive("use strict")), ImmutableList.empty()));
         testShift("(\"use strict\")", statement(new ExpressionStatement(new LiteralStringExpression("use strict"))));
         testShift("(\"use strict\");;", new Script(
-                ImmutableList.nil(),
-                ImmutableList.list(
+                ImmutableList.empty(),
+                ImmutableList.of(
                         new ExpressionStatement(new LiteralStringExpression("use strict")),
                         new EmptyStatement()
                 )
         ));
         testShift("\"use strict\";;", new Script(
-                ImmutableList.list(new Directive("use strict")),
-                ImmutableList.list(new EmptyStatement())
+                ImmutableList.of(new Directive("use strict")),
+                ImmutableList.of(new EmptyStatement())
         ));
         testShift("\"use strict\";(\"use strict\")", new Script(
-                ImmutableList.list(new Directive("use strict")),
-                ImmutableList.list(new ExpressionStatement(new LiteralStringExpression("use strict")))
+                ImmutableList.of(new Directive("use strict")),
+                ImmutableList.of(new ExpressionStatement(new LiteralStringExpression("use strict")))
         ));
         testShift("\"use strict\";;\"use strict\"", new Script(
-                ImmutableList.list(new Directive("use strict")),
-                ImmutableList.list(new EmptyStatement(), new ExpressionStatement(new LiteralStringExpression("use strict")))
+                ImmutableList.of(new Directive("use strict")),
+                ImmutableList.of(new EmptyStatement(), new ExpressionStatement(new LiteralStringExpression("use strict")))
         ));
     }
 
@@ -415,24 +415,24 @@ public class CodeGenTest {
         IdentifierExpression IDENT = new IdentifierExpression("a");
         EmptyStatement EMPTY = new EmptyStatement();
 
-        IfStatement MISSING_ELSE = new IfStatement(IDENT, EMPTY, Maybe.<Statement>nothing());
+        IfStatement MISSING_ELSE = new IfStatement(IDENT, EMPTY, Maybe.empty());
         testShift("if(a){a:if(a);}else;", statement(new IfStatement(IDENT, new LabeledStatement("a",
-                MISSING_ELSE), Maybe.<Statement>just(EMPTY))));
+                MISSING_ELSE), Maybe.of(EMPTY))));
         testShift("if(a){if(a);else if(a);}else;", statement(new IfStatement(IDENT, new IfStatement(IDENT, EMPTY,
-                Maybe.<Statement>just(MISSING_ELSE)), Maybe.<Statement>just(EMPTY))));
-        testShift("if(a){if(a);}else;", statement(new IfStatement(IDENT, MISSING_ELSE, Maybe.<Statement>just(EMPTY))));
+                Maybe.of(MISSING_ELSE)), Maybe.of(EMPTY))));
+        testShift("if(a){if(a);}else;", statement(new IfStatement(IDENT, MISSING_ELSE, Maybe.of(EMPTY))));
         testShift("if(a){while(a)if(a);}else;", statement(new IfStatement(IDENT, new WhileStatement(IDENT, MISSING_ELSE),
-                Maybe.<Statement>just(EMPTY))));
+                Maybe.of(EMPTY))));
         testShift("if(a){with(a)if(a);}else;", statement(new IfStatement(IDENT, new WithStatement(IDENT, MISSING_ELSE),
-                Maybe.<Statement>just(EMPTY))));
-        testShift("if(a){for(;;)if(a);}else;", statement(new IfStatement(IDENT, new ForStatement(Maybe.nothing(),
-                Maybe.nothing(), Maybe.nothing(), MISSING_ELSE), Maybe.<Statement>just(EMPTY))));
+                Maybe.of(EMPTY))));
+        testShift("if(a){for(;;)if(a);}else;", statement(new IfStatement(IDENT, new ForStatement(Maybe.empty(),
+                Maybe.empty(), Maybe.empty(), MISSING_ELSE), Maybe.of(EMPTY))));
         testShift("if(a){for(a in a)if(a);}else;",
                 statement(
                         new IfStatement(
                                 IDENT,
                                 new ForInStatement(new AssignmentTargetIdentifier("a"), IDENT, MISSING_ELSE),
-                                Maybe.<Statement>just(EMPTY))));
+                                Maybe.of(EMPTY))));
     }
 
     @Test
@@ -863,7 +863,7 @@ public class CodeGenTest {
     public void testWithStatement() throws JsError {
         test("with(0);");
         test("with(0)with(0);");
-        testShift("with(null);", new Script(ImmutableList.nil(), ImmutableList.list(new WithStatement(new LiteralNullExpression(), new EmptyStatement()))));
+        testShift("with(null);", new Script(ImmutableList.empty(), ImmutableList.of(new WithStatement(new LiteralNullExpression(), new EmptyStatement()))));
     }
 
     @Test

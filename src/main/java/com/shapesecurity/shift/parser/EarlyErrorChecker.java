@@ -93,7 +93,7 @@ public class EarlyErrorChecker extends MonoidalReducer<EarlyErrorState> {
                                 && ((StaticPropertyName) e.method.name).value.equals("constructor")
         );
 
-        ImmutableList<EarlyError> errors = elements.length > 1 ? elements.maybeTail().just().map(ErrorMessages.DUPLICATE_CTOR::apply) : ImmutableList.nil();
+        ImmutableList<EarlyError> errors = elements.length > 1 ? elements.maybeTail().fromJust().map(ErrorMessages.DUPLICATE_CTOR::apply) : ImmutableList.empty();
         return s.addErrors(errors);
     }
 
@@ -201,7 +201,7 @@ public class EarlyErrorChecker extends MonoidalReducer<EarlyErrorState> {
         EarlyErrorState s = name;
         EarlyErrorState sElements = fold(elements).enforceStrictErrors();
         if (node._super.isJust()) {
-            s = append(s, _super.just().enforceStrictErrors());
+            s = append(s, _super.fromJust().enforceStrictErrors());
             sElements = sElements.clearSuperCallExpressionsInConstructorMethod(); // todo what
         }
         sElements = sElements.enforceSuperCallExpressions();
@@ -230,7 +230,7 @@ public class EarlyErrorChecker extends MonoidalReducer<EarlyErrorState> {
         EarlyErrorState s = name.orJust(new EarlyErrorState()); // todo use `identity`?
         EarlyErrorState sElements = fold(elements).enforceStrictErrors();
         if (node._super.isJust()) {
-            s = append(s, _super.just().enforceStrictErrors());
+            s = append(s, _super.fromJust().enforceStrictErrors());
             sElements = sElements.clearSuperCallExpressionsInConstructorMethod(); // todo what
         }
         sElements = sElements.enforceSuperCallExpressions();
@@ -369,9 +369,9 @@ public class EarlyErrorChecker extends MonoidalReducer<EarlyErrorState> {
                                 .enforceConflictingLexicallyDeclaredNames(body.varDeclaredNames)
         );
         EarlyErrorState s = super.reduceForStatement(node, init, test, update, body);
-        ImmutableList<EarlyError> constErrors = ImmutableList.nil();
+        ImmutableList<EarlyError> constErrors = ImmutableList.empty();
         if (node.init.isJust()) {
-            VariableDeclarationExpression i = node.init.just();
+            VariableDeclarationExpression i = node.init.fromJust();
             if (i instanceof VariableDeclaration) {
                 VariableDeclaration i2 = (VariableDeclaration) i;
                 if (i2.kind.equals(VariableDeclarationKind.Const)) {
@@ -426,8 +426,8 @@ public class EarlyErrorChecker extends MonoidalReducer<EarlyErrorState> {
 
         ImmutableList<EarlyError> errors = params.lexicallyDeclaredNames.values().flatMap(nodes ->
                         nodes.length > 1 ?
-                                nodes.maybeTail().just().map(ErrorMessages.DUPLICATE_BINDING::apply)
-                                : ImmutableList.nil()
+                                nodes.maybeTail().fromJust().map(ErrorMessages.DUPLICATE_BINDING::apply)
+                                : ImmutableList.empty()
         );
         params = dupParamIsNonstrictError ? params.addErrors(errors) : params.addStrictErrors(errors);
         body = body.enforceConflictingLexicallyDeclaredNames(params.lexicallyDeclaredNames);
@@ -457,8 +457,8 @@ public class EarlyErrorChecker extends MonoidalReducer<EarlyErrorState> {
 
         ImmutableList<EarlyError> errors = params.lexicallyDeclaredNames.values().flatMap(nodes ->
                         nodes.length > 1 ?
-                                nodes.maybeTail().just().map(ErrorMessages.DUPLICATE_BINDING::apply)
-                                : ImmutableList.nil()
+                                nodes.maybeTail().fromJust().map(ErrorMessages.DUPLICATE_BINDING::apply)
+                                : ImmutableList.empty()
         );
         params = dupParamIsNonstrictError ? params.addErrors(errors) : params.addStrictErrors(errors);
         body = body.enforceConflictingLexicallyDeclaredNames(params.lexicallyDeclaredNames);
@@ -516,15 +516,15 @@ public class EarlyErrorChecker extends MonoidalReducer<EarlyErrorState> {
         if (isLabeledFunction(node.consequent)) {
             consequent = consequent.addError(ErrorMessages.CONSEQUENT_IS_LABELED_FN.apply(node.consequent));
         }
-        if (node.alternate.isJust() && isLabeledFunction(node.alternate.just())) {
-            alternate = alternate.map(t -> t.addError(ErrorMessages.ALTERNATE_IS_LABELED_FN.apply(node.alternate.just())));
+        if (node.alternate.isJust() && isLabeledFunction(node.alternate.fromJust())) {
+            alternate = alternate.map(t -> t.addError(ErrorMessages.ALTERNATE_IS_LABELED_FN.apply(node.alternate.fromJust())));
         }
         if (node.consequent instanceof FunctionDeclaration) {
             consequent = consequent.addStrictError(ErrorMessages.IF_FNDECL_STRICT.apply(node.consequent));
             consequent = consequent.observeLexicalBoundary();
         }
-        if (node.alternate.isJust() && node.alternate.just() instanceof FunctionDeclaration) {
-            alternate = alternate.map(t -> t.addStrictError(ErrorMessages.IF_FNDECL_STRICT.apply(node.alternate.just())));
+        if (node.alternate.isJust() && node.alternate.fromJust() instanceof FunctionDeclaration) {
+            alternate = alternate.map(t -> t.addStrictError(ErrorMessages.IF_FNDECL_STRICT.apply(node.alternate.fromJust())));
             alternate = alternate.map(EarlyErrorState::observeLexicalBoundary);
         }
         return super.reduceIfStatement(node, test, consequent, alternate);
@@ -610,14 +610,14 @@ public class EarlyErrorChecker extends MonoidalReducer<EarlyErrorState> {
         s = s.enforceDuplicateLexicallyDeclaredNames();
         EarlyErrorState s2 = s.enforceConflictingLexicallyDeclaredNames(s.varDeclaredNames); // effectively final, for lambdas, because Java is godawful
         ImmutableList<EarlyError> errors = s2.exportedNames.entries().flatMap(p ->
-                        p.b.length > 1 ?
-                                p.b.maybeTail().just().map(dupeNode -> ErrorMessages.DUPLICATE_EXPORT.apply(dupeNode, p.a))
-                                : ImmutableList.nil()
+                        p.right().length > 1 ?
+                                p.right().maybeTail().fromJust().map(dupeNode -> ErrorMessages.DUPLICATE_EXPORT.apply(dupeNode, p.left()))
+                                : ImmutableList.empty()
         );
         errors = errors.append(
                 s2.exportedBindings.entries()
-                        .filter(p -> !p.a.equals("*default*") && s2.lexicallyDeclaredNames.get(p.a).isEmpty() && s2.varDeclaredNames.get(p.a).isEmpty())
-                        .flatMap(p -> p.b.map(undeclaredNode -> ErrorMessages.UNDECLARED_EXPORT.apply(undeclaredNode, p.a)))
+                        .filter(p -> !p.left().equals("*default*") && s2.lexicallyDeclaredNames.get(p.left()).isEmpty() && s2.varDeclaredNames.get(p.left()).isEmpty())
+                        .flatMap(p -> p.right().map(undeclaredNode -> ErrorMessages.UNDECLARED_EXPORT.apply(undeclaredNode, p.left())))
         );
         errors = errors.append(
                 s2.newTargetExpressions.map(ErrorMessages.NEW_TARGET_TOP::apply)
@@ -650,7 +650,7 @@ public class EarlyErrorChecker extends MonoidalReducer<EarlyErrorState> {
         s = s.enforceSuperCallExpressionsInConstructorMethod();
         ImmutableList<ObjectProperty> protos = node.properties.filter(p -> p instanceof DataProperty && ((DataProperty) p).name instanceof StaticPropertyName && ((StaticPropertyName) ((DataProperty) p).name).value.equals("__proto__"));
         s = s.addErrors(
-                protos.maybeTail().orJust(ImmutableList.nil()).map(ErrorMessages.DUPLICATE_PROTO::apply)
+                protos.maybeTail().orJust(ImmutableList.empty()).map(ErrorMessages.DUPLICATE_PROTO::apply)
         );
         return s;
     }

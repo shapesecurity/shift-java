@@ -32,24 +32,24 @@ public class IncompatibilitiesTest extends ParserTestCase {
         // ES6: variable declaration statement
 
         testScript("let[a] = b",
-                new VariableDeclarationStatement(new VariableDeclaration(VariableDeclarationKind.Let, ImmutableList.list(
+                new VariableDeclarationStatement(new VariableDeclaration(VariableDeclarationKind.Let, ImmutableList.of(
                         new VariableDeclarator(
-                                new ArrayBinding(ImmutableList.list(Maybe.just(new BindingIdentifier("a"))), Maybe.nothing()),
-                                Maybe.just(new IdentifierExpression("b")))
+                                new ArrayBinding(ImmutableList.of(Maybe.of(new BindingIdentifier("a"))), Maybe.empty()),
+                                Maybe.of(new IdentifierExpression("b")))
                 )))
         );
 
         testScript("const[a] = b",
-                new VariableDeclarationStatement(new VariableDeclaration(VariableDeclarationKind.Const, ImmutableList.list(
+                new VariableDeclarationStatement(new VariableDeclaration(VariableDeclarationKind.Const, ImmutableList.of(
                         new VariableDeclarator(
-                                new ArrayBinding(ImmutableList.list(Maybe.just(new BindingIdentifier("a"))), Maybe.nothing()),
-                                Maybe.just(new IdentifierExpression("b")))
+                                new ArrayBinding(ImmutableList.of(Maybe.of(new BindingIdentifier("a"))), Maybe.empty()),
+                                Maybe.of(new IdentifierExpression("b")))
                 )))
         );
 
         testScript("{ function f() {} }",
-                new BlockStatement(new Block(ImmutableList.list(new FunctionDeclaration(false, new BindingIdentifier("f"),
-                        new FormalParameters(ImmutableList.nil(), Maybe.nothing()), new FunctionBody(ImmutableList.nil(), ImmutableList.nil())))))
+                new BlockStatement(new Block(ImmutableList.of(new FunctionDeclaration(false, new BindingIdentifier("f"),
+                        new FormalParameters(ImmutableList.empty(), Maybe.empty()), new FunctionBody(ImmutableList.empty(), ImmutableList.empty())))))
         );
     }
 
@@ -59,18 +59,18 @@ public class IncompatibilitiesTest extends ParserTestCase {
         // ES5: in sloppy mode, future reserved words (including yield) are regular identifiers
         // ES6: yield has been moved from the future reserved words list to the keywords list
         testScript("var yield = function yield(){};",
-                new VariableDeclarationStatement(new VariableDeclaration(VariableDeclarationKind.Var, ImmutableList.list(
-                        new VariableDeclarator(new BindingIdentifier("yield"), Maybe.just(new FunctionExpression(false,
-                                Maybe.just(new BindingIdentifier("yield")), new FormalParameters(ImmutableList.nil(), Maybe.nothing()),
-                                new FunctionBody(ImmutableList.nil(), ImmutableList.nil()))))
+                new VariableDeclarationStatement(new VariableDeclaration(VariableDeclarationKind.Var, ImmutableList.of(
+                        new VariableDeclarator(new BindingIdentifier("yield"), Maybe.of(new FunctionExpression(false,
+                                Maybe.of(new BindingIdentifier("yield")), new FormalParameters(ImmutableList.empty(), Maybe.empty()),
+                                new FunctionBody(ImmutableList.empty(), ImmutableList.empty()))))
                 ))));
 
         // ES5: this declares a function-scoped variable while at the same time assigning to the block-scoped variable
         // ES6: this particular construction is explicitly disallowed
         testScript("try {} catch(e) { var e = 0; }",
-                new TryCatchStatement(new Block(ImmutableList.nil()), new CatchClause(new BindingIdentifier("e"), new Block(
-                        ImmutableList.list(new VariableDeclarationStatement(new VariableDeclaration(VariableDeclarationKind.Var,
-                                ImmutableList.list(new VariableDeclarator(new BindingIdentifier("e"), Maybe.just(new LiteralNumericExpression(0.0)))))))
+                new TryCatchStatement(new Block(ImmutableList.empty()), new CatchClause(new BindingIdentifier("e"), new Block(
+                        ImmutableList.of(new VariableDeclarationStatement(new VariableDeclaration(VariableDeclarationKind.Var,
+                                ImmutableList.of(new VariableDeclarator(new BindingIdentifier("e"), Maybe.of(new LiteralNumericExpression(0.0)))))))
                 )))
         );
 
@@ -80,31 +80,31 @@ public class IncompatibilitiesTest extends ParserTestCase {
         testScriptFailure("for(let x=1 of [1,2,3]) 0", 12, "Invalid variable declaration in for-of statement");
 
         testScript("for(var x in [1,2]) 0", new ForInStatement(new VariableDeclaration(VariableDeclarationKind.Var,
-                ImmutableList.list(new VariableDeclarator(new BindingIdentifier("x"), Maybe.nothing()))),
-                new ArrayExpression(ImmutableList.list(Maybe.just(new LiteralNumericExpression(1.0)), Maybe.just(
+                ImmutableList.of(new VariableDeclarator(new BindingIdentifier("x"), Maybe.empty()))),
+                new ArrayExpression(ImmutableList.of(Maybe.of(new LiteralNumericExpression(1.0)), Maybe.of(
                     new LiteralNumericExpression(2.0)))), new ExpressionStatement(new LiteralNumericExpression(0.0))));
 
         testScript("for(let x in [1,2]) 0",
-                new ForInStatement(new VariableDeclaration(VariableDeclarationKind.Let, ImmutableList.list(
-                        new VariableDeclarator(new BindingIdentifier("x"), Maybe.nothing())
-                )), new ArrayExpression(ImmutableList.list(
-                        Maybe.just(new LiteralNumericExpression(1.0)), Maybe.just(new LiteralNumericExpression(2.0))
+                new ForInStatement(new VariableDeclaration(VariableDeclarationKind.Let, ImmutableList.of(
+                        new VariableDeclarator(new BindingIdentifier("x"), Maybe.empty())
+                )), new ArrayExpression(ImmutableList.of(
+                        Maybe.of(new LiteralNumericExpression(1.0)), Maybe.of(new LiteralNumericExpression(2.0))
                 )), new ExpressionStatement(new LiteralNumericExpression(0.0)))
         );
 
         testScript("for(var x of [1,2]) 0",
-                new ForOfStatement(new VariableDeclaration(VariableDeclarationKind.Var, ImmutableList.list(
-                        new VariableDeclarator(new BindingIdentifier("x"), Maybe.nothing())
-                )), new ArrayExpression(ImmutableList.list(
-                        Maybe.just(new LiteralNumericExpression(1.0)), Maybe.just(new LiteralNumericExpression(2.0))
+                new ForOfStatement(new VariableDeclaration(VariableDeclarationKind.Var, ImmutableList.of(
+                        new VariableDeclarator(new BindingIdentifier("x"), Maybe.empty())
+                )), new ArrayExpression(ImmutableList.of(
+                        Maybe.of(new LiteralNumericExpression(1.0)), Maybe.of(new LiteralNumericExpression(2.0))
                 )), new ExpressionStatement(new LiteralNumericExpression(0.0)))
         );
 
         testScript("for(let x of [1,2]) 0",
-                new ForOfStatement(new VariableDeclaration(VariableDeclarationKind.Let, ImmutableList.list(
-                        new VariableDeclarator(new BindingIdentifier("x"), Maybe.nothing())
-                )), new ArrayExpression(ImmutableList.list(
-                        Maybe.just(new LiteralNumericExpression(1.0)), Maybe.just(new LiteralNumericExpression(2.0))
+                new ForOfStatement(new VariableDeclaration(VariableDeclarationKind.Let, ImmutableList.of(
+                        new VariableDeclarator(new BindingIdentifier("x"), Maybe.empty())
+                )), new ArrayExpression(ImmutableList.of(
+                        Maybe.of(new LiteralNumericExpression(1.0)), Maybe.of(new LiteralNumericExpression(2.0))
                 )), new ExpressionStatement(new LiteralNumericExpression(0.0)))
         );
 

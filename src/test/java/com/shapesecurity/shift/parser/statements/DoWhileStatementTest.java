@@ -12,22 +12,22 @@ public class DoWhileStatementTest extends ParserTestCase {
     @Test
     public void testDoWhileStatement() throws JsError {
         testScript("do keep(); while (true);", new DoWhileStatement(
-                new ExpressionStatement(new CallExpression(new IdentifierExpression("keep"), ImmutableList.nil())), new LiteralBooleanExpression(true)));
+                new ExpressionStatement(new CallExpression(new IdentifierExpression("keep"), ImmutableList.empty())), new LiteralBooleanExpression(true)));
 
         testScript("do continue; while(1);", new DoWhileStatement(
-                new ContinueStatement(Maybe.nothing()), new LiteralNumericExpression(1.0)));
+                new ContinueStatement(Maybe.empty()), new LiteralNumericExpression(1.0)));
 
         testScript("do ; while (true)", new DoWhileStatement(
                 new EmptyStatement(), new LiteralBooleanExpression(true)));
 
         testScript("do {} while (true)", new DoWhileStatement(
-                new BlockStatement(new Block(ImmutableList.nil())), new LiteralBooleanExpression(true)));
+                new BlockStatement(new Block(ImmutableList.empty())), new LiteralBooleanExpression(true)));
 
-        testScript("{do ; while(false); false}", new BlockStatement(new Block(ImmutableList.list(new DoWhileStatement(
+        testScript("{do ; while(false); false}", new BlockStatement(new Block(ImmutableList.of(new DoWhileStatement(
                 new EmptyStatement(), new LiteralBooleanExpression(false)), new ExpressionStatement(
                 new LiteralBooleanExpression(false))))));
 
-        testScript("{do ; while(false) false}", new BlockStatement(new Block(ImmutableList.list(new DoWhileStatement(
+        testScript("{do ; while(false) false}", new BlockStatement(new Block(ImmutableList.of(new DoWhileStatement(
                 new EmptyStatement(), new LiteralBooleanExpression(false)), new ExpressionStatement(
                 new LiteralBooleanExpression(false))))));
     }

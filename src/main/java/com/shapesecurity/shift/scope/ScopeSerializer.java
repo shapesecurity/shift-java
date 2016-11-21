@@ -27,8 +27,8 @@ public class ScopeSerializer {
                 return comparison;
             }
             for (int i = 0; i < v1.declarations.length; ++i) {
-                Declaration d1 = v1.declarations.index(0).just();
-                Declaration d2 = v2.declarations.index(0).just();
+                Declaration d1 = v1.declarations.index(0).fromJust();
+                Declaration d2 = v2.declarations.index(0).fromJust();
                 comparison = d1.kind.compareTo(d2.kind);
                 if (comparison != 0) {
                     return comparison;
@@ -40,8 +40,8 @@ public class ScopeSerializer {
             }
             ReferenceComparator refcompare = new ReferenceComparator();
             for (int i = 0; i < v1.references.length; ++i) {
-                Reference r1 = v1.references.index(0).just();
-                Reference r2 = v2.references.index(0).just();
+                Reference r1 = v1.references.index(0).fromJust();
+                Reference r2 = v2.references.index(0).fromJust();
                 comparison = refcompare.compare(r1, r2);
                 if (comparison != 0) {
                     return comparison;
@@ -114,7 +114,7 @@ public class ScopeSerializer {
     private ImmutableList<Reference> collectThrough(HashTable<String, ImmutableList<Reference>> through) {
         List<Reference> references = new ArrayList<>();
         for (Pair<String, ImmutableList<Reference>> entry : through.entries()) {
-            for (Reference reference : entry.b) {
+            for (Reference reference : entry.right()) {
                 references.add(reference);
             }
         }

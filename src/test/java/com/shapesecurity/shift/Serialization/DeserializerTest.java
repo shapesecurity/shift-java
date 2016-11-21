@@ -144,16 +144,16 @@ public class DeserializerTest {
 
     @Test
     public void testModule() throws IllegalAccessException, InstantiationException, JSONException, NoSuchMethodException, InvocationTargetException, ClassNotFoundException {
-        testHelperFromAST(new Module(ImmutableList.nil(), ImmutableList.nil()));
-        testHelperFromAST(new Module(ImmutableList.list(new Directive("hi"), new Directive("hello")), ImmutableList.nil()));
-        testHelperFromAST(new Module(ImmutableList.list(new Directive("hi"), new Directive("hello")), ImmutableList.list(new DebuggerStatement(), new EmptyStatement())));
+        testHelperFromAST(new Module(ImmutableList.empty(), ImmutableList.empty()));
+        testHelperFromAST(new Module(ImmutableList.of(new Directive("hi"), new Directive("hello")), ImmutableList.empty()));
+        testHelperFromAST(new Module(ImmutableList.of(new Directive("hi"), new Directive("hello")), ImmutableList.of(new DebuggerStatement(), new EmptyStatement())));
     }
 
     @Test
     public void testDeserializeScript() throws JSONException, IllegalAccessException, ClassNotFoundException, InstantiationException, NoSuchMethodException, InvocationTargetException, JsError {
-        testHelperFromAST(new Script(ImmutableList.nil(), ImmutableList.nil()));
-        testHelperFromAST(new Script(ImmutableList.list(new Directive("hi"), new Directive("hello")), ImmutableList.nil()));
-        testHelperFromAST(new Script(ImmutableList.list(new Directive("hi"), new Directive("hello")), ImmutableList.list(new DebuggerStatement(), new EmptyStatement())));
+        testHelperFromAST(new Script(ImmutableList.empty(), ImmutableList.empty()));
+        testHelperFromAST(new Script(ImmutableList.of(new Directive("hi"), new Directive("hello")), ImmutableList.empty()));
+        testHelperFromAST(new Script(ImmutableList.of(new Directive("hi"), new Directive("hello")), ImmutableList.of(new DebuggerStatement(), new EmptyStatement())));
     }
 
     @Test

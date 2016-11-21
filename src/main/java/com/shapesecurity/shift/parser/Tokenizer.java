@@ -944,7 +944,7 @@ public class Tokenizer {
                     break;
                 case 0x5C:  // \\
                 {
-                    String octal = this.scanStringEscape("", null).b;
+                    String octal = this.scanStringEscape("", null).right();
                     if (octal != null) {
                         throw this.createILLEGAL();
                     }
@@ -972,8 +972,8 @@ public class Tokenizer {
                 return new StringLiteralToken(this.getSlice(start), str, octal);
             } else if (ch == '\\') {
                 Pair<String, String> info = this.scanStringEscape(str, octal);
-                str = info.a;
-                octal = info.b;
+                str = info.left();
+                octal = info.right();
             } else if (Utils.isLineTerminator(ch)) {
                 throw this.createILLEGAL();
             } else {

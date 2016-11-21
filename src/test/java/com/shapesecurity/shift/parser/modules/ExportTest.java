@@ -14,70 +14,70 @@ public class ExportTest extends ParserTestCase {
     public void testExport() throws JsError {
         testModule("export * from 'a'", new ExportAllFrom("a"));
 
-        testModule("export {} from 'a'", new ExportFrom(ImmutableList.nil(), "a"));
+        testModule("export {} from 'a'", new ExportFrom(ImmutableList.empty(), "a"));
 
-        testModule("export {a} from 'a'", new ExportFrom(ImmutableList.list(new ExportFromSpecifier("a", Maybe.nothing())),
+        testModule("export {a} from 'a'", new ExportFrom(ImmutableList.of(new ExportFromSpecifier("a", Maybe.empty())),
                 "a"));
 
-        testModule("export {a,} from 'a'", new ExportFrom(ImmutableList.list(new ExportFromSpecifier("a", Maybe.nothing())),
+        testModule("export {a,} from 'a'", new ExportFrom(ImmutableList.of(new ExportFromSpecifier("a", Maybe.empty())),
                 "a"));
 
-        testModule("export {a,b} from 'a'", new ExportFrom(ImmutableList.list(new ExportFromSpecifier("a", Maybe.nothing()),
-                new ExportFromSpecifier("b", Maybe.nothing())), "a"));
+        testModule("export {a,b} from 'a'", new ExportFrom(ImmutableList.of(new ExportFromSpecifier("a", Maybe.empty()),
+                new ExportFromSpecifier("b", Maybe.empty())), "a"));
 
-        testModule("export {a as b} from 'a'", new ExportFrom(ImmutableList.list(new ExportFromSpecifier("a", Maybe.just("b"))),
+        testModule("export {a as b} from 'a'", new ExportFrom(ImmutableList.of(new ExportFromSpecifier("a", Maybe.of("b"))),
                 "a"));
 
-        testModule("export {as as as} from 'as'", new ExportFrom(ImmutableList.list(new ExportFromSpecifier(
-                "as", Maybe.just("as"))), "as"));
+        testModule("export {as as as} from 'as'", new ExportFrom(ImmutableList.of(new ExportFromSpecifier(
+                "as", Maybe.of("as"))), "as"));
 
-        testModule("export {as as function} from 'as'", new ExportFrom(ImmutableList.list(new ExportFromSpecifier(
-                "as", Maybe.just("function"))), "as"));
+        testModule("export {as as function} from 'as'", new ExportFrom(ImmutableList.of(new ExportFromSpecifier(
+                "as", Maybe.of("function"))), "as"));
 
-        testModule("export {a} from 'm'", new ExportFrom(ImmutableList.list(new ExportFromSpecifier("a", Maybe.nothing())),
+        testModule("export {a} from 'm'", new ExportFrom(ImmutableList.of(new ExportFromSpecifier("a", Maybe.empty())),
                 "m"));
 
-        testModule("export {if as var} from 'a';", new ExportFrom(ImmutableList.list(new ExportFromSpecifier(
-                "if", Maybe.just("var"))), "a"));
+        testModule("export {if as var} from 'a';", new ExportFrom(ImmutableList.of(new ExportFromSpecifier(
+                "if", Maybe.of("var"))), "a"));
 
-        testModule("export {a}\n var a;", new ExportLocals(ImmutableList.list(new ExportLocalSpecifier(new IdentifierExpression("a"), Maybe.nothing()))));
+        testModule("export {a}\n var a;", new ExportLocals(ImmutableList.of(new ExportLocalSpecifier(new IdentifierExpression("a"), Maybe.empty()))));
 
-        testModule("export {a,}\n var a;", new ExportLocals(ImmutableList.list(new ExportLocalSpecifier(new IdentifierExpression("a"), Maybe.nothing()))));
+        testModule("export {a,}\n var a;", new ExportLocals(ImmutableList.of(new ExportLocalSpecifier(new IdentifierExpression("a"), Maybe.empty()))));
 
-        testModule("export {a,b,}\n var a,b;", new ExportLocals(ImmutableList.list(new ExportLocalSpecifier(new IdentifierExpression("a"), Maybe.nothing()),
-                new ExportLocalSpecifier(new IdentifierExpression("b"), Maybe.nothing()))));
+        testModule("export {a,b,}\n var a,b;", new ExportLocals(ImmutableList.of(new ExportLocalSpecifier(new IdentifierExpression("a"), Maybe.empty()),
+                new ExportLocalSpecifier(new IdentifierExpression("b"), Maybe.empty()))));
 
         testModule("export var a = 0, b;", new Export(new VariableDeclaration(VariableDeclarationKind.Var,
-                ImmutableList.list(new VariableDeclarator(new BindingIdentifier("a"), Maybe.just(
-                        new LiteralNumericExpression(0.0))), new VariableDeclarator(new BindingIdentifier("b"), Maybe.nothing())))));
+                ImmutableList.of(new VariableDeclarator(new BindingIdentifier("a"), Maybe.of(
+                        new LiteralNumericExpression(0.0))), new VariableDeclarator(new BindingIdentifier("b"), Maybe.empty())))));
 
         testModule("export const a = 0, b = 0;", new Export(new VariableDeclaration(VariableDeclarationKind.Const,
-                ImmutableList.list(new VariableDeclarator(new BindingIdentifier("a"), Maybe.just(
+                ImmutableList.of(new VariableDeclarator(new BindingIdentifier("a"), Maybe.of(
                         new LiteralNumericExpression(0.0))), new VariableDeclarator(new BindingIdentifier("b"),
-                        Maybe.just(new LiteralNumericExpression(0.0)))))));
+                        Maybe.of(new LiteralNumericExpression(0.0)))))));
 
         testModule("export let a = 0, b = 0;", new Export(new VariableDeclaration(VariableDeclarationKind.Let,
-                ImmutableList.list(new VariableDeclarator(new BindingIdentifier("a"), Maybe.just(
-                        new LiteralNumericExpression(0.0))), new VariableDeclarator(new BindingIdentifier("b"), Maybe.just(
+                ImmutableList.of(new VariableDeclarator(new BindingIdentifier("a"), Maybe.of(
+                        new LiteralNumericExpression(0.0))), new VariableDeclarator(new BindingIdentifier("b"), Maybe.of(
                         new LiteralNumericExpression(0.0)))))));
 
-        testModule("export let[a] = 0;", new Export(new VariableDeclaration(VariableDeclarationKind.Let, ImmutableList.list(
-                new VariableDeclarator(new ArrayBinding(ImmutableList.list(Maybe.just(new BindingIdentifier("a"))),
-                        Maybe.nothing()), Maybe.just(new LiteralNumericExpression(0.0)))))));
+        testModule("export let[a] = 0;", new Export(new VariableDeclaration(VariableDeclarationKind.Let, ImmutableList.of(
+                new VariableDeclarator(new ArrayBinding(ImmutableList.of(Maybe.of(new BindingIdentifier("a"))),
+                        Maybe.empty()), Maybe.of(new LiteralNumericExpression(0.0)))))));
 
         testModule("export class A{} /* no semi */ false", new Export(new ClassDeclaration(new BindingIdentifier("A"),
-                Maybe.nothing(), ImmutableList.nil())));
+                Maybe.empty(), ImmutableList.empty())));
 
         testModule("export function A(){} /* no semi */ false", new Export(new FunctionDeclaration(false, new BindingIdentifier("A"),
-                new FormalParameters(ImmutableList.nil(), Maybe.nothing()), new FunctionBody(ImmutableList.nil(),
-                ImmutableList.nil()))));
+                new FormalParameters(ImmutableList.empty(), Maybe.empty()), new FunctionBody(ImmutableList.empty(),
+                ImmutableList.empty()))));
 
         testModule("export default function (){} /* no semi */ false", new ExportDefault(new FunctionDeclaration(false,
-                new BindingIdentifier("*default*"), new FormalParameters(ImmutableList.nil(), Maybe.nothing()),
-                new FunctionBody(ImmutableList.nil(), ImmutableList.nil()))));
+                new BindingIdentifier("*default*"), new FormalParameters(ImmutableList.empty(), Maybe.empty()),
+                new FunctionBody(ImmutableList.empty(), ImmutableList.empty()))));
 
         testModule("export default class {} /* no semi */ false", new ExportDefault(new ClassDeclaration(
-                new BindingIdentifier("*default*"), Maybe.nothing(), ImmutableList.nil())));
+                new BindingIdentifier("*default*"), Maybe.empty(), ImmutableList.empty())));
 
         testModule("export default 3 + 1", new ExportDefault(new BinaryExpression(
                 new LiteralNumericExpression(3.0), BinaryOperator.Plus, new LiteralNumericExpression(1.0))));
@@ -85,29 +85,29 @@ public class ExportTest extends ParserTestCase {
         testModule("export default a", new ExportDefault(new IdentifierExpression("a")));
 
         testModule("export default function a(){}", new ExportDefault(new FunctionDeclaration(false, new BindingIdentifier("a"),
-                new FormalParameters(ImmutableList.nil(), Maybe.nothing()), new FunctionBody(ImmutableList.nil(),
-                ImmutableList.nil()))));
+                new FormalParameters(ImmutableList.empty(), Maybe.empty()), new FunctionBody(ImmutableList.empty(),
+                ImmutableList.empty()))));
 
         testModule("export default class a{}", new ExportDefault(new ClassDeclaration(new BindingIdentifier("a"),
-                Maybe.nothing(), ImmutableList.nil())));
+                Maybe.empty(), ImmutableList.empty())));
 
         testModule("export default function* a(){}", new ExportDefault(new FunctionDeclaration(true, new BindingIdentifier("a"),
-                new FormalParameters(ImmutableList.nil(), Maybe.nothing()), new FunctionBody(ImmutableList.nil(),
-                ImmutableList.nil()))));
+                new FormalParameters(ImmutableList.empty(), Maybe.empty()), new FunctionBody(ImmutableList.empty(),
+                ImmutableList.empty()))));
 
-        testModule("export default 0;0", new Module(ImmutableList.nil(), ImmutableList.list(new ExportDefault(
+        testModule("export default 0;0", new Module(ImmutableList.empty(), ImmutableList.of(new ExportDefault(
                 new LiteralNumericExpression(0.0)), new ExpressionStatement(new LiteralNumericExpression(0.0)))));
 
-        testModule("export function f(){};0", new Module(ImmutableList.nil(), ImmutableList.list(new Export(
-                        new FunctionDeclaration(false, new BindingIdentifier("f"), new FormalParameters(ImmutableList.nil(),
-                                Maybe.nothing()), new FunctionBody(ImmutableList.nil(), ImmutableList.nil()))), new EmptyStatement(),
+        testModule("export function f(){};0", new Module(ImmutableList.empty(), ImmutableList.of(new Export(
+                        new FunctionDeclaration(false, new BindingIdentifier("f"), new FormalParameters(ImmutableList.empty(),
+                                Maybe.empty()), new FunctionBody(ImmutableList.empty(), ImmutableList.empty()))), new EmptyStatement(),
                 new ExpressionStatement(new LiteralNumericExpression(0.0)))));
 
-        testModule("export class A{};0", new Module(ImmutableList.nil(), ImmutableList.list(new Export(new ClassDeclaration(
-                        new BindingIdentifier("A"), Maybe.nothing(), ImmutableList.nil())), new EmptyStatement(),
+        testModule("export class A{};0", new Module(ImmutableList.empty(), ImmutableList.of(new Export(new ClassDeclaration(
+                        new BindingIdentifier("A"), Maybe.empty(), ImmutableList.empty())), new EmptyStatement(),
                 new ExpressionStatement(new LiteralNumericExpression(0.0)))));
 
-        testModule("export {};0", new Module(ImmutableList.nil(), ImmutableList.list(new ExportLocals(ImmutableList.nil()),
+        testModule("export {};0", new Module(ImmutableList.empty(), ImmutableList.of(new ExportLocals(ImmutableList.empty()),
                 new ExpressionStatement(new LiteralNumericExpression(0.0)))));
 
         testScriptFailure("export * from \"a\"", 0, "Unexpected token \"export\"");

@@ -92,7 +92,7 @@
 //  @Override
 //  public DirtyState<Statement> transform(@NotNull IfStatement node) {
 //    boolean consequentEmpty = node.consequent instanceof EmptyStatement;
-//    boolean alternateEmpty = node.alternate.isJust() && node.alternate.just() instanceof EmptyStatement;
+//    boolean alternateEmpty = node.alternate.isJust() && node.alternate.fromJust() instanceof EmptyStatement;
 //    if ((alternateEmpty || node.alternate.isNothing()) && consequentEmpty) {
 //      return DirtyState.dirty(new ExpressionStatement(node.test));
 //    }
@@ -101,7 +101,7 @@
 //    }
 //    if (consequentEmpty) {
 //      return DirtyState.dirty(new IfStatement(new PrefixExpression(PrefixOperator.LogicalNot, node.test),
-//          node.alternate.just()));
+//          node.alternate.fromJust()));
 //    }
 //    return DirtyState.clean(node);
 //  }

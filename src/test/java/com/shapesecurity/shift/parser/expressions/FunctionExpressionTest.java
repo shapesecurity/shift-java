@@ -12,72 +12,72 @@ import org.junit.Test;
 public class FunctionExpressionTest extends ParserTestCase {
     @Test
     public void testFunctionExpression() throws JsError {
-        testScript("(function(){})", new FunctionExpression(false, Maybe.nothing(), new FormalParameters(ImmutableList.nil(),
-                Maybe.nothing()), new FunctionBody(ImmutableList.nil(), ImmutableList.nil())));
+        testScript("(function(){})", new FunctionExpression(false, Maybe.empty(), new FormalParameters(ImmutableList.empty(),
+                Maybe.empty()), new FunctionBody(ImmutableList.empty(), ImmutableList.empty())));
 
-        testScript("(function x() { y; z() });", new FunctionExpression(false, Maybe.just(new BindingIdentifier("x")),
-                new FormalParameters(ImmutableList.nil(), Maybe.nothing()), new FunctionBody(ImmutableList.nil(),
-                ImmutableList.list(new ExpressionStatement(new IdentifierExpression("y")), new ExpressionStatement(
-                        new CallExpression(new IdentifierExpression("z"), ImmutableList.nil()))))));
+        testScript("(function x() { y; z() });", new FunctionExpression(false, Maybe.of(new BindingIdentifier("x")),
+                new FormalParameters(ImmutableList.empty(), Maybe.empty()), new FunctionBody(ImmutableList.empty(),
+                ImmutableList.of(new ExpressionStatement(new IdentifierExpression("y")), new ExpressionStatement(
+                        new CallExpression(new IdentifierExpression("z"), ImmutableList.empty()))))));
 
-        testScript("(function eval() { });", new FunctionExpression(false, Maybe.just(new BindingIdentifier("eval")),
-                new FormalParameters(ImmutableList.nil(), Maybe.nothing()), new FunctionBody(ImmutableList.nil(),
-                ImmutableList.nil())));
+        testScript("(function eval() { });", new FunctionExpression(false, Maybe.of(new BindingIdentifier("eval")),
+                new FormalParameters(ImmutableList.empty(), Maybe.empty()), new FunctionBody(ImmutableList.empty(),
+                ImmutableList.empty())));
 
-        testScript("(function arguments() { });", new FunctionExpression(false, Maybe.just(new BindingIdentifier("arguments")),
-                new FormalParameters(ImmutableList.nil(), Maybe.nothing()), new FunctionBody(ImmutableList.nil(),
-                ImmutableList.nil())));
+        testScript("(function arguments() { });", new FunctionExpression(false, Maybe.of(new BindingIdentifier("arguments")),
+                new FormalParameters(ImmutableList.empty(), Maybe.empty()), new FunctionBody(ImmutableList.empty(),
+                ImmutableList.empty())));
 
-        testScript("(function x(y, z) { })", new FunctionExpression(false, Maybe.just(new BindingIdentifier("x")),
-                new FormalParameters(ImmutableList.list(new BindingIdentifier("y"), new BindingIdentifier("z")), Maybe.nothing()),
-                new FunctionBody(ImmutableList.nil(), ImmutableList.nil())));
+        testScript("(function x(y, z) { })", new FunctionExpression(false, Maybe.of(new BindingIdentifier("x")),
+                new FormalParameters(ImmutableList.of(new BindingIdentifier("y"), new BindingIdentifier("z")), Maybe.empty()),
+                new FunctionBody(ImmutableList.empty(), ImmutableList.empty())));
 
-        testScript("(function(a = b){})", new FunctionExpression(false, Maybe.nothing(), new FormalParameters(
-                ImmutableList.list(new BindingWithDefault(new BindingIdentifier("a"), new IdentifierExpression("b"))),
-                Maybe.nothing()), new FunctionBody(ImmutableList.nil(), ImmutableList.nil())));
+        testScript("(function(a = b){})", new FunctionExpression(false, Maybe.empty(), new FormalParameters(
+                ImmutableList.of(new BindingWithDefault(new BindingIdentifier("a"), new IdentifierExpression("b"))),
+                Maybe.empty()), new FunctionBody(ImmutableList.empty(), ImmutableList.empty())));
 
-        testScript("(function(...a){})", new FunctionExpression(false, Maybe.nothing(), new FormalParameters(
-                ImmutableList.nil(), Maybe.just(new BindingIdentifier("a"))), new FunctionBody(ImmutableList.nil(),
-                ImmutableList.nil())));
+        testScript("(function(...a){})", new FunctionExpression(false, Maybe.empty(), new FormalParameters(
+                ImmutableList.empty(), Maybe.of(new BindingIdentifier("a"))), new FunctionBody(ImmutableList.empty(),
+                ImmutableList.empty())));
 
-        testScript("(function(a, ...b){})", new FunctionExpression(false, Maybe.nothing(), new FormalParameters(
-                ImmutableList.list(new BindingIdentifier("a")), Maybe.just(new BindingIdentifier("b"))), new FunctionBody(
-                ImmutableList.nil(), ImmutableList.nil())));
+        testScript("(function(a, ...b){})", new FunctionExpression(false, Maybe.empty(), new FormalParameters(
+                ImmutableList.of(new BindingIdentifier("a")), Maybe.of(new BindingIdentifier("b"))), new FunctionBody(
+                ImmutableList.empty(), ImmutableList.empty())));
 
-        testScript("(function({a}){})", new FunctionExpression(false, Maybe.nothing(), new FormalParameters(
-                ImmutableList.list(new ObjectBinding(ImmutableList.list(new BindingPropertyIdentifier(new BindingIdentifier("a"),
-                        Maybe.nothing())))), Maybe.nothing()), new FunctionBody(ImmutableList.nil(), ImmutableList.nil())));
+        testScript("(function({a}){})", new FunctionExpression(false, Maybe.empty(), new FormalParameters(
+                ImmutableList.of(new ObjectBinding(ImmutableList.of(new BindingPropertyIdentifier(new BindingIdentifier("a"),
+                        Maybe.empty())))), Maybe.empty()), new FunctionBody(ImmutableList.empty(), ImmutableList.empty())));
 
-        testScript("(function({a: x, a: y}){})", new FunctionExpression(false, Maybe.nothing(), new FormalParameters(
-                ImmutableList.list(new ObjectBinding(ImmutableList.list(new BindingPropertyProperty(new StaticPropertyName("a"),
+        testScript("(function({a: x, a: y}){})", new FunctionExpression(false, Maybe.empty(), new FormalParameters(
+                ImmutableList.of(new ObjectBinding(ImmutableList.of(new BindingPropertyProperty(new StaticPropertyName("a"),
                         new BindingIdentifier("x")), new BindingPropertyProperty(new StaticPropertyName("a"),
-                        new BindingIdentifier("y"))))), Maybe.nothing()), new FunctionBody(ImmutableList.nil(),
-                ImmutableList.nil())));
+                        new BindingIdentifier("y"))))), Maybe.empty()), new FunctionBody(ImmutableList.empty(),
+                ImmutableList.empty())));
 
-        testScript("(function([a]){})", new FunctionExpression(false, Maybe.nothing(), new FormalParameters(
-                ImmutableList.list(new ArrayBinding(ImmutableList.list(Maybe.just(new BindingIdentifier("a"))), Maybe.nothing())),
-                Maybe.nothing()), new FunctionBody(ImmutableList.nil(), ImmutableList.nil())));
+        testScript("(function([a]){})", new FunctionExpression(false, Maybe.empty(), new FormalParameters(
+                ImmutableList.of(new ArrayBinding(ImmutableList.of(Maybe.of(new BindingIdentifier("a"))), Maybe.empty())),
+                Maybe.empty()), new FunctionBody(ImmutableList.empty(), ImmutableList.empty())));
 
-        testScript("(function({a = 0}){})", new FunctionExpression(false, Maybe.nothing(), new FormalParameters(
-                ImmutableList.list(new ObjectBinding(ImmutableList.list(new BindingPropertyIdentifier(new BindingIdentifier("a"),
-                        Maybe.just(new LiteralNumericExpression(0.0)))))), Maybe.nothing()), new FunctionBody(ImmutableList.nil(),
-                ImmutableList.nil())));
+        testScript("(function({a = 0}){})", new FunctionExpression(false, Maybe.empty(), new FormalParameters(
+                ImmutableList.of(new ObjectBinding(ImmutableList.of(new BindingPropertyIdentifier(new BindingIdentifier("a"),
+                        Maybe.of(new LiteralNumericExpression(0.0)))))), Maybe.empty()), new FunctionBody(ImmutableList.empty(),
+                ImmutableList.empty())));
 
         testScript("label: !function(){ label:; };", new LabeledStatement("label", new ExpressionStatement(
-                new UnaryExpression(UnaryOperator.LogicalNot, new FunctionExpression(false, Maybe.nothing(),
-                        new FormalParameters(ImmutableList.nil(), Maybe.nothing()), new FunctionBody(ImmutableList.nil(),
-                        ImmutableList.list(new LabeledStatement("label", new EmptyStatement()))))))));
+                new UnaryExpression(UnaryOperator.LogicalNot, new FunctionExpression(false, Maybe.empty(),
+                        new FormalParameters(ImmutableList.empty(), Maybe.empty()), new FunctionBody(ImmutableList.empty(),
+                        ImmutableList.of(new LabeledStatement("label", new EmptyStatement()))))))));
 
-        testScript("(function([]){})", new FunctionExpression(false, Maybe.nothing(), new FormalParameters(
-                ImmutableList.list(new ArrayBinding(ImmutableList.nil(), Maybe.nothing())), Maybe.nothing()), new FunctionBody(
-                ImmutableList.nil(), ImmutableList.nil())));
+        testScript("(function([]){})", new FunctionExpression(false, Maybe.empty(), new FormalParameters(
+                ImmutableList.of(new ArrayBinding(ImmutableList.empty(), Maybe.empty())), Maybe.empty()), new FunctionBody(
+                ImmutableList.empty(), ImmutableList.empty())));
 
-        testScript("function* g(){ (function yield(){}); }", new FunctionDeclaration(true, new BindingIdentifier("g"), new FormalParameters(ImmutableList.nil(), Maybe.nothing()), new FunctionBody(ImmutableList.nil(), ImmutableList.list(
-                new ExpressionStatement(new FunctionExpression(false, Maybe.just(new BindingIdentifier("yield")), new FormalParameters(ImmutableList.nil(), Maybe.nothing()), new FunctionBody(ImmutableList.nil(), ImmutableList.nil())))
+        testScript("function* g(){ (function yield(){}); }", new FunctionDeclaration(true, new BindingIdentifier("g"), new FormalParameters(ImmutableList.empty(), Maybe.empty()), new FunctionBody(ImmutableList.empty(), ImmutableList.of(
+                new ExpressionStatement(new FunctionExpression(false, Maybe.of(new BindingIdentifier("yield")), new FormalParameters(ImmutableList.empty(), Maybe.empty()), new FunctionBody(ImmutableList.empty(), ImmutableList.empty())))
         ))));
 
-        testScript("(function*(){ (function yield(){}); });", new FunctionExpression(true, Maybe.nothing(), new FormalParameters(ImmutableList.nil(), Maybe.nothing()), new FunctionBody(ImmutableList.nil(), ImmutableList.list(
-                new ExpressionStatement(new FunctionExpression(false, Maybe.just(new BindingIdentifier("yield")), new FormalParameters(ImmutableList.nil(), Maybe.nothing()), new FunctionBody(ImmutableList.nil(), ImmutableList.nil())))
+        testScript("(function*(){ (function yield(){}); });", new FunctionExpression(true, Maybe.empty(), new FormalParameters(ImmutableList.empty(), Maybe.empty()), new FunctionBody(ImmutableList.empty(), ImmutableList.of(
+                new ExpressionStatement(new FunctionExpression(false, Maybe.of(new BindingIdentifier("yield")), new FormalParameters(ImmutableList.empty(), Maybe.empty()), new FunctionBody(ImmutableList.empty(), ImmutableList.empty())))
         ))));
 
         testScriptFailure("(function(...a, b){})", 14, "Unexpected token \",\"");
