@@ -73,7 +73,7 @@ public class ScopeSerializer {
         } else {
             throw new RuntimeException("GlobalScope does not correspond to script or module");
         }
-        nodes.foreach(n -> nodeToID.put(n, nodeToID.size())); // this logic could go elsewhere. we just need a canonical node->id map for canonical serialization.
+        nodes.forEach(n -> nodeToID.put(n, nodeToID.size())); // this logic could go elsewhere. we just need a canonical node->id map for canonical serialization.
     }
 
     private ScopeSerializer(Map<Node, Integer> nodeToId) {

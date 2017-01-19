@@ -91,15 +91,15 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
     @Override
     public State reduceAssignmentTargetIdentifier(@NotNull AssignmentTargetIdentifier node) {
         return new State(
-                HashTable.empty(),
-                HashTable.empty(),
-                HashTable.empty(),
-                HashTable.empty(),
+                HashTable.emptyUsingEquality(),
+                HashTable.emptyUsingEquality(),
+                HashTable.emptyUsingEquality(),
+                HashTable.emptyUsingEquality(),
                 ImmutableList.empty(),
                 false,
                 ImmutableList.empty(),
                 ImmutableList.of(node),
-                HashTable.empty(),
+                HashTable.emptyUsingEquality(),
                 false
         );
     }
@@ -111,15 +111,15 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
             return new State();
         }
         return new State(
-                HashTable.empty(),
-                HashTable.empty(),
-                HashTable.empty(),
-                HashTable.empty(),
+                HashTable.emptyUsingEquality(),
+                HashTable.emptyUsingEquality(),
+                HashTable.emptyUsingEquality(),
+                HashTable.emptyUsingEquality(),
                 ImmutableList.empty(),
                 false,
                 ImmutableList.of(node),
                 ImmutableList.empty(),
-                HashTable.empty(),
+                HashTable.emptyUsingEquality(),
                 false
         );
     }
@@ -247,15 +247,15 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
     public State reduceIdentifierExpression(@NotNull IdentifierExpression node) {
         Reference ref = new Reference(node);
         return new State(
-                HashTable.<String, ImmutableList<Reference>>empty().put(node.name, ImmutableList.of(ref)),
-                HashTable.empty(),
-                HashTable.empty(),
-                HashTable.empty(),
+                HashTable.<String, ImmutableList<Reference>>emptyUsingEquality().put(node.name, ImmutableList.of(ref)),
+                HashTable.emptyUsingEquality(),
+                HashTable.emptyUsingEquality(),
+                HashTable.emptyUsingEquality(),
                 ImmutableList.empty(),
                 false,
                 ImmutableList.empty(),
                 ImmutableList.empty(),
-                HashTable.empty(),
+                HashTable.emptyUsingEquality(),
                 false
         );
     }
@@ -404,15 +404,15 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
          * Identity constructor
          */
         private State() {
-            this.freeIdentifiers = HashTable.empty();
-            this.functionScopedDeclarations = HashTable.empty();
-            this.blockScopedDeclarations = HashTable.empty();
-            this.functionDeclarations = HashTable.empty();
+            this.freeIdentifiers = HashTable.emptyUsingEquality();
+            this.functionScopedDeclarations = HashTable.emptyUsingEquality();
+            this.blockScopedDeclarations = HashTable.emptyUsingEquality();
+            this.functionDeclarations = HashTable.emptyUsingEquality();
             this.children = ImmutableList.empty();
             this.dynamic = false;
             this.bindingsForParent = ImmutableList.empty();
             this.atsForParent = ImmutableList.empty();
-            this.potentiallyVarScopedFunctionDeclarations = HashTable.empty();
+            this.potentiallyVarScopedFunctionDeclarations = HashTable.emptyUsingEquality();
             this.hasParameterExpressions = false;
         }
 
@@ -446,7 +446,7 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
         private State finish(@NotNull Node astNode, @NotNull Scope.Type scopeType, boolean resolveArguments, boolean shouldB33) {
             ImmutableList<Variable> variables = ImmutableList.empty();
 
-            HashTable<String, ImmutableList<Declaration>> functionScope = HashTable.empty();
+            HashTable<String, ImmutableList<Declaration>> functionScope = HashTable.emptyUsingEquality();
             HashTable<String, ImmutableList<Reference>> freeIdentifiers = this.freeIdentifiers;
             HashTable<String, ImmutableList<Declaration>> potentiallyVarScopedFunctionDeclarations = this.potentiallyVarScopedFunctionDeclarations;
             ImmutableList<Scope> children = this.children;
@@ -508,13 +508,13 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
                                 new Scope(children, variables, freeIdentifiers, scopeType, this.dynamic, astNode)
                         );
                         variables = ImmutableList.empty();
-                        newDeclarations = HashTable.empty();
+                        newDeclarations = HashTable.emptyUsingEquality();
                     }
 
 
                     // then, var-scope declarations
                     if (resolveArguments) {
-                        newDeclarations = newDeclarations.merge(HashTable.<String, ImmutableList<Declaration>>empty().put("arguments", ImmutableList.empty()));
+                        newDeclarations = newDeclarations.merge(HashTable.<String, ImmutableList<Declaration>>emptyUsingEquality().put("arguments", ImmutableList.empty()));
                     }
                     newDeclarations = newDeclarations.merge(this.functionScopedDeclarations, ImmutableList::append).merge(this.functionDeclarations, ImmutableList::append);
 
@@ -539,7 +539,7 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
                         variables = ImmutableList.empty();
                     }
 
-                    potentiallyVarScopedFunctionDeclarations = HashTable.empty();
+                    potentiallyVarScopedFunctionDeclarations = HashTable.emptyUsingEquality();
                     break;
                 default:
                     throw new RuntimeException("Not reached");
@@ -550,7 +550,7 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
                     new Scope(children, variables, freeIdentifiers, scopeType, this.dynamic, astNode);
 
             return new State(
-                    freeIdentifiers, functionScope, HashTable.empty(), HashTable.empty(),
+                    freeIdentifiers, functionScope, HashTable.emptyUsingEquality(), HashTable.emptyUsingEquality(),
                     ImmutableList.of(scope), false, this.bindingsForParent, this.atsForParent, potentiallyVarScopedFunctionDeclarations, this.hasParameterExpressions);
         }
 
@@ -598,7 +598,7 @@ public final class ScopeAnalyzer extends MonoidalReducer<ScopeAnalyzer.State> {
                     this.freeIdentifiers,
                     this.functionScopedDeclarations,
                     this.blockScopedDeclarations,
-                    HashTable.<String, ImmutableList<Declaration>>empty().put(binding.name, ImmutableList.of(decl)),
+                    HashTable.<String, ImmutableList<Declaration>>emptyUsingEquality().put(binding.name, ImmutableList.of(decl)),
                     this.children,
                     this.dynamic,
                     ImmutableList.empty(),

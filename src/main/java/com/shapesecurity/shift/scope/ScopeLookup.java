@@ -36,7 +36,7 @@ public class ScopeLookup {
     }
 
     private void scopeHelper(@NotNull Scope scope) {
-        scope.children.foreach(this::scopeHelper); // logic depends on this occurring first.
+        scope.children.forEach(this::scopeHelper); // logic depends on this occurring first.
         for (Variable v : scope.variables()) { // TODO make this functional
             variableHelper(v);
             isGlobalCache.put(v, scope instanceof GlobalScope);
@@ -45,14 +45,14 @@ public class ScopeLookup {
     }
 
     private void variableHelper(@NotNull Variable variable) {
-        variable.declarations.foreach(decl -> {
+        variable.declarations.forEach(decl -> {
             if (bindingIdentifierDeclarationCache.containsKey(decl.node)) {
                 functionDeclarationCache.put(decl.node, new Pair<>(bindingIdentifierDeclarationCache.get(decl.node), Maybe.of(variable)));
             } else {
                 bindingIdentifierDeclarationCache.put(decl.node, variable);
             }
         });
-        variable.references.foreach(ref -> {
+        variable.references.forEach(ref -> {
             if (ref.node instanceof AssignmentTargetIdentifier) {
                 assignmentTargetIdentifierReferenceCache.put((AssignmentTargetIdentifier) ref.node, variable);
             } else if (ref.node instanceof BindingIdentifier) {

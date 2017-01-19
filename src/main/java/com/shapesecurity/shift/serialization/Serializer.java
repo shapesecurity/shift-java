@@ -56,7 +56,7 @@ public class Serializer implements Reducer<StringBuilder> {
         StringBuilder sb = new StringBuilder("[");
         NonEmptyImmutableList<StringBuilder> nel = (NonEmptyImmutableList<StringBuilder>) values;
         sb.append(nel.head);
-        nel.tail().foreach(s -> sb.append(",").append(s));
+        nel.tail().forEach(s -> sb.append(",").append(s));
         sb.append("]");
         return sb;
     }

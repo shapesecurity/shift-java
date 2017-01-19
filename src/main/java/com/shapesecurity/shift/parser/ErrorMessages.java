@@ -79,9 +79,9 @@ interface ErrorMessages {
     F<MemberExpression, EarlyError> SUPERPROPERTY_ERROR = node -> new EarlyError(node, "Member access on super must be in a method");
     F<BindingIdentifier, EarlyError> DUPLICATE_BINDING = node -> new EarlyError(node, "Duplicate binding " + Utils.escapeStringLiteral(node.name));
     F<ContinueStatement, EarlyError> FREE_CONTINUE = node -> new EarlyError(node, "Continue statement must be nested within an iteration statement");
-    F<ContinueStatement, EarlyError> UNBOUND_CONTINUE = node -> new EarlyError(node, "Continue statement must be nested within an iteration statement with label " + Utils.escapeStringLiteral(node.label.just()));
+    F<ContinueStatement, EarlyError> UNBOUND_CONTINUE = node -> new EarlyError(node, "Continue statement must be nested within an iteration statement with label " + Utils.escapeStringLiteral(node.label.fromJust()));
     F<BreakStatement, EarlyError> FREE_BREAK = node -> new EarlyError(node, "Break statement must be nested within an iteration statement or a switch statement");
-    F<BreakStatement, EarlyError> UNBOUND_BREAK = node -> new EarlyError(node, "Break statement must be nested within a statement with label " + Utils.escapeStringLiteral(node.label.just()));
+    F<BreakStatement, EarlyError> UNBOUND_BREAK = node -> new EarlyError(node, "Break statement must be nested within a statement with label " + Utils.escapeStringLiteral(node.label.fromJust()));
     F<Node, EarlyError> DUPLICATE_CTOR = node -> new EarlyError(node, "Duplicate constructor method in class");
     F<BindingIdentifier, EarlyError> BINDING_IDENTIFIER_STRICT = node -> new EarlyError(node, "The identifier " + Utils.escapeStringLiteral(node.name) + " must not be in binding position in strict mode");
     F<AssignmentTargetIdentifier, EarlyError> TARGET_IDENTIFIER_STRICT = node -> new EarlyError(node, "The identifier " + Utils.escapeStringLiteral(node.name) + " must not be in binding position in strict mode");

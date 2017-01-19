@@ -1937,12 +1937,12 @@ public class ScopeTest extends TestCase {
         Assert.assertEquals(scope.dynamic, isDynamic);
 
         Assert.assertEquals(scope.children.length, children.length);
-        children.foreach(child -> assertTrue(scope.children.exists(scope1 -> scope1 == child)));
+        children.forEach(child -> assertTrue(scope.children.exists(scope1 -> scope1 == child)));
 
         // scope.through.foreach(e -> System.out.println(e.a)); // TODO remove this
 
         Assert.assertEquals(scope.through.length, through.length);
-        through.foreach(name -> {
+        through.forEach(name -> {
             ImmutableList<Reference> references = scope.through.get(name).fromJust();
             Assert.assertNotNull(references);
             assertTrue(references.find(ref -> getIdentifierName(ref.node).equals(name)).isJust());
