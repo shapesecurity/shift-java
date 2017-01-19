@@ -92,15 +92,15 @@ public class WebSafeCodeGen extends CodeGen {
 	@NotNull
 	@Override
 	public CodeRep reduceTemplateExpression(@NotNull TemplateExpression node, @NotNull Maybe<CodeRep> tag, @NotNull ImmutableList<CodeRep> elements) {
-		CodeRep state = node.tag.maybe(factory.empty(), t -> p(t, node.getPrecedence(), tag.just()));
+		CodeRep state = node.tag.maybe(factory.empty(), t -> p(t, node.getPrecedence(), tag.fromJust()));
 		state = seqVA(state, factory.token("`"));
 		for (int i = 0, l = node.elements.length; i < l; ++i) {
-			if (node.elements.index(i).just() instanceof TemplateElement) {
+			if (node.elements.index(i).fromJust() instanceof TemplateElement) {
 				String d = "";
 				if (i > 0) {
 					d += "}";
 				}
-				d += safe(((TemplateElement) node.elements.index(i).just()).rawValue);
+				d += safe(((TemplateElement) node.elements.index(i).fromJust()).rawValue);
 				if (i < l - 1) {
 					d += "${";
 				}
@@ -108,14 +108,14 @@ public class WebSafeCodeGen extends CodeGen {
 					state = seqVA(state, factory.token(d));
 				}
 			} else {
-				state = seqVA(state, elements.index(i).just());
+				state = seqVA(state, elements.index(i).fromJust());
 			}
 		}
 		state = seqVA(state, factory.token("`"));
 		if (node.tag.isJust()) {
-			state.startsWithCurly = tag.just().startsWithCurly;
-			state.startsWithLetSquareBracket = tag.just().startsWithLetSquareBracket;
-			state.startsWithFunctionOrClass = tag.just().startsWithFunctionOrClass;
+			state.startsWithCurly = tag.fromJust().startsWithCurly;
+			state.startsWithLetSquareBracket = tag.fromJust().startsWithLetSquareBracket;
+			state.startsWithFunctionOrClass = tag.fromJust().startsWithFunctionOrClass;
 		}
 		return state;
 	}

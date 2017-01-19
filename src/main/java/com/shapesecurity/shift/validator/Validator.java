@@ -467,7 +467,7 @@ public class Validator extends MonoidalReducer<ValidationContext> {
     public ValidationContext reduceVariableDeclarationStatement(@NotNull VariableDeclarationStatement node, @NotNull ValidationContext declaration) {
         ValidationContext s = super.reduceVariableDeclarationStatement(node, declaration);
         if (node.declaration.kind.equals(VariableDeclarationKind.Const)) {
-            node.declaration.declarators.foreach(x -> {
+            node.declaration.declarators.forEach(x -> {
                 if (x.init.isNothing()) {
                     s.addError(new ValidationError(node, ValidationErrorMessages.CONST_VARIABLE_DECLARATION_MUST_HAVE_INIT));
                 }

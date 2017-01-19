@@ -62,7 +62,7 @@ public class ScopeLookupTest {
 
     private static void getVariables(Scope scope, final List<Variable> list) {
         list.addAll(scope.variables());
-        scope.children.foreach(s -> getVariables(s, list));
+        scope.children.forEach(s -> getVariables(s, list));
     }
 
     private static List<Scope> getScopes(Scope scope) {
@@ -73,7 +73,7 @@ public class ScopeLookupTest {
 
     private static void getScopes(Scope scope, final List<Scope> list) {
         scope.children.forEach(list::add);
-        scope.children.foreach(s -> getScopes(s, list));
+        scope.children.forEach(s -> getScopes(s, list));
     }
 
     private static boolean isDescendant(Scope parent, Scope child) {

@@ -68,20 +68,20 @@ public class EarlyErrorState {
     public EarlyErrorState() {
         this.errors = ImmutableList.empty();
         this.strictErrors = ImmutableList.empty();
-        this.usedLabelNames = HashTable.empty();
+        this.usedLabelNames = HashTable.emptyUsingEquality();
         this.freeBreakStatements = ImmutableList.empty();
         this.freeContinueStatements = ImmutableList.empty();
-        this.freeLabeledBreakStatements = MultiHashTable.empty();
-        this.freeLabeledContinueStatements = MultiHashTable.empty();
+        this.freeLabeledBreakStatements = MultiHashTable.emptyUsingEquality();
+        this.freeLabeledContinueStatements = MultiHashTable.emptyUsingEquality();
         this.newTargetExpressions = ImmutableList.empty();
-        this.boundNames = MultiHashTable.empty();
-        this.previousLexicallyDeclaredNames = MultiHashTable.empty();
-        this.lexicallyDeclaredNames = MultiHashTable.empty();
-        this.functionDeclarationNames = MultiHashTable.empty();
-        this.varDeclaredNames = MultiHashTable.empty();
-        this.forOfVarDeclaredNames = MultiHashTable.empty();
-        this.exportedNames = MultiHashTable.empty();
-        this.exportedBindings = MultiHashTable.empty();
+        this.boundNames = MultiHashTable.emptyUsingEquality();
+        this.previousLexicallyDeclaredNames = MultiHashTable.emptyUsingEquality();
+        this.lexicallyDeclaredNames = MultiHashTable.emptyUsingEquality();
+        this.functionDeclarationNames = MultiHashTable.emptyUsingEquality();
+        this.varDeclaredNames = MultiHashTable.emptyUsingEquality();
+        this.forOfVarDeclaredNames = MultiHashTable.emptyUsingEquality();
+        this.exportedNames = MultiHashTable.emptyUsingEquality();
+        this.exportedBindings = MultiHashTable.emptyUsingEquality();
         this.superCallExpressions = ImmutableList.empty();
         this.superCallExpressionsInConstructorMethod = ImmutableList.empty();
         this.superPropertyExpressions = ImmutableList.empty();
@@ -371,7 +371,7 @@ public class EarlyErrorState {
                 this.usedLabelNames,
                 this.freeBreakStatements,
                 this.freeContinueStatements,
-                MultiHashTable.empty(),
+                MultiHashTable.emptyUsingEquality(),
                 this.freeLabeledContinueStatements,
                 this.newTargetExpressions,
                 this.boundNames,
@@ -424,7 +424,7 @@ public class EarlyErrorState {
                 this.freeBreakStatements,
                 this.freeContinueStatements,
                 this.freeLabeledBreakStatements,
-                MultiHashTable.empty(),
+                MultiHashTable.emptyUsingEquality(),
                 this.newTargetExpressions,
                 this.boundNames,
                 this.previousLexicallyDeclaredNames,
@@ -498,7 +498,7 @@ public class EarlyErrorState {
         return new EarlyErrorState(
                 this.errors,
                 this.strictErrors,
-                HashTable.empty(),
+                HashTable.emptyUsingEquality(),
                 this.freeBreakStatements,
                 this.freeContinueStatements,
                 this.freeLabeledBreakStatements,
@@ -816,7 +816,7 @@ public class EarlyErrorState {
                 this.freeLabeledBreakStatements,
                 this.freeLabeledContinueStatements,
                 this.newTargetExpressions,
-                MultiHashTable.empty(),
+                MultiHashTable.emptyUsingEquality(),
                 this.previousLexicallyDeclaredNames,
                 this.lexicallyDeclaredNames,
                 this.functionDeclarationNames,
@@ -842,7 +842,7 @@ public class EarlyErrorState {
                 this.freeLabeledBreakStatements,
                 this.freeLabeledContinueStatements,
                 this.newTargetExpressions,
-                MultiHashTable.empty(),
+                MultiHashTable.emptyUsingEquality(),
                 this.previousLexicallyDeclaredNames,
                 this.lexicallyDeclaredNames.merge(this.boundNames),
                 this.functionDeclarationNames,
@@ -870,8 +870,8 @@ public class EarlyErrorState {
                 this.newTargetExpressions,
                 this.boundNames,
                 this.lexicallyDeclaredNames,
-                MultiHashTable.empty(),
-                MultiHashTable.empty(),
+                MultiHashTable.emptyUsingEquality(),
+                MultiHashTable.emptyUsingEquality(),
                 this.varDeclaredNames,
                 this.forOfVarDeclaredNames,
                 this.exportedNames,
@@ -956,7 +956,7 @@ public class EarlyErrorState {
                 res.freeLabeledBreakStatements,
                 res.freeLabeledContinueStatements,
                 res.newTargetExpressions,
-                MultiHashTable.empty(),
+                MultiHashTable.emptyUsingEquality(),
                 res.previousLexicallyDeclaredNames,
                 res.lexicallyDeclaredNames,
                 newFnDeclaredNames,
@@ -985,7 +985,7 @@ public class EarlyErrorState {
                 this.boundNames,
                 this.previousLexicallyDeclaredNames,
                 this.lexicallyDeclaredNames.merge(this.functionDeclarationNames),
-                MultiHashTable.empty(),
+                MultiHashTable.emptyUsingEquality(),
                 this.varDeclaredNames,
                 this.forOfVarDeclaredNames,
                 this.exportedNames,
@@ -1008,7 +1008,7 @@ public class EarlyErrorState {
                 this.freeLabeledBreakStatements,
                 this.freeLabeledContinueStatements,
                 this.newTargetExpressions,
-                MultiHashTable.empty(),
+                MultiHashTable.emptyUsingEquality(),
                 this.previousLexicallyDeclaredNames,
                 this.lexicallyDeclaredNames,
                 this.functionDeclarationNames,
@@ -1062,10 +1062,10 @@ public class EarlyErrorState {
                 this.newTargetExpressions,
                 this.boundNames,
                 this.previousLexicallyDeclaredNames,
-                MultiHashTable.empty(),
-                MultiHashTable.empty(),
-                MultiHashTable.empty(),
-                MultiHashTable.empty(),
+                MultiHashTable.emptyUsingEquality(),
+                MultiHashTable.emptyUsingEquality(),
+                MultiHashTable.emptyUsingEquality(),
+                MultiHashTable.emptyUsingEquality(),
                 this.exportedNames,
                 this.exportedBindings,
                 this.superCallExpressions,
@@ -1171,7 +1171,7 @@ public class EarlyErrorState {
                 this.varDeclaredNames,
                 this.forOfVarDeclaredNames,
                 this.exportedNames,
-                MultiHashTable.empty(),
+                MultiHashTable.emptyUsingEquality(),
                 this.superCallExpressions,
                 this.superCallExpressionsInConstructorMethod,
                 this.superPropertyExpressions,
