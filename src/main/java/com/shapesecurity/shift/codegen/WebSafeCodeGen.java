@@ -121,13 +121,19 @@ public class WebSafeCodeGen extends CodeGen {
 	}
 
 	private static Pattern NULL = Pattern.compile("\\x00");
-	private static Pattern NONASCII = Pattern.compile("[\\x80-\\uFFFF]");
+	private static Pattern NONASCII = Pattern.compile("[^\\x00-\\x7F]", Pattern.UNICODE_CHARACTER_CLASS);
 	private static Pattern SCRIPTTAG = Pattern.compile("<(/?)script([\\t\\r\\f />])");
 
 	@NotNull
 	private static String safe(@NotNull String unsafe) {
 		unsafe = replaceAll(NULL, unsafe, "\\x00");
-		unsafe = replaceAll(NONASCII, unsafe, mr -> String.format("\\u%04X", (int) mr.group().charAt(0)));
+		unsafe = replaceAll(NONASCII, unsafe, mr -> {
+			String s = mr.group();
+			int cp = s.codePointAt(0);
+			return cp > 0xFFFF
+				? String.format("\\u%04X\\u%04X", (int) s.charAt(0), (int) s.charAt(1))
+				: String.format("\\u%04X", (int) cp);
+		});
 		unsafe = replaceAll(SCRIPTTAG, unsafe, mr -> "<" + mr.group(1) + String.format("\\x%02X", (int) 's') + "cript" + mr.group(2));
 		return unsafe;
 	}

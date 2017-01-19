@@ -62,6 +62,8 @@ public class WebSafeCodeGenTest {
 		test("let \\u03C6", "let φ");
 		test("\\u03C6=0", "φ = 0");
 		test("(\"\\u03C6\")", "(\"φ\")");
+		test("(\"\\uD835\\uDD42\")", "(\"\\uD835\\uDD42\")");
+		test("(\"\\uD835\\uDD42\")", "(\"\uD835\uDD42\")");
 		testWithoutEq("\"\\u03C6\"", "\"φ\"");
 		testWithoutEq("/\\u03C6/", "/φ/");
 		testWithoutEq("`\\u03C6`", "`φ`");
