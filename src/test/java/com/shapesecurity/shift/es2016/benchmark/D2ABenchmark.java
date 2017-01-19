@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package com.shapesecurity.shift.benchmark;
+package com.shapesecurity.shift.es2016.benchmark;
 
 import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.functional.data.Maybe;
-import com.shapesecurity.shift.ast.ArrayExpression;
-import com.shapesecurity.shift.ast.ExpressionStatement;
-import com.shapesecurity.shift.ast.LiteralNumericExpression;
-import com.shapesecurity.shift.ast.Script;
-import com.shapesecurity.shift.codegen.CodeGen;
+import com.shapesecurity.shift.es2016.ast.ArrayExpression;
+import com.shapesecurity.shift.es2016.ast.ExpressionStatement;
+import com.shapesecurity.shift.es2016.ast.LiteralNumericExpression;
+import com.shapesecurity.shift.es2016.ast.Script;
+import com.shapesecurity.shift.es2016.codegen.CodeGen;
 import org.junit.Test;
 
 public class D2ABenchmark {
@@ -35,6 +35,9 @@ public class D2ABenchmark {
         ImmutableList<Double> numbers = ImmutableList.empty();
         for (int i = 0; i < 100; i++) {
             numbers = numbers.cons(((double) i - 50));
+            if (i % 10 == 0) {
+                numbers = numbers.cons(((double) i - 50 + .5));
+            }
         }
         ArrayExpression ns =
             new ArrayExpression(numbers
