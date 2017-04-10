@@ -35,7 +35,12 @@ public class ParserWithLocation {
 		@NotNull
 		@Override
 		protected <T extends Node> T finishNode(@NotNull SourceLocation startLocation, @NotNull T node) {
-			SourceLocation endLocation = this.getLocation();
+			if (node.getClass() == Script.class || node.getClass() == Module.class) {
+				// Special case: the start/end of the whole-program node is the whole text including leading and trailing whitespace.
+				locations = locations.put(node, new SourceSpan(Maybe.empty(), new SourceLocation(0, 0, 0), new SourceLocation(this.startLine, this.startIndex - this.startLineStart, this.startIndex)));
+				return node;
+			}
+			SourceLocation endLocation = this.getLastTokenEndLocation();
 			locations = locations.put(node, new SourceSpan(Maybe.empty(), startLocation, endLocation));
 			return node;
 		}

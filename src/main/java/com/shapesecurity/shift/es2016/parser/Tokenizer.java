@@ -93,7 +93,9 @@ public class Tokenizer {
     protected int lastLine, lastLineStart, lastIndex;
     protected int startIndex, startLine, startLineStart;
     private SourceLocation cachedSourceLocation;
+    private SourceLocation cachedSourceEndLocation;
     private int lastCachedSourceLocation = -1;
+    private int lastCachedSourceEndLocation = -1;
 
     public Tokenizer(@NotNull String source, boolean isModule) throws JsError {
         this.moduleIsTheGoalSymbol = isModule;
@@ -470,6 +472,15 @@ public class Tokenizer {
             this.lastCachedSourceLocation = this.index;
         }
         return this.cachedSourceLocation;
+    }
+
+    @NotNull
+    SourceLocation getLastTokenEndLocation() {
+        if (this.lastCachedSourceEndLocation != this.lastIndex) {
+            this.cachedSourceEndLocation = new SourceLocation(this.lastLine, this.lastIndex - this.lastLineStart, this.lastIndex);
+            this.lastCachedSourceEndLocation = this.lastIndex;
+        }
+        return this.cachedSourceEndLocation;
     }
 
     @NotNull
