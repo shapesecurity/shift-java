@@ -18,6 +18,7 @@ package com.shapesecurity.shift.es2016.codegen;
 
 import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.functional.data.Maybe;
+import com.shapesecurity.functional.data.Monoid;
 import com.shapesecurity.shift.es2016.ast.AssignmentTargetIdentifier;
 import com.shapesecurity.shift.es2016.ast.Directive;
 import com.shapesecurity.shift.es2016.ast.EmptyStatement;
@@ -34,8 +35,13 @@ import com.shapesecurity.shift.es2016.ast.Script;
 import com.shapesecurity.shift.es2016.ast.Statement;
 import com.shapesecurity.shift.es2016.ast.WhileStatement;
 import com.shapesecurity.shift.es2016.ast.WithStatement;
+import com.shapesecurity.shift.es2016.codegen.location.CodeGenWithLocation;
 import com.shapesecurity.shift.es2016.parser.JsError;
 import com.shapesecurity.shift.es2016.parser.Parser;
+import com.shapesecurity.shift.es2016.parser.ParserWithLocation;
+import com.shapesecurity.shift.es2016.reducer.Director;
+import com.shapesecurity.shift.es2016.reducer.MonoidalReducer;
+import com.shapesecurity.shift.es2016.reducer.WrappedReducer;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 
@@ -49,10 +55,26 @@ public class CodeGenTest {
     }
 
     private static void test(String source) throws JsError {
-        Module module = Parser.parseModule(source);
-        String code = CodeGen.codeGen(module);
+        ParserWithLocation parserWithLocation = new ParserWithLocation();
+        CodeGenWithLocation codeGenWithLocation = new CodeGenWithLocation(new CodeGen(new CodeRepFactory()));
+        Module module = parserWithLocation.parseModule(source);
+        String code = codeGenWithLocation.codeGen(module);
         assertEquals(source, code);
         assertEquals(module, Parser.parseModule(code));
+
+        /*
+       Check location agreement. This isn't quite the right contract; we actually want to assert that,
+       for any tree, if we codegen it then parse it, the two will agree on locations for analagous nodes.
+       Here we take advantage of the fact that the input is required to be in the format that codeGen produces,
+       which allows us to compare the locations for the codegen with the locations for the parser for the same
+       tree.
+
+       This approach is kind of hacky: we really just want a visitor. But it does work.
+        */
+        Director.reduceModule(new WrappedReducer<>((node, unit) -> {
+            assertEquals(parserWithLocation.getLocation(node), codeGenWithLocation.getLocation(node));
+            return unit;
+        }, new MonoidalReducer<>(Monoid.UNIT)), module);
     }
 
     private static void test(String expected, String source) throws JsError {

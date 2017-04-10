@@ -122,7 +122,7 @@ public class MonoidalReducer<State> implements Reducer<State> {
     @NotNull
     protected final Monoid<State> monoidClass;
 
-    protected MonoidalReducer(@NotNull Monoid<State> monoidClass) {
+    public MonoidalReducer(@NotNull Monoid<State> monoidClass) {
         this.monoidClass = monoidClass;
     }
 

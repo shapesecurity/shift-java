@@ -57,7 +57,7 @@ public class WebSafeCodeGen extends CodeGen {
 	public CodeRep reduceIdentifierExpression(@NotNull IdentifierExpression node) {
 		CodeRep a = factory.token(safe(node.name));
 		if (node.name.equals("let")) {
-			a.startsWithLet = true;
+			a.setStartsWithLet(true);
 		}
 		return a;
 	}
@@ -67,7 +67,7 @@ public class WebSafeCodeGen extends CodeGen {
 	public CodeRep reduceAssignmentTargetIdentifier(@NotNull AssignmentTargetIdentifier node) {
 		CodeRep a = factory.token(safe(node.name));
 		if (node.name.equals("let")) {
-			a.startsWithLet = true;
+			a.setStartsWithLet(true);
 		}
 		return a;
 	}
@@ -77,7 +77,7 @@ public class WebSafeCodeGen extends CodeGen {
 	public CodeRep reduceBindingIdentifier(@NotNull BindingIdentifier node) {
 		CodeRep a = factory.token(safe(node.name));
 		if (node.name.equals("let")) {
-			a.startsWithLet = true;
+			a.setStartsWithLet(true);
 		}
 		return a;
 	}
@@ -113,9 +113,9 @@ public class WebSafeCodeGen extends CodeGen {
 		}
 		state = seqVA(state, factory.token("`"));
 		if (node.tag.isJust()) {
-			state.startsWithCurly = tag.fromJust().startsWithCurly;
-			state.startsWithLetSquareBracket = tag.fromJust().startsWithLetSquareBracket;
-			state.startsWithFunctionOrClass = tag.fromJust().startsWithFunctionOrClass;
+			state.setStartsWithCurly(tag.fromJust().startsWithCurly());
+			state.setStartsWithLetSquareBracket(tag.fromJust().startsWithLetSquareBracket());
+			state.setStartsWithFunctionOrClass(tag.fromJust().startsWithFunctionOrClass());
 		}
 		return state;
 	}
