@@ -121,11 +121,12 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
 
     @NotNull
     protected <A, B extends Node> B  parseTopLevel(@NotNull ExceptionalSupplier<A> parser, @NotNull BiFunction<ImmutableList<Directive>, ImmutableList<A>, B> constructor) throws JsError {
+        AdditionalStateT startState = this.startNode();
         B node = this.parseBody(parser, constructor);
         if (!this.match(TokenType.EOS)) {
             throw this.createUnexpected(this.lookahead);
         }
-        return node;
+        return this.finishNode(startState, node);
     }
 
     @NotNull
@@ -140,7 +141,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
 
     @NotNull
     protected <A, B extends Node> B parseBody(@NotNull ExceptionalSupplier<A> parser, @NotNull BiFunction<ImmutableList<Directive>, ImmutableList<A>, B> constructor) throws JsError {
-        AdditionalStateT startState = this.startNode();
+        // Note that this function does not call startNode/finishNode; its callers are responsible for that.
         ArrayList<Directive> directives = new ArrayList<>();
         ArrayList<A> statements = new ArrayList<>();
         boolean parsingDirectives = true;
@@ -182,12 +183,13 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
             throw directiveOctal;
         }
 
-        B node = constructor.apply(ImmutableList.from(directives), ImmutableList.from(statements));
-        return this.finishNode(startState, node);
+        return constructor.apply(ImmutableList.from(directives), ImmutableList.from(statements));
     }
 
     @NotNull
     protected FunctionBody parseFunctionBody() throws JsError {
+        AdditionalStateT startState = this.startNode();
+
         boolean oldInFunctionBody = this.inFunctionBody;
         boolean oldModule = this.module;
         boolean oldStrict = this.strict;
@@ -202,7 +204,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
         this.module = oldModule;
         this.strict = oldStrict;
 
-        return body;
+        return this.finishNode(startState, body);
     }
 
     @NotNull

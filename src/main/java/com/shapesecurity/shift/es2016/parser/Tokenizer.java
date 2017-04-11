@@ -93,7 +93,9 @@ public class Tokenizer {
     protected int lastLine, lastLineStart, lastIndex;
     protected int startIndex, startLine, startLineStart;
     private SourceLocation cachedSourceLocation;
+    private SourceLocation cachedSourceEndLocation;
     private int lastCachedSourceLocation = -1;
+    private int lastCachedSourceEndLocation = -1;
 
     public Tokenizer(@NotNull String source, boolean isModule) throws JsError {
         this.moduleIsTheGoalSymbol = isModule;
@@ -470,6 +472,15 @@ public class Tokenizer {
             this.lastCachedSourceLocation = this.index;
         }
         return this.cachedSourceLocation;
+    }
+
+    @NotNull
+    SourceLocation getLastTokenEndLocation() {
+        if (this.lastCachedSourceEndLocation != this.lastIndex) {
+            this.cachedSourceEndLocation = new SourceLocation(this.lastLine, this.lastIndex - this.lastLineStart, this.lastIndex);
+            this.lastCachedSourceEndLocation = this.lastIndex;
+        }
+        return this.cachedSourceEndLocation;
     }
 
     @NotNull
@@ -934,25 +945,45 @@ public class Tokenizer {
     protected Token scanTemplateElement() throws JsError {
         int start = this.index;
         this.index++;
-        while (this.index < this.source.length()) {
+        int length = this.source.length();
+        while (this.index < length) {
             char ch = this.source.charAt(this.index);
             switch (ch) {
-                case 0x60:  // `
+                case '`':
                     this.index++;
                     return new TemplateToken(this.getSlice(start), true);
-                case 0x24:  // $
+                case '$':
                     if (this.source.charAt(this.index + 1) == 0x7B) {  // {
                         this.index += 2;
                         return new TemplateToken(this.getSlice(start), false);
                     }
                     this.index++;
                     break;
-                case 0x5C:  // \\
+                case '\\':
                 {
                     String octal = this.scanStringEscape("", null).right();
                     if (octal != null) {
                         throw this.createILLEGAL();
                     }
+                    break;
+                }
+                case '\r':
+                {
+                    this.line++;
+                    this.index++;
+                    if (this.index < length && this.source.charAt(this.index) == '\n') {
+                        this.index++;
+                    }
+                    this.lineStart = this.index;
+                    break;
+                }
+                case '\n':
+                case '\u2028':
+                case '\u2029':
+                {
+                    this.line++;
+                    this.index++;
+                    this.lineStart = this.index;
                     break;
                 }
                 default:
