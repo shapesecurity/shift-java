@@ -177,29 +177,29 @@ public class LocationTest extends TestCase  {
 	}
 
 	@Test
-	public void testTemplateDoubleLinebreak() throws JsError {
-		init("`a\n\nb`;");
+	public void testTemplateMultiLinebreak() throws JsError {
+		init("`a\n\r\u2028\u2029b`;");
 		checkText(this.tree, this.source);
 
 		Statement statement = this.tree.statements.maybeHead().fromJust();
 		checkLocation(statement, new SourceSpan(
 				Maybe.empty(),
 				new SourceLocation(0, 0, 0),
-				new SourceLocation(2, 3, 7)
+				new SourceLocation(4, 3, 9)
 		));
 
 		Expression expression = ((ExpressionStatement) statement).expression;
 		checkLocation(expression, new SourceSpan(
 				Maybe.empty(),
 				new SourceLocation(0, 0, 0),
-				new SourceLocation(2, 2, 6)
+				new SourceLocation(4, 2, 8)
 		));
 
 		ExpressionTemplateElement element = ((TemplateExpression) expression).elements.index(0).fromJust();
 		checkLocation(element, new SourceSpan(
 				Maybe.empty(),
 				new SourceLocation(0, 1, 1),
-				new SourceLocation(2, 1, 5)
+				new SourceLocation(4, 1, 7)
 		));
 	}
 }

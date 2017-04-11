@@ -978,6 +978,8 @@ public class Tokenizer {
                     break;
                 }
                 case '\n':
+                case '\u2028':
+                case '\u2029':
                 {
                     this.line++;
                     this.index++;
