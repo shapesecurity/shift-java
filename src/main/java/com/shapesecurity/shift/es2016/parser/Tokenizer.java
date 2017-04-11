@@ -945,25 +945,43 @@ public class Tokenizer {
     protected Token scanTemplateElement() throws JsError {
         int start = this.index;
         this.index++;
-        while (this.index < this.source.length()) {
+        int length = this.source.length();
+        while (this.index < length) {
             char ch = this.source.charAt(this.index);
             switch (ch) {
-                case 0x60:  // `
+                case '`':
                     this.index++;
                     return new TemplateToken(this.getSlice(start), true);
-                case 0x24:  // $
+                case '$':
                     if (this.source.charAt(this.index + 1) == 0x7B) {  // {
                         this.index += 2;
                         return new TemplateToken(this.getSlice(start), false);
                     }
                     this.index++;
                     break;
-                case 0x5C:  // \\
+                case '\\':
                 {
                     String octal = this.scanStringEscape("", null).right();
                     if (octal != null) {
                         throw this.createILLEGAL();
                     }
+                    break;
+                }
+                case '\r':
+                {
+                    this.line++;
+                    this.index++;
+                    if (this.index < length && this.source.charAt(this.index) == '\n') {
+                        this.index++;
+                    }
+                    this.lineStart = this.index;
+                    break;
+                }
+                case '\n':
+                {
+                    this.line++;
+                    this.index++;
+                    this.lineStart = this.index;
                     break;
                 }
                 default:

@@ -44,6 +44,20 @@ public class LocationTest extends TestCase  {
 		assertEquals(expected, actual);
 	}
 
+	private void checkLocation(@NotNull Node node, @NotNull SourceSpan expected) {
+		Maybe<SourceSpan> maybeLocation = this.parserWithLocation.getLocation(node);
+		assertTrue(maybeLocation.isJust());
+
+		SourceSpan location = maybeLocation.fromJust();
+		// Manually checking equality gives better error messages.
+		assertEquals(expected.start.offset, location.start.offset);
+		assertEquals(expected.start.line, location.start.line);
+		assertEquals(expected.start.column, location.start.column);
+		assertEquals(expected.end.offset, location.end.offset);
+		assertEquals(expected.end.line, location.end.line);
+		assertEquals(expected.end.column, location.end.column);
+	}
+
 	@Test
 	public void testSimple() throws JsError {
 		init(" a  + 1.  .b ;   ");
@@ -106,5 +120,86 @@ public class LocationTest extends TestCase  {
 
 		element = ((TemplateExpression) expression).elements.index(4).fromJust();
 		checkText(element, " baz");
+	}
+
+	@Test
+	public void testTemplateSimpleLinebreak() throws JsError {
+		init("`a\nb`;");
+		checkText(this.tree, this.source);
+
+		Statement statement = this.tree.statements.maybeHead().fromJust();
+		checkLocation(statement, new SourceSpan(
+				Maybe.empty(),
+				new SourceLocation(0, 0, 0),
+				new SourceLocation(1, 3, 6)
+		));
+
+		Expression expression = ((ExpressionStatement) statement).expression;
+		checkLocation(expression, new SourceSpan(
+				Maybe.empty(),
+				new SourceLocation(0, 0, 0),
+				new SourceLocation(1, 2, 5)
+		));
+
+		ExpressionTemplateElement element = ((TemplateExpression) expression).elements.index(0).fromJust();
+		checkLocation(element, new SourceSpan(
+				Maybe.empty(),
+				new SourceLocation(0, 1, 1),
+				new SourceLocation(1, 1, 4)
+		));
+	}
+
+	@Test
+	public void testTemplateWindowsLinebreak() throws JsError {
+		init("`a\r\nb`;");
+		checkText(this.tree, this.source);
+
+		Statement statement = this.tree.statements.maybeHead().fromJust();
+		checkLocation(statement, new SourceSpan(
+				Maybe.empty(),
+				new SourceLocation(0, 0, 0),
+				new SourceLocation(1, 3, 7)
+		));
+
+		Expression expression = ((ExpressionStatement) statement).expression;
+		checkLocation(expression, new SourceSpan(
+				Maybe.empty(),
+				new SourceLocation(0, 0, 0),
+				new SourceLocation(1, 2, 6)
+		));
+
+		ExpressionTemplateElement element = ((TemplateExpression) expression).elements.index(0).fromJust();
+		checkLocation(element, new SourceSpan(
+				Maybe.empty(),
+				new SourceLocation(0, 1, 1),
+				new SourceLocation(1, 1, 5)
+		));
+	}
+
+	@Test
+	public void testTemplateDoubleLinebreak() throws JsError {
+		init("`a\n\nb`;");
+		checkText(this.tree, this.source);
+
+		Statement statement = this.tree.statements.maybeHead().fromJust();
+		checkLocation(statement, new SourceSpan(
+				Maybe.empty(),
+				new SourceLocation(0, 0, 0),
+				new SourceLocation(2, 3, 7)
+		));
+
+		Expression expression = ((ExpressionStatement) statement).expression;
+		checkLocation(expression, new SourceSpan(
+				Maybe.empty(),
+				new SourceLocation(0, 0, 0),
+				new SourceLocation(2, 2, 6)
+		));
+
+		ExpressionTemplateElement element = ((TemplateExpression) expression).elements.index(0).fromJust();
+		checkLocation(element, new SourceSpan(
+				Maybe.empty(),
+				new SourceLocation(0, 1, 1),
+				new SourceLocation(2, 1, 5)
+		));
 	}
 }
