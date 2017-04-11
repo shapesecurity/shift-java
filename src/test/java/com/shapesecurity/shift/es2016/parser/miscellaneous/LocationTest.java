@@ -8,6 +8,7 @@ import com.shapesecurity.shift.es2016.ast.ExpressionStatement;
 import com.shapesecurity.shift.es2016.ast.ExpressionSuper;
 import com.shapesecurity.shift.es2016.ast.ExpressionTemplateElement;
 import com.shapesecurity.shift.es2016.ast.FormalParameters;
+import com.shapesecurity.shift.es2016.ast.FunctionBody;
 import com.shapesecurity.shift.es2016.ast.Node;
 import com.shapesecurity.shift.es2016.ast.Script;
 import com.shapesecurity.shift.es2016.ast.Statement;
@@ -206,8 +207,8 @@ public class LocationTest extends TestCase {
 	}
 
 	@Test
-	public void testArrowParams() throws JsError {
-		init("(a,b)=>0");
+	public void testArrow() throws JsError {
+		init("(a,b)=>{}");
 
 		Statement statement = this.tree.statements.maybeHead().fromJust();
 		Expression expression = ((ExpressionStatement) statement).expression;
@@ -216,6 +217,13 @@ public class LocationTest extends TestCase {
 				Maybe.empty(),
 				new SourceLocation(0, 0, 0),
 				new SourceLocation(0, 5, 5) // i.e. including the parentheses, but not the arrow.
+		));
+
+		FunctionBody body = (FunctionBody) ((ArrowExpression) expression).body;
+		checkLocation(body, new SourceSpan(
+				Maybe.empty(),
+				new SourceLocation(0, 8, 8),
+				new SourceLocation(0, 8, 8) // i.e. not including the braces.
 		));
 	}
 

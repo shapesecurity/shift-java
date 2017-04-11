@@ -188,7 +188,6 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
 
     @NotNull
     protected FunctionBody parseFunctionBody() throws JsError {
-        AdditionalStateT startState = this.startNode();
 
         boolean oldInFunctionBody = this.inFunctionBody;
         boolean oldModule = this.module;
@@ -197,14 +196,16 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
         this.module = false;
 
         this.expect(TokenType.LBRACE);
+        AdditionalStateT startState = this.startNode();
         FunctionBody body = this.parseBody(this::parseStatementListItem, FunctionBody::new);
+        body = this.finishNode(startState, body);
         this.expect(TokenType.RBRACE);
 
         this.inFunctionBody = oldInFunctionBody;
         this.module = oldModule;
         this.strict = oldStrict;
 
-        return this.finishNode(startState, body);
+        return body;
     }
 
     @NotNull
