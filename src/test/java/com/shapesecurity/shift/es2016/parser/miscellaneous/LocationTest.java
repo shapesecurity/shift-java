@@ -1,11 +1,13 @@
 package com.shapesecurity.shift.es2016.parser.miscellaneous;
 
 import com.shapesecurity.functional.data.Maybe;
+import com.shapesecurity.shift.es2016.ast.ArrowExpression;
 import com.shapesecurity.shift.es2016.ast.BinaryExpression;
 import com.shapesecurity.shift.es2016.ast.Expression;
 import com.shapesecurity.shift.es2016.ast.ExpressionStatement;
 import com.shapesecurity.shift.es2016.ast.ExpressionSuper;
 import com.shapesecurity.shift.es2016.ast.ExpressionTemplateElement;
+import com.shapesecurity.shift.es2016.ast.FormalParameters;
 import com.shapesecurity.shift.es2016.ast.Node;
 import com.shapesecurity.shift.es2016.ast.Script;
 import com.shapesecurity.shift.es2016.ast.Statement;
@@ -20,7 +22,7 @@ import junit.framework.TestCase;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 
-public class LocationTest extends TestCase  {
+public class LocationTest extends TestCase {
 	private String source;
 
 	private ParserWithLocation parserWithLocation;
@@ -200,6 +202,33 @@ public class LocationTest extends TestCase  {
 				Maybe.empty(),
 				new SourceLocation(0, 1, 1),
 				new SourceLocation(4, 1, 7)
+		));
+	}
+
+	@Test
+	public void testArrowParams() throws JsError {
+		init("(a,b)=>0");
+
+		Statement statement = this.tree.statements.maybeHead().fromJust();
+		Expression expression = ((ExpressionStatement) statement).expression;
+		FormalParameters params = ((ArrowExpression) expression).params;
+		checkLocation(params, new SourceSpan(
+				Maybe.empty(),
+				new SourceLocation(0, 0, 0),
+				new SourceLocation(0, 5, 5) // i.e. including the parentheses, but not the arrow.
+		));
+	}
+
+	@Test
+	public void testGroup() throws JsError {
+		init("(a,b)");
+
+		Statement statement = this.tree.statements.maybeHead().fromJust();
+		Expression expression = ((ExpressionStatement) statement).expression;
+		checkLocation(expression, new SourceSpan(
+				Maybe.empty(),
+				new SourceLocation(0, 1, 1),
+				new SourceLocation(0, 4, 4) // i.e. not including the parentheses.
 		));
 	}
 }
