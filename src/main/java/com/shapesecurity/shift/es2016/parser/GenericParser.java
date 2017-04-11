@@ -1537,8 +1537,8 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
                 return ImmutableList.from(result);
             }
             SpreadElementExpression arg;
+            AdditionalStateT startState = this.startNode();
             if (this.eat(TokenType.ELLIPSIS)) {
-                AdditionalStateT startState = this.startNode();
                 arg = this.finishNode(startState, new SpreadElement(this.parseAssignmentExpression().left().fromJust()));
             } else {
                 arg = this.parseAssignmentExpression().left().fromJust();

@@ -1,8 +1,11 @@
 package com.shapesecurity.shift.es2016.parser.miscellaneous;
 
+import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.functional.data.Maybe;
+import com.shapesecurity.shift.es2016.ast.ArrayExpression;
 import com.shapesecurity.shift.es2016.ast.ArrowExpression;
 import com.shapesecurity.shift.es2016.ast.BinaryExpression;
+import com.shapesecurity.shift.es2016.ast.CallExpression;
 import com.shapesecurity.shift.es2016.ast.Expression;
 import com.shapesecurity.shift.es2016.ast.ExpressionStatement;
 import com.shapesecurity.shift.es2016.ast.ExpressionSuper;
@@ -11,6 +14,7 @@ import com.shapesecurity.shift.es2016.ast.FormalParameters;
 import com.shapesecurity.shift.es2016.ast.FunctionBody;
 import com.shapesecurity.shift.es2016.ast.Node;
 import com.shapesecurity.shift.es2016.ast.Script;
+import com.shapesecurity.shift.es2016.ast.SpreadElementExpression;
 import com.shapesecurity.shift.es2016.ast.Statement;
 import com.shapesecurity.shift.es2016.ast.StaticMemberExpression;
 import com.shapesecurity.shift.es2016.ast.TemplateElement;
@@ -239,4 +243,26 @@ public class LocationTest extends TestCase {
 				new SourceLocation(0, 4, 4) // i.e. not including the parentheses.
 		));
 	}
+
+	@Test
+	public void testSpread() throws JsError {
+		init("f(...a);[...b]");
+
+		Statement statement = this.tree.statements.index(0).fromJust();
+		Expression expression = ((ExpressionStatement) statement).expression;
+		ImmutableList<SpreadElementExpression> args = ((CallExpression) expression).arguments;
+		checkLocation(args.maybeHead().fromJust(), new SourceSpan(
+				Maybe.empty(),
+				new SourceLocation(0, 2, 2), // i.e. including the ellipsis.
+				new SourceLocation(0, 6, 6)
+		));
+
+		statement = this.tree.statements.index(1).fromJust();
+		expression = ((ExpressionStatement) statement).expression;
+		ImmutableList<Maybe<SpreadElementExpression>> elements = ((ArrayExpression) expression).elements;
+		checkLocation(elements.maybeHead().fromJust().fromJust(), new SourceSpan(
+				Maybe.empty(),
+				new SourceLocation(0, 9, 9), // i.e. including the ellipsis.
+				new SourceLocation(0, 13, 13)
+		));	}
 }
