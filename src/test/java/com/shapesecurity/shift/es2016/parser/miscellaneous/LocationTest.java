@@ -258,15 +258,22 @@ public class LocationTest extends TestCase {
 
 	@Test
 	public void testExportDefaultBindingIdentifier() throws JsError {
-		init("export default function(){}");
+		init("export default function(){\n}");
 
 		ExportDefault exportDefault = (ExportDefault) this.tree.items.index(0).fromJust();
-		checkText(exportDefault, "export default function(){}");
+		checkText(exportDefault, "export default function(){\n}");
 
 		FunctionDeclaration functionDeclaration = (FunctionDeclaration) exportDefault.body;
-		checkText(functionDeclaration, "function(){}");
+		checkText(functionDeclaration, "function(){\n}");
 
 		BindingIdentifier name = functionDeclaration.name;
 		assertTrue(this.parserWithLocation.getLocation(name).isNothing());
+
+		FunctionBody body = functionDeclaration.body;
+		checkLocation(body, new SourceSpan(
+				Maybe.empty(),
+				new SourceLocation(0, 26, 26),
+				new SourceLocation(0, 26, 26) // i.e. immediately after the brace, not including any whitespace.
+		));
 	}
 }
