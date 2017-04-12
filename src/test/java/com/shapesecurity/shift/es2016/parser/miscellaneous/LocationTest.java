@@ -222,7 +222,7 @@ public class LocationTest extends TestCase {
 		Statement statement = (Statement) this.tree.items.maybeHead().fromJust();
 		Expression expression = ((ExpressionStatement) statement).expression;
 		FormalParameters params = ((ArrowExpression) expression).params;
-		checkText(params, "(a,b)");
+		checkText(params, "a,b");
 
 		FunctionBody body = (FunctionBody) ((ArrowExpression) expression).body;
 		checkLocation(body, new SourceSpan(
@@ -258,22 +258,29 @@ public class LocationTest extends TestCase {
 
 	@Test
 	public void testExportDefaultBindingIdentifier() throws JsError {
-		init("export default function(){\n}");
+		init("export default function(\n){\n}");
 
 		ExportDefault exportDefault = (ExportDefault) this.tree.items.index(0).fromJust();
-		checkText(exportDefault, "export default function(){\n}");
+		checkText(exportDefault, "export default function(\n){\n}");
 
 		FunctionDeclaration functionDeclaration = (FunctionDeclaration) exportDefault.body;
-		checkText(functionDeclaration, "function(){\n}");
+		checkText(functionDeclaration, "function(\n){\n}");
 
 		BindingIdentifier name = functionDeclaration.name;
 		assertTrue(this.parserWithLocation.getLocation(name).isNothing());
 
+		FormalParameters params = functionDeclaration.params;
+		checkLocation(params, new SourceSpan(
+				Maybe.empty(),
+				new SourceLocation(0, 24, 24),
+				new SourceLocation(0, 24, 24) // i.e. immediately after the opening parenthesis, not including any whitespace.
+		));
+
 		FunctionBody body = functionDeclaration.body;
 		checkLocation(body, new SourceSpan(
 				Maybe.empty(),
-				new SourceLocation(0, 26, 26),
-				new SourceLocation(0, 26, 26) // i.e. immediately after the brace, not including any whitespace.
+				new SourceLocation(1, 2, 27),
+				new SourceLocation(1, 2, 27) // i.e. immediately after the brace, not including any whitespace.
 		));
 	}
 }

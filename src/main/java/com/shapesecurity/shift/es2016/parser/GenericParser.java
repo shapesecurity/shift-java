@@ -381,11 +381,15 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
     }
 
     @NotNull
-    protected Expression parseArrowExpressionTail(ArrayList<BindingBindingWithDefault> params, Maybe<Binding> rest, AdditionalStateT startState) throws JsError {
+    protected FormalParameters finishArrowParams(ArrayList<BindingBindingWithDefault> params, Maybe<Binding> rest, AdditionalStateT startState) {
+        return this.finishNode(startState, new FormalParameters(ImmutableList.from(params).map(this::bindingToParameter), rest));
+    }
+
+    @NotNull
+    protected Expression parseArrowExpressionTail(FormalParameters paramsNode, AdditionalStateT startState) throws JsError {
         if (this.hasLineTerminatorBeforeNext) {
             throw this.createError(ErrorMessages.NEWLINE_AFTER_ARROW_PARAMS);
         }
-        FormalParameters paramsNode = this.finishNode(startState, new FormalParameters(ImmutableList.from(params).map(this::bindingToParameter), rest));
 
         this.expect(TokenType.ARROW);
         this.isBindingElement = this.isAssignmentTarget = false;
@@ -466,8 +470,8 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
 
     @NotNull
     protected FormalParameters parseParams() throws JsError {
-        AdditionalStateT paramsLocation = this.startNode();
         this.expect(TokenType.LPAREN);
+        AdditionalStateT paramsLocation = this.startNode();
         ArrayList<BindingBindingWithDefault> items = new ArrayList<>();
         BindingIdentifier rest = null;
         if (!this.match(TokenType.RPAREN)) {
@@ -483,8 +487,9 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
                 this.expect(TokenType.COMMA);
             }
         }
+        FormalParameters params = this.finishNode(paramsLocation, new FormalParameters(ImmutableList.from(items).map(this::bindingToParameter), Maybe.fromNullable(rest)));
         this.expect(TokenType.RPAREN);
-        return this.finishNode(paramsLocation, new FormalParameters(ImmutableList.from(items).map(this::bindingToParameter), Maybe.fromNullable(rest)));
+        return params;
     }
 
     @NotNull
@@ -1091,7 +1096,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
                 this.firstExprError = null;
                 ArrayList<BindingBindingWithDefault> params = new ArrayList<>();
                 params.add(this.targetToBinding(this.transformDestructuring(expr.left().fromJust())));
-                return Either.left(this.parseArrowExpressionTail(params, Maybe.empty(), startState));
+                return Either.left(this.parseArrowExpressionTail(this.finishArrowParams(params, Maybe.empty(), startState), startState));
             }
         } else {
             expr = this.parseConditionalExpression();
@@ -1863,14 +1868,17 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
         this.expect(TokenType.LPAREN);
         AdditionalStateT postParenStartState = this.startNode();
 
-        if (this.eat(TokenType.RPAREN)) {
+        if (this.match(TokenType.RPAREN)) {
+            FormalParameters paramsNode = this.finishArrowParams(new ArrayList<>(), Maybe.empty(), postParenStartState);
+            this.lex();
             this.isBindingElement = this.isAssignmentTarget = false;
-            return Either.left(this.parseArrowExpressionTail(new ArrayList<>(), Maybe.empty(), preParenStartState));
+            return Either.left(this.parseArrowExpressionTail(paramsNode, preParenStartState));
         } else if (this.eat(TokenType.ELLIPSIS)) {
             Maybe<Binding> rest = Maybe.of(this.parseBindingTarget());
+            FormalParameters paramsNode = this.finishArrowParams(new ArrayList<>(), rest, postParenStartState);
             this.expect(TokenType.RPAREN);
             this.isBindingElement = this.isAssignmentTarget = false;
-            return Either.left(this.parseArrowExpressionTail(new ArrayList<>(), rest, preParenStartState));
+            return Either.left(this.parseArrowExpressionTail(paramsNode, preParenStartState));
         }
 
         Either<Expression, AssignmentTarget> group = this.inheritCoverGrammar(this::parseAssignmentExpressionOrTarget);
@@ -1894,8 +1902,9 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
                 }
                 this.lex();
                 Maybe<Binding> rest = Maybe.of(this.parseBindingTarget());
+                FormalParameters paramsNode = this.finishArrowParams(params, rest, postParenStartState);
                 this.expect(TokenType.RPAREN);
-                return Either.left(this.parseArrowExpressionTail(params, rest, preParenStartState));
+                return Either.left(this.parseArrowExpressionTail(paramsNode, preParenStartState));
             }
 
             if (mustBeArrowParameterList) {
@@ -1920,6 +1929,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
             }
         }
 
+        FormalParameters paramsNode = this.finishArrowParams(params, Maybe.empty(), postParenStartState);
         this.expect(TokenType.RPAREN);
 
         if (!this.hasLineTerminatorBeforeNext && this.match(TokenType.ARROW) || mustBeArrowParameterList) {
@@ -1927,7 +1937,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
                 throw this.createErrorWithLocation(startLocation, this.match(TokenType.ASSIGN) ? ErrorMessages.INVALID_LHS_IN_ASSIGNMENT : ErrorMessages.ILLEGAL_ARROW_FUNCTION_PARAMS);
             }
             this.isBindingElement = false;
-            return Either.left(this.parseArrowExpressionTail(params, Maybe.empty(), preParenStartState));
+            return Either.left(this.parseArrowExpressionTail(paramsNode, preParenStartState));
         } else {
             // Ensure assignment pattern:
             this.isBindingElement = false;
