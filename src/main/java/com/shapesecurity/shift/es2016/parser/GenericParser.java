@@ -188,7 +188,6 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
 
     @NotNull
     protected FunctionBody parseFunctionBody() throws JsError {
-        AdditionalStateT startState = this.startNode();
 
         boolean oldInFunctionBody = this.inFunctionBody;
         boolean oldModule = this.module;
@@ -197,14 +196,16 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
         this.module = false;
 
         this.expect(TokenType.LBRACE);
+        AdditionalStateT startState = this.startNode();
         FunctionBody body = this.parseBody(this::parseStatementListItem, FunctionBody::new);
+        body = this.finishNode(startState, body);
         this.expect(TokenType.RBRACE);
 
         this.inFunctionBody = oldInFunctionBody;
         this.module = oldModule;
         this.strict = oldStrict;
 
-        return this.finishNode(startState, body);
+        return body;
     }
 
     @NotNull
@@ -384,11 +385,12 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
         if (this.hasLineTerminatorBeforeNext) {
             throw this.createError(ErrorMessages.NEWLINE_AFTER_ARROW_PARAMS);
         }
+        FormalParameters paramsNode = this.finishNode(startState, new FormalParameters(ImmutableList.from(params).map(this::bindingToParameter), rest));
+
         this.expect(TokenType.ARROW);
         this.isBindingElement = this.isAssignmentTarget = false;
         this.firstExprError = null;
 
-        FormalParameters paramsNode = this.finishNode(startState, new FormalParameters(ImmutableList.from(params).map(this::bindingToParameter), rest));
 
         boolean previousYield = this.allowYieldExpression;
         this.allowYieldExpression = false;
@@ -1535,8 +1537,8 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
                 return ImmutableList.from(result);
             }
             SpreadElementExpression arg;
+            AdditionalStateT startState = this.startNode();
             if (this.eat(TokenType.ELLIPSIS)) {
-                AdditionalStateT startState = this.startNode();
                 arg = this.finishNode(startState, new SpreadElement(this.parseAssignmentExpression().left().fromJust()));
             } else {
                 arg = this.parseAssignmentExpression().left().fromJust();
@@ -1855,18 +1857,20 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
 
     @NotNull
     protected Either<Expression, AssignmentTarget> parseGroupExpression() throws JsError {
-        AdditionalStateT startState = this.startNode();
+        AdditionalStateT preParenStartState = this.startNode();
         SourceLocation startLocation = this.getLocation();
 
         this.expect(TokenType.LPAREN);
+        AdditionalStateT postParenStartState = this.startNode();
+
         if (this.eat(TokenType.RPAREN)) {
             this.isBindingElement = this.isAssignmentTarget = false;
-            return Either.left(this.parseArrowExpressionTail(new ArrayList<>(), Maybe.empty(), startState));
+            return Either.left(this.parseArrowExpressionTail(new ArrayList<>(), Maybe.empty(), preParenStartState));
         } else if (this.eat(TokenType.ELLIPSIS)) {
             Maybe<Binding> rest = Maybe.of(this.parseBindingTarget());
             this.expect(TokenType.RPAREN);
             this.isBindingElement = this.isAssignmentTarget = false;
-            return Either.left(this.parseArrowExpressionTail(new ArrayList<>(), rest, startState));
+            return Either.left(this.parseArrowExpressionTail(new ArrayList<>(), rest, preParenStartState));
         }
 
         Either<Expression, AssignmentTarget> group = this.inheritCoverGrammar(this::parseAssignmentExpressionOrTarget);
@@ -1891,7 +1895,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
                 this.lex();
                 Maybe<Binding> rest = Maybe.of(this.parseBindingTarget());
                 this.expect(TokenType.RPAREN);
-                return Either.left(this.parseArrowExpressionTail(params, rest, startState));
+                return Either.left(this.parseArrowExpressionTail(params, rest, preParenStartState));
             }
 
             if (mustBeArrowParameterList) {
@@ -1909,7 +1913,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
                     }
                 }
                 if (this.firstExprError == null) {
-                    group = Either.left(this.finishNode(startState, new BinaryExpression(group.left().fromJust(), BinaryOperator.Sequence, expr.left().fromJust())));
+                    group = Either.left(this.finishNode(postParenStartState, new BinaryExpression(group.left().fromJust(), BinaryOperator.Sequence, expr.left().fromJust())));
                 } else {
                     mustBeArrowParameterList = true;
                 }
@@ -1923,7 +1927,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
                 throw this.createErrorWithLocation(startLocation, this.match(TokenType.ASSIGN) ? ErrorMessages.INVALID_LHS_IN_ASSIGNMENT : ErrorMessages.ILLEGAL_ARROW_FUNCTION_PARAMS);
             }
             this.isBindingElement = false;
-            return Either.left(this.parseArrowExpressionTail(params, Maybe.empty(), startState));
+            return Either.left(this.parseArrowExpressionTail(params, Maybe.empty(), preParenStartState));
         } else {
             // Ensure assignment pattern:
             this.isBindingElement = false;

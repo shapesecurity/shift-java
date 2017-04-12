@@ -3,7 +3,9 @@ package com.shapesecurity.shift.es2016.parser;
 import com.shapesecurity.functional.data.HashTable;
 import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.functional.data.Maybe;
+import com.shapesecurity.shift.es2016.ast.BindingIdentifier;
 import com.shapesecurity.shift.es2016.ast.ExpressionTemplateElement;
+import com.shapesecurity.shift.es2016.ast.FunctionBody;
 import com.shapesecurity.shift.es2016.ast.Module;
 import com.shapesecurity.shift.es2016.ast.Node;
 import com.shapesecurity.shift.es2016.ast.Script;
@@ -42,6 +44,17 @@ public class ParserWithLocation {
 			if (node instanceof Script || node instanceof Module) {
 				// Special case: the start/end of the whole-program node is the whole text including leading and trailing whitespace.
 				locations = locations.put(node, new SourceSpan(Maybe.empty(), new SourceLocation(0, 0, 0), new SourceLocation(this.startLine, this.startIndex - this.startLineStart, this.startIndex)));
+				return node;
+			} else if (node instanceof FunctionBody) {
+				FunctionBody body = (FunctionBody) node;
+				if (body.directives.isEmpty() && body.statements.isEmpty()) {
+					// Special case: a function body which contains no nodes spans no tokens, so the usual logic of "start of first contained token through end of last contained token" doesn't work. We choose to define it to start and end immediately after the opening brace.
+					SourceLocation endLocation = this.getLastTokenEndLocation();
+					locations = locations.put(node, new SourceSpan(Maybe.empty(), endLocation, endLocation));
+					return node;
+				}
+			} else if (node instanceof BindingIdentifier && ((BindingIdentifier) node).name.equals("*default*")) {
+				// Special case: synthetic BindingIdentifier for export-default declarations should not have a location
 				return node;
 			} else if (node instanceof TemplateExpression) {
 				// Special case: adjust the locations of TemplateElement to not include surrounding backticks or braces
