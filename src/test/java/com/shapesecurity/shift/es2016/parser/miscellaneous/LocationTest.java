@@ -5,13 +5,18 @@ import com.shapesecurity.functional.data.Maybe;
 import com.shapesecurity.shift.es2016.ast.ArrayExpression;
 import com.shapesecurity.shift.es2016.ast.ArrowExpression;
 import com.shapesecurity.shift.es2016.ast.BinaryExpression;
+import com.shapesecurity.shift.es2016.ast.BindingIdentifier;
 import com.shapesecurity.shift.es2016.ast.CallExpression;
+import com.shapesecurity.shift.es2016.ast.ExportDeclaration;
+import com.shapesecurity.shift.es2016.ast.ExportDefault;
 import com.shapesecurity.shift.es2016.ast.Expression;
 import com.shapesecurity.shift.es2016.ast.ExpressionStatement;
 import com.shapesecurity.shift.es2016.ast.ExpressionSuper;
 import com.shapesecurity.shift.es2016.ast.ExpressionTemplateElement;
 import com.shapesecurity.shift.es2016.ast.FormalParameters;
 import com.shapesecurity.shift.es2016.ast.FunctionBody;
+import com.shapesecurity.shift.es2016.ast.FunctionDeclaration;
+import com.shapesecurity.shift.es2016.ast.Module;
 import com.shapesecurity.shift.es2016.ast.Node;
 import com.shapesecurity.shift.es2016.ast.Script;
 import com.shapesecurity.shift.es2016.ast.SpreadElementExpression;
@@ -32,12 +37,12 @@ public class LocationTest extends TestCase {
 
 	private ParserWithLocation parserWithLocation;
 
-	private Script tree;
+	private Module tree;
 
 	private void init(@NotNull String source) throws JsError {
 		this.source = source;
 		this.parserWithLocation = new ParserWithLocation();
-		this.tree = this.parserWithLocation.parseScript(this.source);
+		this.tree = this.parserWithLocation.parseModule(this.source);
 	}
 
 	private void checkText(@NotNull Node node, @NotNull String expected) {
@@ -71,7 +76,7 @@ public class LocationTest extends TestCase {
 
 		checkText(this.tree, this.source);
 
-		Statement statement = this.tree.statements.maybeHead().fromJust();
+		Statement statement = (Statement) this.tree.items.maybeHead().fromJust();
 		checkText(statement, "a  + 1.  .b ;");
 
 		Expression expression = ((ExpressionStatement) statement).expression;
@@ -92,7 +97,7 @@ public class LocationTest extends TestCase {
 		init("`foo`;");
 		checkText(this.tree, this.source);
 
-		Statement statement = this.tree.statements.maybeHead().fromJust();
+		Statement statement = (Statement) this.tree.items.maybeHead().fromJust();
 		checkText(statement, "`foo`;");
 
 		Expression expression = ((ExpressionStatement) statement).expression;
@@ -107,7 +112,7 @@ public class LocationTest extends TestCase {
 		init("`foo ${ 0 } bar ${ 1 } baz`;");
 		checkText(this.tree, this.source);
 
-		Statement statement = this.tree.statements.maybeHead().fromJust();
+		Statement statement = (Statement) this.tree.items.maybeHead().fromJust();
 		checkText(statement, "`foo ${ 0 } bar ${ 1 } baz`;");
 
 		Expression expression = ((ExpressionStatement) statement).expression;
@@ -134,7 +139,7 @@ public class LocationTest extends TestCase {
 		init("`a\nb`;");
 		checkText(this.tree, this.source);
 
-		Statement statement = this.tree.statements.maybeHead().fromJust();
+		Statement statement = (Statement) this.tree.items.maybeHead().fromJust();
 		checkLocation(statement, new SourceSpan(
 				Maybe.empty(),
 				new SourceLocation(0, 0, 0),
@@ -161,7 +166,7 @@ public class LocationTest extends TestCase {
 		init("`a\r\nb`;");
 		checkText(this.tree, this.source);
 
-		Statement statement = this.tree.statements.maybeHead().fromJust();
+		Statement statement = (Statement) this.tree.items.maybeHead().fromJust();
 		checkLocation(statement, new SourceSpan(
 				Maybe.empty(),
 				new SourceLocation(0, 0, 0),
@@ -188,7 +193,7 @@ public class LocationTest extends TestCase {
 		init("`a\n\r\u2028\u2029b`;");
 		checkText(this.tree, this.source);
 
-		Statement statement = this.tree.statements.maybeHead().fromJust();
+		Statement statement = (Statement) this.tree.items.maybeHead().fromJust();
 		checkLocation(statement, new SourceSpan(
 				Maybe.empty(),
 				new SourceLocation(0, 0, 0),
@@ -214,14 +219,10 @@ public class LocationTest extends TestCase {
 	public void testArrow() throws JsError {
 		init("(a,b)=>{}");
 
-		Statement statement = this.tree.statements.maybeHead().fromJust();
+		Statement statement = (Statement) this.tree.items.maybeHead().fromJust();
 		Expression expression = ((ExpressionStatement) statement).expression;
 		FormalParameters params = ((ArrowExpression) expression).params;
-		checkLocation(params, new SourceSpan(
-				Maybe.empty(),
-				new SourceLocation(0, 0, 0),
-				new SourceLocation(0, 5, 5) // i.e. including the parentheses, but not the arrow.
-		));
+		checkText(params, "(a,b)");
 
 		FunctionBody body = (FunctionBody) ((ArrowExpression) expression).body;
 		checkLocation(body, new SourceSpan(
@@ -235,34 +236,37 @@ public class LocationTest extends TestCase {
 	public void testGroup() throws JsError {
 		init("(a,b)");
 
-		Statement statement = this.tree.statements.maybeHead().fromJust();
+		Statement statement = (Statement) this.tree.items.maybeHead().fromJust();
 		Expression expression = ((ExpressionStatement) statement).expression;
-		checkLocation(expression, new SourceSpan(
-				Maybe.empty(),
-				new SourceLocation(0, 1, 1),
-				new SourceLocation(0, 4, 4) // i.e. not including the parentheses.
-		));
+		checkText(expression, "a,b");
 	}
 
 	@Test
 	public void testSpread() throws JsError {
 		init("f(...a);[...b]");
 
-		Statement statement = this.tree.statements.index(0).fromJust();
+		Statement statement = (Statement) this.tree.items.index(0).fromJust();
 		Expression expression = ((ExpressionStatement) statement).expression;
 		ImmutableList<SpreadElementExpression> args = ((CallExpression) expression).arguments;
-		checkLocation(args.maybeHead().fromJust(), new SourceSpan(
-				Maybe.empty(),
-				new SourceLocation(0, 2, 2), // i.e. including the ellipsis.
-				new SourceLocation(0, 6, 6)
-		));
+		checkText(args.maybeHead().fromJust(), "...a");
 
-		statement = this.tree.statements.index(1).fromJust();
+		statement = (Statement) this.tree.items.index(1).fromJust();
 		expression = ((ExpressionStatement) statement).expression;
 		ImmutableList<Maybe<SpreadElementExpression>> elements = ((ArrayExpression) expression).elements;
-		checkLocation(elements.maybeHead().fromJust().fromJust(), new SourceSpan(
-				Maybe.empty(),
-				new SourceLocation(0, 9, 9), // i.e. including the ellipsis.
-				new SourceLocation(0, 13, 13)
-		));	}
+		checkText(elements.maybeHead().fromJust().fromJust(), "...b");
+	}
+
+	@Test
+	public void testExportDefaultBindingIdentifier() throws JsError {
+		init("export default function(){}");
+
+		ExportDefault exportDefault = (ExportDefault) this.tree.items.index(0).fromJust();
+		checkText(exportDefault, "export default function(){}");
+
+		FunctionDeclaration functionDeclaration = (FunctionDeclaration) exportDefault.body;
+		checkText(functionDeclaration, "function(){}");
+
+		BindingIdentifier name = functionDeclaration.name;
+		assertTrue(this.parserWithLocation.getLocation(name).isNothing());
+	}
 }

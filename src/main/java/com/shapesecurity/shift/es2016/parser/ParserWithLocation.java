@@ -3,6 +3,7 @@ package com.shapesecurity.shift.es2016.parser;
 import com.shapesecurity.functional.data.HashTable;
 import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.functional.data.Maybe;
+import com.shapesecurity.shift.es2016.ast.BindingIdentifier;
 import com.shapesecurity.shift.es2016.ast.ExpressionTemplateElement;
 import com.shapesecurity.shift.es2016.ast.FunctionBody;
 import com.shapesecurity.shift.es2016.ast.Module;
@@ -52,6 +53,9 @@ public class ParserWithLocation {
 					locations = locations.put(node, new SourceSpan(Maybe.empty(), endLocation, endLocation));
 					return node;
 				}
+			} else if (node instanceof BindingIdentifier && ((BindingIdentifier) node).name.equals("*default*")) {
+				// Special case: synthetic BindingIdentifier for export-default declarations should not have a location
+				return node;
 			} else if (node instanceof TemplateExpression) {
 				// Special case: adjust the locations of TemplateElement to not include surrounding backticks or braces
 				ImmutableList<ExpressionTemplateElement> elements = ((TemplateExpression) node).elements;
