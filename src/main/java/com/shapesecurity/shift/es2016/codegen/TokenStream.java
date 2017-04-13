@@ -18,11 +18,12 @@ package com.shapesecurity.shift.es2016.codegen;
 
 import com.shapesecurity.shift.es2016.utils.D2A;
 import com.shapesecurity.shift.es2016.utils.Utils;
-
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-class TokenStream {
+import java.util.regex.Pattern;
+
+public class TokenStream {
     @NotNull
     protected final StringBuilder writer;
     protected char lastChar = (char) -1;
@@ -30,16 +31,15 @@ class TokenStream {
     protected String lastNumber;
     protected boolean optionalSemi;
 
+    protected static final Pattern digitPattern = Pattern.compile("\\d+");
+
     public TokenStream(@NotNull StringBuilder writer) {
         this.writer = writer;
     }
 
     @NotNull
-    private static String numberDot(@NotNull String fragment) {
-        if (fragment.indexOf('.') < 0 && fragment.indexOf('e') < 0) {
-            return "..";
-        }
-        return ".";
+    protected static boolean numberNeedsDoubleDot(@NotNull String fragment) {
+        return digitPattern.matcher(fragment).matches();
     }
 
     public void putNumber(double number) {
@@ -52,7 +52,10 @@ class TokenStream {
         this.optionalSemi = true;
     }
 
-    @SuppressWarnings("LiteralAsArgToStringEquals")
+    public void putRaw(@NotNull String tokenStr) {
+        this.writer.append(tokenStr);
+    }
+
     public void put(@NotNull String tokenStr) {
         if (this.optionalSemi) {
             this.optionalSemi = false;
@@ -62,7 +65,7 @@ class TokenStream {
         }
         if (this.lastNumber != null && tokenStr.length() == 1) {
             if (String.valueOf(tokenStr).equals(".")) {
-                this.writer.append(numberDot(this.lastNumber));
+                this.writer.append(numberNeedsDoubleDot(this.lastNumber) ? ".." : ".");
                 this.lastNumber = null;
                 this.lastChar = '.';
                 return;

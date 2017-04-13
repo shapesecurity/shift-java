@@ -19,18 +19,78 @@ package com.shapesecurity.shift.es2016.codegen;
 import org.jetbrains.annotations.NotNull;
 
 public abstract class CodeRep {
-    public boolean containsIn = false;
-    public boolean containsGroup = false;
-    public boolean startsWithCurly = false;
-    public boolean startsWithFunctionOrClass = false;
-    public boolean startsWithLet = false;
-    public boolean startsWithLetSquareBracket = false;
-    public boolean endsWithMissingElse = false;
+    protected boolean containsIn = false;
+    protected boolean containsGroup = false;
+    protected boolean startsWithCurly = false;
+    protected boolean startsWithFunctionOrClass = false;
+    protected boolean startsWithLet = false;
+    protected boolean startsWithLetSquareBracket = false;
+    protected boolean endsWithMissingElse = false;
 
-    CodeRep() {
+    public CodeRep() {
     }
 
     public abstract void emit(@NotNull TokenStream ts, boolean noIn);
+
+    public boolean containsIn() {
+        return this.containsIn;
+    }
+
+    public void setContainsIn(boolean containsIn) {
+        this.containsIn = containsIn;
+    }
+
+    public boolean containsGroup() {
+        return this.containsGroup;
+    }
+
+    public void setContainsGroup(boolean containsGroup) {
+        this.containsGroup = containsGroup;
+    }
+
+    public boolean startsWithCurly() {
+        return this.startsWithCurly;
+    }
+
+    public void setStartsWithCurly(boolean startsWithCurly) {
+        this.startsWithCurly = startsWithCurly;
+    }
+
+    public boolean startsWithFunctionOrClass() {
+        return this.startsWithFunctionOrClass;
+    }
+
+    public void setStartsWithFunctionOrClass(boolean startsWithFunctionOrClass) {
+        this.startsWithFunctionOrClass = startsWithFunctionOrClass;
+    }
+
+    public boolean startsWithLet() {
+        return this.startsWithLet;
+    }
+
+    public void setStartsWithLet(boolean startsWithLet) {
+        this.startsWithLet = startsWithLet;
+    }
+
+    public boolean startsWithLetSquareBracket() {
+        return this.startsWithLetSquareBracket;
+    }
+
+    public void setStartsWithLetSquareBracket(boolean startsWithLetSquareBracket) {
+        this.startsWithLetSquareBracket = startsWithLetSquareBracket;
+    }
+
+    public boolean endsWithMissingElse() {
+        return this.endsWithMissingElse;
+    }
+
+    public void setEndsWithMissingElse(boolean endsWithMissingElse) {
+        this.endsWithMissingElse = endsWithMissingElse;
+    }
+
+    public void markIsInDirectivePosition() {
+        // Does nothing by default; this exists purely to be overridden by StringLiteralExpressionStatement
+    }
 
     public static final class Empty extends CodeRep {
         @Override
@@ -50,6 +110,21 @@ public abstract class CodeRep {
         @Override
         public void emit(@NotNull TokenStream ts, boolean noIn) {
             ts.put(this.token);
+        }
+    }
+
+    public static final class RawToken extends CodeRep {
+        @NotNull
+        private final String token;
+
+        public RawToken(@NotNull String token) {
+            super();
+            this.token = token;
+        }
+
+        @Override
+        public void emit(@NotNull TokenStream ts, boolean noIn) {
+            ts.putRaw(this.token);
         }
     }
 
@@ -102,21 +177,6 @@ public abstract class CodeRep {
             } else {
                 this.expr.emit(ts, false);
             }
-        }
-    }
-
-    public static final class NumberCodeRep extends CodeRep {
-
-        private final double number;
-
-        public NumberCodeRep(double number) {
-            super();
-            this.number = number;
-        }
-
-        @Override
-        public void emit(@NotNull TokenStream ts, boolean noIn) {
-            ts.putNumber(this.number);
         }
     }
 
@@ -240,6 +300,35 @@ public abstract class CodeRep {
     public static final class SemiOp extends CodeRep {
         @Override
         public void emit(@NotNull TokenStream ts, boolean noIn) {
+            ts.putOptionalSemi();
+        }
+    }
+
+    public static final class StringLiteralExpressionStatement extends CodeRep {
+        protected boolean isInDirectivePosition = false;
+
+        @NotNull
+        private final CodeRep rep;
+
+        public StringLiteralExpressionStatement(@NotNull CodeRep rep) {
+            super();
+            this.rep = rep;
+        }
+
+        @Override
+        public void markIsInDirectivePosition() {
+            this.isInDirectivePosition = true;
+        }
+
+        @Override
+        public void emit(@NotNull TokenStream ts, boolean noIn) {
+            if (this.isInDirectivePosition) {
+                ts.put("(");
+                this.rep.emit(ts, noIn);
+                ts.put(")");
+            } else {
+                this.rep.emit(ts, noIn);
+            }
             ts.putOptionalSemi();
         }
     }

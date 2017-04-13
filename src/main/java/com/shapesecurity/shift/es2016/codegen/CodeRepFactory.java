@@ -4,7 +4,6 @@ import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.functional.data.Maybe;
 import com.shapesecurity.shift.es2016.ast.Expression;
 import com.shapesecurity.shift.es2016.ast.operators.Precedence;
-
 import org.jetbrains.annotations.NotNull;
 
 public class CodeRepFactory {
@@ -29,6 +28,11 @@ public class CodeRepFactory {
     }
 
     @NotNull
+    public CodeRep rawToken(@NotNull String token) {
+        return new CodeRep.RawToken(token);
+    }
+
+    @NotNull
     public CodeRep num(double value) {
         return new CodeRep.Number(value);
     }
@@ -50,7 +54,7 @@ public class CodeRepFactory {
 
     @NotNull
     public CodeRep testIn(@NotNull CodeRep state) {
-        return state.containsIn ? new CodeRep.ContainsIn(state) : state;
+        return state.containsIn() ? new CodeRep.ContainsIn(state) : state;
     }
 
     @NotNull
@@ -94,7 +98,12 @@ public class CodeRepFactory {
     }
 
     @NotNull
-    public final CodeRep markContainsIn(@NotNull CodeRep state) {
-        return state.containsIn ? new CodeRep.ContainsIn(state) : state;
+    public CodeRep markContainsIn(@NotNull CodeRep state) {
+        return state.containsIn() ? new CodeRep.ContainsIn(state) : state;
+    }
+
+    @NotNull
+    public CodeRep markStringLiteralExpressionStatement(@NotNull CodeRep rep) {
+        return new CodeRep.StringLiteralExpressionStatement(rep);
     }
 }

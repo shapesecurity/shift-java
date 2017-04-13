@@ -19,8 +19,6 @@ package com.shapesecurity.shift.es2016.codegen;
 import org.jetbrains.annotations.NotNull;
 
 public class FormattedCodeRepFactory extends CodeRepFactory {
-    public static final FormattedCodeRepFactory INSTANCE = new FormattedCodeRepFactory();
-
     @NotNull
     public CodeRep semi() {
         return new FormattedCodeRep.Semi();
