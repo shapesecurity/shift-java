@@ -23,12 +23,12 @@ public class CodeGenWithLocation extends WrappedReducer<CodeRep> {
 	}
 
 	private static class CtorArgs {
-		// this is just to deal with stupidity in the compiler
+		// A helper class is necessary to construct `wrap` which refers to `meta` but still have access to `meta`.
 		@NotNull
 		final LocationMeta meta;
 
 		@NotNull
-		private final F2<Node, CodeRep, CodeRep> wrap;
+		final F2<Node, CodeRep, CodeRep> wrap;
 
 		@NotNull
 		final Reducer<CodeRep> reducer;

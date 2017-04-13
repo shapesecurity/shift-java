@@ -1,5 +1,6 @@
 package com.shapesecurity.shift.es2016.codegen.location;
 
+import com.shapesecurity.shift.es2016.ast.Directive;
 import com.shapesecurity.shift.es2016.ast.ImportDeclarationExportDeclarationStatement;
 import com.shapesecurity.shift.es2016.ast.LiteralNumericExpression;
 import com.shapesecurity.shift.es2016.ast.Module;
@@ -17,6 +18,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+// This class provides coordination between CodeGenWithLocation and TokenStreamWithLocation, allowing us to tie nodes in the AST to locations in the final string.
 public class LocationMeta {
 	protected final Map<Node, SourceLocation> nodeToStart = new IdentityHashMap<>();
 	protected final Map<Node, SourceLocation> nodeToFinish = new IdentityHashMap<>();
@@ -38,7 +40,8 @@ public class LocationMeta {
 	public void finishEmit(@NotNull Node node, @NotNull TokenStream ts) {
 		if (!(ts instanceof TokenStreamWithLocation)) return;
 		this.nodeToFinish.put(node, ((TokenStreamWithLocation) ts).getLocation());
-		if (node instanceof ImportDeclarationExportDeclarationStatement || node instanceof SwitchCase || node instanceof SwitchDefault) {
+		if (node instanceof ImportDeclarationExportDeclarationStatement || node instanceof Directive || node instanceof SwitchCase || node instanceof SwitchDefault) {
+			// These are the nodes which might have an optional trailing semicolon, which will need to be included in their location once it's added.
 			this.finishingStatements.add(node);
 		} else if (node instanceof LiteralNumericExpression) {
 			this.lastNumberNode = (LiteralNumericExpression) node;

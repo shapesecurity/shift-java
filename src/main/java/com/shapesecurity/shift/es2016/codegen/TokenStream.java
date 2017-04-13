@@ -21,6 +21,8 @@ import com.shapesecurity.shift.es2016.utils.Utils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.regex.Pattern;
+
 public class TokenStream {
     @NotNull
     protected final StringBuilder writer;
@@ -29,13 +31,15 @@ public class TokenStream {
     protected String lastNumber;
     protected boolean optionalSemi;
 
+    protected static final Pattern digitPattern = Pattern.compile("\\d+");
+
     public TokenStream(@NotNull StringBuilder writer) {
         this.writer = writer;
     }
 
     @NotNull
     protected static boolean numberNeedsDoubleDot(@NotNull String fragment) {
-        return fragment.indexOf('.') < 0 && fragment.indexOf('e') < 0;
+        return digitPattern.matcher(fragment).matches();
     }
 
     public void putNumber(double number) {

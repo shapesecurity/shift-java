@@ -72,7 +72,7 @@ public class CodeGenTest {
        This approach is kind of hacky: we really just want a visitor. But it does work.
         */
         Director.reduceModule(new WrappedReducer<>((node, unit) -> {
-            assertEquals(parserWithLocation.getLocation(node), codeGenWithLocation.getLocation(node));
+            assertEquals("Location for " + node.getClass().getSimpleName() + " should be the same according to the parser and the code generator", parserWithLocation.getLocation(node), codeGenWithLocation.getLocation(node));
             return unit;
         }, new MonoidalReducer<>(Monoid.UNIT)), module);
     }
@@ -170,6 +170,7 @@ public class CodeGenTest {
     public void testCodeGenDirectives() throws JsError {
         test("\"use strict\"");
         test("\"use\u0020strict\"");
+        test("\"use strict\";0");
         testShift("\"use\u0020strict\"", new Script(ImmutableList.of(new Directive("use strict")), ImmutableList.empty()));
         testShift("'\"'", new Script(ImmutableList.of(new Directive("\"")), ImmutableList.empty()));
         testShift("\"\\\"\"", new Script(ImmutableList.of(new Directive("\\\"")), ImmutableList.empty()));

@@ -17,7 +17,7 @@ public class TokenStreamWithLocation extends TokenStream {
 	private SourceLocation cachedSourceLocation;
 	private int lastCachedSourceLocation = -1;
 
-	protected static Pattern linebreakPattern = Pattern.compile("\r\n|\r|\n|\u2028|\u2029");
+	protected static final Pattern linebreakPattern = Pattern.compile("\r\n?|[\n\u2028\u2029]");
 
 	@NotNull
 	public SourceLocation getLocation() {
