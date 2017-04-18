@@ -5,7 +5,7 @@ import com.shapesecurity.shift.es2016.ast.Script;
 import org.jetbrains.annotations.NotNull;
 
 public abstract class PrettyCodeGen extends CodeGen {
-	private PrettyCodeGen(@NotNull CodeRepFactory factory) {
+	public PrettyCodeGen(@NotNull CodeRepFactory factory) {
 		super(factory);
 	}
 
