@@ -16,7 +16,7 @@
 
 package com.shapesecurity.shift.es2016.codegen;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 public abstract class FormattedCodeRep extends CodeRep {
     private FormattedCodeRep() {
@@ -24,16 +24,16 @@ public abstract class FormattedCodeRep extends CodeRep {
     }
 
     public static final class Brace extends FormattedCodeRep {
-        @NotNull
+        @Nonnull
         private final CodeRep expr;
 
-        public Brace(@NotNull CodeRep expr) {
+        public Brace(@Nonnull CodeRep expr) {
             super();
             this.expr = expr;
         }
 
         @Override
-        public void emit(@NotNull TokenStream ts, boolean noIn) {
+        public void emit(@Nonnull TokenStream ts, boolean noIn) {
             ts.put("{\n");
             this.expr.emit(ts, false);
             ts.put("}");
@@ -42,14 +42,14 @@ public abstract class FormattedCodeRep extends CodeRep {
 
     public static final class Semi extends FormattedCodeRep {
         @Override
-        public void emit(@NotNull TokenStream ts, boolean noIn) {
+        public void emit(@Nonnull TokenStream ts, boolean noIn) {
             ts.put(";\n");
         }
     }
 
     public static final class SemiOp extends FormattedCodeRep {
         @Override
-        public void emit(@NotNull TokenStream ts, boolean noIn) {
+        public void emit(@Nonnull TokenStream ts, boolean noIn) {
             ts.putOptionalSemi();
             ts.put("\n");
         }

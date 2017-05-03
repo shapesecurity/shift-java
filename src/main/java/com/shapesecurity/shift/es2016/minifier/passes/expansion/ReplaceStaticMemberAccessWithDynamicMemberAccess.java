@@ -27,16 +27,16 @@
 //import com.shapesecurity.shift.minifier.ExpansionRule;
 //import com.shapesecurity.shift.visitor.DirtyState;
 //
-//import org.jetbrains.annotations.NotNull;
+//import javax.annotation.Nonnull;
 //
 //public class ReplaceStaticMemberAccessWithDynamicMemberAccess extends ExpansionRule {
 //  /* replace some special static member accesses with a computed member access */
 //  public static final ReplaceStaticMemberAccessWithDynamicMemberAccess INSTANCE =
 //      new ReplaceStaticMemberAccessWithDynamicMemberAccess();
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public DirtyState<Expression> transform(@NotNull StaticMemberExpression node) {
+//  public DirtyState<Expression> transform(@Nonnull StaticMemberExpression node) {
 //    switch (node.property.name) {
 //    case "undefined":
 //      return DirtyState.dirty(new ComputedMemberExpression(node.object, new PrefixExpression(

@@ -10,8 +10,8 @@ import com.shapesecurity.shift.es2016.ast.SwitchCase;
 import com.shapesecurity.shift.es2016.ast.SwitchDefault;
 import com.shapesecurity.shift.es2016.codegen.TokenStream;
 import com.shapesecurity.shift.es2016.parser.SourceLocation;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import java.util.IdentityHashMap;
 import java.util.LinkedList;
@@ -28,7 +28,7 @@ public class LocationMeta {
 	@Nullable
 	protected LiteralNumericExpression lastNumberNode;
 
-	public void startEmit(@NotNull Node node, @NotNull TokenStream ts) {
+	public void startEmit(@Nonnull Node node, @Nonnull TokenStream ts) {
 		if (!(ts instanceof TokenStreamWithLocation)) return;
 		if (node instanceof Script || node instanceof Module) {
 			this.nodeToStart.put(node, ((TokenStreamWithLocation) ts).getLocation());
@@ -37,7 +37,7 @@ public class LocationMeta {
 		}
 	}
 
-	public void finishEmit(@NotNull Node node, @NotNull TokenStream ts) {
+	public void finishEmit(@Nonnull Node node, @Nonnull TokenStream ts) {
 		if (!(ts instanceof TokenStreamWithLocation)) return;
 		this.nodeToFinish.put(node, ((TokenStreamWithLocation) ts).getLocation());
 		if (node instanceof ImportDeclarationExportDeclarationStatement || node instanceof Directive || node instanceof SwitchCase || node instanceof SwitchDefault) {
@@ -48,7 +48,7 @@ public class LocationMeta {
 		}
 	}
 
-	public void startNodes(@NotNull SourceLocation location) {
+	public void startNodes(@Nonnull SourceLocation location) {
 		for (Node node : this.startingNodes) {
 			this.nodeToStart.put(node, location);
 		}

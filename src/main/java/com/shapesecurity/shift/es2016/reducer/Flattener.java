@@ -118,7 +118,7 @@ import com.shapesecurity.shift.es2016.ast.WhileStatement;
 import com.shapesecurity.shift.es2016.ast.WithStatement;
 import com.shapesecurity.shift.es2016.ast.YieldExpression;
 import com.shapesecurity.shift.es2016.ast.YieldGeneratorExpression;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 public class Flattener extends MonoidalReducer<ImmutableList<Node>> {
     private static final Flattener INSTANCE = new Flattener();
@@ -127,584 +127,584 @@ public class Flattener extends MonoidalReducer<ImmutableList<Node>> {
         super(new com.shapesecurity.functional.data.Monoid.ImmutableListAppend<>());
     }
 
-    @NotNull
-    public static ImmutableList<Node> flatten(@NotNull Program program) {
+    @Nonnull
+    public static ImmutableList<Node> flatten(@Nonnull Program program) {
         return Director.reduceProgram(INSTANCE, program);
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public ImmutableList<Node> reduceArrayAssignmentTarget(@NotNull ArrayAssignmentTarget node, @NotNull ImmutableList<Maybe<ImmutableList<Node>>> elements, @NotNull Maybe<ImmutableList<Node>> rest) {
+    public ImmutableList<Node> reduceArrayAssignmentTarget(@Nonnull ArrayAssignmentTarget node, @Nonnull ImmutableList<Maybe<ImmutableList<Node>>> elements, @Nonnull Maybe<ImmutableList<Node>> rest) {
         return ImmutableList.<Node>of(node).append(super.reduceArrayAssignmentTarget(node, elements, rest));
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public ImmutableList<Node> reduceArrayBinding(@NotNull ArrayBinding node, @NotNull ImmutableList<Maybe<ImmutableList<Node>>> elements, @NotNull Maybe<ImmutableList<Node>> rest) {
+    public ImmutableList<Node> reduceArrayBinding(@Nonnull ArrayBinding node, @Nonnull ImmutableList<Maybe<ImmutableList<Node>>> elements, @Nonnull Maybe<ImmutableList<Node>> rest) {
         return ImmutableList.<Node>of(node).append(super.reduceArrayBinding(node, elements, rest));
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public ImmutableList<Node> reduceArrayExpression(@NotNull ArrayExpression node, @NotNull ImmutableList<Maybe<ImmutableList<Node>>> elements) {
+    public ImmutableList<Node> reduceArrayExpression(@Nonnull ArrayExpression node, @Nonnull ImmutableList<Maybe<ImmutableList<Node>>> elements) {
         return ImmutableList.<Node>of(node).append(super.reduceArrayExpression(node, elements));
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public ImmutableList<Node> reduceArrowExpression(@NotNull ArrowExpression node, @NotNull ImmutableList<Node> params, @NotNull ImmutableList<Node> body) {
+    public ImmutableList<Node> reduceArrowExpression(@Nonnull ArrowExpression node, @Nonnull ImmutableList<Node> params, @Nonnull ImmutableList<Node> body) {
         return ImmutableList.<Node>of(node).append(super.reduceArrowExpression(node, params, body));
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public ImmutableList<Node> reduceAssignmentExpression(@NotNull AssignmentExpression node, @NotNull ImmutableList<Node> binding, @NotNull ImmutableList<Node> expression) {
+    public ImmutableList<Node> reduceAssignmentExpression(@Nonnull AssignmentExpression node, @Nonnull ImmutableList<Node> binding, @Nonnull ImmutableList<Node> expression) {
         return ImmutableList.<Node>of(node).append(super.reduceAssignmentExpression(node, binding, expression));
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public ImmutableList<Node> reduceAssignmentTargetIdentifier(@NotNull AssignmentTargetIdentifier node) {
+    public ImmutableList<Node> reduceAssignmentTargetIdentifier(@Nonnull AssignmentTargetIdentifier node) {
         return ImmutableList.<Node>of(node);
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public ImmutableList<Node> reduceAssignmentTargetPropertyIdentifier(@NotNull AssignmentTargetPropertyIdentifier node, @NotNull ImmutableList<Node> binding, @NotNull Maybe<ImmutableList<Node>> init) {
+    public ImmutableList<Node> reduceAssignmentTargetPropertyIdentifier(@Nonnull AssignmentTargetPropertyIdentifier node, @Nonnull ImmutableList<Node> binding, @Nonnull Maybe<ImmutableList<Node>> init) {
         return ImmutableList.<Node>of(node).append(super.reduceAssignmentTargetPropertyIdentifier(node, binding, init));
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public ImmutableList<Node> reduceAssignmentTargetPropertyProperty(@NotNull AssignmentTargetPropertyProperty node, @NotNull ImmutableList<Node> name, @NotNull ImmutableList<Node> binding) {
+    public ImmutableList<Node> reduceAssignmentTargetPropertyProperty(@Nonnull AssignmentTargetPropertyProperty node, @Nonnull ImmutableList<Node> name, @Nonnull ImmutableList<Node> binding) {
         return ImmutableList.<Node>of(node).append(super.reduceAssignmentTargetPropertyProperty(node, name, binding));
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public ImmutableList<Node> reduceAssignmentTargetWithDefault(@NotNull AssignmentTargetWithDefault node, @NotNull ImmutableList<Node> binding, @NotNull ImmutableList<Node> init) {
+    public ImmutableList<Node> reduceAssignmentTargetWithDefault(@Nonnull AssignmentTargetWithDefault node, @Nonnull ImmutableList<Node> binding, @Nonnull ImmutableList<Node> init) {
         return ImmutableList.<Node>of(node).append(super.reduceAssignmentTargetWithDefault(node, binding, init));
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public ImmutableList<Node> reduceBinaryExpression(@NotNull BinaryExpression node, @NotNull ImmutableList<Node> left, @NotNull ImmutableList<Node> right) {
+    public ImmutableList<Node> reduceBinaryExpression(@Nonnull BinaryExpression node, @Nonnull ImmutableList<Node> left, @Nonnull ImmutableList<Node> right) {
         return ImmutableList.<Node>of(node).append(super.reduceBinaryExpression(node, left, right));
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public ImmutableList<Node> reduceBindingIdentifier(@NotNull BindingIdentifier node) {
+    public ImmutableList<Node> reduceBindingIdentifier(@Nonnull BindingIdentifier node) {
         return ImmutableList.<Node>of(node);
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public ImmutableList<Node> reduceBindingPropertyIdentifier(@NotNull BindingPropertyIdentifier node, @NotNull ImmutableList<Node> binding, @NotNull Maybe<ImmutableList<Node>> init) {
+    public ImmutableList<Node> reduceBindingPropertyIdentifier(@Nonnull BindingPropertyIdentifier node, @Nonnull ImmutableList<Node> binding, @Nonnull Maybe<ImmutableList<Node>> init) {
         return ImmutableList.<Node>of(node).append(super.reduceBindingPropertyIdentifier(node, binding, init));
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public ImmutableList<Node> reduceBindingPropertyProperty(@NotNull BindingPropertyProperty node, @NotNull ImmutableList<Node> name, @NotNull ImmutableList<Node> binding) {
+    public ImmutableList<Node> reduceBindingPropertyProperty(@Nonnull BindingPropertyProperty node, @Nonnull ImmutableList<Node> name, @Nonnull ImmutableList<Node> binding) {
         return ImmutableList.<Node>of(node).append(super.reduceBindingPropertyProperty(node, name, binding));
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public ImmutableList<Node> reduceBindingWithDefault(@NotNull BindingWithDefault node, @NotNull ImmutableList<Node> binding, @NotNull ImmutableList<Node> init) {
+    public ImmutableList<Node> reduceBindingWithDefault(@Nonnull BindingWithDefault node, @Nonnull ImmutableList<Node> binding, @Nonnull ImmutableList<Node> init) {
         return ImmutableList.<Node>of(node).append(super.reduceBindingWithDefault(node, binding, init));
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public ImmutableList<Node> reduceBlock(@NotNull Block node, @NotNull ImmutableList<ImmutableList<Node>> statements) {
+    public ImmutableList<Node> reduceBlock(@Nonnull Block node, @Nonnull ImmutableList<ImmutableList<Node>> statements) {
         return ImmutableList.<Node>of(node).append(super.reduceBlock(node, statements));
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public ImmutableList<Node> reduceBlockStatement(@NotNull BlockStatement node, @NotNull ImmutableList<Node> block) {
+    public ImmutableList<Node> reduceBlockStatement(@Nonnull BlockStatement node, @Nonnull ImmutableList<Node> block) {
         return ImmutableList.<Node>of(node).append(super.reduceBlockStatement(node, block));
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public ImmutableList<Node> reduceBreakStatement(@NotNull BreakStatement node) {
+    public ImmutableList<Node> reduceBreakStatement(@Nonnull BreakStatement node) {
         return ImmutableList.<Node>of(node);
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public ImmutableList<Node> reduceCallExpression(@NotNull CallExpression node, @NotNull ImmutableList<Node> callee, @NotNull ImmutableList<ImmutableList<Node>> arguments) {
+    public ImmutableList<Node> reduceCallExpression(@Nonnull CallExpression node, @Nonnull ImmutableList<Node> callee, @Nonnull ImmutableList<ImmutableList<Node>> arguments) {
         return ImmutableList.<Node>of(node).append(super.reduceCallExpression(node, callee, arguments));
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public ImmutableList<Node> reduceCatchClause(@NotNull CatchClause node, @NotNull ImmutableList<Node> binding, @NotNull ImmutableList<Node> body) {
+    public ImmutableList<Node> reduceCatchClause(@Nonnull CatchClause node, @Nonnull ImmutableList<Node> binding, @Nonnull ImmutableList<Node> body) {
         return ImmutableList.<Node>of(node).append(super.reduceCatchClause(node, binding, body));
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public ImmutableList<Node> reduceClassDeclaration(@NotNull ClassDeclaration node, @NotNull ImmutableList<Node> name, @NotNull Maybe<ImmutableList<Node>> _super, @NotNull ImmutableList<ImmutableList<Node>> elements) {
+    public ImmutableList<Node> reduceClassDeclaration(@Nonnull ClassDeclaration node, @Nonnull ImmutableList<Node> name, @Nonnull Maybe<ImmutableList<Node>> _super, @Nonnull ImmutableList<ImmutableList<Node>> elements) {
         return ImmutableList.<Node>of(node).append(super.reduceClassDeclaration(node, name, _super, elements));
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public ImmutableList<Node> reduceClassElement(@NotNull ClassElement node, @NotNull ImmutableList<Node> method) {
+    public ImmutableList<Node> reduceClassElement(@Nonnull ClassElement node, @Nonnull ImmutableList<Node> method) {
         return ImmutableList.<Node>of(node).append(super.reduceClassElement(node, method));
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public ImmutableList<Node> reduceClassExpression(@NotNull ClassExpression node, @NotNull Maybe<ImmutableList<Node>> name, @NotNull Maybe<ImmutableList<Node>> _super, @NotNull ImmutableList<ImmutableList<Node>> elements) {
+    public ImmutableList<Node> reduceClassExpression(@Nonnull ClassExpression node, @Nonnull Maybe<ImmutableList<Node>> name, @Nonnull Maybe<ImmutableList<Node>> _super, @Nonnull ImmutableList<ImmutableList<Node>> elements) {
         return ImmutableList.<Node>of(node).append(super.reduceClassExpression(node, name, _super, elements));
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public ImmutableList<Node> reduceCompoundAssignmentExpression(@NotNull CompoundAssignmentExpression node, @NotNull ImmutableList<Node> binding, @NotNull ImmutableList<Node> expression) {
+    public ImmutableList<Node> reduceCompoundAssignmentExpression(@Nonnull CompoundAssignmentExpression node, @Nonnull ImmutableList<Node> binding, @Nonnull ImmutableList<Node> expression) {
         return ImmutableList.<Node>of(node).append(super.reduceCompoundAssignmentExpression(node, binding, expression));
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public ImmutableList<Node> reduceComputedMemberAssignmentTarget(@NotNull ComputedMemberAssignmentTarget node, @NotNull ImmutableList<Node> object, @NotNull ImmutableList<Node> expression) {
+    public ImmutableList<Node> reduceComputedMemberAssignmentTarget(@Nonnull ComputedMemberAssignmentTarget node, @Nonnull ImmutableList<Node> object, @Nonnull ImmutableList<Node> expression) {
         return ImmutableList.<Node>of(node).append(super.reduceComputedMemberAssignmentTarget(node, object, expression));
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public ImmutableList<Node> reduceComputedMemberExpression(@NotNull ComputedMemberExpression node, @NotNull ImmutableList<Node> object, @NotNull ImmutableList<Node> expression) {
+    public ImmutableList<Node> reduceComputedMemberExpression(@Nonnull ComputedMemberExpression node, @Nonnull ImmutableList<Node> object, @Nonnull ImmutableList<Node> expression) {
         return ImmutableList.<Node>of(node).append(super.reduceComputedMemberExpression(node, object, expression));
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public ImmutableList<Node> reduceComputedPropertyName(@NotNull ComputedPropertyName node, @NotNull ImmutableList<Node> expression) {
+    public ImmutableList<Node> reduceComputedPropertyName(@Nonnull ComputedPropertyName node, @Nonnull ImmutableList<Node> expression) {
         return ImmutableList.<Node>of(node).append(super.reduceComputedPropertyName(node, expression));
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public ImmutableList<Node> reduceConditionalExpression(@NotNull ConditionalExpression node, @NotNull ImmutableList<Node> test, @NotNull ImmutableList<Node> consequent, @NotNull ImmutableList<Node> alternate) {
+    public ImmutableList<Node> reduceConditionalExpression(@Nonnull ConditionalExpression node, @Nonnull ImmutableList<Node> test, @Nonnull ImmutableList<Node> consequent, @Nonnull ImmutableList<Node> alternate) {
         return ImmutableList.<Node>of(node).append(super.reduceConditionalExpression(node, test, consequent, alternate));
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public ImmutableList<Node> reduceContinueStatement(@NotNull ContinueStatement node) {
+    public ImmutableList<Node> reduceContinueStatement(@Nonnull ContinueStatement node) {
         return ImmutableList.<Node>of(node);
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public ImmutableList<Node> reduceDataProperty(@NotNull DataProperty node, @NotNull ImmutableList<Node> name, @NotNull ImmutableList<Node> expression) {
+    public ImmutableList<Node> reduceDataProperty(@Nonnull DataProperty node, @Nonnull ImmutableList<Node> name, @Nonnull ImmutableList<Node> expression) {
         return ImmutableList.<Node>of(node).append(super.reduceDataProperty(node, name, expression));
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public ImmutableList<Node> reduceDebuggerStatement(@NotNull DebuggerStatement node) {
+    public ImmutableList<Node> reduceDebuggerStatement(@Nonnull DebuggerStatement node) {
         return ImmutableList.<Node>of(node);
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public ImmutableList<Node> reduceDirective(@NotNull Directive node) {
+    public ImmutableList<Node> reduceDirective(@Nonnull Directive node) {
         return ImmutableList.<Node>of(node);
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public ImmutableList<Node> reduceDoWhileStatement(@NotNull DoWhileStatement node, @NotNull ImmutableList<Node> body, @NotNull ImmutableList<Node> test) {
+    public ImmutableList<Node> reduceDoWhileStatement(@Nonnull DoWhileStatement node, @Nonnull ImmutableList<Node> body, @Nonnull ImmutableList<Node> test) {
         return ImmutableList.<Node>of(node).append(super.reduceDoWhileStatement(node, body, test));
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public ImmutableList<Node> reduceEmptyStatement(@NotNull EmptyStatement node) {
+    public ImmutableList<Node> reduceEmptyStatement(@Nonnull EmptyStatement node) {
         return ImmutableList.<Node>of(node);
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public ImmutableList<Node> reduceExport(@NotNull Export node, @NotNull ImmutableList<Node> declaration) {
+    public ImmutableList<Node> reduceExport(@Nonnull Export node, @Nonnull ImmutableList<Node> declaration) {
         return ImmutableList.<Node>of(node).append(super.reduceExport(node, declaration));
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public ImmutableList<Node> reduceExportAllFrom(@NotNull ExportAllFrom node) {
+    public ImmutableList<Node> reduceExportAllFrom(@Nonnull ExportAllFrom node) {
         return ImmutableList.<Node>of(node);
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public ImmutableList<Node> reduceExportDefault(@NotNull ExportDefault node, @NotNull ImmutableList<Node> body) {
+    public ImmutableList<Node> reduceExportDefault(@Nonnull ExportDefault node, @Nonnull ImmutableList<Node> body) {
         return ImmutableList.<Node>of(node).append(super.reduceExportDefault(node, body));
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public ImmutableList<Node> reduceExportFrom(@NotNull ExportFrom node, @NotNull ImmutableList<ImmutableList<Node>> namedExports) {
+    public ImmutableList<Node> reduceExportFrom(@Nonnull ExportFrom node, @Nonnull ImmutableList<ImmutableList<Node>> namedExports) {
         return ImmutableList.<Node>of(node).append(super.reduceExportFrom(node, namedExports));
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public ImmutableList<Node> reduceExportFromSpecifier(@NotNull ExportFromSpecifier node) {
+    public ImmutableList<Node> reduceExportFromSpecifier(@Nonnull ExportFromSpecifier node) {
         return ImmutableList.<Node>of(node);
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public ImmutableList<Node> reduceExportLocalSpecifier(@NotNull ExportLocalSpecifier node, @NotNull ImmutableList<Node> name) {
+    public ImmutableList<Node> reduceExportLocalSpecifier(@Nonnull ExportLocalSpecifier node, @Nonnull ImmutableList<Node> name) {
         return ImmutableList.<Node>of(node).append(super.reduceExportLocalSpecifier(node, name));
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public ImmutableList<Node> reduceExportLocals(@NotNull ExportLocals node, @NotNull ImmutableList<ImmutableList<Node>> namedExports) {
+    public ImmutableList<Node> reduceExportLocals(@Nonnull ExportLocals node, @Nonnull ImmutableList<ImmutableList<Node>> namedExports) {
         return ImmutableList.<Node>of(node).append(super.reduceExportLocals(node, namedExports));
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public ImmutableList<Node> reduceExpressionStatement(@NotNull ExpressionStatement node, @NotNull ImmutableList<Node> expression) {
+    public ImmutableList<Node> reduceExpressionStatement(@Nonnull ExpressionStatement node, @Nonnull ImmutableList<Node> expression) {
         return ImmutableList.<Node>of(node).append(super.reduceExpressionStatement(node, expression));
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public ImmutableList<Node> reduceForInStatement(@NotNull ForInStatement node, @NotNull ImmutableList<Node> left, @NotNull ImmutableList<Node> right, @NotNull ImmutableList<Node> body) {
+    public ImmutableList<Node> reduceForInStatement(@Nonnull ForInStatement node, @Nonnull ImmutableList<Node> left, @Nonnull ImmutableList<Node> right, @Nonnull ImmutableList<Node> body) {
         return ImmutableList.<Node>of(node).append(super.reduceForInStatement(node, left, right, body));
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public ImmutableList<Node> reduceForOfStatement(@NotNull ForOfStatement node, @NotNull ImmutableList<Node> left, @NotNull ImmutableList<Node> right, @NotNull ImmutableList<Node> body) {
+    public ImmutableList<Node> reduceForOfStatement(@Nonnull ForOfStatement node, @Nonnull ImmutableList<Node> left, @Nonnull ImmutableList<Node> right, @Nonnull ImmutableList<Node> body) {
         return ImmutableList.<Node>of(node).append(super.reduceForOfStatement(node, left, right, body));
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public ImmutableList<Node> reduceForStatement(@NotNull ForStatement node, @NotNull Maybe<ImmutableList<Node>> init, @NotNull Maybe<ImmutableList<Node>> test, @NotNull Maybe<ImmutableList<Node>> update, @NotNull ImmutableList<Node> body) {
+    public ImmutableList<Node> reduceForStatement(@Nonnull ForStatement node, @Nonnull Maybe<ImmutableList<Node>> init, @Nonnull Maybe<ImmutableList<Node>> test, @Nonnull Maybe<ImmutableList<Node>> update, @Nonnull ImmutableList<Node> body) {
         return ImmutableList.<Node>of(node).append(super.reduceForStatement(node, init, test, update, body));
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public ImmutableList<Node> reduceFormalParameters(@NotNull FormalParameters node, @NotNull ImmutableList<ImmutableList<Node>> items, @NotNull Maybe<ImmutableList<Node>> rest) {
+    public ImmutableList<Node> reduceFormalParameters(@Nonnull FormalParameters node, @Nonnull ImmutableList<ImmutableList<Node>> items, @Nonnull Maybe<ImmutableList<Node>> rest) {
         return ImmutableList.<Node>of(node).append(super.reduceFormalParameters(node, items, rest));
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public ImmutableList<Node> reduceFunctionBody(@NotNull FunctionBody node, @NotNull ImmutableList<ImmutableList<Node>> directives, @NotNull ImmutableList<ImmutableList<Node>> statements) {
+    public ImmutableList<Node> reduceFunctionBody(@Nonnull FunctionBody node, @Nonnull ImmutableList<ImmutableList<Node>> directives, @Nonnull ImmutableList<ImmutableList<Node>> statements) {
         return ImmutableList.<Node>of(node).append(super.reduceFunctionBody(node, directives, statements));
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public ImmutableList<Node> reduceFunctionDeclaration(@NotNull FunctionDeclaration node, @NotNull ImmutableList<Node> name, @NotNull ImmutableList<Node> params, @NotNull ImmutableList<Node> body) {
+    public ImmutableList<Node> reduceFunctionDeclaration(@Nonnull FunctionDeclaration node, @Nonnull ImmutableList<Node> name, @Nonnull ImmutableList<Node> params, @Nonnull ImmutableList<Node> body) {
         return ImmutableList.<Node>of(node).append(super.reduceFunctionDeclaration(node, name, params, body));
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public ImmutableList<Node> reduceFunctionExpression(@NotNull FunctionExpression node, @NotNull Maybe<ImmutableList<Node>> name, @NotNull ImmutableList<Node> params, @NotNull ImmutableList<Node> body) {
+    public ImmutableList<Node> reduceFunctionExpression(@Nonnull FunctionExpression node, @Nonnull Maybe<ImmutableList<Node>> name, @Nonnull ImmutableList<Node> params, @Nonnull ImmutableList<Node> body) {
         return ImmutableList.<Node>of(node).append(super.reduceFunctionExpression(node, name, params, body));
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public ImmutableList<Node> reduceGetter(@NotNull Getter node, @NotNull ImmutableList<Node> name, @NotNull ImmutableList<Node> body) {
+    public ImmutableList<Node> reduceGetter(@Nonnull Getter node, @Nonnull ImmutableList<Node> name, @Nonnull ImmutableList<Node> body) {
         return ImmutableList.<Node>of(node).append(super.reduceGetter(node, name, body));
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public ImmutableList<Node> reduceIdentifierExpression(@NotNull IdentifierExpression node) {
+    public ImmutableList<Node> reduceIdentifierExpression(@Nonnull IdentifierExpression node) {
         return ImmutableList.<Node>of(node);
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public ImmutableList<Node> reduceIfStatement(@NotNull IfStatement node, @NotNull ImmutableList<Node> test, @NotNull ImmutableList<Node> consequent, @NotNull Maybe<ImmutableList<Node>> alternate) {
+    public ImmutableList<Node> reduceIfStatement(@Nonnull IfStatement node, @Nonnull ImmutableList<Node> test, @Nonnull ImmutableList<Node> consequent, @Nonnull Maybe<ImmutableList<Node>> alternate) {
         return ImmutableList.<Node>of(node).append(super.reduceIfStatement(node, test, consequent, alternate));
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public ImmutableList<Node> reduceImport(@NotNull Import node, @NotNull Maybe<ImmutableList<Node>> defaultBinding, @NotNull ImmutableList<ImmutableList<Node>> namedImports) {
+    public ImmutableList<Node> reduceImport(@Nonnull Import node, @Nonnull Maybe<ImmutableList<Node>> defaultBinding, @Nonnull ImmutableList<ImmutableList<Node>> namedImports) {
         return ImmutableList.<Node>of(node).append(super.reduceImport(node, defaultBinding, namedImports));
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public ImmutableList<Node> reduceImportNamespace(@NotNull ImportNamespace node, @NotNull Maybe<ImmutableList<Node>> defaultBinding, @NotNull ImmutableList<Node> namespaceBinding) {
+    public ImmutableList<Node> reduceImportNamespace(@Nonnull ImportNamespace node, @Nonnull Maybe<ImmutableList<Node>> defaultBinding, @Nonnull ImmutableList<Node> namespaceBinding) {
         return ImmutableList.<Node>of(node).append(super.reduceImportNamespace(node, defaultBinding, namespaceBinding));
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public ImmutableList<Node> reduceImportSpecifier(@NotNull ImportSpecifier node, @NotNull ImmutableList<Node> binding) {
+    public ImmutableList<Node> reduceImportSpecifier(@Nonnull ImportSpecifier node, @Nonnull ImmutableList<Node> binding) {
         return ImmutableList.<Node>of(node).append(super.reduceImportSpecifier(node, binding));
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public ImmutableList<Node> reduceLabeledStatement(@NotNull LabeledStatement node, @NotNull ImmutableList<Node> body) {
+    public ImmutableList<Node> reduceLabeledStatement(@Nonnull LabeledStatement node, @Nonnull ImmutableList<Node> body) {
         return ImmutableList.<Node>of(node).append(super.reduceLabeledStatement(node, body));
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public ImmutableList<Node> reduceLiteralBooleanExpression(@NotNull LiteralBooleanExpression node) {
+    public ImmutableList<Node> reduceLiteralBooleanExpression(@Nonnull LiteralBooleanExpression node) {
         return ImmutableList.<Node>of(node);
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public ImmutableList<Node> reduceLiteralInfinityExpression(@NotNull LiteralInfinityExpression node) {
+    public ImmutableList<Node> reduceLiteralInfinityExpression(@Nonnull LiteralInfinityExpression node) {
         return ImmutableList.<Node>of(node);
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public ImmutableList<Node> reduceLiteralNullExpression(@NotNull LiteralNullExpression node) {
+    public ImmutableList<Node> reduceLiteralNullExpression(@Nonnull LiteralNullExpression node) {
         return ImmutableList.<Node>of(node);
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public ImmutableList<Node> reduceLiteralNumericExpression(@NotNull LiteralNumericExpression node) {
+    public ImmutableList<Node> reduceLiteralNumericExpression(@Nonnull LiteralNumericExpression node) {
         return ImmutableList.<Node>of(node);
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public ImmutableList<Node> reduceLiteralRegExpExpression(@NotNull LiteralRegExpExpression node) {
+    public ImmutableList<Node> reduceLiteralRegExpExpression(@Nonnull LiteralRegExpExpression node) {
         return ImmutableList.<Node>of(node);
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public ImmutableList<Node> reduceLiteralStringExpression(@NotNull LiteralStringExpression node) {
+    public ImmutableList<Node> reduceLiteralStringExpression(@Nonnull LiteralStringExpression node) {
         return ImmutableList.<Node>of(node);
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public ImmutableList<Node> reduceMethod(@NotNull Method node, @NotNull ImmutableList<Node> name, @NotNull ImmutableList<Node> params, @NotNull ImmutableList<Node> body) {
+    public ImmutableList<Node> reduceMethod(@Nonnull Method node, @Nonnull ImmutableList<Node> name, @Nonnull ImmutableList<Node> params, @Nonnull ImmutableList<Node> body) {
         return ImmutableList.<Node>of(node).append(super.reduceMethod(node, name, params, body));
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public ImmutableList<Node> reduceModule(@NotNull Module node, @NotNull ImmutableList<ImmutableList<Node>> directives, @NotNull ImmutableList<ImmutableList<Node>> items) {
+    public ImmutableList<Node> reduceModule(@Nonnull Module node, @Nonnull ImmutableList<ImmutableList<Node>> directives, @Nonnull ImmutableList<ImmutableList<Node>> items) {
         return ImmutableList.<Node>of(node).append(super.reduceModule(node, directives, items));
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public ImmutableList<Node> reduceNewExpression(@NotNull NewExpression node, @NotNull ImmutableList<Node> callee, @NotNull ImmutableList<ImmutableList<Node>> arguments) {
+    public ImmutableList<Node> reduceNewExpression(@Nonnull NewExpression node, @Nonnull ImmutableList<Node> callee, @Nonnull ImmutableList<ImmutableList<Node>> arguments) {
         return ImmutableList.<Node>of(node).append(super.reduceNewExpression(node, callee, arguments));
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public ImmutableList<Node> reduceNewTargetExpression(@NotNull NewTargetExpression node) {
+    public ImmutableList<Node> reduceNewTargetExpression(@Nonnull NewTargetExpression node) {
         return ImmutableList.<Node>of(node);
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public ImmutableList<Node> reduceObjectAssignmentTarget(@NotNull ObjectAssignmentTarget node, @NotNull ImmutableList<ImmutableList<Node>> properties) {
+    public ImmutableList<Node> reduceObjectAssignmentTarget(@Nonnull ObjectAssignmentTarget node, @Nonnull ImmutableList<ImmutableList<Node>> properties) {
         return ImmutableList.<Node>of(node).append(super.reduceObjectAssignmentTarget(node, properties));
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public ImmutableList<Node> reduceObjectBinding(@NotNull ObjectBinding node, @NotNull ImmutableList<ImmutableList<Node>> properties) {
+    public ImmutableList<Node> reduceObjectBinding(@Nonnull ObjectBinding node, @Nonnull ImmutableList<ImmutableList<Node>> properties) {
         return ImmutableList.<Node>of(node).append(super.reduceObjectBinding(node, properties));
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public ImmutableList<Node> reduceObjectExpression(@NotNull ObjectExpression node, @NotNull ImmutableList<ImmutableList<Node>> properties) {
+    public ImmutableList<Node> reduceObjectExpression(@Nonnull ObjectExpression node, @Nonnull ImmutableList<ImmutableList<Node>> properties) {
         return ImmutableList.<Node>of(node).append(super.reduceObjectExpression(node, properties));
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public ImmutableList<Node> reduceReturnStatement(@NotNull ReturnStatement node, @NotNull Maybe<ImmutableList<Node>> expression) {
+    public ImmutableList<Node> reduceReturnStatement(@Nonnull ReturnStatement node, @Nonnull Maybe<ImmutableList<Node>> expression) {
         return ImmutableList.<Node>of(node).append(super.reduceReturnStatement(node, expression));
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public ImmutableList<Node> reduceScript(@NotNull Script node, @NotNull ImmutableList<ImmutableList<Node>> directives, @NotNull ImmutableList<ImmutableList<Node>> statements) {
+    public ImmutableList<Node> reduceScript(@Nonnull Script node, @Nonnull ImmutableList<ImmutableList<Node>> directives, @Nonnull ImmutableList<ImmutableList<Node>> statements) {
         return ImmutableList.<Node>of(node).append(super.reduceScript(node, directives, statements));
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public ImmutableList<Node> reduceSetter(@NotNull Setter node, @NotNull ImmutableList<Node> name, @NotNull ImmutableList<Node> param, @NotNull ImmutableList<Node> body) {
+    public ImmutableList<Node> reduceSetter(@Nonnull Setter node, @Nonnull ImmutableList<Node> name, @Nonnull ImmutableList<Node> param, @Nonnull ImmutableList<Node> body) {
         return ImmutableList.<Node>of(node).append(super.reduceSetter(node, name, param, body));
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public ImmutableList<Node> reduceShorthandProperty(@NotNull ShorthandProperty node, @NotNull ImmutableList<Node> name) {
+    public ImmutableList<Node> reduceShorthandProperty(@Nonnull ShorthandProperty node, @Nonnull ImmutableList<Node> name) {
         return ImmutableList.<Node>of(node).append(super.reduceShorthandProperty(node, name));
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public ImmutableList<Node> reduceSpreadElement(@NotNull SpreadElement node, @NotNull ImmutableList<Node> expression) {
+    public ImmutableList<Node> reduceSpreadElement(@Nonnull SpreadElement node, @Nonnull ImmutableList<Node> expression) {
         return ImmutableList.<Node>of(node).append(super.reduceSpreadElement(node, expression));
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public ImmutableList<Node> reduceStaticMemberAssignmentTarget(@NotNull StaticMemberAssignmentTarget node, @NotNull ImmutableList<Node> object) {
+    public ImmutableList<Node> reduceStaticMemberAssignmentTarget(@Nonnull StaticMemberAssignmentTarget node, @Nonnull ImmutableList<Node> object) {
         return ImmutableList.<Node>of(node).append(super.reduceStaticMemberAssignmentTarget(node, object));
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public ImmutableList<Node> reduceStaticMemberExpression(@NotNull StaticMemberExpression node, @NotNull ImmutableList<Node> object) {
+    public ImmutableList<Node> reduceStaticMemberExpression(@Nonnull StaticMemberExpression node, @Nonnull ImmutableList<Node> object) {
         return ImmutableList.<Node>of(node).append(super.reduceStaticMemberExpression(node, object));
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public ImmutableList<Node> reduceStaticPropertyName(@NotNull StaticPropertyName node) {
+    public ImmutableList<Node> reduceStaticPropertyName(@Nonnull StaticPropertyName node) {
         return ImmutableList.<Node>of(node);
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public ImmutableList<Node> reduceSuper(@NotNull Super node) {
+    public ImmutableList<Node> reduceSuper(@Nonnull Super node) {
         return ImmutableList.<Node>of(node);
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public ImmutableList<Node> reduceSwitchCase(@NotNull SwitchCase node, @NotNull ImmutableList<Node> test, @NotNull ImmutableList<ImmutableList<Node>> consequent) {
+    public ImmutableList<Node> reduceSwitchCase(@Nonnull SwitchCase node, @Nonnull ImmutableList<Node> test, @Nonnull ImmutableList<ImmutableList<Node>> consequent) {
         return ImmutableList.<Node>of(node).append(super.reduceSwitchCase(node, test, consequent));
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public ImmutableList<Node> reduceSwitchDefault(@NotNull SwitchDefault node, @NotNull ImmutableList<ImmutableList<Node>> consequent) {
+    public ImmutableList<Node> reduceSwitchDefault(@Nonnull SwitchDefault node, @Nonnull ImmutableList<ImmutableList<Node>> consequent) {
         return ImmutableList.<Node>of(node).append(super.reduceSwitchDefault(node, consequent));
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public ImmutableList<Node> reduceSwitchStatement(@NotNull SwitchStatement node, @NotNull ImmutableList<Node> discriminant, @NotNull ImmutableList<ImmutableList<Node>> cases) {
+    public ImmutableList<Node> reduceSwitchStatement(@Nonnull SwitchStatement node, @Nonnull ImmutableList<Node> discriminant, @Nonnull ImmutableList<ImmutableList<Node>> cases) {
         return ImmutableList.<Node>of(node).append(super.reduceSwitchStatement(node, discriminant, cases));
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public ImmutableList<Node> reduceSwitchStatementWithDefault(@NotNull SwitchStatementWithDefault node, @NotNull ImmutableList<Node> discriminant, @NotNull ImmutableList<ImmutableList<Node>> preDefaultCases, @NotNull ImmutableList<Node> defaultCase, @NotNull ImmutableList<ImmutableList<Node>> postDefaultCases) {
+    public ImmutableList<Node> reduceSwitchStatementWithDefault(@Nonnull SwitchStatementWithDefault node, @Nonnull ImmutableList<Node> discriminant, @Nonnull ImmutableList<ImmutableList<Node>> preDefaultCases, @Nonnull ImmutableList<Node> defaultCase, @Nonnull ImmutableList<ImmutableList<Node>> postDefaultCases) {
         return ImmutableList.<Node>of(node).append(super.reduceSwitchStatementWithDefault(node, discriminant, preDefaultCases, defaultCase, postDefaultCases));
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public ImmutableList<Node> reduceTemplateElement(@NotNull TemplateElement node) {
+    public ImmutableList<Node> reduceTemplateElement(@Nonnull TemplateElement node) {
         return ImmutableList.<Node>of(node);
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public ImmutableList<Node> reduceTemplateExpression(@NotNull TemplateExpression node, @NotNull Maybe<ImmutableList<Node>> tag, @NotNull ImmutableList<ImmutableList<Node>> elements) {
+    public ImmutableList<Node> reduceTemplateExpression(@Nonnull TemplateExpression node, @Nonnull Maybe<ImmutableList<Node>> tag, @Nonnull ImmutableList<ImmutableList<Node>> elements) {
         return ImmutableList.<Node>of(node).append(super.reduceTemplateExpression(node, tag, elements));
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public ImmutableList<Node> reduceThisExpression(@NotNull ThisExpression node) {
+    public ImmutableList<Node> reduceThisExpression(@Nonnull ThisExpression node) {
         return ImmutableList.<Node>of(node);
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public ImmutableList<Node> reduceThrowStatement(@NotNull ThrowStatement node, @NotNull ImmutableList<Node> expression) {
+    public ImmutableList<Node> reduceThrowStatement(@Nonnull ThrowStatement node, @Nonnull ImmutableList<Node> expression) {
         return ImmutableList.<Node>of(node).append(super.reduceThrowStatement(node, expression));
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public ImmutableList<Node> reduceTryCatchStatement(@NotNull TryCatchStatement node, @NotNull ImmutableList<Node> body, @NotNull ImmutableList<Node> catchClause) {
+    public ImmutableList<Node> reduceTryCatchStatement(@Nonnull TryCatchStatement node, @Nonnull ImmutableList<Node> body, @Nonnull ImmutableList<Node> catchClause) {
         return ImmutableList.<Node>of(node).append(super.reduceTryCatchStatement(node, body, catchClause));
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public ImmutableList<Node> reduceTryFinallyStatement(@NotNull TryFinallyStatement node, @NotNull ImmutableList<Node> body, @NotNull Maybe<ImmutableList<Node>> catchClause, @NotNull ImmutableList<Node> finalizer) {
+    public ImmutableList<Node> reduceTryFinallyStatement(@Nonnull TryFinallyStatement node, @Nonnull ImmutableList<Node> body, @Nonnull Maybe<ImmutableList<Node>> catchClause, @Nonnull ImmutableList<Node> finalizer) {
         return ImmutableList.<Node>of(node).append(super.reduceTryFinallyStatement(node, body, catchClause, finalizer));
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public ImmutableList<Node> reduceUnaryExpression(@NotNull UnaryExpression node, @NotNull ImmutableList<Node> operand) {
+    public ImmutableList<Node> reduceUnaryExpression(@Nonnull UnaryExpression node, @Nonnull ImmutableList<Node> operand) {
         return ImmutableList.<Node>of(node).append(super.reduceUnaryExpression(node, operand));
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public ImmutableList<Node> reduceUpdateExpression(@NotNull UpdateExpression node, @NotNull ImmutableList<Node> operand) {
+    public ImmutableList<Node> reduceUpdateExpression(@Nonnull UpdateExpression node, @Nonnull ImmutableList<Node> operand) {
         return ImmutableList.<Node>of(node).append(super.reduceUpdateExpression(node, operand));
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public ImmutableList<Node> reduceVariableDeclaration(@NotNull VariableDeclaration node, @NotNull ImmutableList<ImmutableList<Node>> declarators) {
+    public ImmutableList<Node> reduceVariableDeclaration(@Nonnull VariableDeclaration node, @Nonnull ImmutableList<ImmutableList<Node>> declarators) {
         return ImmutableList.<Node>of(node).append(super.reduceVariableDeclaration(node, declarators));
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public ImmutableList<Node> reduceVariableDeclarationStatement(@NotNull VariableDeclarationStatement node, @NotNull ImmutableList<Node> declaration) {
+    public ImmutableList<Node> reduceVariableDeclarationStatement(@Nonnull VariableDeclarationStatement node, @Nonnull ImmutableList<Node> declaration) {
         return ImmutableList.<Node>of(node).append(super.reduceVariableDeclarationStatement(node, declaration));
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public ImmutableList<Node> reduceVariableDeclarator(@NotNull VariableDeclarator node, @NotNull ImmutableList<Node> binding, @NotNull Maybe<ImmutableList<Node>> init) {
+    public ImmutableList<Node> reduceVariableDeclarator(@Nonnull VariableDeclarator node, @Nonnull ImmutableList<Node> binding, @Nonnull Maybe<ImmutableList<Node>> init) {
         return ImmutableList.<Node>of(node).append(super.reduceVariableDeclarator(node, binding, init));
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public ImmutableList<Node> reduceWhileStatement(@NotNull WhileStatement node, @NotNull ImmutableList<Node> test, @NotNull ImmutableList<Node> body) {
+    public ImmutableList<Node> reduceWhileStatement(@Nonnull WhileStatement node, @Nonnull ImmutableList<Node> test, @Nonnull ImmutableList<Node> body) {
         return ImmutableList.<Node>of(node).append(super.reduceWhileStatement(node, test, body));
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public ImmutableList<Node> reduceWithStatement(@NotNull WithStatement node, @NotNull ImmutableList<Node> object, @NotNull ImmutableList<Node> body) {
+    public ImmutableList<Node> reduceWithStatement(@Nonnull WithStatement node, @Nonnull ImmutableList<Node> object, @Nonnull ImmutableList<Node> body) {
         return ImmutableList.<Node>of(node).append(super.reduceWithStatement(node, object, body));
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public ImmutableList<Node> reduceYieldExpression(@NotNull YieldExpression node, @NotNull Maybe<ImmutableList<Node>> expression) {
+    public ImmutableList<Node> reduceYieldExpression(@Nonnull YieldExpression node, @Nonnull Maybe<ImmutableList<Node>> expression) {
         return ImmutableList.<Node>of(node).append(super.reduceYieldExpression(node, expression));
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public ImmutableList<Node> reduceYieldGeneratorExpression(@NotNull YieldGeneratorExpression node, @NotNull ImmutableList<Node> expression) {
+    public ImmutableList<Node> reduceYieldGeneratorExpression(@Nonnull YieldGeneratorExpression node, @Nonnull ImmutableList<Node> expression) {
         return ImmutableList.<Node>of(node).append(super.reduceYieldGeneratorExpression(node, expression));
     }
 }

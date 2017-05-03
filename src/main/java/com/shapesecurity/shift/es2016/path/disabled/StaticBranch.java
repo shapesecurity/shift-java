@@ -105,8 +105,8 @@
 //import Node;
 //import com.shapesecurity.shift.ast.types.MaybeType;
 //
-//import org.jetbrains.annotations.NotNull;
-//import org.jetbrains.annotations.Nullable;
+//import javax.annotation.Nonnull;
+//import javax.annotation.Nullable;
 //
 //@SuppressWarnings("unchecked")
 //public enum StaticBranch implements Branch {
@@ -151,7 +151,7 @@
 //  JUST() {
 //    @Nullable
 //    @Override
-//    public Node view(@NotNull Node parent) {
+//    public Node view(@Nonnull Node parent) {
 //      if (parent instanceof MaybeNode) {
 //        MaybeNode typed = ((MaybeNode) parent);
 //        if (typed.maybe.isJust()) {
@@ -161,9 +161,9 @@
 //      return null;
 //    }
 //
-//    @NotNull
+//    @Nonnull
 //    @Override
-//    public Node set(@NotNull Node parent, @NotNull Node child) {
+//    public Node set(@Nonnull Node parent, @Nonnull Node child) {
 //      if (parent instanceof MaybeNode) {
 //        MaybeType type = (MaybeType) parent.genType();
 //        if (((MaybeNode) parent).maybe.isJust() && type.isAssignableFrom(child.genType())) {
@@ -177,7 +177,7 @@
 //  LEFT(BinaryExpression_left, ForInStatement_left) {
 //    @Nullable
 //    @Override
-//    public Node view(@NotNull Node parent) {
+//    public Node view(@Nonnull Node parent) {
 //      if (parent instanceof EitherNode) {
 //        if (((EitherNode) parent).either.isLeft()) {
 //          return wrap(((EitherNode) parent).either.left().fromJust(), ((EitherNode) parent).genType.leftType);
@@ -188,9 +188,9 @@
 //      return super.view(parent);
 //    }
 //
-//    @NotNull
+//    @Nonnull
 //    @Override
-//    public Node set(@NotNull Node parent, @NotNull Node child) {
+//    public Node set(@Nonnull Node parent, @Nonnull Node child) {
 //      if (parent instanceof EitherNode) {
 //        if (((EitherNode) parent).either.isLeft() &&
 //            ((EitherNode) parent).genType.leftType.isAssignableFrom(child.genType())) {
@@ -214,7 +214,7 @@
 //  RIGHT(BinaryExpression_right, ForInStatement_right) {
 //    @Nullable
 //    @Override
-//    public Node view(@NotNull Node parent) {
+//    public Node view(@Nonnull Node parent) {
 //      if (parent instanceof EitherNode) {
 //        if (((EitherNode) parent).either.isRight()) {
 //          return wrap(((EitherNode) parent).either.right().fromJust(), ((EitherNode) parent).genType.rightType);
@@ -225,9 +225,9 @@
 //      return super.view(parent);
 //    }
 //
-//    @NotNull
+//    @Nonnull
 //    @Override
-//    public Node set(@NotNull Node parent, @NotNull Node child) {
+//    public Node set(@Nonnull Node parent, @Nonnull Node child) {
 //      if (parent instanceof EitherNode) {
 //        if (((EitherNode) parent).either.isRight() &&
 //            ((EitherNode) parent).genType.rightType.isAssignableFrom(child.genType())) {
@@ -250,15 +250,15 @@
 //  UPDATE(ForStatement_update),
 //  VALUE(DataProperty_value);
 //
-//  @NotNull
+//  @Nonnull
 //  private final TypedBranch[] typedBranches;
 //
-//  private StaticBranch(@NotNull TypedBranch... typedBranches) {
+//  private StaticBranch(@Nonnull TypedBranch... typedBranches) {
 //    this.typedBranches = typedBranches;
 //  }
 //
 //  @Nullable
-//  public Node view(@NotNull Node parent) {
+//  public Node view(@Nonnull Node parent) {
 //    for (TypedBranch typedBranch : typedBranches) {
 //      if (typedBranch.isValidParent(parent.genType())) {
 //        return typedBranch.view(parent);
@@ -267,8 +267,8 @@
 //    return null;
 //  }
 //
-//  @NotNull
-//  public Node set(@NotNull Node parent, @NotNull Node child) {
+//  @Nonnull
+//  public Node set(@Nonnull Node parent, @Nonnull Node child) {
 //    for (TypedBranch typedBranch : typedBranches) {
 //      if (typedBranch.isValidParent(parent.genType()) && typedBranch.isValidChild(parent.genType(), child.genType())) {
 //        return typedBranch.set(parent, child);

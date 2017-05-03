@@ -82,15 +82,15 @@
 //import Branch;
 //
 //import com.shapesecurity.shift.visitor.Director;
-//import org.jetbrains.annotations.NotNull;
+//import javax.annotation.Nonnull;
 //
 //public class FixPointTransformer extends LazyCloner {
-//  @NotNull
+//  @Nonnull
 //  private final TransformerP<? extends DirtyState<Script>, ? extends DirtyState<FunctionBody>, ? extends DirtyState<ObjectProperty>, ? extends DirtyState<PropertyName>, ? extends DirtyState<Identifier>, ? extends DirtyState<Expression>, ? extends DirtyState<Directive>, ? extends DirtyState<Statement>, ? extends DirtyState<Block>, ? extends DirtyState<VariableDeclarator>, ? extends DirtyState<VariableDeclaration>, ? extends DirtyState<SwitchCase>, ? extends DirtyState<SwitchDefault>, ? extends DirtyState<CatchClause>>
 //      t;
 //
 //  public FixPointTransformer(
-//      @NotNull TransformerP<? extends DirtyState<Script>, ? extends DirtyState<FunctionBody>, ? extends
+//      @Nonnull TransformerP<? extends DirtyState<Script>, ? extends DirtyState<FunctionBody>, ? extends
 //          DirtyState<ObjectProperty>, ? extends DirtyState<PropertyName>, ? extends DirtyState<Identifier>, ? extends
 //          DirtyState<Expression>, ? extends DirtyState<Directive>, ? extends DirtyState<Statement>, ? extends
 //          DirtyState<Block>, ? extends DirtyState<VariableDeclarator>, ? extends DirtyState<VariableDeclaration>, ?
@@ -99,556 +99,556 @@
 //    this.t = t;
 //  }
 //
-//  private F<Expression, DirtyState<Expression>> bindExp(@NotNull final ImmutableList<Branch> path) {
+//  private F<Expression, DirtyState<Expression>> bindExp(@Nonnull final ImmutableList<Branch> path) {
 //    return node -> this.t.transform(node).onDirty(node1 -> Director.reduceExpression(this, node1, path).setDirty());
 //  }
 //
-//  private F<Identifier, DirtyState<Identifier>> bindIdent(@NotNull final ImmutableList<Branch> path) {
+//  private F<Identifier, DirtyState<Identifier>> bindIdent(@Nonnull final ImmutableList<Branch> path) {
 //    return node -> this.t.transform(node).onDirty(node1 -> Director.reduceIdentifier(this, node1, path).setDirty());
 //  }
 //
-//  private F<Statement, DirtyState<Statement>> bindStmt(@NotNull final ImmutableList<Branch> path) {
+//  private F<Statement, DirtyState<Statement>> bindStmt(@Nonnull final ImmutableList<Branch> path) {
 //    return node -> this.t.transform(node).onDirty(node1 -> Director.reduceStatement(this, node1, path).setDirty());
 //  }
 //
-//  private F<Block, DirtyState<Block>> bindBlock(@NotNull final ImmutableList<Branch> path) {
+//  private F<Block, DirtyState<Block>> bindBlock(@Nonnull final ImmutableList<Branch> path) {
 //    return node -> this.t.transform(node).onDirty(node1 -> Director.reduceBlock(this, node1, path).setDirty());
 //  }
 //
-//  private F<VariableDeclaration, DirtyState<VariableDeclaration>> bindVarDeclStmt(@NotNull final ImmutableList<Branch> path) {
+//  private F<VariableDeclaration, DirtyState<VariableDeclaration>> bindVarDeclStmt(@Nonnull final ImmutableList<Branch> path) {
 //    return node -> this.t.transform(node).onDirty(node1 -> Director.reduceVariableDeclaration(this, node1, path).setDirty());
 //  }
 //
-//  private F<SwitchCase, DirtyState<SwitchCase>> bindCase(@NotNull final ImmutableList<Branch> path) {
+//  private F<SwitchCase, DirtyState<SwitchCase>> bindCase(@Nonnull final ImmutableList<Branch> path) {
 //    return node -> this.t.transform(node).onDirty(node1 -> Director.reduceSwitchCase(this, node1, path).setDirty());
 //  }
 //
-//  private F<SwitchDefault, DirtyState<SwitchDefault>> bindDefault(@NotNull final ImmutableList<Branch> path) {
+//  private F<SwitchDefault, DirtyState<SwitchDefault>> bindDefault(@Nonnull final ImmutableList<Branch> path) {
 //    return node -> this.t.transform(node).onDirty(node1 -> Director.reduceSwitchDefault(this, node1, path).setDirty());
 //  }
 //
-//  private F<Directive, DirtyState<Directive>> bindDirective(@NotNull final ImmutableList<Branch> path) {
+//  private F<Directive, DirtyState<Directive>> bindDirective(@Nonnull final ImmutableList<Branch> path) {
 //    return node -> this.t.transform(node).onDirty(node1 -> Director.reduceDirective(this, node1, path).setDirty());
 //  }
 //
-//  private F<PropertyName, DirtyState<PropertyName>> bindPropName(@NotNull final ImmutableList<Branch> path) {
+//  private F<PropertyName, DirtyState<PropertyName>> bindPropName(@Nonnull final ImmutableList<Branch> path) {
 //    return node -> this.t.transform(node).onDirty(node1 -> Director.reducePropertyName(this, node1, path).setDirty());
 //  }
 //
-//  private F<ObjectProperty, DirtyState<ObjectProperty>> bindProp(@NotNull final ImmutableList<Branch> path) {
+//  private F<ObjectProperty, DirtyState<ObjectProperty>> bindProp(@Nonnull final ImmutableList<Branch> path) {
 //    return node -> this.t.transform(node).onDirty(node1 -> Director.reduceObjectProperty(this, node1, path).setDirty());
 //  }
 //
-//  private F<Script, DirtyState<Script>> bindProgram(@NotNull final ImmutableList<Branch> path) {
+//  private F<Script, DirtyState<Script>> bindProgram(@Nonnull final ImmutableList<Branch> path) {
 //    return node -> this.t.transform(node).onDirty(node1 -> Director.reduceScript(this, node1, path).setDirty());
 //  }
 //
-//  private F<FunctionBody, DirtyState<FunctionBody>> bindProgramBody(@NotNull final ImmutableList<Branch> path) {
+//  private F<FunctionBody, DirtyState<FunctionBody>> bindProgramBody(@Nonnull final ImmutableList<Branch> path) {
 //    return node -> this.t.transform(node).onDirty(node1 -> Director.reduceFunctionBody(this, node1, path).setDirty());
 //  }
 //
-//  @NotNull
-//  public Script transform(@NotNull Script script, @NotNull ImmutableList<Branch> path) {
+//  @Nonnull
+//  public Script transform(@Nonnull Script script, @Nonnull ImmutableList<Branch> path) {
 //    return Director.reduceScript(this, script, path).node;
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
 //  public DirtyState<Script> reduceScript(
-//      @NotNull Script node,
-//      @NotNull ImmutableList<Branch> path,
-//      @NotNull DirtyState<FunctionBody> body) {
+//      @Nonnull Script node,
+//      @Nonnull ImmutableList<Branch> path,
+//      @Nonnull DirtyState<FunctionBody> body) {
 //    return super.reduceScript(node, path, body).bind(this.bindProgram(path));
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public DirtyState<Identifier> reduceIdentifier(@NotNull Identifier node, @NotNull ImmutableList<Branch> path) {
+//  public DirtyState<Identifier> reduceIdentifier(@Nonnull Identifier node, @Nonnull ImmutableList<Branch> path) {
 //    return super.reduceIdentifier(node, path).bind(this.bindIdent(path));
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
 //  public DirtyState<Expression> reduceIdentifierExpression(
-//      @NotNull IdentifierExpression node,
-//      @NotNull ImmutableList<Branch> path,
-//      @NotNull DirtyState<Identifier> identifier) {
+//      @Nonnull IdentifierExpression node,
+//      @Nonnull ImmutableList<Branch> path,
+//      @Nonnull DirtyState<Identifier> identifier) {
 //    return super.reduceIdentifierExpression(node, path, identifier).bind(this.bindExp(path));
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public DirtyState<Expression> reduceThisExpression(@NotNull ThisExpression node, @NotNull ImmutableList<Branch> path) {
+//  public DirtyState<Expression> reduceThisExpression(@Nonnull ThisExpression node, @Nonnull ImmutableList<Branch> path) {
 //    return super.reduceThisExpression(node, path).bind(this.bindExp(path));
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
 //  public DirtyState<Expression> reduceLiteralBooleanExpression(
-//      @NotNull LiteralBooleanExpression node,
-//      @NotNull ImmutableList<Branch> path) {
+//      @Nonnull LiteralBooleanExpression node,
+//      @Nonnull ImmutableList<Branch> path) {
 //    return super.reduceLiteralBooleanExpression(node, path).bind(this.bindExp(path));
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
 //  public DirtyState<Expression> reduceLiteralStringExpression(
-//      @NotNull LiteralStringExpression node,
-//      @NotNull ImmutableList<Branch> path) {
+//      @Nonnull LiteralStringExpression node,
+//      @Nonnull ImmutableList<Branch> path) {
 //    return super.reduceLiteralStringExpression(node, path).bind(this.bindExp(path));
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
 //  public DirtyState<Expression> reduceLiteralRegExpExpression(
-//      @NotNull LiteralRegExpExpression node,
-//      @NotNull ImmutableList<Branch> path) {
+//      @Nonnull LiteralRegExpExpression node,
+//      @Nonnull ImmutableList<Branch> path) {
 //    return super.reduceLiteralRegExpExpression(node, path).bind(this.bindExp(path));
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
 //  public DirtyState<Expression> reduceLiteralNumericExpression(
-//      @NotNull LiteralNumericExpression node,
-//      @NotNull ImmutableList<Branch> path) {
+//      @Nonnull LiteralNumericExpression node,
+//      @Nonnull ImmutableList<Branch> path) {
 //    return super.reduceLiteralNumericExpression(node, path).bind(this.bindExp(path));
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
 //  public DirtyState<Expression> reduceLiteralNullExpression(
-//      @NotNull LiteralNullExpression node,
-//      @NotNull ImmutableList<Branch> path) {
+//      @Nonnull LiteralNullExpression node,
+//      @Nonnull ImmutableList<Branch> path) {
 //    return super.reduceLiteralNullExpression(node, path).bind(this.bindExp(path));
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
 //  public DirtyState<Expression> reduceFunctionExpression(
-//      @NotNull FunctionExpression node,
-//      @NotNull ImmutableList<Branch> path,
-//      @NotNull Maybe<DirtyState<Identifier>> name,
-//      @NotNull ImmutableList<DirtyState<Identifier>> parameters,
-//      @NotNull DirtyState<FunctionBody> body) {
+//      @Nonnull FunctionExpression node,
+//      @Nonnull ImmutableList<Branch> path,
+//      @Nonnull Maybe<DirtyState<Identifier>> name,
+//      @Nonnull ImmutableList<DirtyState<Identifier>> parameters,
+//      @Nonnull DirtyState<FunctionBody> body) {
 //    return super.reduceFunctionExpression(node, path, name, parameters, body).bind(this.bindExp(path));
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
 //  public DirtyState<Expression> reduceStaticMemberExpression(
-//      @NotNull StaticMemberExpression node,
-//      @NotNull ImmutableList<Branch> path,
-//      @NotNull DirtyState<Expression> object,
-//      @NotNull DirtyState<Identifier> property) {
+//      @Nonnull StaticMemberExpression node,
+//      @Nonnull ImmutableList<Branch> path,
+//      @Nonnull DirtyState<Expression> object,
+//      @Nonnull DirtyState<Identifier> property) {
 //    return super.reduceStaticMemberExpression(node, path, object, property).bind(this.bindExp(path));
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
 //  public DirtyState<Expression> reduceComputedMemberExpression(
-//      @NotNull ComputedMemberExpression node,
-//      @NotNull ImmutableList<Branch> path,
-//      @NotNull DirtyState<Expression> object,
-//      @NotNull DirtyState<Expression> expression) {
+//      @Nonnull ComputedMemberExpression node,
+//      @Nonnull ImmutableList<Branch> path,
+//      @Nonnull DirtyState<Expression> object,
+//      @Nonnull DirtyState<Expression> expression) {
 //    return super.reduceComputedMemberExpression(node, path, object, expression).bind(this.bindExp(path));
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
 //  public DirtyState<Expression> reduceObjectExpression(
-//      @NotNull ObjectExpression node,
-//      @NotNull ImmutableList<Branch> path,
-//      @NotNull ImmutableList<DirtyState<ObjectProperty>> properties) {
+//      @Nonnull ObjectExpression node,
+//      @Nonnull ImmutableList<Branch> path,
+//      @Nonnull ImmutableList<DirtyState<ObjectProperty>> properties) {
 //    return super.reduceObjectExpression(node, path, properties).bind(this.bindExp(path));
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
 //  public DirtyState<Expression> reduceBinaryExpression(
-//      @NotNull BinaryExpression node,
-//      @NotNull ImmutableList<Branch> path,
-//      @NotNull DirtyState<Expression> left,
-//      @NotNull DirtyState<Expression> right) {
+//      @Nonnull BinaryExpression node,
+//      @Nonnull ImmutableList<Branch> path,
+//      @Nonnull DirtyState<Expression> left,
+//      @Nonnull DirtyState<Expression> right) {
 //    return super.reduceBinaryExpression(node, path, left, right).bind(this.bindExp(path));
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
 //  public DirtyState<Expression> reduceArrayExpression(
-//      @NotNull ArrayExpression node,
-//      @NotNull ImmutableList<Branch> path,
-//      @NotNull ImmutableList<Maybe<DirtyState<Expression>>> elements) {
+//      @Nonnull ArrayExpression node,
+//      @Nonnull ImmutableList<Branch> path,
+//      @Nonnull ImmutableList<Maybe<DirtyState<Expression>>> elements) {
 //    return super.reduceArrayExpression(node, path, elements).bind(this.bindExp(path));
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
 //  public DirtyState<Expression> reduceNewExpression(
-//      @NotNull NewExpression node,
-//      @NotNull ImmutableList<Branch> path,
-//      @NotNull DirtyState<Expression> callee,
-//      @NotNull ImmutableList<DirtyState<Expression>> arguments) {
+//      @Nonnull NewExpression node,
+//      @Nonnull ImmutableList<Branch> path,
+//      @Nonnull DirtyState<Expression> callee,
+//      @Nonnull ImmutableList<DirtyState<Expression>> arguments) {
 //    return super.reduceNewExpression(node, path, callee, arguments).bind(this.bindExp(path));
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
 //  public DirtyState<Expression> reduceCallExpression(
-//      @NotNull CallExpression node,
-//      @NotNull ImmutableList<Branch> path,
-//      @NotNull DirtyState<Expression> callee,
-//      @NotNull ImmutableList<DirtyState<Expression>> arguments) {
+//      @Nonnull CallExpression node,
+//      @Nonnull ImmutableList<Branch> path,
+//      @Nonnull DirtyState<Expression> callee,
+//      @Nonnull ImmutableList<DirtyState<Expression>> arguments) {
 //    return super.reduceCallExpression(node, path, callee, arguments).bind(this.bindExp(path));
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
 //  public DirtyState<Expression> reducePostfixExpression(
-//      @NotNull PostfixExpression node,
-//      @NotNull ImmutableList<Branch> path,
-//      @NotNull DirtyState<Expression> operand) {
+//      @Nonnull PostfixExpression node,
+//      @Nonnull ImmutableList<Branch> path,
+//      @Nonnull DirtyState<Expression> operand) {
 //    return super.reducePostfixExpression(node, path, operand).bind(this.bindExp(path));
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
 //  public DirtyState<Expression> reducePrefixExpression(
-//      @NotNull PrefixExpression node,
-//      @NotNull ImmutableList<Branch> path,
-//      @NotNull DirtyState<Expression> operand) {
+//      @Nonnull PrefixExpression node,
+//      @Nonnull ImmutableList<Branch> path,
+//      @Nonnull DirtyState<Expression> operand) {
 //    return super.reducePrefixExpression(node, path, operand).bind(this.bindExp(path));
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
 //  public DirtyState<Expression> reduceConditionalExpression(
-//      @NotNull ConditionalExpression node,
-//      @NotNull ImmutableList<Branch> path,
-//      @NotNull DirtyState<Expression> test,
-//      @NotNull DirtyState<Expression> consequent,
-//      @NotNull DirtyState<Expression> alternate) {
+//      @Nonnull ConditionalExpression node,
+//      @Nonnull ImmutableList<Branch> path,
+//      @Nonnull DirtyState<Expression> test,
+//      @Nonnull DirtyState<Expression> consequent,
+//      @Nonnull DirtyState<Expression> alternate) {
 //    return super.reduceConditionalExpression(node, path, test, consequent, alternate).bind(this.bindExp(path));
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
 //  public DirtyState<Statement> reduceFunctionDeclaration(
-//      @NotNull FunctionDeclaration node,
-//      @NotNull ImmutableList<Branch> path,
-//      @NotNull DirtyState<Identifier> name,
-//      @NotNull ImmutableList<DirtyState<Identifier>> params,
-//      @NotNull DirtyState<FunctionBody> body) {
+//      @Nonnull FunctionDeclaration node,
+//      @Nonnull ImmutableList<Branch> path,
+//      @Nonnull DirtyState<Identifier> name,
+//      @Nonnull ImmutableList<DirtyState<Identifier>> params,
+//      @Nonnull DirtyState<FunctionBody> body) {
 //    return super.reduceFunctionDeclaration(node, path, name, params, body).bind(this.bindStmt(path));
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public DirtyState<Directive> reduceUseStrictDirective(@NotNull UseStrictDirective node, @NotNull ImmutableList<Branch> path) {
+//  public DirtyState<Directive> reduceUseStrictDirective(@Nonnull UseStrictDirective node, @Nonnull ImmutableList<Branch> path) {
 //    return super.reduceUseStrictDirective(node, path).bind(this.bindDirective(path));
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public DirtyState<Directive> reduceUnknownDirective(@NotNull UnknownDirective node, @NotNull ImmutableList<Branch> path) {
+//  public DirtyState<Directive> reduceUnknownDirective(@Nonnull UnknownDirective node, @Nonnull ImmutableList<Branch> path) {
 //    return super.reduceUnknownDirective(node, path).bind(this.bindDirective(path));
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
 //  public DirtyState<Statement> reduceBlockStatement(
-//      @NotNull BlockStatement node,
-//      @NotNull ImmutableList<Branch> path,
-//      @NotNull DirtyState<Block> block) {
+//      @Nonnull BlockStatement node,
+//      @Nonnull ImmutableList<Branch> path,
+//      @Nonnull DirtyState<Block> block) {
 //    return super.reduceBlockStatement(node, path, block).bind(this.bindStmt(path));
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
 //  public DirtyState<Statement> reduceBreakStatement(
-//      @NotNull BreakStatement node,
-//      @NotNull ImmutableList<Branch> path,
-//      @NotNull Maybe<DirtyState<Identifier>> label) {
+//      @Nonnull BreakStatement node,
+//      @Nonnull ImmutableList<Branch> path,
+//      @Nonnull Maybe<DirtyState<Identifier>> label) {
 //    return super.reduceBreakStatement(node, path, label).bind(this.bindStmt(path));
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
 //  public DirtyState<CatchClause> reduceCatchClause(
-//      @NotNull CatchClause node,
-//      @NotNull final ImmutableList<Branch> path,
-//      @NotNull DirtyState<Identifier> binding,
-//      @NotNull DirtyState<Block> body) {
+//      @Nonnull CatchClause node,
+//      @Nonnull final ImmutableList<Branch> path,
+//      @Nonnull DirtyState<Identifier> binding,
+//      @Nonnull DirtyState<Block> body) {
 //    return super.reduceCatchClause(node, path, binding, body).bind(
 //        node1 -> this.t.transform(node1).onDirty(
 //            node2 -> Director.reduceCatchClause(this, node2, path).setDirty()));
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
 //  public DirtyState<Statement> reduceContinueStatement(
-//      @NotNull ContinueStatement node,
-//      @NotNull ImmutableList<Branch> path,
-//      @NotNull Maybe<DirtyState<Identifier>> label) {
+//      @Nonnull ContinueStatement node,
+//      @Nonnull ImmutableList<Branch> path,
+//      @Nonnull Maybe<DirtyState<Identifier>> label) {
 //    return super.reduceContinueStatement(node, path, label).bind(this.bindStmt(path));
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public DirtyState<Statement> reduceDebuggerStatement(@NotNull DebuggerStatement node, @NotNull ImmutableList<Branch> path) {
+//  public DirtyState<Statement> reduceDebuggerStatement(@Nonnull DebuggerStatement node, @Nonnull ImmutableList<Branch> path) {
 //    return super.reduceDebuggerStatement(node, path).bind(this.bindStmt(path));
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
 //  public DirtyState<Statement> reduceDoWhileStatement(
-//      @NotNull DoWhileStatement node,
-//      @NotNull ImmutableList<Branch> path,
-//      @NotNull DirtyState<Statement> body,
-//      @NotNull DirtyState<Expression> test) {
+//      @Nonnull DoWhileStatement node,
+//      @Nonnull ImmutableList<Branch> path,
+//      @Nonnull DirtyState<Statement> body,
+//      @Nonnull DirtyState<Expression> test) {
 //    return super.reduceDoWhileStatement(node, path, body, test).bind(this.bindStmt(path));
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public DirtyState<Statement> reduceEmptyStatement(@NotNull EmptyStatement node, @NotNull ImmutableList<Branch> path) {
+//  public DirtyState<Statement> reduceEmptyStatement(@Nonnull EmptyStatement node, @Nonnull ImmutableList<Branch> path) {
 //    return super.reduceEmptyStatement(node, path).bind(this.bindStmt(path));
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
 //  public DirtyState<Statement> reduceExpressionStatement(
-//      @NotNull ExpressionStatement node,
-//      @NotNull ImmutableList<Branch> path,
-//      @NotNull DirtyState<Expression> expression) {
+//      @Nonnull ExpressionStatement node,
+//      @Nonnull ImmutableList<Branch> path,
+//      @Nonnull DirtyState<Expression> expression) {
 //    return super.reduceExpressionStatement(node, path, expression).bind(this.bindStmt(path));
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
 //  public DirtyState<Statement> reduceForInStatement(
-//      @NotNull ForInStatement node,
-//      @NotNull ImmutableList<Branch> path,
-//      @NotNull Either<DirtyState<VariableDeclaration>, DirtyState<Expression>> left,
-//      @NotNull DirtyState<Expression> right,
-//      @NotNull DirtyState<Statement> body) {
+//      @Nonnull ForInStatement node,
+//      @Nonnull ImmutableList<Branch> path,
+//      @Nonnull Either<DirtyState<VariableDeclaration>, DirtyState<Expression>> left,
+//      @Nonnull DirtyState<Expression> right,
+//      @Nonnull DirtyState<Statement> body) {
 //    return super.reduceForInStatement(node, path, left, right, body).bind(this.bindStmt(path));
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
 //  public DirtyState<Statement> reduceForStatement(
-//      @NotNull ForStatement node,
-//      @NotNull ImmutableList<Branch> path,
-//      @NotNull Maybe<Either<DirtyState<VariableDeclaration>, DirtyState<Expression>>> init,
-//      @NotNull Maybe<DirtyState<Expression>> test,
-//      @NotNull Maybe<DirtyState<Expression>> update,
-//      @NotNull DirtyState<Statement> body) {
+//      @Nonnull ForStatement node,
+//      @Nonnull ImmutableList<Branch> path,
+//      @Nonnull Maybe<Either<DirtyState<VariableDeclaration>, DirtyState<Expression>>> init,
+//      @Nonnull Maybe<DirtyState<Expression>> test,
+//      @Nonnull Maybe<DirtyState<Expression>> update,
+//      @Nonnull DirtyState<Statement> body) {
 //    return super.reduceForStatement(node, path, init, test, update, body).bind(this.bindStmt(path));
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
 //  public DirtyState<Statement> reduceIfStatement(
-//      @NotNull IfStatement node,
-//      @NotNull ImmutableList<Branch> path,
-//      @NotNull DirtyState<Expression> test,
-//      @NotNull DirtyState<Statement> consequent,
-//      @NotNull Maybe<DirtyState<Statement>> alternate) {
+//      @Nonnull IfStatement node,
+//      @Nonnull ImmutableList<Branch> path,
+//      @Nonnull DirtyState<Expression> test,
+//      @Nonnull DirtyState<Statement> consequent,
+//      @Nonnull Maybe<DirtyState<Statement>> alternate) {
 //    return super.reduceIfStatement(node, path, test, consequent, alternate).bind(this.bindStmt(path));
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
 //  public DirtyState<Statement> reduceLabeledStatement(
-//      @NotNull LabeledStatement node,
-//      @NotNull ImmutableList<Branch> path,
-//      @NotNull DirtyState<Identifier> label,
-//      @NotNull DirtyState<Statement> body) {
+//      @Nonnull LabeledStatement node,
+//      @Nonnull ImmutableList<Branch> path,
+//      @Nonnull DirtyState<Identifier> label,
+//      @Nonnull DirtyState<Statement> body) {
 //    return super.reduceLabeledStatement(node, path, label, body).bind(this.bindStmt(path));
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
 //  public DirtyState<Statement> reduceReturnStatement(
-//      @NotNull ReturnStatement node,
-//      @NotNull ImmutableList<Branch> path,
-//      @NotNull Maybe<DirtyState<Expression>> expression) {
+//      @Nonnull ReturnStatement node,
+//      @Nonnull ImmutableList<Branch> path,
+//      @Nonnull Maybe<DirtyState<Expression>> expression) {
 //    return super.reduceReturnStatement(node, path, expression).bind(this.bindStmt(path));
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
 //  public DirtyState<SwitchCase> reduceSwitchCase(
-//      @NotNull SwitchCase node,
-//      @NotNull ImmutableList<Branch> path,
-//      @NotNull DirtyState<Expression> test,
-//      @NotNull ImmutableList<DirtyState<Statement>> consequent) {
+//      @Nonnull SwitchCase node,
+//      @Nonnull ImmutableList<Branch> path,
+//      @Nonnull DirtyState<Expression> test,
+//      @Nonnull ImmutableList<DirtyState<Statement>> consequent) {
 //    return super.reduceSwitchCase(node, path, test, consequent).bind(this.bindCase(path));
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
 //  public DirtyState<SwitchDefault> reduceSwitchDefault(
-//      @NotNull SwitchDefault node,
-//      @NotNull ImmutableList<Branch> path,
-//      @NotNull ImmutableList<DirtyState<Statement>> consequent) {
+//      @Nonnull SwitchDefault node,
+//      @Nonnull ImmutableList<Branch> path,
+//      @Nonnull ImmutableList<DirtyState<Statement>> consequent) {
 //    return super.reduceSwitchDefault(node, path, consequent).bind(this.bindDefault(path));
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
 //  public DirtyState<Statement> reduceSwitchStatement(
-//      @NotNull SwitchStatement node,
-//      @NotNull ImmutableList<Branch> path,
-//      @NotNull DirtyState<Expression> discriminant,
-//      @NotNull ImmutableList<DirtyState<SwitchCase>> cases) {
+//      @Nonnull SwitchStatement node,
+//      @Nonnull ImmutableList<Branch> path,
+//      @Nonnull DirtyState<Expression> discriminant,
+//      @Nonnull ImmutableList<DirtyState<SwitchCase>> cases) {
 //    return super.reduceSwitchStatement(node, path, discriminant, cases).bind(this.bindStmt(path));
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
 //  public DirtyState<Statement> reduceSwitchStatementWithDefault(
-//      @NotNull SwitchStatementWithDefault node,
-//      @NotNull ImmutableList<Branch> path,
-//      @NotNull DirtyState<Expression> discriminant,
-//      @NotNull ImmutableList<DirtyState<SwitchCase>> preDefaultCases,
-//      @NotNull DirtyState<SwitchDefault> defaultCase,
-//      @NotNull ImmutableList<DirtyState<SwitchCase>> postDefaultCases) {
+//      @Nonnull SwitchStatementWithDefault node,
+//      @Nonnull ImmutableList<Branch> path,
+//      @Nonnull DirtyState<Expression> discriminant,
+//      @Nonnull ImmutableList<DirtyState<SwitchCase>> preDefaultCases,
+//      @Nonnull DirtyState<SwitchDefault> defaultCase,
+//      @Nonnull ImmutableList<DirtyState<SwitchCase>> postDefaultCases) {
 //    return super.reduceSwitchStatementWithDefault(node, path, discriminant, preDefaultCases, defaultCase, postDefaultCases).bind(
 //        this.bindStmt(path));
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
 //  public DirtyState<Statement> reduceThrowStatement(
-//      @NotNull ThrowStatement node,
-//      @NotNull ImmutableList<Branch> path,
-//      @NotNull DirtyState<Expression> expression) {
+//      @Nonnull ThrowStatement node,
+//      @Nonnull ImmutableList<Branch> path,
+//      @Nonnull DirtyState<Expression> expression) {
 //    return super.reduceThrowStatement(node, path, expression).bind(this.bindStmt(path));
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
 //  public DirtyState<Statement> reduceTryCatchStatement(
-//      @NotNull TryCatchStatement node,
-//      @NotNull ImmutableList<Branch> path,
-//      @NotNull DirtyState<Block> block,
-//      @NotNull DirtyState<CatchClause> catchClause) {
+//      @Nonnull TryCatchStatement node,
+//      @Nonnull ImmutableList<Branch> path,
+//      @Nonnull DirtyState<Block> block,
+//      @Nonnull DirtyState<CatchClause> catchClause) {
 //    return super.reduceTryCatchStatement(node, path, block, catchClause).bind(this.bindStmt(path));
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
 //  public DirtyState<Statement> reduceTryFinallyStatement(
-//      @NotNull TryFinallyStatement node,
-//      @NotNull ImmutableList<Branch> path,
-//      @NotNull DirtyState<Block> block,
-//      @NotNull Maybe<DirtyState<CatchClause>> catchClause,
-//      @NotNull DirtyState<Block> finalizer) {
+//      @Nonnull TryFinallyStatement node,
+//      @Nonnull ImmutableList<Branch> path,
+//      @Nonnull DirtyState<Block> block,
+//      @Nonnull Maybe<DirtyState<CatchClause>> catchClause,
+//      @Nonnull DirtyState<Block> finalizer) {
 //    return super.reduceTryFinallyStatement(node, path, block, catchClause, finalizer).bind(this.bindStmt(path));
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
 //  public DirtyState<Statement> reduceVariableDeclarationStatement(
-//      @NotNull VariableDeclarationStatement node,
-//      @NotNull ImmutableList<Branch> path,
-//      @NotNull DirtyState<VariableDeclaration> declaration) {
+//      @Nonnull VariableDeclarationStatement node,
+//      @Nonnull ImmutableList<Branch> path,
+//      @Nonnull DirtyState<VariableDeclaration> declaration) {
 //    return super.reduceVariableDeclarationStatement(node, path, declaration).bind(this.bindStmt(path));
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
 //  public DirtyState<VariableDeclaration> reduceVariableDeclaration(
-//      @NotNull VariableDeclaration node,
-//      @NotNull ImmutableList<Branch> path,
-//      @NotNull NonEmptyImmutableList<DirtyState<VariableDeclarator>> declarators) {
+//      @Nonnull VariableDeclaration node,
+//      @Nonnull ImmutableList<Branch> path,
+//      @Nonnull NonEmptyImmutableList<DirtyState<VariableDeclarator>> declarators) {
 //    return super.reduceVariableDeclaration(node, path, declarators).bind(this.bindVarDeclStmt(path));
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
 //  public DirtyState<Statement> reduceWhileStatement(
-//      @NotNull WhileStatement node,
-//      @NotNull ImmutableList<Branch> path,
-//      @NotNull DirtyState<Expression> test,
-//      @NotNull DirtyState<Statement> body) {
+//      @Nonnull WhileStatement node,
+//      @Nonnull ImmutableList<Branch> path,
+//      @Nonnull DirtyState<Expression> test,
+//      @Nonnull DirtyState<Statement> body) {
 //    return super.reduceWhileStatement(node, path, test, body).bind(this.bindStmt(path));
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
 //  public DirtyState<Statement> reduceWithStatement(
-//      @NotNull WithStatement node,
-//      @NotNull ImmutableList<Branch> path,
-//      @NotNull DirtyState<Expression> object,
-//      @NotNull DirtyState<Statement> body) {
+//      @Nonnull WithStatement node,
+//      @Nonnull ImmutableList<Branch> path,
+//      @Nonnull DirtyState<Expression> object,
+//      @Nonnull DirtyState<Statement> body) {
 //    return super.reduceWithStatement(node, path, object, body).bind(this.bindStmt(path));
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
 //  public DirtyState<Block> reduceBlock(
-//      @NotNull Block node,
-//      @NotNull ImmutableList<Branch> path,
-//      @NotNull ImmutableList<DirtyState<Statement>> statements) {
+//      @Nonnull Block node,
+//      @Nonnull ImmutableList<Branch> path,
+//      @Nonnull ImmutableList<DirtyState<Statement>> statements) {
 //    return super.reduceBlock(node, path, statements).bind(this.bindBlock(path));
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
 //  public DirtyState<ObjectProperty> reduceDataProperty(
-//      @NotNull DataProperty node,
-//      @NotNull ImmutableList<Branch> path,
-//      @NotNull DirtyState<PropertyName> name,
-//      @NotNull DirtyState<Expression> value) {
+//      @Nonnull DataProperty node,
+//      @Nonnull ImmutableList<Branch> path,
+//      @Nonnull DirtyState<PropertyName> name,
+//      @Nonnull DirtyState<Expression> value) {
 //    return super.reduceDataProperty(node, path, name, value).bind(this.bindProp(path));
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
 //  public DirtyState<ObjectProperty> reduceGetter(
-//      @NotNull Getter node,
-//      @NotNull ImmutableList<Branch> path,
-//      @NotNull DirtyState<PropertyName> name,
-//      @NotNull DirtyState<FunctionBody> body) {
+//      @Nonnull Getter node,
+//      @Nonnull ImmutableList<Branch> path,
+//      @Nonnull DirtyState<PropertyName> name,
+//      @Nonnull DirtyState<FunctionBody> body) {
 //    return super.reduceGetter(node, path, name, body).bind(this.bindProp(path));
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
 //  public DirtyState<ObjectProperty> reduceSetter(
-//      @NotNull Setter node,
-//      @NotNull ImmutableList<Branch> path,
-//      @NotNull DirtyState<PropertyName> name,
-//      @NotNull DirtyState<Identifier> parameter,
-//      @NotNull DirtyState<FunctionBody> body) {
+//      @Nonnull Setter node,
+//      @Nonnull ImmutableList<Branch> path,
+//      @Nonnull DirtyState<PropertyName> name,
+//      @Nonnull DirtyState<Identifier> parameter,
+//      @Nonnull DirtyState<FunctionBody> body) {
 //    return super.reduceSetter(node, path, name, parameter, body).bind(this.bindProp(path));
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public DirtyState<PropertyName> reducePropertyName(@NotNull PropertyName node, @NotNull ImmutableList<Branch> path) {
+//  public DirtyState<PropertyName> reducePropertyName(@Nonnull PropertyName node, @Nonnull ImmutableList<Branch> path) {
 //    return super.reducePropertyName(node, path).bind(this.bindPropName(path));
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
 //  public DirtyState<FunctionBody> reduceFunctionBody(
-//      @NotNull FunctionBody node,
-//      @NotNull ImmutableList<Branch> path,
-//      @NotNull ImmutableList<DirtyState<Directive>> directives,
-//      @NotNull ImmutableList<DirtyState<Statement>> statements) {
+//      @Nonnull FunctionBody node,
+//      @Nonnull ImmutableList<Branch> path,
+//      @Nonnull ImmutableList<DirtyState<Directive>> directives,
+//      @Nonnull ImmutableList<DirtyState<Statement>> statements) {
 //    return super.reduceFunctionBody(node, path, directives, statements).bind(this.bindProgramBody(path));
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
 //  public DirtyState<VariableDeclarator> reduceVariableDeclarator(
-//      @NotNull VariableDeclarator node,
-//      @NotNull final ImmutableList<Branch> path,
-//      @NotNull DirtyState<Identifier> binding,
-//      @NotNull Maybe<DirtyState<Expression>> init) {
+//      @Nonnull VariableDeclarator node,
+//      @Nonnull final ImmutableList<Branch> path,
+//      @Nonnull DirtyState<Identifier> binding,
+//      @Nonnull Maybe<DirtyState<Expression>> init) {
 //    return super.reduceVariableDeclarator(node, path, binding, init).bind(
 //        node1 -> this.t.transform(node1).onDirty(
 //            variableDeclarator -> Director.reduceVariableDeclarator(this, variableDeclarator, path).setDirty()));

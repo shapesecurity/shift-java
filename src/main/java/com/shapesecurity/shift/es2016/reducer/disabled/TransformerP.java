@@ -77,11 +77,11 @@
 //import com.shapesecurity.shift.ast.statement.WhileStatement;
 //import com.shapesecurity.shift.ast.statement.WithStatement;
 //
-//import org.jetbrains.annotations.NotNull;
+//import javax.annotation.Nonnull;
 //
 //public interface TransformerP<ScriptState, ProgramBodyState, PropertyState, PropertyNameState, IdentifierState, ExpressionState, DirectiveState, StatementState, BlockState, DeclaratorState, DeclarationState, SwitchCaseState, SwitchDefaultState, CatchClauseState> {
-//  @NotNull
-//  default StatementState transform(@NotNull Statement node) {
+//  @Nonnull
+//  default StatementState transform(@Nonnull Statement node) {
 //    switch (node.type()) {
 //    case BlockStatement:
 //      return this.transform((BlockStatement) node);
@@ -130,8 +130,8 @@
 //    }
 //  }
 //
-//  @NotNull
-//  default ExpressionState transform(@NotNull Expression node) {
+//  @Nonnull
+//  default ExpressionState transform(@Nonnull Expression node) {
 //    switch (node.type()) {
 //    case LiteralBooleanExpression:
 //      return this.transform((LiteralBooleanExpression) node);
@@ -178,8 +178,8 @@
 //    }
 //  }
 //
-//  @NotNull
-//  default PropertyState transform(@NotNull ObjectProperty node) {
+//  @Nonnull
+//  default PropertyState transform(@Nonnull ObjectProperty node) {
 //    if (node instanceof DataProperty) {
 //      return this.transform((DataProperty) node);
 //    } else if (node instanceof Getter) {
@@ -189,179 +189,179 @@
 //    }
 //  }
 //
-//  @NotNull
-//  default DirectiveState transform(@NotNull Directive node) {
+//  @Nonnull
+//  default DirectiveState transform(@Nonnull Directive node) {
 //    if (node instanceof UnknownDirective) {
 //      return this.transform((UnknownDirective) node);
 //    }
 //    return this.transform((UseStrictDirective) node);
 //  }
 //
-//  @NotNull
-//  CatchClauseState transform(@NotNull CatchClause node);
+//  @Nonnull
+//  CatchClauseState transform(@Nonnull CatchClause node);
 //
-//  @NotNull
-//  DeclaratorState transform(@NotNull VariableDeclarator node);
+//  @Nonnull
+//  DeclaratorState transform(@Nonnull VariableDeclarator node);
 //
-//  @NotNull
-//  DirectiveState transform(@NotNull UnknownDirective node);
+//  @Nonnull
+//  DirectiveState transform(@Nonnull UnknownDirective node);
 //
-//  @NotNull
-//  DirectiveState transform(@NotNull UseStrictDirective node);
+//  @Nonnull
+//  DirectiveState transform(@Nonnull UseStrictDirective node);
 //
-//  @NotNull
-//  ExpressionState transform(@NotNull ArrayExpression node);
+//  @Nonnull
+//  ExpressionState transform(@Nonnull ArrayExpression node);
 //
-//  @NotNull
-//  ExpressionState transform(@NotNull BinaryExpression node);
+//  @Nonnull
+//  ExpressionState transform(@Nonnull BinaryExpression node);
 //
-//  @NotNull
-//  ExpressionState transform(@NotNull AssignmentExpression node);
+//  @Nonnull
+//  ExpressionState transform(@Nonnull AssignmentExpression node);
 //
-//  @NotNull
-//  ExpressionState transform(@NotNull CallExpression node);
+//  @Nonnull
+//  ExpressionState transform(@Nonnull CallExpression node);
 //
-//  @NotNull
-//  ExpressionState transform(@NotNull ComputedMemberExpression node);
+//  @Nonnull
+//  ExpressionState transform(@Nonnull ComputedMemberExpression node);
 //
-//  @NotNull
-//  ExpressionState transform(@NotNull ConditionalExpression node);
+//  @Nonnull
+//  ExpressionState transform(@Nonnull ConditionalExpression node);
 //
-//  @NotNull
-//  ExpressionState transform(@NotNull FunctionExpression node);
+//  @Nonnull
+//  ExpressionState transform(@Nonnull FunctionExpression node);
 //
-//  @NotNull
-//  ExpressionState transform(@NotNull IdentifierExpression node);
+//  @Nonnull
+//  ExpressionState transform(@Nonnull IdentifierExpression node);
 //
-//  @NotNull
-//  ExpressionState transform(@NotNull LiteralBooleanExpression node);
+//  @Nonnull
+//  ExpressionState transform(@Nonnull LiteralBooleanExpression node);
 //
-//  @NotNull
-//  ExpressionState transform(@NotNull LiteralNullExpression node);
+//  @Nonnull
+//  ExpressionState transform(@Nonnull LiteralNullExpression node);
 //
-//  @NotNull
-//  ExpressionState transform(@NotNull LiteralInfinityExpression node);
+//  @Nonnull
+//  ExpressionState transform(@Nonnull LiteralInfinityExpression node);
 //
-//  @NotNull
-//  ExpressionState transform(@NotNull LiteralNumericExpression node);
+//  @Nonnull
+//  ExpressionState transform(@Nonnull LiteralNumericExpression node);
 //
-//  @NotNull
-//  ExpressionState transform(@NotNull LiteralRegExpExpression node);
+//  @Nonnull
+//  ExpressionState transform(@Nonnull LiteralRegExpExpression node);
 //
-//  @NotNull
-//  ExpressionState transform(@NotNull LiteralStringExpression node);
+//  @Nonnull
+//  ExpressionState transform(@Nonnull LiteralStringExpression node);
 //
-//  @NotNull
-//  ExpressionState transform(@NotNull NewExpression node);
+//  @Nonnull
+//  ExpressionState transform(@Nonnull NewExpression node);
 //
-//  @NotNull
-//  ExpressionState transform(@NotNull ObjectExpression node);
+//  @Nonnull
+//  ExpressionState transform(@Nonnull ObjectExpression node);
 //
-//  @NotNull
-//  ExpressionState transform(@NotNull PostfixExpression node);
+//  @Nonnull
+//  ExpressionState transform(@Nonnull PostfixExpression node);
 //
-//  @NotNull
-//  ExpressionState transform(@NotNull PrefixExpression node);
+//  @Nonnull
+//  ExpressionState transform(@Nonnull PrefixExpression node);
 //
-//  @NotNull
-//  ExpressionState transform(@NotNull StaticMemberExpression node);
+//  @Nonnull
+//  ExpressionState transform(@Nonnull StaticMemberExpression node);
 //
-//  @NotNull
-//  ExpressionState transform(@NotNull ThisExpression node);
+//  @Nonnull
+//  ExpressionState transform(@Nonnull ThisExpression node);
 //
-//  @NotNull
-//  IdentifierState transform(@NotNull Identifier node);
+//  @Nonnull
+//  IdentifierState transform(@Nonnull Identifier node);
 //
-//  @NotNull
-//  ProgramBodyState transform(@NotNull FunctionBody node);
+//  @Nonnull
+//  ProgramBodyState transform(@Nonnull FunctionBody node);
 //
-//  @NotNull
-//  ScriptState transform(@NotNull Script node);
+//  @Nonnull
+//  ScriptState transform(@Nonnull Script node);
 //
-//  @NotNull
-//  PropertyNameState transform(@NotNull PropertyName node);
+//  @Nonnull
+//  PropertyNameState transform(@Nonnull PropertyName node);
 //
-//  @NotNull
-//  PropertyState transform(@NotNull Getter node);
+//  @Nonnull
+//  PropertyState transform(@Nonnull Getter node);
 //
-//  @NotNull
-//  PropertyState transform(@NotNull DataProperty node);
+//  @Nonnull
+//  PropertyState transform(@Nonnull DataProperty node);
 //
-//  @NotNull
-//  PropertyState transform(@NotNull Setter node);
+//  @Nonnull
+//  PropertyState transform(@Nonnull Setter node);
 //
-//  @NotNull
-//  StatementState transform(@NotNull BlockStatement node);
+//  @Nonnull
+//  StatementState transform(@Nonnull BlockStatement node);
 //
-//  @NotNull
-//  StatementState transform(@NotNull BreakStatement node);
+//  @Nonnull
+//  StatementState transform(@Nonnull BreakStatement node);
 //
-//  @NotNull
-//  StatementState transform(@NotNull ContinueStatement node);
+//  @Nonnull
+//  StatementState transform(@Nonnull ContinueStatement node);
 //
-//  @NotNull
-//  StatementState transform(@NotNull DebuggerStatement node);
+//  @Nonnull
+//  StatementState transform(@Nonnull DebuggerStatement node);
 //
-//  @NotNull
-//  StatementState transform(@NotNull DoWhileStatement node);
+//  @Nonnull
+//  StatementState transform(@Nonnull DoWhileStatement node);
 //
-//  @NotNull
-//  StatementState transform(@NotNull EmptyStatement node);
+//  @Nonnull
+//  StatementState transform(@Nonnull EmptyStatement node);
 //
-//  @NotNull
-//  StatementState transform(@NotNull ExpressionStatement node);
+//  @Nonnull
+//  StatementState transform(@Nonnull ExpressionStatement node);
 //
-//  @NotNull
-//  StatementState transform(@NotNull ForInStatement node);
+//  @Nonnull
+//  StatementState transform(@Nonnull ForInStatement node);
 //
-//  @NotNull
-//  StatementState transform(@NotNull ForStatement node);
+//  @Nonnull
+//  StatementState transform(@Nonnull ForStatement node);
 //
-//  @NotNull
-//  StatementState transform(@NotNull FunctionDeclaration node);
+//  @Nonnull
+//  StatementState transform(@Nonnull FunctionDeclaration node);
 //
-//  @NotNull
-//  StatementState transform(@NotNull IfStatement node);
+//  @Nonnull
+//  StatementState transform(@Nonnull IfStatement node);
 //
-//  @NotNull
-//  StatementState transform(@NotNull LabeledStatement node);
+//  @Nonnull
+//  StatementState transform(@Nonnull LabeledStatement node);
 //
-//  @NotNull
-//  StatementState transform(@NotNull ReturnStatement node);
+//  @Nonnull
+//  StatementState transform(@Nonnull ReturnStatement node);
 //
-//  @NotNull
-//  StatementState transform(@NotNull SwitchStatement node);
+//  @Nonnull
+//  StatementState transform(@Nonnull SwitchStatement node);
 //
-//  @NotNull
-//  StatementState transform(@NotNull SwitchStatementWithDefault node);
+//  @Nonnull
+//  StatementState transform(@Nonnull SwitchStatementWithDefault node);
 //
-//  @NotNull
-//  StatementState transform(@NotNull ThrowStatement node);
+//  @Nonnull
+//  StatementState transform(@Nonnull ThrowStatement node);
 //
-//  @NotNull
-//  StatementState transform(@NotNull TryCatchStatement node);
+//  @Nonnull
+//  StatementState transform(@Nonnull TryCatchStatement node);
 //
-//  @NotNull
-//  StatementState transform(@NotNull TryFinallyStatement node);
+//  @Nonnull
+//  StatementState transform(@Nonnull TryFinallyStatement node);
 //
-//  @NotNull
-//  StatementState transform(@NotNull VariableDeclarationStatement node);
+//  @Nonnull
+//  StatementState transform(@Nonnull VariableDeclarationStatement node);
 //
-//  @NotNull
-//  BlockState transform(@NotNull Block node);
+//  @Nonnull
+//  BlockState transform(@Nonnull Block node);
 //
-//  @NotNull
-//  DeclarationState transform(@NotNull VariableDeclaration node);
+//  @Nonnull
+//  DeclarationState transform(@Nonnull VariableDeclaration node);
 //
-//  @NotNull
-//  StatementState transform(@NotNull WhileStatement node);
+//  @Nonnull
+//  StatementState transform(@Nonnull WhileStatement node);
 //
-//  @NotNull
-//  StatementState transform(@NotNull WithStatement node);
+//  @Nonnull
+//  StatementState transform(@Nonnull WithStatement node);
 //
-//  @NotNull
-//  SwitchCaseState transform(@NotNull SwitchCase node);
+//  @Nonnull
+//  SwitchCaseState transform(@Nonnull SwitchCase node);
 //
-//  @NotNull
-//  SwitchDefaultState transform(@NotNull SwitchDefault node);
+//  @Nonnull
+//  SwitchDefaultState transform(@Nonnull SwitchDefault node);
 //}

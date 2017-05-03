@@ -69,7 +69,7 @@ import com.shapesecurity.shift.es2016.reducer.Director;
 import com.shapesecurity.shift.es2016.utils.Utils;
 import com.shapesecurity.shift.es2016.reducer.MonoidalReducer;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 public class EarlyErrorChecker extends MonoidalReducer<EarlyErrorState> {
     public EarlyErrorChecker() {
@@ -88,15 +88,15 @@ public class EarlyErrorChecker extends MonoidalReducer<EarlyErrorState> {
         return EarlyErrorChecker.extract(Director.reduceModule(new EarlyErrorChecker(), module));
     }
 
-    private boolean isStrictFunctionBody(@NotNull FunctionBody functionBody) {
+    private boolean isStrictFunctionBody(@Nonnull FunctionBody functionBody) {
         return isStrictDirectives(functionBody.directives);
     }
 
-    private boolean isStrictDirectives(@NotNull ImmutableList<Directive> directives) {
+    private boolean isStrictDirectives(@Nonnull ImmutableList<Directive> directives) {
         return directives.exists(d -> d.rawValue.equals("use strict"));
     }
 
-    private boolean containsDuplicates(@NotNull String arr) { // TODO maybe should go elsewhere
+    private boolean containsDuplicates(@Nonnull String arr) { // TODO maybe should go elsewhere
         HashTable<Character, Unit> seen = HashTable.emptyUsingEquality(); // aka set
         for (int i = 0, l = arr.length(); i < l; ++i) {
             if (seen.get(arr.charAt(i)).isJust()) {
@@ -107,7 +107,7 @@ public class EarlyErrorChecker extends MonoidalReducer<EarlyErrorState> {
         return false;
     }
 
-    private boolean isLabeledFunction(@NotNull Node node) {
+    private boolean isLabeledFunction(@Nonnull Node node) {
         if (!(node instanceof LabeledStatement)) {
             return false;
         }
@@ -115,7 +115,7 @@ public class EarlyErrorChecker extends MonoidalReducer<EarlyErrorState> {
         return labeledStatement.body instanceof FunctionDeclaration || isLabeledFunction(labeledStatement.body);
     }
 
-    private boolean isIterationStatement(@NotNull Node node) {
+    private boolean isIterationStatement(@Nonnull Node node) {
         if (node instanceof LabeledStatement) {
             return isIterationStatement(((LabeledStatement) node).body);
         }
@@ -126,7 +126,7 @@ public class EarlyErrorChecker extends MonoidalReducer<EarlyErrorState> {
                 || node instanceof WhileStatement);
     }
 
-    private boolean isSpecialMethod(@NotNull MethodDefinition methodDefinition) {
+    private boolean isSpecialMethod(@Nonnull MethodDefinition methodDefinition) {
         if (!(methodDefinition.name instanceof StaticPropertyName) || !((StaticPropertyName) methodDefinition.name).value.equals("constructor")) {
             return false;
         }
@@ -136,12 +136,12 @@ public class EarlyErrorChecker extends MonoidalReducer<EarlyErrorState> {
         return ((Method) methodDefinition).isGenerator;
     }
 
-    private boolean isSimpleParameterList(@NotNull FormalParameters params) {
+    private boolean isSimpleParameterList(@Nonnull FormalParameters params) {
         return params.rest.isNothing() && !params.items.exists(i -> !(i instanceof BindingIdentifier));
     }
 
-    @NotNull
-    private EarlyErrorState enforceDuplicateConstructorMethods(@NotNull ImmutableList<ClassElement> elements, @NotNull EarlyErrorState s) {
+    @Nonnull
+    private EarlyErrorState enforceDuplicateConstructorMethods(@Nonnull ImmutableList<ClassElement> elements, @Nonnull EarlyErrorState s) {
         elements = elements.filter(e ->
                         !e.isStatic
                                 && e.method instanceof Method
@@ -155,9 +155,9 @@ public class EarlyErrorChecker extends MonoidalReducer<EarlyErrorState> {
     }
 
 
-    @NotNull
+    @Nonnull
     @Override
-    public EarlyErrorState reduceArrowExpression(@NotNull ArrowExpression node, @NotNull EarlyErrorState params, @NotNull EarlyErrorState body) {
+    public EarlyErrorState reduceArrowExpression(@Nonnull ArrowExpression node, @Nonnull EarlyErrorState params, @Nonnull EarlyErrorState body) {
         params = params.enforceDuplicateLexicallyDeclaredNames();
         if (node.body instanceof FunctionBody) {
             body = body.enforceConflictingLexicallyDeclaredNames(params.lexicallyDeclaredNames);
@@ -174,18 +174,18 @@ public class EarlyErrorChecker extends MonoidalReducer<EarlyErrorState> {
         return s.observeVarBoundary();
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public EarlyErrorState reduceAssignmentExpression(
-            @NotNull AssignmentExpression node,
-            @NotNull EarlyErrorState binding,
-            @NotNull EarlyErrorState expression) {
+            @Nonnull AssignmentExpression node,
+            @Nonnull EarlyErrorState binding,
+            @Nonnull EarlyErrorState expression) {
         return super.reduceAssignmentExpression(node, binding, expression).clearBoundNames();
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public EarlyErrorState reduceAssignmentTargetIdentifier(@NotNull AssignmentTargetIdentifier node) {
+    public EarlyErrorState reduceAssignmentTargetIdentifier(@Nonnull AssignmentTargetIdentifier node) {
         EarlyErrorState s = new EarlyErrorState();
         if (Utils.isRestrictedWord(node.name) || Utils.isStrictModeReservedWord(node.name)) {
             s = s.addStrictError(ErrorMessages.TARGET_IDENTIFIER_STRICT.apply(node));
@@ -193,9 +193,9 @@ public class EarlyErrorChecker extends MonoidalReducer<EarlyErrorState> {
         return s;
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public EarlyErrorState reduceBindingIdentifier(@NotNull BindingIdentifier node) {
+    public EarlyErrorState reduceBindingIdentifier(@Nonnull BindingIdentifier node) {
         EarlyErrorState s = new EarlyErrorState();
         if (Utils.isRestrictedWord(node.name) || Utils.isStrictModeReservedWord(node.name)) {
             s = s.addStrictError(ErrorMessages.BINDING_IDENTIFIER_STRICT.apply(node));
@@ -204,9 +204,9 @@ public class EarlyErrorChecker extends MonoidalReducer<EarlyErrorState> {
     }
 
 
-    @NotNull
+    @Nonnull
     @Override
-    public EarlyErrorState reduceBlock(@NotNull Block node, @NotNull ImmutableList<EarlyErrorState> statements) {
+    public EarlyErrorState reduceBlock(@Nonnull Block node, @Nonnull ImmutableList<EarlyErrorState> statements) {
         EarlyErrorState s = super.reduceBlock(node, statements);
         s = s.functionDeclarationNamesAreLexical();
         s = s.enforceDuplicateLexicallyDeclaredNames();
@@ -215,19 +215,19 @@ public class EarlyErrorChecker extends MonoidalReducer<EarlyErrorState> {
         return s;
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public EarlyErrorState reduceBreakStatement(@NotNull BreakStatement node) {
+    public EarlyErrorState reduceBreakStatement(@Nonnull BreakStatement node) {
         EarlyErrorState s = super.reduceBreakStatement(node);
         return node.label.maybe(s.addFreeBreakStatement(node), l -> s.addFreeLabeledBreakStatement(node));
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public EarlyErrorState reduceCallExpression(
-            @NotNull CallExpression node,
-            @NotNull EarlyErrorState callee,
-            @NotNull ImmutableList<EarlyErrorState> arguments) {
+            @Nonnull CallExpression node,
+            @Nonnull EarlyErrorState callee,
+            @Nonnull ImmutableList<EarlyErrorState> arguments) {
         EarlyErrorState s = super.reduceCallExpression(node, callee, arguments);
         if (node.callee instanceof Super) {
             s = s.observeSuperCallExpression((Super) node.callee);
@@ -235,12 +235,12 @@ public class EarlyErrorChecker extends MonoidalReducer<EarlyErrorState> {
         return s;
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public EarlyErrorState reduceCatchClause(
-            @NotNull CatchClause node,
-            @NotNull EarlyErrorState binding,
-            @NotNull EarlyErrorState body) {
+            @Nonnull CatchClause node,
+            @Nonnull EarlyErrorState binding,
+            @Nonnull EarlyErrorState body) {
         binding = binding.observeLexicalDeclaration();
         binding = binding.enforceDuplicateLexicallyDeclaredNames();
         final EarlyErrorState finalBinding = binding.enforceConflictingLexicallyDeclaredNames(body.previousLexicallyDeclaredNames);
@@ -252,9 +252,9 @@ public class EarlyErrorChecker extends MonoidalReducer<EarlyErrorState> {
         return s.observeLexicalBoundary();
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public EarlyErrorState reduceClassDeclaration(@NotNull ClassDeclaration node, @NotNull EarlyErrorState name, @NotNull Maybe<EarlyErrorState> _super, @NotNull ImmutableList<EarlyErrorState> elements) {
+    public EarlyErrorState reduceClassDeclaration(@Nonnull ClassDeclaration node, @Nonnull EarlyErrorState name, @Nonnull Maybe<EarlyErrorState> _super, @Nonnull ImmutableList<EarlyErrorState> elements) {
         EarlyErrorState s = name;
         EarlyErrorState sElements = fold(elements).enforceStrictErrors();
         if (node._super.isJust()) {
@@ -268,9 +268,9 @@ public class EarlyErrorChecker extends MonoidalReducer<EarlyErrorState> {
         return s.observeLexicalDeclaration();
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public EarlyErrorState reduceClassElement(@NotNull ClassElement node, @NotNull EarlyErrorState method) {
+    public EarlyErrorState reduceClassElement(@Nonnull ClassElement node, @Nonnull EarlyErrorState method) {
         EarlyErrorState s = super.reduceClassElement(node, method);
         if (!node.isStatic && isSpecialMethod(node.method)) {
             s = s.addError(ErrorMessages.CTOR_SPECIAL.apply(node));
@@ -281,9 +281,9 @@ public class EarlyErrorChecker extends MonoidalReducer<EarlyErrorState> {
         return s;
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public EarlyErrorState reduceClassExpression(@NotNull ClassExpression node, @NotNull Maybe<EarlyErrorState> name, @NotNull Maybe<EarlyErrorState> _super, @NotNull ImmutableList<EarlyErrorState> elements) {
+    public EarlyErrorState reduceClassExpression(@Nonnull ClassExpression node, @Nonnull Maybe<EarlyErrorState> name, @Nonnull Maybe<EarlyErrorState> _super, @Nonnull ImmutableList<EarlyErrorState> elements) {
         EarlyErrorState s = name.orJust(new EarlyErrorState()); // todo use `identity`?
         EarlyErrorState sElements = fold(elements).enforceStrictErrors();
         if (node._super.isJust()) {
@@ -297,18 +297,18 @@ public class EarlyErrorChecker extends MonoidalReducer<EarlyErrorState> {
         return s.clearBoundNames();
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public EarlyErrorState reduceCompoundAssignmentExpression(@NotNull CompoundAssignmentExpression node, @NotNull EarlyErrorState binding, @NotNull EarlyErrorState expression) {
+    public EarlyErrorState reduceCompoundAssignmentExpression(@Nonnull CompoundAssignmentExpression node, @Nonnull EarlyErrorState binding, @Nonnull EarlyErrorState expression) {
         return super.reduceCompoundAssignmentExpression(node, binding, expression).clearBoundNames();
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public EarlyErrorState reduceComputedMemberExpression(
-            @NotNull ComputedMemberExpression node,
-            @NotNull EarlyErrorState object,
-            @NotNull EarlyErrorState expression) {
+            @Nonnull ComputedMemberExpression node,
+            @Nonnull EarlyErrorState object,
+            @Nonnull EarlyErrorState expression) {
         EarlyErrorState s = super.reduceComputedMemberExpression(node, object, expression);
         if (node.object instanceof Super) {
             s = s.observeSuperPropertyExpression(node);
@@ -316,20 +316,20 @@ public class EarlyErrorChecker extends MonoidalReducer<EarlyErrorState> {
         return s;
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public EarlyErrorState reduceContinueStatement(@NotNull ContinueStatement node) {
+    public EarlyErrorState reduceContinueStatement(@Nonnull ContinueStatement node) {
         EarlyErrorState s = super.reduceContinueStatement(node);
         return node.label.maybe(s.addFreeContinueStatement(node), l -> s.addFreeLabeledContinueStatement(node));
     }
 
 
-    @NotNull
+    @Nonnull
     @Override
     public EarlyErrorState reduceDoWhileStatement(
-            @NotNull DoWhileStatement node,
-            @NotNull EarlyErrorState body,
-            @NotNull EarlyErrorState test) {
+            @Nonnull DoWhileStatement node,
+            @Nonnull EarlyErrorState body,
+            @Nonnull EarlyErrorState test) {
         EarlyErrorState s = super.reduceDoWhileStatement(node, body, test);
         if (isLabeledFunction(node.body)) {
             s = s.addError(ErrorMessages.DO_WHILE_LABELED_FN.apply(node.body));
@@ -339,9 +339,9 @@ public class EarlyErrorChecker extends MonoidalReducer<EarlyErrorState> {
         return s;
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public EarlyErrorState reduceExport(@NotNull Export node, @NotNull EarlyErrorState declaration) {
+    public EarlyErrorState reduceExport(@Nonnull Export node, @Nonnull EarlyErrorState declaration) {
         EarlyErrorState s = super.reduceExport(node, declaration);
         s = s.functionDeclarationNamesAreLexical();
         s = s.exportDeclaredNames();
@@ -350,9 +350,9 @@ public class EarlyErrorChecker extends MonoidalReducer<EarlyErrorState> {
 
     // TODO no exportAllFrom?
 
-    @NotNull
+    @Nonnull
     @Override
-    public EarlyErrorState reduceExportDefault(@NotNull ExportDefault node, @NotNull EarlyErrorState body) {
+    public EarlyErrorState reduceExportDefault(@Nonnull ExportDefault node, @Nonnull EarlyErrorState body) {
         EarlyErrorState s = super.reduceExportDefault(node, body);
         s = s.functionDeclarationNamesAreLexical();
         if ((node.body instanceof FunctionDeclaration && !((FunctionDeclaration) node.body).name.name.equals("*default*"))
@@ -363,33 +363,33 @@ public class EarlyErrorChecker extends MonoidalReducer<EarlyErrorState> {
         return s;
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public EarlyErrorState reduceExportFrom(@NotNull ExportFrom node, @NotNull ImmutableList<EarlyErrorState> namedExports) {
+    public EarlyErrorState reduceExportFrom(@Nonnull ExportFrom node, @Nonnull ImmutableList<EarlyErrorState> namedExports) {
         EarlyErrorState s = super.reduceExportFrom(node, namedExports);
         s = s.clearExportedBindings();
         return s;
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public EarlyErrorState reduceExportFromSpecifier(@NotNull ExportFromSpecifier node) {
+    public EarlyErrorState reduceExportFromSpecifier(@Nonnull ExportFromSpecifier node) {
         return super.reduceExportFromSpecifier(node)
                 .exportName(node.exportedName.orJust(node.name), node)
                 .exportBinding(node.name, node);
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public EarlyErrorState reduceExportLocalSpecifier(@NotNull ExportLocalSpecifier node, @NotNull EarlyErrorState name) {
+    public EarlyErrorState reduceExportLocalSpecifier(@Nonnull ExportLocalSpecifier node, @Nonnull EarlyErrorState name) {
         return super.reduceExportLocalSpecifier(node, name)
                 .exportName(node.exportedName.orJust(node.name.name), node)
                 .exportBinding(node.name.name, node);
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public EarlyErrorState reduceForInStatement(@NotNull ForInStatement node, @NotNull EarlyErrorState left, @NotNull EarlyErrorState right, @NotNull EarlyErrorState body) {
+    public EarlyErrorState reduceForInStatement(@Nonnull ForInStatement node, @Nonnull EarlyErrorState left, @Nonnull EarlyErrorState right, @Nonnull EarlyErrorState body) {
         left = left.enforceDuplicateLexicallyDeclaredNames();
         left = left.enforceConflictingLexicallyDeclaredNames(body.varDeclaredNames);
         EarlyErrorState s = super.reduceForInStatement(node, left, right, body);
@@ -402,9 +402,9 @@ public class EarlyErrorChecker extends MonoidalReducer<EarlyErrorState> {
         return s;
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public EarlyErrorState reduceForOfStatement(@NotNull ForOfStatement node, @NotNull EarlyErrorState left, @NotNull EarlyErrorState right, @NotNull EarlyErrorState body) {
+    public EarlyErrorState reduceForOfStatement(@Nonnull ForOfStatement node, @Nonnull EarlyErrorState left, @Nonnull EarlyErrorState right, @Nonnull EarlyErrorState body) {
         left = left.recordForOfVars();
         left = left.enforceDuplicateLexicallyDeclaredNames();
         left = left.enforceConflictingLexicallyDeclaredNames(body.varDeclaredNames);
@@ -418,9 +418,9 @@ public class EarlyErrorChecker extends MonoidalReducer<EarlyErrorState> {
         return s;
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public EarlyErrorState reduceForStatement(@NotNull ForStatement node, @NotNull Maybe<EarlyErrorState> init, @NotNull Maybe<EarlyErrorState> test, @NotNull Maybe<EarlyErrorState> update, @NotNull EarlyErrorState body) {
+    public EarlyErrorState reduceForStatement(@Nonnull ForStatement node, @Nonnull Maybe<EarlyErrorState> init, @Nonnull Maybe<EarlyErrorState> test, @Nonnull Maybe<EarlyErrorState> update, @Nonnull EarlyErrorState body) {
         init = init.map(i ->
                         i.enforceDuplicateLexicallyDeclaredNames()
                                 .enforceConflictingLexicallyDeclaredNames(body.varDeclaredNames)
@@ -448,19 +448,19 @@ public class EarlyErrorChecker extends MonoidalReducer<EarlyErrorState> {
         return s;
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public EarlyErrorState reduceFormalParameters(@NotNull FormalParameters node, @NotNull ImmutableList<EarlyErrorState> items, @NotNull Maybe<EarlyErrorState> rest) {
+    public EarlyErrorState reduceFormalParameters(@Nonnull FormalParameters node, @Nonnull ImmutableList<EarlyErrorState> items, @Nonnull Maybe<EarlyErrorState> rest) {
         return super.reduceFormalParameters(node, items, rest)
                 .observeLexicalDeclaration();
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public EarlyErrorState reduceFunctionBody(
-            @NotNull FunctionBody node,
-            @NotNull ImmutableList<EarlyErrorState> directives,
-            @NotNull ImmutableList<EarlyErrorState> statements) {
+            @Nonnull FunctionBody node,
+            @Nonnull ImmutableList<EarlyErrorState> directives,
+            @Nonnull ImmutableList<EarlyErrorState> statements) {
         EarlyErrorState s = super.reduceFunctionBody(node, directives, statements);
         s = s.enforceDuplicateLexicallyDeclaredNames();
         s = s.enforceConflictingLexicallyDeclaredNames(s.varDeclaredNames);
@@ -476,9 +476,9 @@ public class EarlyErrorChecker extends MonoidalReducer<EarlyErrorState> {
         return s;
     }
 
-    @NotNull
+    @Nonnull
     @Override // TODO de-dup code between this and below
-    public EarlyErrorState reduceFunctionDeclaration(@NotNull FunctionDeclaration node, @NotNull EarlyErrorState name, @NotNull EarlyErrorState params, @NotNull EarlyErrorState body) {
+    public EarlyErrorState reduceFunctionDeclaration(@Nonnull FunctionDeclaration node, @Nonnull EarlyErrorState name, @Nonnull EarlyErrorState params, @Nonnull EarlyErrorState body) {
         boolean dupParamIsNonstrictError = !isSimpleParameterList(node.params) || node.isGenerator;
 
         ImmutableList<EarlyError> errors = params.lexicallyDeclaredNames.values().flatMap(nodes ->
@@ -507,9 +507,9 @@ public class EarlyErrorChecker extends MonoidalReducer<EarlyErrorState> {
         return s;
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public EarlyErrorState reduceFunctionExpression(@NotNull FunctionExpression node, @NotNull Maybe<EarlyErrorState> name, @NotNull EarlyErrorState params, @NotNull EarlyErrorState body) {
+    public EarlyErrorState reduceFunctionExpression(@Nonnull FunctionExpression node, @Nonnull Maybe<EarlyErrorState> name, @Nonnull EarlyErrorState params, @Nonnull EarlyErrorState body) {
         boolean dupParamIsNonstrictError = !isSimpleParameterList(node.params) || node.isGenerator;
 
         ImmutableList<EarlyError> errors = params.lexicallyDeclaredNames.values().flatMap(nodes ->
@@ -539,9 +539,9 @@ public class EarlyErrorChecker extends MonoidalReducer<EarlyErrorState> {
         return s;
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public EarlyErrorState reduceGetter(@NotNull Getter node, @NotNull EarlyErrorState name, @NotNull EarlyErrorState body) {
+    public EarlyErrorState reduceGetter(@Nonnull Getter node, @Nonnull EarlyErrorState name, @Nonnull EarlyErrorState body) {
         body = body.enforceSuperCallExpressions();
         body = body.clearSuperPropertyExpressions();
         body = body.clearNewTargetExpressions();
@@ -553,9 +553,9 @@ public class EarlyErrorChecker extends MonoidalReducer<EarlyErrorState> {
         return s;
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public EarlyErrorState reduceIdentifierExpression(@NotNull IdentifierExpression node) {
+    public EarlyErrorState reduceIdentifierExpression(@Nonnull IdentifierExpression node) {
         EarlyErrorState s = new EarlyErrorState(); // todo maybe should be `identity`
         if (Utils.isStrictModeReservedWord(node.name)) {
             s = s.addStrictError(ErrorMessages.IDENTIFIER_EXP_STRICT.apply(node));
@@ -563,13 +563,13 @@ public class EarlyErrorChecker extends MonoidalReducer<EarlyErrorState> {
         return s;
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public EarlyErrorState reduceIfStatement(
-            @NotNull IfStatement node,
-            @NotNull EarlyErrorState test,
-            @NotNull EarlyErrorState consequent,
-            @NotNull Maybe<EarlyErrorState> alternate) {
+            @Nonnull IfStatement node,
+            @Nonnull EarlyErrorState test,
+            @Nonnull EarlyErrorState consequent,
+            @Nonnull Maybe<EarlyErrorState> alternate) {
         if (isLabeledFunction(node.consequent)) {
             consequent = consequent.addError(ErrorMessages.CONSEQUENT_IS_LABELED_FN.apply(node.consequent));
         }
@@ -587,25 +587,25 @@ public class EarlyErrorChecker extends MonoidalReducer<EarlyErrorState> {
         return super.reduceIfStatement(node, test, consequent, alternate);
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public EarlyErrorState reduceImport(@NotNull Import node, @NotNull Maybe<EarlyErrorState> defaultBinding, @NotNull ImmutableList<EarlyErrorState> namedImports) {
+    public EarlyErrorState reduceImport(@Nonnull Import node, @Nonnull Maybe<EarlyErrorState> defaultBinding, @Nonnull ImmutableList<EarlyErrorState> namedImports) {
         EarlyErrorState s = super.reduceImport(node, defaultBinding, namedImports);
         s = s.observeLexicalDeclaration();
         return s;
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public EarlyErrorState reduceImportNamespace(@NotNull ImportNamespace node, @NotNull Maybe<EarlyErrorState> defaultBinding, @NotNull EarlyErrorState namespaceBinding) {
+    public EarlyErrorState reduceImportNamespace(@Nonnull ImportNamespace node, @Nonnull Maybe<EarlyErrorState> defaultBinding, @Nonnull EarlyErrorState namespaceBinding) {
         EarlyErrorState s = super.reduceImportNamespace(node, defaultBinding, namespaceBinding);
         s = s.observeLexicalDeclaration();
         return s;
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public EarlyErrorState reduceLabeledStatement(@NotNull LabeledStatement node, @NotNull EarlyErrorState body) {
+    public EarlyErrorState reduceLabeledStatement(@Nonnull LabeledStatement node, @Nonnull EarlyErrorState body) {
         EarlyErrorState s = super.reduceLabeledStatement(node, body);
         if (node.label.equals("yield")) {
             s = s.addStrictError(ErrorMessages.YIELD_LABEL.apply(node));
@@ -622,17 +622,17 @@ public class EarlyErrorChecker extends MonoidalReducer<EarlyErrorState> {
         return s;
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public EarlyErrorState reduceLiteralRegExpExpression(@NotNull LiteralRegExpExpression node) {
+    public EarlyErrorState reduceLiteralRegExpExpression(@Nonnull LiteralRegExpExpression node) {
         EarlyErrorState s = new EarlyErrorState(); // todo `identity`?
         // todo validate pattern
         return s;
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public EarlyErrorState reduceMethod(@NotNull Method node, @NotNull EarlyErrorState name, @NotNull EarlyErrorState params, @NotNull EarlyErrorState body) {
+    public EarlyErrorState reduceMethod(@Nonnull Method node, @Nonnull EarlyErrorState name, @Nonnull EarlyErrorState params, @Nonnull EarlyErrorState body) {
         params = params.enforceDuplicateLexicallyDeclaredNames();
         body = body.enforceConflictingLexicallyDeclaredNames(params.lexicallyDeclaredNames);
         if (node.name instanceof StaticPropertyName && ((StaticPropertyName) node.name).value.equals("constructor")) {
@@ -659,9 +659,9 @@ public class EarlyErrorChecker extends MonoidalReducer<EarlyErrorState> {
         return s;
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public EarlyErrorState reduceModule(@NotNull Module node, @NotNull ImmutableList<EarlyErrorState> directives, @NotNull ImmutableList<EarlyErrorState> items) {
+    public EarlyErrorState reduceModule(@Nonnull Module node, @Nonnull ImmutableList<EarlyErrorState> directives, @Nonnull ImmutableList<EarlyErrorState> items) {
         EarlyErrorState s = super.reduceModule(node, directives, items);
         s = s.functionDeclarationNamesAreLexical();
         s = s.enforceDuplicateLexicallyDeclaredNames();
@@ -691,18 +691,18 @@ public class EarlyErrorChecker extends MonoidalReducer<EarlyErrorState> {
         return s;
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public EarlyErrorState reduceNewTargetExpression(@NotNull NewTargetExpression node) {
+    public EarlyErrorState reduceNewTargetExpression(@Nonnull NewTargetExpression node) {
         return new EarlyErrorState().observeNewTargetExpression(node); // todo `identity`?
     }
 
 
-    @NotNull
+    @Nonnull
     @Override
     public EarlyErrorState reduceObjectExpression(
-            @NotNull ObjectExpression node,
-            @NotNull ImmutableList<EarlyErrorState> properties) {
+            @Nonnull ObjectExpression node,
+            @Nonnull ImmutableList<EarlyErrorState> properties) {
         EarlyErrorState s = super.reduceObjectExpression(node, properties);
         s = s.enforceSuperCallExpressionsInConstructorMethod();
         ImmutableList<ObjectProperty> protos = node.properties.filter(p -> p instanceof DataProperty && ((DataProperty) p).name instanceof StaticPropertyName && ((StaticPropertyName) ((DataProperty) p).name).value.equals("__proto__"));
@@ -712,9 +712,9 @@ public class EarlyErrorChecker extends MonoidalReducer<EarlyErrorState> {
         return s;
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public EarlyErrorState reduceScript(@NotNull Script node, @NotNull ImmutableList<EarlyErrorState> directives, @NotNull ImmutableList<EarlyErrorState> statements) {
+    public EarlyErrorState reduceScript(@Nonnull Script node, @Nonnull ImmutableList<EarlyErrorState> directives, @Nonnull ImmutableList<EarlyErrorState> statements) {
         EarlyErrorState s = super.reduceScript(node, directives, statements);
         s = s.enforceDuplicateLexicallyDeclaredNames();
         s = s.enforceConflictingLexicallyDeclaredNames(s.varDeclaredNames);
@@ -731,13 +731,13 @@ public class EarlyErrorChecker extends MonoidalReducer<EarlyErrorState> {
         return s;
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public EarlyErrorState reduceSetter(
-            @NotNull Setter node,
-            @NotNull EarlyErrorState name,
-            @NotNull EarlyErrorState param,
-            @NotNull EarlyErrorState body) {
+            @Nonnull Setter node,
+            @Nonnull EarlyErrorState name,
+            @Nonnull EarlyErrorState param,
+            @Nonnull EarlyErrorState body) {
         param = param.observeLexicalDeclaration();
         param = param.enforceDuplicateLexicallyDeclaredNames();
         body = body.enforceConflictingLexicallyDeclaredNames(param.lexicallyDeclaredNames);
@@ -756,9 +756,9 @@ public class EarlyErrorChecker extends MonoidalReducer<EarlyErrorState> {
         return s;
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public EarlyErrorState reduceStaticMemberExpression(@NotNull StaticMemberExpression node, @NotNull EarlyErrorState object) {
+    public EarlyErrorState reduceStaticMemberExpression(@Nonnull StaticMemberExpression node, @Nonnull EarlyErrorState object) {
         EarlyErrorState s = super.reduceStaticMemberExpression(node, object);
         if (node.object instanceof Super) {
             s = s.observeSuperPropertyExpression(node);
@@ -766,12 +766,12 @@ public class EarlyErrorChecker extends MonoidalReducer<EarlyErrorState> {
         return s;
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public EarlyErrorState reduceSwitchStatement(
-            @NotNull SwitchStatement node,
-            @NotNull EarlyErrorState discriminant,
-            @NotNull ImmutableList<EarlyErrorState> cases) {
+            @Nonnull SwitchStatement node,
+            @Nonnull EarlyErrorState discriminant,
+            @Nonnull ImmutableList<EarlyErrorState> cases) {
         EarlyErrorState sCases = this.fold(cases);
         sCases = sCases.functionDeclarationNamesAreLexical();
         sCases = sCases.enforceDuplicateLexicallyDeclaredNames();
@@ -782,14 +782,14 @@ public class EarlyErrorChecker extends MonoidalReducer<EarlyErrorState> {
         return s;
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public EarlyErrorState reduceSwitchStatementWithDefault(
-            @NotNull SwitchStatementWithDefault node,
-            @NotNull EarlyErrorState discriminant,
-            @NotNull ImmutableList<EarlyErrorState> preDefaultCases,
-            @NotNull EarlyErrorState defaultCase,
-            @NotNull ImmutableList<EarlyErrorState> postDefaultCases) {
+            @Nonnull SwitchStatementWithDefault node,
+            @Nonnull EarlyErrorState discriminant,
+            @Nonnull ImmutableList<EarlyErrorState> preDefaultCases,
+            @Nonnull EarlyErrorState defaultCase,
+            @Nonnull ImmutableList<EarlyErrorState> postDefaultCases) {
         EarlyErrorState sCases = this.append(defaultCase, this.append(this.fold(preDefaultCases), this.fold(postDefaultCases))); // TODO ensure this ordering is permissible
         sCases = sCases.functionDeclarationNamesAreLexical();
         sCases = sCases.enforceDuplicateLexicallyDeclaredNames();
@@ -801,9 +801,9 @@ public class EarlyErrorChecker extends MonoidalReducer<EarlyErrorState> {
     }
 
 
-    @NotNull
+    @Nonnull
     @Override
-    public EarlyErrorState reduceUnaryExpression(@NotNull UnaryExpression node, @NotNull EarlyErrorState operand) {
+    public EarlyErrorState reduceUnaryExpression(@Nonnull UnaryExpression node, @Nonnull EarlyErrorState operand) {
         EarlyErrorState s = super.reduceUnaryExpression(node, operand);
         if (node.operator.equals(UnaryOperator.Delete) && node.operand instanceof IdentifierExpression) {
             s = s.addStrictError(ErrorMessages.DELETE_IDENTIFIER_EXP_STRICT.apply(node));
@@ -811,18 +811,18 @@ public class EarlyErrorChecker extends MonoidalReducer<EarlyErrorState> {
         return s;
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public EarlyErrorState reduceUpdateExpression(@NotNull UpdateExpression node, @NotNull EarlyErrorState operand) {
+    public EarlyErrorState reduceUpdateExpression(@Nonnull UpdateExpression node, @Nonnull EarlyErrorState operand) {
         EarlyErrorState s = super.reduceUpdateExpression(node, operand);
         s = s.clearBoundNames();
         return s;
     }
 
 
-    @NotNull
+    @Nonnull
     @Override
-    public EarlyErrorState reduceVariableDeclaration(@NotNull VariableDeclaration node, @NotNull ImmutableList<EarlyErrorState> declarators) {
+    public EarlyErrorState reduceVariableDeclaration(@Nonnull VariableDeclaration node, @Nonnull ImmutableList<EarlyErrorState> declarators) {
         EarlyErrorState s = super.reduceVariableDeclaration(node, declarators);
         switch (node.kind) {
             case Const:
@@ -840,11 +840,11 @@ public class EarlyErrorChecker extends MonoidalReducer<EarlyErrorState> {
         return s;
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public EarlyErrorState reduceVariableDeclarationStatement(
-            @NotNull VariableDeclarationStatement node,
-            @NotNull EarlyErrorState declaration) {
+            @Nonnull VariableDeclarationStatement node,
+            @Nonnull EarlyErrorState declaration) {
         EarlyErrorState s = super.reduceVariableDeclarationStatement(node, declaration);
         if (node.declaration.kind.equals(VariableDeclarationKind.Const)) {
             s = s.addErrors(
@@ -855,12 +855,12 @@ public class EarlyErrorChecker extends MonoidalReducer<EarlyErrorState> {
         return s;
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public EarlyErrorState reduceWhileStatement(
-            @NotNull WhileStatement node,
-            @NotNull EarlyErrorState test,
-            @NotNull EarlyErrorState body) {
+            @Nonnull WhileStatement node,
+            @Nonnull EarlyErrorState test,
+            @Nonnull EarlyErrorState body) {
         EarlyErrorState s = super.reduceWhileStatement(node, test, body);
         if (isLabeledFunction(node.body)) {
             s = s.addError(ErrorMessages.WHILE_LABELED_FN.apply(node.body));
@@ -869,12 +869,12 @@ public class EarlyErrorChecker extends MonoidalReducer<EarlyErrorState> {
         return s;
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public EarlyErrorState reduceWithStatement(
-            @NotNull WithStatement node,
-            @NotNull EarlyErrorState object,
-            @NotNull EarlyErrorState body) {
+            @Nonnull WithStatement node,
+            @Nonnull EarlyErrorState object,
+            @Nonnull EarlyErrorState body) {
         EarlyErrorState s = super.reduceWithStatement(node, object, body);
         if (isLabeledFunction(node.body)) {
             s = s.addError(ErrorMessages.WITH_LABELED_FN.apply(node.body));
@@ -883,17 +883,17 @@ public class EarlyErrorChecker extends MonoidalReducer<EarlyErrorState> {
         return s;
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public EarlyErrorState reduceYieldExpression(@NotNull YieldExpression node, @NotNull Maybe<EarlyErrorState> expression) {
+    public EarlyErrorState reduceYieldExpression(@Nonnull YieldExpression node, @Nonnull Maybe<EarlyErrorState> expression) {
         EarlyErrorState s = super.reduceYieldExpression(node, expression);
         s = s.observeYieldExpression(node);
         return s;
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public EarlyErrorState reduceYieldGeneratorExpression(@NotNull YieldGeneratorExpression node, @NotNull EarlyErrorState expression) {
+    public EarlyErrorState reduceYieldGeneratorExpression(@Nonnull YieldGeneratorExpression node, @Nonnull EarlyErrorState expression) {
         EarlyErrorState s = super.reduceYieldGeneratorExpression(node, expression);
         s = s.observeYieldExpression(node);
         return s;

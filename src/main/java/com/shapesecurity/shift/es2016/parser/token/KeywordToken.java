@@ -19,10 +19,10 @@ package com.shapesecurity.shift.es2016.parser.token;
 import com.shapesecurity.shift.es2016.parser.TokenType;
 import com.shapesecurity.shift.es2016.parser.SourceRange;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 public class KeywordToken extends IdentifierLikeToken {
-    public KeywordToken(@NotNull TokenType type, @NotNull SourceRange slice) {
+    public KeywordToken(@Nonnull TokenType type, @Nonnull SourceRange slice) {
         super(type, slice);
     }
 }

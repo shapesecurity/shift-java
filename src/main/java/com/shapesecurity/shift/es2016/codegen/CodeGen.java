@@ -25,7 +25,7 @@ import com.shapesecurity.shift.es2016.ast.operators.Precedence;
 import com.shapesecurity.shift.es2016.reducer.Director;
 import com.shapesecurity.shift.es2016.reducer.Reducer;
 import com.shapesecurity.shift.es2016.utils.Utils;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,28 +36,28 @@ public class CodeGen implements Reducer<CodeRep> {
     public static final CodeGen PRETTY = new CodeGen(new FormattedCodeRepFactory());
     protected final CodeRepFactory factory;
 
-    public CodeGen(@NotNull CodeRepFactory factory) {
+    public CodeGen(@Nonnull CodeRepFactory factory) {
         this.factory = factory;
     }
 
-    @NotNull
-    public static String codeGen(@NotNull Script script) {
+    @Nonnull
+    public static String codeGen(@Nonnull Script script) {
         return codeGen(script, COMPACT);
     }
 
-    @NotNull
-    public static String codeGen(@NotNull Module module) {
+    @Nonnull
+    public static String codeGen(@Nonnull Module module) {
         return codeGen(module, COMPACT);
     }
 
-    protected static String codeGen(@NotNull Script script, @NotNull CodeGen codeGen) {
+    protected static String codeGen(@Nonnull Script script, @Nonnull CodeGen codeGen) {
         StringBuilder sb = new StringBuilder();
         TokenStream ts = new TokenStream(sb);
         Director.reduceScript(codeGen, script).emit(ts, false);
         return sb.toString();
     }
 
-    protected static String codeGen(@NotNull Module module, @NotNull CodeGen codeGen) {
+    protected static String codeGen(@Nonnull Module module, @Nonnull CodeGen codeGen) {
         StringBuilder sb = new StringBuilder();
         TokenStream ts = new TokenStream(sb);
         Director.reduceModule(codeGen, module).emit(ts, false);
@@ -65,14 +65,14 @@ public class CodeGen implements Reducer<CodeRep> {
     }
 
     @Deprecated
-    @NotNull
-    public static String codeGen(@NotNull Script script, boolean pretty) {
+    @Nonnull
+    public static String codeGen(@Nonnull Script script, boolean pretty) {
         return codeGen(script, pretty ? PRETTY : COMPACT);
     }
 
     @Deprecated
-    @NotNull
-    public static String codeGen(@NotNull Module module, boolean pretty) {
+    @Nonnull
+    public static String codeGen(@Nonnull Module module, boolean pretty) {
         return codeGen(module, pretty ? PRETTY : COMPACT);
     }
 
@@ -80,8 +80,8 @@ public class CodeGen implements Reducer<CodeRep> {
         return (char) ((lead - 0xD800) * 0x400 + (trail - 0xDC00) + 0x10000);
     }
 
-    @NotNull
-    private CodeRep getAssignmentExpr(@NotNull Maybe<CodeRep> state) {
+    @Nonnull
+    private CodeRep getAssignmentExpr(@Nonnull Maybe<CodeRep> state) {
         if (state.isJust()) {
             return state.fromJust().containsGroup() ? factory.paren(state.fromJust()) : state.fromJust();
         } else {
@@ -119,7 +119,7 @@ public class CodeGen implements Reducer<CodeRep> {
         return true;
     }
 
-    private boolean isComplexArrowHead(@NotNull FormalParameters params) {
+    private boolean isComplexArrowHead(@Nonnull FormalParameters params) {
         return (params.rest.isJust() || params.items.length != 1 || !(params.items.maybeHead().fromJust() instanceof BindingIdentifier));
     }
 
@@ -127,9 +127,9 @@ public class CodeGen implements Reducer<CodeRep> {
         return ((Expression) node).getPrecedence().ordinal() < precedence.ordinal() ? factory.paren(a) : a;
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public CodeRep reduceArrayAssignmentTarget(@NotNull ArrayAssignmentTarget node, @NotNull ImmutableList<Maybe<CodeRep>> elements, @NotNull Maybe<CodeRep> rest) {
+    public CodeRep reduceArrayAssignmentTarget(@Nonnull ArrayAssignmentTarget node, @Nonnull ImmutableList<Maybe<CodeRep>> elements, @Nonnull Maybe<CodeRep> rest) {
         CodeRep content;
         if (elements.length == 0) {
             content = rest.maybe(factory.empty(), r -> seqVA(factory.token("..."), r));
@@ -145,9 +145,9 @@ public class CodeGen implements Reducer<CodeRep> {
         return factory.bracket(content);
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public CodeRep reduceArrayBinding(@NotNull ArrayBinding node, @NotNull ImmutableList<Maybe<CodeRep>> elements, @NotNull Maybe<CodeRep> rest) {
+    public CodeRep reduceArrayBinding(@Nonnull ArrayBinding node, @Nonnull ImmutableList<Maybe<CodeRep>> elements, @Nonnull Maybe<CodeRep> rest) {
         CodeRep content;
         if (elements.length == 0) {
             content = rest.maybe(factory.empty(), r -> seqVA(factory.token("..."), r));
@@ -164,8 +164,8 @@ public class CodeGen implements Reducer<CodeRep> {
     }
 
     @Override
-    @NotNull
-    public CodeRep reduceArrayExpression(@NotNull ArrayExpression node, @NotNull ImmutableList<Maybe<CodeRep>> elements) {
+    @Nonnull
+    public CodeRep reduceArrayExpression(@Nonnull ArrayExpression node, @Nonnull ImmutableList<Maybe<CodeRep>> elements) {
         if (elements.isEmpty()) {
             return factory.bracket(factory.empty());
         }
@@ -177,9 +177,9 @@ public class CodeGen implements Reducer<CodeRep> {
         return factory.bracket(content);
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public CodeRep reduceArrowExpression(@NotNull ArrowExpression node, @NotNull CodeRep params, @NotNull CodeRep body) {
+    public CodeRep reduceArrowExpression(@Nonnull ArrowExpression node, @Nonnull CodeRep params, @Nonnull CodeRep body) {
         if (isComplexArrowHead(node.params)) {
             params = factory.paren(params);
         }
@@ -195,8 +195,8 @@ public class CodeGen implements Reducer<CodeRep> {
     }
 
     @Override
-    @NotNull
-    public CodeRep reduceAssignmentExpression(@NotNull AssignmentExpression node, @NotNull CodeRep leftCode, @NotNull CodeRep expression) {
+    @Nonnull
+    public CodeRep reduceAssignmentExpression(@Nonnull AssignmentExpression node, @Nonnull CodeRep leftCode, @Nonnull CodeRep expression) {
         CodeRep rightCode = expression;
         boolean containsIn = expression.containsIn();
         boolean startsWithCurly = leftCode.startsWithCurly();
@@ -214,33 +214,33 @@ public class CodeGen implements Reducer<CodeRep> {
         return toReturn;
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public CodeRep reduceAssignmentTargetIdentifier(@NotNull AssignmentTargetIdentifier node) {
+    public CodeRep reduceAssignmentTargetIdentifier(@Nonnull AssignmentTargetIdentifier node) {
         return factory.token(node.name);
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public CodeRep reduceAssignmentTargetPropertyIdentifier(@NotNull AssignmentTargetPropertyIdentifier node, @NotNull CodeRep binding, @NotNull Maybe<CodeRep> init) {
+    public CodeRep reduceAssignmentTargetPropertyIdentifier(@Nonnull AssignmentTargetPropertyIdentifier node, @Nonnull CodeRep binding, @Nonnull Maybe<CodeRep> init) {
         return init.maybe(binding, i -> seqVA(binding, factory.token("="), i));
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public CodeRep reduceAssignmentTargetPropertyProperty(@NotNull AssignmentTargetPropertyProperty node, @NotNull CodeRep name, @NotNull CodeRep binding) {
+    public CodeRep reduceAssignmentTargetPropertyProperty(@Nonnull AssignmentTargetPropertyProperty node, @Nonnull CodeRep name, @Nonnull CodeRep binding) {
         return seqVA(name, factory.token(":"), binding);
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public CodeRep reduceAssignmentTargetWithDefault(@NotNull AssignmentTargetWithDefault node, @NotNull CodeRep binding, @NotNull CodeRep init) {
+    public CodeRep reduceAssignmentTargetWithDefault(@Nonnull AssignmentTargetWithDefault node, @Nonnull CodeRep binding, @Nonnull CodeRep init) {
         return seqVA(binding, factory.token("="), init);
     }
 
     @Override
-    @NotNull
-    public CodeRep reduceBinaryExpression(@NotNull BinaryExpression node, @NotNull CodeRep left, @NotNull CodeRep right) {
+    @Nonnull
+    public CodeRep reduceBinaryExpression(@Nonnull BinaryExpression node, @Nonnull CodeRep left, @Nonnull CodeRep right) {
         CodeRep leftCode = left;
         boolean startsWithCurly = left.startsWithCurly();
         boolean startsWithLetSquareBracket = left.startsWithLetSquareBracket();
@@ -268,9 +268,9 @@ public class CodeGen implements Reducer<CodeRep> {
         return toReturn;
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public CodeRep reduceBindingIdentifier(@NotNull BindingIdentifier node) {
+    public CodeRep reduceBindingIdentifier(@Nonnull BindingIdentifier node) {
         CodeRep a = factory.token(node.name);
         if (node.name.equals("let")) {
             a.setStartsWithLet(true);
@@ -278,45 +278,45 @@ public class CodeGen implements Reducer<CodeRep> {
         return a;
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public CodeRep reduceBindingPropertyIdentifier(@NotNull BindingPropertyIdentifier node, @NotNull CodeRep binding, @NotNull Maybe<CodeRep> init) {
+    public CodeRep reduceBindingPropertyIdentifier(@Nonnull BindingPropertyIdentifier node, @Nonnull CodeRep binding, @Nonnull Maybe<CodeRep> init) {
         return init.maybe(binding, i -> seqVA(binding, factory.token("="), i));
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public CodeRep reduceBindingPropertyProperty(@NotNull BindingPropertyProperty node, @NotNull CodeRep name, @NotNull CodeRep binding) {
+    public CodeRep reduceBindingPropertyProperty(@Nonnull BindingPropertyProperty node, @Nonnull CodeRep name, @Nonnull CodeRep binding) {
         return seqVA(name, factory.token(":"), binding);
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public CodeRep reduceBindingWithDefault(@NotNull BindingWithDefault node, @NotNull CodeRep binding, @NotNull CodeRep init) {
+    public CodeRep reduceBindingWithDefault(@Nonnull BindingWithDefault node, @Nonnull CodeRep binding, @Nonnull CodeRep init) {
         return seqVA(binding, factory.token("="), init);
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public CodeRep reduceBlock(@NotNull Block node, @NotNull ImmutableList<CodeRep> statements) {
+    public CodeRep reduceBlock(@Nonnull Block node, @Nonnull ImmutableList<CodeRep> statements) {
         return factory.brace(factory.seq(statements));
     }
 
     @Override
-    @NotNull
-    public CodeRep reduceBlockStatement(@NotNull BlockStatement node, @NotNull CodeRep block) {
+    @Nonnull
+    public CodeRep reduceBlockStatement(@Nonnull BlockStatement node, @Nonnull CodeRep block) {
         return block;
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public CodeRep reduceBreakStatement(@NotNull BreakStatement node) {
+    public CodeRep reduceBreakStatement(@Nonnull BreakStatement node) {
         return seqVA(factory.token("break"), node.label.maybe(factory.empty(), factory::token), factory.semiOp());
     }
 
     @Override
-    @NotNull
-    public CodeRep reduceCallExpression(@NotNull CallExpression node, @NotNull CodeRep callee, @NotNull ImmutableList<CodeRep> arguments) {
+    @Nonnull
+    public CodeRep reduceCallExpression(@Nonnull CallExpression node, @Nonnull CodeRep callee, @Nonnull ImmutableList<CodeRep> arguments) {
         CodeRep result;
         if (node.callee instanceof Expression) {
             result = seqVA(p(node.callee, node.getPrecedence(), callee), factory.paren(factory.commaSep(arguments)));
@@ -329,15 +329,15 @@ public class CodeGen implements Reducer<CodeRep> {
         return result;
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public CodeRep reduceCatchClause(@NotNull CatchClause node, @NotNull CodeRep binding, @NotNull CodeRep body) {
+    public CodeRep reduceCatchClause(@Nonnull CatchClause node, @Nonnull CodeRep binding, @Nonnull CodeRep body) {
         return seqVA(factory.token("catch"), factory.paren(binding), body);
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public CodeRep reduceClassDeclaration(@NotNull ClassDeclaration node, @NotNull CodeRep name, @NotNull Maybe<CodeRep> _super, @NotNull ImmutableList<CodeRep> elements) {
+    public CodeRep reduceClassDeclaration(@Nonnull ClassDeclaration node, @Nonnull CodeRep name, @Nonnull Maybe<CodeRep> _super, @Nonnull ImmutableList<CodeRep> elements) {
         CodeRep state = seqVA(factory.token("class"), name);
         if (_super.isJust()) {
             state = seqVA(state, factory.token("extends"), _super.fromJust());
@@ -346,18 +346,18 @@ public class CodeGen implements Reducer<CodeRep> {
         return state;
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public CodeRep reduceClassElement(@NotNull ClassElement node, @NotNull CodeRep method) {
+    public CodeRep reduceClassElement(@Nonnull ClassElement node, @Nonnull CodeRep method) {
         if (!node.isStatic) {
             return method;
         }
         return seqVA(factory.token("static"), method);
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public CodeRep reduceClassExpression(@NotNull ClassExpression node, @NotNull Maybe<CodeRep> name, @NotNull Maybe<CodeRep> _super, @NotNull ImmutableList<CodeRep> elements) {
+    public CodeRep reduceClassExpression(@Nonnull ClassExpression node, @Nonnull Maybe<CodeRep> name, @Nonnull Maybe<CodeRep> _super, @Nonnull ImmutableList<CodeRep> elements) {
         CodeRep state = factory.token("class");
         if (name.isJust()) {
             state = seqVA(state, name.fromJust());
@@ -370,9 +370,9 @@ public class CodeGen implements Reducer<CodeRep> {
         return state;
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public CodeRep reduceCompoundAssignmentExpression(@NotNull CompoundAssignmentExpression node, @NotNull CodeRep binding, @NotNull CodeRep expression) {
+    public CodeRep reduceCompoundAssignmentExpression(@Nonnull CompoundAssignmentExpression node, @Nonnull CodeRep binding, @Nonnull CodeRep expression) {
         CodeRep rightCode = expression;
         boolean containsIn = expression.containsIn();
         boolean startsWithCurly = binding.startsWithCurly();
@@ -390,9 +390,9 @@ public class CodeGen implements Reducer<CodeRep> {
         return toReturn;
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public CodeRep reduceComputedMemberAssignmentTarget(@NotNull ComputedMemberAssignmentTarget node, @NotNull CodeRep object, @NotNull CodeRep expression) {
+    public CodeRep reduceComputedMemberAssignmentTarget(@Nonnull ComputedMemberAssignmentTarget node, @Nonnull CodeRep object, @Nonnull CodeRep expression) {
         boolean startsWithLetSquareBracket = object.startsWithLetSquareBracket() || node.object instanceof IdentifierExpression && ((IdentifierExpression) node.object).name.equals("let");
         CodeRep result;
         if (node.object instanceof Expression) {
@@ -408,8 +408,8 @@ public class CodeGen implements Reducer<CodeRep> {
     }
 
     @Override
-    @NotNull
-    public CodeRep reduceComputedMemberExpression(@NotNull ComputedMemberExpression node, @NotNull CodeRep object, @NotNull CodeRep expression) {
+    @Nonnull
+    public CodeRep reduceComputedMemberExpression(@Nonnull ComputedMemberExpression node, @Nonnull CodeRep object, @Nonnull CodeRep expression) {
         boolean startsWithLetSquareBracket = object.startsWithLetSquareBracket() || node.object instanceof IdentifierExpression && ((IdentifierExpression) node.object).name.equals("let");
         CodeRep result;
         if (node.object instanceof Expression) {
@@ -424,15 +424,15 @@ public class CodeGen implements Reducer<CodeRep> {
         return result;
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public CodeRep reduceComputedPropertyName(@NotNull ComputedPropertyName node, @NotNull CodeRep expression) {
+    public CodeRep reduceComputedPropertyName(@Nonnull ComputedPropertyName node, @Nonnull CodeRep expression) {
         return factory.bracket(expression);
     }
 
     @Override
-    @NotNull
-    public CodeRep reduceConditionalExpression(@NotNull ConditionalExpression node, @NotNull CodeRep test, @NotNull CodeRep consequent, @NotNull CodeRep alternate) {
+    @Nonnull
+    public CodeRep reduceConditionalExpression(@Nonnull ConditionalExpression node, @Nonnull CodeRep test, @Nonnull CodeRep consequent, @Nonnull CodeRep alternate) {
         boolean containsIn = test.containsIn() || alternate.containsIn();
         boolean startsWithCurly = test.startsWithCurly();
         boolean startsWithLetSquareBracket = test.startsWithLetSquareBracket();
@@ -446,64 +446,64 @@ public class CodeGen implements Reducer<CodeRep> {
         return toReturn;
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public CodeRep reduceContinueStatement(@NotNull ContinueStatement node) {
+    public CodeRep reduceContinueStatement(@Nonnull ContinueStatement node) {
         return seqVA(factory.token("continue"), node.label.maybe(factory.empty(), factory::token), factory.semiOp());
     }
 
     @Override
-    @NotNull
-    public CodeRep reduceDataProperty(@NotNull DataProperty node, @NotNull CodeRep name, @NotNull CodeRep expression) {
+    @Nonnull
+    public CodeRep reduceDataProperty(@Nonnull DataProperty node, @Nonnull CodeRep name, @Nonnull CodeRep expression) {
         return seqVA(name, factory.token(":"), getAssignmentExpr(Maybe.of(expression)));
     }
 
     @Override
-    @NotNull
-    public CodeRep reduceDebuggerStatement(@NotNull DebuggerStatement node) {
+    @Nonnull
+    public CodeRep reduceDebuggerStatement(@Nonnull DebuggerStatement node) {
         return seqVA(factory.token("debugger"), factory.semiOp());
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public CodeRep reduceDirective(@NotNull Directive node) {
+    public CodeRep reduceDirective(@Nonnull Directive node) {
         String delim = node.rawValue.matches("^(?:[^\"]|\\\\.)*$") ? "\"" : "\'";
         return seqVA(factory.token(delim + node.rawValue + delim), factory.semiOp());
     }
 
     @Override
-    @NotNull
+    @Nonnull
     public CodeRep reduceDoWhileStatement(
-            @NotNull DoWhileStatement node, @NotNull CodeRep body, @NotNull CodeRep test) {
+            @Nonnull DoWhileStatement node, @Nonnull CodeRep body, @Nonnull CodeRep test) {
         return seqVA(
                 factory.token("do"), body, factory.token("while"), factory.paren(test), factory.semiOp());
     }
 
     @Override
-    @NotNull
-    public CodeRep reduceEmptyStatement(@NotNull EmptyStatement node) {
+    @Nonnull
+    public CodeRep reduceEmptyStatement(@Nonnull EmptyStatement node) {
         return factory.semi();
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public CodeRep reduceExport(@NotNull Export node, @NotNull CodeRep declaration) {
+    public CodeRep reduceExport(@Nonnull Export node, @Nonnull CodeRep declaration) {
         if (node.declaration instanceof VariableDeclaration) {
             declaration = seqVA(declaration, factory.semiOp());
         }
         return seqVA(factory.token("export"), declaration);
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public CodeRep reduceExportAllFrom(@NotNull ExportAllFrom node) {
+    public CodeRep reduceExportAllFrom(@Nonnull ExportAllFrom node) {
         return seqVA(factory.token("export"), factory.token("*"), factory.token("from"), factory.token(Utils.escapeStringLiteral(node.moduleSpecifier)), factory.semiOp());
 
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public CodeRep reduceExportDefault(@NotNull ExportDefault node, @NotNull CodeRep body) {
+    public CodeRep reduceExportDefault(@Nonnull ExportDefault node, @Nonnull CodeRep body) {
         body = body.startsWithFunctionOrClass() ? factory.paren(body) : body;
         if (node.body instanceof Expression) {
             body = seqVA(body, factory.semiOp());
@@ -511,9 +511,9 @@ public class CodeGen implements Reducer<CodeRep> {
         return seqVA(factory.token("export default"), body);
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public CodeRep reduceExportFrom(@NotNull ExportFrom node, @NotNull ImmutableList<CodeRep> namedExports) {
+    public CodeRep reduceExportFrom(@Nonnull ExportFrom node, @Nonnull ImmutableList<CodeRep> namedExports) {
         return seqVA(
                 factory.token("export"),
                 factory.brace(factory.commaSep(namedExports)),
@@ -521,27 +521,27 @@ public class CodeGen implements Reducer<CodeRep> {
         );
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public CodeRep reduceExportFromSpecifier(@NotNull ExportFromSpecifier node) {
+    public CodeRep reduceExportFromSpecifier(@Nonnull ExportFromSpecifier node) {
         if (node.exportedName.isNothing()) {
             return factory.token(node.name);
         }
         return seqVA(factory.token(node.name), factory.token("as"), factory.token(node.exportedName.fromJust()));
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public CodeRep reduceExportLocalSpecifier(@NotNull ExportLocalSpecifier node, @NotNull CodeRep name) {
+    public CodeRep reduceExportLocalSpecifier(@Nonnull ExportLocalSpecifier node, @Nonnull CodeRep name) {
         if (node.exportedName.isNothing()) {
             return name;
         }
         return seqVA(name, factory.token("as"), factory.token(node.exportedName.fromJust()));
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public CodeRep reduceExportLocals(@NotNull ExportLocals node, @NotNull ImmutableList<CodeRep> namedExports) {
+    public CodeRep reduceExportLocals(@Nonnull ExportLocals node, @Nonnull ImmutableList<CodeRep> namedExports) {
         return seqVA(
                 factory.token("export"),
                 factory.brace(factory.commaSep(namedExports))
@@ -549,8 +549,8 @@ public class CodeGen implements Reducer<CodeRep> {
     }
 
     @Override
-    @NotNull
-    public CodeRep reduceExpressionStatement(@NotNull ExpressionStatement expressionStatement, @NotNull CodeRep expression) {
+    @Nonnull
+    public CodeRep reduceExpressionStatement(@Nonnull ExpressionStatement expressionStatement, @Nonnull CodeRep expression) {
         if (expressionStatement.expression instanceof LiteralStringExpression) {
             return factory.markStringLiteralExpressionStatement(expression);
         }
@@ -558,9 +558,9 @@ public class CodeGen implements Reducer<CodeRep> {
         return seqVA((needsParens ? factory.paren(expression) : expression), factory.semiOp());
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public CodeRep reduceForInStatement(@NotNull ForInStatement node, @NotNull CodeRep left, @NotNull CodeRep right, @NotNull CodeRep body) {
+    public CodeRep reduceForInStatement(@Nonnull ForInStatement node, @Nonnull CodeRep left, @Nonnull CodeRep right, @Nonnull CodeRep body) {
         CodeRep leftP = left;
         if (node.left instanceof VariableDeclaration) {
             leftP = factory.noIn(factory.markContainsIn(left));
@@ -574,23 +574,23 @@ public class CodeGen implements Reducer<CodeRep> {
         return toReturn;
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public CodeRep reduceForOfStatement(@NotNull ForOfStatement node, @NotNull CodeRep left, @NotNull CodeRep right, @NotNull CodeRep body) {
+    public CodeRep reduceForOfStatement(@Nonnull ForOfStatement node, @Nonnull CodeRep left, @Nonnull CodeRep right, @Nonnull CodeRep body) {
         left = node.left instanceof VariableDeclaration ? factory.noIn(factory.markContainsIn(left)) : left;
         CodeRep toReturn = seqVA(factory.token("for"), factory.paren(seqVA(left.startsWithLet() ? factory.paren(left) : left, factory.token("of"), right)), body);
         toReturn.setEndsWithMissingElse(body.endsWithMissingElse());
         return toReturn;
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public CodeRep reduceForStatement(
-            @NotNull ForStatement node,
-            @NotNull Maybe<CodeRep> init,
-            @NotNull Maybe<CodeRep> test,
-            @NotNull Maybe<CodeRep> update,
-            @NotNull CodeRep body) {
+            @Nonnull ForStatement node,
+            @Nonnull Maybe<CodeRep> init,
+            @Nonnull Maybe<CodeRep> test,
+            @Nonnull Maybe<CodeRep> update,
+            @Nonnull CodeRep body) {
         CodeRep result = seqVA(
                 factory.token("for"),
                 factory.paren(seqVA(
@@ -604,18 +604,18 @@ public class CodeGen implements Reducer<CodeRep> {
         return result;
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public CodeRep reduceFormalParameters(@NotNull FormalParameters node, @NotNull ImmutableList<CodeRep> items, @NotNull Maybe<CodeRep> rest) {
+    public CodeRep reduceFormalParameters(@Nonnull FormalParameters node, @Nonnull ImmutableList<CodeRep> items, @Nonnull Maybe<CodeRep> rest) {
         return factory.commaSep(rest.maybe(items, r -> items.append(ImmutableList.of(seqVA(factory.token("..."), r)))));
     }
 
     @Override
-    @NotNull
+    @Nonnull
     public CodeRep reduceFunctionBody(
-            @NotNull final FunctionBody node,
-            @NotNull final ImmutableList<CodeRep> directives,
-            @NotNull final ImmutableList<CodeRep> statements) {
+            @Nonnull final FunctionBody node,
+            @Nonnull final ImmutableList<CodeRep> directives,
+            @Nonnull final ImmutableList<CodeRep> statements) {
         if (statements.isNotEmpty()) {
             ((NonEmptyImmutableList<CodeRep>) statements).head.markIsInDirectivePosition();
         }
@@ -623,29 +623,29 @@ public class CodeGen implements Reducer<CodeRep> {
     }
 
     @Override
-    @NotNull
-    public CodeRep reduceFunctionDeclaration(@NotNull FunctionDeclaration node, @NotNull CodeRep name, @NotNull CodeRep params, @NotNull CodeRep body) {
+    @Nonnull
+    public CodeRep reduceFunctionDeclaration(@Nonnull FunctionDeclaration node, @Nonnull CodeRep name, @Nonnull CodeRep params, @Nonnull CodeRep body) {
         return seqVA(factory.token("function"), node.isGenerator ? factory.token("*") : factory.empty(), node.name.name.equals("*default*") ? factory.empty() : name, factory.paren(params), factory.brace(body));
     }
 
     @Override
-    @NotNull
-    public CodeRep reduceFunctionExpression(@NotNull FunctionExpression node, @NotNull Maybe<CodeRep> name, @NotNull CodeRep params, @NotNull CodeRep body) {
+    @Nonnull
+    public CodeRep reduceFunctionExpression(@Nonnull FunctionExpression node, @Nonnull Maybe<CodeRep> name, @Nonnull CodeRep params, @Nonnull CodeRep body) {
         CodeRep state = seqVA(factory.token("function"), node.isGenerator ? factory.token("*") : factory.empty(), name.isJust() ? name.fromJust() : factory.empty(), factory.paren(params), factory.brace(body));
         state.setStartsWithFunctionOrClass(true);
         return state;
     }
 
     @Override
-    @NotNull
+    @Nonnull
     public CodeRep reduceGetter(
-            @NotNull Getter node, @NotNull CodeRep name, @NotNull CodeRep body) {
+            @Nonnull Getter node, @Nonnull CodeRep name, @Nonnull CodeRep body) {
         return seqVA(factory.token("get"), name, factory.paren(factory.empty()), factory.brace(body));
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public CodeRep reduceIdentifierExpression(@NotNull IdentifierExpression node) {
+    public CodeRep reduceIdentifierExpression(@Nonnull IdentifierExpression node) {
         CodeRep a = factory.token(node.name);
         if (node.name.equals("let")) {
             a.setStartsWithLet(true);
@@ -654,12 +654,12 @@ public class CodeGen implements Reducer<CodeRep> {
     }
 
     @Override
-    @NotNull
+    @Nonnull
     public CodeRep reduceIfStatement(
-            @NotNull IfStatement node,
-            @NotNull CodeRep test,
-            @NotNull CodeRep consequent,
-            @NotNull Maybe<CodeRep> alternate) {
+            @Nonnull IfStatement node,
+            @Nonnull CodeRep test,
+            @Nonnull CodeRep consequent,
+            @Nonnull Maybe<CodeRep> alternate) {
         CodeRep consequentCode = consequent;
         if (alternate.isJust() && consequent.endsWithMissingElse()) {
             consequentCode = factory.brace(consequentCode);
@@ -672,9 +672,9 @@ public class CodeGen implements Reducer<CodeRep> {
         return result;
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public CodeRep reduceImport(@NotNull Import node, @NotNull Maybe<CodeRep> defaultBinding, @NotNull ImmutableList<CodeRep> namedImports) {
+    public CodeRep reduceImport(@Nonnull Import node, @Nonnull Maybe<CodeRep> defaultBinding, @Nonnull ImmutableList<CodeRep> namedImports) {
         List<CodeRep> bindings = new ArrayList<>();
         if (defaultBinding.isJust()) {
             bindings.add(defaultBinding.fromJust());
@@ -688,9 +688,9 @@ public class CodeGen implements Reducer<CodeRep> {
         return seqVA(factory.token("import"), factory.commaSep(ImmutableList.from(bindings)), factory.token("from"), factory.token(Utils.escapeStringLiteral(node.moduleSpecifier)), factory.semiOp());
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public CodeRep reduceImportNamespace(@NotNull ImportNamespace node, @NotNull Maybe<CodeRep> defaultBinding, @NotNull CodeRep namespaceBinding) {
+    public CodeRep reduceImportNamespace(@Nonnull ImportNamespace node, @Nonnull Maybe<CodeRep> defaultBinding, @Nonnull CodeRep namespaceBinding) {
         return seqVA(
                 factory.token("import"),
                 defaultBinding.maybe(factory.empty(), b -> seqVA(b, factory.token(","))),
@@ -703,71 +703,71 @@ public class CodeGen implements Reducer<CodeRep> {
         );
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public CodeRep reduceImportSpecifier(@NotNull ImportSpecifier node, @NotNull CodeRep binding) {
+    public CodeRep reduceImportSpecifier(@Nonnull ImportSpecifier node, @Nonnull CodeRep binding) {
         return node.name.maybe(binding, n -> seqVA(factory.token(n), factory.token("as"), binding));
     }
 
     @Override
-    @NotNull
+    @Nonnull
     public CodeRep reduceLabeledStatement(
-            @NotNull LabeledStatement node, @NotNull CodeRep body) {
+            @Nonnull LabeledStatement node, @Nonnull CodeRep body) {
         CodeRep result = seqVA(factory.token(node.label), factory.token(":"), body);
         result.setEndsWithMissingElse(body.endsWithMissingElse());
         return result;
     }
 
     @Override
-    @NotNull
-    public CodeRep reduceLiteralBooleanExpression(@NotNull LiteralBooleanExpression node) {
+    @Nonnull
+    public CodeRep reduceLiteralBooleanExpression(@Nonnull LiteralBooleanExpression node) {
         return factory.token(Boolean.toString(node.value));
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public CodeRep reduceLiteralInfinityExpression(@NotNull LiteralInfinityExpression node) {
+    public CodeRep reduceLiteralInfinityExpression(@Nonnull LiteralInfinityExpression node) {
         return factory.token("2e308");
     }
 
     @Override
-    @NotNull
-    public CodeRep reduceLiteralNullExpression(@NotNull LiteralNullExpression node) {
+    @Nonnull
+    public CodeRep reduceLiteralNullExpression(@Nonnull LiteralNullExpression node) {
         return factory.token("null");
     }
 
     @Override
-    @NotNull
-    public CodeRep reduceLiteralNumericExpression(@NotNull LiteralNumericExpression node) {
+    @Nonnull
+    public CodeRep reduceLiteralNumericExpression(@Nonnull LiteralNumericExpression node) {
         return factory.num(node.value);
     }
 
     @Override
-    @NotNull
-    public CodeRep reduceLiteralRegExpExpression(@NotNull LiteralRegExpExpression node) {
+    @Nonnull
+    public CodeRep reduceLiteralRegExpExpression(@Nonnull LiteralRegExpExpression node) {
         return factory.token("/" + node.pattern + "/" + buildFlags(node));
     }
 
-    @NotNull
-    protected static String buildFlags(@NotNull LiteralRegExpExpression node) {
+    @Nonnull
+    protected static String buildFlags(@Nonnull LiteralRegExpExpression node) {
         return (node.global ? "g" : "") + (node.ignoreCase ? "i" : "") + (node.multiLine ? "m" : "") + (node.unicode ? "u" : "") + (node.sticky ? "y" : "");
     }
 
     @Override
-    @NotNull
-    public CodeRep reduceLiteralStringExpression(@NotNull LiteralStringExpression node) {
+    @Nonnull
+    public CodeRep reduceLiteralStringExpression(@Nonnull LiteralStringExpression node) {
         return factory.token(Utils.escapeStringLiteral(node.value));
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public CodeRep reduceMethod(@NotNull Method node, @NotNull CodeRep name, @NotNull CodeRep params, @NotNull CodeRep body) {
+    public CodeRep reduceMethod(@Nonnull Method node, @Nonnull CodeRep name, @Nonnull CodeRep params, @Nonnull CodeRep body) {
         return seqVA(node.isGenerator ? factory.token("*") : factory.empty(), name, factory.paren(params), factory.brace(body));
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public CodeRep reduceModule(@NotNull Module node, @NotNull ImmutableList<CodeRep> directives, @NotNull ImmutableList<CodeRep> items) {
+    public CodeRep reduceModule(@Nonnull Module node, @Nonnull ImmutableList<CodeRep> directives, @Nonnull ImmutableList<CodeRep> items) {
         if (items.isNotEmpty()) {
             ((NonEmptyImmutableList<CodeRep>) items).head.markIsInDirectivePosition();
         }
@@ -775,53 +775,53 @@ public class CodeGen implements Reducer<CodeRep> {
     }
 
     @Override
-    @NotNull
-    public CodeRep reduceNewExpression(@NotNull NewExpression node, @NotNull CodeRep callee, @NotNull ImmutableList<CodeRep> arguments) {
+    @Nonnull
+    public CodeRep reduceNewExpression(@Nonnull NewExpression node, @Nonnull CodeRep callee, @Nonnull ImmutableList<CodeRep> arguments) {
         CodeRep calleeRep = node.callee.getPrecedence() == Precedence.CALL ? factory.paren(callee) : p(node.callee, node.getPrecedence(), callee);
         return seqVA(factory.token("new"), calleeRep, arguments.length == 0 ? factory.empty() : factory.paren(factory.commaSep(arguments)));
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public CodeRep reduceNewTargetExpression(@NotNull NewTargetExpression node) {
+    public CodeRep reduceNewTargetExpression(@Nonnull NewTargetExpression node) {
         return factory.token("new.target");
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public CodeRep reduceObjectAssignmentTarget(@NotNull ObjectAssignmentTarget node, @NotNull ImmutableList<CodeRep> properties) {
+    public CodeRep reduceObjectAssignmentTarget(@Nonnull ObjectAssignmentTarget node, @Nonnull ImmutableList<CodeRep> properties) {
         CodeRep state = factory.brace(factory.commaSep(properties));
         state.setStartsWithCurly(true);
         return state;
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public CodeRep reduceObjectBinding(@NotNull ObjectBinding node, @NotNull ImmutableList<CodeRep> properties) {
+    public CodeRep reduceObjectBinding(@Nonnull ObjectBinding node, @Nonnull ImmutableList<CodeRep> properties) {
         CodeRep state = factory.brace(factory.commaSep(properties));
         state.setStartsWithCurly(true);
         return state;
     }
 
     @Override
-    @NotNull
-    public CodeRep reduceObjectExpression(@NotNull ObjectExpression node, @NotNull ImmutableList<CodeRep> properties) {
+    @Nonnull
+    public CodeRep reduceObjectExpression(@Nonnull ObjectExpression node, @Nonnull ImmutableList<CodeRep> properties) {
         CodeRep result = factory.brace(factory.commaSep(properties));
         result.setStartsWithCurly(true);
         return result;
     }
 
     @Override
-    @NotNull
+    @Nonnull
     public CodeRep reduceReturnStatement(
-            @NotNull ReturnStatement node, @NotNull Maybe<CodeRep> expression) {
+            @Nonnull ReturnStatement node, @Nonnull Maybe<CodeRep> expression) {
         return seqVA(
                 factory.token("return"), seqVA(expression.orJust(factory.empty())), factory.semiOp());
     }
 
     @Override
-    @NotNull
-    public CodeRep reduceScript(@NotNull Script node, @NotNull ImmutableList<CodeRep> directives, @NotNull ImmutableList<CodeRep> statements) {
+    @Nonnull
+    public CodeRep reduceScript(@Nonnull Script node, @Nonnull ImmutableList<CodeRep> directives, @Nonnull ImmutableList<CodeRep> statements) {
         if (statements.isNotEmpty()) {
             ((NonEmptyImmutableList<CodeRep>) statements).head.markIsInDirectivePosition();
         }
@@ -829,30 +829,30 @@ public class CodeGen implements Reducer<CodeRep> {
     }
 
     @Override
-    @NotNull
+    @Nonnull
     public CodeRep reduceSetter(
-            @NotNull Setter node,
-            @NotNull CodeRep name,
-            @NotNull CodeRep param,
-            @NotNull CodeRep body) {
+            @Nonnull Setter node,
+            @Nonnull CodeRep name,
+            @Nonnull CodeRep param,
+            @Nonnull CodeRep body) {
         return (seqVA(factory.token("set"), name, factory.paren(param), factory.brace(body)));
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public CodeRep reduceShorthandProperty(@NotNull ShorthandProperty node, @NotNull CodeRep name) {
+    public CodeRep reduceShorthandProperty(@Nonnull ShorthandProperty node, @Nonnull CodeRep name) {
         return name;
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public CodeRep reduceSpreadElement(@NotNull SpreadElement node, @NotNull CodeRep expression) {
+    public CodeRep reduceSpreadElement(@Nonnull SpreadElement node, @Nonnull CodeRep expression) {
         return seqVA(factory.token("..."), p(node.expression, Precedence.ASSIGNMENT, expression));
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public CodeRep reduceStaticMemberAssignmentTarget(@NotNull StaticMemberAssignmentTarget node, @NotNull CodeRep object) {
+    public CodeRep reduceStaticMemberAssignmentTarget(@Nonnull StaticMemberAssignmentTarget node, @Nonnull CodeRep object) {
         CodeRep state;
         if (node.object instanceof Expression) {
             state = seqVA(p(node.object, Precedence.MEMBER, object), factory.token("."), factory.token(node.property)); // TODO confirm MEMBMER is always correct
@@ -868,8 +868,8 @@ public class CodeGen implements Reducer<CodeRep> {
     }
 
     @Override
-    @NotNull
-    public CodeRep reduceStaticMemberExpression(@NotNull StaticMemberExpression node, @NotNull CodeRep object) {
+    @Nonnull
+    public CodeRep reduceStaticMemberExpression(@Nonnull StaticMemberExpression node, @Nonnull CodeRep object) {
         CodeRep state;
         if (node.object instanceof Expression) {
             state = seqVA(p(node.object, node.getPrecedence(), object), factory.token("."), factory.token(node.property));
@@ -884,9 +884,9 @@ public class CodeGen implements Reducer<CodeRep> {
         return state;
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public CodeRep reduceStaticPropertyName(@NotNull StaticPropertyName node) {
+    public CodeRep reduceStaticPropertyName(@Nonnull StaticPropertyName node) {
         if (isIdentifierNameES6(node.value) && !node.value.equals("Infinity")) {
             return factory.token(node.value);
         } else {
@@ -899,45 +899,45 @@ public class CodeGen implements Reducer<CodeRep> {
         }
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public CodeRep reduceSuper(@NotNull Super node) {
+    public CodeRep reduceSuper(@Nonnull Super node) {
         return factory.token("super");
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public CodeRep reduceSwitchCase(
-            @NotNull SwitchCase node, @NotNull CodeRep test, @NotNull ImmutableList<CodeRep> consequent) {
+            @Nonnull SwitchCase node, @Nonnull CodeRep test, @Nonnull ImmutableList<CodeRep> consequent) {
         return seqVA(factory.token("case"), test, factory.token(":"), factory.seq(consequent));
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public CodeRep reduceSwitchDefault(
-            @NotNull SwitchDefault node, @NotNull ImmutableList<CodeRep> consequent) {
+            @Nonnull SwitchDefault node, @Nonnull ImmutableList<CodeRep> consequent) {
         return seqVA(factory.token("default"), factory.token(":"), factory.seq(consequent));
     }
 
     @Override
-    @NotNull
+    @Nonnull
     public CodeRep reduceSwitchStatement(
-            @NotNull SwitchStatement node,
-            @NotNull CodeRep discriminant,
-            @NotNull ImmutableList<CodeRep> cases) {
+            @Nonnull SwitchStatement node,
+            @Nonnull CodeRep discriminant,
+            @Nonnull ImmutableList<CodeRep> cases) {
         return seqVA(
                 factory.token("switch"), factory.paren(discriminant), factory.brace(
                         factory.seq(cases)));
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public CodeRep reduceSwitchStatementWithDefault(
-            @NotNull SwitchStatementWithDefault node,
-            @NotNull CodeRep discriminant,
-            @NotNull ImmutableList<CodeRep> preDefaultCases,
-            @NotNull CodeRep defaultCase,
-            @NotNull ImmutableList<CodeRep> postDefaultCases) {
+            @Nonnull SwitchStatementWithDefault node,
+            @Nonnull CodeRep discriminant,
+            @Nonnull ImmutableList<CodeRep> preDefaultCases,
+            @Nonnull CodeRep defaultCase,
+            @Nonnull ImmutableList<CodeRep> postDefaultCases) {
         return seqVA(
                 factory.token("switch"), factory.paren(discriminant), factory.brace(
                         seqVA(
@@ -945,15 +945,15 @@ public class CodeGen implements Reducer<CodeRep> {
                                 ))));
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public CodeRep reduceTemplateElement(@NotNull TemplateElement node) {
+    public CodeRep reduceTemplateElement(@Nonnull TemplateElement node) {
         return factory.rawToken(node.rawValue);
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public CodeRep reduceTemplateExpression(@NotNull TemplateExpression node, @NotNull Maybe<CodeRep> tag, @NotNull ImmutableList<CodeRep> elements) {
+    public CodeRep reduceTemplateExpression(@Nonnull TemplateExpression node, @Nonnull Maybe<CodeRep> tag, @Nonnull ImmutableList<CodeRep> elements) {
         CodeRep state = node.tag.maybe(factory.empty(), t -> p(t, node.getPrecedence(), tag.fromJust()));
         state = seqVA(state, factory.token("`"));
         for (int i = 0, l = node.elements.length; i < l; ++i) {
@@ -978,48 +978,48 @@ public class CodeGen implements Reducer<CodeRep> {
     }
 
     @Override
-    @NotNull
-    public CodeRep reduceThisExpression(@NotNull ThisExpression node) {
+    @Nonnull
+    public CodeRep reduceThisExpression(@Nonnull ThisExpression node) {
         return factory.token("this");
     }
 
     @Override
-    @NotNull
+    @Nonnull
     public CodeRep reduceThrowStatement(
-            @NotNull ThrowStatement node, @NotNull CodeRep expression) {
+            @Nonnull ThrowStatement node, @Nonnull CodeRep expression) {
         return seqVA(factory.token("throw"), expression, factory.semiOp());
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public CodeRep reduceTryCatchStatement(
-            @NotNull TryCatchStatement node,
-            @NotNull CodeRep block,
-            @NotNull CodeRep catchClause) {
+            @Nonnull TryCatchStatement node,
+            @Nonnull CodeRep block,
+            @Nonnull CodeRep catchClause) {
         return seqVA(factory.token("try"), block, catchClause);
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public CodeRep reduceTryFinallyStatement(
-            @NotNull TryFinallyStatement node,
-            @NotNull CodeRep block,
-            @NotNull Maybe<CodeRep> catchClause,
-            @NotNull CodeRep finalizer) {
+            @Nonnull TryFinallyStatement node,
+            @Nonnull CodeRep block,
+            @Nonnull Maybe<CodeRep> catchClause,
+            @Nonnull CodeRep finalizer) {
         return seqVA(
                 factory.token("try"), block, catchClause.orJust(factory.empty()), seqVA(
                         factory.token("finally"), finalizer));
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public CodeRep reduceUnaryExpression(@NotNull UnaryExpression node, @NotNull CodeRep operand) {
+    public CodeRep reduceUnaryExpression(@Nonnull UnaryExpression node, @Nonnull CodeRep operand) {
         return seqVA(factory.token(node.operator.getName()), p(node.operand, node.getPrecedence(), operand));
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public CodeRep reduceUpdateExpression(@NotNull UpdateExpression node, @NotNull CodeRep operand) {
+    public CodeRep reduceUpdateExpression(@Nonnull UpdateExpression node, @Nonnull CodeRep operand) {
         if (node.isPrefix) {
             return seqVA(factory.token(node.operator.getName()), operand);
         } else {
@@ -1033,25 +1033,25 @@ public class CodeGen implements Reducer<CodeRep> {
 
 //----------------------------------------------------------------------------------------------------------------------
 
-    @NotNull
+    @Nonnull
     @Override
     public CodeRep reduceVariableDeclaration(
-            @NotNull VariableDeclaration node, @NotNull ImmutableList<CodeRep> declarators) {
+            @Nonnull VariableDeclaration node, @Nonnull ImmutableList<CodeRep> declarators) {
         return seqVA(factory.token(node.kind.name), factory.commaSep(declarators));
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public CodeRep reduceVariableDeclarationStatement(
-            @NotNull VariableDeclarationStatement node, @NotNull CodeRep declaration) {
+            @Nonnull VariableDeclarationStatement node, @Nonnull CodeRep declaration) {
         return seqVA(declaration, factory.semiOp());
     }
 
     @Override
-    @NotNull
+    @Nonnull
     public CodeRep reduceVariableDeclarator(
-            @NotNull VariableDeclarator node, @NotNull CodeRep binding,
-            @NotNull Maybe<CodeRep> init) {
+            @Nonnull VariableDeclarator node, @Nonnull CodeRep binding,
+            @Nonnull Maybe<CodeRep> init) {
         CodeRep result = factory.init(
                 binding, init.map(
                         state -> state.containsGroup() ? factory.paren(state) : factory.testIn(state)));
@@ -1060,40 +1060,40 @@ public class CodeGen implements Reducer<CodeRep> {
     }
 
     @Override
-    @NotNull
+    @Nonnull
     public CodeRep reduceWhileStatement(
-            @NotNull WhileStatement node, @NotNull CodeRep test, @NotNull CodeRep body) {
+            @Nonnull WhileStatement node, @Nonnull CodeRep test, @Nonnull CodeRep body) {
         CodeRep result = seqVA(factory.token("while"), factory.paren(test), body);
         result.setEndsWithMissingElse(body.endsWithMissingElse());
         return result;
     }
 
     @Override
-    @NotNull
+    @Nonnull
     public CodeRep reduceWithStatement(
-            @NotNull WithStatement node, @NotNull CodeRep object, @NotNull CodeRep body) {
+            @Nonnull WithStatement node, @Nonnull CodeRep object, @Nonnull CodeRep body) {
         CodeRep result = seqVA(factory.token("with"), factory.paren(object), body);
         result.setEndsWithMissingElse(body.endsWithMissingElse());
         return result;
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public CodeRep reduceYieldExpression(@NotNull YieldExpression node, @NotNull Maybe<CodeRep> expression) {
+    public CodeRep reduceYieldExpression(@Nonnull YieldExpression node, @Nonnull Maybe<CodeRep> expression) {
         if (node.expression.isNothing()) {
             return factory.token("yield");
         }
         return seqVA(factory.token("yield"), p(node.expression.fromJust(), node.getPrecedence(), expression.fromJust()));
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public CodeRep reduceYieldGeneratorExpression(@NotNull YieldGeneratorExpression node, @NotNull CodeRep expression) {
+    public CodeRep reduceYieldGeneratorExpression(@Nonnull YieldGeneratorExpression node, @Nonnull CodeRep expression) {
         return seqVA(factory.token("yield"), factory.token("*"), p(node.expression, node.getPrecedence(), expression));
     }
 
-    @NotNull
-    protected CodeRep seqVA(@NotNull CodeRep... reps) {
+    @Nonnull
+    protected CodeRep seqVA(@Nonnull CodeRep... reps) {
         return factory.seq(reps);
     }
 }

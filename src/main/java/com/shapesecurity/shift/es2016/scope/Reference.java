@@ -20,40 +20,40 @@ import com.shapesecurity.shift.es2016.ast.AssignmentTargetIdentifier;
 import com.shapesecurity.shift.es2016.ast.BindingIdentifier;
 import com.shapesecurity.shift.es2016.ast.IdentifierExpression;
 import com.shapesecurity.shift.es2016.ast.VariableReference;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 public final class Reference {
-    @NotNull
+    @Nonnull
     public final VariableReference node;
-    @NotNull
+    @Nonnull
     public final Accessibility accessibility;
 
-    private Reference(@NotNull VariableReference node, @NotNull Accessibility accessibility) {
+    private Reference(@Nonnull VariableReference node, @Nonnull Accessibility accessibility) {
         this.node = node;
         this.accessibility = accessibility;
     }
 
-    public Reference(@NotNull BindingIdentifier node) {
+    public Reference(@Nonnull BindingIdentifier node) {
         this.node = node;
         this.accessibility = Accessibility.Write;
     }
 
-    public Reference(@NotNull IdentifierExpression node) {
+    public Reference(@Nonnull IdentifierExpression node) {
         this.node = node;
         this.accessibility = Accessibility.Read;
     }
 
-    public Reference(@NotNull AssignmentTargetIdentifier node, @NotNull Accessibility accessibility) {
+    public Reference(@Nonnull AssignmentTargetIdentifier node, @Nonnull Accessibility accessibility) {
         this.node = node;
         this.accessibility = accessibility;
     }
 
-    @NotNull
+    @Nonnull
     public final Reference withReadability() {
         return new Reference(this.node, this.accessibility.withReadability());
     }
 
-    @NotNull
+    @Nonnull
     public final Reference withWritability() {
         return new Reference(this.node, this.accessibility.withWritability());
     }

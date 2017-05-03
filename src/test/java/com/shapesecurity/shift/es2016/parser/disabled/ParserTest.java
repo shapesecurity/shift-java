@@ -22,7 +22,7 @@
 //import JsError;
 //import Parser;
 //import Utils;
-//import org.jetbrains.annotations.NotNull;
+//import javax.annotation.Nonnull;
 //import org.junit.Ignore;
 //import org.junit.Test;
 //
@@ -605,7 +605,7 @@
 //    setFatal(true); // Revert back to the default behavior
 //  }
 //
-//  private void testFailureML(@NotNull String source, int line, int column, int index, @NotNull String error) {
+//  private void testFailureML(@Nonnull String source, int line, int column, int index, @Nonnull String error) {
 //    try {
 //      Parser.parse(source);
 //    } catch (JsError jsError) {
@@ -620,7 +620,7 @@
 //  }
 //
 //
-//  private void testFailure(@NotNull String source, int index, @NotNull String error) {
+//  private void testFailure(@Nonnull String source, int index, @Nonnull String error) {
 //    testFailureML(source, 1, index, index, error);
 //  }
 //

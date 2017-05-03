@@ -13,7 +13,7 @@ import com.shapesecurity.shift.es2016.ast.NewTargetExpression;
 import com.shapesecurity.shift.es2016.ast.Node;
 import com.shapesecurity.shift.es2016.ast.Super;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 public class EarlyErrorState {
 
@@ -21,26 +21,26 @@ public class EarlyErrorState {
 
     // Fully saturated constructor.
     public EarlyErrorState(
-            @NotNull ImmutableList<EarlyError> errors,
-            @NotNull ImmutableList<EarlyError> strictErrors,
-            @NotNull HashTable<String, LabeledStatement> usedLabelNames,
-            @NotNull ImmutableList<BreakStatement> freeBreakStatements,
-            @NotNull ImmutableList<ContinueStatement> freeContinueStatements,
-            @NotNull MultiHashTable<String, BreakStatement> freeLabeledBreakStatements,
-            @NotNull MultiHashTable<String, ContinueStatement> freeLabeledContinueStatements,
-            @NotNull ImmutableList<NewTargetExpression> newTargetExpressions,
-            @NotNull MultiHashTable<String, BindingIdentifier> boundNames,
-            @NotNull MultiHashTable<String, BindingIdentifier> previousLexicallyDeclaredNames,
-            @NotNull MultiHashTable<String, BindingIdentifier> lexicallyDeclaredNames,
-            @NotNull MultiHashTable<String, BindingIdentifier> functionDeclarationNames,
-            @NotNull MultiHashTable<String, BindingIdentifier> varDeclaredNames,
-            @NotNull MultiHashTable<String, BindingIdentifier> forOfVarDeclaredNames,
-            @NotNull MultiHashTable<String, Node> exportedNames,
-            @NotNull MultiHashTable<String, Node> exportedBindings,
-            @NotNull ImmutableList<Super> superCallExpressions,
-            @NotNull ImmutableList<Super> superCallExpressionsInConstructorMethod,
-            @NotNull ImmutableList<MemberExpression> superPropertyExpressions,
-            @NotNull ImmutableList<Node> yieldExpressions) {
+            @Nonnull ImmutableList<EarlyError> errors,
+            @Nonnull ImmutableList<EarlyError> strictErrors,
+            @Nonnull HashTable<String, LabeledStatement> usedLabelNames,
+            @Nonnull ImmutableList<BreakStatement> freeBreakStatements,
+            @Nonnull ImmutableList<ContinueStatement> freeContinueStatements,
+            @Nonnull MultiHashTable<String, BreakStatement> freeLabeledBreakStatements,
+            @Nonnull MultiHashTable<String, ContinueStatement> freeLabeledContinueStatements,
+            @Nonnull ImmutableList<NewTargetExpression> newTargetExpressions,
+            @Nonnull MultiHashTable<String, BindingIdentifier> boundNames,
+            @Nonnull MultiHashTable<String, BindingIdentifier> previousLexicallyDeclaredNames,
+            @Nonnull MultiHashTable<String, BindingIdentifier> lexicallyDeclaredNames,
+            @Nonnull MultiHashTable<String, BindingIdentifier> functionDeclarationNames,
+            @Nonnull MultiHashTable<String, BindingIdentifier> varDeclaredNames,
+            @Nonnull MultiHashTable<String, BindingIdentifier> forOfVarDeclaredNames,
+            @Nonnull MultiHashTable<String, Node> exportedNames,
+            @Nonnull MultiHashTable<String, Node> exportedBindings,
+            @Nonnull ImmutableList<Super> superCallExpressions,
+            @Nonnull ImmutableList<Super> superCallExpressionsInConstructorMethod,
+            @Nonnull ImmutableList<MemberExpression> superPropertyExpressions,
+            @Nonnull ImmutableList<Node> yieldExpressions) {
         this.errors = errors;
         this.strictErrors = strictErrors;
         this.usedLabelNames = usedLabelNames;
@@ -88,7 +88,7 @@ public class EarlyErrorState {
     }
 
     // Append
-    public EarlyErrorState(@NotNull EarlyErrorState a, @NotNull EarlyErrorState b) {
+    public EarlyErrorState(@Nonnull EarlyErrorState a, @Nonnull EarlyErrorState b) {
         this.errors = a.errors.append(b.errors);
         this.strictErrors = a.strictErrors.append(b.strictErrors);
         this.usedLabelNames = a.usedLabelNames.merge(b.usedLabelNames);
@@ -112,76 +112,76 @@ public class EarlyErrorState {
     }
 
 
-    @NotNull
+    @Nonnull
     public final ImmutableList<EarlyError> errors;
     // errors that are only errors in strict mode code
-    @NotNull
+    @Nonnull
     public final ImmutableList<EarlyError> strictErrors;
 
     // Label values used in LabeledStatement nodes; cleared at function boundaries
-    @NotNull
+    @Nonnull
     public final HashTable<String, LabeledStatement> usedLabelNames; // TODO maybe just set of strings?
 
 
     // BreakStatement nodes; cleared at iteration, switch, and function boundaries
-    @NotNull
+    @Nonnull
     public final ImmutableList<BreakStatement> freeBreakStatements;
     // ContinueStatement nodes; cleared at iteration boundaries
-    @NotNull
+    @Nonnull
     public final ImmutableList<ContinueStatement> freeContinueStatements;
 
     // labeled BreakStatement nodes; cleared at LabeledStatement with same Label and function boundaries
-    @NotNull
+    @Nonnull
     public final MultiHashTable<String, BreakStatement> freeLabeledBreakStatements;
     // labeled ContinueStatement nodes; cleared at labeled iteration statement with same Label and function boundaries
-    @NotNull
+    @Nonnull
     public final MultiHashTable<String, ContinueStatement> freeLabeledContinueStatements;
 
     // NewTargetExpression nodes; cleared at function (besides arrow expression) boundaries
-    @NotNull
+    @Nonnull
     public final ImmutableList<NewTargetExpression> newTargetExpressions;
 
     // BindingIdentifier nodes; cleared at containing declaration node
-    @NotNull
+    @Nonnull
     public final MultiHashTable<String, BindingIdentifier> boundNames;
     // BindingIdentifiers that were found to be in a lexical binding position
-    @NotNull
+    @Nonnull
     public final MultiHashTable<String, BindingIdentifier> previousLexicallyDeclaredNames;
-    @NotNull
+    @Nonnull
     public final MultiHashTable<String, BindingIdentifier> lexicallyDeclaredNames;
     // BindingIdentifiers that were the name of a FunctionDeclaration
-    @NotNull
+    @Nonnull
     public final MultiHashTable<String, BindingIdentifier> functionDeclarationNames;
     // BindingIdentifiers that were found to be in a variable binding position
-    @NotNull
+    @Nonnull
     public final MultiHashTable<String, BindingIdentifier> varDeclaredNames;
     // BindingIdentifiers that were found to be in a variable binding position
-    @NotNull
+    @Nonnull
     public final MultiHashTable<String, BindingIdentifier> forOfVarDeclaredNames;
 
     // Names that this module exports
-    @NotNull
+    @Nonnull
     public final MultiHashTable<String, Node> exportedNames;
     // Locally declared names that are referenced in export declarations
-    @NotNull
+    @Nonnull
     public final MultiHashTable<String, Node> exportedBindings;
 
     // CallExpressions with Super callee
-    @NotNull
+    @Nonnull
     public final ImmutableList<Super> superCallExpressions;
     // SuperCall expressions in the context of a Method named "constructor"
-    @NotNull
+    @Nonnull
     public final ImmutableList<Super> superCallExpressionsInConstructorMethod;
     // MemberExpressions with Super object
-    @NotNull
+    @Nonnull
     public final ImmutableList<MemberExpression> superPropertyExpressions;
     // YieldExpressions which may be within parameters / concise arrow bodies
-    @NotNull
+    @Nonnull
     public final ImmutableList<Node> yieldExpressions;
 
 
-    @NotNull
-    public EarlyErrorState addFreeBreakStatement(@NotNull BreakStatement breakStatement) {
+    @Nonnull
+    public EarlyErrorState addFreeBreakStatement(@Nonnull BreakStatement breakStatement) {
         return new EarlyErrorState(
                 this.errors,
                 this.strictErrors,
@@ -206,8 +206,8 @@ public class EarlyErrorState {
         );
     }
 
-    @NotNull
-    public EarlyErrorState addFreeLabeledBreakStatement(@NotNull BreakStatement breakStatement) {
+    @Nonnull
+    public EarlyErrorState addFreeLabeledBreakStatement(@Nonnull BreakStatement breakStatement) {
         return new EarlyErrorState(
                 this.errors,
                 this.strictErrors,
@@ -232,7 +232,7 @@ public class EarlyErrorState {
         );
     }
 
-    @NotNull
+    @Nonnull
     public EarlyErrorState clearFreeBreakStatements() {
         return new EarlyErrorState(
                 this.errors,
@@ -258,8 +258,8 @@ public class EarlyErrorState {
         );
     }
 
-    @NotNull
-    public EarlyErrorState addFreeContinueStatement(@NotNull ContinueStatement continueStatement) {
+    @Nonnull
+    public EarlyErrorState addFreeContinueStatement(@Nonnull ContinueStatement continueStatement) {
         return new EarlyErrorState(
                 this.errors,
                 this.strictErrors,
@@ -284,8 +284,8 @@ public class EarlyErrorState {
         );
     }
 
-    @NotNull
-    public EarlyErrorState addFreeLabeledContinueStatement(@NotNull ContinueStatement continueStatement) {
+    @Nonnull
+    public EarlyErrorState addFreeLabeledContinueStatement(@Nonnull ContinueStatement continueStatement) {
         return new EarlyErrorState(
                 this.errors,
                 this.strictErrors,
@@ -310,7 +310,7 @@ public class EarlyErrorState {
         );
     }
 
-    @NotNull
+    @Nonnull
     public EarlyErrorState clearFreeContinueStatements() {
         return new EarlyErrorState(
                 this.errors,
@@ -336,7 +336,7 @@ public class EarlyErrorState {
         );
     }
 
-    @NotNull
+    @Nonnull
     public EarlyErrorState enforceFreeBreakStatementErrors() {
         return new EarlyErrorState(
                 this.errors.append(this.freeBreakStatements.map(ErrorMessages.FREE_BREAK)),
@@ -362,7 +362,7 @@ public class EarlyErrorState {
         );
     }
 
-    @NotNull
+    @Nonnull
     public EarlyErrorState enforceFreeLabeledBreakStatementErrors() {
         return new EarlyErrorState(
                 this.errors.append(this.freeLabeledBreakStatements.gatherValues().map(ErrorMessages.UNBOUND_BREAK)),
@@ -388,7 +388,7 @@ public class EarlyErrorState {
         );
     }
 
-    @NotNull
+    @Nonnull
     public EarlyErrorState enforceFreeContinueStatementErrors() {
         return new EarlyErrorState(
                 this.errors.append(this.freeContinueStatements.map(ErrorMessages.FREE_CONTINUE)),
@@ -414,7 +414,7 @@ public class EarlyErrorState {
         );
     }
 
-    @NotNull
+    @Nonnull
     public EarlyErrorState enforceFreeLabeledContinueStatementErrors() {
         return new EarlyErrorState(
                 this.errors.append(this.freeLabeledContinueStatements.gatherValues().map(ErrorMessages.UNBOUND_CONTINUE)),
@@ -440,8 +440,8 @@ public class EarlyErrorState {
         );
     }
 
-    @NotNull
-    public EarlyErrorState observeIterationLabel(@NotNull LabeledStatement labeledStatement) {
+    @Nonnull
+    public EarlyErrorState observeIterationLabel(@Nonnull LabeledStatement labeledStatement) {
         return new EarlyErrorState(
                 this.errors,
                 this.strictErrors,
@@ -466,8 +466,8 @@ public class EarlyErrorState {
         );
     }
 
-    @NotNull
-    public EarlyErrorState observeNonIterationLabel(@NotNull LabeledStatement labeledStatement) {
+    @Nonnull
+    public EarlyErrorState observeNonIterationLabel(@Nonnull LabeledStatement labeledStatement) {
         return new EarlyErrorState(
                 this.errors,
                 this.strictErrors,
@@ -492,7 +492,7 @@ public class EarlyErrorState {
         );
     }
 
-    @NotNull
+    @Nonnull
     public EarlyErrorState clearUsedLabelNames() {
         return new EarlyErrorState(
                 this.errors,
@@ -518,8 +518,8 @@ public class EarlyErrorState {
         );
     }
 
-    @NotNull
-    public EarlyErrorState observeSuperCallExpression(@NotNull Super node) {
+    @Nonnull
+    public EarlyErrorState observeSuperCallExpression(@Nonnull Super node) {
         return new EarlyErrorState(
                 this.errors,
                 this.strictErrors,
@@ -544,7 +544,7 @@ public class EarlyErrorState {
         );
     }
 
-    @NotNull
+    @Nonnull
     public EarlyErrorState observeConstructorMethod() {
         return new EarlyErrorState(
                 this.errors,
@@ -570,7 +570,7 @@ public class EarlyErrorState {
         );
     }
 
-    @NotNull
+    @Nonnull
     public EarlyErrorState clearSuperCallExpressionsInConstructorMethod() {
         return new EarlyErrorState(
                 this.errors,
@@ -596,7 +596,7 @@ public class EarlyErrorState {
         );
     }
 
-    @NotNull
+    @Nonnull
     public EarlyErrorState enforceSuperCallExpressions() {
         return new EarlyErrorState(
                 this.errors.append(this.superCallExpressions.map(ErrorMessages.SUPERCALL_ERROR)).append(this.superCallExpressionsInConstructorMethod.map(ErrorMessages.SUPERCALL_ERROR)),
@@ -622,7 +622,7 @@ public class EarlyErrorState {
         );
     }
 
-    @NotNull
+    @Nonnull
     public EarlyErrorState enforceSuperCallExpressionsInConstructorMethod() {
         return new EarlyErrorState(
                 this.errors.append(this.superCallExpressionsInConstructorMethod.map(ErrorMessages.SUPERCALL_ERROR)),
@@ -648,8 +648,8 @@ public class EarlyErrorState {
         );
     }
 
-    @NotNull
-    public EarlyErrorState observeSuperPropertyExpression(@NotNull MemberExpression memberExpression) {
+    @Nonnull
+    public EarlyErrorState observeSuperPropertyExpression(@Nonnull MemberExpression memberExpression) {
         return new EarlyErrorState(
                 this.errors,
                 this.strictErrors,
@@ -674,7 +674,7 @@ public class EarlyErrorState {
         );
     }
 
-    @NotNull
+    @Nonnull
     public EarlyErrorState clearSuperPropertyExpressions() {
         return new EarlyErrorState(
                 this.errors,
@@ -700,7 +700,7 @@ public class EarlyErrorState {
         );
     }
 
-    @NotNull
+    @Nonnull
     public EarlyErrorState enforceSuperPropertyExpressions() {
         return new EarlyErrorState(
                 this.errors.append(this.superPropertyExpressions.map(ErrorMessages.SUPERPROPERTY_ERROR)),
@@ -726,8 +726,8 @@ public class EarlyErrorState {
         );
     }
 
-    @NotNull
-    public EarlyErrorState observeNewTargetExpression(@NotNull NewTargetExpression newTargetExpression) {
+    @Nonnull
+    public EarlyErrorState observeNewTargetExpression(@Nonnull NewTargetExpression newTargetExpression) {
         return new EarlyErrorState(
                 this.errors,
                 this.strictErrors,
@@ -752,7 +752,7 @@ public class EarlyErrorState {
         );
     }
 
-    @NotNull
+    @Nonnull
     public EarlyErrorState clearNewTargetExpressions() {
         return new EarlyErrorState(
                 this.errors,
@@ -778,8 +778,8 @@ public class EarlyErrorState {
         );
     }
 
-    @NotNull
-    public EarlyErrorState bindName(@NotNull BindingIdentifier bindingIdentifier) {
+    @Nonnull
+    public EarlyErrorState bindName(@Nonnull BindingIdentifier bindingIdentifier) {
         return new EarlyErrorState(
                 this.errors,
                 this.strictErrors,
@@ -804,7 +804,7 @@ public class EarlyErrorState {
         );
     }
 
-    @NotNull
+    @Nonnull
     public EarlyErrorState clearBoundNames() {
         return new EarlyErrorState(
                 this.errors,
@@ -830,7 +830,7 @@ public class EarlyErrorState {
         );
     }
 
-    @NotNull
+    @Nonnull
     public EarlyErrorState observeLexicalDeclaration() {
         return new EarlyErrorState(
                 this.errors,
@@ -856,7 +856,7 @@ public class EarlyErrorState {
         );
     }
 
-    @NotNull
+    @Nonnull
     public EarlyErrorState observeLexicalBoundary() {
         return new EarlyErrorState(
                 this.errors,
@@ -882,7 +882,7 @@ public class EarlyErrorState {
         );
     }
 
-    @NotNull
+    @Nonnull
     public EarlyErrorState enforceDuplicateLexicallyDeclaredNames() {
         HashTable<String, ImmutableList<EarlyError>> errorMap = this.lexicallyDeclaredNames.toHashTable(
                 l -> ((l.length > 1) ? l.maybeTail().fromJust().map(ErrorMessages.DUPLICATE_BINDING) : ImmutableList.empty())
@@ -912,8 +912,8 @@ public class EarlyErrorState {
         );
     }
 
-    @NotNull
-    public EarlyErrorState enforceConflictingLexicallyDeclaredNames(@NotNull MultiHashTable<String, BindingIdentifier> otherNames) {
+    @Nonnull
+    public EarlyErrorState enforceConflictingLexicallyDeclaredNames(@Nonnull MultiHashTable<String, BindingIdentifier> otherNames) {
         HashTable<String, ImmutableList<EarlyError>> errorMap = this.lexicallyDeclaredNames.toHashTable(
                 (k, vs) -> (otherNames.get(k).isNotEmpty() ? vs.map(ErrorMessages.DUPLICATE_BINDING) : ImmutableList.empty())
         );
@@ -942,7 +942,7 @@ public class EarlyErrorState {
         );
     }
 
-    @NotNull
+    @Nonnull
     public EarlyErrorState observeFunctionDeclaration() {
         EarlyErrorState res = this.observeVarBoundary();
         MultiHashTable<String, BindingIdentifier> newFnDeclaredNames = res.functionDeclarationNames.merge(res.boundNames);
@@ -970,7 +970,7 @@ public class EarlyErrorState {
         );
     }
 
-    @NotNull
+    @Nonnull
     public EarlyErrorState functionDeclarationNamesAreLexical() {
         return new EarlyErrorState(
                 this.errors,
@@ -996,7 +996,7 @@ public class EarlyErrorState {
         );
     }
 
-    @NotNull
+    @Nonnull
     public EarlyErrorState observeVarDeclaration() {
         return new EarlyErrorState(
                 this.errors,
@@ -1022,7 +1022,7 @@ public class EarlyErrorState {
         );
     }
 
-    @NotNull
+    @Nonnull
     public EarlyErrorState recordForOfVars() {
         return new EarlyErrorState(
                 this.errors,
@@ -1048,7 +1048,7 @@ public class EarlyErrorState {
         );
     }
 
-    @NotNull
+    @Nonnull
     public EarlyErrorState observeVarBoundary() {
         return new EarlyErrorState(
                 this.errors,
@@ -1074,8 +1074,8 @@ public class EarlyErrorState {
         );
     }
 
-    @NotNull
-    public EarlyErrorState exportName(@NotNull String name, @NotNull Node node) {
+    @Nonnull
+    public EarlyErrorState exportName(@Nonnull String name, @Nonnull Node node) {
         return new EarlyErrorState(
                 this.errors,
                 this.strictErrors,
@@ -1100,7 +1100,7 @@ public class EarlyErrorState {
         );
     }
 
-    @NotNull
+    @Nonnull
     public EarlyErrorState exportDeclaredNames() {
         return new EarlyErrorState(
                 this.errors,
@@ -1126,8 +1126,8 @@ public class EarlyErrorState {
         );
     }
 
-    @NotNull
-    public EarlyErrorState exportBinding(@NotNull String name, @NotNull Node node) {
+    @Nonnull
+    public EarlyErrorState exportBinding(@Nonnull String name, @Nonnull Node node) {
         return new EarlyErrorState(
                 this.errors,
                 this.strictErrors,
@@ -1152,7 +1152,7 @@ public class EarlyErrorState {
         );
     }
 
-    @NotNull
+    @Nonnull
     public EarlyErrorState clearExportedBindings() {
         return new EarlyErrorState(
                 this.errors,
@@ -1178,8 +1178,8 @@ public class EarlyErrorState {
         );
     }
 
-    @NotNull
-    public EarlyErrorState observeYieldExpression(@NotNull Node yieldExpression) {
+    @Nonnull
+    public EarlyErrorState observeYieldExpression(@Nonnull Node yieldExpression) {
         return new EarlyErrorState(
                 this.errors,
                 this.strictErrors,
@@ -1204,7 +1204,7 @@ public class EarlyErrorState {
         );
     }
 
-    @NotNull
+    @Nonnull
     public EarlyErrorState clearYieldExpressions() {
         return new EarlyErrorState(
                 this.errors,
@@ -1230,8 +1230,8 @@ public class EarlyErrorState {
         );
     }
 
-    @NotNull
-    public EarlyErrorState addError(@NotNull EarlyError error) {
+    @Nonnull
+    public EarlyErrorState addError(@Nonnull EarlyError error) {
         return new EarlyErrorState(
                 this.errors.cons(error),
                 this.strictErrors,
@@ -1256,8 +1256,8 @@ public class EarlyErrorState {
         );
     }
 
-    @NotNull
-    public EarlyErrorState addErrors(@NotNull ImmutableList<EarlyError> errors) {
+    @Nonnull
+    public EarlyErrorState addErrors(@Nonnull ImmutableList<EarlyError> errors) {
         return new EarlyErrorState(
                 this.errors.append(errors),
                 this.strictErrors,
@@ -1282,8 +1282,8 @@ public class EarlyErrorState {
         );
     }
 
-    @NotNull
-    public EarlyErrorState addStrictError(@NotNull EarlyError error) {
+    @Nonnull
+    public EarlyErrorState addStrictError(@Nonnull EarlyError error) {
         return new EarlyErrorState(
                 this.errors,
                 this.strictErrors.cons(error),
@@ -1308,8 +1308,8 @@ public class EarlyErrorState {
         );
     }
 
-    @NotNull
-    public EarlyErrorState addStrictErrors(@NotNull ImmutableList<EarlyError> errors) {
+    @Nonnull
+    public EarlyErrorState addStrictErrors(@Nonnull ImmutableList<EarlyError> errors) {
         return new EarlyErrorState(
                 this.errors,
                 this.strictErrors.append(errors),
@@ -1334,7 +1334,7 @@ public class EarlyErrorState {
         );
     }
 
-    @NotNull
+    @Nonnull
     public EarlyErrorState enforceStrictErrors() {
         return new EarlyErrorState(
                 this.errors.append(this.strictErrors),
@@ -1361,13 +1361,13 @@ public class EarlyErrorState {
     }
 
     private static final class EarlyErrorContextMonoid implements Monoid<EarlyErrorState> {
-        @NotNull
+        @Nonnull
         @Override
         public EarlyErrorState identity() {
             return new EarlyErrorState();
         }
 
-        @NotNull
+        @Nonnull
         @Override
         public EarlyErrorState append(EarlyErrorState a, EarlyErrorState b) {
             return new EarlyErrorState(a, b);

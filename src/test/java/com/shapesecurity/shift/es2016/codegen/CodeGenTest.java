@@ -42,15 +42,15 @@ import com.shapesecurity.shift.es2016.parser.ParserWithLocation;
 import com.shapesecurity.shift.es2016.reducer.Director;
 import com.shapesecurity.shift.es2016.reducer.MonoidalReducer;
 import com.shapesecurity.shift.es2016.reducer.WrappedReducer;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
 public class CodeGenTest {
 
-    @NotNull
-    private static Script statement(@NotNull Statement stmt) {
+    @Nonnull
+    private static Script statement(@Nonnull Statement stmt) {
         return new Script(ImmutableList.empty(), ImmutableList.of(stmt));
     }
 
@@ -84,11 +84,11 @@ public class CodeGenTest {
         assertEquals(module, Parser.parseModule(code));
     }
 
-    private void testShift(@NotNull String expected, @NotNull Script script) {
+    private void testShift(@Nonnull String expected, @Nonnull Script script) {
         assertEquals(expected, CodeGen.codeGen(script));
     }
 
-    private void testShift(@NotNull String expected, @NotNull Module module) {
+    private void testShift(@Nonnull String expected, @Nonnull Module module) {
         assertEquals(expected, CodeGen.codeGen(module));
     }
 

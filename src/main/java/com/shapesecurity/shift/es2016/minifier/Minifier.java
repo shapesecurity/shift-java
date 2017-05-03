@@ -30,7 +30,7 @@
 //import com.shapesecurity.shift.minifier.passes.reduction.ReplaceWhileWithFor;
 //import com.shapesecurity.shift.visitor.FixPointTransformer;
 //
-//import org.jetbrains.annotations.NotNull;
+//import javax.annotation.Nonnull;
 //
 //public class Minifier {
 //  private static final FixPointTransformer REDUCTION = new FixPointTransformer(new ComposedRule<>(
@@ -41,24 +41,24 @@
 //      new ExpansionRule[]{ReplaceStaticMemberAccessWithDynamicMemberAccess.INSTANCE, ExpandBooleanLiterals.INSTANCE,
 //                          TopLevelExpressionWithProhibitedFirstToken.INSTANCE,}));
 //
-//  @NotNull
-//  public static Script minify(@NotNull Script script) {
+//  @Nonnull
+//  public static Script minify(@Nonnull Script script) {
 //    return EXPANSION.transform(REDUCTION.transform(script, ImmutableList.empty()), ImmutableList.empty());
 //  }
 //
 //  public static Script minify(
-//      @NotNull Script script,
-//      @NotNull ReductionRule[] reductionRules,
-//      @NotNull ExpansionRule[] expansionRules) {
+//      @Nonnull Script script,
+//      @Nonnull ReductionRule[] reductionRules,
+//      @Nonnull ExpansionRule[] expansionRules) {
 //    FixPointTransformer reduction = new FixPointTransformer(new ComposedRule<>(reductionRules));
 //    FixPointTransformer expansion = new FixPointTransformer(new ComposedRule<>(expansionRules));
 //    return expansion.transform(reduction.transform(script, ImmutableList.empty()), ImmutableList.empty());
 //  }
 //
 //  public static Script minify(
-//      @NotNull Script script,
-//      @NotNull ImmutableList<ReductionRule> reductionRules,
-//      @NotNull ImmutableList<ExpansionRule> expansionRules) {
+//      @Nonnull Script script,
+//      @Nonnull ImmutableList<ReductionRule> reductionRules,
+//      @Nonnull ImmutableList<ExpansionRule> expansionRules) {
 //    ReductionRule[] reductionRulesArray = reductionRules.toArray(new ReductionRule[reductionRules.length]);
 //    ExpansionRule[] expansionRulesArray = expansionRules.toArray(new ExpansionRule[expansionRules.length]);
 //    FixPointTransformer reduction = new FixPointTransformer(new ComposedRule<>(reductionRulesArray));

@@ -4,39 +4,39 @@ import com.shapesecurity.functional.Unit;
 import com.shapesecurity.shift.es2016.ast.Module;
 import com.shapesecurity.shift.es2016.ast.Node;
 import com.shapesecurity.shift.es2016.ast.Script;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 public class Parser extends GenericParser<Unit> {
 
-	protected Parser(@NotNull String source, boolean isModule) throws JsError {
+	protected Parser(@Nonnull String source, boolean isModule) throws JsError {
 		super(source, isModule);
 	}
 
-	@NotNull
-	public static Script parseScript(@NotNull String text) throws JsError {
+	@Nonnull
+	public static Script parseScript(@Nonnull String text) throws JsError {
 		return new Parser(text, false).parseScript();
 	}
 
-	@NotNull
-	public static Module parseModule(@NotNull String text) throws JsError {
+	@Nonnull
+	public static Module parseModule(@Nonnull String text) throws JsError {
 		return new Parser(text, true).parseModule();
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	protected <T extends Node> T finishNode(@NotNull Unit startState, @NotNull T node) {
+	protected <T extends Node> T finishNode(@Nonnull Unit startState, @Nonnull T node) {
 		return node;
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	protected Unit startNode() {
 		return Unit.unit;
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	protected <T extends Node> T copyNode(@NotNull Node src, @NotNull T dest) {
+	protected <T extends Node> T copyNode(@Nonnull Node src, @Nonnull T dest) {
 		return dest;
 	}
 }

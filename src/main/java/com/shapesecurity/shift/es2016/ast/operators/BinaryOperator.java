@@ -16,7 +16,7 @@
 
 package com.shapesecurity.shift.es2016.ast.operators;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 public enum BinaryOperator implements Operator {
     Sequence(",", Precedence.SEQUENCE),
@@ -51,24 +51,24 @@ public enum BinaryOperator implements Operator {
     Right(">>", Precedence.SHIFT),
     UnsignedRight(">>>", Precedence.SHIFT);
 
-    @NotNull
+    @Nonnull
     private final String name;
 
-    @NotNull
+    @Nonnull
     private final Precedence precedence;
 
-    private BinaryOperator(@NotNull String name, @NotNull Precedence precedence) {
+    private BinaryOperator(@Nonnull String name, @Nonnull Precedence precedence) {
         this.name = name;
         this.precedence = precedence;
     }
 
-    @NotNull
+    @Nonnull
     public Precedence getPrecedence() {
         return this.precedence;
     }
 
     @Override
-    @NotNull
+    @Nonnull
     public String getName() {
         return this.name;
     }

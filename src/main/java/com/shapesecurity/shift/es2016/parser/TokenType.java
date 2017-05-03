@@ -16,7 +16,7 @@
 
 package com.shapesecurity.shift.es2016.parser;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 public enum TokenType {
     /* end of source indicator. */
@@ -119,12 +119,12 @@ public enum TokenType {
     AWAIT(TokenClass.Keyword, "await"),
     ILLEGAL(TokenClass.Illegal, "ILLEGAL"),
     TEMPLATE(TokenClass.TemplateElement, "template");
-    @NotNull
+    @Nonnull
     public final TokenClass klass;
-    @NotNull
+    @Nonnull
     public final String name;
 
-    private TokenType(@NotNull TokenClass klass, @NotNull String name) {
+    private TokenType(@Nonnull TokenClass klass, @Nonnull String name) {
         this.klass = klass;
         this.name = name;
     }

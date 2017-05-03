@@ -101,594 +101,594 @@ import com.shapesecurity.shift.es2016.ast.WithStatement;
 import com.shapesecurity.shift.es2016.ast.YieldExpression;
 import com.shapesecurity.shift.es2016.ast.YieldGeneratorExpression;
 import com.shapesecurity.shift.es2016.reducer.Reducer;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 public class WrappedReducer<T> implements Reducer<T> {
 
-	@NotNull
+	@Nonnull
 	private final F2<Node, T, T> wrap;
 
-	@NotNull
+	@Nonnull
 	private final Reducer<T> reducer;
 
-	public WrappedReducer(@NotNull F2<Node, T, T> wrap, @NotNull Reducer<T> reducer) {
+	public WrappedReducer(@Nonnull F2<Node, T, T> wrap, @Nonnull Reducer<T> reducer) {
 		this.wrap = wrap;
 		this.reducer = reducer;
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public T reduceArrayAssignmentTarget(@NotNull ArrayAssignmentTarget node, @NotNull ImmutableList<Maybe<T>> elements, @NotNull Maybe<T> rest) {
+	public T reduceArrayAssignmentTarget(@Nonnull ArrayAssignmentTarget node, @Nonnull ImmutableList<Maybe<T>> elements, @Nonnull Maybe<T> rest) {
 		return wrap.apply(node, reducer.reduceArrayAssignmentTarget(node, elements, rest));
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public T reduceArrayBinding(@NotNull ArrayBinding node, @NotNull ImmutableList<Maybe<T>> elements, @NotNull Maybe<T> rest) {
+	public T reduceArrayBinding(@Nonnull ArrayBinding node, @Nonnull ImmutableList<Maybe<T>> elements, @Nonnull Maybe<T> rest) {
 		return wrap.apply(node, reducer.reduceArrayBinding(node, elements, rest));
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public T reduceArrayExpression(@NotNull ArrayExpression node, @NotNull ImmutableList<Maybe<T>> elements) {
+	public T reduceArrayExpression(@Nonnull ArrayExpression node, @Nonnull ImmutableList<Maybe<T>> elements) {
 		return wrap.apply(node, reducer.reduceArrayExpression(node, elements));
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public T reduceArrowExpression(@NotNull ArrowExpression node, @NotNull T params, @NotNull T body) {
+	public T reduceArrowExpression(@Nonnull ArrowExpression node, @Nonnull T params, @Nonnull T body) {
 		return wrap.apply(node, reducer.reduceArrowExpression(node, params, body));
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public T reduceAssignmentExpression(@NotNull AssignmentExpression node, @NotNull T binding, @NotNull T expression) {
+	public T reduceAssignmentExpression(@Nonnull AssignmentExpression node, @Nonnull T binding, @Nonnull T expression) {
 		return wrap.apply(node, reducer.reduceAssignmentExpression(node, binding, expression));
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public T reduceAssignmentTargetIdentifier(@NotNull AssignmentTargetIdentifier node) {
+	public T reduceAssignmentTargetIdentifier(@Nonnull AssignmentTargetIdentifier node) {
 		return wrap.apply(node, reducer.reduceAssignmentTargetIdentifier(node));
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public T reduceAssignmentTargetPropertyIdentifier(@NotNull AssignmentTargetPropertyIdentifier node, @NotNull T binding, @NotNull Maybe<T> init) {
+	public T reduceAssignmentTargetPropertyIdentifier(@Nonnull AssignmentTargetPropertyIdentifier node, @Nonnull T binding, @Nonnull Maybe<T> init) {
 		return wrap.apply(node, reducer.reduceAssignmentTargetPropertyIdentifier(node, binding, init));
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public T reduceAssignmentTargetPropertyProperty(@NotNull AssignmentTargetPropertyProperty node, @NotNull T name, @NotNull T binding) {
+	public T reduceAssignmentTargetPropertyProperty(@Nonnull AssignmentTargetPropertyProperty node, @Nonnull T name, @Nonnull T binding) {
 		return wrap.apply(node, reducer.reduceAssignmentTargetPropertyProperty(node, name, binding));
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public T reduceAssignmentTargetWithDefault(@NotNull AssignmentTargetWithDefault node, @NotNull T binding, @NotNull T init) {
+	public T reduceAssignmentTargetWithDefault(@Nonnull AssignmentTargetWithDefault node, @Nonnull T binding, @Nonnull T init) {
 		return wrap.apply(node, reducer.reduceAssignmentTargetWithDefault(node, binding, init));
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public T reduceBinaryExpression(@NotNull BinaryExpression node, @NotNull T left, @NotNull T right) {
+	public T reduceBinaryExpression(@Nonnull BinaryExpression node, @Nonnull T left, @Nonnull T right) {
 		return wrap.apply(node, reducer.reduceBinaryExpression(node, left, right));
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public T reduceBindingIdentifier(@NotNull BindingIdentifier node) {
+	public T reduceBindingIdentifier(@Nonnull BindingIdentifier node) {
 		return wrap.apply(node, reducer.reduceBindingIdentifier(node));
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public T reduceBindingPropertyIdentifier(@NotNull BindingPropertyIdentifier node, @NotNull T binding, @NotNull Maybe<T> init) {
+	public T reduceBindingPropertyIdentifier(@Nonnull BindingPropertyIdentifier node, @Nonnull T binding, @Nonnull Maybe<T> init) {
 		return wrap.apply(node, reducer.reduceBindingPropertyIdentifier(node, binding, init));
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public T reduceBindingPropertyProperty(@NotNull BindingPropertyProperty node, @NotNull T name, @NotNull T binding) {
+	public T reduceBindingPropertyProperty(@Nonnull BindingPropertyProperty node, @Nonnull T name, @Nonnull T binding) {
 		return wrap.apply(node, reducer.reduceBindingPropertyProperty(node, name, binding));
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public T reduceBindingWithDefault(@NotNull BindingWithDefault node, @NotNull T binding, @NotNull T init) {
+	public T reduceBindingWithDefault(@Nonnull BindingWithDefault node, @Nonnull T binding, @Nonnull T init) {
 		return wrap.apply(node, reducer.reduceBindingWithDefault(node, binding, init));
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public T reduceBlock(@NotNull Block node, @NotNull ImmutableList<T> statements) {
+	public T reduceBlock(@Nonnull Block node, @Nonnull ImmutableList<T> statements) {
 		return wrap.apply(node, reducer.reduceBlock(node, statements));
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public T reduceBlockStatement(@NotNull BlockStatement node, @NotNull T block) {
+	public T reduceBlockStatement(@Nonnull BlockStatement node, @Nonnull T block) {
 		return wrap.apply(node, reducer.reduceBlockStatement(node, block));
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public T reduceBreakStatement(@NotNull BreakStatement node) {
+	public T reduceBreakStatement(@Nonnull BreakStatement node) {
 		return wrap.apply(node, reducer.reduceBreakStatement(node));
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public T reduceCallExpression(@NotNull CallExpression node, @NotNull T callee, @NotNull ImmutableList<T> arguments) {
+	public T reduceCallExpression(@Nonnull CallExpression node, @Nonnull T callee, @Nonnull ImmutableList<T> arguments) {
 		return wrap.apply(node, reducer.reduceCallExpression(node, callee, arguments));
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public T reduceCatchClause(@NotNull CatchClause node, @NotNull T binding, @NotNull T body) {
+	public T reduceCatchClause(@Nonnull CatchClause node, @Nonnull T binding, @Nonnull T body) {
 		return wrap.apply(node, reducer.reduceCatchClause(node, binding, body));
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public T reduceClassDeclaration(@NotNull ClassDeclaration node, @NotNull T name, @NotNull Maybe<T> _super, @NotNull ImmutableList<T> elements) {
+	public T reduceClassDeclaration(@Nonnull ClassDeclaration node, @Nonnull T name, @Nonnull Maybe<T> _super, @Nonnull ImmutableList<T> elements) {
 		return wrap.apply(node, reducer.reduceClassDeclaration(node, name, _super, elements));
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public T reduceClassElement(@NotNull ClassElement node, @NotNull T method) {
+	public T reduceClassElement(@Nonnull ClassElement node, @Nonnull T method) {
 		return wrap.apply(node, reducer.reduceClassElement(node, method));
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public T reduceClassExpression(@NotNull ClassExpression node, @NotNull Maybe<T> name, @NotNull Maybe<T> _super, @NotNull ImmutableList<T> elements) {
+	public T reduceClassExpression(@Nonnull ClassExpression node, @Nonnull Maybe<T> name, @Nonnull Maybe<T> _super, @Nonnull ImmutableList<T> elements) {
 		return wrap.apply(node, reducer.reduceClassExpression(node, name, _super, elements));
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public T reduceCompoundAssignmentExpression(@NotNull CompoundAssignmentExpression node, @NotNull T binding, @NotNull T expression) {
+	public T reduceCompoundAssignmentExpression(@Nonnull CompoundAssignmentExpression node, @Nonnull T binding, @Nonnull T expression) {
 		return wrap.apply(node, reducer.reduceCompoundAssignmentExpression(node, binding, expression));
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public T reduceComputedMemberAssignmentTarget(@NotNull ComputedMemberAssignmentTarget node, @NotNull T object, @NotNull T expression) {
+	public T reduceComputedMemberAssignmentTarget(@Nonnull ComputedMemberAssignmentTarget node, @Nonnull T object, @Nonnull T expression) {
 		return wrap.apply(node, reducer.reduceComputedMemberAssignmentTarget(node, object, expression));
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public T reduceComputedMemberExpression(@NotNull ComputedMemberExpression node, @NotNull T object, @NotNull T expression) {
+	public T reduceComputedMemberExpression(@Nonnull ComputedMemberExpression node, @Nonnull T object, @Nonnull T expression) {
 		return wrap.apply(node, reducer.reduceComputedMemberExpression(node, object, expression));
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public T reduceComputedPropertyName(@NotNull ComputedPropertyName node, @NotNull T expression) {
+	public T reduceComputedPropertyName(@Nonnull ComputedPropertyName node, @Nonnull T expression) {
 		return wrap.apply(node, reducer.reduceComputedPropertyName(node, expression));
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public T reduceConditionalExpression(@NotNull ConditionalExpression node, @NotNull T test, @NotNull T consequent, @NotNull T alternate) {
+	public T reduceConditionalExpression(@Nonnull ConditionalExpression node, @Nonnull T test, @Nonnull T consequent, @Nonnull T alternate) {
 		return wrap.apply(node, reducer.reduceConditionalExpression(node, test, consequent, alternate));
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public T reduceContinueStatement(@NotNull ContinueStatement node) {
+	public T reduceContinueStatement(@Nonnull ContinueStatement node) {
 		return wrap.apply(node, reducer.reduceContinueStatement(node));
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public T reduceDataProperty(@NotNull DataProperty node, @NotNull T name, @NotNull T expression) {
+	public T reduceDataProperty(@Nonnull DataProperty node, @Nonnull T name, @Nonnull T expression) {
 		return wrap.apply(node, reducer.reduceDataProperty(node, name, expression));
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public T reduceDebuggerStatement(@NotNull DebuggerStatement node) {
+	public T reduceDebuggerStatement(@Nonnull DebuggerStatement node) {
 		return wrap.apply(node, reducer.reduceDebuggerStatement(node));
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public T reduceDirective(@NotNull Directive node) {
+	public T reduceDirective(@Nonnull Directive node) {
 		return wrap.apply(node, reducer.reduceDirective(node));
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public T reduceDoWhileStatement(@NotNull DoWhileStatement node, @NotNull T body, @NotNull T test) {
+	public T reduceDoWhileStatement(@Nonnull DoWhileStatement node, @Nonnull T body, @Nonnull T test) {
 		return wrap.apply(node, reducer.reduceDoWhileStatement(node, body, test));
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public T reduceEmptyStatement(@NotNull EmptyStatement node) {
+	public T reduceEmptyStatement(@Nonnull EmptyStatement node) {
 		return wrap.apply(node, reducer.reduceEmptyStatement(node));
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public T reduceExport(@NotNull Export node, @NotNull T declaration) {
+	public T reduceExport(@Nonnull Export node, @Nonnull T declaration) {
 		return wrap.apply(node, reducer.reduceExport(node, declaration));
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public T reduceExportAllFrom(@NotNull ExportAllFrom node) {
+	public T reduceExportAllFrom(@Nonnull ExportAllFrom node) {
 		return wrap.apply(node, reducer.reduceExportAllFrom(node));
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public T reduceExportDefault(@NotNull ExportDefault node, @NotNull T body) {
+	public T reduceExportDefault(@Nonnull ExportDefault node, @Nonnull T body) {
 		return wrap.apply(node, reducer.reduceExportDefault(node, body));
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public T reduceExportFrom(@NotNull ExportFrom node, @NotNull ImmutableList<T> namedExports) {
+	public T reduceExportFrom(@Nonnull ExportFrom node, @Nonnull ImmutableList<T> namedExports) {
 		return wrap.apply(node, reducer.reduceExportFrom(node, namedExports));
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public T reduceExportFromSpecifier(@NotNull ExportFromSpecifier node) {
+	public T reduceExportFromSpecifier(@Nonnull ExportFromSpecifier node) {
 		return wrap.apply(node, reducer.reduceExportFromSpecifier(node));
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public T reduceExportLocalSpecifier(@NotNull ExportLocalSpecifier node, @NotNull T name) {
+	public T reduceExportLocalSpecifier(@Nonnull ExportLocalSpecifier node, @Nonnull T name) {
 		return wrap.apply(node, reducer.reduceExportLocalSpecifier(node, name));
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public T reduceExportLocals(@NotNull ExportLocals node, @NotNull ImmutableList<T> namedExports) {
+	public T reduceExportLocals(@Nonnull ExportLocals node, @Nonnull ImmutableList<T> namedExports) {
 		return wrap.apply(node, reducer.reduceExportLocals(node, namedExports));
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public T reduceExpressionStatement(@NotNull ExpressionStatement node, @NotNull T expression) {
+	public T reduceExpressionStatement(@Nonnull ExpressionStatement node, @Nonnull T expression) {
 		return wrap.apply(node, reducer.reduceExpressionStatement(node, expression));
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public T reduceForInStatement(@NotNull ForInStatement node, @NotNull T left, @NotNull T right, @NotNull T body) {
+	public T reduceForInStatement(@Nonnull ForInStatement node, @Nonnull T left, @Nonnull T right, @Nonnull T body) {
 		return wrap.apply(node, reducer.reduceForInStatement(node, left, right, body));
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public T reduceForOfStatement(@NotNull ForOfStatement node, @NotNull T left, @NotNull T right, @NotNull T body) {
+	public T reduceForOfStatement(@Nonnull ForOfStatement node, @Nonnull T left, @Nonnull T right, @Nonnull T body) {
 		return wrap.apply(node, reducer.reduceForOfStatement(node, left, right, body));
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public T reduceForStatement(@NotNull ForStatement node, @NotNull Maybe<T> init, @NotNull Maybe<T> test, @NotNull Maybe<T> update, @NotNull T body) {
+	public T reduceForStatement(@Nonnull ForStatement node, @Nonnull Maybe<T> init, @Nonnull Maybe<T> test, @Nonnull Maybe<T> update, @Nonnull T body) {
 		return wrap.apply(node, reducer.reduceForStatement(node, init, test, update, body));
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public T reduceFormalParameters(@NotNull FormalParameters node, @NotNull ImmutableList<T> items, @NotNull Maybe<T> rest) {
+	public T reduceFormalParameters(@Nonnull FormalParameters node, @Nonnull ImmutableList<T> items, @Nonnull Maybe<T> rest) {
 		return wrap.apply(node, reducer.reduceFormalParameters(node, items, rest));
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public T reduceFunctionBody(@NotNull FunctionBody node, @NotNull ImmutableList<T> directives, @NotNull ImmutableList<T> statements) {
+	public T reduceFunctionBody(@Nonnull FunctionBody node, @Nonnull ImmutableList<T> directives, @Nonnull ImmutableList<T> statements) {
 		return wrap.apply(node, reducer.reduceFunctionBody(node, directives, statements));
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public T reduceFunctionDeclaration(@NotNull FunctionDeclaration node, @NotNull T name, @NotNull T params, @NotNull T body) {
+	public T reduceFunctionDeclaration(@Nonnull FunctionDeclaration node, @Nonnull T name, @Nonnull T params, @Nonnull T body) {
 		return wrap.apply(node, reducer.reduceFunctionDeclaration(node, name, params, body));
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public T reduceFunctionExpression(@NotNull FunctionExpression node, @NotNull Maybe<T> name, @NotNull T params, @NotNull T body) {
+	public T reduceFunctionExpression(@Nonnull FunctionExpression node, @Nonnull Maybe<T> name, @Nonnull T params, @Nonnull T body) {
 		return wrap.apply(node, reducer.reduceFunctionExpression(node, name, params, body));
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public T reduceGetter(@NotNull Getter node, @NotNull T name, @NotNull T body) {
+	public T reduceGetter(@Nonnull Getter node, @Nonnull T name, @Nonnull T body) {
 		return wrap.apply(node, reducer.reduceGetter(node, name, body));
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public T reduceIdentifierExpression(@NotNull IdentifierExpression node) {
+	public T reduceIdentifierExpression(@Nonnull IdentifierExpression node) {
 		return wrap.apply(node, reducer.reduceIdentifierExpression(node));
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public T reduceIfStatement(@NotNull IfStatement node, @NotNull T test, @NotNull T consequent, @NotNull Maybe<T> alternate) {
+	public T reduceIfStatement(@Nonnull IfStatement node, @Nonnull T test, @Nonnull T consequent, @Nonnull Maybe<T> alternate) {
 		return wrap.apply(node, reducer.reduceIfStatement(node, test, consequent, alternate));
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public T reduceImport(@NotNull Import node, @NotNull Maybe<T> defaultBinding, @NotNull ImmutableList<T> namedImports) {
+	public T reduceImport(@Nonnull Import node, @Nonnull Maybe<T> defaultBinding, @Nonnull ImmutableList<T> namedImports) {
 		return wrap.apply(node, reducer.reduceImport(node, defaultBinding, namedImports));
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public T reduceImportNamespace(@NotNull ImportNamespace node, @NotNull Maybe<T> defaultBinding, @NotNull T namespaceBinding) {
+	public T reduceImportNamespace(@Nonnull ImportNamespace node, @Nonnull Maybe<T> defaultBinding, @Nonnull T namespaceBinding) {
 		return wrap.apply(node, reducer.reduceImportNamespace(node, defaultBinding, namespaceBinding));
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public T reduceImportSpecifier(@NotNull ImportSpecifier node, @NotNull T binding) {
+	public T reduceImportSpecifier(@Nonnull ImportSpecifier node, @Nonnull T binding) {
 		return wrap.apply(node, reducer.reduceImportSpecifier(node, binding));
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public T reduceLabeledStatement(@NotNull LabeledStatement node, @NotNull T body) {
+	public T reduceLabeledStatement(@Nonnull LabeledStatement node, @Nonnull T body) {
 		return wrap.apply(node, reducer.reduceLabeledStatement(node, body));
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public T reduceLiteralBooleanExpression(@NotNull LiteralBooleanExpression node) {
+	public T reduceLiteralBooleanExpression(@Nonnull LiteralBooleanExpression node) {
 		return wrap.apply(node, reducer.reduceLiteralBooleanExpression(node));
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public T reduceLiteralInfinityExpression(@NotNull LiteralInfinityExpression node) {
+	public T reduceLiteralInfinityExpression(@Nonnull LiteralInfinityExpression node) {
 		return wrap.apply(node, reducer.reduceLiteralInfinityExpression(node));
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public T reduceLiteralNullExpression(@NotNull LiteralNullExpression node) {
+	public T reduceLiteralNullExpression(@Nonnull LiteralNullExpression node) {
 		return wrap.apply(node, reducer.reduceLiteralNullExpression(node));
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public T reduceLiteralNumericExpression(@NotNull LiteralNumericExpression node) {
+	public T reduceLiteralNumericExpression(@Nonnull LiteralNumericExpression node) {
 		return wrap.apply(node, reducer.reduceLiteralNumericExpression(node));
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public T reduceLiteralRegExpExpression(@NotNull LiteralRegExpExpression node) {
+	public T reduceLiteralRegExpExpression(@Nonnull LiteralRegExpExpression node) {
 		return wrap.apply(node, reducer.reduceLiteralRegExpExpression(node));
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public T reduceLiteralStringExpression(@NotNull LiteralStringExpression node) {
+	public T reduceLiteralStringExpression(@Nonnull LiteralStringExpression node) {
 		return wrap.apply(node, reducer.reduceLiteralStringExpression(node));
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public T reduceMethod(@NotNull Method node, @NotNull T name, @NotNull T params, @NotNull T body) {
+	public T reduceMethod(@Nonnull Method node, @Nonnull T name, @Nonnull T params, @Nonnull T body) {
 		return wrap.apply(node, reducer.reduceMethod(node, name, params, body));
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public T reduceModule(@NotNull Module node, @NotNull ImmutableList<T> directives, @NotNull ImmutableList<T> items) {
+	public T reduceModule(@Nonnull Module node, @Nonnull ImmutableList<T> directives, @Nonnull ImmutableList<T> items) {
 		return wrap.apply(node, reducer.reduceModule(node, directives, items));
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public T reduceNewExpression(@NotNull NewExpression node, @NotNull T callee, @NotNull ImmutableList<T> arguments) {
+	public T reduceNewExpression(@Nonnull NewExpression node, @Nonnull T callee, @Nonnull ImmutableList<T> arguments) {
 		return wrap.apply(node, reducer.reduceNewExpression(node, callee, arguments));
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public T reduceNewTargetExpression(@NotNull NewTargetExpression node) {
+	public T reduceNewTargetExpression(@Nonnull NewTargetExpression node) {
 		return wrap.apply(node, reducer.reduceNewTargetExpression(node));
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public T reduceObjectAssignmentTarget(@NotNull ObjectAssignmentTarget node, @NotNull ImmutableList<T> properties) {
+	public T reduceObjectAssignmentTarget(@Nonnull ObjectAssignmentTarget node, @Nonnull ImmutableList<T> properties) {
 		return wrap.apply(node, reducer.reduceObjectAssignmentTarget(node, properties));
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public T reduceObjectBinding(@NotNull ObjectBinding node, @NotNull ImmutableList<T> properties) {
+	public T reduceObjectBinding(@Nonnull ObjectBinding node, @Nonnull ImmutableList<T> properties) {
 		return wrap.apply(node, reducer.reduceObjectBinding(node, properties));
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public T reduceObjectExpression(@NotNull ObjectExpression node, @NotNull ImmutableList<T> properties) {
+	public T reduceObjectExpression(@Nonnull ObjectExpression node, @Nonnull ImmutableList<T> properties) {
 		return wrap.apply(node, reducer.reduceObjectExpression(node, properties));
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public T reduceReturnStatement(@NotNull ReturnStatement node, @NotNull Maybe<T> expression) {
+	public T reduceReturnStatement(@Nonnull ReturnStatement node, @Nonnull Maybe<T> expression) {
 		return wrap.apply(node, reducer.reduceReturnStatement(node, expression));
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public T reduceScript(@NotNull Script node, @NotNull ImmutableList<T> directives, @NotNull ImmutableList<T> statements) {
+	public T reduceScript(@Nonnull Script node, @Nonnull ImmutableList<T> directives, @Nonnull ImmutableList<T> statements) {
 		return wrap.apply(node, reducer.reduceScript(node, directives, statements));
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public T reduceSetter(@NotNull Setter node, @NotNull T name, @NotNull T param, @NotNull T body) {
+	public T reduceSetter(@Nonnull Setter node, @Nonnull T name, @Nonnull T param, @Nonnull T body) {
 		return wrap.apply(node, reducer.reduceSetter(node, name, param, body));
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public T reduceShorthandProperty(@NotNull ShorthandProperty node, @NotNull T name) {
+	public T reduceShorthandProperty(@Nonnull ShorthandProperty node, @Nonnull T name) {
 		return wrap.apply(node, reducer.reduceShorthandProperty(node, name));
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public T reduceSpreadElement(@NotNull SpreadElement node, @NotNull T expression) {
+	public T reduceSpreadElement(@Nonnull SpreadElement node, @Nonnull T expression) {
 		return wrap.apply(node, reducer.reduceSpreadElement(node, expression));
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public T reduceStaticMemberAssignmentTarget(@NotNull StaticMemberAssignmentTarget node, @NotNull T object) {
+	public T reduceStaticMemberAssignmentTarget(@Nonnull StaticMemberAssignmentTarget node, @Nonnull T object) {
 		return wrap.apply(node, reducer.reduceStaticMemberAssignmentTarget(node, object));
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public T reduceStaticMemberExpression(@NotNull StaticMemberExpression node, @NotNull T object) {
+	public T reduceStaticMemberExpression(@Nonnull StaticMemberExpression node, @Nonnull T object) {
 		return wrap.apply(node, reducer.reduceStaticMemberExpression(node, object));
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public T reduceStaticPropertyName(@NotNull StaticPropertyName node) {
+	public T reduceStaticPropertyName(@Nonnull StaticPropertyName node) {
 		return wrap.apply(node, reducer.reduceStaticPropertyName(node));
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public T reduceSuper(@NotNull Super node) {
+	public T reduceSuper(@Nonnull Super node) {
 		return wrap.apply(node, reducer.reduceSuper(node));
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public T reduceSwitchCase(@NotNull SwitchCase node, @NotNull T test, @NotNull ImmutableList<T> consequent) {
+	public T reduceSwitchCase(@Nonnull SwitchCase node, @Nonnull T test, @Nonnull ImmutableList<T> consequent) {
 		return wrap.apply(node, reducer.reduceSwitchCase(node, test, consequent));
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public T reduceSwitchDefault(@NotNull SwitchDefault node, @NotNull ImmutableList<T> consequent) {
+	public T reduceSwitchDefault(@Nonnull SwitchDefault node, @Nonnull ImmutableList<T> consequent) {
 		return wrap.apply(node, reducer.reduceSwitchDefault(node, consequent));
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public T reduceSwitchStatement(@NotNull SwitchStatement node, @NotNull T discriminant, @NotNull ImmutableList<T> cases) {
+	public T reduceSwitchStatement(@Nonnull SwitchStatement node, @Nonnull T discriminant, @Nonnull ImmutableList<T> cases) {
 		return wrap.apply(node, reducer.reduceSwitchStatement(node, discriminant, cases));
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public T reduceSwitchStatementWithDefault(@NotNull SwitchStatementWithDefault node, @NotNull T discriminant, @NotNull ImmutableList<T> preDefaultCases, @NotNull T defaultCase, @NotNull ImmutableList<T> postDefaultCases) {
+	public T reduceSwitchStatementWithDefault(@Nonnull SwitchStatementWithDefault node, @Nonnull T discriminant, @Nonnull ImmutableList<T> preDefaultCases, @Nonnull T defaultCase, @Nonnull ImmutableList<T> postDefaultCases) {
 		return wrap.apply(node, reducer.reduceSwitchStatementWithDefault(node, discriminant, preDefaultCases, defaultCase, postDefaultCases));
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public T reduceTemplateElement(@NotNull TemplateElement node) {
+	public T reduceTemplateElement(@Nonnull TemplateElement node) {
 		return wrap.apply(node, reducer.reduceTemplateElement(node));
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public T reduceTemplateExpression(@NotNull TemplateExpression node, @NotNull Maybe<T> tag, @NotNull ImmutableList<T> elements) {
+	public T reduceTemplateExpression(@Nonnull TemplateExpression node, @Nonnull Maybe<T> tag, @Nonnull ImmutableList<T> elements) {
 		return wrap.apply(node, reducer.reduceTemplateExpression(node, tag, elements));
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public T reduceThisExpression(@NotNull ThisExpression node) {
+	public T reduceThisExpression(@Nonnull ThisExpression node) {
 		return wrap.apply(node, reducer.reduceThisExpression(node));
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public T reduceThrowStatement(@NotNull ThrowStatement node, @NotNull T expression) {
+	public T reduceThrowStatement(@Nonnull ThrowStatement node, @Nonnull T expression) {
 		return wrap.apply(node, reducer.reduceThrowStatement(node, expression));
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public T reduceTryCatchStatement(@NotNull TryCatchStatement node, @NotNull T body, @NotNull T catchClause) {
+	public T reduceTryCatchStatement(@Nonnull TryCatchStatement node, @Nonnull T body, @Nonnull T catchClause) {
 		return wrap.apply(node, reducer.reduceTryCatchStatement(node, body, catchClause));
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public T reduceTryFinallyStatement(@NotNull TryFinallyStatement node, @NotNull T body, @NotNull Maybe<T> catchClause, @NotNull T finalizer) {
+	public T reduceTryFinallyStatement(@Nonnull TryFinallyStatement node, @Nonnull T body, @Nonnull Maybe<T> catchClause, @Nonnull T finalizer) {
 		return wrap.apply(node, reducer.reduceTryFinallyStatement(node, body, catchClause, finalizer));
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public T reduceUnaryExpression(@NotNull UnaryExpression node, @NotNull T operand) {
+	public T reduceUnaryExpression(@Nonnull UnaryExpression node, @Nonnull T operand) {
 		return wrap.apply(node, reducer.reduceUnaryExpression(node, operand));
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public T reduceUpdateExpression(@NotNull UpdateExpression node, @NotNull T operand) {
+	public T reduceUpdateExpression(@Nonnull UpdateExpression node, @Nonnull T operand) {
 		return wrap.apply(node, reducer.reduceUpdateExpression(node, operand));
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public T reduceVariableDeclaration(@NotNull VariableDeclaration node, @NotNull ImmutableList<T> declarators) {
+	public T reduceVariableDeclaration(@Nonnull VariableDeclaration node, @Nonnull ImmutableList<T> declarators) {
 		return wrap.apply(node, reducer.reduceVariableDeclaration(node, declarators));
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public T reduceVariableDeclarationStatement(@NotNull VariableDeclarationStatement node, @NotNull T declaration) {
+	public T reduceVariableDeclarationStatement(@Nonnull VariableDeclarationStatement node, @Nonnull T declaration) {
 		return wrap.apply(node, reducer.reduceVariableDeclarationStatement(node, declaration));
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public T reduceVariableDeclarator(@NotNull VariableDeclarator node, @NotNull T binding, @NotNull Maybe<T> init) {
+	public T reduceVariableDeclarator(@Nonnull VariableDeclarator node, @Nonnull T binding, @Nonnull Maybe<T> init) {
 		return wrap.apply(node, reducer.reduceVariableDeclarator(node, binding, init));
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public T reduceWhileStatement(@NotNull WhileStatement node, @NotNull T test, @NotNull T body) {
+	public T reduceWhileStatement(@Nonnull WhileStatement node, @Nonnull T test, @Nonnull T body) {
 		return wrap.apply(node, reducer.reduceWhileStatement(node, test, body));
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public T reduceWithStatement(@NotNull WithStatement node, @NotNull T object, @NotNull T body) {
+	public T reduceWithStatement(@Nonnull WithStatement node, @Nonnull T object, @Nonnull T body) {
 		return wrap.apply(node, reducer.reduceWithStatement(node, object, body));
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public T reduceYieldExpression(@NotNull YieldExpression node, @NotNull Maybe<T> expression) {
+	public T reduceYieldExpression(@Nonnull YieldExpression node, @Nonnull Maybe<T> expression) {
 		return wrap.apply(node, reducer.reduceYieldExpression(node, expression));
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public T reduceYieldGeneratorExpression(@NotNull YieldGeneratorExpression node, @NotNull T expression) {
+	public T reduceYieldGeneratorExpression(@Nonnull YieldGeneratorExpression node, @Nonnull T expression) {
 		return wrap.apply(node, reducer.reduceYieldGeneratorExpression(node, expression));
 	}
 }

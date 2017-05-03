@@ -19,7 +19,7 @@
 //import java.io.IOException;
 //import java.util.function.Consumer;
 //
-//import org.jetbrains.annotations.NotNull;
+//import javax.annotation.Nonnull;
 //
 //import com.shapesecurity.functional.data.ImmutableList;
 //import com.shapesecurity.functional.data.Maybe;
@@ -44,17 +44,17 @@
 //    }
 //  }
 //
-//  private void forBranches(@NotNull Consumer<Branch> f) {
+//  private void forBranches(@Nonnull Consumer<Branch> f) {
 //    StaticBranch[] staticBranches = StaticBranch.values();
 //    for (StaticBranch staticBranch : staticBranches) {
 //      f.accept(staticBranch);
 //    }
 //  }
 //
-//  private void forASTs(@NotNull Consumer<Node> f) {
+//  private void forASTs(@Nonnull Consumer<Node> f) {
 //    script.reduce(new TestReducer() {
 //      @Override
-//      protected void accept(@NotNull Node node) {
+//      protected void accept(@Nonnull Node node) {
 //        f.accept(node);
 //      }
 //    });
@@ -85,7 +85,7 @@
 //  public void testPath() throws IOException {
 //    script.reduce(new TestReducerWithPath() {
 //      @Override
-//      protected void accept(@NotNull Node node, @NotNull ImmutableList<Branch> path) {
+//      protected void accept(@Nonnull Node node, @Nonnull ImmutableList<Branch> path) {
 //        assertTrue(node == track(path));
 //      }
 //    });

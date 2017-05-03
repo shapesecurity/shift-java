@@ -117,505 +117,505 @@ import com.shapesecurity.shift.es2016.ast.WhileStatement;
 import com.shapesecurity.shift.es2016.ast.WithStatement;
 import com.shapesecurity.shift.es2016.ast.YieldExpression;
 import com.shapesecurity.shift.es2016.ast.YieldGeneratorExpression;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 public interface Reducer<State> {
-    @NotNull
+    @Nonnull
     State reduceArrayAssignmentTarget(
-            @NotNull ArrayAssignmentTarget node,
-            @NotNull ImmutableList<Maybe<State>> elements,
-            @NotNull Maybe<State> rest);
+            @Nonnull ArrayAssignmentTarget node,
+            @Nonnull ImmutableList<Maybe<State>> elements,
+            @Nonnull Maybe<State> rest);
 
-    @NotNull
+    @Nonnull
     State reduceArrayBinding(
-            @NotNull ArrayBinding node,
-            @NotNull ImmutableList<Maybe<State>> elements,
-            @NotNull Maybe<State> rest);
+            @Nonnull ArrayBinding node,
+            @Nonnull ImmutableList<Maybe<State>> elements,
+            @Nonnull Maybe<State> rest);
 
-    @NotNull
+    @Nonnull
     State reduceArrayExpression(
-            @NotNull ArrayExpression node,
-            @NotNull ImmutableList<Maybe<State>> elements);
+            @Nonnull ArrayExpression node,
+            @Nonnull ImmutableList<Maybe<State>> elements);
 
-    @NotNull
+    @Nonnull
     State reduceArrowExpression(
-            @NotNull ArrowExpression node,
-            @NotNull State params,
-            @NotNull State body);
+            @Nonnull ArrowExpression node,
+            @Nonnull State params,
+            @Nonnull State body);
 
-    @NotNull
+    @Nonnull
     State reduceAssignmentExpression(
-            @NotNull AssignmentExpression node,
-            @NotNull State binding,
-            @NotNull State expression);
+            @Nonnull AssignmentExpression node,
+            @Nonnull State binding,
+            @Nonnull State expression);
 
-    @NotNull
-    State reduceAssignmentTargetIdentifier(@NotNull AssignmentTargetIdentifier node);
+    @Nonnull
+    State reduceAssignmentTargetIdentifier(@Nonnull AssignmentTargetIdentifier node);
 
-    @NotNull
+    @Nonnull
     State reduceAssignmentTargetPropertyIdentifier(
-            @NotNull AssignmentTargetPropertyIdentifier node,
-            @NotNull State binding,
-            @NotNull Maybe<State> init);
+            @Nonnull AssignmentTargetPropertyIdentifier node,
+            @Nonnull State binding,
+            @Nonnull Maybe<State> init);
 
-    @NotNull
+    @Nonnull
     State reduceAssignmentTargetPropertyProperty(
-            @NotNull AssignmentTargetPropertyProperty node,
-            @NotNull State name,
-            @NotNull State binding);
+            @Nonnull AssignmentTargetPropertyProperty node,
+            @Nonnull State name,
+            @Nonnull State binding);
 
-    @NotNull
+    @Nonnull
     State reduceAssignmentTargetWithDefault(
-            @NotNull AssignmentTargetWithDefault node,
-            @NotNull State binding,
-            @NotNull State init);
+            @Nonnull AssignmentTargetWithDefault node,
+            @Nonnull State binding,
+            @Nonnull State init);
 
-    @NotNull
+    @Nonnull
     State reduceBinaryExpression(
-            @NotNull BinaryExpression node,
-            @NotNull State left,
-            @NotNull State right);
+            @Nonnull BinaryExpression node,
+            @Nonnull State left,
+            @Nonnull State right);
 
-    @NotNull
-    State reduceBindingIdentifier(@NotNull BindingIdentifier node);
+    @Nonnull
+    State reduceBindingIdentifier(@Nonnull BindingIdentifier node);
 
-    @NotNull
+    @Nonnull
     State reduceBindingPropertyIdentifier(
-            @NotNull BindingPropertyIdentifier node,
-            @NotNull State binding,
-            @NotNull Maybe<State> init);
+            @Nonnull BindingPropertyIdentifier node,
+            @Nonnull State binding,
+            @Nonnull Maybe<State> init);
 
-    @NotNull
+    @Nonnull
     State reduceBindingPropertyProperty(
-            @NotNull BindingPropertyProperty node,
-            @NotNull State name,
-            @NotNull State binding);
+            @Nonnull BindingPropertyProperty node,
+            @Nonnull State name,
+            @Nonnull State binding);
 
-    @NotNull
+    @Nonnull
     State reduceBindingWithDefault(
-            @NotNull BindingWithDefault node,
-            @NotNull State binding,
-            @NotNull State init);
+            @Nonnull BindingWithDefault node,
+            @Nonnull State binding,
+            @Nonnull State init);
 
-    @NotNull
+    @Nonnull
     State reduceBlock(
-            @NotNull Block node,
-            @NotNull ImmutableList<State> statements);
+            @Nonnull Block node,
+            @Nonnull ImmutableList<State> statements);
 
-    @NotNull
+    @Nonnull
     State reduceBlockStatement(
-            @NotNull BlockStatement node,
-            @NotNull State block);
+            @Nonnull BlockStatement node,
+            @Nonnull State block);
 
-    @NotNull
-    State reduceBreakStatement(@NotNull BreakStatement node);
+    @Nonnull
+    State reduceBreakStatement(@Nonnull BreakStatement node);
 
-    @NotNull
+    @Nonnull
     State reduceCallExpression(
-            @NotNull CallExpression node,
-            @NotNull State callee,
-            @NotNull ImmutableList<State> arguments);
+            @Nonnull CallExpression node,
+            @Nonnull State callee,
+            @Nonnull ImmutableList<State> arguments);
 
-    @NotNull
+    @Nonnull
     State reduceCatchClause(
-            @NotNull CatchClause node,
-            @NotNull State binding,
-            @NotNull State body);
+            @Nonnull CatchClause node,
+            @Nonnull State binding,
+            @Nonnull State body);
 
-    @NotNull
+    @Nonnull
     State reduceClassDeclaration(
-            @NotNull ClassDeclaration node,
-            @NotNull State name,
-            @NotNull Maybe<State> _super,
-            @NotNull ImmutableList<State> elements);
+            @Nonnull ClassDeclaration node,
+            @Nonnull State name,
+            @Nonnull Maybe<State> _super,
+            @Nonnull ImmutableList<State> elements);
 
-    @NotNull
+    @Nonnull
     State reduceClassElement(
-            @NotNull ClassElement node,
-            @NotNull State method);
+            @Nonnull ClassElement node,
+            @Nonnull State method);
 
-    @NotNull
+    @Nonnull
     State reduceClassExpression(
-            @NotNull ClassExpression node,
-            @NotNull Maybe<State> name,
-            @NotNull Maybe<State> _super,
-            @NotNull ImmutableList<State> elements);
+            @Nonnull ClassExpression node,
+            @Nonnull Maybe<State> name,
+            @Nonnull Maybe<State> _super,
+            @Nonnull ImmutableList<State> elements);
 
-    @NotNull
+    @Nonnull
     State reduceCompoundAssignmentExpression(
-            @NotNull CompoundAssignmentExpression node,
-            @NotNull State binding,
-            @NotNull State expression);
+            @Nonnull CompoundAssignmentExpression node,
+            @Nonnull State binding,
+            @Nonnull State expression);
 
-    @NotNull
+    @Nonnull
     State reduceComputedMemberAssignmentTarget(
-            @NotNull ComputedMemberAssignmentTarget node,
-            @NotNull State object,
-            @NotNull State expression);
+            @Nonnull ComputedMemberAssignmentTarget node,
+            @Nonnull State object,
+            @Nonnull State expression);
 
-    @NotNull
+    @Nonnull
     State reduceComputedMemberExpression(
-            @NotNull ComputedMemberExpression node,
-            @NotNull State object,
-            @NotNull State expression);
+            @Nonnull ComputedMemberExpression node,
+            @Nonnull State object,
+            @Nonnull State expression);
 
-    @NotNull
+    @Nonnull
     State reduceComputedPropertyName(
-            @NotNull ComputedPropertyName node,
-            @NotNull State expression);
+            @Nonnull ComputedPropertyName node,
+            @Nonnull State expression);
 
-    @NotNull
+    @Nonnull
     State reduceConditionalExpression(
-            @NotNull ConditionalExpression node,
-            @NotNull State test,
-            @NotNull State consequent,
-            @NotNull State alternate);
+            @Nonnull ConditionalExpression node,
+            @Nonnull State test,
+            @Nonnull State consequent,
+            @Nonnull State alternate);
 
-    @NotNull
-    State reduceContinueStatement(@NotNull ContinueStatement node);
+    @Nonnull
+    State reduceContinueStatement(@Nonnull ContinueStatement node);
 
-    @NotNull
+    @Nonnull
     State reduceDataProperty(
-            @NotNull DataProperty node,
-            @NotNull State name,
-            @NotNull State expression);
+            @Nonnull DataProperty node,
+            @Nonnull State name,
+            @Nonnull State expression);
 
-    @NotNull
-    State reduceDebuggerStatement(@NotNull DebuggerStatement node);
+    @Nonnull
+    State reduceDebuggerStatement(@Nonnull DebuggerStatement node);
 
-    @NotNull
-    State reduceDirective(@NotNull Directive node);
+    @Nonnull
+    State reduceDirective(@Nonnull Directive node);
 
-    @NotNull
+    @Nonnull
     State reduceDoWhileStatement(
-            @NotNull DoWhileStatement node,
-            @NotNull State body,
-            @NotNull State test);
+            @Nonnull DoWhileStatement node,
+            @Nonnull State body,
+            @Nonnull State test);
 
-    @NotNull
-    State reduceEmptyStatement(@NotNull EmptyStatement node);
+    @Nonnull
+    State reduceEmptyStatement(@Nonnull EmptyStatement node);
 
-    @NotNull
+    @Nonnull
     State reduceExport(
-            @NotNull Export node,
-            @NotNull State declaration);
+            @Nonnull Export node,
+            @Nonnull State declaration);
 
-    @NotNull
-    State reduceExportAllFrom(@NotNull ExportAllFrom node);
+    @Nonnull
+    State reduceExportAllFrom(@Nonnull ExportAllFrom node);
 
-    @NotNull
+    @Nonnull
     State reduceExportDefault(
-            @NotNull ExportDefault node,
-            @NotNull State body);
+            @Nonnull ExportDefault node,
+            @Nonnull State body);
 
-    @NotNull
+    @Nonnull
     State reduceExportFrom(
-            @NotNull ExportFrom node,
-            @NotNull ImmutableList<State> namedExports);
+            @Nonnull ExportFrom node,
+            @Nonnull ImmutableList<State> namedExports);
 
-    @NotNull
-    State reduceExportFromSpecifier(@NotNull ExportFromSpecifier node);
+    @Nonnull
+    State reduceExportFromSpecifier(@Nonnull ExportFromSpecifier node);
 
-    @NotNull
+    @Nonnull
     State reduceExportLocalSpecifier(
-            @NotNull ExportLocalSpecifier node,
-            @NotNull State name);
+            @Nonnull ExportLocalSpecifier node,
+            @Nonnull State name);
 
-    @NotNull
+    @Nonnull
     State reduceExportLocals(
-            @NotNull ExportLocals node,
-            @NotNull ImmutableList<State> namedExports);
+            @Nonnull ExportLocals node,
+            @Nonnull ImmutableList<State> namedExports);
 
-    @NotNull
+    @Nonnull
     State reduceExpressionStatement(
-            @NotNull ExpressionStatement node,
-            @NotNull State expression);
+            @Nonnull ExpressionStatement node,
+            @Nonnull State expression);
 
-    @NotNull
+    @Nonnull
     State reduceForInStatement(
-            @NotNull ForInStatement node,
-            @NotNull State left,
-            @NotNull State right,
-            @NotNull State body);
+            @Nonnull ForInStatement node,
+            @Nonnull State left,
+            @Nonnull State right,
+            @Nonnull State body);
 
-    @NotNull
+    @Nonnull
     State reduceForOfStatement(
-            @NotNull ForOfStatement node,
-            @NotNull State left,
-            @NotNull State right,
-            @NotNull State body);
+            @Nonnull ForOfStatement node,
+            @Nonnull State left,
+            @Nonnull State right,
+            @Nonnull State body);
 
-    @NotNull
+    @Nonnull
     State reduceForStatement(
-            @NotNull ForStatement node,
-            @NotNull Maybe<State> init,
-            @NotNull Maybe<State> test,
-            @NotNull Maybe<State> update,
-            @NotNull State body);
+            @Nonnull ForStatement node,
+            @Nonnull Maybe<State> init,
+            @Nonnull Maybe<State> test,
+            @Nonnull Maybe<State> update,
+            @Nonnull State body);
 
-    @NotNull
+    @Nonnull
     State reduceFormalParameters(
-            @NotNull FormalParameters node,
-            @NotNull ImmutableList<State> items,
-            @NotNull Maybe<State> rest);
+            @Nonnull FormalParameters node,
+            @Nonnull ImmutableList<State> items,
+            @Nonnull Maybe<State> rest);
 
-    @NotNull
+    @Nonnull
     State reduceFunctionBody(
-            @NotNull FunctionBody node,
-            @NotNull ImmutableList<State> directives,
-            @NotNull ImmutableList<State> statements);
+            @Nonnull FunctionBody node,
+            @Nonnull ImmutableList<State> directives,
+            @Nonnull ImmutableList<State> statements);
 
-    @NotNull
+    @Nonnull
     State reduceFunctionDeclaration(
-            @NotNull FunctionDeclaration node,
-            @NotNull State name,
-            @NotNull State params,
-            @NotNull State body);
+            @Nonnull FunctionDeclaration node,
+            @Nonnull State name,
+            @Nonnull State params,
+            @Nonnull State body);
 
-    @NotNull
+    @Nonnull
     State reduceFunctionExpression(
-            @NotNull FunctionExpression node,
-            @NotNull Maybe<State> name,
-            @NotNull State params,
-            @NotNull State body);
+            @Nonnull FunctionExpression node,
+            @Nonnull Maybe<State> name,
+            @Nonnull State params,
+            @Nonnull State body);
 
-    @NotNull
+    @Nonnull
     State reduceGetter(
-            @NotNull Getter node,
-            @NotNull State name,
-            @NotNull State body);
+            @Nonnull Getter node,
+            @Nonnull State name,
+            @Nonnull State body);
 
-    @NotNull
-    State reduceIdentifierExpression(@NotNull IdentifierExpression node);
+    @Nonnull
+    State reduceIdentifierExpression(@Nonnull IdentifierExpression node);
 
-    @NotNull
+    @Nonnull
     State reduceIfStatement(
-            @NotNull IfStatement node,
-            @NotNull State test,
-            @NotNull State consequent,
-            @NotNull Maybe<State> alternate);
+            @Nonnull IfStatement node,
+            @Nonnull State test,
+            @Nonnull State consequent,
+            @Nonnull Maybe<State> alternate);
 
-    @NotNull
+    @Nonnull
     State reduceImport(
-            @NotNull Import node,
-            @NotNull Maybe<State> defaultBinding,
-            @NotNull ImmutableList<State> namedImports);
+            @Nonnull Import node,
+            @Nonnull Maybe<State> defaultBinding,
+            @Nonnull ImmutableList<State> namedImports);
 
-    @NotNull
+    @Nonnull
     State reduceImportNamespace(
-            @NotNull ImportNamespace node,
-            @NotNull Maybe<State> defaultBinding,
-            @NotNull State namespaceBinding);
+            @Nonnull ImportNamespace node,
+            @Nonnull Maybe<State> defaultBinding,
+            @Nonnull State namespaceBinding);
 
-    @NotNull
+    @Nonnull
     State reduceImportSpecifier(
-            @NotNull ImportSpecifier node,
-            @NotNull State binding);
+            @Nonnull ImportSpecifier node,
+            @Nonnull State binding);
 
-    @NotNull
+    @Nonnull
     State reduceLabeledStatement(
-            @NotNull LabeledStatement node,
-            @NotNull State body);
+            @Nonnull LabeledStatement node,
+            @Nonnull State body);
 
-    @NotNull
-    State reduceLiteralBooleanExpression(@NotNull LiteralBooleanExpression node);
+    @Nonnull
+    State reduceLiteralBooleanExpression(@Nonnull LiteralBooleanExpression node);
 
-    @NotNull
-    State reduceLiteralInfinityExpression(@NotNull LiteralInfinityExpression node);
+    @Nonnull
+    State reduceLiteralInfinityExpression(@Nonnull LiteralInfinityExpression node);
 
-    @NotNull
-    State reduceLiteralNullExpression(@NotNull LiteralNullExpression node);
+    @Nonnull
+    State reduceLiteralNullExpression(@Nonnull LiteralNullExpression node);
 
-    @NotNull
-    State reduceLiteralNumericExpression(@NotNull LiteralNumericExpression node);
+    @Nonnull
+    State reduceLiteralNumericExpression(@Nonnull LiteralNumericExpression node);
 
-    @NotNull
-    State reduceLiteralRegExpExpression(@NotNull LiteralRegExpExpression node);
+    @Nonnull
+    State reduceLiteralRegExpExpression(@Nonnull LiteralRegExpExpression node);
 
-    @NotNull
-    State reduceLiteralStringExpression(@NotNull LiteralStringExpression node);
+    @Nonnull
+    State reduceLiteralStringExpression(@Nonnull LiteralStringExpression node);
 
-    @NotNull
+    @Nonnull
     State reduceMethod(
-            @NotNull Method node,
-            @NotNull State name,
-            @NotNull State params,
-            @NotNull State body);
+            @Nonnull Method node,
+            @Nonnull State name,
+            @Nonnull State params,
+            @Nonnull State body);
 
-    @NotNull
+    @Nonnull
     State reduceModule(
-            @NotNull Module node,
-            @NotNull ImmutableList<State> directives,
-            @NotNull ImmutableList<State> items);
+            @Nonnull Module node,
+            @Nonnull ImmutableList<State> directives,
+            @Nonnull ImmutableList<State> items);
 
-    @NotNull
+    @Nonnull
     State reduceNewExpression(
-            @NotNull NewExpression node,
-            @NotNull State callee,
-            @NotNull ImmutableList<State> arguments);
+            @Nonnull NewExpression node,
+            @Nonnull State callee,
+            @Nonnull ImmutableList<State> arguments);
 
-    @NotNull
-    State reduceNewTargetExpression(@NotNull NewTargetExpression node);
+    @Nonnull
+    State reduceNewTargetExpression(@Nonnull NewTargetExpression node);
 
-    @NotNull
+    @Nonnull
     State reduceObjectAssignmentTarget(
-            @NotNull ObjectAssignmentTarget node,
-            @NotNull ImmutableList<State> properties);
+            @Nonnull ObjectAssignmentTarget node,
+            @Nonnull ImmutableList<State> properties);
 
-    @NotNull
+    @Nonnull
     State reduceObjectBinding(
-            @NotNull ObjectBinding node,
-            @NotNull ImmutableList<State> properties);
+            @Nonnull ObjectBinding node,
+            @Nonnull ImmutableList<State> properties);
 
-    @NotNull
+    @Nonnull
     State reduceObjectExpression(
-            @NotNull ObjectExpression node,
-            @NotNull ImmutableList<State> properties);
+            @Nonnull ObjectExpression node,
+            @Nonnull ImmutableList<State> properties);
 
-    @NotNull
+    @Nonnull
     State reduceReturnStatement(
-            @NotNull ReturnStatement node,
-            @NotNull Maybe<State> expression);
+            @Nonnull ReturnStatement node,
+            @Nonnull Maybe<State> expression);
 
-    @NotNull
+    @Nonnull
     State reduceScript(
-            @NotNull Script node,
-            @NotNull ImmutableList<State> directives,
-            @NotNull ImmutableList<State> statements);
+            @Nonnull Script node,
+            @Nonnull ImmutableList<State> directives,
+            @Nonnull ImmutableList<State> statements);
 
-    @NotNull
+    @Nonnull
     State reduceSetter(
-            @NotNull Setter node,
-            @NotNull State name,
-            @NotNull State param,
-            @NotNull State body);
+            @Nonnull Setter node,
+            @Nonnull State name,
+            @Nonnull State param,
+            @Nonnull State body);
 
-    @NotNull
+    @Nonnull
     State reduceShorthandProperty(
-            @NotNull ShorthandProperty node,
-            @NotNull State name);
+            @Nonnull ShorthandProperty node,
+            @Nonnull State name);
 
-    @NotNull
+    @Nonnull
     State reduceSpreadElement(
-            @NotNull SpreadElement node,
-            @NotNull State expression);
+            @Nonnull SpreadElement node,
+            @Nonnull State expression);
 
-    @NotNull
+    @Nonnull
     State reduceStaticMemberAssignmentTarget(
-            @NotNull StaticMemberAssignmentTarget node,
-            @NotNull State object);
+            @Nonnull StaticMemberAssignmentTarget node,
+            @Nonnull State object);
 
-    @NotNull
+    @Nonnull
     State reduceStaticMemberExpression(
-            @NotNull StaticMemberExpression node,
-            @NotNull State object);
+            @Nonnull StaticMemberExpression node,
+            @Nonnull State object);
 
-    @NotNull
-    State reduceStaticPropertyName(@NotNull StaticPropertyName node);
+    @Nonnull
+    State reduceStaticPropertyName(@Nonnull StaticPropertyName node);
 
-    @NotNull
-    State reduceSuper(@NotNull Super node);
+    @Nonnull
+    State reduceSuper(@Nonnull Super node);
 
-    @NotNull
+    @Nonnull
     State reduceSwitchCase(
-            @NotNull SwitchCase node,
-            @NotNull State test,
-            @NotNull ImmutableList<State> consequent);
+            @Nonnull SwitchCase node,
+            @Nonnull State test,
+            @Nonnull ImmutableList<State> consequent);
 
-    @NotNull
+    @Nonnull
     State reduceSwitchDefault(
-            @NotNull SwitchDefault node,
-            @NotNull ImmutableList<State> consequent);
+            @Nonnull SwitchDefault node,
+            @Nonnull ImmutableList<State> consequent);
 
-    @NotNull
+    @Nonnull
     State reduceSwitchStatement(
-            @NotNull SwitchStatement node,
-            @NotNull State discriminant,
-            @NotNull ImmutableList<State> cases);
+            @Nonnull SwitchStatement node,
+            @Nonnull State discriminant,
+            @Nonnull ImmutableList<State> cases);
 
-    @NotNull
+    @Nonnull
     State reduceSwitchStatementWithDefault(
-            @NotNull SwitchStatementWithDefault node,
-            @NotNull State discriminant,
-            @NotNull ImmutableList<State> preDefaultCases,
-            @NotNull State defaultCase,
-            @NotNull ImmutableList<State> postDefaultCases);
+            @Nonnull SwitchStatementWithDefault node,
+            @Nonnull State discriminant,
+            @Nonnull ImmutableList<State> preDefaultCases,
+            @Nonnull State defaultCase,
+            @Nonnull ImmutableList<State> postDefaultCases);
 
-    @NotNull
-    State reduceTemplateElement(@NotNull TemplateElement node);
+    @Nonnull
+    State reduceTemplateElement(@Nonnull TemplateElement node);
 
-    @NotNull
+    @Nonnull
     State reduceTemplateExpression(
-            @NotNull TemplateExpression node,
-            @NotNull Maybe<State> tag,
-            @NotNull ImmutableList<State> elements);
+            @Nonnull TemplateExpression node,
+            @Nonnull Maybe<State> tag,
+            @Nonnull ImmutableList<State> elements);
 
-    @NotNull
-    State reduceThisExpression(@NotNull ThisExpression node);
+    @Nonnull
+    State reduceThisExpression(@Nonnull ThisExpression node);
 
-    @NotNull
+    @Nonnull
     State reduceThrowStatement(
-            @NotNull ThrowStatement node,
-            @NotNull State expression);
+            @Nonnull ThrowStatement node,
+            @Nonnull State expression);
 
-    @NotNull
+    @Nonnull
     State reduceTryCatchStatement(
-            @NotNull TryCatchStatement node,
-            @NotNull State body,
-            @NotNull State catchClause);
+            @Nonnull TryCatchStatement node,
+            @Nonnull State body,
+            @Nonnull State catchClause);
 
-    @NotNull
+    @Nonnull
     State reduceTryFinallyStatement(
-            @NotNull TryFinallyStatement node,
-            @NotNull State body,
-            @NotNull Maybe<State> catchClause,
-            @NotNull State finalizer);
+            @Nonnull TryFinallyStatement node,
+            @Nonnull State body,
+            @Nonnull Maybe<State> catchClause,
+            @Nonnull State finalizer);
 
-    @NotNull
+    @Nonnull
     State reduceUnaryExpression(
-            @NotNull UnaryExpression node,
-            @NotNull State operand);
+            @Nonnull UnaryExpression node,
+            @Nonnull State operand);
 
-    @NotNull
+    @Nonnull
     State reduceUpdateExpression(
-            @NotNull UpdateExpression node,
-            @NotNull State operand);
+            @Nonnull UpdateExpression node,
+            @Nonnull State operand);
 
-    @NotNull
+    @Nonnull
     State reduceVariableDeclaration(
-            @NotNull VariableDeclaration node,
-            @NotNull ImmutableList<State> declarators);
+            @Nonnull VariableDeclaration node,
+            @Nonnull ImmutableList<State> declarators);
 
-    @NotNull
+    @Nonnull
     State reduceVariableDeclarationStatement(
-            @NotNull VariableDeclarationStatement node,
-            @NotNull State declaration);
+            @Nonnull VariableDeclarationStatement node,
+            @Nonnull State declaration);
 
-    @NotNull
+    @Nonnull
     State reduceVariableDeclarator(
-            @NotNull VariableDeclarator node,
-            @NotNull State binding,
-            @NotNull Maybe<State> init);
+            @Nonnull VariableDeclarator node,
+            @Nonnull State binding,
+            @Nonnull Maybe<State> init);
 
-    @NotNull
+    @Nonnull
     State reduceWhileStatement(
-            @NotNull WhileStatement node,
-            @NotNull State test,
-            @NotNull State body);
+            @Nonnull WhileStatement node,
+            @Nonnull State test,
+            @Nonnull State body);
 
-    @NotNull
+    @Nonnull
     State reduceWithStatement(
-            @NotNull WithStatement node,
-            @NotNull State object,
-            @NotNull State body);
+            @Nonnull WithStatement node,
+            @Nonnull State object,
+            @Nonnull State body);
 
-    @NotNull
+    @Nonnull
     State reduceYieldExpression(
-            @NotNull YieldExpression node,
-            @NotNull Maybe<State> expression);
+            @Nonnull YieldExpression node,
+            @Nonnull Maybe<State> expression);
 
-    @NotNull
+    @Nonnull
     State reduceYieldGeneratorExpression(
-            @NotNull YieldGeneratorExpression node,
-            @NotNull State expression);
+            @Nonnull YieldGeneratorExpression node,
+            @Nonnull State expression);
 }

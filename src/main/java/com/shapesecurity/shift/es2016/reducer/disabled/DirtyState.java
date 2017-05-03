@@ -19,27 +19,27 @@
 //import com.shapesecurity.functional.F;
 //import com.shapesecurity.functional.Thunk;
 //
-//import org.jetbrains.annotations.NotNull;
+//import javax.annotation.Nonnull;
 //
 //public class DirtyState<T> {
-//  @NotNull
+//  @Nonnull
 //  public final T node;
 //  public final boolean dirty;
 //
-//  public DirtyState(@NotNull T node, boolean dirty) {
+//  public DirtyState(@Nonnull T node, boolean dirty) {
 //    this.node = node;
 //    this.dirty = dirty;
 //  }
 //
-//  public static <T> DirtyState<T> clean(@NotNull T node) {
+//  public static <T> DirtyState<T> clean(@Nonnull T node) {
 //    return new DirtyState<>(node, false);
 //  }
 //
-//  public static <T> DirtyState<T> dirty(@NotNull T node) {
+//  public static <T> DirtyState<T> dirty(@Nonnull T node) {
 //    return new DirtyState<>(node, true);
 //  }
 //
-//  public <U> DirtyState<U> bind(@NotNull F<T, DirtyState<U>> f) {
+//  public <U> DirtyState<U> bind(@Nonnull F<T, DirtyState<U>> f) {
 //    if (this.dirty) {
 //      DirtyState<U> b = f.apply(this.node);
 //      if (b.dirty) {
@@ -51,18 +51,18 @@
 //    }
 //  }
 //
-//  public <U> DirtyState<Thunk<U>> bindLast(@NotNull final F<T, U> f) {
+//  public <U> DirtyState<Thunk<U>> bindLast(@Nonnull final F<T, U> f) {
 //    return new DirtyState<>(Thunk.from(() -> f.apply(DirtyState.this.node)), this.dirty);
 //  }
 //
-//  public DirtyState<T> onDirty(@NotNull F<T, DirtyState<T>> f) {
+//  public DirtyState<T> onDirty(@Nonnull F<T, DirtyState<T>> f) {
 //    if (this.dirty) {
 //      return f.apply(this.node);
 //    }
 //    return this;
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  public DirtyState<T> setDirty() {
 //    if (this.dirty) {
 //      return this;

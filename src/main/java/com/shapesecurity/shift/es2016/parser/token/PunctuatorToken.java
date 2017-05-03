@@ -20,14 +20,14 @@ import com.shapesecurity.shift.es2016.parser.TokenType;
 import com.shapesecurity.shift.es2016.parser.SourceRange;
 import com.shapesecurity.shift.es2016.parser.Token;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 public class PunctuatorToken extends Token {
-    public PunctuatorToken(@NotNull TokenType type, @NotNull SourceRange slice) {
+    public PunctuatorToken(@Nonnull TokenType type, @Nonnull SourceRange slice) {
         super(type, slice);
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public String getValueString() {
         return this.type.name;

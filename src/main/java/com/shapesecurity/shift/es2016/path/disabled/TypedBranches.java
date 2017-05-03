@@ -84,8 +84,8 @@
 //import com.shapesecurity.shift.ast.types.NonEmptyListType;
 //import com.shapesecurity.shift.ast.types.Type;
 //
-//import org.jetbrains.annotations.NotNull;
-//import org.jetbrains.annotations.Nullable;
+//import javax.annotation.Nonnull;
+//import javax.annotation.Nullable;
 //
 //class TypedBranches {
 //
@@ -122,114 +122,114 @@
 //  }
 //
 //  private static <P extends Node, C extends Node> TypedBranch<P, C> def(
-//      @NotNull GenType parentType,
-//      @NotNull GenType childType,
-//      @NotNull F<P, C> view,
-//      @NotNull F2<P, C, P> set) {
+//      @Nonnull GenType parentType,
+//      @Nonnull GenType childType,
+//      @Nonnull F<P, C> view,
+//      @Nonnull F2<P, C, P> set) {
 //    return new TypedBranch<P, C>(parentType, childType) {
 //
 //      @Nullable
 //      @Override
-//      public C view(@NotNull P parent) {
+//      public C view(@Nonnull P parent) {
 //        return view.apply(parent);
 //      }
 //
-//      @NotNull
+//      @Nonnull
 //      @Override
-//      public P set(@NotNull P parent, @NotNull C child) {
+//      public P set(@Nonnull P parent, @Nonnull C child) {
 //        return set.apply(parent, child);
 //      }
 //    };
 //  }
 //
 //  private static <P extends Node, C> TypedBranch<P, ListNode<C>> defl(
-//      @NotNull GenType parentType,
-//      @NotNull GenType childType,
-//      @NotNull F<P, ImmutableList<C>> view,
-//      @NotNull F2<P, ImmutableList<C>, P> set) {
+//      @Nonnull GenType parentType,
+//      @Nonnull GenType childType,
+//      @Nonnull F<P, ImmutableList<C>> view,
+//      @Nonnull F2<P, ImmutableList<C>, P> set) {
 //    F<P, ListNode<C>> lView = list(view, childType);
 //    F2<P, ListNode<C>, P> lSet = list(set);
 //    return new TypedBranch<P, ListNode<C>>(parentType, ListType.from(childType)) {
 //
 //      @Nullable
 //      @Override
-//      public ListNode<C> view(@NotNull P parent) {
+//      public ListNode<C> view(@Nonnull P parent) {
 //        return lView.apply(parent);
 //      }
 //
-//      @NotNull
+//      @Nonnull
 //      @Override
-//      public P set(@NotNull P parent, @NotNull ListNode<C> child) {
+//      public P set(@Nonnull P parent, @Nonnull ListNode<C> child) {
 //        return lSet.apply(parent, child);
 //      }
 //    };
 //  }
 //
 //  private static <P extends Node, C> TypedBranch<P, NonEmptyListNode<C>> defnel(
-//      @NotNull GenType parentType,
-//      @NotNull GenType childType,
-//      @NotNull F<P, NonEmptyImmutableList<C>> view,
-//      @NotNull F2<P, NonEmptyImmutableList<C>, P> set) {
+//      @Nonnull GenType parentType,
+//      @Nonnull GenType childType,
+//      @Nonnull F<P, NonEmptyImmutableList<C>> view,
+//      @Nonnull F2<P, NonEmptyImmutableList<C>, P> set) {
 //    F<P, NonEmptyListNode<C>> nelView = nel(view, childType);
 //    F2<P, NonEmptyListNode<C>, P> nelSet = nel(set);
 //    return new TypedBranch<P, NonEmptyListNode<C>>(parentType, NonEmptyListType.from(childType)) {
 //
 //      @Nullable
 //      @Override
-//      public NonEmptyListNode<C> view(@NotNull P parent) {
+//      public NonEmptyListNode<C> view(@Nonnull P parent) {
 //        return nelView.apply(parent);
 //      }
 //
-//      @NotNull
+//      @Nonnull
 //      @Override
-//      public P set(@NotNull P parent, @NotNull NonEmptyListNode<C> child) {
+//      public P set(@Nonnull P parent, @Nonnull NonEmptyListNode<C> child) {
 //        return nelSet.apply(parent, child);
 //      }
 //    };
 //  }
 //
 //  private static <P extends Node, C> TypedBranch<P, MaybeNode<C>> defm(
-//      @NotNull GenType parentType,
-//      @NotNull GenType childType,
-//      @NotNull F<P, Maybe<C>> view,
-//      @NotNull F2<P, Maybe<C>, P> set) {
+//      @Nonnull GenType parentType,
+//      @Nonnull GenType childType,
+//      @Nonnull F<P, Maybe<C>> view,
+//      @Nonnull F2<P, Maybe<C>, P> set) {
 //    F<P, MaybeNode<C>> mView = maybe(view, childType);
 //    F2<P, MaybeNode<C>, P> mSet = maybe(set);
 //    return new TypedBranch<P, MaybeNode<C>>(parentType, MaybeType.from(childType)) {
 //
 //      @Nullable
 //      @Override
-//      public MaybeNode<C> view(@NotNull P parent) {
+//      public MaybeNode<C> view(@Nonnull P parent) {
 //        return mView.apply(parent);
 //      }
 //
-//      @NotNull
+//      @Nonnull
 //      @Override
-//      public P set(@NotNull P parent, @NotNull MaybeNode<C> child) {
+//      public P set(@Nonnull P parent, @Nonnull MaybeNode<C> child) {
 //        return mSet.apply(parent, child);
 //      }
 //    };
 //  }
 //
 //  private static <P extends Node, A, B> TypedBranch<P, EitherNode<A, B>> defe(
-//      @NotNull GenType parentType,
-//      @NotNull GenType a,
-//      @NotNull GenType b,
-//      @NotNull F<P, Either<A, B>> view,
-//      @NotNull F2<P, Either<A, B>, P> set) {
+//      @Nonnull GenType parentType,
+//      @Nonnull GenType a,
+//      @Nonnull GenType b,
+//      @Nonnull F<P, Either<A, B>> view,
+//      @Nonnull F2<P, Either<A, B>, P> set) {
 //    F<P, EitherNode<A, B>> eView = either(view, a, b);
 //    F2<P, EitherNode<A, B>, P> eSet = either(set);
 //    return new TypedBranch<P, EitherNode<A, B>>(parentType, EitherType.from(a, b)) {
 //
 //      @Nullable
 //      @Override
-//      public EitherNode<A, B> view(@NotNull P parent) {
+//      public EitherNode<A, B> view(@Nonnull P parent) {
 //        return eView.apply(parent);
 //      }
 //
-//      @NotNull
+//      @Nonnull
 //      @Override
-//      public P set(@NotNull P parent, @NotNull EitherNode<A, B> child) {
+//      public P set(@Nonnull P parent, @Nonnull EitherNode<A, B> child) {
 //        return eSet.apply(parent, child);
 //      }
 //    };

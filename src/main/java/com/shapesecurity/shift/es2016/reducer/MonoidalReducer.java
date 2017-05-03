@@ -116,13 +116,13 @@ import com.shapesecurity.shift.es2016.ast.WhileStatement;
 import com.shapesecurity.shift.es2016.ast.WithStatement;
 import com.shapesecurity.shift.es2016.ast.YieldExpression;
 import com.shapesecurity.shift.es2016.ast.YieldGeneratorExpression;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 public class MonoidalReducer<State> implements Reducer<State> {
-    @NotNull
+    @Nonnull
     protected final Monoid<State> monoidClass;
 
-    public MonoidalReducer(@NotNull Monoid<State> monoidClass) {
+    public MonoidalReducer(@Nonnull Monoid<State> monoidClass) {
         this.monoidClass = monoidClass;
     }
 
@@ -150,795 +150,795 @@ public class MonoidalReducer<State> implements Reducer<State> {
         return as.foldLeft(this::append, a);
     }
 
-    @NotNull
-    protected State o(@NotNull Maybe<State> s) {
+    @Nonnull
+    protected State o(@Nonnull Maybe<State> s) {
         return s.orJust(this.identity());
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public State reduceArrayAssignmentTarget(
-            @NotNull ArrayAssignmentTarget node,
-            @NotNull ImmutableList<Maybe<State>> elements,
-            @NotNull Maybe<State> rest) {
+            @Nonnull ArrayAssignmentTarget node,
+            @Nonnull ImmutableList<Maybe<State>> elements,
+            @Nonnull Maybe<State> rest) {
         return append(fold(Maybe.catMaybes(elements)), o(rest));
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public State reduceArrayBinding(
-            @NotNull ArrayBinding node,
-            @NotNull ImmutableList<Maybe<State>> elements,
-            @NotNull Maybe<State> rest) {
+            @Nonnull ArrayBinding node,
+            @Nonnull ImmutableList<Maybe<State>> elements,
+            @Nonnull Maybe<State> rest) {
         return append(fold(Maybe.catMaybes(elements)), o(rest));
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public State reduceArrayExpression(
-            @NotNull ArrayExpression node,
-            @NotNull ImmutableList<Maybe<State>> elements) {
+            @Nonnull ArrayExpression node,
+            @Nonnull ImmutableList<Maybe<State>> elements) {
         return fold(Maybe.catMaybes(elements));
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public State reduceArrowExpression(
-            @NotNull ArrowExpression node,
-            @NotNull State params,
-            @NotNull State body) {
+            @Nonnull ArrowExpression node,
+            @Nonnull State params,
+            @Nonnull State body) {
         return append(params, body);
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public State reduceAssignmentExpression(
-            @NotNull AssignmentExpression node,
-            @NotNull State binding,
-            @NotNull State expression) {
+            @Nonnull AssignmentExpression node,
+            @Nonnull State binding,
+            @Nonnull State expression) {
         return append(binding, expression);
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public State reduceAssignmentTargetIdentifier(@NotNull AssignmentTargetIdentifier node) {
+    public State reduceAssignmentTargetIdentifier(@Nonnull AssignmentTargetIdentifier node) {
         return this.identity();
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public State reduceAssignmentTargetPropertyIdentifier(
-            @NotNull AssignmentTargetPropertyIdentifier node,
-            @NotNull State binding,
-            @NotNull Maybe<State> init) {
+            @Nonnull AssignmentTargetPropertyIdentifier node,
+            @Nonnull State binding,
+            @Nonnull Maybe<State> init) {
         return append(binding, o(init));
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public State reduceAssignmentTargetPropertyProperty(
-            @NotNull AssignmentTargetPropertyProperty node,
-            @NotNull State name,
-            @NotNull State binding) {
+            @Nonnull AssignmentTargetPropertyProperty node,
+            @Nonnull State name,
+            @Nonnull State binding) {
         return append(name, binding);
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public State reduceAssignmentTargetWithDefault(
-            @NotNull AssignmentTargetWithDefault node,
-            @NotNull State binding,
-            @NotNull State init) {
+            @Nonnull AssignmentTargetWithDefault node,
+            @Nonnull State binding,
+            @Nonnull State init) {
         return append(binding, init);
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public State reduceBinaryExpression(
-            @NotNull BinaryExpression node,
-            @NotNull State left,
-            @NotNull State right) {
+            @Nonnull BinaryExpression node,
+            @Nonnull State left,
+            @Nonnull State right) {
         return append(left, right);
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public State reduceBindingIdentifier(@NotNull BindingIdentifier node) {
+    public State reduceBindingIdentifier(@Nonnull BindingIdentifier node) {
         return this.identity();
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public State reduceBindingPropertyIdentifier(
-            @NotNull BindingPropertyIdentifier node,
-            @NotNull State binding,
-            @NotNull Maybe<State> init) {
+            @Nonnull BindingPropertyIdentifier node,
+            @Nonnull State binding,
+            @Nonnull Maybe<State> init) {
         return append(binding, o(init));
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public State reduceBindingPropertyProperty(
-            @NotNull BindingPropertyProperty node,
-            @NotNull State name,
-            @NotNull State binding) {
+            @Nonnull BindingPropertyProperty node,
+            @Nonnull State name,
+            @Nonnull State binding) {
         return append(name, binding);
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public State reduceBindingWithDefault(
-            @NotNull BindingWithDefault node,
-            @NotNull State binding,
-            @NotNull State init) {
+            @Nonnull BindingWithDefault node,
+            @Nonnull State binding,
+            @Nonnull State init) {
         return append(binding, init);
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public State reduceBlock(
-            @NotNull Block node,
-            @NotNull ImmutableList<State> statements) {
+            @Nonnull Block node,
+            @Nonnull ImmutableList<State> statements) {
         return fold(statements);
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public State reduceBlockStatement(
-            @NotNull BlockStatement node,
-            @NotNull State block) {
+            @Nonnull BlockStatement node,
+            @Nonnull State block) {
         return block;
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public State reduceBreakStatement(@NotNull BreakStatement node) {
+    public State reduceBreakStatement(@Nonnull BreakStatement node) {
         return this.identity();
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public State reduceCallExpression(
-            @NotNull CallExpression node,
-            @NotNull State callee,
-            @NotNull ImmutableList<State> arguments) {
+            @Nonnull CallExpression node,
+            @Nonnull State callee,
+            @Nonnull ImmutableList<State> arguments) {
         return fold1(arguments, callee);
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public State reduceCatchClause(
-            @NotNull CatchClause node,
-            @NotNull State binding,
-            @NotNull State body) {
+            @Nonnull CatchClause node,
+            @Nonnull State binding,
+            @Nonnull State body) {
         return append(binding, body);
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public State reduceClassDeclaration(
-            @NotNull ClassDeclaration node,
-            @NotNull State name,
-            @NotNull Maybe<State> _super,
-            @NotNull ImmutableList<State> elements) {
+            @Nonnull ClassDeclaration node,
+            @Nonnull State name,
+            @Nonnull Maybe<State> _super,
+            @Nonnull ImmutableList<State> elements) {
         return append(name, o(_super), fold(elements));
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public State reduceClassElement(
-            @NotNull ClassElement node,
-            @NotNull State method) {
+            @Nonnull ClassElement node,
+            @Nonnull State method) {
         return method;
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public State reduceClassExpression(
-            @NotNull ClassExpression node,
-            @NotNull Maybe<State> name,
-            @NotNull Maybe<State> _super,
-            @NotNull ImmutableList<State> elements) {
+            @Nonnull ClassExpression node,
+            @Nonnull Maybe<State> name,
+            @Nonnull Maybe<State> _super,
+            @Nonnull ImmutableList<State> elements) {
         return append(o(name), o(_super), fold(elements));
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public State reduceCompoundAssignmentExpression(
-            @NotNull CompoundAssignmentExpression node,
-            @NotNull State binding,
-            @NotNull State expression) {
+            @Nonnull CompoundAssignmentExpression node,
+            @Nonnull State binding,
+            @Nonnull State expression) {
         return append(binding, expression);
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public State reduceComputedMemberAssignmentTarget(
-            @NotNull ComputedMemberAssignmentTarget node,
-            @NotNull State object,
-            @NotNull State expression) {
+            @Nonnull ComputedMemberAssignmentTarget node,
+            @Nonnull State object,
+            @Nonnull State expression) {
         return append(object, expression);
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public State reduceComputedMemberExpression(
-            @NotNull ComputedMemberExpression node,
-            @NotNull State object,
-            @NotNull State expression) {
+            @Nonnull ComputedMemberExpression node,
+            @Nonnull State object,
+            @Nonnull State expression) {
         return append(object, expression);
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public State reduceComputedPropertyName(
-            @NotNull ComputedPropertyName node,
-            @NotNull State expression) {
+            @Nonnull ComputedPropertyName node,
+            @Nonnull State expression) {
         return expression;
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public State reduceConditionalExpression(
-            @NotNull ConditionalExpression node,
-            @NotNull State test,
-            @NotNull State consequent,
-            @NotNull State alternate) {
+            @Nonnull ConditionalExpression node,
+            @Nonnull State test,
+            @Nonnull State consequent,
+            @Nonnull State alternate) {
         return append(test, consequent, alternate);
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public State reduceContinueStatement(@NotNull ContinueStatement node) {
+    public State reduceContinueStatement(@Nonnull ContinueStatement node) {
         return this.identity();
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public State reduceDataProperty(
-            @NotNull DataProperty node,
-            @NotNull State name,
-            @NotNull State expression) {
+            @Nonnull DataProperty node,
+            @Nonnull State name,
+            @Nonnull State expression) {
         return append(name, expression);
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public State reduceDebuggerStatement(@NotNull DebuggerStatement node) {
+    public State reduceDebuggerStatement(@Nonnull DebuggerStatement node) {
         return this.identity();
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public State reduceDirective(@NotNull Directive node) {
+    public State reduceDirective(@Nonnull Directive node) {
         return this.identity();
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public State reduceDoWhileStatement(
-            @NotNull DoWhileStatement node,
-            @NotNull State body,
-            @NotNull State test) {
+            @Nonnull DoWhileStatement node,
+            @Nonnull State body,
+            @Nonnull State test) {
         return append(body, test);
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public State reduceEmptyStatement(@NotNull EmptyStatement node) {
+    public State reduceEmptyStatement(@Nonnull EmptyStatement node) {
         return this.identity();
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public State reduceExport(
-            @NotNull Export node,
-            @NotNull State declaration) {
+            @Nonnull Export node,
+            @Nonnull State declaration) {
         return declaration;
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public State reduceExportAllFrom(@NotNull ExportAllFrom node) {
+    public State reduceExportAllFrom(@Nonnull ExportAllFrom node) {
         return this.identity();
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public State reduceExportDefault(
-            @NotNull ExportDefault node,
-            @NotNull State body) {
+            @Nonnull ExportDefault node,
+            @Nonnull State body) {
         return body;
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public State reduceExportFrom(
-            @NotNull ExportFrom node,
-            @NotNull ImmutableList<State> namedExports) {
+            @Nonnull ExportFrom node,
+            @Nonnull ImmutableList<State> namedExports) {
         return fold(namedExports);
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public State reduceExportFromSpecifier(@NotNull ExportFromSpecifier node) {
+    public State reduceExportFromSpecifier(@Nonnull ExportFromSpecifier node) {
         return this.identity();
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public State reduceExportLocalSpecifier(
-            @NotNull ExportLocalSpecifier node,
-            @NotNull State name) {
+            @Nonnull ExportLocalSpecifier node,
+            @Nonnull State name) {
         return name;
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public State reduceExportLocals(
-            @NotNull ExportLocals node,
-            @NotNull ImmutableList<State> namedExports) {
+            @Nonnull ExportLocals node,
+            @Nonnull ImmutableList<State> namedExports) {
         return fold(namedExports);
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public State reduceExpressionStatement(
-            @NotNull ExpressionStatement node,
-            @NotNull State expression) {
+            @Nonnull ExpressionStatement node,
+            @Nonnull State expression) {
         return expression;
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public State reduceForInStatement(
-            @NotNull ForInStatement node,
-            @NotNull State left,
-            @NotNull State right,
-            @NotNull State body) {
+            @Nonnull ForInStatement node,
+            @Nonnull State left,
+            @Nonnull State right,
+            @Nonnull State body) {
         return append(left, right, body);
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public State reduceForOfStatement(
-            @NotNull ForOfStatement node,
-            @NotNull State left,
-            @NotNull State right,
-            @NotNull State body) {
+            @Nonnull ForOfStatement node,
+            @Nonnull State left,
+            @Nonnull State right,
+            @Nonnull State body) {
         return append(left, right, body);
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public State reduceForStatement(
-            @NotNull ForStatement node,
-            @NotNull Maybe<State> init,
-            @NotNull Maybe<State> test,
-            @NotNull Maybe<State> update,
-            @NotNull State body) {
+            @Nonnull ForStatement node,
+            @Nonnull Maybe<State> init,
+            @Nonnull Maybe<State> test,
+            @Nonnull Maybe<State> update,
+            @Nonnull State body) {
         return append(o(init), o(test), o(update), body);
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public State reduceFormalParameters(
-            @NotNull FormalParameters node,
-            @NotNull ImmutableList<State> items,
-            @NotNull Maybe<State> rest) {
+            @Nonnull FormalParameters node,
+            @Nonnull ImmutableList<State> items,
+            @Nonnull Maybe<State> rest) {
         return append(fold(items), o(rest));
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public State reduceFunctionBody(
-            @NotNull FunctionBody node,
-            @NotNull ImmutableList<State> directives,
-            @NotNull ImmutableList<State> statements) {
+            @Nonnull FunctionBody node,
+            @Nonnull ImmutableList<State> directives,
+            @Nonnull ImmutableList<State> statements) {
         return append(fold(directives), fold(statements));
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public State reduceFunctionDeclaration(
-            @NotNull FunctionDeclaration node,
-            @NotNull State name,
-            @NotNull State params,
-            @NotNull State body) {
+            @Nonnull FunctionDeclaration node,
+            @Nonnull State name,
+            @Nonnull State params,
+            @Nonnull State body) {
         return append(name, params, body);
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public State reduceFunctionExpression(
-            @NotNull FunctionExpression node,
-            @NotNull Maybe<State> name,
-            @NotNull State params,
-            @NotNull State body) {
+            @Nonnull FunctionExpression node,
+            @Nonnull Maybe<State> name,
+            @Nonnull State params,
+            @Nonnull State body) {
         return append(o(name), params, body);
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public State reduceGetter(
-            @NotNull Getter node,
-            @NotNull State name,
-            @NotNull State body) {
+            @Nonnull Getter node,
+            @Nonnull State name,
+            @Nonnull State body) {
         return append(name, body);
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public State reduceIdentifierExpression(@NotNull IdentifierExpression node) {
+    public State reduceIdentifierExpression(@Nonnull IdentifierExpression node) {
         return this.identity();
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public State reduceIfStatement(
-            @NotNull IfStatement node,
-            @NotNull State test,
-            @NotNull State consequent,
-            @NotNull Maybe<State> alternate) {
+            @Nonnull IfStatement node,
+            @Nonnull State test,
+            @Nonnull State consequent,
+            @Nonnull Maybe<State> alternate) {
         return append(test, consequent, o(alternate));
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public State reduceImport(
-            @NotNull Import node,
-            @NotNull Maybe<State> defaultBinding,
-            @NotNull ImmutableList<State> namedImports) {
+            @Nonnull Import node,
+            @Nonnull Maybe<State> defaultBinding,
+            @Nonnull ImmutableList<State> namedImports) {
         return fold1(namedImports, o(defaultBinding));
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public State reduceImportNamespace(
-            @NotNull ImportNamespace node,
-            @NotNull Maybe<State> defaultBinding,
-            @NotNull State namespaceBinding) {
+            @Nonnull ImportNamespace node,
+            @Nonnull Maybe<State> defaultBinding,
+            @Nonnull State namespaceBinding) {
         return append(o(defaultBinding), namespaceBinding);
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public State reduceImportSpecifier(
-            @NotNull ImportSpecifier node,
-            @NotNull State binding) {
+            @Nonnull ImportSpecifier node,
+            @Nonnull State binding) {
         return binding;
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public State reduceLabeledStatement(
-            @NotNull LabeledStatement node,
-            @NotNull State body) {
+            @Nonnull LabeledStatement node,
+            @Nonnull State body) {
         return body;
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public State reduceLiteralBooleanExpression(@NotNull LiteralBooleanExpression node) {
+    public State reduceLiteralBooleanExpression(@Nonnull LiteralBooleanExpression node) {
         return this.identity();
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public State reduceLiteralInfinityExpression(@NotNull LiteralInfinityExpression node) {
+    public State reduceLiteralInfinityExpression(@Nonnull LiteralInfinityExpression node) {
         return this.identity();
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public State reduceLiteralNullExpression(@NotNull LiteralNullExpression node) {
+    public State reduceLiteralNullExpression(@Nonnull LiteralNullExpression node) {
         return this.identity();
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public State reduceLiteralNumericExpression(@NotNull LiteralNumericExpression node) {
+    public State reduceLiteralNumericExpression(@Nonnull LiteralNumericExpression node) {
         return this.identity();
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public State reduceLiteralRegExpExpression(@NotNull LiteralRegExpExpression node) {
+    public State reduceLiteralRegExpExpression(@Nonnull LiteralRegExpExpression node) {
         return this.identity();
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public State reduceLiteralStringExpression(@NotNull LiteralStringExpression node) {
+    public State reduceLiteralStringExpression(@Nonnull LiteralStringExpression node) {
         return this.identity();
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public State reduceMethod(
-            @NotNull Method node,
-            @NotNull State name,
-            @NotNull State params,
-            @NotNull State body) {
+            @Nonnull Method node,
+            @Nonnull State name,
+            @Nonnull State params,
+            @Nonnull State body) {
         return append(name, params, body);
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public State reduceModule(
-            @NotNull Module node,
-            @NotNull ImmutableList<State> directives,
-            @NotNull ImmutableList<State> items) {
+            @Nonnull Module node,
+            @Nonnull ImmutableList<State> directives,
+            @Nonnull ImmutableList<State> items) {
         return append(fold(directives), fold(items));
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public State reduceNewExpression(
-            @NotNull NewExpression node,
-            @NotNull State callee,
-            @NotNull ImmutableList<State> arguments) {
+            @Nonnull NewExpression node,
+            @Nonnull State callee,
+            @Nonnull ImmutableList<State> arguments) {
         return fold1(arguments, callee);
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public State reduceNewTargetExpression(@NotNull NewTargetExpression node) {
+    public State reduceNewTargetExpression(@Nonnull NewTargetExpression node) {
         return this.identity();
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public State reduceObjectAssignmentTarget(
-            @NotNull ObjectAssignmentTarget node,
-            @NotNull ImmutableList<State> properties) {
+            @Nonnull ObjectAssignmentTarget node,
+            @Nonnull ImmutableList<State> properties) {
         return fold(properties);
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public State reduceObjectBinding(
-            @NotNull ObjectBinding node,
-            @NotNull ImmutableList<State> properties) {
+            @Nonnull ObjectBinding node,
+            @Nonnull ImmutableList<State> properties) {
         return fold(properties);
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public State reduceObjectExpression(
-            @NotNull ObjectExpression node,
-            @NotNull ImmutableList<State> properties) {
+            @Nonnull ObjectExpression node,
+            @Nonnull ImmutableList<State> properties) {
         return fold(properties);
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public State reduceReturnStatement(
-            @NotNull ReturnStatement node,
-            @NotNull Maybe<State> expression) {
+            @Nonnull ReturnStatement node,
+            @Nonnull Maybe<State> expression) {
         return o(expression);
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public State reduceScript(
-            @NotNull Script node,
-            @NotNull ImmutableList<State> directives,
-            @NotNull ImmutableList<State> statements) {
+            @Nonnull Script node,
+            @Nonnull ImmutableList<State> directives,
+            @Nonnull ImmutableList<State> statements) {
         return append(fold(directives), fold(statements));
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public State reduceSetter(
-            @NotNull Setter node,
-            @NotNull State name,
-            @NotNull State param,
-            @NotNull State body) {
+            @Nonnull Setter node,
+            @Nonnull State name,
+            @Nonnull State param,
+            @Nonnull State body) {
         return append(name, param, body);
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public State reduceShorthandProperty(
-            @NotNull ShorthandProperty node,
-            @NotNull State name) {
+            @Nonnull ShorthandProperty node,
+            @Nonnull State name) {
         return name;
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public State reduceSpreadElement(
-            @NotNull SpreadElement node,
-            @NotNull State expression) {
+            @Nonnull SpreadElement node,
+            @Nonnull State expression) {
         return expression;
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public State reduceStaticMemberAssignmentTarget(
-            @NotNull StaticMemberAssignmentTarget node,
-            @NotNull State object) {
+            @Nonnull StaticMemberAssignmentTarget node,
+            @Nonnull State object) {
         return object;
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public State reduceStaticMemberExpression(
-            @NotNull StaticMemberExpression node,
-            @NotNull State object) {
+            @Nonnull StaticMemberExpression node,
+            @Nonnull State object) {
         return object;
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public State reduceStaticPropertyName(@NotNull StaticPropertyName node) {
+    public State reduceStaticPropertyName(@Nonnull StaticPropertyName node) {
         return this.identity();
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public State reduceSuper(@NotNull Super node) {
+    public State reduceSuper(@Nonnull Super node) {
         return this.identity();
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public State reduceSwitchCase(
-            @NotNull SwitchCase node,
-            @NotNull State test,
-            @NotNull ImmutableList<State> consequent) {
+            @Nonnull SwitchCase node,
+            @Nonnull State test,
+            @Nonnull ImmutableList<State> consequent) {
         return fold1(consequent, test);
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public State reduceSwitchDefault(
-            @NotNull SwitchDefault node,
-            @NotNull ImmutableList<State> consequent) {
+            @Nonnull SwitchDefault node,
+            @Nonnull ImmutableList<State> consequent) {
         return fold(consequent);
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public State reduceSwitchStatement(
-            @NotNull SwitchStatement node,
-            @NotNull State discriminant,
-            @NotNull ImmutableList<State> cases) {
+            @Nonnull SwitchStatement node,
+            @Nonnull State discriminant,
+            @Nonnull ImmutableList<State> cases) {
         return fold1(cases, discriminant);
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public State reduceSwitchStatementWithDefault(
-            @NotNull SwitchStatementWithDefault node,
-            @NotNull State discriminant,
-            @NotNull ImmutableList<State> preDefaultCases,
-            @NotNull State defaultCase,
-            @NotNull ImmutableList<State> postDefaultCases) {
+            @Nonnull SwitchStatementWithDefault node,
+            @Nonnull State discriminant,
+            @Nonnull ImmutableList<State> preDefaultCases,
+            @Nonnull State defaultCase,
+            @Nonnull ImmutableList<State> postDefaultCases) {
         return append(discriminant, fold(preDefaultCases), defaultCase, fold(postDefaultCases));
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public State reduceTemplateElement(@NotNull TemplateElement node) {
+    public State reduceTemplateElement(@Nonnull TemplateElement node) {
         return this.identity();
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public State reduceTemplateExpression(
-            @NotNull TemplateExpression node,
-            @NotNull Maybe<State> tag,
-            @NotNull ImmutableList<State> elements) {
+            @Nonnull TemplateExpression node,
+            @Nonnull Maybe<State> tag,
+            @Nonnull ImmutableList<State> elements) {
         return fold1(elements, o(tag));
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public State reduceThisExpression(@NotNull ThisExpression node) {
+    public State reduceThisExpression(@Nonnull ThisExpression node) {
         return this.identity();
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public State reduceThrowStatement(
-            @NotNull ThrowStatement node,
-            @NotNull State expression) {
+            @Nonnull ThrowStatement node,
+            @Nonnull State expression) {
         return expression;
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public State reduceTryCatchStatement(
-            @NotNull TryCatchStatement node,
-            @NotNull State body,
-            @NotNull State catchClause) {
+            @Nonnull TryCatchStatement node,
+            @Nonnull State body,
+            @Nonnull State catchClause) {
         return append(body, catchClause);
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public State reduceTryFinallyStatement(
-            @NotNull TryFinallyStatement node,
-            @NotNull State body,
-            @NotNull Maybe<State> catchClause,
-            @NotNull State finalizer) {
+            @Nonnull TryFinallyStatement node,
+            @Nonnull State body,
+            @Nonnull Maybe<State> catchClause,
+            @Nonnull State finalizer) {
         return append(body, o(catchClause), finalizer);
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public State reduceUnaryExpression(
-            @NotNull UnaryExpression node,
-            @NotNull State operand) {
+            @Nonnull UnaryExpression node,
+            @Nonnull State operand) {
         return operand;
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public State reduceUpdateExpression(
-            @NotNull UpdateExpression node,
-            @NotNull State operand) {
+            @Nonnull UpdateExpression node,
+            @Nonnull State operand) {
         return operand;
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public State reduceVariableDeclaration(
-            @NotNull VariableDeclaration node,
-            @NotNull ImmutableList<State> declarators) {
+            @Nonnull VariableDeclaration node,
+            @Nonnull ImmutableList<State> declarators) {
         return fold(declarators);
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public State reduceVariableDeclarationStatement(
-            @NotNull VariableDeclarationStatement node,
-            @NotNull State declaration) {
+            @Nonnull VariableDeclarationStatement node,
+            @Nonnull State declaration) {
         return declaration;
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public State reduceVariableDeclarator(
-            @NotNull VariableDeclarator node,
-            @NotNull State binding,
-            @NotNull Maybe<State> init) {
+            @Nonnull VariableDeclarator node,
+            @Nonnull State binding,
+            @Nonnull Maybe<State> init) {
         return append(binding, o(init));
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public State reduceWhileStatement(
-            @NotNull WhileStatement node,
-            @NotNull State test,
-            @NotNull State body) {
+            @Nonnull WhileStatement node,
+            @Nonnull State test,
+            @Nonnull State body) {
         return append(test, body);
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public State reduceWithStatement(
-            @NotNull WithStatement node,
-            @NotNull State object,
-            @NotNull State body) {
+            @Nonnull WithStatement node,
+            @Nonnull State object,
+            @Nonnull State body) {
         return append(object, body);
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public State reduceYieldExpression(
-            @NotNull YieldExpression node,
-            @NotNull Maybe<State> expression) {
+            @Nonnull YieldExpression node,
+            @Nonnull Maybe<State> expression) {
         return o(expression);
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public State reduceYieldGeneratorExpression(
-            @NotNull YieldGeneratorExpression node,
-            @NotNull State expression) {
+            @Nonnull YieldGeneratorExpression node,
+            @Nonnull State expression) {
         return expression;
     }
 }

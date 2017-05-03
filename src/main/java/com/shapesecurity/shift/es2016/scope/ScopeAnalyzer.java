@@ -61,33 +61,33 @@ import com.shapesecurity.shift.es2016.reducer.StrictnessReducer;
 import com.shapesecurity.shift.es2016.scope.Declaration.Kind;
 import com.shapesecurity.shift.es2016.scope.ScopeAnalyzer.State;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 public final class ScopeAnalyzer extends MonoidalReducer<State> {
     private final ImmutableSet<Node> sloppySet;
 
-    private ScopeAnalyzer(@NotNull Script script) {
+    private ScopeAnalyzer(@Nonnull Script script) {
         super(new StateMonoid());
         sloppySet = StrictnessReducer.analyze(script);
     }
 
-    private ScopeAnalyzer(@NotNull Module module) {
+    private ScopeAnalyzer(@Nonnull Module module) {
         super(new StateMonoid());
         sloppySet = ImmutableSet.emptyUsingIdentity();
     }
 
-    @NotNull
-    public static GlobalScope analyze(@NotNull Script script) {
+    @Nonnull
+    public static GlobalScope analyze(@Nonnull Script script) {
         return (GlobalScope) Director.reduceScript(new ScopeAnalyzer(script), script).children.maybeHead().fromJust();
     }
 
-    @NotNull
-    public static GlobalScope analyze(@NotNull Module module) {
+    @Nonnull
+    public static GlobalScope analyze(@Nonnull Module module) {
         return (GlobalScope) Director.reduceModule(new ScopeAnalyzer(module), module).children.maybeHead().fromJust();
     }
 
-    @NotNull
-    private State finishFunction(@NotNull Node fnNode, @NotNull State params, @NotNull State body) {
+    @Nonnull
+    private State finishFunction(@Nonnull Node fnNode, @Nonnull State params, @Nonnull State body) {
         boolean isArrowFn = fnNode instanceof ArrowExpression;
         Scope.Type fnType = isArrowFn ? Scope.Type.ArrowFunction : Scope.Type.Function;
         if (params.hasParameterExpressions) {
@@ -98,9 +98,9 @@ public final class ScopeAnalyzer extends MonoidalReducer<State> {
         }
     }
 
-    @NotNull
+    @Nonnull
     // TODO you'd think you'd need to do this for labelled function declarations too, but the spec actually doesn't say so...
-    private ImmutableList<BindingIdentifier> getFunctionDeclarations(@NotNull ImmutableList<Statement> statements) { // get the names of functions declared in the statement list
+    private ImmutableList<BindingIdentifier> getFunctionDeclarations(@Nonnull ImmutableList<Statement> statements) { // get the names of functions declared in the statement list
         ImmutableList<BindingIdentifier> potentiallyVarScopedFunctionDeclarations = ImmutableList.empty();
         for (Statement statement : statements) { // TODO this is not a very clean way of doing this
             if (statement instanceof FunctionDeclaration) {
@@ -111,21 +111,21 @@ public final class ScopeAnalyzer extends MonoidalReducer<State> {
         return potentiallyVarScopedFunctionDeclarations;
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public State reduceArrowExpression(@NotNull ArrowExpression node, @NotNull State params, @NotNull State body) {
+    public State reduceArrowExpression(@Nonnull ArrowExpression node, @Nonnull State params, @Nonnull State body) {
         return finishFunction(node, params, body);
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public State reduceAssignmentExpression(@NotNull AssignmentExpression node, @NotNull State binding, @NotNull State expression) {
+    public State reduceAssignmentExpression(@Nonnull AssignmentExpression node, @Nonnull State binding, @Nonnull State expression) {
         return super.reduceAssignmentExpression(node, binding.addReferences(Accessibility.Write), expression);
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public State reduceAssignmentTargetIdentifier(@NotNull AssignmentTargetIdentifier node) {
+    public State reduceAssignmentTargetIdentifier(@Nonnull AssignmentTargetIdentifier node) {
         return new State(
                 HashTable.emptyUsingEquality(),
                 HashTable.emptyUsingEquality(),
@@ -140,9 +140,9 @@ public final class ScopeAnalyzer extends MonoidalReducer<State> {
         );
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public State reduceBindingIdentifier(@NotNull BindingIdentifier node) {
+    public State reduceBindingIdentifier(@Nonnull BindingIdentifier node) {
         if (node.name.equals("*default*")) {
             return new State();
         }
@@ -160,9 +160,9 @@ public final class ScopeAnalyzer extends MonoidalReducer<State> {
         );
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public State reduceBindingPropertyIdentifier(@NotNull BindingPropertyIdentifier node, @NotNull State binding, @NotNull Maybe<State> init) {
+    public State reduceBindingPropertyIdentifier(@Nonnull BindingPropertyIdentifier node, @Nonnull State binding, @Nonnull Maybe<State> init) {
         State s = super.reduceBindingPropertyIdentifier(node, binding, init);
         if (init.isJust()) {
             return s.withParameterExpressions();
@@ -170,21 +170,21 @@ public final class ScopeAnalyzer extends MonoidalReducer<State> {
         return s;
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public State reduceBindingWithDefault(@NotNull BindingWithDefault node, @NotNull State binding, @NotNull State init) {
+    public State reduceBindingWithDefault(@Nonnull BindingWithDefault node, @Nonnull State binding, @Nonnull State init) {
         return super.reduceBindingWithDefault(node, binding, init).withParameterExpressions();
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public State reduceBlock(@NotNull Block node, @NotNull ImmutableList<State> statements) {
+    public State reduceBlock(@Nonnull Block node, @Nonnull ImmutableList<State> statements) {
         return super.reduceBlock(node, statements).withPotentialVarFunctions(getFunctionDeclarations(node.statements)).finish(node, Scope.Type.Block);
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public State reduceCallExpression(@NotNull CallExpression node, @NotNull State callee, @NotNull ImmutableList<State> arguments) {
+    public State reduceCallExpression(@Nonnull CallExpression node, @Nonnull State callee, @Nonnull ImmutableList<State> arguments) {
         State s = super.reduceCallExpression(node, callee, arguments);
         if (node.callee instanceof IdentifierExpression && ((IdentifierExpression) node.callee).name.equals("eval")) {
             return s.taint();
@@ -192,58 +192,58 @@ public final class ScopeAnalyzer extends MonoidalReducer<State> {
         return s;
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public State reduceCatchClause(@NotNull CatchClause node, @NotNull State binding, @NotNull State body) {
+    public State reduceCatchClause(@Nonnull CatchClause node, @Nonnull State binding, @Nonnull State body) {
         return super.reduceCatchClause(node, binding.addDeclarations(Kind.CatchParameter), body).finish(node, Scope.Type.Catch);
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public State reduceClassDeclaration(@NotNull ClassDeclaration node, @NotNull State name, @NotNull Maybe<State> _super, @NotNull ImmutableList<State> elements) {
+    public State reduceClassDeclaration(@Nonnull ClassDeclaration node, @Nonnull State name, @Nonnull Maybe<State> _super, @Nonnull ImmutableList<State> elements) {
         State s = super.reduceClassDeclaration(node, name, _super, elements).addDeclarations(Kind.ClassName).finish(node, Scope.Type.ClassName);
         return new State(s, name.addDeclarations(Kind.ClassDeclaration));
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public State reduceClassExpression(@NotNull ClassExpression node, @NotNull Maybe<State> name, @NotNull Maybe<State> _super, @NotNull ImmutableList<State> elements) {
+    public State reduceClassExpression(@Nonnull ClassExpression node, @Nonnull Maybe<State> name, @Nonnull Maybe<State> _super, @Nonnull ImmutableList<State> elements) {
         return super.reduceClassExpression(node, name, _super, elements).addDeclarations(Kind.ClassName).finish(node, Scope.Type.ClassName);
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public State reduceCompoundAssignmentExpression(@NotNull CompoundAssignmentExpression node, @NotNull State binding, @NotNull State expression) {
+    public State reduceCompoundAssignmentExpression(@Nonnull CompoundAssignmentExpression node, @Nonnull State binding, @Nonnull State expression) {
         return super.reduceCompoundAssignmentExpression(node, binding.addReferences(Accessibility.ReadWrite), expression);
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public State reduceComputedMemberExpression(@NotNull ComputedMemberExpression node, @NotNull State object, @NotNull State expression) {
+    public State reduceComputedMemberExpression(@Nonnull ComputedMemberExpression node, @Nonnull State object, @Nonnull State expression) {
         return super.reduceComputedMemberExpression(node, object, expression).withParameterExpressions();
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public State reduceForInStatement(@NotNull ForInStatement node, @NotNull State left, @NotNull State right, @NotNull State body) {
+    public State reduceForInStatement(@Nonnull ForInStatement node, @Nonnull State left, @Nonnull State right, @Nonnull State body) {
         return super.reduceForInStatement(node, left.addReferences(Accessibility.Write), right, body).finish(node, Scope.Type.Block);
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public State reduceForOfStatement(@NotNull ForOfStatement node, @NotNull State left, @NotNull State right, @NotNull State body) {
+    public State reduceForOfStatement(@Nonnull ForOfStatement node, @Nonnull State left, @Nonnull State right, @Nonnull State body) {
         return super.reduceForOfStatement(node, left.addReferences(Accessibility.Write), right, body).finish(node, Scope.Type.Block);
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public State reduceForStatement(@NotNull ForStatement node, @NotNull Maybe<State> init, @NotNull Maybe<State> test, @NotNull Maybe<State> update, @NotNull State body) {
+    public State reduceForStatement(@Nonnull ForStatement node, @Nonnull Maybe<State> init, @Nonnull Maybe<State> test, @Nonnull Maybe<State> update, @Nonnull State body) {
         return super.reduceForStatement(node, init.map(State::withoutBindingsForParent), test, update, body).finish(node, Scope.Type.Block);
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public State reduceFormalParameters(@NotNull FormalParameters node, @NotNull ImmutableList<State> items, @NotNull Maybe<State> rest) {
+    public State reduceFormalParameters(@Nonnull FormalParameters node, @Nonnull ImmutableList<State> items, @Nonnull Maybe<State> rest) {
         return items.mapWithIndex((F2<Integer, State, Pair>) Pair::new)
                 .foldLeft((x, y) ->
                         new State(x, ((State) y.right()).hasParameterExpressions ? ((State) y.right()).finish(node.items.index((Integer) y.left()).fromJust(), Scope.Type.ParameterExpression) : ((State) y.right())),
@@ -252,17 +252,17 @@ public final class ScopeAnalyzer extends MonoidalReducer<State> {
     }
 
     // TODO should defining a function count as writing to its name, for symmetry with initialized variable declaration?
-    @NotNull
+    @Nonnull
     @Override
-    public State reduceFunctionDeclaration(@NotNull FunctionDeclaration node, @NotNull State name, @NotNull State params, @NotNull State body) {
+    public State reduceFunctionDeclaration(@Nonnull FunctionDeclaration node, @Nonnull State name, @Nonnull State params, @Nonnull State body) {
         return new State(name, finishFunction(node, params, body)).addFunctionDeclaration();
         // todo it is possible that this should sometimes add a write-reference per B.3.3
     }
 
     // TODO should defining a function count as writing to its name, for symmetry with initialized variable declaration
-    @NotNull
+    @Nonnull
     @Override
-    public State reduceFunctionExpression(@NotNull FunctionExpression node, @NotNull Maybe<State> name, @NotNull State params, @NotNull State body) {
+    public State reduceFunctionExpression(@Nonnull FunctionExpression node, @Nonnull Maybe<State> name, @Nonnull State params, @Nonnull State body) {
         State primary = finishFunction(node, params, body);
         if (name.isJust()) {
             return new State(name.fromJust(), primary).addDeclarations(Kind.FunctionExpressionName).finish(node, Scope.Type.FunctionName);
@@ -271,16 +271,16 @@ public final class ScopeAnalyzer extends MonoidalReducer<State> {
         }
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public State reduceGetter(@NotNull Getter node, @NotNull State name, @NotNull State body) {
+    public State reduceGetter(@Nonnull Getter node, @Nonnull State name, @Nonnull State body) {
         return new State(name, body.finish(node, Scope.Type.Function, true, this.sloppySet.contains(node)));
         // variables defined in body are not in scope when evaluating name (which may be computed)
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public State reduceIdentifierExpression(@NotNull IdentifierExpression node) {
+    public State reduceIdentifierExpression(@Nonnull IdentifierExpression node) {
         Reference ref = new Reference(node);
         return new State(
                 HashTable.<String, ImmutableList<Reference>>emptyUsingEquality().put(node.name, ImmutableList.of(ref)),
@@ -296,9 +296,9 @@ public final class ScopeAnalyzer extends MonoidalReducer<State> {
         );
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public State reduceIfStatement(@NotNull IfStatement node, @NotNull State test, @NotNull State consequent, @NotNull Maybe<State> alternate) {
+    public State reduceIfStatement(@Nonnull IfStatement node, @Nonnull State test, @Nonnull State consequent, @Nonnull Maybe<State> alternate) {
         ImmutableList<Statement> statements = ImmutableList.of(node.consequent);
         if (node.alternate.isJust()) {
             statements = statements.cons(node.alternate.fromJust());
@@ -306,72 +306,72 @@ public final class ScopeAnalyzer extends MonoidalReducer<State> {
         return super.reduceIfStatement(node, test, consequent, alternate).withPotentialVarFunctions(getFunctionDeclarations(statements));
     }
 
-    @NotNull
-    public State reduceImport(@NotNull Import node, @NotNull Maybe<State> defaultBinding, @NotNull ImmutableList<State> namedImports) {
+    @Nonnull
+    public State reduceImport(@Nonnull Import node, @Nonnull Maybe<State> defaultBinding, @Nonnull ImmutableList<State> namedImports) {
         return super.reduceImport(node, defaultBinding, namedImports).addDeclarations(Kind.Import);
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public State reduceMethod(@NotNull Method node, @NotNull State name, @NotNull State params, @NotNull State body) {
+    public State reduceMethod(@Nonnull Method node, @Nonnull State name, @Nonnull State params, @Nonnull State body) {
         return new State(name, finishFunction(node, params, body));
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public State reduceModule(@NotNull Module node, @NotNull ImmutableList<State> directives, @NotNull ImmutableList<State> statements) {
+    public State reduceModule(@Nonnull Module node, @Nonnull ImmutableList<State> directives, @Nonnull ImmutableList<State> statements) {
         return super.reduceModule(node, directives, statements).finish(node, Scope.Type.Module);
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public State reduceScript(@NotNull Script node, @NotNull ImmutableList<State> directives, @NotNull ImmutableList<State> statements) {
+    public State reduceScript(@Nonnull Script node, @Nonnull ImmutableList<State> directives, @Nonnull ImmutableList<State> statements) {
         return super.reduceScript(node, directives, statements).finish(node, Scope.Type.Script);
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public State reduceSetter(@NotNull Setter node, @NotNull State name, @NotNull State param, @NotNull State body) {
+    public State reduceSetter(@Nonnull Setter node, @Nonnull State name, @Nonnull State param, @Nonnull State body) {
         param = param.hasParameterExpressions ? param.finish(node, Scope.Type.ParameterExpression) : param;
         return new State(name, finishFunction(node, param.addDeclarations(Kind.Parameter), body));
         // TODO have the node associated with the parameter's scope be more precise
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public State reduceSwitchCase(@NotNull SwitchCase node, @NotNull State test, @NotNull ImmutableList<State> consequent) {
+    public State reduceSwitchCase(@Nonnull SwitchCase node, @Nonnull State test, @Nonnull ImmutableList<State> consequent) {
         return super.reduceSwitchCase(node, test, consequent).finish(node, Scope.Type.Block).withPotentialVarFunctions(getFunctionDeclarations(node.consequent));
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public State reduceSwitchDefault(@NotNull SwitchDefault node, @NotNull ImmutableList<State> consequent) {
+    public State reduceSwitchDefault(@Nonnull SwitchDefault node, @Nonnull ImmutableList<State> consequent) {
         return super.reduceSwitchDefault(node, consequent).finish(node, Scope.Type.Block).withPotentialVarFunctions(getFunctionDeclarations(node.consequent));
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public State reduceUpdateExpression(@NotNull UpdateExpression node, @NotNull State operand) {
+    public State reduceUpdateExpression(@Nonnull UpdateExpression node, @Nonnull State operand) {
         return operand.addReferences(Accessibility.ReadWrite);
         // no-op if operand is a member expression (which will have no bindingsForParent)
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public State reduceVariableDeclaration(@NotNull VariableDeclaration node, @NotNull ImmutableList<State> declarators) {
+    public State reduceVariableDeclaration(@Nonnull VariableDeclaration node, @Nonnull ImmutableList<State> declarators) {
         return super.reduceVariableDeclaration(node, declarators).addDeclarations(Kind.fromVariableDeclarationKind(node.kind), true);
         // passes bindingsForParent up, for for-in and for-of to add their write-references
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public State reduceVariableDeclarationStatement(@NotNull VariableDeclarationStatement node, @NotNull State declaration) {
+    public State reduceVariableDeclarationStatement(@Nonnull VariableDeclarationStatement node, @Nonnull State declaration) {
         return declaration.withoutBindingsForParent();
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public State reduceVariableDeclarator(@NotNull VariableDeclarator node, @NotNull State binding, @NotNull Maybe<State> init) {
+    public State reduceVariableDeclarator(@Nonnull VariableDeclarator node, @Nonnull State binding, @Nonnull Maybe<State> init) {
         State res = super.reduceVariableDeclarator(node, binding, init);
         if (init.isJust()) {
             return res.addReferences(Accessibility.Write, true);
@@ -381,9 +381,9 @@ public final class ScopeAnalyzer extends MonoidalReducer<State> {
         }
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public State reduceWithStatement(@NotNull WithStatement node, @NotNull State object, @NotNull State body) {
+    public State reduceWithStatement(@Nonnull WithStatement node, @Nonnull State object, @Nonnull State body) {
         return super.reduceWithStatement(node, object, body.finish(node, Scope.Type.With));
     }
 
@@ -392,36 +392,36 @@ public final class ScopeAnalyzer extends MonoidalReducer<State> {
     public static final class State {
         public final boolean dynamic;
         public final boolean hasParameterExpressions; // to decide if function parameters are in a different scope than function variables. only meaningful on `params` states and their children. true iff `params` has any default values or computed member accesses among its children.
-        @NotNull
+        @Nonnull
         public final HashTable<String, ImmutableList<Reference>> freeIdentifiers;
-        @NotNull
+        @Nonnull
         public final HashTable<String, ImmutableList<Declaration>> functionScopedDeclarations;
-        @NotNull
+        @Nonnull
         public final HashTable<String, ImmutableList<Declaration>> blockScopedDeclarations;
-        @NotNull
+        @Nonnull
         public final HashTable<String, ImmutableList<Declaration>> functionDeclarations; // function declarations are special: they are lexical in blocks and var at the top level of functions and scripts. In particular, at the top of scripts they go in global scope.
-        @NotNull
+        @Nonnull
         public final ImmutableList<Scope> children;
-        @NotNull
+        @Nonnull
         public final ImmutableList<BindingIdentifier> bindingsForParent; // either references bubbling up to the AssignmentExpression, ForOfStatement, or ForInStatement which writes to them or declarations bubbling up to the VariableDeclaration, FunctionDeclaration, ClassDeclaration, FormalParameters, Setter, Method, or CatchClause which declares them
-        @NotNull
+        @Nonnull
         public final ImmutableList<AssignmentTargetIdentifier> atsForParent; // references bubbling up to the AssignmentExpression, ForOfStatement, or ForInStatement which writes to them
-        @NotNull
+        @Nonnull
         public final HashTable<String, ImmutableList<Declaration>> potentiallyVarScopedFunctionDeclarations; // for annex B.3.3, which says (essentially) that function declarations are *also* var-scoped if doing so is not an early error (although not at the top level; only within functions).
 
         /*
          * Fully saturated constructor
          */
         private State(
-                @NotNull HashTable<String, ImmutableList<Reference>> freeIdentifiers,
-                @NotNull HashTable<String, ImmutableList<Declaration>> functionScopedDeclarations,
-                @NotNull HashTable<String, ImmutableList<Declaration>> blockScopedDeclarations,
-                @NotNull HashTable<String, ImmutableList<Declaration>> functionDeclarations,
-                @NotNull ImmutableList<Scope> children,
+                @Nonnull HashTable<String, ImmutableList<Reference>> freeIdentifiers,
+                @Nonnull HashTable<String, ImmutableList<Declaration>> functionScopedDeclarations,
+                @Nonnull HashTable<String, ImmutableList<Declaration>> blockScopedDeclarations,
+                @Nonnull HashTable<String, ImmutableList<Declaration>> functionDeclarations,
+                @Nonnull ImmutableList<Scope> children,
                 boolean dynamic,
-                @NotNull ImmutableList<BindingIdentifier> bindingsForParent,
-                @NotNull ImmutableList<AssignmentTargetIdentifier> atsForParent,
-                @NotNull HashTable<String, ImmutableList<Declaration>> potentiallyVarScopedFunctionDeclarations,
+                @Nonnull ImmutableList<BindingIdentifier> bindingsForParent,
+                @Nonnull ImmutableList<AssignmentTargetIdentifier> atsForParent,
+                @Nonnull HashTable<String, ImmutableList<Declaration>> potentiallyVarScopedFunctionDeclarations,
                 boolean hasParameterExpressions
         ) {
             this.freeIdentifiers = freeIdentifiers;
@@ -456,7 +456,7 @@ public final class ScopeAnalyzer extends MonoidalReducer<State> {
          * Monoidal append: merges the two states together
          */
         @SuppressWarnings({"AccessingNonPublicFieldOfAnotherObject", "ObjectEquality"})
-        private State(@NotNull State a, @NotNull State b) {
+        private State(@Nonnull State a, @Nonnull State b) {
             this.freeIdentifiers = a.freeIdentifiers.merge(b.freeIdentifiers, ImmutableList::append);
             this.functionScopedDeclarations = a.functionScopedDeclarations.merge(b.functionScopedDeclarations, ImmutableList::append);
             this.blockScopedDeclarations = a.blockScopedDeclarations.merge(b.blockScopedDeclarations, ImmutableList::append);
@@ -475,11 +475,11 @@ public final class ScopeAnalyzer extends MonoidalReducer<State> {
          * and declarations found into variable objects. Any free identifiers remaining
          * are carried forward into the new state object.
          */
-        private State finish(@NotNull Node astNode, @NotNull Scope.Type scopeType) {
+        private State finish(@Nonnull Node astNode, @Nonnull Scope.Type scopeType) {
             return finish(astNode, scopeType, false, false);
         }
 
-        private State finish(@NotNull Node astNode, @NotNull Scope.Type scopeType, boolean resolveArguments, boolean shouldB33) {
+        private State finish(@Nonnull Node astNode, @Nonnull Scope.Type scopeType, boolean resolveArguments, boolean shouldB33) {
             ImmutableList<Variable> variables = ImmutableList.empty();
 
             HashTable<String, ImmutableList<Declaration>> functionScope = HashTable.emptyUsingEquality();
@@ -593,13 +593,13 @@ public final class ScopeAnalyzer extends MonoidalReducer<State> {
         /*
          * Observe variables entering scope
          */
-        @NotNull
-        private State addDeclarations(@NotNull Kind kind) {
+        @Nonnull
+        private State addDeclarations(@Nonnull Kind kind) {
             return addDeclarations(kind, false);
         }
 
-        @NotNull
-        private State addDeclarations(@NotNull Kind kind, boolean keepBindingsForParent) {
+        @Nonnull
+        private State addDeclarations(@Nonnull Kind kind, boolean keepBindingsForParent) {
             HashTable<String, ImmutableList<Declaration>> declMap =
                     kind.isBlockScoped ? this.blockScopedDeclarations : this.functionScopedDeclarations;
 
@@ -623,7 +623,7 @@ public final class ScopeAnalyzer extends MonoidalReducer<State> {
             );
         }
 
-        @NotNull
+        @Nonnull
         private State addFunctionDeclaration() {
             if (this.bindingsForParent.length == 0) { // i.e., this is `export default function () {...}`
                 return this;
@@ -647,13 +647,13 @@ public final class ScopeAnalyzer extends MonoidalReducer<State> {
         /*
          * Observe references
          */
-        @NotNull
-        public State addReferences(@NotNull Accessibility accessibility) {
+        @Nonnull
+        public State addReferences(@Nonnull Accessibility accessibility) {
             return addReferences(accessibility, false);
         }
 
-        @NotNull
-        private State addReferences(@NotNull Accessibility accessibility, boolean keepBindingsForParent) {
+        @Nonnull
+        private State addReferences(@Nonnull Accessibility accessibility, boolean keepBindingsForParent) {
             HashTable<String, ImmutableList<Reference>> free = this.freeIdentifiers;
             for (BindingIdentifier binding : this.bindingsForParent) {
                 assert accessibility.isWrite(); // todo confirm and remove
@@ -682,7 +682,7 @@ public final class ScopeAnalyzer extends MonoidalReducer<State> {
             );
         }
 
-        @NotNull
+        @Nonnull
         public State taint() {
             return new State(
                     this.freeIdentifiers,
@@ -698,7 +698,7 @@ public final class ScopeAnalyzer extends MonoidalReducer<State> {
             );
         }
 
-        @NotNull
+        @Nonnull
         public State withoutBindingsForParent() {
             return new State(
                     this.freeIdentifiers,
@@ -714,7 +714,7 @@ public final class ScopeAnalyzer extends MonoidalReducer<State> {
             );
         }
 
-        @NotNull
+        @Nonnull
         public State withParameterExpressions() {
             return new State(
                     this.freeIdentifiers,
@@ -730,7 +730,7 @@ public final class ScopeAnalyzer extends MonoidalReducer<State> {
             );
         }
 
-        @NotNull
+        @Nonnull
         public State withoutParameterExpressions() {
             return new State(
                     this.freeIdentifiers,
@@ -746,8 +746,8 @@ public final class ScopeAnalyzer extends MonoidalReducer<State> {
             );
         }
 
-        @NotNull
-        public State withPotentialVarFunctions(@NotNull ImmutableList<BindingIdentifier> funcs) {
+        @Nonnull
+        public State withPotentialVarFunctions(@Nonnull ImmutableList<BindingIdentifier> funcs) {
             HashTable<String, ImmutableList<Declaration>> potentiallyVarScopedFunctionDeclarations = this.potentiallyVarScopedFunctionDeclarations;
             for (BindingIdentifier bi : funcs) {
                 ImmutableList<Declaration> existing = potentiallyVarScopedFunctionDeclarations.get(bi.name).orJust(ImmutableList.empty());
@@ -771,13 +771,13 @@ public final class ScopeAnalyzer extends MonoidalReducer<State> {
     @SuppressWarnings("ProtectedInnerClass")
     private static final class StateMonoid implements Monoid<State> {
         @Override
-        @NotNull
+        @Nonnull
         public State identity() {
             return new State();
         }
 
         @Override
-        @NotNull
+        @Nonnull
         public State append(State a, State b) {
             if (a == b) {
                 return a;

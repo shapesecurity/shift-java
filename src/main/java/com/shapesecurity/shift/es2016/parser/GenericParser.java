@@ -22,8 +22,8 @@ import com.shapesecurity.shift.es2016.parser.token.RegularExpressionLiteralToken
 import com.shapesecurity.shift.es2016.parser.token.StringLiteralToken;
 import com.shapesecurity.shift.es2016.parser.token.TemplateToken;
 import com.shapesecurity.shift.es2016.utils.D2A;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import java.util.ArrayList;
 import java.util.function.BiFunction;
@@ -41,12 +41,12 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
     protected boolean allowYieldExpression = false;
     protected boolean inParameter = false;
 
-    protected GenericParser(@NotNull String source, boolean isModule) throws JsError {
+    protected GenericParser(@Nonnull String source, boolean isModule) throws JsError {
         super(source, isModule);
         this.module = this.strict = isModule;
     }
 
-    boolean eat(@NotNull TokenType subType) throws JsError {
+    boolean eat(@Nonnull TokenType subType) throws JsError {
         if (this.lookahead.type != subType) {
             return false;
         }
@@ -54,15 +54,15 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
         return true;
     }
 
-    @NotNull
-    Token expect(@NotNull TokenType subType) throws JsError {
+    @Nonnull
+    Token expect(@Nonnull TokenType subType) throws JsError {
         if (this.lookahead.type != subType) {
             throw this.createUnexpected(this.lookahead);
         }
         return this.lex();
     }
 
-    protected boolean match(@NotNull TokenType subType) {
+    protected boolean match(@Nonnull TokenType subType) {
         return this.lookahead.type == subType;
     }
 
@@ -79,14 +79,14 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
         }
     }
 
-    @NotNull
-    protected abstract <T extends Node> T finishNode(@NotNull AdditionalStateT startState, @NotNull T node);
+    @Nonnull
+    protected abstract <T extends Node> T finishNode(@Nonnull AdditionalStateT startState, @Nonnull T node);
 
-    @NotNull
+    @Nonnull
     protected abstract AdditionalStateT startNode();
 
-    @NotNull
-    protected abstract <T extends Node> T copyNode(@NotNull Node src, @NotNull T dest);
+    @Nonnull
+    protected abstract <T extends Node> T copyNode(@Nonnull Node src, @Nonnull T dest);
 
     protected boolean lookaheadLexicalDeclaration() throws JsError {
         if (this.match(TokenType.LET) || this.match(TokenType.CONST)) {
@@ -102,7 +102,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
         return false;
     }
 
-    @NotNull
+    @Nonnull
     protected ImportDeclarationExportDeclarationStatement parseModuleItem() throws JsError {
         switch (this.lookahead.type) {
             case IMPORT:
@@ -119,8 +119,8 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
         A get() throws JsError;
     }
 
-    @NotNull
-    protected <A, B extends Node> B  parseTopLevel(@NotNull ExceptionalSupplier<A> parser, @NotNull BiFunction<ImmutableList<Directive>, ImmutableList<A>, B> constructor) throws JsError {
+    @Nonnull
+    protected <A, B extends Node> B  parseTopLevel(@Nonnull ExceptionalSupplier<A> parser, @Nonnull BiFunction<ImmutableList<Directive>, ImmutableList<A>, B> constructor) throws JsError {
         AdditionalStateT startState = this.startNode();
         B node = this.parseBody(parser, constructor);
         if (!this.match(TokenType.EOS)) {
@@ -129,18 +129,18 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
         return this.finishNode(startState, node);
     }
 
-    @NotNull
+    @Nonnull
     protected Script parseScript() throws JsError {
         return this.parseTopLevel(this::parseStatementListItem, Script::new);
     }
 
-    @NotNull
+    @Nonnull
     protected Module parseModule() throws JsError {
         return this.parseTopLevel(this::parseModuleItem, Module::new);
     }
 
-    @NotNull
-    protected <A, B extends Node> B parseBody(@NotNull ExceptionalSupplier<A> parser, @NotNull BiFunction<ImmutableList<Directive>, ImmutableList<A>, B> constructor) throws JsError {
+    @Nonnull
+    protected <A, B extends Node> B parseBody(@Nonnull ExceptionalSupplier<A> parser, @Nonnull BiFunction<ImmutableList<Directive>, ImmutableList<A>, B> constructor) throws JsError {
         // Note that this function does not call startNode/finishNode; its callers are responsible for that.
         ArrayList<Directive> directives = new ArrayList<>();
         ArrayList<A> statements = new ArrayList<>();
@@ -186,7 +186,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
         return constructor.apply(ImmutableList.from(directives), ImmutableList.from(statements));
     }
 
-    @NotNull
+    @Nonnull
     protected FunctionBody parseFunctionBody() throws JsError {
 
         boolean oldInFunctionBody = this.inFunctionBody;
@@ -208,7 +208,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
         return body;
     }
 
-    @NotNull
+    @Nonnull
     protected Statement parseStatementListItem() throws JsError {
         if (this.eof()) {
             throw this.createUnexpected(this.lookahead);
@@ -228,14 +228,14 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
         }
     }
 
-    @NotNull
+    @Nonnull
     protected Statement parseVariableDeclarationStatement() throws JsError {
         VariableDeclaration declaration = this.parseVariableDeclaration(true);
         this.consumeSemicolon();
         return new VariableDeclarationStatement(declaration);
     }
 
-    @NotNull
+    @Nonnull
     protected VariableDeclaration parseVariableDeclaration(boolean bindingPatternsMustHaveInit) throws JsError {
         AdditionalStateT startState = this.startNode();
         Token token = this.lex();
@@ -246,7 +246,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
 
     }
 
-    @NotNull
+    @Nonnull
     protected ImmutableList<VariableDeclarator> parseVariableDeclaratorList(boolean bindingPatternsMustHaveInit) throws JsError {
         ArrayList<VariableDeclarator> result = new ArrayList<>();
         do {
@@ -255,7 +255,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
         return ImmutableList.from(result);
     }
 
-    @NotNull
+    @Nonnull
     protected VariableDeclarator parseVariableDeclarator(boolean bindingPatternsMustHaveInit) throws JsError {
         AdditionalStateT startState = this.startNode();
         if (this.match(TokenType.LPAREN)) {
@@ -272,7 +272,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
         return this.finishNode(startState, new VariableDeclarator(binding, init));
     }
 
-    @NotNull
+    @Nonnull
     protected Binding parseBindingTarget() throws JsError {
         switch (this.lookahead.type) {
             case IDENTIFIER:
@@ -287,7 +287,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
         throw this.createUnexpected(this.lookahead);
     }
 
-    @NotNull
+    @Nonnull
     protected Binding parseObjectBinding() throws JsError {
         AdditionalStateT startState = this.startNode();
 
@@ -306,7 +306,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
         return this.finishNode(startState, new ObjectBinding(ImmutableList.from(properties)));
     }
 
-    @NotNull
+    @Nonnull
     protected BindingProperty parseBindingProperty() throws JsError {
         AdditionalStateT startState = this.startNode();
         Token token = this.lookahead;
@@ -334,7 +334,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
         return this.finishNode(startState, new BindingPropertyProperty(name, fromParseBindingElement));
     }
 
-    @NotNull
+    @Nonnull
     protected Binding parseArrayBinding() throws JsError {
         AdditionalStateT startState = this.startNode();
         this.expect(TokenType.LBRACK);
@@ -365,13 +365,13 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
         return this.finishNode(startState, new ArrayBinding(ImmutableList.from(elements), restElement));
     }
 
-    @NotNull
+    @Nonnull
     protected BindingIdentifier parseBindingIdentifier() throws JsError {
         AdditionalStateT startState = this.startNode();
         return this.finishNode(startState, new BindingIdentifier(this.parseIdentifier()));
     }
 
-    @NotNull
+    @Nonnull
     protected String parseIdentifier() throws JsError {
         if (this.match(TokenType.IDENTIFIER) || !this.allowYieldExpression && this.match(TokenType.YIELD) || this.match(TokenType.LET)) {
             return this.lex().toString();
@@ -380,12 +380,12 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
         }
     }
 
-    @NotNull
+    @Nonnull
     protected FormalParameters finishArrowParams(ArrayList<BindingBindingWithDefault> params, Maybe<Binding> rest, AdditionalStateT startState) {
         return this.finishNode(startState, new FormalParameters(ImmutableList.from(params).map(this::bindingToParameter), rest));
     }
 
-    @NotNull
+    @Nonnull
     protected Expression parseArrowExpressionTail(FormalParameters paramsNode, AdditionalStateT startState) throws JsError {
         if (this.hasLineTerminatorBeforeNext) {
             throw this.createError(ErrorMessages.NEWLINE_AFTER_ARROW_PARAMS);
@@ -404,7 +404,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
         return this.finishNode(startState, new ArrowExpression(paramsNode, body));
     }
 
-    @NotNull
+    @Nonnull
     protected Statement parseIfStatement() throws JsError {
         AdditionalStateT startState = this.startNode();
         this.lex();
@@ -421,12 +421,12 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
         return this.finishNode(startState, new IfStatement(test, consequent, alternate));
     }
 
-    @NotNull
+    @Nonnull
     protected Statement parseIfStatementChild() throws JsError {
         return this.match(TokenType.FUNCTION) ? this.parseFunctionDeclaration(false, false) : this.parseStatement();
     }
 
-    @NotNull
+    @Nonnull
     protected Statement parseFunctionDeclaration(boolean inDefault, boolean allowGenerator) throws JsError {
         AdditionalStateT startState = this.startNode();
         this.lex();
@@ -449,7 +449,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
         return this.finishNode(startState, new FunctionDeclaration(isGenerator, name, params, body));
     }
 
-    @NotNull
+    @Nonnull
     protected Expression parseFunctionExpression(boolean allowGenerator) throws JsError {
         AdditionalStateT startState = this.startNode();
         this.lex();
@@ -468,7 +468,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
         return this.finishNode(startState, new FunctionExpression(isGenerator, name, params, body));
     }
 
-    @NotNull
+    @Nonnull
     protected FormalParameters parseParams() throws JsError {
         this.expect(TokenType.LPAREN);
         AdditionalStateT paramsLocation = this.startNode();
@@ -492,7 +492,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
         return params;
     }
 
-    @NotNull
+    @Nonnull
     protected BindingBindingWithDefault parseParam() throws JsError {
         boolean previousInParameter = this.inParameter;
         this.inParameter = true;
@@ -501,7 +501,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
         return param;
     }
 
-    @NotNull
+    @Nonnull
     protected BindingBindingWithDefault parseBindingElement() throws JsError {
         AdditionalStateT startState = this.startNode();
         Binding binding = this.parseBindingTarget();
@@ -519,14 +519,14 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
         return (node instanceof IdentifierExpression || node instanceof ComputedMemberExpression || node instanceof StaticMemberExpression);
     }
 
-    @NotNull
+    @Nonnull
     protected Statement parseStatement() throws JsError {
         AdditionalStateT startState = this.startNode();
         Statement stmt = this.isolateCoverGrammar(this::parseStatementHelper);
         return this.finishNode(startState, stmt);
     }
 
-    @NotNull
+    @Nonnull
     protected Statement parseStatementHelper() throws JsError {
         if (this.eof()) {
             throw this.createUnexpected(this.lookahead);
@@ -584,7 +584,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
         }
     }
 
-    @NotNull
+    @Nonnull
     protected Statement parseForStatement() throws JsError {
         this.lex();
         this.expect(TokenType.LPAREN);
@@ -698,8 +698,8 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
         }
     }
 
-    @NotNull
-    protected Parameter bindingToParameter(@NotNull BindingBindingWithDefault binding) {
+    @Nonnull
+    protected Parameter bindingToParameter(@Nonnull BindingBindingWithDefault binding) {
         if (binding instanceof Binding) {
             return (Binding) binding;
         } else {
@@ -707,7 +707,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
         }
     }
 
-    @NotNull
+    @Nonnull
     protected AssignmentTargetProperty transformDestructuring(ObjectProperty objectProperty) throws JsError {
         if (this.firstExprError != null) {
             throw this.firstExprError;
@@ -722,7 +722,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
         throw this.createError(ErrorMessages.INVALID_LHS_IN_ASSIGNMENT);
     }
 
-    @NotNull
+    @Nonnull
     protected AssignmentTarget transformDestructuring(Expression node) throws JsError {
         if (node instanceof ObjectExpression) {
             ObjectExpression objectExpression = (ObjectExpression) node;
@@ -769,12 +769,12 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
         throw this.createError(ErrorMessages.INVALID_LHS_IN_ASSIGNMENT);
     }
 
-    @NotNull
+    @Nonnull
     protected AssignmentTargetIdentifier transformDestructuring(StaticPropertyName property) {
         return this.copyNode(property, new AssignmentTargetIdentifier(property.value));
     }
 
-    @NotNull
+    @Nonnull
     protected AssignmentTargetAssignmentTargetWithDefault transformDestructuringWithDefault(Expression node) throws JsError {
         if (node instanceof AssignmentExpression) {
             AssignmentExpression assignmentExpression = (AssignmentExpression) node;
@@ -787,7 +787,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
         return this.lookahead.type == TokenType.IDENTIFIER && keyword.equals(this.lookahead.toString());
     }
 
-    @NotNull
+    @Nonnull
     protected Statement parseSwitchStatement() throws JsError {
         this.lex();
         this.expect(TokenType.LPAREN);
@@ -814,7 +814,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
         }
     }
 
-    @NotNull
+    @Nonnull
     protected ImmutableList<SwitchCase> parseSwitchCases() throws JsError {
         ArrayList<SwitchCase> result = new ArrayList<>();
         while (!(this.eof() || this.match(TokenType.RBRACE) || this.match(TokenType.DEFAULT))) {
@@ -823,7 +823,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
         return ImmutableList.from(result);
     }
 
-    @NotNull
+    @Nonnull
     protected SwitchCase parseSwitchCase() throws JsError {
         AdditionalStateT startState = this.startNode();
         this.expect(TokenType.CASE);
@@ -831,13 +831,13 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
                 this.parseSwitchCaseBody()));
     }
 
-    @NotNull
+    @Nonnull
     protected ImmutableList<Statement> parseSwitchCaseBody() throws JsError {
         this.expect(TokenType.COLON);
         return this.parseStatementListInSwitchCaseBody();
     }
 
-    @NotNull
+    @Nonnull
     protected ImmutableList<Statement> parseStatementListInSwitchCaseBody() throws JsError {
         ArrayList<Statement> result = new ArrayList<>();
         while (!(this.eof() || this.match(TokenType.RBRACE) || this.match(TokenType.DEFAULT) || this.match(TokenType.CASE))) {
@@ -846,21 +846,21 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
         return ImmutableList.from(result);
     }
 
-    @NotNull
+    @Nonnull
     protected SwitchDefault parseSwitchDefault() throws JsError {
         AdditionalStateT startState = this.startNode();
         this.expect(TokenType.DEFAULT);
         return this.finishNode(startState, new SwitchDefault(this.parseSwitchCaseBody()));
     }
 
-    @NotNull
+    @Nonnull
     protected Statement parseDebuggerStatement() throws JsError {
         this.lex();
         this.consumeSemicolon();
         return new DebuggerStatement();
     }
 
-    @NotNull
+    @Nonnull
     protected Statement parseDoWhileStatement() throws JsError {
         this.lex();
         Statement body = this.parseStatement();
@@ -872,7 +872,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
         return new DoWhileStatement(body, test);
     }
 
-    @NotNull
+    @Nonnull
     protected Statement parseContinueStatement() throws JsError {
         this.lex();
         if (this.eat(TokenType.SEMICOLON) || this.hasLineTerminatorBeforeNext) {
@@ -886,7 +886,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
         return new ContinueStatement(label);
     }
 
-    @NotNull
+    @Nonnull
     protected Statement parseBreakStatement() throws JsError {
         this.lex();
         if (this.eat(TokenType.SEMICOLON) || this.hasLineTerminatorBeforeNext) {
@@ -900,7 +900,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
         return new BreakStatement(label);
     }
 
-    @NotNull
+    @Nonnull
     protected Statement parseTryStatement() throws JsError {
         this.lex();
         Block body = this.parseBlock();
@@ -921,7 +921,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
         }
     }
 
-    @NotNull
+    @Nonnull
     protected CatchClause parseCatchClause() throws JsError {
         AdditionalStateT startState = this.startNode();
         this.lex();
@@ -936,7 +936,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
         return this.finishNode(startState, new CatchClause(binding, body));
     }
 
-    @NotNull
+    @Nonnull
     protected Statement parseThrowStatement() throws JsError {
         this.lex();
         if (this.hasLineTerminatorBeforeNext) {
@@ -948,7 +948,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
 
     }
 
-    @NotNull
+    @Nonnull
     protected Statement parseReturnStatement() throws JsError {
         if (!this.inFunctionBody) {
             throw this.createError(ErrorMessages.ILLEGAL_RETURN);
@@ -970,13 +970,13 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
         return new ReturnStatement(expression);
     }
 
-    @NotNull
+    @Nonnull
     protected Statement parseEmptyStatement() throws JsError {
         this.lex();
         return new EmptyStatement();
     }
 
-    @NotNull
+    @Nonnull
     protected Statement parseWhileStatement() throws JsError {
         this.lex();
         this.expect(TokenType.LPAREN);
@@ -985,7 +985,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
         return new WhileStatement(test, body);
     }
 
-    @NotNull
+    @Nonnull
     protected Statement parseWithStatement() throws JsError {
         this.lex();
         this.expect(TokenType.LPAREN);
@@ -994,18 +994,18 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
         return new WithStatement(test, body);
     }
 
-    @NotNull
+    @Nonnull
     protected Statement getIteratorStatementEpilogue() throws JsError {
         this.expect(TokenType.RPAREN);
         return this.parseStatement();
     }
 
-    @NotNull
+    @Nonnull
     protected Statement parseBlockStatement() throws JsError {
         return new BlockStatement(this.parseBlock());
     }
 
-    @NotNull
+    @Nonnull
     protected Block parseBlock() throws JsError {
         AdditionalStateT startState = this.startNode();
         this.expect(TokenType.LBRACE);
@@ -1017,14 +1017,14 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
         return this.finishNode(startState, new Block(ImmutableList.from(body)));
     }
 
-    @NotNull
+    @Nonnull
     protected Statement parseExpressionStatement() throws JsError {
         Expression expr = this.parseExpression().left().fromJust();
         this.consumeSemicolon();
         return new ExpressionStatement(expr);
     }
 
-    @NotNull
+    @Nonnull
     protected Either<Expression, AssignmentTarget> parseExpression() throws JsError {
         AdditionalStateT startState = this.startNode();
         Either<Expression, AssignmentTarget> left = this.parseAssignmentExpression();
@@ -1041,7 +1041,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
         return left;
     }
 
-    @NotNull
+    @Nonnull
     protected <T> T isolateCoverGrammar(ExceptionalSupplier<T> parser) throws JsError {
         boolean oldIsBindingElement = this.isBindingElement;
         boolean oldIsAssignmentTarget = this.isAssignmentTarget;
@@ -1059,7 +1059,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
         return result;
     }
 
-    @NotNull
+    @Nonnull
     protected <T> T inheritCoverGrammar(ExceptionalSupplier<T> parser) throws JsError {
         boolean oldIsBindingElement = this.isBindingElement;
         boolean oldIsAssignmentTarget = this.isAssignmentTarget;
@@ -1074,12 +1074,12 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
         return result;
     }
 
-    @NotNull
+    @Nonnull
     protected Either<Expression, AssignmentTarget> parseAssignmentExpression() throws JsError {
         return this.isolateCoverGrammar(this::parseAssignmentExpressionOrTarget);
     }
 
-    @NotNull
+    @Nonnull
     protected Either<Expression, AssignmentTarget> parseAssignmentExpressionOrTarget() throws JsError {
         AdditionalStateT startState = this.startNode();
 
@@ -1159,7 +1159,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
         }
     }
 
-    @NotNull
+    @Nonnull
     protected Expression parseYieldExpression() throws JsError {
         AdditionalStateT startState = this.startNode();
         this.lex();
@@ -1211,7 +1211,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
 
     }
 
-    @NotNull
+    @Nonnull
     protected Either<Expression, AssignmentTarget> parseConditionalExpression() throws JsError {
         AdditionalStateT startState = this.startNode();
         Either<Expression, AssignmentTarget> test = this.parseBinaryExpression();
@@ -1235,7 +1235,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
         return test;
     }
 
-    @NotNull
+    @Nonnull
     protected Either<Expression, AssignmentTarget> parseBinaryExpression() throws JsError {
         AdditionalStateT startState = this.startNode();
         Either<Expression, AssignmentTarget> left = this.parseExponentiationExpression();
@@ -1288,7 +1288,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
         }
     }
 
-    @NotNull
+    @Nonnull
     protected Either<Expression, AssignmentTarget> parseExponentiationExpression() throws JsError {
         AdditionalStateT startState = this.startNode();
         Either<Expression, AssignmentTarget> left = this.parseUnaryExpression();
@@ -1302,7 +1302,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
         return Either.left(this.finishNode(startState, new BinaryExpression(left.left().fromJust(), BinaryOperator.Exp, right)));
     }
 
-    @NotNull
+    @Nonnull
     protected Either<Expression, AssignmentTarget> parseUnaryExpression() throws JsError {
         if (this.lookahead.type.klass != TokenClass.Punctuator && this.lookahead.type.klass != TokenClass.Keyword) {
             return this.parseUpdateExpression();
@@ -1331,7 +1331,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
         }
     }
 
-    @NotNull
+    @Nonnull
     protected Either<Expression, AssignmentTarget> parseUpdateExpression() throws JsError {
         AdditionalStateT startState = this.startNode();
         Either<Expression, AssignmentTarget> operand = this.parseLeftHandSideExpression(true).mapLeft(x -> (Expression) x);
@@ -1351,8 +1351,8 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
         }
     }
 
-    @NotNull
-    protected Expression createUpdateExpression(@NotNull AdditionalStateT startState, @NotNull Expression operand, @NotNull UpdateOperator operator, boolean isPrefix) throws JsError {
+    @Nonnull
+    protected Expression createUpdateExpression(@Nonnull AdditionalStateT startState, @Nonnull Expression operand, @Nonnull UpdateOperator operator, boolean isPrefix) throws JsError {
         SimpleAssignmentTarget restrictedOperand;
         if (operand instanceof MemberExpression || operand instanceof IdentifierExpression) {
             restrictedOperand = (SimpleAssignmentTarget) transformDestructuring(operand);
@@ -1362,7 +1362,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
         return this.finishNode(startState, new UpdateExpression(isPrefix, operator, restrictedOperand));
     }
 
-    @NotNull
+    @Nonnull
     protected Expression parseNumericLiteral() throws JsError {
         AdditionalStateT startState = this.startNode();
         SourceLocation startLocation = this.getLocation();
@@ -1383,7 +1383,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
         }
     }
 
-    @NotNull
+    @Nonnull
     protected Either<ExpressionSuper, AssignmentTarget> parseLeftHandSideExpression(boolean allowCall) throws JsError {
         AdditionalStateT startState = this.startNode();
         boolean previousAllowIn = this.allowIn;
@@ -1447,7 +1447,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
         }
     }
 
-    @NotNull
+    @Nonnull
     protected String parseStaticMember() throws JsError {
         this.lex();
         if (!isIdentifierName(this.lookahead.type.klass)) {
@@ -1457,7 +1457,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
         }
     }
 
-    @NotNull
+    @Nonnull
     protected Expression parseComputedMember() throws JsError {
         this.lex();
         Expression expr = this.parseExpression().left().fromJust();
@@ -1465,7 +1465,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
         return expr;
     }
 
-    @NotNull
+    @Nonnull
     protected ImmutableList<ExpressionTemplateElement> parseTemplateElements() throws JsError {
         AdditionalStateT startState = this.startNode();
         Token token = this.lookahead;
@@ -1502,7 +1502,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
         }
     }
 
-    @NotNull
+    @Nonnull
     protected Expression parseNewExpression() throws JsError {
         AdditionalStateT startState = this.startNode();
         this.lex();
@@ -1526,7 +1526,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
         }
     }
 
-    @NotNull
+    @Nonnull
     protected ImmutableList<SpreadElementExpression> parseArgumentList() throws JsError {
         this.lex();
         ImmutableList<SpreadElementExpression> args = this.parseArguments();
@@ -1534,7 +1534,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
         return args;
     }
 
-    @NotNull
+    @Nonnull
     protected ImmutableList<SpreadElementExpression> parseArguments() throws JsError {
         ArrayList<SpreadElementExpression> result = new ArrayList<>();
         while (true) {
@@ -1556,7 +1556,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
         return ImmutableList.from(result);
     }
 
-    @NotNull
+    @Nonnull
     protected Either<Expression, AssignmentTarget> parsePrimaryExpression() throws JsError {
         if (this.match(TokenType.LPAREN)) {
             return this.parseGroupExpression();
@@ -1659,7 +1659,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
         }
     }
 
-    @NotNull
+    @Nonnull
     protected Expression parseStringLiteral() throws JsError {
         AdditionalStateT startState = this.startNode();
         SourceLocation startLocation = this.getLocation();
@@ -1671,7 +1671,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
         return this.finishNode(startState, new LiteralStringExpression(token.getValueString().toString()));
     }
 
-    @NotNull
+    @Nonnull
     protected Either<Expression, AssignmentTarget> parseArrayExpression() throws JsError {
         AdditionalStateT startState = this.startNode();
         this.lex();
@@ -1764,7 +1764,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
         }
     }
 
-    @NotNull
+    @Nonnull
     protected Either<Expression, AssignmentTarget> parseObjectExpression() throws JsError {
         AdditionalStateT startState = this.startNode();
         this.lex();
@@ -1805,13 +1805,13 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
         }
     }
 
-    @NotNull // todo move this
-    protected BindingWithDefault targetToBindingWithDefault(@NotNull AssignmentTargetWithDefault target) throws JsError {
+    @Nonnull // todo move this
+    protected BindingWithDefault targetToBindingWithDefault(@Nonnull AssignmentTargetWithDefault target) throws JsError {
         return this.copyNode(target, new BindingWithDefault(targetToBinding(target.binding), target.init));
     }
 
-    @NotNull
-    protected Binding targetToBinding(@NotNull AssignmentTarget target) throws JsError {
+    @Nonnull
+    protected Binding targetToBinding(@Nonnull AssignmentTarget target) throws JsError {
         if (target instanceof AssignmentTargetIdentifier) {
             return this.copyNode(target, new BindingIdentifier(((AssignmentTargetIdentifier) target).name));
         } else if (target instanceof MemberAssignmentTarget) { // TODO correct location information for this error (ugh)
@@ -1851,8 +1851,8 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
         }
     }
 
-    @NotNull
-    protected BindingBindingWithDefault targetToBindingPossiblyWithDefault(@NotNull AssignmentTargetAssignmentTargetWithDefault target) throws JsError {
+    @Nonnull
+    protected BindingBindingWithDefault targetToBindingPossiblyWithDefault(@Nonnull AssignmentTargetAssignmentTargetWithDefault target) throws JsError {
         if (target instanceof AssignmentTargetWithDefault) {
             return targetToBindingWithDefault((AssignmentTargetWithDefault) target);
         } else {
@@ -1860,7 +1860,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
         }
     }
 
-    @NotNull
+    @Nonnull
     protected Either<Expression, AssignmentTarget> parseGroupExpression() throws JsError {
         AdditionalStateT preParenStartState = this.startNode();
         SourceLocation startLocation = this.getLocation();
@@ -1948,7 +1948,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
         }
     }
 
-    @NotNull
+    @Nonnull
     protected Either<ObjectProperty, AssignmentTargetProperty> parsePropertyDefinition() throws JsError {
         AdditionalStateT startState = this.startNode();
         SourceLocation startLocation = this.getLocation();
@@ -1990,7 +1990,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
         );
     }
 
-    @NotNull
+    @Nonnull
     protected Either<PropertyName, MethodDefinition> parseMethodDefinition() throws JsError {
         Token token = this.lookahead;
         AdditionalStateT startState = this.startNode();
@@ -2054,7 +2054,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
         }
     }
 
-    @NotNull
+    @Nonnull
     protected Pair<PropertyName, Maybe<Binding>> parsePropertyName() throws JsError {
         Token token = this.lookahead;
         AdditionalStateT startState = this.startNode();
@@ -2091,7 +2091,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
         return new Pair<>(this.finishNode(startState, new StaticPropertyName(name)), maybeBinding);
     }
 
-    @NotNull
+    @Nonnull
     protected String parseIdentifierName() throws JsError {
         if (isIdentifierName(this.lookahead.type.klass)) {
             return this.lex().toString();
@@ -2104,7 +2104,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
         return (klass.getName().equals("Identifier") || klass.getName().equals("Keyword") || klass.getName().equals("Boolean") || klass.getName().equals("Null") || klass.getName().equals("Yield"));
     }
 
-    @NotNull
+    @Nonnull
     protected Expression parseClass() throws JsError {
         AdditionalStateT startState = this.startNode();
 
@@ -2150,7 +2150,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
         return this.finishNode(startState, new ClassExpression(name, heritage, ImmutableList.from(elements)));
     }
 
-    @NotNull
+    @Nonnull
     protected ClassDeclaration parseClass(boolean inDefault) throws JsError {
         AdditionalStateT startState = this.startNode();
 
@@ -2202,7 +2202,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
         return this.finishNode(startState, new ClassDeclaration(name.fromJust(), heritage, ImmutableList.from(elements)));
     }
 
-    @NotNull
+    @Nonnull
     protected ImportDeclaration parseImportDeclaration() throws JsError {
         AdditionalStateT startState = this.startNode();
         Maybe<BindingIdentifier> defaultBinding = Maybe.empty();
@@ -2239,7 +2239,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
         }
     }
 
-    @NotNull
+    @Nonnull
     protected ImmutableList<ImportSpecifier> parseNamedImports() throws JsError {
         ArrayList<ImportSpecifier> result = new ArrayList<>();
         this.expect(TokenType.LBRACE);
@@ -2253,7 +2253,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
         return ImmutableList.from(result);
     }
 
-    @NotNull
+    @Nonnull
     protected ImportSpecifier parseImportSpecifier() throws JsError {
         AdditionalStateT startState = this.startNode();
         Maybe<String> name = Maybe.empty();
@@ -2280,21 +2280,21 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
         }
     }
 
-    @NotNull
+    @Nonnull
     protected BindingIdentifier parseNameSpaceBinding() throws JsError {
         this.expect(TokenType.MUL);
         this.expectContextualKeyword("as");
         return this.parseBindingIdentifier();
     }
 
-    @NotNull
+    @Nonnull
     protected String parseFromClause() throws JsError {
         this.expectContextualKeyword("from");
         String value = this.expect(TokenType.STRING).getValueString().toString();
         return value;
     }
 
-    @NotNull
+    @Nonnull
     protected Token expectContextualKeyword(String keyword) throws JsError {
         if (this.lookahead.type == TokenType.IDENTIFIER && this.lookahead.toString().equals(keyword)) {
             return this.lex();
@@ -2303,7 +2303,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
         }
     }
 
-    @NotNull
+    @Nonnull
     protected ExportDeclaration parseExportDeclaration() throws JsError {
         AdditionalStateT startState = this.startNode();
         ExportDeclaration decl;
@@ -2356,7 +2356,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
         return this.finishNode(startState, decl);
     }
 
-    @NotNull
+    @Nonnull
     protected Pair<ImmutableList<ExportFromSpecifier>, ImmutableList<ExportLocalSpecifier>> parseExportClause() throws JsError {
         this.expect(TokenType.LBRACE);
         ArrayList<ExportFromSpecifier> exportFromSpecifiers = new ArrayList<>();
@@ -2373,7 +2373,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
         return new Pair<>(ImmutableList.from(exportFromSpecifiers), ImmutableList.from(exportLocalSpecifiers));
     }
 
-    @NotNull
+    @Nonnull
     protected Pair<ExportFromSpecifier, ExportLocalSpecifier> parseExportSpecifier() throws JsError {
         AdditionalStateT startState = this.startNode();
         String name = this.parseIdentifierName();
@@ -2392,7 +2392,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
     }
 
     @Nullable
-    public static CompoundAssignmentOperator lookupCompoundAssignmentOperator(@NotNull Token token) {
+    public static CompoundAssignmentOperator lookupCompoundAssignmentOperator(@Nonnull Token token) {
         switch (token.type) {
             case ASSIGN_BIT_OR:
                 return CompoundAssignmentOperator.AssignBitOr;
@@ -2424,7 +2424,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
     }
 
     @Nullable
-    public static BinaryOperator lookupBinaryOperator(@NotNull Token token, boolean allowIn) {
+    public static BinaryOperator lookupBinaryOperator(@Nonnull Token token, boolean allowIn) {
         switch (token.type) {
             case OR:
                 return BinaryOperator.LogicalOr;
@@ -2526,13 +2526,13 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
 
     protected static class ExprStackItem<T> {
         final T startState;
-        @NotNull
+        @Nonnull
         final Expression left;
-        @NotNull
+        @Nonnull
         final BinaryOperator operator;
         final int precedence;
 
-        ExprStackItem(@NotNull T startState, @NotNull Expression left, @NotNull BinaryOperator operator) {
+        ExprStackItem(@Nonnull T startState, @Nonnull Expression left, @Nonnull BinaryOperator operator) {
             this.startState = startState;
             this.left = left;
             this.operator = operator;

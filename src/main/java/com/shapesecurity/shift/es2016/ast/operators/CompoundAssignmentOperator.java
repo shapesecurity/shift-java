@@ -16,7 +16,7 @@
 
 package com.shapesecurity.shift.es2016.ast.operators;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 public enum CompoundAssignmentOperator implements Operator {
     AssignPlus("+="),
@@ -32,20 +32,20 @@ public enum CompoundAssignmentOperator implements Operator {
     AssignBitXor("^="),
     AssignBitAnd("&=");
 
-    @NotNull
+    @Nonnull
     private final String name;
 
-    private CompoundAssignmentOperator(@NotNull String name) {
+    private CompoundAssignmentOperator(@Nonnull String name) {
         this.name = name;
     }
 
-    @NotNull
+    @Nonnull
     public static Precedence getPrecedence() {
         return Precedence.ASSIGNMENT;
     }
 
     @Override
-    @NotNull
+    @Nonnull
     public String getName() {
         return this.name;
     }

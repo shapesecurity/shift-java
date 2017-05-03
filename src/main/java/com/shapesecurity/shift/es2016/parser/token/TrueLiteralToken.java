@@ -19,10 +19,10 @@ package com.shapesecurity.shift.es2016.parser.token;
 import com.shapesecurity.shift.es2016.parser.TokenType;
 import com.shapesecurity.shift.es2016.parser.SourceRange;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 public class TrueLiteralToken extends IdentifierLikeToken {
-    public TrueLiteralToken(@NotNull SourceRange slice) {
+    public TrueLiteralToken(@Nonnull SourceRange slice) {
         super(TokenType.TRUE_LITERAL, slice);
     }
 }

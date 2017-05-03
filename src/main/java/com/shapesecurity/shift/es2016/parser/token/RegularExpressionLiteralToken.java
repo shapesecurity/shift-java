@@ -20,18 +20,18 @@ import com.shapesecurity.shift.es2016.parser.SourceRange;
 import com.shapesecurity.shift.es2016.parser.Token;
 import com.shapesecurity.shift.es2016.parser.TokenType;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 public class RegularExpressionLiteralToken extends Token {
-    @NotNull
+    @Nonnull
     private final String value;
 
-    public RegularExpressionLiteralToken(@NotNull SourceRange slice, @NotNull String value) {
+    public RegularExpressionLiteralToken(@Nonnull SourceRange slice, @Nonnull String value) {
         super(TokenType.REGEXP, slice);
         this.value = value;
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public String getValueString() {
         return this.value;

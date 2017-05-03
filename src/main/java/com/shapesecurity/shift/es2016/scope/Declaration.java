@@ -1,6 +1,6 @@
 package com.shapesecurity.shift.es2016.scope;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import com.shapesecurity.shift.es2016.ast.BindingIdentifier;
 import com.shapesecurity.shift.es2016.ast.VariableDeclarationKind;
@@ -9,15 +9,15 @@ public class Declaration {
     /**
      * AST node representing the declaration of this node
      */
-    @NotNull
+    @Nonnull
     public final BindingIdentifier node;
     /**
      * Declared Variable kind
      */
-    @NotNull
+    @Nonnull
     public final Kind kind;
 
-    public Declaration(@NotNull BindingIdentifier node, @NotNull Kind kind) {
+    public Declaration(@Nonnull BindingIdentifier node, @Nonnull Kind kind) {
         this.node = node;
         this.kind = kind;
     }
@@ -43,8 +43,8 @@ public class Declaration {
             this.isBlockScoped = isBlockScoped;
         }
 
-        @NotNull
-        public static Kind fromVariableDeclarationKind(@NotNull VariableDeclarationKind kind) {
+        @Nonnull
+        public static Kind fromVariableDeclarationKind(@Nonnull VariableDeclarationKind kind) {
             switch (kind) {
                 case Var:
                     return Kind.Var;

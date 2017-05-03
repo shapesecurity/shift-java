@@ -22,15 +22,15 @@
 //import com.shapesecurity.shift.minifier.ReductionRule;
 //import com.shapesecurity.shift.visitor.DirtyState;
 //
-//import org.jetbrains.annotations.NotNull;
+//import javax.annotation.Nonnull;
 //
 //public class RemoveEmptyBlocks extends ReductionRule {
 //  /* replace empty blocks with empty statements */
 //  public static final RemoveEmptyBlocks INSTANCE = new RemoveEmptyBlocks();
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public DirtyState<Statement> transform(@NotNull BlockStatement node) {
+//  public DirtyState<Statement> transform(@Nonnull BlockStatement node) {
 //    return node.block.statements.isEmpty() ? DirtyState.dirty(new EmptyStatement()) : DirtyState.clean(node);
 //  }
 //}

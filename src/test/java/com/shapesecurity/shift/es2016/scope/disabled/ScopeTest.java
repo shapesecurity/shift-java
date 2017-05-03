@@ -52,7 +52,7 @@
 //import java.util.Map;
 //
 //import junit.framework.TestCase;
-//import org.jetbrains.annotations.NotNull;
+//import javax.annotation.Nonnull;
 //import org.junit.Assert;
 //import org.junit.Test;
 //
@@ -63,39 +63,39 @@
 //
 //
 //  private static class Getter {
-//    @NotNull
+//    @Nonnull
 //    public final Node node;
-//    @NotNull
+//    @Nonnull
 //    public final ImmutableList<Branch> from;
 //
-//    private Getter(@NotNull Node node, @NotNull ImmutableList<Branch> from) {
+//    private Getter(@Nonnull Node node, @Nonnull ImmutableList<Branch> from) {
 //      this.node = node;
 //      this.from = from;
 //    }
 //
-//    public Getter(@NotNull Node node) {
+//    public Getter(@Nonnull Node node) {
 //      this(node, ImmutableList.empty());
 //    }
 //
-//    @NotNull
-//    private Getter d(@NotNull Branch branch) {
+//    @Nonnull
+//    private Getter d(@Nonnull Branch branch) {
 //      Maybe<? extends Node> maybe = node.get(branch);
 //      assertTrue("Failed to follow branches.", maybe.isJust());
 //      return new Getter(maybe.fromJust(), from.cons(branch));
 //    }
 //
-//    @NotNull
-//    public Getter d(@NotNull Branch staticBranch, int index) {
+//    @Nonnull
+//    public Getter d(@Nonnull Branch staticBranch, int index) {
 //      return d(staticBranch).d(IndexedBranch.from(index));
 //    }
 //
-//    @NotNull
+//    @Nonnull
 //    IdentifierExpression getIdentifierExpression() {
 //      assertTrue("The endpoint is not an IdentifierExpression.", this.node instanceof IdentifierExpression);
 //      return (IdentifierExpression) this.node;
 //    }
 //
-//    @NotNull
+//    @Nonnull
 //    BindingIdentifier getBindingIdentifier() {
 //      assertTrue("The endpoint is not a BindingIdentifier.", this.node instanceof BindingIdentifier);
 //      return (BindingIdentifier) this.node;
@@ -1380,13 +1380,13 @@
 //   * Check the given scope is correct based on the information provided
 //   */
 //  private static void checkScope(
-//      @NotNull final Scope scope,
-//      @NotNull final Scope.Type scopeType,
+//      @Nonnull final Scope scope,
+//      @Nonnull final Scope.Type scopeType,
 //      final boolean isDynamic,
-//      @NotNull final ImmutableList<Scope> children,
-//      @NotNull final ImmutableList<String> through,
-//      @NotNull final Map<String, Pair<ImmutableList<IdentifierP>, ImmutableList<IdentifierP>>> variables,
-//      @NotNull final Map<IdentifierP, Accessibility> referenceTypes) {
+//      @Nonnull final ImmutableList<Scope> children,
+//      @Nonnull final ImmutableList<String> through,
+//      @Nonnull final Map<String, Pair<ImmutableList<IdentifierP>, ImmutableList<IdentifierP>>> variables,
+//      @Nonnull final Map<IdentifierP, Accessibility> referenceTypes) {
 //    Assert.assertEquals(scope.type, scopeType);
 //    Assert.assertEquals(scope.dynamic, isDynamic);
 //

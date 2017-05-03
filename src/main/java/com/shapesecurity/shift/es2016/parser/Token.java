@@ -16,28 +16,28 @@
 
 package com.shapesecurity.shift.es2016.parser;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public abstract class Token {
-    @NotNull
+    @Nonnull
     public final TokenType type;
-    @NotNull
+    @Nonnull
     public final SourceRange slice;
     @Nullable
     public SourceRange leadingWhitespace;
 
-    protected Token(@NotNull TokenType type,
-                    @NotNull SourceRange slice) {
+    protected Token(@Nonnull TokenType type,
+                    @Nonnull SourceRange slice) {
         this.type = type;
         this.slice = slice;
     }
 
-    @NotNull
+    @Nonnull
     public abstract CharSequence getValueString();
 
     @Override
-    @NotNull
+    @Nonnull
     public String toString() {
         return this.slice.getString().toString();
     }

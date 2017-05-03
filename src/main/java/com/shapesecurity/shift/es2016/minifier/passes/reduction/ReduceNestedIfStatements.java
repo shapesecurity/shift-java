@@ -23,15 +23,15 @@
 //import com.shapesecurity.shift.minifier.ReductionRule;
 //import com.shapesecurity.shift.visitor.DirtyState;
 //
-//import org.jetbrains.annotations.NotNull;
+//import javax.annotation.Nonnull;
 //
 //public class ReduceNestedIfStatements extends ReductionRule {
 //  /* combine tests (using &&) of nested IfStatement nodes */
 //  public static final ReduceNestedIfStatements INSTANCE = new ReduceNestedIfStatements();
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public DirtyState<Statement> transform(@NotNull IfStatement node) {
+//  public DirtyState<Statement> transform(@Nonnull IfStatement node) {
 //    if (node.alternate.isNothing() &&
 //        node.consequent instanceof IfStatement) {
 //      IfStatement consequent = (IfStatement) node.consequent;

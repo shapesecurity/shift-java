@@ -16,7 +16,7 @@
 
 package com.shapesecurity.shift.es2016.codegen;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 public abstract class CodeRep {
     protected boolean containsIn = false;
@@ -30,7 +30,7 @@ public abstract class CodeRep {
     public CodeRep() {
     }
 
-    public abstract void emit(@NotNull TokenStream ts, boolean noIn);
+    public abstract void emit(@Nonnull TokenStream ts, boolean noIn);
 
     public boolean containsIn() {
         return this.containsIn;
@@ -94,36 +94,36 @@ public abstract class CodeRep {
 
     public static final class Empty extends CodeRep {
         @Override
-        public void emit(@NotNull TokenStream ts, boolean noIn) {
+        public void emit(@Nonnull TokenStream ts, boolean noIn) {
         }
     }
 
     public static final class Token extends CodeRep {
-        @NotNull
+        @Nonnull
         private final String token;
 
-        public Token(@NotNull String token) {
+        public Token(@Nonnull String token) {
             super();
             this.token = token;
         }
 
         @Override
-        public void emit(@NotNull TokenStream ts, boolean noIn) {
+        public void emit(@Nonnull TokenStream ts, boolean noIn) {
             ts.put(this.token);
         }
     }
 
     public static final class RawToken extends CodeRep {
-        @NotNull
+        @Nonnull
         private final String token;
 
-        public RawToken(@NotNull String token) {
+        public RawToken(@Nonnull String token) {
             super();
             this.token = token;
         }
 
         @Override
-        public void emit(@NotNull TokenStream ts, boolean noIn) {
+        public void emit(@Nonnull TokenStream ts, boolean noIn) {
             ts.putRaw(this.token);
         }
     }
@@ -137,22 +137,22 @@ public abstract class CodeRep {
         }
 
         @Override
-        public void emit(@NotNull TokenStream ts, boolean noIn) {
+        public void emit(@Nonnull TokenStream ts, boolean noIn) {
             ts.putNumber(this.number);
         }
     }
 
     public static final class Paren extends CodeRep {
-        @NotNull
+        @Nonnull
         private final CodeRep expr;
 
-        public Paren(@NotNull CodeRep expr) {
+        public Paren(@Nonnull CodeRep expr) {
             super();
             this.expr = expr;
         }
 
         @Override
-        public void emit(@NotNull TokenStream ts, boolean noIn) {
+        public void emit(@Nonnull TokenStream ts, boolean noIn) {
             ts.put("(");
             this.expr.emit(ts, false);
             ts.put(")");
@@ -160,16 +160,16 @@ public abstract class CodeRep {
     }
 
     public static final class ContainsIn extends CodeRep {
-        @NotNull
+        @Nonnull
         private final CodeRep expr;
 
-        public ContainsIn(@NotNull CodeRep expr) {
+        public ContainsIn(@Nonnull CodeRep expr) {
             super();
             this.expr = expr;
         }
 
         @Override
-        public void emit(@NotNull TokenStream ts, boolean noIn) {
+        public void emit(@Nonnull TokenStream ts, boolean noIn) {
             if (noIn) {
                 ts.put("(");
                 this.expr.emit(ts, false);
@@ -181,16 +181,16 @@ public abstract class CodeRep {
     }
 
     public static final class Brace extends CodeRep {
-        @NotNull
+        @Nonnull
         private final CodeRep expr;
 
-        public Brace(@NotNull CodeRep expr) {
+        public Brace(@Nonnull CodeRep expr) {
             super();
             this.expr = expr;
         }
 
         @Override
-        public void emit(@NotNull TokenStream ts, boolean noIn) {
+        public void emit(@Nonnull TokenStream ts, boolean noIn) {
             ts.put("{");
             this.expr.emit(ts, false);
             ts.put("}");
@@ -198,16 +198,16 @@ public abstract class CodeRep {
     }
 
     public static final class Bracket extends CodeRep {
-        @NotNull
+        @Nonnull
         private final CodeRep expr;
 
-        public Bracket(@NotNull CodeRep expr) {
+        public Bracket(@Nonnull CodeRep expr) {
             super();
             this.expr = expr;
         }
 
         @Override
-        public void emit(@NotNull TokenStream ts, boolean noIn) {
+        public void emit(@Nonnull TokenStream ts, boolean noIn) {
             ts.put("[");
             this.expr.emit(ts, false);
             ts.put("]");
@@ -215,31 +215,31 @@ public abstract class CodeRep {
     }
 
     public static final class NoIn extends CodeRep {
-        @NotNull
+        @Nonnull
         private final CodeRep expr;
 
-        public NoIn(@NotNull CodeRep expr) {
+        public NoIn(@Nonnull CodeRep expr) {
             super();
             this.expr = expr;
         }
 
         @Override
-        public void emit(@NotNull TokenStream ts, boolean noIn) {
+        public void emit(@Nonnull TokenStream ts, boolean noIn) {
             this.expr.emit(ts, true);
         }
     }
 
     public static final class Seq extends CodeRep {
-        @NotNull
+        @Nonnull
         public final CodeRep[] children;
 
-        public Seq(@NotNull CodeRep[] children) {
+        public Seq(@Nonnull CodeRep[] children) {
             super();
             this.children = children;
         }
 
         @Override
-        public void emit(@NotNull TokenStream ts, final boolean noIn) {
+        public void emit(@Nonnull TokenStream ts, final boolean noIn) {
             // Using fold instead of foreach to pass ts in the closure.
             for (CodeRep child : this.children) {
                 child.emit(ts, noIn);
@@ -248,19 +248,19 @@ public abstract class CodeRep {
     }
 
     public static final class Init extends CodeRep {
-        @NotNull
+        @Nonnull
         private final CodeRep lhs;
-        @NotNull
+        @Nonnull
         private final CodeRep rhs;
 
-        public Init(@NotNull CodeRep lhs, @NotNull CodeRep rhs) {
+        public Init(@Nonnull CodeRep lhs, @Nonnull CodeRep rhs) {
             super();
             this.lhs = lhs;
             this.rhs = rhs;
         }
 
         @Override
-        public void emit(@NotNull final TokenStream ts, final boolean noIn) {
+        public void emit(@Nonnull final TokenStream ts, final boolean noIn) {
             this.lhs.emit(ts, false);
             ts.put("=");
             this.rhs.emit(ts, noIn);
@@ -268,16 +268,16 @@ public abstract class CodeRep {
     }
 
     public static final class CommaSep extends CodeRep {
-        @NotNull
+        @Nonnull
         private final CodeRep[] children;
 
-        public CommaSep(@NotNull CodeRep[] children) {
+        public CommaSep(@Nonnull CodeRep[] children) {
             super();
             this.children = children;
         }
 
         @Override
-        public void emit(@NotNull final TokenStream ts, final boolean noIn) {
+        public void emit(@Nonnull final TokenStream ts, final boolean noIn) {
             if (this.children.length == 0) {
                 return;
             }
@@ -292,14 +292,14 @@ public abstract class CodeRep {
 
     public static final class Semi extends CodeRep {
         @Override
-        public void emit(@NotNull TokenStream ts, boolean noIn) {
+        public void emit(@Nonnull TokenStream ts, boolean noIn) {
             ts.put(";");
         }
     }
 
     public static final class SemiOp extends CodeRep {
         @Override
-        public void emit(@NotNull TokenStream ts, boolean noIn) {
+        public void emit(@Nonnull TokenStream ts, boolean noIn) {
             ts.putOptionalSemi();
         }
     }
@@ -307,10 +307,10 @@ public abstract class CodeRep {
     public static final class StringLiteralExpressionStatement extends CodeRep {
         protected boolean isInDirectivePosition = false;
 
-        @NotNull
+        @Nonnull
         private final CodeRep rep;
 
-        public StringLiteralExpressionStatement(@NotNull CodeRep rep) {
+        public StringLiteralExpressionStatement(@Nonnull CodeRep rep) {
             super();
             this.rep = rep;
         }
@@ -321,7 +321,7 @@ public abstract class CodeRep {
         }
 
         @Override
-        public void emit(@NotNull TokenStream ts, boolean noIn) {
+        public void emit(@Nonnull TokenStream ts, boolean noIn) {
             if (this.isInDirectivePosition) {
                 ts.put("(");
                 this.rep.emit(ts, noIn);

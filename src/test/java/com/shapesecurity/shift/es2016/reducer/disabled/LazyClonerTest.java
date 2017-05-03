@@ -31,7 +31,7 @@
 //import java.io.File;
 //import java.io.IOException;
 //
-//import org.jetbrains.annotations.NotNull;
+//import javax.annotation.Nonnull;
 //import org.junit.Test;
 //
 //public class LazyClonerTest extends TestBase {
@@ -76,18 +76,18 @@
 //    assertTrue(script == script.reduce(new LazyCloner()).node);
 //
 //    LazyCloner a = new LazyCloner() {
-//      @NotNull
+//      @Nonnull
 //      @Override
 //      public DirtyState<Identifier> reduceIdentifier(
-//          @NotNull Identifier node, @NotNull ImmutableList<Branch> path) {
+//          @Nonnull Identifier node, @Nonnull ImmutableList<Branch> path) {
 //        return DirtyState.dirty(new Identifier("a"));
 //      }
 //    };
 //    LazyCloner b = new LazyCloner() {
-//      @NotNull
+//      @Nonnull
 //      @Override
 //      public DirtyState<Expression> reduceLiteralStringExpression(
-//          @NotNull LiteralStringExpression node, @NotNull ImmutableList<Branch> path) {
+//          @Nonnull LiteralStringExpression node, @Nonnull ImmutableList<Branch> path) {
 //        return DirtyState.dirty(new LiteralStringExpression("a"));
 //      }
 //    };

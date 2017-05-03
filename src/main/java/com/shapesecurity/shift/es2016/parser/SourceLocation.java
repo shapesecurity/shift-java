@@ -1,17 +1,17 @@
 package com.shapesecurity.shift.es2016.parser;
 
 import com.shapesecurity.functional.data.HashCodeBuilder;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 public class SourceLocation {
-    @NotNull
+    @Nonnull
     public final Integer line;
-    @NotNull
+    @Nonnull
     public final Integer column;
-    @NotNull
+    @Nonnull
     public final Integer offset;
 
-    public SourceLocation(@NotNull Integer line, @NotNull Integer column, @NotNull Integer offset) {
+    public SourceLocation(@Nonnull Integer line, @Nonnull Integer column, @Nonnull Integer offset) {
         super();
         this.line = line;
         this.column = column;

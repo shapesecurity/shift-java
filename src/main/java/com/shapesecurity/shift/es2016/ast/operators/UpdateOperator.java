@@ -16,20 +16,20 @@
 
 package com.shapesecurity.shift.es2016.ast.operators;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 public enum UpdateOperator implements Operator {
     Increment("++"),
     Decrement("--");
-    @NotNull
+    @Nonnull
     private final String name;
 
-    private UpdateOperator(@NotNull String name) {
+    private UpdateOperator(@Nonnull String name) {
         this.name = name;
     }
 
     @Override
-    @NotNull
+    @Nonnull
     public String getName() {
         return this.name;
     }

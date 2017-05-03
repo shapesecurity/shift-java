@@ -83,7 +83,7 @@
 //import com.shapesecurity.shift.ast.statement.WithStatement;
 //import Branch;
 //
-//import org.jetbrains.annotations.NotNull;
+//import javax.annotation.Nonnull;
 //
 //public class LazyCloner
 //    implements ReducerP<DirtyState<Script>, DirtyState<FunctionBody>, DirtyState<ObjectProperty>, DirtyState<PropertyName>, DirtyState<Identifier>, DirtyState<Expression>, DirtyState<Directive>, DirtyState<Statement>, DirtyState<Block>, DirtyState<VariableDeclarator>, DirtyState<VariableDeclaration>, DirtyState<SwitchCase>, DirtyState<SwitchDefault>, DirtyState<CatchClause>> {
@@ -96,11 +96,11 @@
 //    return l(elements.map(LazyCloner::op));
 //  }
 //
-//  private static <T> DirtyState<ImmutableList<T>> l(@NotNull ImmutableList<DirtyState<T>> node) {
+//  private static <T> DirtyState<ImmutableList<T>> l(@Nonnull ImmutableList<DirtyState<T>> node) {
 //    return new DirtyState<>(node.map(tDirtyState -> tDirtyState.node), node.exists(tDirtyState -> tDirtyState.dirty));
 //  }
 //
-//  private static <T> DirtyState<Maybe<T>> op(@NotNull Maybe<DirtyState<T>> node) {
+//  private static <T> DirtyState<Maybe<T>> op(@Nonnull Maybe<DirtyState<T>> node) {
 //    if (node.isJust()) {
 //      DirtyState<T> s = node.fromJust();
 //      return new DirtyState<>(Maybe.of(s.node), s.dirty);
@@ -109,113 +109,113 @@
 //    }
 //  }
 //
-//  private static <U> DirtyState<U> get(@NotNull U def, @NotNull DirtyState<Thunk<U>> s) {
+//  private static <U> DirtyState<U> get(@Nonnull U def, @Nonnull DirtyState<Thunk<U>> s) {
 //    return s.dirty ? dirty(s.node.get()) : clean(def);
 //  }
 //
-//  private static <T> DirtyState<T> dirty(@NotNull T node) {
+//  private static <T> DirtyState<T> dirty(@Nonnull T node) {
 //    return new DirtyState<>(node, true);
 //  }
 //
-//  private static <T> DirtyState<T> clean(@NotNull T node) {
+//  private static <T> DirtyState<T> clean(@Nonnull T node) {
 //    return new DirtyState<>(node, false);
 //  }
 //
-//  private static <T> DirtyState<NonEmptyImmutableList<T>> l(@NotNull NonEmptyImmutableList<DirtyState<T>> node) {
+//  private static <T> DirtyState<NonEmptyImmutableList<T>> l(@Nonnull NonEmptyImmutableList<DirtyState<T>> node) {
 //    return new DirtyState<>(node.map(tDirtyState -> tDirtyState.node), node.exists(tDirtyState -> tDirtyState.dirty));
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
 //  public DirtyState<Script> reduceScript(
-//      @NotNull Script node,
-//      @NotNull ImmutableList<Branch> path,
-//      @NotNull DirtyState<FunctionBody> body) {
+//      @Nonnull Script node,
+//      @Nonnull ImmutableList<Branch> path,
+//      @Nonnull DirtyState<FunctionBody> body) {
 //    if (body.dirty) {
 //      return dirty(new Script(body.node));
 //    }
 //    return clean(node);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public DirtyState<Identifier> reduceIdentifier(@NotNull Identifier node, @NotNull ImmutableList<Branch> path) {
+//  public DirtyState<Identifier> reduceIdentifier(@Nonnull Identifier node, @Nonnull ImmutableList<Branch> path) {
 //    return clean(node);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
 //  public DirtyState<Expression> reduceIdentifierExpression(
-//      @NotNull IdentifierExpression node,
-//      @NotNull ImmutableList<Branch> path,
-//      @NotNull DirtyState<Identifier> identifier) {
+//      @Nonnull IdentifierExpression node,
+//      @Nonnull ImmutableList<Branch> path,
+//      @Nonnull DirtyState<Identifier> identifier) {
 //    if (identifier.dirty) {
 //      return dirty((Expression) new IdentifierExpression(node.identifier));
 //    }
 //    return clean((Expression) node);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public DirtyState<Expression> reduceThisExpression(@NotNull ThisExpression node, @NotNull ImmutableList<Branch> path) {
+//  public DirtyState<Expression> reduceThisExpression(@Nonnull ThisExpression node, @Nonnull ImmutableList<Branch> path) {
 //    return clean((Expression) node);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
 //  public DirtyState<Expression> reduceLiteralBooleanExpression(
-//      @NotNull LiteralBooleanExpression node,
-//      @NotNull ImmutableList<Branch> path) {
+//      @Nonnull LiteralBooleanExpression node,
+//      @Nonnull ImmutableList<Branch> path) {
 //    return clean((Expression) node);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
 //  public DirtyState<Expression> reduceLiteralStringExpression(
-//      @NotNull LiteralStringExpression node,
-//      @NotNull ImmutableList<Branch> path) {
+//      @Nonnull LiteralStringExpression node,
+//      @Nonnull ImmutableList<Branch> path) {
 //    return clean((Expression) node);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
 //  public DirtyState<Expression> reduceLiteralRegExpExpression(
-//      @NotNull LiteralRegExpExpression node,
-//      @NotNull ImmutableList<Branch> path) {
+//      @Nonnull LiteralRegExpExpression node,
+//      @Nonnull ImmutableList<Branch> path) {
 //    return clean((Expression) node);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
 //  public DirtyState<Expression> reduceLiteralNumericExpression(
-//      @NotNull LiteralNumericExpression node,
-//      @NotNull ImmutableList<Branch> path) {
+//      @Nonnull LiteralNumericExpression node,
+//      @Nonnull ImmutableList<Branch> path) {
 //    return clean((Expression) node);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public DirtyState<Expression> reduceLiteralInfinityExpression(@NotNull LiteralInfinityExpression node,
-//                                                                @NotNull ImmutableList<Branch> path) {
+//  public DirtyState<Expression> reduceLiteralInfinityExpression(@Nonnull LiteralInfinityExpression node,
+//                                                                @Nonnull ImmutableList<Branch> path) {
 //    return clean(node);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
 //  public DirtyState<Expression> reduceLiteralNullExpression(
-//      @NotNull LiteralNullExpression node,
-//      @NotNull ImmutableList<Branch> path) {
+//      @Nonnull LiteralNullExpression node,
+//      @Nonnull ImmutableList<Branch> path) {
 //    return clean((Expression) node);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
 //  public DirtyState<Expression> reduceFunctionExpression(
-//      @NotNull FunctionExpression node,
-//      @NotNull ImmutableList<Branch> path,
-//      @NotNull Maybe<DirtyState<Identifier>> name,
-//      @NotNull ImmutableList<DirtyState<Identifier>> parameters,
-//      @NotNull DirtyState<FunctionBody> body) {
+//      @Nonnull FunctionExpression node,
+//      @Nonnull ImmutableList<Branch> path,
+//      @Nonnull Maybe<DirtyState<Identifier>> name,
+//      @Nonnull ImmutableList<DirtyState<Identifier>> parameters,
+//      @Nonnull DirtyState<FunctionBody> body) {
 //    DirtyState<Maybe<Identifier>> i = op(name);
 //    DirtyState<ImmutableList<Identifier>> p = l(parameters);
 //    if (i.dirty || p.dirty || body.dirty) {
@@ -224,38 +224,38 @@
 //    return clean((Expression) node);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
 //  public DirtyState<Expression> reduceStaticMemberExpression(
-//      @NotNull StaticMemberExpression node,
-//      @NotNull ImmutableList<Branch> path,
-//      @NotNull DirtyState<Expression> object,
-//      @NotNull DirtyState<Identifier> property) {
+//      @Nonnull StaticMemberExpression node,
+//      @Nonnull ImmutableList<Branch> path,
+//      @Nonnull DirtyState<Expression> object,
+//      @Nonnull DirtyState<Identifier> property) {
 //    if (object.dirty || property.dirty) {
 //      return dirty((Expression) new StaticMemberExpression(object.node, property.node));
 //    }
 //    return clean((Expression) node);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
 //  public DirtyState<Expression> reduceComputedMemberExpression(
-//      @NotNull ComputedMemberExpression node,
-//      @NotNull ImmutableList<Branch> path,
-//      @NotNull DirtyState<Expression> object,
-//      @NotNull final DirtyState<Expression> expression) {
+//      @Nonnull ComputedMemberExpression node,
+//      @Nonnull ImmutableList<Branch> path,
+//      @Nonnull DirtyState<Expression> object,
+//      @Nonnull final DirtyState<Expression> expression) {
 //    if (object.dirty || expression.dirty) {
 //      return dirty((Expression) new ComputedMemberExpression(object.node, expression.node));
 //    }
 //    return clean((Expression) node);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
 //  public DirtyState<Expression> reduceObjectExpression(
-//      @NotNull ObjectExpression node,
-//      @NotNull ImmutableList<Branch> path,
-//      @NotNull ImmutableList<DirtyState<ObjectProperty>> properties) {
+//      @Nonnull ObjectExpression node,
+//      @Nonnull ImmutableList<Branch> path,
+//      @Nonnull ImmutableList<DirtyState<ObjectProperty>> properties) {
 //    DirtyState<ImmutableList<ObjectProperty>> p = l(properties);
 //    if (p.dirty) {
 //      return dirty((Expression) new ObjectExpression(p.node));
@@ -263,42 +263,42 @@
 //    return clean((Expression) node);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
 //  public DirtyState<Expression> reduceBinaryExpression(
-//      @NotNull final BinaryExpression node,
-//      @NotNull ImmutableList<Branch> path,
-//      @NotNull DirtyState<Expression> left,
-//      @NotNull final DirtyState<Expression> right) {
+//      @Nonnull final BinaryExpression node,
+//      @Nonnull ImmutableList<Branch> path,
+//      @Nonnull DirtyState<Expression> left,
+//      @Nonnull final DirtyState<Expression> right) {
 //    return get(node, left.bind(l -> right.bindLast(r -> new BinaryExpression(node.operator, l, r))));
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
 //  public DirtyState<Expression> reduceAssignmentExpression(
-//      @NotNull AssignmentExpression node,
-//      @NotNull ImmutableList<Branch> path,
-//      @NotNull DirtyState<Expression> binding,
-//      @NotNull DirtyState<Expression> expression) {
+//      @Nonnull AssignmentExpression node,
+//      @Nonnull ImmutableList<Branch> path,
+//      @Nonnull DirtyState<Expression> binding,
+//      @Nonnull DirtyState<Expression> expression) {
 //    return get(node, binding.bind(l -> expression.bindLast(r -> new AssignmentExpression(node.operator, l, r))));
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
 //  public DirtyState<Expression> reduceArrayExpression(
-//      @NotNull ArrayExpression node,
-//      @NotNull ImmutableList<Branch> path,
-//      @NotNull ImmutableList<Maybe<DirtyState<Expression>>> elements) {
+//      @Nonnull ArrayExpression node,
+//      @Nonnull ImmutableList<Branch> path,
+//      @Nonnull ImmutableList<Maybe<DirtyState<Expression>>> elements) {
 //    return LazyCloner.get(node, lo(elements).bindLast(ArrayExpression::new));
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
 //  public DirtyState<Expression> reduceNewExpression(
-//      @NotNull NewExpression node,
-//      @NotNull ImmutableList<Branch> path,
-//      @NotNull DirtyState<Expression> callee,
-//      @NotNull final ImmutableList<DirtyState<Expression>> arguments) {
+//      @Nonnull NewExpression node,
+//      @Nonnull ImmutableList<Branch> path,
+//      @Nonnull DirtyState<Expression> callee,
+//      @Nonnull final ImmutableList<DirtyState<Expression>> arguments) {
 //    DirtyState<ImmutableList<Expression>> args = l(arguments);
 //    if (callee.dirty || args.dirty) {
 //      return dirty((Expression) new NewExpression(callee.node, args.node));
@@ -306,13 +306,13 @@
 //    return clean((Expression) node);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
 //  public DirtyState<Expression> reduceCallExpression(
-//      @NotNull CallExpression node,
-//      @NotNull ImmutableList<Branch> path,
-//      @NotNull DirtyState<Expression> callee,
-//      @NotNull final ImmutableList<DirtyState<Expression>> arguments) {
+//      @Nonnull CallExpression node,
+//      @Nonnull ImmutableList<Branch> path,
+//      @Nonnull DirtyState<Expression> callee,
+//      @Nonnull final ImmutableList<DirtyState<Expression>> arguments) {
 //    DirtyState<ImmutableList<Expression>> args = l(arguments);
 //    if (callee.dirty || args.dirty) {
 //      return dirty((Expression) new CallExpression(callee.node, args.node));
@@ -320,153 +320,153 @@
 //    return clean((Expression) node);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
 //  public DirtyState<Expression> reducePostfixExpression(
-//      @NotNull final PostfixExpression node,
-//      @NotNull ImmutableList<Branch> path,
-//      @NotNull DirtyState<Expression> operand) {
+//      @Nonnull final PostfixExpression node,
+//      @Nonnull ImmutableList<Branch> path,
+//      @Nonnull DirtyState<Expression> operand) {
 //    if (operand.dirty) {
 //      return dirty((Expression) new PostfixExpression(node.operator, operand.node));
 //    }
 //    return clean((Expression) node);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
 //  public DirtyState<Expression> reducePrefixExpression(
-//      @NotNull final PrefixExpression node,
-//      @NotNull ImmutableList<Branch> path,
-//      @NotNull DirtyState<Expression> operand) {
+//      @Nonnull final PrefixExpression node,
+//      @Nonnull ImmutableList<Branch> path,
+//      @Nonnull DirtyState<Expression> operand) {
 //    if (operand.dirty) {
 //      return dirty((Expression) new PrefixExpression(node.operator, operand.node));
 //    }
 //    return clean((Expression) node);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
 //  public DirtyState<Expression> reduceConditionalExpression(
-//      @NotNull ConditionalExpression node,
-//      @NotNull ImmutableList<Branch> path,
-//      @NotNull final DirtyState<Expression> test,
-//      @NotNull final DirtyState<Expression> consequent,
-//      @NotNull final DirtyState<Expression> alternate) {
+//      @Nonnull ConditionalExpression node,
+//      @Nonnull ImmutableList<Branch> path,
+//      @Nonnull final DirtyState<Expression> test,
+//      @Nonnull final DirtyState<Expression> consequent,
+//      @Nonnull final DirtyState<Expression> alternate) {
 //    return get(node, test.bind(t -> consequent.bind(c -> alternate.bindLast(a -> new ConditionalExpression(t, c, a)))));
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
 //  public DirtyState<Statement> reduceFunctionDeclaration(
-//      @NotNull FunctionDeclaration node,
-//      @NotNull ImmutableList<Branch> path,
-//      @NotNull DirtyState<Identifier> name,
-//      @NotNull final ImmutableList<DirtyState<Identifier>> params,
-//      @NotNull final DirtyState<FunctionBody> body) {
+//      @Nonnull FunctionDeclaration node,
+//      @Nonnull ImmutableList<Branch> path,
+//      @Nonnull DirtyState<Identifier> name,
+//      @Nonnull final ImmutableList<DirtyState<Identifier>> params,
+//      @Nonnull final DirtyState<FunctionBody> body) {
 //    return get(node, name.bind(id1 -> l(params).bind(params1 -> body.bindLast(body1 -> new FunctionDeclaration(id1,
 //        params1, body1)))));
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public DirtyState<Directive> reduceUseStrictDirective(@NotNull UseStrictDirective node, @NotNull ImmutableList<Branch> path) {
+//  public DirtyState<Directive> reduceUseStrictDirective(@Nonnull UseStrictDirective node, @Nonnull ImmutableList<Branch> path) {
 //    return clean((Directive) node);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public DirtyState<Directive> reduceUnknownDirective(@NotNull UnknownDirective node, @NotNull ImmutableList<Branch> path) {
+//  public DirtyState<Directive> reduceUnknownDirective(@Nonnull UnknownDirective node, @Nonnull ImmutableList<Branch> path) {
 //    return clean((Directive) node);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
 //  public DirtyState<Statement> reduceBlockStatement(
-//      @NotNull BlockStatement node,
-//      @NotNull ImmutableList<Branch> path,
-//      @NotNull final DirtyState<Block> block) {
+//      @Nonnull BlockStatement node,
+//      @Nonnull ImmutableList<Branch> path,
+//      @Nonnull final DirtyState<Block> block) {
 //    if (block.dirty) {
 //      return dirty((Statement) new BlockStatement(block.node));
 //    }
 //    return clean((Statement) node);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
 //  public DirtyState<Statement> reduceBreakStatement(
-//      @NotNull BreakStatement node,
-//      @NotNull ImmutableList<Branch> path,
-//      @NotNull Maybe<DirtyState<Identifier>> label) {
+//      @Nonnull BreakStatement node,
+//      @Nonnull ImmutableList<Branch> path,
+//      @Nonnull Maybe<DirtyState<Identifier>> label) {
 //    if (label.isJust() && label.fromJust().dirty) {
 //      return dirty((Statement) new BreakStatement(Maybe.of(label.fromJust().node)));
 //    }
 //    return clean((Statement) node);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
 //  public DirtyState<CatchClause> reduceCatchClause(
-//      @NotNull CatchClause node,
-//      @NotNull ImmutableList<Branch> path,
-//      @NotNull final DirtyState<Identifier> binding,
-//      @NotNull final DirtyState<Block> body) {
+//      @Nonnull CatchClause node,
+//      @Nonnull ImmutableList<Branch> path,
+//      @Nonnull final DirtyState<Identifier> binding,
+//      @Nonnull final DirtyState<Block> body) {
 //    return get(node, binding.bind(p -> body.bindLast(s -> new CatchClause(p, s))));
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
 //  public DirtyState<Statement> reduceContinueStatement(
-//      @NotNull ContinueStatement node,
-//      @NotNull ImmutableList<Branch> path,
-//      @NotNull Maybe<DirtyState<Identifier>> label) {
+//      @Nonnull ContinueStatement node,
+//      @Nonnull ImmutableList<Branch> path,
+//      @Nonnull Maybe<DirtyState<Identifier>> label) {
 //    if (label.isJust() && label.fromJust().dirty) {
 //      return dirty((Statement) new ContinueStatement(Maybe.of(label.fromJust().node)));
 //    }
 //    return clean((Statement) node);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public DirtyState<Statement> reduceDebuggerStatement(@NotNull DebuggerStatement node, @NotNull ImmutableList<Branch> path) {
+//  public DirtyState<Statement> reduceDebuggerStatement(@Nonnull DebuggerStatement node, @Nonnull ImmutableList<Branch> path) {
 //    return clean((Statement) node);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
 //  public DirtyState<Statement> reduceDoWhileStatement(
-//      @NotNull DoWhileStatement node,
-//      @NotNull ImmutableList<Branch> path,
-//      @NotNull DirtyState<Statement> body,
-//      @NotNull final DirtyState<Expression> test) {
+//      @Nonnull DoWhileStatement node,
+//      @Nonnull ImmutableList<Branch> path,
+//      @Nonnull DirtyState<Statement> body,
+//      @Nonnull final DirtyState<Expression> test) {
 //    return get(node, body.bind(body1 -> test.bindLast(test1 -> new DoWhileStatement(body1, test1))));
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public DirtyState<Statement> reduceEmptyStatement(@NotNull EmptyStatement node, @NotNull ImmutableList<Branch> path) {
+//  public DirtyState<Statement> reduceEmptyStatement(@Nonnull EmptyStatement node, @Nonnull ImmutableList<Branch> path) {
 //    return clean((Statement) node);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
 //  public DirtyState<Statement> reduceExpressionStatement(
-//      @NotNull ExpressionStatement node,
-//      @NotNull ImmutableList<Branch> path,
-//      @NotNull DirtyState<Expression> expression) {
+//      @Nonnull ExpressionStatement node,
+//      @Nonnull ImmutableList<Branch> path,
+//      @Nonnull DirtyState<Expression> expression) {
 //    if (expression.dirty) {
 //      return dirty((Statement) new ExpressionStatement(expression.node));
 //    }
 //    return clean((Statement) node);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
 //  public DirtyState<Statement> reduceForInStatement(
-//      @NotNull ForInStatement node,
-//      @NotNull ImmutableList<Branch> path,
-//      @NotNull Either<DirtyState<VariableDeclaration>, DirtyState<Expression>> left,
-//      @NotNull final DirtyState<Expression> right,
-//      @NotNull final DirtyState<Statement> body) {
+//      @Nonnull ForInStatement node,
+//      @Nonnull ImmutableList<Branch> path,
+//      @Nonnull Either<DirtyState<VariableDeclaration>, DirtyState<Expression>> left,
+//      @Nonnull final DirtyState<Expression> right,
+//      @Nonnull final DirtyState<Statement> body) {
 //    boolean leftDirty = left.either(x -> x.dirty, x -> x.dirty);
 //    Either<VariableDeclaration, Expression> leftNode = left.map(x -> x.node, x -> x.node);
 //    if (leftDirty || right.dirty || body.dirty) {
@@ -475,15 +475,15 @@
 //    return clean((Statement) node);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
 //  public DirtyState<Statement> reduceForStatement(
-//      @NotNull ForStatement node,
-//      @NotNull ImmutableList<Branch> path,
-//      @NotNull Maybe<Either<DirtyState<VariableDeclaration>, DirtyState<Expression>>> init,
-//      @NotNull final Maybe<DirtyState<Expression>> test,
-//      @NotNull final Maybe<DirtyState<Expression>> update,
-//      @NotNull final DirtyState<Statement> body) {
+//      @Nonnull ForStatement node,
+//      @Nonnull ImmutableList<Branch> path,
+//      @Nonnull Maybe<Either<DirtyState<VariableDeclaration>, DirtyState<Expression>>> init,
+//      @Nonnull final Maybe<DirtyState<Expression>> test,
+//      @Nonnull final Maybe<DirtyState<Expression>> update,
+//      @Nonnull final DirtyState<Statement> body) {
 //    boolean iDirty = init.map(x -> x.either(y -> y.dirty, y -> y.dirty)).orJust(false);
 //    Maybe<Either<VariableDeclaration, Expression>> iNode = init.map(x -> x.map(y -> y.node, y -> y.node));
 //    DirtyState<Maybe<Expression>> t = op(test), u = op(update);
@@ -493,79 +493,79 @@
 //    return clean((Statement) node);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
 //  public DirtyState<Statement> reduceIfStatement(
-//      @NotNull IfStatement node,
-//      @NotNull ImmutableList<Branch> path,
-//      @NotNull DirtyState<Expression> test,
-//      @NotNull final DirtyState<Statement> consequent,
-//      @NotNull final Maybe<DirtyState<Statement>> alternate) {
+//      @Nonnull IfStatement node,
+//      @Nonnull ImmutableList<Branch> path,
+//      @Nonnull DirtyState<Expression> test,
+//      @Nonnull final DirtyState<Statement> consequent,
+//      @Nonnull final Maybe<DirtyState<Statement>> alternate) {
 //    return get(node, test.bind(test1 -> consequent.bind(consequent1 -> op(alternate).bindLast(
 //        alternate1 -> new IfStatement(test1, consequent1, alternate1)))));
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
 //  public DirtyState<Statement> reduceLabeledStatement(
-//      @NotNull LabeledStatement node,
-//      @NotNull ImmutableList<Branch> path,
-//      @NotNull DirtyState<Identifier> label,
-//      @NotNull final DirtyState<Statement> body) {
+//      @Nonnull LabeledStatement node,
+//      @Nonnull ImmutableList<Branch> path,
+//      @Nonnull DirtyState<Identifier> label,
+//      @Nonnull final DirtyState<Statement> body) {
 //    return get(node, label.bind(label1 -> body.bindLast(body1 -> new LabeledStatement(label1, body1))));
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
 //  public DirtyState<Statement> reduceReturnStatement(
-//      @NotNull ReturnStatement node,
-//      @NotNull ImmutableList<Branch> path,
-//      @NotNull Maybe<DirtyState<Expression>> expression) {
+//      @Nonnull ReturnStatement node,
+//      @Nonnull ImmutableList<Branch> path,
+//      @Nonnull Maybe<DirtyState<Expression>> expression) {
 //    if (expression.isNothing() || !expression.fromJust().dirty) {
 //      return clean((Statement) node);
 //    }
 //    return DirtyState.dirty((Statement) new ReturnStatement(Maybe.of(expression.fromJust().node)));
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
 //  public DirtyState<SwitchCase> reduceSwitchCase(
-//      @NotNull SwitchCase node,
-//      @NotNull ImmutableList<Branch> path,
-//      @NotNull DirtyState<Expression> test,
-//      @NotNull final ImmutableList<DirtyState<Statement>> consequent) {
+//      @Nonnull SwitchCase node,
+//      @Nonnull ImmutableList<Branch> path,
+//      @Nonnull DirtyState<Expression> test,
+//      @Nonnull final ImmutableList<DirtyState<Statement>> consequent) {
 //    return get(node, test.bind(test1 -> l(consequent).bindLast(consequent1 -> new SwitchCase(test1, consequent1))));
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
 //  public DirtyState<SwitchDefault> reduceSwitchDefault(
-//      @NotNull SwitchDefault node,
-//      @NotNull ImmutableList<Branch> path,
-//      @NotNull ImmutableList<DirtyState<Statement>> consequent) {
+//      @Nonnull SwitchDefault node,
+//      @Nonnull ImmutableList<Branch> path,
+//      @Nonnull ImmutableList<DirtyState<Statement>> consequent) {
 //    return get(node, l(consequent).bindLast(SwitchDefault::new));
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
 //  public DirtyState<Statement> reduceSwitchStatement(
-//      @NotNull final SwitchStatement node,
-//      @NotNull final ImmutableList<Branch> path,
-//      @NotNull DirtyState<Expression> discriminant,
-//      @NotNull final ImmutableList<DirtyState<SwitchCase>> cases) {
+//      @Nonnull final SwitchStatement node,
+//      @Nonnull final ImmutableList<Branch> path,
+//      @Nonnull DirtyState<Expression> discriminant,
+//      @Nonnull final ImmutableList<DirtyState<SwitchCase>> cases) {
 //    return get(node, discriminant.bind(discriminant1 -> l(cases).bindLast(
 //        cases1 -> CloneReducer.INSTANCE.reduceSwitchStatement(node, path, discriminant1, cases1))));
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
 //  public DirtyState<Statement> reduceSwitchStatementWithDefault(
-//      @NotNull SwitchStatementWithDefault node,
-//      @NotNull ImmutableList<Branch> path,
-//      @NotNull DirtyState<Expression> discriminant,
-//      @NotNull ImmutableList<DirtyState<SwitchCase>> preDefaultCases,
-//      @NotNull DirtyState<SwitchDefault> defaultCase,
-//      @NotNull ImmutableList<DirtyState<SwitchCase>> postDefaultCases) {
+//      @Nonnull SwitchStatementWithDefault node,
+//      @Nonnull ImmutableList<Branch> path,
+//      @Nonnull DirtyState<Expression> discriminant,
+//      @Nonnull ImmutableList<DirtyState<SwitchCase>> preDefaultCases,
+//      @Nonnull DirtyState<SwitchDefault> defaultCase,
+//      @Nonnull ImmutableList<DirtyState<SwitchCase>> postDefaultCases) {
 //    DirtyState<ImmutableList<SwitchCase>> cs = l(preDefaultCases);
 //    DirtyState<ImmutableList<SwitchCase>> pcs = l(postDefaultCases);
 //
@@ -575,36 +575,36 @@
 //    return clean((Statement) node);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
 //  public DirtyState<Statement> reduceThrowStatement(
-//      @NotNull ThrowStatement node,
-//      @NotNull ImmutableList<Branch> path,
-//      @NotNull final DirtyState<Expression> expression) {
+//      @Nonnull ThrowStatement node,
+//      @Nonnull ImmutableList<Branch> path,
+//      @Nonnull final DirtyState<Expression> expression) {
 //    return get(node, expression.bindLast(ThrowStatement::new));
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
 //  public DirtyState<Statement> reduceTryCatchStatement(
-//      @NotNull TryCatchStatement node,
-//      @NotNull ImmutableList<Branch> path,
-//      @NotNull DirtyState<Block> block,
-//      @NotNull DirtyState<CatchClause> catchClause) {
+//      @Nonnull TryCatchStatement node,
+//      @Nonnull ImmutableList<Branch> path,
+//      @Nonnull DirtyState<Block> block,
+//      @Nonnull DirtyState<CatchClause> catchClause) {
 //    if (block.dirty || catchClause.dirty) {
 //      return DirtyState.dirty(new TryCatchStatement(block.node, catchClause.node));
 //    }
 //    return DirtyState.clean(node);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
 //  public DirtyState<Statement> reduceTryFinallyStatement(
-//      @NotNull TryFinallyStatement node,
-//      @NotNull ImmutableList<Branch> path,
-//      @NotNull DirtyState<Block> block,
-//      @NotNull Maybe<DirtyState<CatchClause>> catchClause,
-//      @NotNull DirtyState<Block> finalizer) {
+//      @Nonnull TryFinallyStatement node,
+//      @Nonnull ImmutableList<Branch> path,
+//      @Nonnull DirtyState<Block> block,
+//      @Nonnull Maybe<DirtyState<CatchClause>> catchClause,
+//      @Nonnull DirtyState<Block> finalizer) {
 //    DirtyState<Maybe<CatchClause>> op = op(catchClause);
 //    if (block.dirty || op.dirty || finalizer.dirty) {
 //      return dirty(new TryFinallyStatement(block.node, op.node, finalizer.node));
@@ -612,24 +612,24 @@
 //    return clean(node);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
 //  public DirtyState<Statement> reduceVariableDeclarationStatement(
-//      @NotNull final VariableDeclarationStatement node,
-//      @NotNull ImmutableList<Branch> path,
-//      @NotNull DirtyState<VariableDeclaration> declaration) {
+//      @Nonnull final VariableDeclarationStatement node,
+//      @Nonnull ImmutableList<Branch> path,
+//      @Nonnull DirtyState<VariableDeclaration> declaration) {
 //    if (declaration.dirty) {
 //      return dirty((Statement) new VariableDeclarationStatement(declaration.node));
 //    }
 //    return clean((Statement) node);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
 //  public DirtyState<VariableDeclaration> reduceVariableDeclaration(
-//      @NotNull VariableDeclaration node,
-//      @NotNull ImmutableList<Branch> path,
-//      @NotNull NonEmptyImmutableList<DirtyState<VariableDeclarator>> declarators) {
+//      @Nonnull VariableDeclaration node,
+//      @Nonnull ImmutableList<Branch> path,
+//      @Nonnull NonEmptyImmutableList<DirtyState<VariableDeclarator>> declarators) {
 //    DirtyState<NonEmptyImmutableList<VariableDeclarator>> ds = l(declarators);
 //    if (ds.dirty) {
 //      return dirty(new VariableDeclaration(node.kind, ds.node));
@@ -637,79 +637,79 @@
 //    return clean(node);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
 //  public DirtyState<Statement> reduceWhileStatement(
-//      @NotNull WhileStatement node,
-//      @NotNull ImmutableList<Branch> path,
-//      @NotNull DirtyState<Expression> test,
-//      @NotNull final DirtyState<Statement> body) {
+//      @Nonnull WhileStatement node,
+//      @Nonnull ImmutableList<Branch> path,
+//      @Nonnull DirtyState<Expression> test,
+//      @Nonnull final DirtyState<Statement> body) {
 //    if (test.dirty || body.dirty) {
 //      return dirty((Statement) new WhileStatement(test.node, body.node));
 //    }
 //    return clean((Statement) node);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
 //  public DirtyState<Statement> reduceWithStatement(
-//      @NotNull WithStatement node,
-//      @NotNull ImmutableList<Branch> path,
-//      @NotNull DirtyState<Expression> object,
-//      @NotNull final DirtyState<Statement> body) {
+//      @Nonnull WithStatement node,
+//      @Nonnull ImmutableList<Branch> path,
+//      @Nonnull DirtyState<Expression> object,
+//      @Nonnull final DirtyState<Statement> body) {
 //    return get(node, object.bind(object1 -> body.bindLast(body1 -> new WithStatement(object1, body1))));
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
 //  public DirtyState<ObjectProperty> reduceDataProperty(
-//      @NotNull DataProperty node,
-//      @NotNull ImmutableList<Branch> path,
-//      @NotNull DirtyState<PropertyName> name,
-//      @NotNull final DirtyState<Expression> value) {
+//      @Nonnull DataProperty node,
+//      @Nonnull ImmutableList<Branch> path,
+//      @Nonnull DirtyState<PropertyName> name,
+//      @Nonnull final DirtyState<Expression> value) {
 //    if (name.dirty || value.dirty) {
 //      return dirty((ObjectProperty) new DataProperty(name.node, value.node));
 //    }
 //    return clean((ObjectProperty) node);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
 //  public DirtyState<ObjectProperty> reduceGetter(
-//      @NotNull Getter node,
-//      @NotNull ImmutableList<Branch> path,
-//      @NotNull final DirtyState<PropertyName> name,
-//      @NotNull final DirtyState<FunctionBody> body) {
+//      @Nonnull Getter node,
+//      @Nonnull ImmutableList<Branch> path,
+//      @Nonnull final DirtyState<PropertyName> name,
+//      @Nonnull final DirtyState<FunctionBody> body) {
 //    return get(node, name.bind(propertyName -> body.bindLast(programBody -> new Getter(propertyName, programBody))));
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
 //  public DirtyState<ObjectProperty> reduceSetter(
-//      @NotNull Setter node,
-//      @NotNull ImmutableList<Branch> path,
-//      @NotNull DirtyState<PropertyName> name,
-//      @NotNull final DirtyState<Identifier> parameter,
-//      @NotNull final DirtyState<FunctionBody> body) {
+//      @Nonnull Setter node,
+//      @Nonnull ImmutableList<Branch> path,
+//      @Nonnull DirtyState<PropertyName> name,
+//      @Nonnull final DirtyState<Identifier> parameter,
+//      @Nonnull final DirtyState<FunctionBody> body) {
 //    if (name.dirty || parameter.dirty || body.dirty) {
 //      return dirty((ObjectProperty) new Setter(name.node, parameter.node, body.node));
 //    }
 //    return clean((ObjectProperty) node);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public DirtyState<PropertyName> reducePropertyName(@NotNull PropertyName node, @NotNull ImmutableList<Branch> path) {
+//  public DirtyState<PropertyName> reducePropertyName(@Nonnull PropertyName node, @Nonnull ImmutableList<Branch> path) {
 //    return clean(node);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
 //  public DirtyState<FunctionBody> reduceFunctionBody(
-//      @NotNull FunctionBody node,
-//      @NotNull ImmutableList<Branch> path,
-//      @NotNull ImmutableList<DirtyState<Directive>> directives,
-//      @NotNull final ImmutableList<DirtyState<Statement>> statements) {
+//      @Nonnull FunctionBody node,
+//      @Nonnull ImmutableList<Branch> path,
+//      @Nonnull ImmutableList<DirtyState<Directive>> directives,
+//      @Nonnull final ImmutableList<DirtyState<Statement>> statements) {
 //    DirtyState<ImmutableList<Directive>> dirs = l(directives);
 //    DirtyState<ImmutableList<Statement>> ses = l(statements);
 //    if (dirs.dirty || ses.dirty) {
@@ -718,13 +718,13 @@
 //    return clean(node);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
 //  public DirtyState<VariableDeclarator> reduceVariableDeclarator(
-//      @NotNull VariableDeclarator node,
-//      @NotNull ImmutableList<Branch> path,
-//      @NotNull DirtyState<Identifier> binding,
-//      @NotNull final Maybe<DirtyState<Expression>> init) {
+//      @Nonnull VariableDeclarator node,
+//      @Nonnull ImmutableList<Branch> path,
+//      @Nonnull DirtyState<Identifier> binding,
+//      @Nonnull final Maybe<DirtyState<Expression>> init) {
 //    if (binding.dirty) {
 //      return dirty(new VariableDeclarator(binding.node, init.map(expr -> expr.node)));
 //    }
@@ -734,12 +734,12 @@
 //    return clean(node);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
 //  public DirtyState<Block> reduceBlock(
-//      @NotNull Block node,
-//      @NotNull ImmutableList<Branch> path,
-//      @NotNull ImmutableList<DirtyState<Statement>> statements) {
+//      @Nonnull Block node,
+//      @Nonnull ImmutableList<Branch> path,
+//      @Nonnull ImmutableList<DirtyState<Statement>> statements) {
 //    DirtyState<ImmutableList<Statement>> ds = l(statements);
 //    if (ds.dirty) {
 //      return DirtyState.dirty(new Block(ds.node));

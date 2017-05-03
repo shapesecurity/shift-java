@@ -79,343 +79,343 @@
 //import com.shapesecurity.shift.visitor.DirtyState;
 //import com.shapesecurity.shift.visitor.TransformerP;
 //
-//import org.jetbrains.annotations.NotNull;
+//import javax.annotation.Nonnull;
 //
 //public class MinificationRule
 //    implements TransformerP<DirtyState<Script>, DirtyState<FunctionBody>, DirtyState<ObjectProperty>, DirtyState<PropertyName>, DirtyState<Identifier>, DirtyState<Expression>, DirtyState<Directive>, DirtyState<Statement>, DirtyState<Block>, DirtyState<VariableDeclarator>, DirtyState<VariableDeclaration>, DirtyState<SwitchCase>, DirtyState<SwitchDefault>, DirtyState<CatchClause>> {
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public DirtyState<CatchClause> transform(@NotNull CatchClause node) {
+//  public DirtyState<CatchClause> transform(@Nonnull CatchClause node) {
 //    return DirtyState.clean(node);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public DirtyState<VariableDeclarator> transform(@NotNull VariableDeclarator node) {
+//  public DirtyState<VariableDeclarator> transform(@Nonnull VariableDeclarator node) {
 //    return DirtyState.clean(node);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public DirtyState<Directive> transform(@NotNull UnknownDirective node) {
+//  public DirtyState<Directive> transform(@Nonnull UnknownDirective node) {
 //    return DirtyState.clean(node);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public DirtyState<Directive> transform(@NotNull UseStrictDirective node) {
+//  public DirtyState<Directive> transform(@Nonnull UseStrictDirective node) {
 //    return DirtyState.clean(node);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public DirtyState<Expression> transform(@NotNull ArrayExpression node) {
+//  public DirtyState<Expression> transform(@Nonnull ArrayExpression node) {
 //    return DirtyState.clean(node);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public DirtyState<Expression> transform(@NotNull BinaryExpression node) {
+//  public DirtyState<Expression> transform(@Nonnull BinaryExpression node) {
 //    return DirtyState.clean(node);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public DirtyState<Expression> transform(@NotNull AssignmentExpression node) {
+//  public DirtyState<Expression> transform(@Nonnull AssignmentExpression node) {
 //    return DirtyState.clean(node);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public DirtyState<Expression> transform(@NotNull CallExpression node) {
+//  public DirtyState<Expression> transform(@Nonnull CallExpression node) {
 //    return DirtyState.clean(node);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public DirtyState<Expression> transform(@NotNull ComputedMemberExpression node) {
+//  public DirtyState<Expression> transform(@Nonnull ComputedMemberExpression node) {
 //    return DirtyState.clean(node);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public DirtyState<Expression> transform(@NotNull ConditionalExpression node) {
+//  public DirtyState<Expression> transform(@Nonnull ConditionalExpression node) {
 //    return DirtyState.clean(node);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public DirtyState<Expression> transform(@NotNull FunctionExpression node) {
+//  public DirtyState<Expression> transform(@Nonnull FunctionExpression node) {
 //    return DirtyState.clean(node);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public DirtyState<Expression> transform(@NotNull IdentifierExpression node) {
+//  public DirtyState<Expression> transform(@Nonnull IdentifierExpression node) {
 //    return DirtyState.clean(node);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public DirtyState<Expression> transform(@NotNull LiteralBooleanExpression node) {
+//  public DirtyState<Expression> transform(@Nonnull LiteralBooleanExpression node) {
 //    return DirtyState.clean(node);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public DirtyState<Expression> transform(@NotNull LiteralNullExpression node) {
+//  public DirtyState<Expression> transform(@Nonnull LiteralNullExpression node) {
 //    return DirtyState.clean(node);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public DirtyState<Expression> transform(@NotNull LiteralInfinityExpression node) {
+//  public DirtyState<Expression> transform(@Nonnull LiteralInfinityExpression node) {
 //    return DirtyState.clean(node);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public DirtyState<Expression> transform(@NotNull LiteralNumericExpression node) {
+//  public DirtyState<Expression> transform(@Nonnull LiteralNumericExpression node) {
 //    return DirtyState.clean(node);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public DirtyState<Expression> transform(@NotNull LiteralRegExpExpression node) {
+//  public DirtyState<Expression> transform(@Nonnull LiteralRegExpExpression node) {
 //    return DirtyState.clean(node);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public DirtyState<Expression> transform(@NotNull LiteralStringExpression node) {
+//  public DirtyState<Expression> transform(@Nonnull LiteralStringExpression node) {
 //    return DirtyState.clean(node);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public DirtyState<Expression> transform(@NotNull NewExpression node) {
+//  public DirtyState<Expression> transform(@Nonnull NewExpression node) {
 //    return DirtyState.clean(node);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public DirtyState<Expression> transform(@NotNull ObjectExpression node) {
+//  public DirtyState<Expression> transform(@Nonnull ObjectExpression node) {
 //    return DirtyState.clean(node);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public DirtyState<Expression> transform(@NotNull PostfixExpression node) {
+//  public DirtyState<Expression> transform(@Nonnull PostfixExpression node) {
 //    return DirtyState.clean(node);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public DirtyState<Expression> transform(@NotNull PrefixExpression node) {
+//  public DirtyState<Expression> transform(@Nonnull PrefixExpression node) {
 //    return DirtyState.clean(node);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public DirtyState<Expression> transform(@NotNull StaticMemberExpression node) {
+//  public DirtyState<Expression> transform(@Nonnull StaticMemberExpression node) {
 //    return DirtyState.clean(node);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public DirtyState<Expression> transform(@NotNull ThisExpression node) {
+//  public DirtyState<Expression> transform(@Nonnull ThisExpression node) {
 //    return DirtyState.clean(node);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public DirtyState<Identifier> transform(@NotNull Identifier node) {
+//  public DirtyState<Identifier> transform(@Nonnull Identifier node) {
 //    return DirtyState.clean(node);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public DirtyState<FunctionBody> transform(@NotNull FunctionBody node) {
+//  public DirtyState<FunctionBody> transform(@Nonnull FunctionBody node) {
 //    return DirtyState.clean(node);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public DirtyState<Script> transform(@NotNull Script node) {
+//  public DirtyState<Script> transform(@Nonnull Script node) {
 //    return DirtyState.clean(node);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public DirtyState<PropertyName> transform(@NotNull PropertyName node) {
+//  public DirtyState<PropertyName> transform(@Nonnull PropertyName node) {
 //    return DirtyState.clean(node);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public DirtyState<ObjectProperty> transform(@NotNull Getter node) {
+//  public DirtyState<ObjectProperty> transform(@Nonnull Getter node) {
 //    return DirtyState.clean(node);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public DirtyState<ObjectProperty> transform(@NotNull DataProperty node) {
+//  public DirtyState<ObjectProperty> transform(@Nonnull DataProperty node) {
 //    return DirtyState.clean(node);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public DirtyState<ObjectProperty> transform(@NotNull Setter node) {
+//  public DirtyState<ObjectProperty> transform(@Nonnull Setter node) {
 //    return DirtyState.clean(node);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public DirtyState<Statement> transform(@NotNull BlockStatement node) {
+//  public DirtyState<Statement> transform(@Nonnull BlockStatement node) {
 //    return DirtyState.clean(node);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public DirtyState<Statement> transform(@NotNull BreakStatement node) {
+//  public DirtyState<Statement> transform(@Nonnull BreakStatement node) {
 //    return DirtyState.clean(node);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public DirtyState<Statement> transform(@NotNull ContinueStatement node) {
+//  public DirtyState<Statement> transform(@Nonnull ContinueStatement node) {
 //    return DirtyState.clean(node);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public DirtyState<Statement> transform(@NotNull DebuggerStatement node) {
+//  public DirtyState<Statement> transform(@Nonnull DebuggerStatement node) {
 //    return DirtyState.clean(node);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public DirtyState<Statement> transform(@NotNull DoWhileStatement node) {
+//  public DirtyState<Statement> transform(@Nonnull DoWhileStatement node) {
 //    return DirtyState.clean(node);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public DirtyState<Statement> transform(@NotNull EmptyStatement node) {
+//  public DirtyState<Statement> transform(@Nonnull EmptyStatement node) {
 //    return DirtyState.clean(node);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public DirtyState<Statement> transform(@NotNull ExpressionStatement node) {
+//  public DirtyState<Statement> transform(@Nonnull ExpressionStatement node) {
 //    return DirtyState.clean(node);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public DirtyState<Statement> transform(@NotNull ForInStatement node) {
+//  public DirtyState<Statement> transform(@Nonnull ForInStatement node) {
 //    return DirtyState.clean(node);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public DirtyState<Statement> transform(@NotNull ForStatement node) {
+//  public DirtyState<Statement> transform(@Nonnull ForStatement node) {
 //    return DirtyState.clean(node);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public DirtyState<Statement> transform(@NotNull FunctionDeclaration node) {
+//  public DirtyState<Statement> transform(@Nonnull FunctionDeclaration node) {
 //    return DirtyState.clean(node);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public DirtyState<Statement> transform(@NotNull IfStatement node) {
+//  public DirtyState<Statement> transform(@Nonnull IfStatement node) {
 //    return DirtyState.clean(node);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public DirtyState<Statement> transform(@NotNull LabeledStatement node) {
+//  public DirtyState<Statement> transform(@Nonnull LabeledStatement node) {
 //    return DirtyState.clean(node);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public DirtyState<Statement> transform(@NotNull ReturnStatement node) {
+//  public DirtyState<Statement> transform(@Nonnull ReturnStatement node) {
 //    return DirtyState.clean(node);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public DirtyState<Statement> transform(@NotNull SwitchStatement node) {
+//  public DirtyState<Statement> transform(@Nonnull SwitchStatement node) {
 //    return DirtyState.clean(node);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public DirtyState<Statement> transform(@NotNull SwitchStatementWithDefault node) {
+//  public DirtyState<Statement> transform(@Nonnull SwitchStatementWithDefault node) {
 //    return DirtyState.clean(node);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public DirtyState<Statement> transform(@NotNull ThrowStatement node) {
+//  public DirtyState<Statement> transform(@Nonnull ThrowStatement node) {
 //    return DirtyState.clean(node);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public DirtyState<Statement> transform(@NotNull TryCatchStatement node) {
+//  public DirtyState<Statement> transform(@Nonnull TryCatchStatement node) {
 //    return DirtyState.clean(node);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public DirtyState<Statement> transform(@NotNull TryFinallyStatement node) {
+//  public DirtyState<Statement> transform(@Nonnull TryFinallyStatement node) {
 //    return DirtyState.clean(node);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public DirtyState<Statement> transform(@NotNull VariableDeclarationStatement node) {
+//  public DirtyState<Statement> transform(@Nonnull VariableDeclarationStatement node) {
 //    return DirtyState.clean((Statement) node);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public DirtyState<Block> transform(@NotNull Block node) {
+//  public DirtyState<Block> transform(@Nonnull Block node) {
 //    return DirtyState.clean(node);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public DirtyState<VariableDeclaration> transform(@NotNull VariableDeclaration node) {
+//  public DirtyState<VariableDeclaration> transform(@Nonnull VariableDeclaration node) {
 //    return DirtyState.clean(node);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public DirtyState<Statement> transform(@NotNull WhileStatement node) {
+//  public DirtyState<Statement> transform(@Nonnull WhileStatement node) {
 //    return DirtyState.clean(node);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public DirtyState<Statement> transform(@NotNull WithStatement node) {
+//  public DirtyState<Statement> transform(@Nonnull WithStatement node) {
 //    return DirtyState.clean(node);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public DirtyState<SwitchCase> transform(@NotNull SwitchCase node) {
+//  public DirtyState<SwitchCase> transform(@Nonnull SwitchCase node) {
 //    return DirtyState.clean(node);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public DirtyState<SwitchDefault> transform(@NotNull SwitchDefault node) {
+//  public DirtyState<SwitchDefault> transform(@Nonnull SwitchDefault node) {
 //    return DirtyState.clean(node);
 //  }
 //}

@@ -27,7 +27,7 @@ import com.shapesecurity.shift.es2016.ast.operators.UpdateOperator;
 import com.shapesecurity.shift.es2016.ast.*;
 import com.shapesecurity.shift.es2016.utils.Utils;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.util.Random;
 
@@ -223,8 +223,8 @@ public class Fuzzer {
         return (ctx, depth) -> arr[ctx.random.nextInt(arr.length)];
     }
 
-    @NotNull
-    public static Program generate(@NotNull Random random, int depth) {
+    @Nonnull
+    public static Program generate(@Nonnull Random random, int depth) {
         return random.nextBoolean() ? randomScript(new GenCtx(random), depth) : randomModule(new GenCtx(random), depth);
     }
 
@@ -237,8 +237,8 @@ public class Fuzzer {
         return false;
     }
 
-    @NotNull
-    private static <T> Gen<ImmutableList<T>> many(final int bound, @NotNull Gen<T> gen) {
+    @Nonnull
+    private static <T> Gen<ImmutableList<T>> many(final int bound, @Nonnull Gen<T> gen) {
         return (ctx, depth) -> {
             if (depth <= 0) {
                 return ImmutableList.empty();
@@ -252,18 +252,18 @@ public class Fuzzer {
         };
     }
 
-    @NotNull
-    private static <T> Gen<ImmutableList<T>> many(@NotNull Gen<T> gen) {
+    @Nonnull
+    private static <T> Gen<ImmutableList<T>> many(@Nonnull Gen<T> gen) {
         return many(MANY_BOUND, gen);
     }
 
-    @NotNull
-    private static <T> Gen<NonEmptyImmutableList<T>> many1(@NotNull Gen<T> gen) {
+    @Nonnull
+    private static <T> Gen<NonEmptyImmutableList<T>> many1(@Nonnull Gen<T> gen) {
         return (ctx, depth) -> many(MANY_BOUND - 1, gen).apply(ctx, depth).cons(gen.apply(ctx, depth));
     }
 
-    @NotNull
-    private static <T> Gen<Maybe<T>> optional(@NotNull Gen<T> gen) {
+    @Nonnull
+    private static <T> Gen<Maybe<T>> optional(@Nonnull Gen<T> gen) {
         return (ctx, depth) -> {
             if (depth <= 0) {
                 return Maybe.empty();
@@ -275,52 +275,52 @@ public class Fuzzer {
         };
     }
 
-    @NotNull
-    private static ArrayBinding randomArrayBinding(@NotNull GenCtx ctx, int depth) {
+    @Nonnull
+    private static ArrayBinding randomArrayBinding(@Nonnull GenCtx ctx, int depth) {
         return new ArrayBinding(many(optional(Fuzzer::randomBindingBindingWithDefault)).apply(ctx, depth - 1), optional(Fuzzer::randomBinding).apply(ctx, depth - 1));
     }
 
-    @NotNull
-    private static ArrayAssignmentTarget randomArrayAssignmentTarget(@NotNull GenCtx ctx, int depth) {
+    @Nonnull
+    private static ArrayAssignmentTarget randomArrayAssignmentTarget(@Nonnull GenCtx ctx, int depth) {
         return new ArrayAssignmentTarget(many(optional(Fuzzer::randomAssignmentTargetAssignmentTargetWithDefault)).apply(ctx, depth - 1), optional(Fuzzer::randomAssignmentTarget).apply(ctx, depth - 1));
     }
 
-    @NotNull
-    private static ArrayExpression randomArrayExpression(@NotNull GenCtx ctx, int depth) {
+    @Nonnull
+    private static ArrayExpression randomArrayExpression(@Nonnull GenCtx ctx, int depth) {
         return new ArrayExpression(many(optional(Fuzzer::randomSpreadElementExpression)).apply(ctx, depth - 1));
     }
 
-    @NotNull
-    private static ArrowExpression randomArrowExpression(@NotNull GenCtx ctx, int depth) {
+    @Nonnull
+    private static ArrowExpression randomArrowExpression(@Nonnull GenCtx ctx, int depth) {
         return new ArrowExpression(randomFormalParameters(ctx, depth - 1), randomFunctionBodyExpression(ctx, depth - 1));
     }
 
-    @NotNull
-    private static AssignmentExpression randomAssignmentExpression(@NotNull GenCtx ctx, int depth) {
+    @Nonnull
+    private static AssignmentExpression randomAssignmentExpression(@Nonnull GenCtx ctx, int depth) {
         return new AssignmentExpression(randomAssignmentTarget(ctx, depth - 1), randomExpression(ctx, depth - 1));
     }
 
-    @NotNull
-    private static AssignmentTarget randomAssignmentTarget(@NotNull GenCtx ctx, int depth) {
+    @Nonnull
+    private static AssignmentTarget randomAssignmentTarget(@Nonnull GenCtx ctx, int depth) {
         return choice(assignmentTargetGens).apply(ctx, depth).apply(ctx, depth - 1);
     }
 
 
-    @NotNull
-    private static BinaryExpression randomBinaryExpression(@NotNull GenCtx ctx, int depth) {
+    @Nonnull
+    private static BinaryExpression randomBinaryExpression(@Nonnull GenCtx ctx, int depth) {
         return new BinaryExpression(randomExpression(ctx, depth - 1), choice(BinaryOperator.values()).apply(ctx, depth - 1), randomExpression(ctx, depth - 1));
     }
 
-    @NotNull
-    private static Binding randomBinding(@NotNull GenCtx ctx, int depth) {
+    @Nonnull
+    private static Binding randomBinding(@Nonnull GenCtx ctx, int depth) {
 //        if (ctx.inForInOfStatement) { // todo why was this here?
 //            return randomBindingIdentifier(ctx, depth - 1);
 //        }
         return choice(bindingGens).apply(ctx, depth).apply(ctx, depth - 1);
     }
 
-    @NotNull
-    private static BindingBindingWithDefault randomBindingBindingWithDefault(@NotNull GenCtx ctx, int depth) {
+    @Nonnull
+    private static BindingBindingWithDefault randomBindingBindingWithDefault(@Nonnull GenCtx ctx, int depth) {
         int number = ctx.random.nextInt();
         if (number % 2 == 0) {
             return randomBinding(ctx, depth);
@@ -329,8 +329,8 @@ public class Fuzzer {
         }
     }
 
-    @NotNull
-    private static AssignmentTargetAssignmentTargetWithDefault randomAssignmentTargetAssignmentTargetWithDefault(@NotNull GenCtx ctx, int depth) {
+    @Nonnull
+    private static AssignmentTargetAssignmentTargetWithDefault randomAssignmentTargetAssignmentTargetWithDefault(@Nonnull GenCtx ctx, int depth) {
         int number = ctx.random.nextInt();
         if (number % 2 == 0) {
             return randomAssignmentTarget(ctx, depth);
@@ -339,18 +339,18 @@ public class Fuzzer {
         }
     }
 
-    @NotNull
-    private static BindingIdentifier randomBindingIdentifier(@NotNull GenCtx ctx, int depth) {
+    @Nonnull
+    private static BindingIdentifier randomBindingIdentifier(@Nonnull GenCtx ctx, int depth) {
         return new BindingIdentifier(randomIdentifierString(ctx, depth - 1));
     }
 
-    @NotNull
-    private static AssignmentTargetIdentifier randomAssignmentTargetIdentifier(@NotNull GenCtx ctx, int depth) {
+    @Nonnull
+    private static AssignmentTargetIdentifier randomAssignmentTargetIdentifier(@Nonnull GenCtx ctx, int depth) {
         return new AssignmentTargetIdentifier(randomIdentifierString(ctx, depth - 1));
     }
 
-    @NotNull
-    private static SimpleAssignmentTarget randomSimpleAssignmentTarget(@NotNull GenCtx ctx, int depth) {
+    @Nonnull
+    private static SimpleAssignmentTarget randomSimpleAssignmentTarget(@Nonnull GenCtx ctx, int depth) {
         int number = ctx.random.nextInt();
         if (number % 2 == 0) {
             return randomAssignmentTargetIdentifier(ctx, depth);
@@ -364,8 +364,8 @@ public class Fuzzer {
         }
     }
 
-    @NotNull
-    private static BindingProperty randomBindingProperty(@NotNull GenCtx ctx, int depth) {
+    @Nonnull
+    private static BindingProperty randomBindingProperty(@Nonnull GenCtx ctx, int depth) {
         int number = ctx.random.nextInt();
         if (number % 2 == 0) {
             return randomBindingPropertyIdentifier(ctx, depth);
@@ -374,8 +374,8 @@ public class Fuzzer {
         }
     }
 
-    @NotNull
-    private static AssignmentTargetProperty randomAssignmentTargetProperty(@NotNull GenCtx ctx, int depth) {
+    @Nonnull
+    private static AssignmentTargetProperty randomAssignmentTargetProperty(@Nonnull GenCtx ctx, int depth) {
         int number = ctx.random.nextInt();
         if (number % 2 == 0) {
             return randomAssignmentTargetPropertyIdentifier(ctx, depth);
@@ -384,82 +384,82 @@ public class Fuzzer {
         }
     }
 
-    @NotNull
-    private static BindingPropertyIdentifier randomBindingPropertyIdentifier(@NotNull GenCtx ctx, int depth) {
+    @Nonnull
+    private static BindingPropertyIdentifier randomBindingPropertyIdentifier(@Nonnull GenCtx ctx, int depth) {
         return new BindingPropertyIdentifier(randomBindingIdentifier(ctx, depth - 1), optional(Fuzzer::randomExpression).apply(ctx, depth - 1));
     }
 
-    @NotNull
-    private static AssignmentTargetPropertyIdentifier randomAssignmentTargetPropertyIdentifier(@NotNull GenCtx ctx, int depth) {
+    @Nonnull
+    private static AssignmentTargetPropertyIdentifier randomAssignmentTargetPropertyIdentifier(@Nonnull GenCtx ctx, int depth) {
         return new AssignmentTargetPropertyIdentifier(randomAssignmentTargetIdentifier(ctx, depth - 1), optional(Fuzzer::randomExpression).apply(ctx, depth - 1));
     }
 
-    @NotNull
-    private static BindingPropertyProperty randomBindingPropertyProperty(@NotNull GenCtx ctx, int depth) {
+    @Nonnull
+    private static BindingPropertyProperty randomBindingPropertyProperty(@Nonnull GenCtx ctx, int depth) {
         return new BindingPropertyProperty(randomPropertyName(ctx, depth - 1), randomBindingBindingWithDefault(ctx, depth - 1));
     }
 
-    @NotNull
-    private static AssignmentTargetPropertyProperty randomAssignmentTargetPropertyProperty(@NotNull GenCtx ctx, int depth) {
+    @Nonnull
+    private static AssignmentTargetPropertyProperty randomAssignmentTargetPropertyProperty(@Nonnull GenCtx ctx, int depth) {
         return new AssignmentTargetPropertyProperty(randomPropertyName(ctx, depth - 1), randomAssignmentTargetAssignmentTargetWithDefault(ctx, depth - 1));
     }
 
-    @NotNull
-    private static BindingWithDefault randomBindingWithDefault(@NotNull GenCtx ctx, int depth) {
+    @Nonnull
+    private static BindingWithDefault randomBindingWithDefault(@Nonnull GenCtx ctx, int depth) {
         return new BindingWithDefault(randomBinding(ctx, depth - 1), randomExpression(ctx, depth - 1));
     }
 
-    @NotNull
-    private static AssignmentTargetWithDefault randomAssignmentTargetWithDefault(@NotNull GenCtx ctx, int depth) {
+    @Nonnull
+    private static AssignmentTargetWithDefault randomAssignmentTargetWithDefault(@Nonnull GenCtx ctx, int depth) {
         return new AssignmentTargetWithDefault(randomAssignmentTarget(ctx, depth - 1), randomExpression(ctx, depth - 1));
     }
 
-    @NotNull
-    private static Block randomBlock(@NotNull GenCtx ctx, int depth) {
+    @Nonnull
+    private static Block randomBlock(@Nonnull GenCtx ctx, int depth) {
         if (depth < 1) {
             return new Block(ImmutableList.empty());
         }
         return new Block(many(Fuzzer::randomStatement).apply(ctx.allowMissingElse(), depth - 1));
     }
 
-    @NotNull
-    private static BlockStatement randomBlockStatement(@NotNull GenCtx ctx, int depth) {
+    @Nonnull
+    private static BlockStatement randomBlockStatement(@Nonnull GenCtx ctx, int depth) {
         return new BlockStatement(randomBlock(ctx.allowMissingElse(), depth - 1));
     }
 
-    @NotNull
-    private static BreakStatement randomBreakStatement(@NotNull GenCtx ctx, int depth) {
+    @Nonnull
+    private static BreakStatement randomBreakStatement(@Nonnull GenCtx ctx, int depth) {
         return new BreakStatement(optional(Fuzzer::randomIdentifierString).apply(ctx, depth - 1));
     }
 
-    @NotNull
-    private static CallExpression randomCallExpression(@NotNull GenCtx ctx, int depth) {
+    @Nonnull
+    private static CallExpression randomCallExpression(@Nonnull GenCtx ctx, int depth) {
         return new CallExpression(randomExpressionSuper(ctx, depth - 1), many(Fuzzer::randomSpreadElementExpression).apply(ctx, depth - 1));
     }
 
-    @NotNull
-    private static CatchClause randomCatchClause(@NotNull GenCtx ctx, int depth) {
+    @Nonnull
+    private static CatchClause randomCatchClause(@Nonnull GenCtx ctx, int depth) {
         Binding binding = (Binding) randomParameter(ctx, depth - 1);
         return new CatchClause(binding, randomBlock(ctx, depth - 1));
     }
 
-    @NotNull
-    private static ClassDeclaration randomClassDeclaration(@NotNull GenCtx ctx, int depth) {
+    @Nonnull
+    private static ClassDeclaration randomClassDeclaration(@Nonnull GenCtx ctx, int depth) {
         return new ClassDeclaration(randomBindingIdentifier(ctx, depth - 1), optional(Fuzzer::randomExpression).apply(ctx, depth - 1), many(Fuzzer::randomClassElement).apply(ctx, depth - 1));
     }
 
-    @NotNull
-    private static ClassElement randomClassElement(@NotNull GenCtx ctx, int depth) {
+    @Nonnull
+    private static ClassElement randomClassElement(@Nonnull GenCtx ctx, int depth) {
         return new ClassElement(false, randomMethodDefinition(ctx, depth - 1));
     }
 
-    @NotNull
-    private static ClassExpression randomClassExpression(@NotNull GenCtx ctx, int depth) {
+    @Nonnull
+    private static ClassExpression randomClassExpression(@Nonnull GenCtx ctx, int depth) {
         return new ClassExpression(optional(Fuzzer::randomBindingIdentifier).apply(ctx, depth - 1), optional(Fuzzer::randomExpression).apply(ctx, depth - 1), many(Fuzzer::randomClassElement).apply(ctx, depth - 1));
     }
 
-    @NotNull
-    private static CompoundAssignmentExpression randomCompoundAssignmentExpression(@NotNull GenCtx ctx, int depth) {
+    @Nonnull
+    private static CompoundAssignmentExpression randomCompoundAssignmentExpression(@Nonnull GenCtx ctx, int depth) {
         SimpleAssignmentTarget lhs;
         do {
             lhs = randomSimpleAssignmentTarget(ctx, depth - 1);
@@ -471,99 +471,99 @@ public class Fuzzer {
                 randomExpression(ctx, depth - 1));
     }
 
-    @NotNull
-    private static ComputedMemberExpression randomComputedMemberExpression(@NotNull GenCtx ctx, int depth) {
+    @Nonnull
+    private static ComputedMemberExpression randomComputedMemberExpression(@Nonnull GenCtx ctx, int depth) {
         return new ComputedMemberExpression(randomExpression(ctx, depth - 1), randomExpression(ctx, depth - 1));
     }
 
-    @NotNull
-    private static ComputedMemberAssignmentTarget randomComputedMemberAssignmentTarget(@NotNull GenCtx ctx, int depth) {
+    @Nonnull
+    private static ComputedMemberAssignmentTarget randomComputedMemberAssignmentTarget(@Nonnull GenCtx ctx, int depth) {
         return new ComputedMemberAssignmentTarget(randomExpression(ctx, depth - 1), randomExpression(ctx, depth - 1));
     }
 
-    @NotNull
-    private static ComputedPropertyName randomComputedPropertyName(@NotNull GenCtx ctx, int depth) {
+    @Nonnull
+    private static ComputedPropertyName randomComputedPropertyName(@Nonnull GenCtx ctx, int depth) {
         return new ComputedPropertyName(randomExpression(ctx, depth - 1));
     }
 
-    @NotNull
-    private static ConditionalExpression randomConditionalExpression(@NotNull GenCtx ctx, int depth) {
+    @Nonnull
+    private static ConditionalExpression randomConditionalExpression(@Nonnull GenCtx ctx, int depth) {
         return new ConditionalExpression(randomExpression(ctx, depth - 1), randomExpression(ctx, depth - 1), randomExpression(ctx, depth - 1));
     }
 
-    @NotNull
-    private static ContinueStatement randomContinueStatement(@NotNull GenCtx ctx, int depth) {
+    @Nonnull
+    private static ContinueStatement randomContinueStatement(@Nonnull GenCtx ctx, int depth) {
         return new ContinueStatement(optional(Fuzzer::randomIdentifierString).apply(ctx, depth - 1));
     }
 
-    @NotNull
-    private static DataProperty randomDataProperty(@NotNull GenCtx ctx, int depth) {
+    @Nonnull
+    private static DataProperty randomDataProperty(@Nonnull GenCtx ctx, int depth) {
         return new DataProperty(randomPropertyName(ctx, depth - 1), randomExpression(ctx, depth - 1));
     }
 
-    @NotNull
-    private static DebuggerStatement randomDebuggerStatement(@NotNull GenCtx ctx, int depth) {
+    @Nonnull
+    private static DebuggerStatement randomDebuggerStatement(@Nonnull GenCtx ctx, int depth) {
         return new DebuggerStatement();
     }
 
-    @NotNull
-    private static Directive randomDirective(@NotNull GenCtx ctx, int depth) {
+    @Nonnull
+    private static Directive randomDirective(@Nonnull GenCtx ctx, int depth) {
         String value = Utils.escapeStringLiteral(randomIdentifierString(ctx, depth - 1));
         return new Directive(value.substring(1, value.length() - 1));
     }
 
-    @NotNull
-    private static DoWhileStatement randomDoWhileStatement(@NotNull GenCtx ctx, int depth) {
+    @Nonnull
+    private static DoWhileStatement randomDoWhileStatement(@Nonnull GenCtx ctx, int depth) {
         return new DoWhileStatement(randomStatement(ctx.enterIteration().allowMissingElse(), depth - 1), randomExpression(ctx, depth - 1));
     }
 
-    @NotNull
-    private static EmptyStatement randomEmptyStatement(@NotNull GenCtx ctx, int depth) {
+    @Nonnull
+    private static EmptyStatement randomEmptyStatement(@Nonnull GenCtx ctx, int depth) {
         return new EmptyStatement();
     }
 
-    @NotNull
-    private static Export randomExport(@NotNull GenCtx ctx, int depth) {
+    @Nonnull
+    private static Export randomExport(@Nonnull GenCtx ctx, int depth) {
         return new Export(randomFunctionDeclarationClassDeclarationVariableDeclaration(ctx, depth - 1));
     }
 
-    @NotNull
-    private static ExportAllFrom randomExportAllFrom(@NotNull GenCtx ctx, int depth) {
+    @Nonnull
+    private static ExportAllFrom randomExportAllFrom(@Nonnull GenCtx ctx, int depth) {
         return new ExportAllFrom(randomIdentifierString(ctx, depth - 1));
     }
 
-    @NotNull
-    private static ExportDeclaration randomExportDeclaration(@NotNull GenCtx ctx, int depth) {
+    @Nonnull
+    private static ExportDeclaration randomExportDeclaration(@Nonnull GenCtx ctx, int depth) {
         return choice(exportDeclarationGens).apply(ctx, depth - 1).apply(ctx, depth - 1);
     }
 
-    @NotNull
-    private static ExportDefault randomExportDefault(@NotNull GenCtx ctx, int depth) {
+    @Nonnull
+    private static ExportDefault randomExportDefault(@Nonnull GenCtx ctx, int depth) {
         return new ExportDefault(randomFunctionDeclarationClassDeclarationExpression(ctx, depth - 1));
     }
 
-    @NotNull
-    private static ExportFrom randomExportFrom(@NotNull GenCtx ctx, int depth) {
+    @Nonnull
+    private static ExportFrom randomExportFrom(@Nonnull GenCtx ctx, int depth) {
         return new ExportFrom(many(Fuzzer::randomExportFromSpecifier).apply(ctx, depth - 1), randomIdentifierString(ctx, depth-1));
     }
 
-    @NotNull
-    private static ExportFromSpecifier randomExportFromSpecifier(@NotNull GenCtx ctx, int depth) {
+    @Nonnull
+    private static ExportFromSpecifier randomExportFromSpecifier(@Nonnull GenCtx ctx, int depth) {
         return new ExportFromSpecifier(randomIdentifierString(ctx, depth-1), optional(Fuzzer::randomIdentifierString).apply(ctx, depth - 1));
     }
 
-    @NotNull
-    private static ExportLocals randomExportLocals(@NotNull GenCtx ctx, int depth) {
+    @Nonnull
+    private static ExportLocals randomExportLocals(@Nonnull GenCtx ctx, int depth) {
         return new ExportLocals(many(Fuzzer::randomExportLocalSpecifier).apply(ctx, depth - 1));
     }
 
-    @NotNull
-    private static ExportLocalSpecifier randomExportLocalSpecifier(@NotNull GenCtx ctx, int depth) {
+    @Nonnull
+    private static ExportLocalSpecifier randomExportLocalSpecifier(@Nonnull GenCtx ctx, int depth) {
         return new ExportLocalSpecifier(randomIdentifierExpression(ctx, depth-1), optional(Fuzzer::randomIdentifierString).apply(ctx, depth - 1));
     }
 
-    @NotNull
-    private static Expression randomExpression(@NotNull GenCtx ctx, int depth) {
+    @Nonnull
+    private static Expression randomExpression(@Nonnull GenCtx ctx, int depth) {
         if (depth < 0) {
             return randomLiteralStringExpression(ctx, depth - 1);
         }
@@ -576,13 +576,13 @@ public class Fuzzer {
         return expression;
     }
 
-    @NotNull
-    private static ExpressionStatement randomExpressionStatement(@NotNull GenCtx ctx, int depth) {
+    @Nonnull
+    private static ExpressionStatement randomExpressionStatement(@Nonnull GenCtx ctx, int depth) {
         return new ExpressionStatement(randomExpression(ctx, depth - 1));
     }
 
-    @NotNull
-    private static ExpressionSuper randomExpressionSuper(@NotNull GenCtx ctx, int depth) {
+    @Nonnull
+    private static ExpressionSuper randomExpressionSuper(@Nonnull GenCtx ctx, int depth) {
         int number = ctx.random.nextInt();
         if (number % 2 == 0) {
             return randomExpression(ctx, depth);
@@ -591,33 +591,33 @@ public class Fuzzer {
         }
     }
 
-    @NotNull
-    private static ImmutableList<ExpressionTemplateElement> randomAlternatingTemplateElementExpression(@NotNull GenCtx ctx, int depth) {
+    @Nonnull
+    private static ImmutableList<ExpressionTemplateElement> randomAlternatingTemplateElementExpression(@Nonnull GenCtx ctx, int depth) {
         return ImmutableList.of(randomTemplateElement(ctx, depth - 1), randomExpression(ctx, depth - 1), randomTemplateElement(ctx, depth - 1));
     }
 
-    @NotNull
-    private static ForInStatement randomForInStatement(@NotNull GenCtx ctx, int depth) {
+    @Nonnull
+    private static ForInStatement randomForInStatement(@Nonnull GenCtx ctx, int depth) {
         return new ForInStatement(randomVariableDeclarationAssignmentTarget(ctx.inForInOfStatement(), depth - 1), randomExpression(ctx, depth - 1), randomStatement(ctx, depth - 1));
     }
 
-    @NotNull
-    private static ForOfStatement randomForOfStatement(@NotNull GenCtx ctx, int depth) {
+    @Nonnull
+    private static ForOfStatement randomForOfStatement(@Nonnull GenCtx ctx, int depth) {
         return new ForOfStatement(randomVariableDeclarationAssignmentTarget(ctx.inForInOfStatement(), depth - 1), randomExpression(ctx, depth - 1), randomStatement(ctx, depth - 1));
     }
 
-    @NotNull
-    private static ForStatement randomForStatement(@NotNull GenCtx ctx, int depth) {
+    @Nonnull
+    private static ForStatement randomForStatement(@Nonnull GenCtx ctx, int depth) {
         return new ForStatement(optional(Fuzzer::randomVariableDeclarationExpression).apply(ctx, depth - 1), optional(Fuzzer::randomExpression).apply(ctx, depth - 1), optional(Fuzzer::randomExpression).apply(ctx, depth - 1), randomStatement(ctx, depth - 1));
     }
 
-    @NotNull
-    private static FormalParameters randomFormalParameters(@NotNull GenCtx ctx, int depth) {
+    @Nonnull
+    private static FormalParameters randomFormalParameters(@Nonnull GenCtx ctx, int depth) {
         return new FormalParameters(many(Fuzzer::randomParameter).apply(ctx, depth - 1), optional(Fuzzer::randomBinding).apply(ctx, depth - 1));
     }
 
-    @NotNull
-    private static Parameter randomParameter(@NotNull GenCtx ctx, int depth) {
+    @Nonnull
+    private static Parameter randomParameter(@Nonnull GenCtx ctx, int depth) {
         // returns nodes that are Binding, but not Member Expression
         switch (ctx.random.nextInt(3)) {
             case 0:
@@ -629,8 +629,8 @@ public class Fuzzer {
         }
     }
 
-    @NotNull
-    private static FunctionBody randomFunctionBody(@NotNull GenCtx ctx, int depth) {
+    @Nonnull
+    private static FunctionBody randomFunctionBody(@Nonnull GenCtx ctx, int depth) {
         ImmutableList<Directive> directives = many(Fuzzer::randomDirective).apply(ctx, depth - 1);
         if (!ctx.inStrictMode && directives.exists(dir -> dir != null)) {
             ctx = ctx.enterStrictMode();
@@ -647,8 +647,8 @@ public class Fuzzer {
         }
     }
 
-    @NotNull
-    private static FunctionDeclaration randomFunctionDeclaration(@NotNull GenCtx ctx, int depth) {
+    @Nonnull
+    private static FunctionDeclaration randomFunctionDeclaration(@Nonnull GenCtx ctx, int depth) {
         FunctionBody body = randomFunctionBody(ctx.enterFunctional().clearLabels(), depth - 1);
         if (isFunctionBodyStrict(body)) {
             ctx = ctx.enterStrictMode();
@@ -660,8 +660,8 @@ public class Fuzzer {
         return new FunctionDeclaration(isGenerator, randomBindingIdentifier(ctx, depth - 1), randomFormalParameters(ctx, depth - 1), body);
     }
 
-    @NotNull
-    private static FunctionDeclarationClassDeclarationExpression randomFunctionDeclarationClassDeclarationExpression(@NotNull GenCtx ctx, int depth) {
+    @Nonnull
+    private static FunctionDeclarationClassDeclarationExpression randomFunctionDeclarationClassDeclarationExpression(@Nonnull GenCtx ctx, int depth) {
         switch (ctx.random.nextInt(3)) {
             case 0:
                 return randomFunctionDeclaration(ctx, depth);
@@ -672,8 +672,8 @@ public class Fuzzer {
         }
     }
 
-    @NotNull
-    private static FunctionDeclarationClassDeclarationVariableDeclaration randomFunctionDeclarationClassDeclarationVariableDeclaration(@NotNull GenCtx ctx, int depth) {
+    @Nonnull
+    private static FunctionDeclarationClassDeclarationVariableDeclaration randomFunctionDeclarationClassDeclarationVariableDeclaration(@Nonnull GenCtx ctx, int depth) {
         switch (ctx.random.nextInt(3)) {
             case 0:
                 return randomFunctionDeclaration(ctx, depth);
@@ -684,8 +684,8 @@ public class Fuzzer {
         }
     }
 
-    @NotNull
-    private static FunctionExpression randomFunctionExpression(@NotNull GenCtx ctx, int depth) {
+    @Nonnull
+    private static FunctionExpression randomFunctionExpression(@Nonnull GenCtx ctx, int depth) {
         FunctionBody body = randomFunctionBody(ctx.enterFunctional(), depth - 1);
         if (isFunctionBodyStrict(body)) {
             ctx = ctx.enterStrictMode();
@@ -697,8 +697,8 @@ public class Fuzzer {
         return new FunctionExpression(isGenerator, optional(Fuzzer::randomBindingIdentifier).apply(ctx, depth - 1), randomFormalParameters(ctx, depth - 1), body);
     }
 
-    @NotNull
-    private static Getter randomGetter(@NotNull GenCtx ctx, int depth) {
+    @Nonnull
+    private static Getter randomGetter(@Nonnull GenCtx ctx, int depth) {
         FunctionBody body = randomFunctionBody(ctx.enterFunctional(), depth - 1);
         if (isFunctionBodyStrict(body)) {
             ctx = ctx.enterStrictMode();
@@ -706,8 +706,8 @@ public class Fuzzer {
         return new Getter(randomPropertyName(ctx, depth - 1), body);
     }
 
-    @NotNull
-    private static IdentifierExpression randomIdentifier(@NotNull GenCtx ctx, int depth, boolean allowReserved, boolean allowRestricted) {
+    @Nonnull
+    private static IdentifierExpression randomIdentifier(@Nonnull GenCtx ctx, int depth, boolean allowReserved, boolean allowRestricted) {
         String name;
         boolean genarateSpecial = ctx.random.nextDouble() < SPECIAL_IDENT_PROBABILITY;
         if (genarateSpecial && allowReserved) {
@@ -733,14 +733,14 @@ public class Fuzzer {
         return new IdentifierExpression(name);
     }
 
-    @NotNull
-    private static IdentifierExpression randomIdentifierExpression(@NotNull GenCtx ctx, int depth) {
+    @Nonnull
+    private static IdentifierExpression randomIdentifierExpression(@Nonnull GenCtx ctx, int depth) {
         // restricted word are filtered in assignment expression.
         return randomIdentifier(ctx, depth - 1, false, true);
     }
 
-    @NotNull
-    private static String randomIdentifierString(@NotNull GenCtx ctx, int depth) {
+    @Nonnull
+    private static String randomIdentifierString(@Nonnull GenCtx ctx, int depth) {
         StringBuilder result = new StringBuilder();
         result.append(identifierStartArr[ctx.random.nextInt(identifierStartArr.length)]);
         int length = ctx.random.nextInt(MAX_IDENT_LENGTH);
@@ -750,8 +750,8 @@ public class Fuzzer {
         return result.toString();
     }
 
-    @NotNull
-    private static IfStatement randomIfStatement(@NotNull GenCtx ctx, int depth) {
+    @Nonnull
+    private static IfStatement randomIfStatement(@Nonnull GenCtx ctx, int depth) {
         if (ctx.allowMissingElse) {
             boolean missElse = ctx.random.nextBoolean();
             if (missElse) {
@@ -761,13 +761,13 @@ public class Fuzzer {
         return new IfStatement(randomExpression(ctx, depth - 1), randomStatement(ctx.forbidMissingElse(), depth - 1), Maybe.of(randomStatement(ctx, depth - 1)));
     }
 
-    @NotNull
-    private static Import randomImport(@NotNull GenCtx ctx, int depth) {
+    @Nonnull
+    private static Import randomImport(@Nonnull GenCtx ctx, int depth) {
         return new Import(optional(Fuzzer::randomBindingIdentifier).apply(ctx, depth - 1), many(Fuzzer::randomImportSpecifier).apply(ctx, depth - 1), randomIdentifierString(ctx, depth - 1));
     }
 
-    @NotNull
-    private static ImportDeclaration randomImportDeclaration(@NotNull GenCtx ctx, int depth) {
+    @Nonnull
+    private static ImportDeclaration randomImportDeclaration(@Nonnull GenCtx ctx, int depth) {
         int number = ctx.random.nextInt();
         if (number % 2 == 0) {
             return randomImport(ctx, depth);
@@ -776,8 +776,8 @@ public class Fuzzer {
         }
     }
 
-    @NotNull
-    private static ImportDeclarationExportDeclarationStatement randomImportDeclarationExportDeclarationStatement(@NotNull GenCtx ctx, int depth) {
+    @Nonnull
+    private static ImportDeclarationExportDeclarationStatement randomImportDeclarationExportDeclarationStatement(@Nonnull GenCtx ctx, int depth) {
         switch (ctx.random.nextInt(3)) {
             case 0:
                 return randomImportDeclaration(ctx, depth);
@@ -788,53 +788,53 @@ public class Fuzzer {
         }
     }
 
-    @NotNull
-    private static ImportNamespace randomImportNamespace(@NotNull GenCtx ctx, int depth) {
+    @Nonnull
+    private static ImportNamespace randomImportNamespace(@Nonnull GenCtx ctx, int depth) {
         return new ImportNamespace(optional(Fuzzer::randomBindingIdentifier).apply(ctx, depth - 1), randomBindingIdentifier(ctx, depth - 1), randomIdentifierString(ctx, depth - 1));
     }
 
-    @NotNull
-    private static ImportSpecifier randomImportSpecifier(@NotNull GenCtx ctx, int depth) {
+    @Nonnull
+    private static ImportSpecifier randomImportSpecifier(@Nonnull GenCtx ctx, int depth) {
         return new ImportSpecifier(optional(Fuzzer::randomIdentifierString).apply(ctx, depth - 1), randomBindingIdentifier(ctx, depth - 1));
     }
 
-    @NotNull
-    private static LabeledStatement randomLabeledStatement(@NotNull GenCtx ctx, int depth) {
+    @Nonnull
+    private static LabeledStatement randomLabeledStatement(@Nonnull GenCtx ctx, int depth) {
         return new LabeledStatement(randomIdentifierString(ctx, depth - 1), randomStatement(ctx, depth - 1));
     }
 
-    @NotNull
-    private static LiteralBooleanExpression randomLiteralBooleanExpression(@NotNull GenCtx ctx, int depth) {
+    @Nonnull
+    private static LiteralBooleanExpression randomLiteralBooleanExpression(@Nonnull GenCtx ctx, int depth) {
         return new LiteralBooleanExpression(ctx.random.nextBoolean());
     }
 
-    @NotNull
-    private static LiteralInfinityExpression randomLiteralInfinityExpression(@NotNull GenCtx ctx, int depth) {
+    @Nonnull
+    private static LiteralInfinityExpression randomLiteralInfinityExpression(@Nonnull GenCtx ctx, int depth) {
         return new LiteralInfinityExpression();
     }
 
-    @NotNull
-    private static LiteralNullExpression randomLiteralNullExpression(@NotNull GenCtx ctx, int depth) {
+    @Nonnull
+    private static LiteralNullExpression randomLiteralNullExpression(@Nonnull GenCtx ctx, int depth) {
         return new LiteralNullExpression();
     }
 
-    @NotNull
-    private static LiteralNumericExpression randomLiteralNumericExpression(@NotNull GenCtx ctx, int depth) {
+    @Nonnull
+    private static LiteralNumericExpression randomLiteralNumericExpression(@Nonnull GenCtx ctx, int depth) {
         return new LiteralNumericExpression(randomNumber(ctx));
     }
 
-    @NotNull
-    private static LiteralRegExpExpression randomLiteralRegExpExpression(@NotNull GenCtx ctx, int depth) {
+    @Nonnull
+    private static LiteralRegExpExpression randomLiteralRegExpExpression(@Nonnull GenCtx ctx, int depth) {
         return new LiteralRegExpExpression(randomRegExpString(ctx, depth - 1), ctx.random.nextBoolean(), ctx.random.nextBoolean(), ctx.random.nextBoolean(), ctx.random.nextBoolean(), ctx.random.nextBoolean());
     }
 
-    @NotNull
-    private static LiteralStringExpression randomLiteralStringExpression(@NotNull GenCtx ctx, int depth) {
+    @Nonnull
+    private static LiteralStringExpression randomLiteralStringExpression(@Nonnull GenCtx ctx, int depth) {
         return new LiteralStringExpression(randomIdentifierString(ctx, depth - 1));
     }
 
-    @NotNull
-    private static MemberExpression randomMemberExpression(@NotNull GenCtx ctx, int depth) {
+    @Nonnull
+    private static MemberExpression randomMemberExpression(@Nonnull GenCtx ctx, int depth) {
         int number = ctx.random.nextInt();
         if (number % 2 == 0) {
             return randomComputedMemberExpression(ctx, depth);
@@ -843,13 +843,13 @@ public class Fuzzer {
         }
     }
 
-    @NotNull
-    private static Method randomMethod(@NotNull GenCtx ctx, int depth) {
+    @Nonnull
+    private static Method randomMethod(@Nonnull GenCtx ctx, int depth) {
         return new Method(false, randomPropertyName(ctx, depth - 1), randomFormalParameters(ctx, depth - 1), randomFunctionBody(ctx, depth - 1));
     }
 
-    @NotNull
-    private static MethodDefinition randomMethodDefinition(@NotNull GenCtx ctx, int depth) {
+    @Nonnull
+    private static MethodDefinition randomMethodDefinition(@Nonnull GenCtx ctx, int depth) {
         switch (ctx.random.nextInt(3)) {
             case 0:
                 return randomGetter(ctx, depth);
@@ -860,43 +860,43 @@ public class Fuzzer {
         }
     }
 
-    @NotNull
-    private static Module randomModule(@NotNull GenCtx ctx, int depth) {
+    @Nonnull
+    private static Module randomModule(@Nonnull GenCtx ctx, int depth) {
         return new Module(many(Fuzzer::randomDirective).apply(ctx, depth - 1), many(Fuzzer::randomImportDeclarationExportDeclarationStatement).apply(ctx, depth - 1));
     }
 
-    @NotNull
-    private static NewExpression randomNewExpression(@NotNull GenCtx ctx, int depth) {
+    @Nonnull
+    private static NewExpression randomNewExpression(@Nonnull GenCtx ctx, int depth) {
         return new NewExpression(randomExpression(ctx, depth - 1), many(Fuzzer::randomSpreadElementExpression).apply(ctx, depth - 1));
     }
 
-    @NotNull
-    private static NewTargetExpression randomNewTargetExpression(@NotNull GenCtx ctx, int depth) {
+    @Nonnull
+    private static NewTargetExpression randomNewTargetExpression(@Nonnull GenCtx ctx, int depth) {
         return new NewTargetExpression();
     }
 
-    @NotNull
-    private static double randomNumber(@NotNull GenCtx ctx) {
+    @Nonnull
+    private static double randomNumber(@Nonnull GenCtx ctx) {
         return Math.exp(ctx.random.nextGaussian());
     }
 
-    @NotNull
-    private static ObjectBinding randomObjectBinding(@NotNull GenCtx ctx, int depth) {
+    @Nonnull
+    private static ObjectBinding randomObjectBinding(@Nonnull GenCtx ctx, int depth) {
         return new ObjectBinding(many(Fuzzer::randomBindingProperty).apply(ctx, depth - 1));
     }
 
-    @NotNull
-    private static ObjectAssignmentTarget randomObjectAssignmentTarget(@NotNull GenCtx ctx, int depth) {
+    @Nonnull
+    private static ObjectAssignmentTarget randomObjectAssignmentTarget(@Nonnull GenCtx ctx, int depth) {
         return new ObjectAssignmentTarget(many(Fuzzer::randomAssignmentTargetProperty).apply(ctx, depth - 1));
     }
 
-    @NotNull
-    private static ObjectExpression randomObjectExpression(@NotNull GenCtx ctx, int depth) {
+    @Nonnull
+    private static ObjectExpression randomObjectExpression(@Nonnull GenCtx ctx, int depth) {
         return new ObjectExpression(many(Fuzzer::randomObjectProperty).apply(ctx, depth - 1));
     }
 
-    @NotNull
-    private static ObjectProperty randomObjectProperty(@NotNull GenCtx ctx, int depth) {
+    @Nonnull
+    private static ObjectProperty randomObjectProperty(@Nonnull GenCtx ctx, int depth) {
         switch (ctx.random.nextInt(5)) {
             case 0:
                 return randomDataProperty(ctx, depth);
@@ -907,8 +907,8 @@ public class Fuzzer {
         }
     }
 
-    @NotNull
-    private static PropertyName randomPropertyName(@NotNull GenCtx ctx, int depth) {
+    @Nonnull
+    private static PropertyName randomPropertyName(@Nonnull GenCtx ctx, int depth) {
         int number = ctx.random.nextInt();
         if (number % 2 == 0) {
             return randomComputedPropertyName(ctx, depth);
@@ -917,13 +917,13 @@ public class Fuzzer {
         }
     }
 
-    @NotNull
-    private static String randomRegExpString(@NotNull GenCtx ctx, int depth) {
+    @Nonnull
+    private static String randomRegExpString(@Nonnull GenCtx ctx, int depth) {
         return "/" + randomIdentifierString(ctx, depth - 1) + "/";
     }
 
-    @NotNull
-    private static Statement randomReturnStatement(@NotNull GenCtx ctx, int depth) {
+    @Nonnull
+    private static Statement randomReturnStatement(@Nonnull GenCtx ctx, int depth) {
         if (ctx.allowReturn) {
             return new ReturnStatement(optional(Fuzzer::randomExpression).apply(ctx, depth - 1));
         } else {
@@ -931,14 +931,14 @@ public class Fuzzer {
         }
     }
 
-    @NotNull
-    private static Script randomScript(@NotNull GenCtx ctx, int depth) {
+    @Nonnull
+    private static Script randomScript(@Nonnull GenCtx ctx, int depth) {
         FunctionBody randomFunctionBody = randomFunctionBody(ctx, depth - 1);
         return new Script(randomFunctionBody.directives, randomFunctionBody.statements);
     }
 
-    @NotNull
-    private static Setter randomSetter(@NotNull GenCtx ctx, int depth) {
+    @Nonnull
+    private static Setter randomSetter(@Nonnull GenCtx ctx, int depth) {
         FunctionBody body = randomFunctionBody(ctx.enterFunctional(), depth - 1);
         if (isFunctionBodyStrict(body)) {
             ctx = ctx.enterStrictMode();
@@ -946,18 +946,18 @@ public class Fuzzer {
         return new Setter(randomPropertyName(ctx, depth - 1), randomParameter(ctx, depth - 1), body);
     }
 
-    @NotNull
-    private static ShorthandProperty randomShorthandProperty(@NotNull GenCtx ctx, int depth) {
+    @Nonnull
+    private static ShorthandProperty randomShorthandProperty(@Nonnull GenCtx ctx, int depth) {
         return new ShorthandProperty(randomIdentifierExpression(ctx, depth - 1));
     }
 
-    @NotNull
-    private static SpreadElement randomSpreadElement(@NotNull GenCtx ctx, int depth) {
+    @Nonnull
+    private static SpreadElement randomSpreadElement(@Nonnull GenCtx ctx, int depth) {
         return new SpreadElement(randomExpression(ctx, depth - 1));
     }
 
-    @NotNull
-    private static SpreadElementExpression randomSpreadElementExpression(@NotNull GenCtx ctx, int depth) {
+    @Nonnull
+    private static SpreadElementExpression randomSpreadElementExpression(@Nonnull GenCtx ctx, int depth) {
         int number = ctx.random.nextInt();
         if (number % 2 == 0) {
             return randomSpreadElement(ctx, depth);
@@ -966,13 +966,13 @@ public class Fuzzer {
         }
     }
 
-    @NotNull
-    private static Statement randomStatement(@NotNull GenCtx ctx, int depth) {
+    @Nonnull
+    private static Statement randomStatement(@Nonnull GenCtx ctx, int depth) {
         return randomStatementGeneric(ctx, depth, true);
     }
 
-    @NotNull
-    private static Statement randomStatementGeneric(@NotNull GenCtx ctx, int depth, boolean allowIteration) {
+    @Nonnull
+    private static Statement randomStatementGeneric(@Nonnull GenCtx ctx, int depth, boolean allowIteration) {
         if (depth <= 0) {
             switch (ctx.random.nextInt(ctx.inIteration ? 4 : 2)) {
                 case 0:
@@ -1069,54 +1069,54 @@ public class Fuzzer {
         }
     }
 
-    @NotNull
-    private static StaticMemberExpression randomStaticMemberExpression(@NotNull GenCtx ctx, int depth) {
+    @Nonnull
+    private static StaticMemberExpression randomStaticMemberExpression(@Nonnull GenCtx ctx, int depth) {
         return new StaticMemberExpression(randomExpressionSuper(ctx, depth - 1), randomIdentifierString(ctx, depth - 1));
     }
 
-    @NotNull
-    private static StaticMemberAssignmentTarget randomStaticMemberAssignmentTarget(@NotNull GenCtx ctx, int depth) {
+    @Nonnull
+    private static StaticMemberAssignmentTarget randomStaticMemberAssignmentTarget(@Nonnull GenCtx ctx, int depth) {
         return new StaticMemberAssignmentTarget(randomExpressionSuper(ctx, depth - 1), randomIdentifierString(ctx, depth - 1));
     }
 
-    @NotNull
-    private static StaticPropertyName randomStaticPropertyName(@NotNull GenCtx ctx, int depth) {
+    @Nonnull
+    private static StaticPropertyName randomStaticPropertyName(@Nonnull GenCtx ctx, int depth) {
         return new StaticPropertyName(randomIdentifierString(ctx, depth - 1));
     }
 
-    @NotNull
-    private static String randomString(@NotNull GenCtx ctx, int depth) {
+    @Nonnull
+    private static String randomString(@Nonnull GenCtx ctx, int depth) {
         int length = ctx.random.nextInt(MAX_STRING_LENGTH);
         StringBuilder sb = new StringBuilder();
         ctx.random.ints(length, 20, 127).forEach((i) -> sb.append((char) i));
         return sb.toString();
     }
 
-    @NotNull
+    @Nonnull
     private static Super randomSuper() {
         return new Super();
     }
 
-    @NotNull
-    private static SwitchCase randomSwitchCase(@NotNull GenCtx ctx, int depth) {
+    @Nonnull
+    private static SwitchCase randomSwitchCase(@Nonnull GenCtx ctx, int depth) {
         return new SwitchCase(randomExpression(ctx, depth - 1), many(Fuzzer::randomStatement).apply(ctx, depth - 1));
     }
 
-    @NotNull
-    private static SwitchDefault randomSwitchDefault(@NotNull GenCtx ctx, int depth) {
+    @Nonnull
+    private static SwitchDefault randomSwitchDefault(@Nonnull GenCtx ctx, int depth) {
         return new SwitchDefault(many(Fuzzer::randomStatement).apply(ctx, depth - 1));
     }
 
-    @NotNull
-    private static SwitchStatement randomSwitchStatement(@NotNull GenCtx ctx, int depth) {
+    @Nonnull
+    private static SwitchStatement randomSwitchStatement(@Nonnull GenCtx ctx, int depth) {
         ctx = ctx.allowMissingElse().enterSwitch();
         return new SwitchStatement(
                 randomExpression(ctx, depth - 1),
                 Fuzzer.many(Fuzzer::randomSwitchCase).apply(ctx, depth - 1));
     }
 
-    @NotNull
-    private static SwitchStatementWithDefault randomSwitchStatementWithDefault(@NotNull GenCtx ctx, int depth) {
+    @Nonnull
+    private static SwitchStatementWithDefault randomSwitchStatementWithDefault(@Nonnull GenCtx ctx, int depth) {
         ctx = ctx.allowMissingElse().enterSwitch();
         return new SwitchStatementWithDefault(
                 randomExpression(ctx, depth - 1),
@@ -1125,53 +1125,53 @@ public class Fuzzer {
                 Fuzzer.many(Fuzzer::randomSwitchCase).apply(ctx, depth - 1));
     }
 
-    @NotNull
-    private static TemplateElement randomTemplateElement(@NotNull GenCtx ctx, int depth) {
+    @Nonnull
+    private static TemplateElement randomTemplateElement(@Nonnull GenCtx ctx, int depth) {
         return new TemplateElement(randomIdentifierString(ctx, depth - 1));
     }
 
-    @NotNull
-    private static TemplateExpression randomTemplateExpression(@NotNull GenCtx ctx, int depth) {
+    @Nonnull
+    private static TemplateExpression randomTemplateExpression(@Nonnull GenCtx ctx, int depth) {
         return new TemplateExpression(optional(Fuzzer::randomExpression).apply(ctx, depth - 1), randomAlternatingTemplateElementExpression(ctx, depth - 1));
     }
 
-    @NotNull
-    private static ThisExpression randomThisExpression(@NotNull GenCtx ctx, int depth) {
+    @Nonnull
+    private static ThisExpression randomThisExpression(@Nonnull GenCtx ctx, int depth) {
         return new ThisExpression();
     }
 
-    @NotNull
-    private static ThrowStatement randomThrowStatement(@NotNull GenCtx ctx, int depth) {
+    @Nonnull
+    private static ThrowStatement randomThrowStatement(@Nonnull GenCtx ctx, int depth) {
         return new ThrowStatement(randomExpression(ctx, depth - 1));
     }
 
-    @NotNull
-    private static TryCatchStatement randomTryCatchStatement(@NotNull GenCtx ctx, int depth) {
+    @Nonnull
+    private static TryCatchStatement randomTryCatchStatement(@Nonnull GenCtx ctx, int depth) {
         return new TryCatchStatement(randomBlock(ctx, depth - 1), randomCatchClause(ctx, depth - 1));
     }
 
-    @NotNull
-    private static TryFinallyStatement randomTryFinallyStatement(@NotNull GenCtx ctx, int depth) {
+    @Nonnull
+    private static TryFinallyStatement randomTryFinallyStatement(@Nonnull GenCtx ctx, int depth) {
         return new TryFinallyStatement(
                 randomBlock(ctx, depth - 1),
                 optional(Fuzzer::randomCatchClause).apply(ctx, depth - 1),
                 randomBlock(ctx, depth - 1));
     }
 
-    @NotNull
-    private static UnaryExpression randomUnaryExpression(@NotNull GenCtx ctx, int depth) {
+    @Nonnull
+    private static UnaryExpression randomUnaryExpression(@Nonnull GenCtx ctx, int depth) {
         UnaryOperator operator = choice(UnaryOperator.values()).apply(ctx, depth - 1);
         return new UnaryExpression(operator, randomExpression(ctx, depth - 1));
     }
 
-    @NotNull
-    private static UpdateExpression randomUpdateExpression(@NotNull GenCtx ctx, int depth) {
+    @Nonnull
+    private static UpdateExpression randomUpdateExpression(@Nonnull GenCtx ctx, int depth) {
         UpdateOperator operator = choice(UpdateOperator.values()).apply(ctx, depth - 1);
         return new UpdateExpression(false, operator, randomSimpleAssignmentTarget(ctx, depth - 1));
     }
 
-    @NotNull
-    private static VariableDeclaration randomVariableDeclaration(@NotNull GenCtx ctx, int depth) {
+    @Nonnull
+    private static VariableDeclaration randomVariableDeclaration(@Nonnull GenCtx ctx, int depth) {
         VariableDeclarationKind kind = choice(VariableDeclarationKind.values()).apply(ctx, depth - 1);
         if (kind.name.equals("const")) {
             ctx = ctx.variableDeclarationKindIsConst();
@@ -1179,8 +1179,8 @@ public class Fuzzer {
         return new VariableDeclaration(ctx.inStrictMode ? VariableDeclarationKind.Var : kind, ctx.inForInOfStatement ? ImmutableList.of(randomVariableDeclaratorWithoutInit(ctx, depth - 1)) : many1(Fuzzer::randomVariableDeclarator).apply(ctx, depth - 1));
     }
 
-    @NotNull
-    private static VariableDeclarationAssignmentTarget randomVariableDeclarationAssignmentTarget(@NotNull GenCtx ctx, int depth) {
+    @Nonnull
+    private static VariableDeclarationAssignmentTarget randomVariableDeclarationAssignmentTarget(@Nonnull GenCtx ctx, int depth) {
         int number = ctx.random.nextInt();
         if (number % 2 == 0) {
             return randomVariableDeclaration(ctx, depth);
@@ -1190,13 +1190,13 @@ public class Fuzzer {
         }
     }
 
-    @NotNull
-    private static VariableDeclarator randomVariableDeclaratorWithoutInit(@NotNull GenCtx ctx, int depth) {
+    @Nonnull
+    private static VariableDeclarator randomVariableDeclaratorWithoutInit(@Nonnull GenCtx ctx, int depth) {
         Binding binding = (Binding) randomParameter(ctx, depth - 1);
         return new VariableDeclarator(binding, Maybe.empty());
     }
 
-    @NotNull
+    @Nonnull
     private static VariableDeclarationExpression randomVariableDeclarationExpression(GenCtx ctx, int depth) {
         int number = ctx.random.nextInt();
         if (number % 2 == 0) {
@@ -1206,13 +1206,13 @@ public class Fuzzer {
         }
     }
 
-    @NotNull
-    private static VariableDeclarationStatement randomVariableDeclarationStatement(@NotNull GenCtx ctx, int depth) {
+    @Nonnull
+    private static VariableDeclarationStatement randomVariableDeclarationStatement(@Nonnull GenCtx ctx, int depth) {
         return new VariableDeclarationStatement(randomVariableDeclaration(ctx, depth - 1));
     }
 
-    @NotNull
-    private static VariableDeclarator randomVariableDeclarator(@NotNull GenCtx ctx, int depth) {
+    @Nonnull
+    private static VariableDeclarator randomVariableDeclarator(@Nonnull GenCtx ctx, int depth) {
         Binding binding = (Binding) randomParameter(ctx, depth - 1);
         if (binding instanceof BindingIdentifier && !ctx.isVariableDeclarationKindConst) {
             return new VariableDeclarator(binding, optional(Fuzzer::randomExpression).apply(ctx, depth - 1));
@@ -1222,28 +1222,28 @@ public class Fuzzer {
     }
 
 
-    @NotNull
-    private static WhileStatement randomWhileStatement(@NotNull GenCtx ctx, int depth) {
+    @Nonnull
+    private static WhileStatement randomWhileStatement(@Nonnull GenCtx ctx, int depth) {
         return new WhileStatement(randomExpression(ctx, depth - 1), randomStatement(ctx, depth - 1));
     }
 
-    @NotNull
-    private static WithStatement randomWithStatement(@NotNull GenCtx ctx, int depth) {
+    @Nonnull
+    private static WithStatement randomWithStatement(@Nonnull GenCtx ctx, int depth) {
         return new WithStatement(randomExpression(ctx, depth - 1), randomStatement(ctx, depth - 1));
     }
 
-    @NotNull
-    private static YieldExpression randomYieldExpression(@NotNull GenCtx ctx, int depth) {
+    @Nonnull
+    private static YieldExpression randomYieldExpression(@Nonnull GenCtx ctx, int depth) {
         return new YieldExpression(optional(Fuzzer::randomExpression).apply(ctx, depth - 1));
     }
 
-    @NotNull
-    private static YieldGeneratorExpression randomYieldGeneratorExpression(@NotNull GenCtx ctx, int depth) {
+    @Nonnull
+    private static YieldGeneratorExpression randomYieldGeneratorExpression(@Nonnull GenCtx ctx, int depth) {
         return new YieldGeneratorExpression(randomExpression(ctx, depth - 1));
     }
 
     private interface Gen<T> {
-        @NotNull
-        T apply(@NotNull GenCtx ctx, int depth);
+        @Nonnull
+        T apply(@Nonnull GenCtx ctx, int depth);
     }
 }

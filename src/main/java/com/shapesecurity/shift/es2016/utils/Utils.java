@@ -18,7 +18,7 @@ package com.shapesecurity.shift.es2016.utils;
 
 import com.shapesecurity.functional.data.ImmutableList;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.util.HashSet;
 
@@ -42,11 +42,11 @@ public final class Utils {
     private Utils() {
     }
 
-    public static boolean isRestrictedWord(@NotNull String name) {
+    public static boolean isRestrictedWord(@Nonnull String name) {
         return "eval".equals(name) || "arguments".equals(name);
     }
 
-    public static boolean areUniqueNames(@NotNull ImmutableList<String> list) {
+    public static boolean areUniqueNames(@Nonnull ImmutableList<String> list) {
         HashSet<String> paramSet = new HashSet<>();
         for (String item : list) {
             if (paramSet.contains(item)) {
@@ -58,8 +58,8 @@ public final class Utils {
         return true;
     }
 
-    @NotNull
-    public static String escapeStringLiteral(@NotNull String stringValue) {
+    @Nonnull
+    public static String escapeStringLiteral(@Nonnull String stringValue) {
         int nSingle = 0;
         int nDouble = 0;
         for (int i = 0, l = stringValue.length(); i < l; ++i) {
@@ -74,8 +74,8 @@ public final class Utils {
         return escapeStringLiteral(stringValue, delim);
     }
 
-    @NotNull
-    public static String escapeStringLiteral(@NotNull String stringValue, char delim) {
+    @Nonnull
+    public static String escapeStringLiteral(@Nonnull String stringValue, char delim) {
         StringBuilder result = new StringBuilder();
         result.append(delim);
         for (int i = 0; i < stringValue.length(); i++) {
@@ -108,7 +108,7 @@ public final class Utils {
         return result.toString();
     }
 
-    public static boolean isReservedWordES5(@NotNull String word) {
+    public static boolean isReservedWordES5(@Nonnull String word) {
         switch (word) {
             case "break":
             case "case":
@@ -149,7 +149,7 @@ public final class Utils {
         }
     }
 
-    public static boolean isReservedWord(@NotNull String word) {
+    public static boolean isReservedWord(@Nonnull String word) {
         switch (word) {
             case "await":
             case "break":
@@ -195,7 +195,7 @@ public final class Utils {
         }
     }
 
-    public static boolean isStrictModeReservedWordES5(@NotNull String word) {
+    public static boolean isStrictModeReservedWordES5(@Nonnull String word) {
         switch (word) {
             case "implements":
             case "interface":
@@ -211,7 +211,7 @@ public final class Utils {
         }
     }
 
-    public static boolean isStrictModeReservedWord(@NotNull String word) {
+    public static boolean isStrictModeReservedWord(@Nonnull String word) {
         switch (word) {
             case "implements":
             case "interface":
@@ -298,7 +298,7 @@ public final class Utils {
         return -1;
     }
 
-    public static boolean isValidNumber(@NotNull String source) {
+    public static boolean isValidNumber(@Nonnull String source) {
         int index = 0;
         int length = source.length();
         char[] chs = source.toCharArray();

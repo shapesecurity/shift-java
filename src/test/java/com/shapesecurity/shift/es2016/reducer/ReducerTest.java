@@ -25,7 +25,7 @@ import com.shapesecurity.shift.es2016.ast.Script;
 import com.shapesecurity.shift.es2016.parser.JsError;
 import com.shapesecurity.shift.es2016.parser.Parser;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -45,59 +45,59 @@ public class ReducerTest extends VisitorTestCase {
     @Test
     public void testSimpleCounter() throws JsError {
         count("({})", 1, new Counter() {
-            @NotNull
+            @Nonnull
             @Override
             public Integer reduceObjectExpression(
-                    @NotNull ObjectExpression node,
-                    @NotNull ImmutableList<Integer> properties) {
+                    @Nonnull ObjectExpression node,
+                    @Nonnull ImmutableList<Integer> properties) {
                 return 1;
             }
         });
 
         count("({a:1,b:2})", 1, new Counter() {
-            @NotNull
+            @Nonnull
             @Override
             public Integer reduceObjectExpression(
-                    @NotNull ObjectExpression node,
-                    @NotNull ImmutableList<Integer> properties) {
+                    @Nonnull ObjectExpression node,
+                    @Nonnull ImmutableList<Integer> properties) {
                 return 1;
             }
         });
 
         count("{a:1,b}", 0, new Counter() {
-            @NotNull
+            @Nonnull
             @Override
             public Integer reduceObjectExpression(
-                    @NotNull ObjectExpression node,
-                    @NotNull ImmutableList<Integer> properties) {
+                    @Nonnull ObjectExpression node,
+                    @Nonnull ImmutableList<Integer> properties) {
                 return 1;
             }
         });
 
         count("{a:1,b}", 0, new Counter() {
-            @NotNull
+            @Nonnull
             @Override
             public Integer reduceObjectExpression(
-                    @NotNull ObjectExpression node,
-                    @NotNull ImmutableList<Integer> properties) {
+                    @Nonnull ObjectExpression node,
+                    @Nonnull ImmutableList<Integer> properties) {
                 return 1;
             }
         });
 
         count("+{get a() { return 0; }, set a(v) { return v; } }", 1, new Counter() {
-            @NotNull
+            @Nonnull
             @Override
-            public Integer reduceIdentifierExpression(@NotNull IdentifierExpression node) {
+            public Integer reduceIdentifierExpression(@Nonnull IdentifierExpression node) {
                 return 1;
             }
         });
 
         count("+{get a() { return 0; }, set a(v) { return v; } }", 2, new Counter() {
-            @NotNull
+            @Nonnull
             @Override
             public Integer reduceReturnStatement(
-                    @NotNull ReturnStatement node,
-                    @NotNull Maybe<Integer> expression) {
+                    @Nonnull ReturnStatement node,
+                    @Nonnull Maybe<Integer> expression) {
                 return expression.orJust(0) + 1;
             }
         });
@@ -107,11 +107,11 @@ public class ReducerTest extends VisitorTestCase {
     @Test
     public void testLibraryCounter() throws JsError, IOException {
         Counter counter = new Counter() {
-            @NotNull
+            @Nonnull
             @Override
             public Integer reduceReturnStatement(
-                    @NotNull ReturnStatement node,
-                    @NotNull Maybe<Integer> expression) {
+                    @Nonnull ReturnStatement node,
+                    @Nonnull Maybe<Integer> expression) {
                 return expression.orJust(0) + 1;
             }
         };

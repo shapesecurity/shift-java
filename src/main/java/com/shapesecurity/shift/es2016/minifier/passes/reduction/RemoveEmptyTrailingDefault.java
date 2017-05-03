@@ -22,15 +22,15 @@
 //import com.shapesecurity.shift.minifier.ReductionRule;
 //import com.shapesecurity.shift.visitor.DirtyState;
 //
-//import org.jetbrains.annotations.NotNull;
+//import javax.annotation.Nonnull;
 //
 //public class RemoveEmptyTrailingDefault extends ReductionRule {
 //  /* remove SwitchDefault when its consequent is empty and it is the last SwitchCase */
 //  public static final RemoveEmptyTrailingDefault INSTANCE = new RemoveEmptyTrailingDefault();
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public DirtyState<Statement> transform(@NotNull final SwitchStatementWithDefault node) {
+//  public DirtyState<Statement> transform(@Nonnull final SwitchStatementWithDefault node) {
 //    if (node.defaultCase.consequent.isEmpty() && node.postDefaultCases.isEmpty()) {
 //      return DirtyState.dirty(new SwitchStatement(node.discriminant, node.preDefaultCases));
 //    }

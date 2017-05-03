@@ -36,7 +36,7 @@ import java.util.Map;
 
 import junit.framework.TestCase;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -2047,7 +2047,7 @@ public class ScopeTest extends TestCase {
         );
     }
 
-    private static String getIdentifierName(@NotNull Node node) {
+    private static String getIdentifierName(@Nonnull Node node) {
         if (node instanceof AssignmentTargetIdentifier) {
             return ((AssignmentTargetIdentifier) node).name;
         } else if (node instanceof BindingIdentifier) {
@@ -2063,13 +2063,13 @@ public class ScopeTest extends TestCase {
      * Check the given scope is correct based on the information provided
      */
     private static void checkScope(
-            @NotNull final Scope scope,
-            @NotNull final Scope.Type scopeType,
+            @Nonnull final Scope scope,
+            @Nonnull final Scope.Type scopeType,
             final boolean isDynamic,
-            @NotNull final ImmutableList<Scope> children,
-            @NotNull final ImmutableList<String> through,
-            @NotNull final Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<VariableReference>>> variables,
-            @NotNull final Map<VariableReference, Accessibility> referenceTypes) {
+            @Nonnull final ImmutableList<Scope> children,
+            @Nonnull final ImmutableList<String> through,
+            @Nonnull final Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<VariableReference>>> variables,
+            @Nonnull final Map<VariableReference, Accessibility> referenceTypes) {
         Assert.assertEquals(scope.type, scopeType);
         Assert.assertEquals(scope.dynamic, isDynamic);
 

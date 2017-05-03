@@ -15,46 +15,46 @@ import com.shapesecurity.shift.es2016.ast.TemplateElement;
 import com.shapesecurity.shift.es2016.ast.TemplateExpression;
 import com.shapesecurity.shift.es2016.reducer.Director;
 import com.shapesecurity.shift.es2016.utils.Utils;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class WebSafeCodeGen extends CodeGen {
-	public WebSafeCodeGen(@NotNull CodeRepFactory factory) {
+	public WebSafeCodeGen(@Nonnull CodeRepFactory factory) {
 		super(factory);
 	}
 
-	@NotNull
-	public static String codeGen(@NotNull Script script) {
+	@Nonnull
+	public static String codeGen(@Nonnull Script script) {
 		StringBuilder sb = new StringBuilder();
 		Director.reduceScript(new WebSafeCodeGen(new CodeRepFactory()), script).emit(new WebSafeTokenStream(sb), false);
 		return sb.toString();
 	}
 
-	@NotNull
-	public static String codeGen(@NotNull Module module) {
+	@Nonnull
+	public static String codeGen(@Nonnull Module module) {
 		StringBuilder sb = new StringBuilder();
 		Director.reduceModule(new WebSafeCodeGen(new CodeRepFactory()), module).emit(new WebSafeTokenStream(sb), false);
 		return sb.toString();
 	}
 
 	@Override
-	@NotNull
-	public CodeRep reduceLiteralStringExpression(@NotNull LiteralStringExpression node) {
+	@Nonnull
+	public CodeRep reduceLiteralStringExpression(@Nonnull LiteralStringExpression node) {
 		return factory.token(safe(Utils.escapeStringLiteral(node.value)));
 	}
 
 	@Override
-	@NotNull
-	public CodeRep reduceLiteralRegExpExpression(@NotNull LiteralRegExpExpression node) {
+	@Nonnull
+	public CodeRep reduceLiteralRegExpExpression(@Nonnull LiteralRegExpExpression node) {
 		return factory.token("/" + safe(node.pattern + "/") + buildFlags(node));
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public CodeRep reduceIdentifierExpression(@NotNull IdentifierExpression node) {
+	public CodeRep reduceIdentifierExpression(@Nonnull IdentifierExpression node) {
 		CodeRep a = factory.token(safe(node.name));
 		if (node.name.equals("let")) {
 			a.setStartsWithLet(true);
@@ -62,9 +62,9 @@ public class WebSafeCodeGen extends CodeGen {
 		return a;
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public CodeRep reduceAssignmentTargetIdentifier(@NotNull AssignmentTargetIdentifier node) {
+	public CodeRep reduceAssignmentTargetIdentifier(@Nonnull AssignmentTargetIdentifier node) {
 		CodeRep a = factory.token(safe(node.name));
 		if (node.name.equals("let")) {
 			a.setStartsWithLet(true);
@@ -72,9 +72,9 @@ public class WebSafeCodeGen extends CodeGen {
 		return a;
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public CodeRep reduceBindingIdentifier(@NotNull BindingIdentifier node) {
+	public CodeRep reduceBindingIdentifier(@Nonnull BindingIdentifier node) {
 		CodeRep a = factory.token(safe(node.name));
 		if (node.name.equals("let")) {
 			a.setStartsWithLet(true);
@@ -82,16 +82,16 @@ public class WebSafeCodeGen extends CodeGen {
 		return a;
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public CodeRep reduceDirective(@NotNull Directive node) {
+	public CodeRep reduceDirective(@Nonnull Directive node) {
 		String delim = node.rawValue.matches("^(?:[^\"]|\\\\.)*$") ? "\"" : "\'";
 		return seqVA(factory.token(delim + safe(node.rawValue) + delim), factory.semiOp());
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public CodeRep reduceTemplateExpression(@NotNull TemplateExpression node, @NotNull Maybe<CodeRep> tag, @NotNull ImmutableList<CodeRep> elements) {
+	public CodeRep reduceTemplateExpression(@Nonnull TemplateExpression node, @Nonnull Maybe<CodeRep> tag, @Nonnull ImmutableList<CodeRep> elements) {
 		CodeRep state = node.tag.maybe(factory.empty(), t -> p(t, node.getPrecedence(), tag.fromJust()));
 		state = seqVA(state, factory.token("`"));
 		for (int i = 0, l = node.elements.length; i < l; ++i) {
@@ -124,8 +124,8 @@ public class WebSafeCodeGen extends CodeGen {
 	private static Pattern NONASCII = Pattern.compile("[^\\x00-\\x7F]", Pattern.UNICODE_CHARACTER_CLASS);
 	private static Pattern SCRIPTTAG = Pattern.compile("<(/?)script([\\t\\r\\f />])");
 
-	@NotNull
-	private static String safe(@NotNull String unsafe) {
+	@Nonnull
+	private static String safe(@Nonnull String unsafe) {
 		unsafe = replaceAll(NULL, unsafe, "\\x00");
 		unsafe = replaceAll(NONASCII, unsafe, mr -> {
 			String s = mr.group();
@@ -141,18 +141,18 @@ public class WebSafeCodeGen extends CodeGen {
 	private static Pattern DOLLAR_OR_BACKSLASH = Pattern.compile("[\\\\$]");
 
 	// in order to treat replacement string as literal replacement, escape backslash and dollar sign
-	@NotNull
-	private static String literally(@NotNull String replacement) {
+	@Nonnull
+	private static String literally(@Nonnull String replacement) {
 		return DOLLAR_OR_BACKSLASH.matcher(replacement).replaceAll("\\\\$0");
 	}
 
-	@NotNull
-	private static String replaceAll(@NotNull Pattern pattern, @NotNull String string, @NotNull String replacement) {
+	@Nonnull
+	private static String replaceAll(@Nonnull Pattern pattern, @Nonnull String string, @Nonnull String replacement) {
 		return pattern.matcher(string).replaceAll(literally(replacement));
 	}
 
-	@NotNull
-	private static String replaceAll(@NotNull Pattern pattern, @NotNull String string, @NotNull F<MatchResult, String> replacer) {
+	@Nonnull
+	private static String replaceAll(@Nonnull Pattern pattern, @Nonnull String string, @Nonnull F<MatchResult, String> replacer) {
 		StringBuffer output = new StringBuffer();
 		Matcher matcher = pattern.matcher(string);
 		while (matcher.find()) {

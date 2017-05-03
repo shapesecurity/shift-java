@@ -2,15 +2,15 @@ package com.shapesecurity.shift.es2016.parser;
 
 import com.shapesecurity.shift.es2016.ast.Node;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 public class EarlyError {
-    @NotNull
+    @Nonnull
     public final Node node;
-    @NotNull
+    @Nonnull
     public final String message;
 
-    public EarlyError(@NotNull Node node, @NotNull String message) {
+    public EarlyError(@Nonnull Node node, @Nonnull String message) {
         this.node = node;
         this.message = message;
     }

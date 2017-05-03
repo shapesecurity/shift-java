@@ -21,15 +21,15 @@
 //import com.shapesecurity.shift.minifier.ReductionRule;
 //import com.shapesecurity.shift.visitor.DirtyState;
 //
-//import org.jetbrains.annotations.NotNull;
+//import javax.annotation.Nonnull;
 //
 //public class RemoveSingleStatementBlocks extends ReductionRule {
 //  /* replace single-statement blocks with the contained statement */
 //  public static final RemoveSingleStatementBlocks INSTANCE = new RemoveSingleStatementBlocks();
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public DirtyState<Statement> transform(@NotNull BlockStatement node) {
+//  public DirtyState<Statement> transform(@Nonnull BlockStatement node) {
 //    return node.block.statements.isNotEmpty() && node.block.statements.maybeTail().fromJust().isEmpty() ? DirtyState.dirty(
 //        node.block.statements.maybeHead().fromJust()) : DirtyState.clean(node);
 //  }

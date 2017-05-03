@@ -2,7 +2,7 @@ package com.shapesecurity.shift.es2016.reducer;
 
 import junit.framework.TestCase;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.io.IOException;
 import java.net.URI;
@@ -25,8 +25,8 @@ public abstract class VisitorTestCase extends TestCase {
         }
     }
 
-    @NotNull
-    protected static String readFile(@NotNull String path) throws IOException {
+    @Nonnull
+    protected static String readFile(@Nonnull String path) throws IOException {
         byte[] encoded = Files.readAllBytes(getPath(path));
         return StandardCharsets.UTF_8.decode(ByteBuffer.wrap(encoded)).toString();
     }

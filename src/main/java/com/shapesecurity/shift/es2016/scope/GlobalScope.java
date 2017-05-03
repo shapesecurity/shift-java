@@ -21,14 +21,14 @@ import com.shapesecurity.functional.data.HashTable;
 import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.shift.es2016.ast.Node;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 public class GlobalScope extends Scope {
     GlobalScope(
-            @NotNull ImmutableList<Scope> children,
-            @NotNull ImmutableList<Variable> variables,
-            @NotNull HashTable<String, ImmutableList<Reference>> through,
-            @NotNull Node astNode) {
+            @Nonnull ImmutableList<Scope> children,
+            @Nonnull ImmutableList<Variable> variables,
+            @Nonnull HashTable<String, ImmutableList<Reference>> through,
+            @Nonnull Node astNode) {
         super(children, variables, through, Type.Global, true, astNode);
         for (Pair<String, ImmutableList<Reference>> var : through.entries()) {
             this.variables.put(var.left(), new Variable(var.left(), var.right(), ImmutableList.empty()));

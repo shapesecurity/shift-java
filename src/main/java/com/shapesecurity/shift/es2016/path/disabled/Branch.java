@@ -28,19 +28,19 @@
 //import com.shapesecurity.shift.ast.types.ListType;
 //import com.shapesecurity.shift.ast.types.MaybeType;
 //
-//import org.jetbrains.annotations.NotNull;
-//import org.jetbrains.annotations.Nullable;
+//import javax.annotation.Nonnull;
+//import javax.annotation.Nullable;
 //
 //public interface Branch {
 //  @Nullable
-//  Node view(@NotNull Node parent);
+//  Node view(@Nonnull Node parent);
 //
-//  @NotNull
-//  Node set(@NotNull Node parent, @NotNull Node child);
+//  @Nonnull
+//  Node set(@Nonnull Node parent, @Nonnull Node child);
 //
 //  @SuppressWarnings("unchecked")
-//  @NotNull
-//  static Node wrap(@NotNull Object obj, @NotNull GenType suggestedType) {
+//  @Nonnull
+//  static Node wrap(@Nonnull Object obj, @Nonnull GenType suggestedType) {
 //    if (obj instanceof Either) {
 //      return new EitherNode((Either) obj, (EitherType) suggestedType);
 //    } else if (obj instanceof ImmutableList) {

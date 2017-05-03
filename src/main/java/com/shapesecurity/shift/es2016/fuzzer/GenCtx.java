@@ -22,18 +22,18 @@ import java.util.Random;
 
 import com.shapesecurity.shift.es2016.ast.IdentifierExpression;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 class GenCtx {
-    @NotNull
+    @Nonnull
     final Random random;
-    @NotNull
+    @Nonnull
     final ImmutableList<IdentifierExpression> labels;
-    @NotNull
+    @Nonnull
     final ImmutableList<IdentifierExpression> iterationLabels;
-    @NotNull
+    @Nonnull
     final ImmutableList<IdentifierExpression> labelsInFunctionBoundary;
-    @NotNull
+    @Nonnull
     final ImmutableList<IdentifierExpression> iterationLabelsInFunctionBoundary;
 
     final boolean inIteration;
@@ -47,15 +47,15 @@ class GenCtx {
     final boolean allowYieldExpression;
 
 
-    GenCtx(@NotNull Random random) {
+    GenCtx(@Nonnull Random random) {
         this(random, ImmutableList.empty(), ImmutableList.empty(), ImmutableList.empty(), ImmutableList.empty(), false, false, false, false, true, false, false, false, false);
     }
 
-    private GenCtx(@NotNull Random random,
-                   @NotNull ImmutableList<IdentifierExpression> labels,
-                   @NotNull ImmutableList<IdentifierExpression> iterationLabels,
-                   @NotNull ImmutableList<IdentifierExpression> labelsInFunctionBoundary,
-                   @NotNull ImmutableList<IdentifierExpression> iterationLabelsInFunctionBoundary,
+    private GenCtx(@Nonnull Random random,
+                   @Nonnull ImmutableList<IdentifierExpression> labels,
+                   @Nonnull ImmutableList<IdentifierExpression> iterationLabels,
+                   @Nonnull ImmutableList<IdentifierExpression> labelsInFunctionBoundary,
+                   @Nonnull ImmutableList<IdentifierExpression> iterationLabelsInFunctionBoundary,
                    boolean inIteration, boolean inSwitch, boolean inStrictMode,
                    boolean inFunctional,
                    boolean allowMissingElse,
@@ -79,8 +79,8 @@ class GenCtx {
         this.allowYieldExpression = allowYieldExpression;
     }
 
-    @NotNull
-    GenCtx withLabel(@NotNull IdentifierExpression identifier) {
+    @Nonnull
+    GenCtx withLabel(@Nonnull IdentifierExpression identifier) {
         return new GenCtx(this.random,
                 this.labels.cons(identifier),
                 this.iterationLabels,
@@ -97,8 +97,8 @@ class GenCtx {
                 this.allowYieldExpression);
     }
 
-    @NotNull
-    GenCtx withIterationLabel(@NotNull IdentifierExpression identifier) {
+    @Nonnull
+    GenCtx withIterationLabel(@Nonnull IdentifierExpression identifier) {
         return new GenCtx(this.random,
                 this.labels.cons(identifier),
                 this.iterationLabels.cons(identifier),
@@ -114,7 +114,7 @@ class GenCtx {
                 this.allowYieldExpression);
     }
 
-    @NotNull
+    @Nonnull
     GenCtx enterIteration() {
         return new GenCtx(
                 this.random,
@@ -132,7 +132,7 @@ class GenCtx {
                 this.allowYieldExpression);
     }
 
-    @NotNull
+    @Nonnull
     GenCtx enterStrictMode() {
         return new GenCtx(this.random,
                 this.labels,
@@ -149,7 +149,7 @@ class GenCtx {
                 this.allowYieldExpression);
     }
 
-    @NotNull
+    @Nonnull
     GenCtx enterSwitch() {
         return new GenCtx(this.random,
                 this.labels,
@@ -166,7 +166,7 @@ class GenCtx {
                 this.allowYieldExpression);
     }
 
-    @NotNull
+    @Nonnull
     GenCtx enterFunctional() {
         return new GenCtx(
                 this.random,
@@ -185,7 +185,7 @@ class GenCtx {
                 this.allowYieldExpression);
     }
 
-    @NotNull
+    @Nonnull
     GenCtx clearLabels() {
         return new GenCtx(
                 this.random,
@@ -204,7 +204,7 @@ class GenCtx {
                 this.allowYieldExpression);
     }
 
-    @NotNull
+    @Nonnull
     GenCtx allowMissingElse() {
         return new GenCtx(this.random,
                 this.labels,
@@ -222,7 +222,7 @@ class GenCtx {
                 this.allowYieldExpression);
     }
 
-    @NotNull
+    @Nonnull
     GenCtx forbidMissingElse() {
         return new GenCtx(this.random,
                 this.labels,
@@ -240,7 +240,7 @@ class GenCtx {
                 this.allowYieldExpression);
     }
 
-    @NotNull
+    @Nonnull
     GenCtx inForInOfStatement() {
         return new GenCtx(this.random,
                 this.labels,
@@ -258,7 +258,7 @@ class GenCtx {
                 this.allowYieldExpression);
     }
 
-    @NotNull
+    @Nonnull
     GenCtx variableDeclarationKindIsConst() {
         return new GenCtx(this.random,
                 this.labels,
@@ -276,7 +276,7 @@ class GenCtx {
                 this.allowYieldExpression);
     }
 
-    @NotNull
+    @Nonnull
     GenCtx inGeneratorFunction() {
         return new GenCtx(this.random,
                 this.labels,

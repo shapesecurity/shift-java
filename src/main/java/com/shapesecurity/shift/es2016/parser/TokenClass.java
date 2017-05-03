@@ -16,7 +16,7 @@
 
 package com.shapesecurity.shift.es2016.parser;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 public enum TokenClass {
     BooleanLiteral("Boolean"),
@@ -38,7 +38,7 @@ public enum TokenClass {
         this.name = name;
     }
 
-    @NotNull
+    @Nonnull
     public String getName() {
         return this.name;
     }

@@ -2,17 +2,17 @@ package com.shapesecurity.shift.es2016.parser;
 
 import com.shapesecurity.functional.data.HashCodeBuilder;
 import com.shapesecurity.functional.data.Maybe;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 public class SourceSpan {
-    @NotNull
+    @Nonnull
     public final Maybe<String> source;
-    @NotNull
+    @Nonnull
     public final SourceLocation start;
-    @NotNull
+    @Nonnull
     public final SourceLocation end;
 
-    public SourceSpan(@NotNull Maybe<String> source, @NotNull SourceLocation start, @NotNull SourceLocation end) {
+    public SourceSpan(@Nonnull Maybe<String> source, @Nonnull SourceLocation start, @Nonnull SourceLocation end) {
         this.source = source;
         this.start = start;
         this.end = end;

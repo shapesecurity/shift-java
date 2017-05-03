@@ -21,25 +21,25 @@ import com.shapesecurity.shift.es2016.utils.D2A;
 import com.shapesecurity.shift.es2016.parser.SourceRange;
 import com.shapesecurity.shift.es2016.parser.Token;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 public final class NumericLiteralToken extends Token {
     public final double value;
     public final boolean octal;
     public final boolean noctal;
 
-    public NumericLiteralToken(@NotNull SourceRange slice, double value) {
+    public NumericLiteralToken(@Nonnull SourceRange slice, double value) {
         this(slice, value, false, false);
     }
 
-    public NumericLiteralToken(@NotNull SourceRange slice, double value, boolean octal, boolean noctal) {
+    public NumericLiteralToken(@Nonnull SourceRange slice, double value, boolean octal, boolean noctal) {
         super(TokenType.NUMBER, slice);
         this.value = value;
         this.octal = octal;
         this.noctal = octal && noctal;
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public String getValueString() {
         return D2A.d2a(this.value);
