@@ -3,26 +3,26 @@ package com.shapesecurity.shift.es2016.codegen.location;
 import com.shapesecurity.shift.es2016.ast.Node;
 import com.shapesecurity.shift.es2016.codegen.CodeRep;
 import com.shapesecurity.shift.es2016.codegen.TokenStream;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 public class CodeRepWithLocation extends CodeRep {
-	@NotNull
+	@Nonnull
 	protected final CodeRep inner;
 
-	@NotNull
+	@Nonnull
 	protected final Node node;
 
-	@NotNull
+	@Nonnull
 	protected final LocationMeta meta;
 
-	protected CodeRepWithLocation(@NotNull CodeRep inner, @NotNull Node node, @NotNull LocationMeta meta) {
+	protected CodeRepWithLocation(@Nonnull CodeRep inner, @Nonnull Node node, @Nonnull LocationMeta meta) {
 		this.inner = inner;
 		this.node = node;
 		this.meta = meta;
 	}
 
 	@Override
-	public void emit(@NotNull TokenStream ts, boolean noIn) {
+	public void emit(@Nonnull TokenStream ts, boolean noIn) {
 		this.meta.startEmit(this.node, ts);
 		this.inner.emit(ts, noIn);
 		this.meta.finishEmit(this.node, ts);

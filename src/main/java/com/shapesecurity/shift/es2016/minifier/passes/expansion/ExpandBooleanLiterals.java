@@ -24,15 +24,15 @@
 //import com.shapesecurity.shift.minifier.ExpansionRule;
 //import com.shapesecurity.shift.visitor.DirtyState;
 //
-//import org.jetbrains.annotations.NotNull;
+//import javax.annotation.Nonnull;
 //
 //public class ExpandBooleanLiterals extends ExpansionRule {
 //  /* expand true to !0 and false to !1 */
 //  public static final ExpandBooleanLiterals INSTANCE = new ExpandBooleanLiterals();
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public DirtyState<Expression> transform(@NotNull LiteralBooleanExpression node) {
+//  public DirtyState<Expression> transform(@Nonnull LiteralBooleanExpression node) {
 //    return DirtyState.dirty(new PrefixExpression(PrefixOperator.LogicalNot, new LiteralNumericExpression(
 //        node.value ? 0 : 1)));
 //  }

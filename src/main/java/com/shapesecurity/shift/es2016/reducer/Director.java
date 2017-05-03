@@ -23,48 +23,48 @@ import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.functional.data.Maybe;
 
 import com.shapesecurity.shift.es2016.ast.*;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 public final class Director {
-    @NotNull
+    @Nonnull
     public static <State> State reduceArrayAssignmentTarget(
-      @NotNull Reducer<State> reducer,
-      @NotNull ArrayAssignmentTarget node) {
+      @Nonnull Reducer<State> reducer,
+      @Nonnull ArrayAssignmentTarget node) {
         return reducer.reduceArrayAssignmentTarget(node, reduceListMaybeAssignmentTargetAssignmentTargetWithDefault(reducer, node.elements), reduceMaybeAssignmentTarget(reducer, node.rest));
     }
 
-    @NotNull
+    @Nonnull
     public static <State> State reduceArrayBinding(
-      @NotNull Reducer<State> reducer,
-      @NotNull ArrayBinding node) {
+      @Nonnull Reducer<State> reducer,
+      @Nonnull ArrayBinding node) {
         return reducer.reduceArrayBinding(node, reduceListMaybeBindingBindingWithDefault(reducer, node.elements), reduceMaybeBinding(reducer, node.rest));
     }
 
-    @NotNull
+    @Nonnull
     public static <State> State reduceArrayExpression(
-      @NotNull Reducer<State> reducer,
-      @NotNull ArrayExpression node) {
+      @Nonnull Reducer<State> reducer,
+      @Nonnull ArrayExpression node) {
         return reducer.reduceArrayExpression(node, reduceListMaybeSpreadElementExpression(reducer, node.elements));
     }
 
-    @NotNull
+    @Nonnull
     public static <State> State reduceArrowExpression(
-      @NotNull Reducer<State> reducer,
-      @NotNull ArrowExpression node) {
+      @Nonnull Reducer<State> reducer,
+      @Nonnull ArrowExpression node) {
         return reducer.reduceArrowExpression(node, reduceFormalParameters(reducer, node.params), reduceFunctionBodyExpression(reducer, node.body));
     }
 
-    @NotNull
+    @Nonnull
     public static <State> State reduceAssignmentExpression(
-      @NotNull Reducer<State> reducer,
-      @NotNull AssignmentExpression node) {
+      @Nonnull Reducer<State> reducer,
+      @Nonnull AssignmentExpression node) {
         return reducer.reduceAssignmentExpression(node, reduceAssignmentTarget(reducer, node.binding), reduceExpression(reducer, node.expression));
     }
 
-    @NotNull
+    @Nonnull
     public static <State> State reduceAssignmentTarget(
-      @NotNull Reducer<State> reducer,
-      @NotNull AssignmentTarget node) {
+      @Nonnull Reducer<State> reducer,
+      @Nonnull AssignmentTarget node) {
         if (node instanceof AssignmentTargetPattern) {
             return reduceAssignmentTargetPattern(reducer, (AssignmentTargetPattern) node);
         } else if (node instanceof SimpleAssignmentTarget) {
@@ -74,10 +74,10 @@ public final class Director {
         }
     }
 
-    @NotNull
+    @Nonnull
     public static <State> State reduceAssignmentTargetAssignmentTargetWithDefault(
-      @NotNull Reducer<State> reducer,
-      @NotNull AssignmentTargetAssignmentTargetWithDefault node) {
+      @Nonnull Reducer<State> reducer,
+      @Nonnull AssignmentTargetAssignmentTargetWithDefault node) {
         if (node instanceof AssignmentTarget) {
             return reduceAssignmentTarget(reducer, (AssignmentTarget) node);
         } else if (node instanceof AssignmentTargetWithDefault) {
@@ -87,17 +87,17 @@ public final class Director {
         }
     }
 
-    @NotNull
+    @Nonnull
     public static <State> State reduceAssignmentTargetIdentifier(
-      @NotNull Reducer<State> reducer,
-      @NotNull AssignmentTargetIdentifier node) {
+      @Nonnull Reducer<State> reducer,
+      @Nonnull AssignmentTargetIdentifier node) {
         return reducer.reduceAssignmentTargetIdentifier(node);
     }
 
-    @NotNull
+    @Nonnull
     public static <State> State reduceAssignmentTargetPattern(
-      @NotNull Reducer<State> reducer,
-      @NotNull AssignmentTargetPattern node) {
+      @Nonnull Reducer<State> reducer,
+      @Nonnull AssignmentTargetPattern node) {
         if (node instanceof ObjectAssignmentTarget) {
             return reduceObjectAssignmentTarget(reducer, (ObjectAssignmentTarget) node);
         } else if (node instanceof ArrayAssignmentTarget) {
@@ -107,10 +107,10 @@ public final class Director {
         }
     }
 
-    @NotNull
+    @Nonnull
     public static <State> State reduceAssignmentTargetProperty(
-      @NotNull Reducer<State> reducer,
-      @NotNull AssignmentTargetProperty node) {
+      @Nonnull Reducer<State> reducer,
+      @Nonnull AssignmentTargetProperty node) {
         if (node instanceof AssignmentTargetPropertyIdentifier) {
             return reduceAssignmentTargetPropertyIdentifier(reducer, (AssignmentTargetPropertyIdentifier) node);
         } else if (node instanceof AssignmentTargetPropertyProperty) {
@@ -120,38 +120,38 @@ public final class Director {
         }
     }
 
-    @NotNull
+    @Nonnull
     public static <State> State reduceAssignmentTargetPropertyIdentifier(
-      @NotNull Reducer<State> reducer,
-      @NotNull AssignmentTargetPropertyIdentifier node) {
+      @Nonnull Reducer<State> reducer,
+      @Nonnull AssignmentTargetPropertyIdentifier node) {
         return reducer.reduceAssignmentTargetPropertyIdentifier(node, reduceAssignmentTargetIdentifier(reducer, node.binding), reduceMaybeExpression(reducer, node.init));
     }
 
-    @NotNull
+    @Nonnull
     public static <State> State reduceAssignmentTargetPropertyProperty(
-      @NotNull Reducer<State> reducer,
-      @NotNull AssignmentTargetPropertyProperty node) {
+      @Nonnull Reducer<State> reducer,
+      @Nonnull AssignmentTargetPropertyProperty node) {
         return reducer.reduceAssignmentTargetPropertyProperty(node, reducePropertyName(reducer, node.name), reduceAssignmentTargetAssignmentTargetWithDefault(reducer, node.binding));
     }
 
-    @NotNull
+    @Nonnull
     public static <State> State reduceAssignmentTargetWithDefault(
-      @NotNull Reducer<State> reducer,
-      @NotNull AssignmentTargetWithDefault node) {
+      @Nonnull Reducer<State> reducer,
+      @Nonnull AssignmentTargetWithDefault node) {
         return reducer.reduceAssignmentTargetWithDefault(node, reduceAssignmentTarget(reducer, node.binding), reduceExpression(reducer, node.init));
     }
 
-    @NotNull
+    @Nonnull
     public static <State> State reduceBinaryExpression(
-      @NotNull Reducer<State> reducer,
-      @NotNull BinaryExpression node) {
+      @Nonnull Reducer<State> reducer,
+      @Nonnull BinaryExpression node) {
         return reducer.reduceBinaryExpression(node, reduceExpression(reducer, node.left), reduceExpression(reducer, node.right));
     }
 
-    @NotNull
+    @Nonnull
     public static <State> State reduceBinding(
-      @NotNull Reducer<State> reducer,
-      @NotNull Binding node) {
+      @Nonnull Reducer<State> reducer,
+      @Nonnull Binding node) {
         if (node instanceof BindingPattern) {
             return reduceBindingPattern(reducer, (BindingPattern) node);
         } else if (node instanceof BindingIdentifier) {
@@ -161,10 +161,10 @@ public final class Director {
         }
     }
 
-    @NotNull
+    @Nonnull
     public static <State> State reduceBindingBindingWithDefault(
-      @NotNull Reducer<State> reducer,
-      @NotNull BindingBindingWithDefault node) {
+      @Nonnull Reducer<State> reducer,
+      @Nonnull BindingBindingWithDefault node) {
         if (node instanceof Binding) {
             return reduceBinding(reducer, (Binding) node);
         } else if (node instanceof BindingWithDefault) {
@@ -174,17 +174,17 @@ public final class Director {
         }
     }
 
-    @NotNull
+    @Nonnull
     public static <State> State reduceBindingIdentifier(
-      @NotNull Reducer<State> reducer,
-      @NotNull BindingIdentifier node) {
+      @Nonnull Reducer<State> reducer,
+      @Nonnull BindingIdentifier node) {
         return reducer.reduceBindingIdentifier(node);
     }
 
-    @NotNull
+    @Nonnull
     public static <State> State reduceBindingPattern(
-      @NotNull Reducer<State> reducer,
-      @NotNull BindingPattern node) {
+      @Nonnull Reducer<State> reducer,
+      @Nonnull BindingPattern node) {
         if (node instanceof ObjectBinding) {
             return reduceObjectBinding(reducer, (ObjectBinding) node);
         } else if (node instanceof ArrayBinding) {
@@ -194,10 +194,10 @@ public final class Director {
         }
     }
 
-    @NotNull
+    @Nonnull
     public static <State> State reduceBindingProperty(
-      @NotNull Reducer<State> reducer,
-      @NotNull BindingProperty node) {
+      @Nonnull Reducer<State> reducer,
+      @Nonnull BindingProperty node) {
         if (node instanceof BindingPropertyIdentifier) {
             return reduceBindingPropertyIdentifier(reducer, (BindingPropertyIdentifier) node);
         } else if (node instanceof BindingPropertyProperty) {
@@ -207,178 +207,178 @@ public final class Director {
         }
     }
 
-    @NotNull
+    @Nonnull
     public static <State> State reduceBindingPropertyIdentifier(
-      @NotNull Reducer<State> reducer,
-      @NotNull BindingPropertyIdentifier node) {
+      @Nonnull Reducer<State> reducer,
+      @Nonnull BindingPropertyIdentifier node) {
         return reducer.reduceBindingPropertyIdentifier(node, reduceBindingIdentifier(reducer, node.binding), reduceMaybeExpression(reducer, node.init));
     }
 
-    @NotNull
+    @Nonnull
     public static <State> State reduceBindingPropertyProperty(
-      @NotNull Reducer<State> reducer,
-      @NotNull BindingPropertyProperty node) {
+      @Nonnull Reducer<State> reducer,
+      @Nonnull BindingPropertyProperty node) {
         return reducer.reduceBindingPropertyProperty(node, reducePropertyName(reducer, node.name), reduceBindingBindingWithDefault(reducer, node.binding));
     }
 
-    @NotNull
+    @Nonnull
     public static <State> State reduceBindingWithDefault(
-      @NotNull Reducer<State> reducer,
-      @NotNull BindingWithDefault node) {
+      @Nonnull Reducer<State> reducer,
+      @Nonnull BindingWithDefault node) {
         return reducer.reduceBindingWithDefault(node, reduceBinding(reducer, node.binding), reduceExpression(reducer, node.init));
     }
 
-    @NotNull
+    @Nonnull
     public static <State> State reduceBlock(
-      @NotNull Reducer<State> reducer,
-      @NotNull Block node) {
+      @Nonnull Reducer<State> reducer,
+      @Nonnull Block node) {
         return reducer.reduceBlock(node, reduceListStatement(reducer, node.statements));
     }
 
-    @NotNull
+    @Nonnull
     public static <State> State reduceBlockStatement(
-      @NotNull Reducer<State> reducer,
-      @NotNull BlockStatement node) {
+      @Nonnull Reducer<State> reducer,
+      @Nonnull BlockStatement node) {
         return reducer.reduceBlockStatement(node, reduceBlock(reducer, node.block));
     }
 
-    @NotNull
+    @Nonnull
     public static <State> State reduceBreakStatement(
-      @NotNull Reducer<State> reducer,
-      @NotNull BreakStatement node) {
+      @Nonnull Reducer<State> reducer,
+      @Nonnull BreakStatement node) {
         return reducer.reduceBreakStatement(node);
     }
 
-    @NotNull
+    @Nonnull
     public static <State> State reduceCallExpression(
-      @NotNull Reducer<State> reducer,
-      @NotNull CallExpression node) {
+      @Nonnull Reducer<State> reducer,
+      @Nonnull CallExpression node) {
         return reducer.reduceCallExpression(node, reduceExpressionSuper(reducer, node.callee), reduceListSpreadElementExpression(reducer, node.arguments));
     }
 
-    @NotNull
+    @Nonnull
     public static <State> State reduceCatchClause(
-      @NotNull Reducer<State> reducer,
-      @NotNull CatchClause node) {
+      @Nonnull Reducer<State> reducer,
+      @Nonnull CatchClause node) {
         return reducer.reduceCatchClause(node, reduceBinding(reducer, node.binding), reduceBlock(reducer, node.body));
     }
 
-    @NotNull
+    @Nonnull
     public static <State> State reduceClassDeclaration(
-      @NotNull Reducer<State> reducer,
-      @NotNull ClassDeclaration node) {
+      @Nonnull Reducer<State> reducer,
+      @Nonnull ClassDeclaration node) {
         return reducer.reduceClassDeclaration(node, reduceBindingIdentifier(reducer, node.name), reduceMaybeExpression(reducer, node._super), reduceListClassElement(reducer, node.elements));
     }
 
-    @NotNull
+    @Nonnull
     public static <State> State reduceClassElement(
-      @NotNull Reducer<State> reducer,
-      @NotNull ClassElement node) {
+      @Nonnull Reducer<State> reducer,
+      @Nonnull ClassElement node) {
         return reducer.reduceClassElement(node, reduceMethodDefinition(reducer, node.method));
     }
 
-    @NotNull
+    @Nonnull
     public static <State> State reduceClassExpression(
-      @NotNull Reducer<State> reducer,
-      @NotNull ClassExpression node) {
+      @Nonnull Reducer<State> reducer,
+      @Nonnull ClassExpression node) {
         return reducer.reduceClassExpression(node, reduceMaybeBindingIdentifier(reducer, node.name), reduceMaybeExpression(reducer, node._super), reduceListClassElement(reducer, node.elements));
     }
 
-    @NotNull
+    @Nonnull
     public static <State> State reduceCompoundAssignmentExpression(
-      @NotNull Reducer<State> reducer,
-      @NotNull CompoundAssignmentExpression node) {
+      @Nonnull Reducer<State> reducer,
+      @Nonnull CompoundAssignmentExpression node) {
         return reducer.reduceCompoundAssignmentExpression(node, reduceSimpleAssignmentTarget(reducer, node.binding), reduceExpression(reducer, node.expression));
     }
 
-    @NotNull
+    @Nonnull
     public static <State> State reduceComputedMemberAssignmentTarget(
-      @NotNull Reducer<State> reducer,
-      @NotNull ComputedMemberAssignmentTarget node) {
+      @Nonnull Reducer<State> reducer,
+      @Nonnull ComputedMemberAssignmentTarget node) {
         return reducer.reduceComputedMemberAssignmentTarget(node, reduceExpressionSuper(reducer, node.object), reduceExpression(reducer, node.expression));
     }
 
-    @NotNull
+    @Nonnull
     public static <State> State reduceComputedMemberExpression(
-      @NotNull Reducer<State> reducer,
-      @NotNull ComputedMemberExpression node) {
+      @Nonnull Reducer<State> reducer,
+      @Nonnull ComputedMemberExpression node) {
         return reducer.reduceComputedMemberExpression(node, reduceExpressionSuper(reducer, node.object), reduceExpression(reducer, node.expression));
     }
 
-    @NotNull
+    @Nonnull
     public static <State> State reduceComputedPropertyName(
-      @NotNull Reducer<State> reducer,
-      @NotNull ComputedPropertyName node) {
+      @Nonnull Reducer<State> reducer,
+      @Nonnull ComputedPropertyName node) {
         return reducer.reduceComputedPropertyName(node, reduceExpression(reducer, node.expression));
     }
 
-    @NotNull
+    @Nonnull
     public static <State> State reduceConditionalExpression(
-      @NotNull Reducer<State> reducer,
-      @NotNull ConditionalExpression node) {
+      @Nonnull Reducer<State> reducer,
+      @Nonnull ConditionalExpression node) {
         return reducer.reduceConditionalExpression(node, reduceExpression(reducer, node.test), reduceExpression(reducer, node.consequent), reduceExpression(reducer, node.alternate));
     }
 
-    @NotNull
+    @Nonnull
     public static <State> State reduceContinueStatement(
-      @NotNull Reducer<State> reducer,
-      @NotNull ContinueStatement node) {
+      @Nonnull Reducer<State> reducer,
+      @Nonnull ContinueStatement node) {
         return reducer.reduceContinueStatement(node);
     }
 
-    @NotNull
+    @Nonnull
     public static <State> State reduceDataProperty(
-      @NotNull Reducer<State> reducer,
-      @NotNull DataProperty node) {
+      @Nonnull Reducer<State> reducer,
+      @Nonnull DataProperty node) {
         return reducer.reduceDataProperty(node, reducePropertyName(reducer, node.name), reduceExpression(reducer, node.expression));
     }
 
-    @NotNull
+    @Nonnull
     public static <State> State reduceDebuggerStatement(
-      @NotNull Reducer<State> reducer,
-      @NotNull DebuggerStatement node) {
+      @Nonnull Reducer<State> reducer,
+      @Nonnull DebuggerStatement node) {
         return reducer.reduceDebuggerStatement(node);
     }
 
-    @NotNull
+    @Nonnull
     public static <State> State reduceDirective(
-      @NotNull Reducer<State> reducer,
-      @NotNull Directive node) {
+      @Nonnull Reducer<State> reducer,
+      @Nonnull Directive node) {
         return reducer.reduceDirective(node);
     }
 
-    @NotNull
+    @Nonnull
     public static <State> State reduceDoWhileStatement(
-      @NotNull Reducer<State> reducer,
-      @NotNull DoWhileStatement node) {
+      @Nonnull Reducer<State> reducer,
+      @Nonnull DoWhileStatement node) {
         return reducer.reduceDoWhileStatement(node, reduceStatement(reducer, node.body), reduceExpression(reducer, node.test));
     }
 
-    @NotNull
+    @Nonnull
     public static <State> State reduceEmptyStatement(
-      @NotNull Reducer<State> reducer,
-      @NotNull EmptyStatement node) {
+      @Nonnull Reducer<State> reducer,
+      @Nonnull EmptyStatement node) {
         return reducer.reduceEmptyStatement(node);
     }
 
-    @NotNull
+    @Nonnull
     public static <State> State reduceExport(
-      @NotNull Reducer<State> reducer,
-      @NotNull Export node) {
+      @Nonnull Reducer<State> reducer,
+      @Nonnull Export node) {
         return reducer.reduceExport(node, reduceFunctionDeclarationClassDeclarationVariableDeclaration(reducer, node.declaration));
     }
 
-    @NotNull
+    @Nonnull
     public static <State> State reduceExportAllFrom(
-      @NotNull Reducer<State> reducer,
-      @NotNull ExportAllFrom node) {
+      @Nonnull Reducer<State> reducer,
+      @Nonnull ExportAllFrom node) {
         return reducer.reduceExportAllFrom(node);
     }
 
-    @NotNull
+    @Nonnull
     public static <State> State reduceExportDeclaration(
-      @NotNull Reducer<State> reducer,
-      @NotNull ExportDeclaration node) {
+      @Nonnull Reducer<State> reducer,
+      @Nonnull ExportDeclaration node) {
         if (node instanceof ExportAllFrom) {
             return reduceExportAllFrom(reducer, (ExportAllFrom) node);
         } else if (node instanceof ExportFrom) {
@@ -394,45 +394,45 @@ public final class Director {
         }
     }
 
-    @NotNull
+    @Nonnull
     public static <State> State reduceExportDefault(
-      @NotNull Reducer<State> reducer,
-      @NotNull ExportDefault node) {
+      @Nonnull Reducer<State> reducer,
+      @Nonnull ExportDefault node) {
         return reducer.reduceExportDefault(node, reduceFunctionDeclarationClassDeclarationExpression(reducer, node.body));
     }
 
-    @NotNull
+    @Nonnull
     public static <State> State reduceExportFrom(
-      @NotNull Reducer<State> reducer,
-      @NotNull ExportFrom node) {
+      @Nonnull Reducer<State> reducer,
+      @Nonnull ExportFrom node) {
         return reducer.reduceExportFrom(node, reduceListExportFromSpecifier(reducer, node.namedExports));
     }
 
-    @NotNull
+    @Nonnull
     public static <State> State reduceExportFromSpecifier(
-      @NotNull Reducer<State> reducer,
-      @NotNull ExportFromSpecifier node) {
+      @Nonnull Reducer<State> reducer,
+      @Nonnull ExportFromSpecifier node) {
         return reducer.reduceExportFromSpecifier(node);
     }
 
-    @NotNull
+    @Nonnull
     public static <State> State reduceExportLocalSpecifier(
-      @NotNull Reducer<State> reducer,
-      @NotNull ExportLocalSpecifier node) {
+      @Nonnull Reducer<State> reducer,
+      @Nonnull ExportLocalSpecifier node) {
         return reducer.reduceExportLocalSpecifier(node, reduceIdentifierExpression(reducer, node.name));
     }
 
-    @NotNull
+    @Nonnull
     public static <State> State reduceExportLocals(
-      @NotNull Reducer<State> reducer,
-      @NotNull ExportLocals node) {
+      @Nonnull Reducer<State> reducer,
+      @Nonnull ExportLocals node) {
         return reducer.reduceExportLocals(node, reduceListExportLocalSpecifier(reducer, node.namedExports));
     }
 
-    @NotNull
+    @Nonnull
     public static <State> State reduceExpression(
-      @NotNull Reducer<State> reducer,
-      @NotNull Expression node) {
+      @Nonnull Reducer<State> reducer,
+      @Nonnull Expression node) {
         if (node instanceof MemberExpression) {
             return reduceMemberExpression(reducer, (MemberExpression) node);
         } else if (node instanceof ClassExpression) {
@@ -490,17 +490,17 @@ public final class Director {
         }
     }
 
-    @NotNull
+    @Nonnull
     public static <State> State reduceExpressionStatement(
-      @NotNull Reducer<State> reducer,
-      @NotNull ExpressionStatement node) {
+      @Nonnull Reducer<State> reducer,
+      @Nonnull ExpressionStatement node) {
         return reducer.reduceExpressionStatement(node, reduceExpression(reducer, node.expression));
     }
 
-    @NotNull
+    @Nonnull
     public static <State> State reduceExpressionSuper(
-      @NotNull Reducer<State> reducer,
-      @NotNull ExpressionSuper node) {
+      @Nonnull Reducer<State> reducer,
+      @Nonnull ExpressionSuper node) {
         if (node instanceof Expression) {
             return reduceExpression(reducer, (Expression) node);
         } else if (node instanceof Super) {
@@ -510,10 +510,10 @@ public final class Director {
         }
     }
 
-    @NotNull
+    @Nonnull
     public static <State> State reduceExpressionTemplateElement(
-      @NotNull Reducer<State> reducer,
-      @NotNull ExpressionTemplateElement node) {
+      @Nonnull Reducer<State> reducer,
+      @Nonnull ExpressionTemplateElement node) {
         if (node instanceof Expression) {
             return reduceExpression(reducer, (Expression) node);
         } else if (node instanceof TemplateElement) {
@@ -523,45 +523,45 @@ public final class Director {
         }
     }
 
-    @NotNull
+    @Nonnull
     public static <State> State reduceForInStatement(
-      @NotNull Reducer<State> reducer,
-      @NotNull ForInStatement node) {
+      @Nonnull Reducer<State> reducer,
+      @Nonnull ForInStatement node) {
         return reducer.reduceForInStatement(node, reduceVariableDeclarationAssignmentTarget(reducer, node.left), reduceExpression(reducer, node.right), reduceStatement(reducer, node.body));
     }
 
-    @NotNull
+    @Nonnull
     public static <State> State reduceForOfStatement(
-      @NotNull Reducer<State> reducer,
-      @NotNull ForOfStatement node) {
+      @Nonnull Reducer<State> reducer,
+      @Nonnull ForOfStatement node) {
         return reducer.reduceForOfStatement(node, reduceVariableDeclarationAssignmentTarget(reducer, node.left), reduceExpression(reducer, node.right), reduceStatement(reducer, node.body));
     }
 
-    @NotNull
+    @Nonnull
     public static <State> State reduceForStatement(
-      @NotNull Reducer<State> reducer,
-      @NotNull ForStatement node) {
+      @Nonnull Reducer<State> reducer,
+      @Nonnull ForStatement node) {
         return reducer.reduceForStatement(node, reduceMaybeVariableDeclarationExpression(reducer, node.init), reduceMaybeExpression(reducer, node.test), reduceMaybeExpression(reducer, node.update), reduceStatement(reducer, node.body));
     }
 
-    @NotNull
+    @Nonnull
     public static <State> State reduceFormalParameters(
-      @NotNull Reducer<State> reducer,
-      @NotNull FormalParameters node) {
+      @Nonnull Reducer<State> reducer,
+      @Nonnull FormalParameters node) {
         return reducer.reduceFormalParameters(node, reduceListParameter(reducer, node.items), reduceMaybeBinding(reducer, node.rest));
     }
 
-    @NotNull
+    @Nonnull
     public static <State> State reduceFunctionBody(
-      @NotNull Reducer<State> reducer,
-      @NotNull FunctionBody node) {
+      @Nonnull Reducer<State> reducer,
+      @Nonnull FunctionBody node) {
         return reducer.reduceFunctionBody(node, reduceListDirective(reducer, node.directives), reduceListStatement(reducer, node.statements));
     }
 
-    @NotNull
+    @Nonnull
     public static <State> State reduceFunctionBodyExpression(
-      @NotNull Reducer<State> reducer,
-      @NotNull FunctionBodyExpression node) {
+      @Nonnull Reducer<State> reducer,
+      @Nonnull FunctionBodyExpression node) {
         if (node instanceof FunctionBody) {
             return reduceFunctionBody(reducer, (FunctionBody) node);
         } else if (node instanceof Expression) {
@@ -571,17 +571,17 @@ public final class Director {
         }
     }
 
-    @NotNull
+    @Nonnull
     public static <State> State reduceFunctionDeclaration(
-      @NotNull Reducer<State> reducer,
-      @NotNull FunctionDeclaration node) {
+      @Nonnull Reducer<State> reducer,
+      @Nonnull FunctionDeclaration node) {
         return reducer.reduceFunctionDeclaration(node, reduceBindingIdentifier(reducer, node.name), reduceFormalParameters(reducer, node.params), reduceFunctionBody(reducer, node.body));
     }
 
-    @NotNull
+    @Nonnull
     public static <State> State reduceFunctionDeclarationClassDeclarationExpression(
-      @NotNull Reducer<State> reducer,
-      @NotNull FunctionDeclarationClassDeclarationExpression node) {
+      @Nonnull Reducer<State> reducer,
+      @Nonnull FunctionDeclarationClassDeclarationExpression node) {
         if (node instanceof FunctionDeclaration) {
             return reduceFunctionDeclaration(reducer, (FunctionDeclaration) node);
         } else if (node instanceof ClassDeclaration) {
@@ -593,10 +593,10 @@ public final class Director {
         }
     }
 
-    @NotNull
+    @Nonnull
     public static <State> State reduceFunctionDeclarationClassDeclarationVariableDeclaration(
-      @NotNull Reducer<State> reducer,
-      @NotNull FunctionDeclarationClassDeclarationVariableDeclaration node) {
+      @Nonnull Reducer<State> reducer,
+      @Nonnull FunctionDeclarationClassDeclarationVariableDeclaration node) {
         if (node instanceof FunctionDeclaration) {
             return reduceFunctionDeclaration(reducer, (FunctionDeclaration) node);
         } else if (node instanceof ClassDeclaration) {
@@ -608,45 +608,45 @@ public final class Director {
         }
     }
 
-    @NotNull
+    @Nonnull
     public static <State> State reduceFunctionExpression(
-      @NotNull Reducer<State> reducer,
-      @NotNull FunctionExpression node) {
+      @Nonnull Reducer<State> reducer,
+      @Nonnull FunctionExpression node) {
         return reducer.reduceFunctionExpression(node, reduceMaybeBindingIdentifier(reducer, node.name), reduceFormalParameters(reducer, node.params), reduceFunctionBody(reducer, node.body));
     }
 
-    @NotNull
+    @Nonnull
     public static <State> State reduceGetter(
-      @NotNull Reducer<State> reducer,
-      @NotNull Getter node) {
+      @Nonnull Reducer<State> reducer,
+      @Nonnull Getter node) {
         return reducer.reduceGetter(node, reducePropertyName(reducer, node.name), reduceFunctionBody(reducer, node.body));
     }
 
-    @NotNull
+    @Nonnull
     public static <State> State reduceIdentifierExpression(
-      @NotNull Reducer<State> reducer,
-      @NotNull IdentifierExpression node) {
+      @Nonnull Reducer<State> reducer,
+      @Nonnull IdentifierExpression node) {
         return reducer.reduceIdentifierExpression(node);
     }
 
-    @NotNull
+    @Nonnull
     public static <State> State reduceIfStatement(
-      @NotNull Reducer<State> reducer,
-      @NotNull IfStatement node) {
+      @Nonnull Reducer<State> reducer,
+      @Nonnull IfStatement node) {
         return reducer.reduceIfStatement(node, reduceExpression(reducer, node.test), reduceStatement(reducer, node.consequent), reduceMaybeStatement(reducer, node.alternate));
     }
 
-    @NotNull
+    @Nonnull
     public static <State> State reduceImport(
-      @NotNull Reducer<State> reducer,
-      @NotNull Import node) {
+      @Nonnull Reducer<State> reducer,
+      @Nonnull Import node) {
         return reducer.reduceImport(node, reduceMaybeBindingIdentifier(reducer, node.defaultBinding), reduceListImportSpecifier(reducer, node.namedImports));
     }
 
-    @NotNull
+    @Nonnull
     public static <State> State reduceImportDeclaration(
-      @NotNull Reducer<State> reducer,
-      @NotNull ImportDeclaration node) {
+      @Nonnull Reducer<State> reducer,
+      @Nonnull ImportDeclaration node) {
         if (node instanceof Import) {
             return reduceImport(reducer, (Import) node);
         } else if (node instanceof ImportNamespace) {
@@ -656,10 +656,10 @@ public final class Director {
         }
     }
 
-    @NotNull
+    @Nonnull
     public static <State> State reduceImportDeclarationExportDeclarationStatement(
-      @NotNull Reducer<State> reducer,
-      @NotNull ImportDeclarationExportDeclarationStatement node) {
+      @Nonnull Reducer<State> reducer,
+      @Nonnull ImportDeclarationExportDeclarationStatement node) {
         if (node instanceof ImportDeclaration) {
             return reduceImportDeclaration(reducer, (ImportDeclaration) node);
         } else if (node instanceof ExportDeclaration) {
@@ -671,24 +671,24 @@ public final class Director {
         }
     }
 
-    @NotNull
+    @Nonnull
     public static <State> State reduceImportNamespace(
-      @NotNull Reducer<State> reducer,
-      @NotNull ImportNamespace node) {
+      @Nonnull Reducer<State> reducer,
+      @Nonnull ImportNamespace node) {
         return reducer.reduceImportNamespace(node, reduceMaybeBindingIdentifier(reducer, node.defaultBinding), reduceBindingIdentifier(reducer, node.namespaceBinding));
     }
 
-    @NotNull
+    @Nonnull
     public static <State> State reduceImportSpecifier(
-      @NotNull Reducer<State> reducer,
-      @NotNull ImportSpecifier node) {
+      @Nonnull Reducer<State> reducer,
+      @Nonnull ImportSpecifier node) {
         return reducer.reduceImportSpecifier(node, reduceBindingIdentifier(reducer, node.binding));
     }
 
-    @NotNull
+    @Nonnull
     public static <State> State reduceIterationStatement(
-      @NotNull Reducer<State> reducer,
-      @NotNull IterationStatement node) {
+      @Nonnull Reducer<State> reducer,
+      @Nonnull IterationStatement node) {
         if (node instanceof DoWhileStatement) {
             return reduceDoWhileStatement(reducer, (DoWhileStatement) node);
         } else if (node instanceof ForInStatement) {
@@ -704,283 +704,283 @@ public final class Director {
         }
     }
 
-    @NotNull
+    @Nonnull
     public static <State> State reduceLabeledStatement(
-      @NotNull Reducer<State> reducer,
-      @NotNull LabeledStatement node) {
+      @Nonnull Reducer<State> reducer,
+      @Nonnull LabeledStatement node) {
         return reducer.reduceLabeledStatement(node, reduceStatement(reducer, node.body));
     }
 
-    @NotNull
+    @Nonnull
     public static <State> ImmutableList<State> reduceListAssignmentTargetProperty(
-      @NotNull Reducer<State> reducer,
-      @NotNull ImmutableList<AssignmentTargetProperty> list) {
+      @Nonnull Reducer<State> reducer,
+      @Nonnull ImmutableList<AssignmentTargetProperty> list) {
         return list.map(x -> reduceAssignmentTargetProperty(reducer, x));
       }
 
 
-    @NotNull
+    @Nonnull
     public static <State> ImmutableList<State> reduceListBindingProperty(
-      @NotNull Reducer<State> reducer,
-      @NotNull ImmutableList<BindingProperty> list) {
+      @Nonnull Reducer<State> reducer,
+      @Nonnull ImmutableList<BindingProperty> list) {
         return list.map(x -> reduceBindingProperty(reducer, x));
       }
 
 
-    @NotNull
+    @Nonnull
     public static <State> ImmutableList<State> reduceListClassElement(
-      @NotNull Reducer<State> reducer,
-      @NotNull ImmutableList<ClassElement> list) {
+      @Nonnull Reducer<State> reducer,
+      @Nonnull ImmutableList<ClassElement> list) {
         return list.map(x -> reduceClassElement(reducer, x));
       }
 
 
-    @NotNull
+    @Nonnull
     public static <State> ImmutableList<State> reduceListDirective(
-      @NotNull Reducer<State> reducer,
-      @NotNull ImmutableList<Directive> list) {
+      @Nonnull Reducer<State> reducer,
+      @Nonnull ImmutableList<Directive> list) {
         return list.map(x -> reduceDirective(reducer, x));
       }
 
 
-    @NotNull
+    @Nonnull
     public static <State> ImmutableList<State> reduceListExportFromSpecifier(
-      @NotNull Reducer<State> reducer,
-      @NotNull ImmutableList<ExportFromSpecifier> list) {
+      @Nonnull Reducer<State> reducer,
+      @Nonnull ImmutableList<ExportFromSpecifier> list) {
         return list.map(x -> reduceExportFromSpecifier(reducer, x));
       }
 
 
-    @NotNull
+    @Nonnull
     public static <State> ImmutableList<State> reduceListExportLocalSpecifier(
-      @NotNull Reducer<State> reducer,
-      @NotNull ImmutableList<ExportLocalSpecifier> list) {
+      @Nonnull Reducer<State> reducer,
+      @Nonnull ImmutableList<ExportLocalSpecifier> list) {
         return list.map(x -> reduceExportLocalSpecifier(reducer, x));
       }
 
 
-    @NotNull
+    @Nonnull
     public static <State> ImmutableList<State> reduceListExpressionTemplateElement(
-      @NotNull Reducer<State> reducer,
-      @NotNull ImmutableList<ExpressionTemplateElement> list) {
+      @Nonnull Reducer<State> reducer,
+      @Nonnull ImmutableList<ExpressionTemplateElement> list) {
         return list.map(x -> reduceExpressionTemplateElement(reducer, x));
       }
 
 
-    @NotNull
+    @Nonnull
     public static <State> ImmutableList<State> reduceListImportDeclarationExportDeclarationStatement(
-      @NotNull Reducer<State> reducer,
-      @NotNull ImmutableList<ImportDeclarationExportDeclarationStatement> list) {
+      @Nonnull Reducer<State> reducer,
+      @Nonnull ImmutableList<ImportDeclarationExportDeclarationStatement> list) {
         return list.map(x -> reduceImportDeclarationExportDeclarationStatement(reducer, x));
       }
 
 
-    @NotNull
+    @Nonnull
     public static <State> ImmutableList<State> reduceListImportSpecifier(
-      @NotNull Reducer<State> reducer,
-      @NotNull ImmutableList<ImportSpecifier> list) {
+      @Nonnull Reducer<State> reducer,
+      @Nonnull ImmutableList<ImportSpecifier> list) {
         return list.map(x -> reduceImportSpecifier(reducer, x));
       }
 
 
-    @NotNull
+    @Nonnull
     public static <State> ImmutableList<Maybe<State>> reduceListMaybeAssignmentTargetAssignmentTargetWithDefault(
-      @NotNull Reducer<State> reducer,
-      @NotNull ImmutableList<Maybe<AssignmentTargetAssignmentTargetWithDefault>> list) {
+      @Nonnull Reducer<State> reducer,
+      @Nonnull ImmutableList<Maybe<AssignmentTargetAssignmentTargetWithDefault>> list) {
         return list.map(x -> reduceMaybeAssignmentTargetAssignmentTargetWithDefault(reducer, x));
       }
 
 
-    @NotNull
+    @Nonnull
     public static <State> ImmutableList<Maybe<State>> reduceListMaybeBindingBindingWithDefault(
-      @NotNull Reducer<State> reducer,
-      @NotNull ImmutableList<Maybe<BindingBindingWithDefault>> list) {
+      @Nonnull Reducer<State> reducer,
+      @Nonnull ImmutableList<Maybe<BindingBindingWithDefault>> list) {
         return list.map(x -> reduceMaybeBindingBindingWithDefault(reducer, x));
       }
 
 
-    @NotNull
+    @Nonnull
     public static <State> ImmutableList<Maybe<State>> reduceListMaybeSpreadElementExpression(
-      @NotNull Reducer<State> reducer,
-      @NotNull ImmutableList<Maybe<SpreadElementExpression>> list) {
+      @Nonnull Reducer<State> reducer,
+      @Nonnull ImmutableList<Maybe<SpreadElementExpression>> list) {
         return list.map(x -> reduceMaybeSpreadElementExpression(reducer, x));
       }
 
 
-    @NotNull
+    @Nonnull
     public static <State> ImmutableList<State> reduceListObjectProperty(
-      @NotNull Reducer<State> reducer,
-      @NotNull ImmutableList<ObjectProperty> list) {
+      @Nonnull Reducer<State> reducer,
+      @Nonnull ImmutableList<ObjectProperty> list) {
         return list.map(x -> reduceObjectProperty(reducer, x));
       }
 
 
-    @NotNull
+    @Nonnull
     public static <State> ImmutableList<State> reduceListParameter(
-      @NotNull Reducer<State> reducer,
-      @NotNull ImmutableList<Parameter> list) {
+      @Nonnull Reducer<State> reducer,
+      @Nonnull ImmutableList<Parameter> list) {
         return list.map(x -> reduceParameter(reducer, x));
       }
 
 
-    @NotNull
+    @Nonnull
     public static <State> ImmutableList<State> reduceListSpreadElementExpression(
-      @NotNull Reducer<State> reducer,
-      @NotNull ImmutableList<SpreadElementExpression> list) {
+      @Nonnull Reducer<State> reducer,
+      @Nonnull ImmutableList<SpreadElementExpression> list) {
         return list.map(x -> reduceSpreadElementExpression(reducer, x));
       }
 
 
-    @NotNull
+    @Nonnull
     public static <State> ImmutableList<State> reduceListStatement(
-      @NotNull Reducer<State> reducer,
-      @NotNull ImmutableList<Statement> list) {
+      @Nonnull Reducer<State> reducer,
+      @Nonnull ImmutableList<Statement> list) {
         return list.map(x -> reduceStatement(reducer, x));
       }
 
 
-    @NotNull
+    @Nonnull
     public static <State> ImmutableList<State> reduceListSwitchCase(
-      @NotNull Reducer<State> reducer,
-      @NotNull ImmutableList<SwitchCase> list) {
+      @Nonnull Reducer<State> reducer,
+      @Nonnull ImmutableList<SwitchCase> list) {
         return list.map(x -> reduceSwitchCase(reducer, x));
       }
 
 
-    @NotNull
+    @Nonnull
     public static <State> ImmutableList<State> reduceListVariableDeclarator(
-      @NotNull Reducer<State> reducer,
-      @NotNull ImmutableList<VariableDeclarator> list) {
+      @Nonnull Reducer<State> reducer,
+      @Nonnull ImmutableList<VariableDeclarator> list) {
         return list.map(x -> reduceVariableDeclarator(reducer, x));
       }
 
 
-    @NotNull
+    @Nonnull
     public static <State> State reduceLiteralBooleanExpression(
-      @NotNull Reducer<State> reducer,
-      @NotNull LiteralBooleanExpression node) {
+      @Nonnull Reducer<State> reducer,
+      @Nonnull LiteralBooleanExpression node) {
         return reducer.reduceLiteralBooleanExpression(node);
     }
 
-    @NotNull
+    @Nonnull
     public static <State> State reduceLiteralInfinityExpression(
-      @NotNull Reducer<State> reducer,
-      @NotNull LiteralInfinityExpression node) {
+      @Nonnull Reducer<State> reducer,
+      @Nonnull LiteralInfinityExpression node) {
         return reducer.reduceLiteralInfinityExpression(node);
     }
 
-    @NotNull
+    @Nonnull
     public static <State> State reduceLiteralNullExpression(
-      @NotNull Reducer<State> reducer,
-      @NotNull LiteralNullExpression node) {
+      @Nonnull Reducer<State> reducer,
+      @Nonnull LiteralNullExpression node) {
         return reducer.reduceLiteralNullExpression(node);
     }
 
-    @NotNull
+    @Nonnull
     public static <State> State reduceLiteralNumericExpression(
-      @NotNull Reducer<State> reducer,
-      @NotNull LiteralNumericExpression node) {
+      @Nonnull Reducer<State> reducer,
+      @Nonnull LiteralNumericExpression node) {
         return reducer.reduceLiteralNumericExpression(node);
     }
 
-    @NotNull
+    @Nonnull
     public static <State> State reduceLiteralRegExpExpression(
-      @NotNull Reducer<State> reducer,
-      @NotNull LiteralRegExpExpression node) {
+      @Nonnull Reducer<State> reducer,
+      @Nonnull LiteralRegExpExpression node) {
         return reducer.reduceLiteralRegExpExpression(node);
     }
 
-    @NotNull
+    @Nonnull
     public static <State> State reduceLiteralStringExpression(
-      @NotNull Reducer<State> reducer,
-      @NotNull LiteralStringExpression node) {
+      @Nonnull Reducer<State> reducer,
+      @Nonnull LiteralStringExpression node) {
         return reducer.reduceLiteralStringExpression(node);
     }
 
-    @NotNull
+    @Nonnull
     public static <State> Maybe<State> reduceMaybeAssignmentTarget(
-      @NotNull Reducer<State> reducer,
-      @NotNull Maybe<AssignmentTarget> maybe) {
+      @Nonnull Reducer<State> reducer,
+      @Nonnull Maybe<AssignmentTarget> maybe) {
         return maybe.map(x -> reduceAssignmentTarget(reducer, x));
       }
 
 
-    @NotNull
+    @Nonnull
     public static <State> Maybe<State> reduceMaybeAssignmentTargetAssignmentTargetWithDefault(
-      @NotNull Reducer<State> reducer,
-      @NotNull Maybe<AssignmentTargetAssignmentTargetWithDefault> maybe) {
+      @Nonnull Reducer<State> reducer,
+      @Nonnull Maybe<AssignmentTargetAssignmentTargetWithDefault> maybe) {
         return maybe.map(x -> reduceAssignmentTargetAssignmentTargetWithDefault(reducer, x));
       }
 
 
-    @NotNull
+    @Nonnull
     public static <State> Maybe<State> reduceMaybeBinding(
-      @NotNull Reducer<State> reducer,
-      @NotNull Maybe<Binding> maybe) {
+      @Nonnull Reducer<State> reducer,
+      @Nonnull Maybe<Binding> maybe) {
         return maybe.map(x -> reduceBinding(reducer, x));
       }
 
 
-    @NotNull
+    @Nonnull
     public static <State> Maybe<State> reduceMaybeBindingBindingWithDefault(
-      @NotNull Reducer<State> reducer,
-      @NotNull Maybe<BindingBindingWithDefault> maybe) {
+      @Nonnull Reducer<State> reducer,
+      @Nonnull Maybe<BindingBindingWithDefault> maybe) {
         return maybe.map(x -> reduceBindingBindingWithDefault(reducer, x));
       }
 
 
-    @NotNull
+    @Nonnull
     public static <State> Maybe<State> reduceMaybeBindingIdentifier(
-      @NotNull Reducer<State> reducer,
-      @NotNull Maybe<BindingIdentifier> maybe) {
+      @Nonnull Reducer<State> reducer,
+      @Nonnull Maybe<BindingIdentifier> maybe) {
         return maybe.map(x -> reduceBindingIdentifier(reducer, x));
       }
 
 
-    @NotNull
+    @Nonnull
     public static <State> Maybe<State> reduceMaybeCatchClause(
-      @NotNull Reducer<State> reducer,
-      @NotNull Maybe<CatchClause> maybe) {
+      @Nonnull Reducer<State> reducer,
+      @Nonnull Maybe<CatchClause> maybe) {
         return maybe.map(x -> reduceCatchClause(reducer, x));
       }
 
 
-    @NotNull
+    @Nonnull
     public static <State> Maybe<State> reduceMaybeExpression(
-      @NotNull Reducer<State> reducer,
-      @NotNull Maybe<Expression> maybe) {
+      @Nonnull Reducer<State> reducer,
+      @Nonnull Maybe<Expression> maybe) {
         return maybe.map(x -> reduceExpression(reducer, x));
       }
 
 
-    @NotNull
+    @Nonnull
     public static <State> Maybe<State> reduceMaybeSpreadElementExpression(
-      @NotNull Reducer<State> reducer,
-      @NotNull Maybe<SpreadElementExpression> maybe) {
+      @Nonnull Reducer<State> reducer,
+      @Nonnull Maybe<SpreadElementExpression> maybe) {
         return maybe.map(x -> reduceSpreadElementExpression(reducer, x));
       }
 
 
-    @NotNull
+    @Nonnull
     public static <State> Maybe<State> reduceMaybeStatement(
-      @NotNull Reducer<State> reducer,
-      @NotNull Maybe<Statement> maybe) {
+      @Nonnull Reducer<State> reducer,
+      @Nonnull Maybe<Statement> maybe) {
         return maybe.map(x -> reduceStatement(reducer, x));
       }
 
 
-    @NotNull
+    @Nonnull
     public static <State> Maybe<State> reduceMaybeVariableDeclarationExpression(
-      @NotNull Reducer<State> reducer,
-      @NotNull Maybe<VariableDeclarationExpression> maybe) {
+      @Nonnull Reducer<State> reducer,
+      @Nonnull Maybe<VariableDeclarationExpression> maybe) {
         return maybe.map(x -> reduceVariableDeclarationExpression(reducer, x));
       }
 
 
-    @NotNull
+    @Nonnull
     public static <State> State reduceMemberAssignmentTarget(
-      @NotNull Reducer<State> reducer,
-      @NotNull MemberAssignmentTarget node) {
+      @Nonnull Reducer<State> reducer,
+      @Nonnull MemberAssignmentTarget node) {
         if (node instanceof ComputedMemberAssignmentTarget) {
             return reduceComputedMemberAssignmentTarget(reducer, (ComputedMemberAssignmentTarget) node);
         } else if (node instanceof StaticMemberAssignmentTarget) {
@@ -990,10 +990,10 @@ public final class Director {
         }
     }
 
-    @NotNull
+    @Nonnull
     public static <State> State reduceMemberExpression(
-      @NotNull Reducer<State> reducer,
-      @NotNull MemberExpression node) {
+      @Nonnull Reducer<State> reducer,
+      @Nonnull MemberExpression node) {
         if (node instanceof ComputedMemberExpression) {
             return reduceComputedMemberExpression(reducer, (ComputedMemberExpression) node);
         } else if (node instanceof StaticMemberExpression) {
@@ -1003,17 +1003,17 @@ public final class Director {
         }
     }
 
-    @NotNull
+    @Nonnull
     public static <State> State reduceMethod(
-      @NotNull Reducer<State> reducer,
-      @NotNull Method node) {
+      @Nonnull Reducer<State> reducer,
+      @Nonnull Method node) {
         return reducer.reduceMethod(node, reducePropertyName(reducer, node.name), reduceFormalParameters(reducer, node.params), reduceFunctionBody(reducer, node.body));
     }
 
-    @NotNull
+    @Nonnull
     public static <State> State reduceMethodDefinition(
-      @NotNull Reducer<State> reducer,
-      @NotNull MethodDefinition node) {
+      @Nonnull Reducer<State> reducer,
+      @Nonnull MethodDefinition node) {
         if (node instanceof Method) {
             return reduceMethod(reducer, (Method) node);
         } else if (node instanceof Getter) {
@@ -1025,17 +1025,17 @@ public final class Director {
         }
     }
 
-    @NotNull
+    @Nonnull
     public static <State> State reduceModule(
-      @NotNull Reducer<State> reducer,
-      @NotNull Module node) {
+      @Nonnull Reducer<State> reducer,
+      @Nonnull Module node) {
         return reducer.reduceModule(node, reduceListDirective(reducer, node.directives), reduceListImportDeclarationExportDeclarationStatement(reducer, node.items));
     }
 
-    @NotNull
+    @Nonnull
     public static <State> State reduceNamedObjectProperty(
-      @NotNull Reducer<State> reducer,
-      @NotNull NamedObjectProperty node) {
+      @Nonnull Reducer<State> reducer,
+      @Nonnull NamedObjectProperty node) {
         if (node instanceof MethodDefinition) {
             return reduceMethodDefinition(reducer, (MethodDefinition) node);
         } else if (node instanceof DataProperty) {
@@ -1045,45 +1045,45 @@ public final class Director {
         }
     }
 
-    @NotNull
+    @Nonnull
     public static <State> State reduceNewExpression(
-      @NotNull Reducer<State> reducer,
-      @NotNull NewExpression node) {
+      @Nonnull Reducer<State> reducer,
+      @Nonnull NewExpression node) {
         return reducer.reduceNewExpression(node, reduceExpression(reducer, node.callee), reduceListSpreadElementExpression(reducer, node.arguments));
     }
 
-    @NotNull
+    @Nonnull
     public static <State> State reduceNewTargetExpression(
-      @NotNull Reducer<State> reducer,
-      @NotNull NewTargetExpression node) {
+      @Nonnull Reducer<State> reducer,
+      @Nonnull NewTargetExpression node) {
         return reducer.reduceNewTargetExpression(node);
     }
 
-    @NotNull
+    @Nonnull
     public static <State> State reduceObjectAssignmentTarget(
-      @NotNull Reducer<State> reducer,
-      @NotNull ObjectAssignmentTarget node) {
+      @Nonnull Reducer<State> reducer,
+      @Nonnull ObjectAssignmentTarget node) {
         return reducer.reduceObjectAssignmentTarget(node, reduceListAssignmentTargetProperty(reducer, node.properties));
     }
 
-    @NotNull
+    @Nonnull
     public static <State> State reduceObjectBinding(
-      @NotNull Reducer<State> reducer,
-      @NotNull ObjectBinding node) {
+      @Nonnull Reducer<State> reducer,
+      @Nonnull ObjectBinding node) {
         return reducer.reduceObjectBinding(node, reduceListBindingProperty(reducer, node.properties));
     }
 
-    @NotNull
+    @Nonnull
     public static <State> State reduceObjectExpression(
-      @NotNull Reducer<State> reducer,
-      @NotNull ObjectExpression node) {
+      @Nonnull Reducer<State> reducer,
+      @Nonnull ObjectExpression node) {
         return reducer.reduceObjectExpression(node, reduceListObjectProperty(reducer, node.properties));
     }
 
-    @NotNull
+    @Nonnull
     public static <State> State reduceObjectProperty(
-      @NotNull Reducer<State> reducer,
-      @NotNull ObjectProperty node) {
+      @Nonnull Reducer<State> reducer,
+      @Nonnull ObjectProperty node) {
         if (node instanceof NamedObjectProperty) {
             return reduceNamedObjectProperty(reducer, (NamedObjectProperty) node);
         } else if (node instanceof ShorthandProperty) {
@@ -1093,10 +1093,10 @@ public final class Director {
         }
     }
 
-    @NotNull
+    @Nonnull
     public static <State> State reduceParameter(
-      @NotNull Reducer<State> reducer,
-      @NotNull Parameter node) {
+      @Nonnull Reducer<State> reducer,
+      @Nonnull Parameter node) {
         if (node instanceof Binding) {
             return reduceBinding(reducer, (Binding) node);
         } else if (node instanceof BindingWithDefault) {
@@ -1106,10 +1106,10 @@ public final class Director {
         }
     }
 
-    @NotNull
+    @Nonnull
     public static <State> State reduceProgram(
-      @NotNull Reducer<State> reducer,
-      @NotNull Program node) {
+      @Nonnull Reducer<State> reducer,
+      @Nonnull Program node) {
         if (node instanceof Module) {
             return reduceModule(reducer, (Module) node);
         } else if (node instanceof Script) {
@@ -1119,10 +1119,10 @@ public final class Director {
         }
     }
 
-    @NotNull
+    @Nonnull
     public static <State> State reducePropertyName(
-      @NotNull Reducer<State> reducer,
-      @NotNull PropertyName node) {
+      @Nonnull Reducer<State> reducer,
+      @Nonnull PropertyName node) {
         if (node instanceof ComputedPropertyName) {
             return reduceComputedPropertyName(reducer, (ComputedPropertyName) node);
         } else if (node instanceof StaticPropertyName) {
@@ -1132,38 +1132,38 @@ public final class Director {
         }
     }
 
-    @NotNull
+    @Nonnull
     public static <State> State reduceReturnStatement(
-      @NotNull Reducer<State> reducer,
-      @NotNull ReturnStatement node) {
+      @Nonnull Reducer<State> reducer,
+      @Nonnull ReturnStatement node) {
         return reducer.reduceReturnStatement(node, reduceMaybeExpression(reducer, node.expression));
     }
 
-    @NotNull
+    @Nonnull
     public static <State> State reduceScript(
-      @NotNull Reducer<State> reducer,
-      @NotNull Script node) {
+      @Nonnull Reducer<State> reducer,
+      @Nonnull Script node) {
         return reducer.reduceScript(node, reduceListDirective(reducer, node.directives), reduceListStatement(reducer, node.statements));
     }
 
-    @NotNull
+    @Nonnull
     public static <State> State reduceSetter(
-      @NotNull Reducer<State> reducer,
-      @NotNull Setter node) {
+      @Nonnull Reducer<State> reducer,
+      @Nonnull Setter node) {
         return reducer.reduceSetter(node, reducePropertyName(reducer, node.name), reduceParameter(reducer, node.param), reduceFunctionBody(reducer, node.body));
     }
 
-    @NotNull
+    @Nonnull
     public static <State> State reduceShorthandProperty(
-      @NotNull Reducer<State> reducer,
-      @NotNull ShorthandProperty node) {
+      @Nonnull Reducer<State> reducer,
+      @Nonnull ShorthandProperty node) {
         return reducer.reduceShorthandProperty(node, reduceIdentifierExpression(reducer, node.name));
     }
 
-    @NotNull
+    @Nonnull
     public static <State> State reduceSimpleAssignmentTarget(
-      @NotNull Reducer<State> reducer,
-      @NotNull SimpleAssignmentTarget node) {
+      @Nonnull Reducer<State> reducer,
+      @Nonnull SimpleAssignmentTarget node) {
         if (node instanceof AssignmentTargetIdentifier) {
             return reduceAssignmentTargetIdentifier(reducer, (AssignmentTargetIdentifier) node);
         } else if (node instanceof MemberAssignmentTarget) {
@@ -1173,17 +1173,17 @@ public final class Director {
         }
     }
 
-    @NotNull
+    @Nonnull
     public static <State> State reduceSpreadElement(
-      @NotNull Reducer<State> reducer,
-      @NotNull SpreadElement node) {
+      @Nonnull Reducer<State> reducer,
+      @Nonnull SpreadElement node) {
         return reducer.reduceSpreadElement(node, reduceExpression(reducer, node.expression));
     }
 
-    @NotNull
+    @Nonnull
     public static <State> State reduceSpreadElementExpression(
-      @NotNull Reducer<State> reducer,
-      @NotNull SpreadElementExpression node) {
+      @Nonnull Reducer<State> reducer,
+      @Nonnull SpreadElementExpression node) {
         if (node instanceof SpreadElement) {
             return reduceSpreadElement(reducer, (SpreadElement) node);
         } else if (node instanceof Expression) {
@@ -1193,10 +1193,10 @@ public final class Director {
         }
     }
 
-    @NotNull
+    @Nonnull
     public static <State> State reduceStatement(
-      @NotNull Reducer<State> reducer,
-      @NotNull Statement node) {
+      @Nonnull Reducer<State> reducer,
+      @Nonnull Statement node) {
         if (node instanceof IterationStatement) {
             return reduceIterationStatement(reducer, (IterationStatement) node);
         } else if (node instanceof ClassDeclaration) {
@@ -1240,129 +1240,129 @@ public final class Director {
         }
     }
 
-    @NotNull
+    @Nonnull
     public static <State> State reduceStaticMemberAssignmentTarget(
-      @NotNull Reducer<State> reducer,
-      @NotNull StaticMemberAssignmentTarget node) {
+      @Nonnull Reducer<State> reducer,
+      @Nonnull StaticMemberAssignmentTarget node) {
         return reducer.reduceStaticMemberAssignmentTarget(node, reduceExpressionSuper(reducer, node.object));
     }
 
-    @NotNull
+    @Nonnull
     public static <State> State reduceStaticMemberExpression(
-      @NotNull Reducer<State> reducer,
-      @NotNull StaticMemberExpression node) {
+      @Nonnull Reducer<State> reducer,
+      @Nonnull StaticMemberExpression node) {
         return reducer.reduceStaticMemberExpression(node, reduceExpressionSuper(reducer, node.object));
     }
 
-    @NotNull
+    @Nonnull
     public static <State> State reduceStaticPropertyName(
-      @NotNull Reducer<State> reducer,
-      @NotNull StaticPropertyName node) {
+      @Nonnull Reducer<State> reducer,
+      @Nonnull StaticPropertyName node) {
         return reducer.reduceStaticPropertyName(node);
     }
 
-    @NotNull
+    @Nonnull
     public static <State> State reduceSuper(
-      @NotNull Reducer<State> reducer,
-      @NotNull Super node) {
+      @Nonnull Reducer<State> reducer,
+      @Nonnull Super node) {
         return reducer.reduceSuper(node);
     }
 
-    @NotNull
+    @Nonnull
     public static <State> State reduceSwitchCase(
-      @NotNull Reducer<State> reducer,
-      @NotNull SwitchCase node) {
+      @Nonnull Reducer<State> reducer,
+      @Nonnull SwitchCase node) {
         return reducer.reduceSwitchCase(node, reduceExpression(reducer, node.test), reduceListStatement(reducer, node.consequent));
     }
 
-    @NotNull
+    @Nonnull
     public static <State> State reduceSwitchDefault(
-      @NotNull Reducer<State> reducer,
-      @NotNull SwitchDefault node) {
+      @Nonnull Reducer<State> reducer,
+      @Nonnull SwitchDefault node) {
         return reducer.reduceSwitchDefault(node, reduceListStatement(reducer, node.consequent));
     }
 
-    @NotNull
+    @Nonnull
     public static <State> State reduceSwitchStatement(
-      @NotNull Reducer<State> reducer,
-      @NotNull SwitchStatement node) {
+      @Nonnull Reducer<State> reducer,
+      @Nonnull SwitchStatement node) {
         return reducer.reduceSwitchStatement(node, reduceExpression(reducer, node.discriminant), reduceListSwitchCase(reducer, node.cases));
     }
 
-    @NotNull
+    @Nonnull
     public static <State> State reduceSwitchStatementWithDefault(
-      @NotNull Reducer<State> reducer,
-      @NotNull SwitchStatementWithDefault node) {
+      @Nonnull Reducer<State> reducer,
+      @Nonnull SwitchStatementWithDefault node) {
         return reducer.reduceSwitchStatementWithDefault(node, reduceExpression(reducer, node.discriminant), reduceListSwitchCase(reducer, node.preDefaultCases), reduceSwitchDefault(reducer, node.defaultCase), reduceListSwitchCase(reducer, node.postDefaultCases));
     }
 
-    @NotNull
+    @Nonnull
     public static <State> State reduceTemplateElement(
-      @NotNull Reducer<State> reducer,
-      @NotNull TemplateElement node) {
+      @Nonnull Reducer<State> reducer,
+      @Nonnull TemplateElement node) {
         return reducer.reduceTemplateElement(node);
     }
 
-    @NotNull
+    @Nonnull
     public static <State> State reduceTemplateExpression(
-      @NotNull Reducer<State> reducer,
-      @NotNull TemplateExpression node) {
+      @Nonnull Reducer<State> reducer,
+      @Nonnull TemplateExpression node) {
         return reducer.reduceTemplateExpression(node, reduceMaybeExpression(reducer, node.tag), reduceListExpressionTemplateElement(reducer, node.elements));
     }
 
-    @NotNull
+    @Nonnull
     public static <State> State reduceThisExpression(
-      @NotNull Reducer<State> reducer,
-      @NotNull ThisExpression node) {
+      @Nonnull Reducer<State> reducer,
+      @Nonnull ThisExpression node) {
         return reducer.reduceThisExpression(node);
     }
 
-    @NotNull
+    @Nonnull
     public static <State> State reduceThrowStatement(
-      @NotNull Reducer<State> reducer,
-      @NotNull ThrowStatement node) {
+      @Nonnull Reducer<State> reducer,
+      @Nonnull ThrowStatement node) {
         return reducer.reduceThrowStatement(node, reduceExpression(reducer, node.expression));
     }
 
-    @NotNull
+    @Nonnull
     public static <State> State reduceTryCatchStatement(
-      @NotNull Reducer<State> reducer,
-      @NotNull TryCatchStatement node) {
+      @Nonnull Reducer<State> reducer,
+      @Nonnull TryCatchStatement node) {
         return reducer.reduceTryCatchStatement(node, reduceBlock(reducer, node.body), reduceCatchClause(reducer, node.catchClause));
     }
 
-    @NotNull
+    @Nonnull
     public static <State> State reduceTryFinallyStatement(
-      @NotNull Reducer<State> reducer,
-      @NotNull TryFinallyStatement node) {
+      @Nonnull Reducer<State> reducer,
+      @Nonnull TryFinallyStatement node) {
         return reducer.reduceTryFinallyStatement(node, reduceBlock(reducer, node.body), reduceMaybeCatchClause(reducer, node.catchClause), reduceBlock(reducer, node.finalizer));
     }
 
-    @NotNull
+    @Nonnull
     public static <State> State reduceUnaryExpression(
-      @NotNull Reducer<State> reducer,
-      @NotNull UnaryExpression node) {
+      @Nonnull Reducer<State> reducer,
+      @Nonnull UnaryExpression node) {
         return reducer.reduceUnaryExpression(node, reduceExpression(reducer, node.operand));
     }
 
-    @NotNull
+    @Nonnull
     public static <State> State reduceUpdateExpression(
-      @NotNull Reducer<State> reducer,
-      @NotNull UpdateExpression node) {
+      @Nonnull Reducer<State> reducer,
+      @Nonnull UpdateExpression node) {
         return reducer.reduceUpdateExpression(node, reduceSimpleAssignmentTarget(reducer, node.operand));
     }
 
-    @NotNull
+    @Nonnull
     public static <State> State reduceVariableDeclaration(
-      @NotNull Reducer<State> reducer,
-      @NotNull VariableDeclaration node) {
+      @Nonnull Reducer<State> reducer,
+      @Nonnull VariableDeclaration node) {
         return reducer.reduceVariableDeclaration(node, reduceListVariableDeclarator(reducer, node.declarators));
     }
 
-    @NotNull
+    @Nonnull
     public static <State> State reduceVariableDeclarationAssignmentTarget(
-      @NotNull Reducer<State> reducer,
-      @NotNull VariableDeclarationAssignmentTarget node) {
+      @Nonnull Reducer<State> reducer,
+      @Nonnull VariableDeclarationAssignmentTarget node) {
         if (node instanceof VariableDeclaration) {
             return reduceVariableDeclaration(reducer, (VariableDeclaration) node);
         } else if (node instanceof AssignmentTarget) {
@@ -1372,10 +1372,10 @@ public final class Director {
         }
     }
 
-    @NotNull
+    @Nonnull
     public static <State> State reduceVariableDeclarationExpression(
-      @NotNull Reducer<State> reducer,
-      @NotNull VariableDeclarationExpression node) {
+      @Nonnull Reducer<State> reducer,
+      @Nonnull VariableDeclarationExpression node) {
         if (node instanceof VariableDeclaration) {
             return reduceVariableDeclaration(reducer, (VariableDeclaration) node);
         } else if (node instanceof Expression) {
@@ -1385,45 +1385,45 @@ public final class Director {
         }
     }
 
-    @NotNull
+    @Nonnull
     public static <State> State reduceVariableDeclarationStatement(
-      @NotNull Reducer<State> reducer,
-      @NotNull VariableDeclarationStatement node) {
+      @Nonnull Reducer<State> reducer,
+      @Nonnull VariableDeclarationStatement node) {
         return reducer.reduceVariableDeclarationStatement(node, reduceVariableDeclaration(reducer, node.declaration));
     }
 
-    @NotNull
+    @Nonnull
     public static <State> State reduceVariableDeclarator(
-      @NotNull Reducer<State> reducer,
-      @NotNull VariableDeclarator node) {
+      @Nonnull Reducer<State> reducer,
+      @Nonnull VariableDeclarator node) {
         return reducer.reduceVariableDeclarator(node, reduceBinding(reducer, node.binding), reduceMaybeExpression(reducer, node.init));
     }
 
-    @NotNull
+    @Nonnull
     public static <State> State reduceWhileStatement(
-      @NotNull Reducer<State> reducer,
-      @NotNull WhileStatement node) {
+      @Nonnull Reducer<State> reducer,
+      @Nonnull WhileStatement node) {
         return reducer.reduceWhileStatement(node, reduceExpression(reducer, node.test), reduceStatement(reducer, node.body));
     }
 
-    @NotNull
+    @Nonnull
     public static <State> State reduceWithStatement(
-      @NotNull Reducer<State> reducer,
-      @NotNull WithStatement node) {
+      @Nonnull Reducer<State> reducer,
+      @Nonnull WithStatement node) {
         return reducer.reduceWithStatement(node, reduceExpression(reducer, node.object), reduceStatement(reducer, node.body));
     }
 
-    @NotNull
+    @Nonnull
     public static <State> State reduceYieldExpression(
-      @NotNull Reducer<State> reducer,
-      @NotNull YieldExpression node) {
+      @Nonnull Reducer<State> reducer,
+      @Nonnull YieldExpression node) {
         return reducer.reduceYieldExpression(node, reduceMaybeExpression(reducer, node.expression));
     }
 
-    @NotNull
+    @Nonnull
     public static <State> State reduceYieldGeneratorExpression(
-      @NotNull Reducer<State> reducer,
-      @NotNull YieldGeneratorExpression node) {
+      @Nonnull Reducer<State> reducer,
+      @Nonnull YieldGeneratorExpression node) {
         return reducer.reduceYieldGeneratorExpression(node, reduceExpression(reducer, node.expression));
     }
 }

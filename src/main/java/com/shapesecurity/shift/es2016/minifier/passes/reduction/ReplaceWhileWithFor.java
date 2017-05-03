@@ -23,15 +23,15 @@
 //import com.shapesecurity.shift.minifier.ReductionRule;
 //import com.shapesecurity.shift.visitor.DirtyState;
 //
-//import org.jetbrains.annotations.NotNull;
+//import javax.annotation.Nonnull;
 //
 //public class ReplaceWhileWithFor extends ReductionRule {
 //  /* for any X and Y, replace while(X)Y with for(;X;)Y */
 //  public static final ReplaceWhileWithFor INSTANCE = new ReplaceWhileWithFor();
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public DirtyState<Statement> transform(@NotNull WhileStatement node) {
+//  public DirtyState<Statement> transform(@Nonnull WhileStatement node) {
 //    return DirtyState.dirty(new ForStatement(Maybe.empty(), Maybe.of(node.test), Maybe.empty(),
 //        node.body));
 //  }

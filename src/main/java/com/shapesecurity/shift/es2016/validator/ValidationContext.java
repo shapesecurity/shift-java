@@ -23,7 +23,7 @@ import com.shapesecurity.shift.es2016.ast.ReturnStatement;
 import com.shapesecurity.shift.es2016.ast.YieldExpression;
 import com.shapesecurity.shift.es2016.ast.YieldGeneratorExpression;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,15 +33,15 @@ public class ValidationContext {
 
     public static final Monoid<ValidationContext> MONOID = new ValidationContextMonoid();
 
-    @NotNull
+    @Nonnull
     public final List<ValidationError> errors;
-    @NotNull
+    @Nonnull
     private final List<ReturnStatement> freeReturnStatements;
-    @NotNull
+    @Nonnull
     private final List<BindingIdentifier> bindingIdentifiersCalledDefault;
-    @NotNull
+    @Nonnull
     private final List<YieldExpression> yieldExpressionsNotInGeneratorContext;
-    @NotNull
+    @Nonnull
     private final List<YieldGeneratorExpression> yieldGeneratorExpressionsNotInGeneratorContext;
 
 
@@ -56,11 +56,11 @@ public class ValidationContext {
     }
 
     private ValidationContext(
-            @NotNull List<ValidationError> errors,
-            @NotNull List<ReturnStatement> freeReturnStatements,
-            @NotNull List<BindingIdentifier> bindingIdentifiersCalledDefault,
-            @NotNull List<YieldExpression> yieldExpressionsNotInGeneratorContext,
-            @NotNull List<YieldGeneratorExpression> yieldGeneratorExpressionsNotInGeneratorContext
+            @Nonnull List<ValidationError> errors,
+            @Nonnull List<ReturnStatement> freeReturnStatements,
+            @Nonnull List<BindingIdentifier> bindingIdentifiersCalledDefault,
+            @Nonnull List<YieldExpression> yieldExpressionsNotInGeneratorContext,
+            @Nonnull List<YieldGeneratorExpression> yieldGeneratorExpressionsNotInGeneratorContext
     ) {
         this.errors = errors;
         this.freeReturnStatements = freeReturnStatements;
@@ -69,7 +69,7 @@ public class ValidationContext {
         this.yieldGeneratorExpressionsNotInGeneratorContext = yieldGeneratorExpressionsNotInGeneratorContext;
     }
 
-    public void addFreeReturnStatement(@NotNull ReturnStatement node) {
+    public void addFreeReturnStatement(@Nonnull ReturnStatement node) {
         this.freeReturnStatements.add(node);
     }
 
@@ -82,7 +82,7 @@ public class ValidationContext {
         this.freeReturnStatements.clear();
     }
 
-    public void addBindingIdentifierCalledDefault(@NotNull BindingIdentifier node) {
+    public void addBindingIdentifierCalledDefault(@Nonnull BindingIdentifier node) {
         this.bindingIdentifiersCalledDefault.add(node);
     }
 
@@ -95,7 +95,7 @@ public class ValidationContext {
         this.bindingIdentifiersCalledDefault.clear();
     }
 
-    public void addYieldExpressionsNotInGeneratorContext(@NotNull YieldExpression node) {
+    public void addYieldExpressionsNotInGeneratorContext(@Nonnull YieldExpression node) {
         this.yieldExpressionsNotInGeneratorContext.add(node);
     }
 
@@ -108,7 +108,7 @@ public class ValidationContext {
         this.yieldExpressionsNotInGeneratorContext.clear();
     }
 
-    public void addYieldGeneratorExpressionsNotInGeneratorContext(@NotNull YieldGeneratorExpression node) {
+    public void addYieldGeneratorExpressionsNotInGeneratorContext(@Nonnull YieldGeneratorExpression node) {
         this.yieldGeneratorExpressionsNotInGeneratorContext.add(node);
     }
 
@@ -121,11 +121,11 @@ public class ValidationContext {
         this.yieldGeneratorExpressionsNotInGeneratorContext.clear();
     }
 
-    public void addError(@NotNull ValidationError error) {
+    public void addError(@Nonnull ValidationError error) {
         this.errors.add(error);
     }
 
-    ValidationContext append(@NotNull ValidationContext other) {
+    ValidationContext append(@Nonnull ValidationContext other) {
         this.errors.addAll(other.errors);
         this.freeReturnStatements.addAll(other.freeReturnStatements);
         this.bindingIdentifiersCalledDefault.addAll(other.bindingIdentifiersCalledDefault);
@@ -135,13 +135,13 @@ public class ValidationContext {
     }
 
     private static final class ValidationContextMonoid implements Monoid<ValidationContext> {
-        @NotNull
+        @Nonnull
         @Override
         public ValidationContext identity() {
             return new ValidationContext();
         }
 
-        @NotNull
+        @Nonnull
         @Override
         public ValidationContext append(ValidationContext a, ValidationContext b) {
             return a.append(b);

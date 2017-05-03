@@ -24,7 +24,7 @@ import com.shapesecurity.shift.es2016.ast.BindingIdentifier;
 import com.shapesecurity.shift.es2016.ast.Node;
 import com.shapesecurity.shift.es2016.reducer.WrappedReducer;
 import com.shapesecurity.shift.es2016.reducer.MonoidalReducer;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import static org.junit.Assert.assertTrue;
 
@@ -53,13 +53,13 @@ public class RangeCheckerReducer extends WrappedReducer<RangeCheckerReducer.Rang
 
     static class RangeChecker {
         public final static Monoid<RangeChecker> MONOID = new Monoid<RangeChecker>() {
-            @NotNull
+            @Nonnull
             @Override
             public RangeChecker identity() {
                 return new RangeChecker(Integer.MAX_VALUE, Integer.MIN_VALUE);
             }
 
-            @NotNull
+            @Nonnull
             @Override
             public RangeChecker append(RangeChecker a, RangeChecker b) {
                 assertTrue(a.end <= b.start);

@@ -16,7 +16,7 @@
 
 package com.shapesecurity.shift.es2016.ast.operators;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 public enum UnaryOperator implements Operator {
     Plus("+"),
@@ -26,15 +26,15 @@ public enum UnaryOperator implements Operator {
     Typeof("typeof"),
     Void("void"),
     Delete("delete");
-    @NotNull
+    @Nonnull
     private final String name;
 
-    private UnaryOperator(@NotNull String name) {
+    private UnaryOperator(@Nonnull String name) {
         this.name = name;
     }
 
     @Override
-    @NotNull
+    @Nonnull
     public String getName() {
         return this.name;
     }

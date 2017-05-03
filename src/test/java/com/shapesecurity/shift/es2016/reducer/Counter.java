@@ -19,7 +19,7 @@ package com.shapesecurity.shift.es2016.reducer;
 import com.shapesecurity.functional.data.Monoid;
 import com.shapesecurity.shift.es2016.ast.IdentifierExpression;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 /**
  * This class is an example of using reducing. To make a counter of certain leaf type of element,
@@ -31,9 +31,9 @@ public class Counter extends MonoidalReducer<Integer> {
     }
 
     public static class IdentifierCounter extends Counter {
-        @NotNull
+        @Nonnull
         @Override
-        public Integer reduceIdentifierExpression(@NotNull IdentifierExpression node) {
+        public Integer reduceIdentifierExpression(@Nonnull IdentifierExpression node) {
             return 1;
         }
     }

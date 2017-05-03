@@ -3,13 +3,13 @@ package com.shapesecurity.shift.es2016.codegen.location;
 import com.shapesecurity.shift.es2016.codegen.TokenStream;
 import com.shapesecurity.shift.es2016.parser.SourceLocation;
 import com.shapesecurity.shift.es2016.utils.Utils;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class TokenStreamWithLocation extends TokenStream {
-	@NotNull
+	@Nonnull
 	public LocationMeta meta;
 
 	protected int line = 0;
@@ -19,7 +19,7 @@ public class TokenStreamWithLocation extends TokenStream {
 
 	protected static final Pattern linebreakPattern = Pattern.compile("\r\n?|[\n\u2028\u2029]");
 
-	@NotNull
+	@Nonnull
 	public SourceLocation getLocation() {
 		int index = this.writer.length();
 		if (this.lastCachedSourceLocation != this.writer.length()) {
@@ -30,19 +30,19 @@ public class TokenStreamWithLocation extends TokenStream {
 	}
 
 
-	public TokenStreamWithLocation(@NotNull StringBuilder writer, @NotNull LocationMeta meta) {
+	public TokenStreamWithLocation(@Nonnull StringBuilder writer, @Nonnull LocationMeta meta) {
 		super(writer);
 		this.meta = meta;
 	}
 
 	@Override
-	public void putRaw(@NotNull String tokenStr) {
+	public void putRaw(@Nonnull String tokenStr) {
 		this.meta.startNodes(this.getLocation());
 		this.writer.append(tokenStr);
 	}
 
 	@Override
-	public void put(@NotNull String tokenStr) {
+	public void put(@Nonnull String tokenStr) {
 		if (tokenStr.length() == 0) return;
 
 		if (this.optionalSemi) {

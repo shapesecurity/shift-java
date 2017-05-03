@@ -21,7 +21,7 @@
 //
 //import com.shapesecurity.shift.visitor.disabled.CloneReducer;
 //import com.shapesecurity.shift.visitor.disabled.LazyCloner;
-//import org.jetbrains.annotations.NotNull;
+//import javax.annotation.Nonnull;
 //
 //import com.shapesecurity.functional.data.ImmutableList;
 //import com.shapesecurity.shift.TestBase;
@@ -64,21 +64,21 @@
 //  public void testTransformSimple() throws JsError {
 //    testTransform(
 //        "3", "2", new CloneReducer() {
-//          @NotNull
+//          @Nonnull
 //          @Override
 //          public Expression reduceLiteralNumericExpression(
-//              @NotNull LiteralNumericExpression node,
-//              @NotNull ImmutableList<Branch> path) {
+//              @Nonnull LiteralNumericExpression node,
+//              @Nonnull ImmutableList<Branch> path) {
 //            return new LiteralNumericExpression(node.value + 1);
 //          }
 //        });
 //    testTransform(
 //        "3+5", "2+4", new CloneReducer() {
-//          @NotNull
+//          @Nonnull
 //          @Override
 //          public Expression reduceLiteralNumericExpression(
-//              @NotNull LiteralNumericExpression node,
-//              @NotNull ImmutableList<Branch> path) {
+//              @Nonnull LiteralNumericExpression node,
+//              @Nonnull ImmutableList<Branch> path) {
 //            return new LiteralNumericExpression(node.value + 1);
 //          }
 //        });

@@ -21,7 +21,7 @@ import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.functional.data.Maybe;
 import com.shapesecurity.shift.es2016.ast.Node;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.util.Collection;
 import java.util.LinkedHashMap;
@@ -29,24 +29,24 @@ import java.util.Map;
 
 public class Scope {
 
-    @NotNull
+    @Nonnull
     public final Node astNode;
-    @NotNull
+    @Nonnull
     public final HashTable<String, ImmutableList<Reference>> through;
-    @NotNull
+    @Nonnull
     public final ImmutableList<Scope> children;
-    @NotNull
+    @Nonnull
     public final Type type;
     public final boolean dynamic;
     protected final Map<String, Variable> variables = new LinkedHashMap<>();
 
     Scope(
-            @NotNull ImmutableList<Scope> children,
-            @NotNull ImmutableList<Variable> variables,
-            @NotNull HashTable<String, ImmutableList<Reference>> through,
-            @NotNull Type type,
+            @Nonnull ImmutableList<Scope> children,
+            @Nonnull ImmutableList<Variable> variables,
+            @Nonnull HashTable<String, ImmutableList<Reference>> through,
+            @Nonnull Type type,
             boolean isDynamic,
-            @NotNull Node astNode) {
+            @Nonnull Node astNode) {
         this.children = children;
         this.through = through;
         this.type = type;
@@ -63,12 +63,12 @@ public class Scope {
         return (this.type == Type.Global);
     }
 
-    @NotNull
-    public final Maybe<Variable> lookupVariable(@NotNull String name) {
+    @Nonnull
+    public final Maybe<Variable> lookupVariable(@Nonnull String name) {
         return Maybe.fromNullable(this.variables.get(name));
     }
 
-    @NotNull
+    @Nonnull
     public final Collection<Variable> variables() {
         return this.variables.values();
     }

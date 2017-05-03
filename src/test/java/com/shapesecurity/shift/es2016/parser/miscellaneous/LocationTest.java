@@ -29,7 +29,7 @@ import com.shapesecurity.shift.es2016.parser.ParserWithLocation;
 import com.shapesecurity.shift.es2016.parser.SourceLocation;
 import com.shapesecurity.shift.es2016.parser.SourceSpan;
 import junit.framework.TestCase;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import org.junit.Test;
 
 public class LocationTest extends TestCase {
@@ -39,13 +39,13 @@ public class LocationTest extends TestCase {
 
 	private Module tree;
 
-	private void init(@NotNull String source) throws JsError {
+	private void init(@Nonnull String source) throws JsError {
 		this.source = source;
 		this.parserWithLocation = new ParserWithLocation();
 		this.tree = this.parserWithLocation.parseModule(this.source);
 	}
 
-	private void checkText(@NotNull Node node, @NotNull String expected) {
+	private void checkText(@Nonnull Node node, @Nonnull String expected) {
 		Maybe<SourceSpan> maybeLocation = this.parserWithLocation.getLocation(node);
 		assertTrue(maybeLocation.isJust());
 
@@ -56,7 +56,7 @@ public class LocationTest extends TestCase {
 		assertEquals(expected, actual);
 	}
 
-	private void checkLocation(@NotNull Node node, @NotNull SourceSpan expected) {
+	private void checkLocation(@Nonnull Node node, @Nonnull SourceSpan expected) {
 		Maybe<SourceSpan> maybeLocation = this.parserWithLocation.getLocation(node);
 		assertTrue(maybeLocation.isJust());
 

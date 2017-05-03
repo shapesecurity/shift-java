@@ -16,21 +16,21 @@
 
 package com.shapesecurity.shift.es2016.codegen;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 public class FormattedCodeRepFactory extends CodeRepFactory {
-    @NotNull
+    @Nonnull
     public CodeRep semi() {
         return new FormattedCodeRep.Semi();
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public CodeRep brace(@NotNull CodeRep rep) {
+    public CodeRep brace(@Nonnull CodeRep rep) {
         return new FormattedCodeRep.Brace(rep);
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public CodeRep semiOp() {
         return new FormattedCodeRep.SemiOp();

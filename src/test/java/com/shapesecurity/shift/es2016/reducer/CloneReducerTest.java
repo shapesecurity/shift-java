@@ -13,7 +13,7 @@ import com.shapesecurity.shift.es2016.parser.Parser;
 
 import static org.junit.Assert.assertEquals;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import org.junit.Test;
 
 public class CloneReducerTest extends CloneReducerTestCase {
@@ -705,8 +705,8 @@ public class CloneReducerTest extends CloneReducerTestCase {
 
     class ReplaceStaticMemberExpressionWithComputedMemberExpression extends ReconstructingReducer {
         @Override
-        @NotNull
-        public ComputedMemberExpression reduceStaticMemberExpression(@NotNull StaticMemberExpression node, @NotNull Node object) {
+        @Nonnull
+        public ComputedMemberExpression reduceStaticMemberExpression(@Nonnull StaticMemberExpression node, @Nonnull Node object) {
             return new ComputedMemberExpression(new LiteralNullExpression(), new LiteralNullExpression());
         }
     }
@@ -716,8 +716,8 @@ public class CloneReducerTest extends CloneReducerTestCase {
 
     class ReplaceBlockStatementsWithEmptyStatements extends ReconstructingReducer {
         @Override
-        @NotNull
-        public EmptyStatement reduceBlockStatement(@NotNull BlockStatement blockStatement, @NotNull Node block) {
+        @Nonnull
+        public EmptyStatement reduceBlockStatement(@Nonnull BlockStatement blockStatement, @Nonnull Node block) {
             return new EmptyStatement();
         }
     }

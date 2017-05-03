@@ -16,7 +16,7 @@
 
 package com.shapesecurity.shift.es2016.utils;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.math.BigInteger;
 
@@ -27,7 +27,7 @@ public final class D2A {
     private D2A() {
     }
 
-    private static BigInteger power(@NotNull BigInteger b, int p) {
+    private static BigInteger power(@Nonnull BigInteger b, int p) {
         BigInteger result;
         if (p == 0) {
             result = BigInteger.ONE;
@@ -43,8 +43,8 @@ public final class D2A {
         return result;
     }
 
-    @NotNull
-    private static String digitTrim(@NotNull BigInteger value, @NotNull String strValue, @NotNull BigInteger err) {
+    @Nonnull
+    private static String digitTrim(@Nonnull BigInteger value, @Nonnull String strValue, @Nonnull BigInteger err) {
         if (err.signum() == 0) {
             return strValue;
         }
@@ -63,7 +63,7 @@ public final class D2A {
     }
 
     // Gives a 16 digits decimal and an exponential that str[0:0]+"."+str[1:]+"e"+exp.toString is correct.
-    @NotNull
+    @Nonnull
     private static DtoAInfo formatNumberHelper(double number) {
         long p = Double.doubleToRawLongBits(number);
         long shift = p >>> 52;
@@ -94,7 +94,7 @@ public final class D2A {
     }
 
     @SuppressWarnings("StringContatenationInLoop")
-    @NotNull
+    @Nonnull
     public static String d2a(double number) {
         if (Double.isNaN(number)) {
             return "NaN";
@@ -141,7 +141,7 @@ public final class D2A {
         }
     }
 
-    @NotNull
+    @Nonnull
     public static String shortD2a(double n) {
         String s = d2a(n);
         if (n >= 1e3 && n % 10 == 0) {
@@ -172,10 +172,10 @@ public final class D2A {
     private static final class DtoAInfo {
         public final int exp;
         @SuppressWarnings("PublicField")
-        @NotNull
+        @Nonnull
         public String digits;
 
-        DtoAInfo(@NotNull String digits, int exp) {
+        DtoAInfo(@Nonnull String digits, int exp) {
             this.digits = digits;
             this.exp = exp;
         }

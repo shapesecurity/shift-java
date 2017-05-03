@@ -18,13 +18,13 @@ package com.shapesecurity.shift.es2016.codegen;
 
 import com.shapesecurity.shift.es2016.utils.D2A;
 import com.shapesecurity.shift.es2016.utils.Utils;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import java.util.regex.Pattern;
 
 public class TokenStream {
-    @NotNull
+    @Nonnull
     protected final StringBuilder writer;
     protected char lastChar = (char) -1;
     @Nullable
@@ -33,12 +33,12 @@ public class TokenStream {
 
     protected static final Pattern digitPattern = Pattern.compile("\\d+");
 
-    public TokenStream(@NotNull StringBuilder writer) {
+    public TokenStream(@Nonnull StringBuilder writer) {
         this.writer = writer;
     }
 
-    @NotNull
-    protected static boolean numberNeedsDoubleDot(@NotNull String fragment) {
+    @Nonnull
+    protected static boolean numberNeedsDoubleDot(@Nonnull String fragment) {
         return digitPattern.matcher(fragment).matches();
     }
 
@@ -52,11 +52,11 @@ public class TokenStream {
         this.optionalSemi = true;
     }
 
-    public void putRaw(@NotNull String tokenStr) {
+    public void putRaw(@Nonnull String tokenStr) {
         this.writer.append(tokenStr);
     }
 
-    public void put(@NotNull String tokenStr) {
+    public void put(@Nonnull String tokenStr) {
         if (this.optionalSemi) {
             this.optionalSemi = false;
             if (!tokenStr.equals("}")) {

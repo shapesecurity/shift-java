@@ -127,7 +127,7 @@ import com.shapesecurity.shift.es2016.reducer.Director;
 import com.shapesecurity.shift.es2016.reducer.Reducer;
 import com.shapesecurity.shift.es2016.utils.Utils;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 
 public class Serializer implements Reducer<StringBuilder> {
@@ -136,17 +136,17 @@ public class Serializer implements Reducer<StringBuilder> {
 
     protected Serializer() {}
 
-    public static String serialize(@NotNull Program program) {
+    public static String serialize(@Nonnull Program program) {
         return Director.reduceProgram(INSTANCE, program).toString();
     }
 
-    @NotNull
-    private static JsonObjectBuilder b(@NotNull String type) {
+    @Nonnull
+    private static JsonObjectBuilder b(@Nonnull String type) {
         return new JsonObjectBuilder().add("type", type);
     }
 
-    @NotNull
-    private static StringBuilder list(@NotNull ImmutableList<StringBuilder> values) {
+    @Nonnull
+    private static StringBuilder list(@Nonnull ImmutableList<StringBuilder> values) {
         if (values.isEmpty()) {
             return new StringBuilder("[]");
         }
@@ -158,8 +158,8 @@ public class Serializer implements Reducer<StringBuilder> {
         return sb;
     }
 
-    @NotNull
-    private static StringBuilder o(@NotNull Maybe<StringBuilder> el) {
+    @Nonnull
+    private static StringBuilder o(@Nonnull Maybe<StringBuilder> el) {
         return el.orJust(new StringBuilder("null"));
     }
 
@@ -167,98 +167,98 @@ public class Serializer implements Reducer<StringBuilder> {
         final StringBuilder text = new StringBuilder("{");
         boolean first = true;
 
-        @NotNull
-        JsonObjectBuilder add(@NotNull String property, boolean value) {
+        @Nonnull
+        JsonObjectBuilder add(@Nonnull String property, boolean value) {
             optionalComma();
             this.text.append(Utils.escapeStringLiteral(property)).append(":").append(value);
             return this;
         }
 
-        @NotNull
-        JsonObjectBuilder add(@NotNull String property, @NotNull String value) {
+        @Nonnull
+        JsonObjectBuilder add(@Nonnull String property, @Nonnull String value) {
             optionalComma();
             this.text.append(Utils.escapeStringLiteral(property)).append(":").append(Utils.escapeStringLiteral(value));
             return this;
         }
 
-        @NotNull
-        JsonObjectBuilder add(@NotNull String property, @NotNull Number value) {
+        @Nonnull
+        JsonObjectBuilder add(@Nonnull String property, @Nonnull Number value) {
             optionalComma();
             this.text.append(Utils.escapeStringLiteral(property)).append(":").append(value);
             return this;
         }
 
-        @NotNull
-        JsonObjectBuilder add(@NotNull String property, @NotNull BinaryOperator value) {
+        @Nonnull
+        JsonObjectBuilder add(@Nonnull String property, @Nonnull BinaryOperator value) {
             optionalComma();
             this.text.append(Utils.escapeStringLiteral(property)).append(":").append(Utils.escapeStringLiteral(value.getName()));
             return this;
         }
 
-        @NotNull
-        JsonObjectBuilder add(@NotNull String property, @NotNull CompoundAssignmentOperator value) {
+        @Nonnull
+        JsonObjectBuilder add(@Nonnull String property, @Nonnull CompoundAssignmentOperator value) {
             optionalComma();
             this.text.append(Utils.escapeStringLiteral(property)).append(":").append(Utils.escapeStringLiteral(value.getName()));
             return this;
         }
 
-        @NotNull
-        JsonObjectBuilder add(@NotNull String property, @NotNull UnaryOperator value) {
+        @Nonnull
+        JsonObjectBuilder add(@Nonnull String property, @Nonnull UnaryOperator value) {
             optionalComma();
             this.text.append(Utils.escapeStringLiteral(property)).append(":").append(Utils.escapeStringLiteral(value.getName()));
             return this;
         }
 
-        @NotNull
-        JsonObjectBuilder add(@NotNull String property, @NotNull UpdateOperator value) {
+        @Nonnull
+        JsonObjectBuilder add(@Nonnull String property, @Nonnull UpdateOperator value) {
             optionalComma();
             this.text.append(Utils.escapeStringLiteral(property)).append(":").append(Utils.escapeStringLiteral(value.getName()));
             return this;
         }
 
-        @NotNull
-        JsonObjectBuilder add(@NotNull String property, @NotNull VariableDeclarationKind value) {
+        @Nonnull
+        JsonObjectBuilder add(@Nonnull String property, @Nonnull VariableDeclarationKind value) {
             optionalComma();
             this.text.append(Utils.escapeStringLiteral(property)).append(":").append(Utils.escapeStringLiteral(value.name));
             return this;
         }
 
-        @NotNull
-        JsonObjectBuilder add(@NotNull String property, @NotNull StringBuilder value) {
+        @Nonnull
+        JsonObjectBuilder add(@Nonnull String property, @Nonnull StringBuilder value) {
             optionalComma();
             this.text.append(Utils.escapeStringLiteral(property)).append(":").append(value);
             return this;
         }
 
-        @NotNull
-        JsonObjectBuilder addMaybeString(@NotNull String property, @NotNull Maybe<String> value) {
+        @Nonnull
+        JsonObjectBuilder addMaybeString(@Nonnull String property, @Nonnull Maybe<String> value) {
             optionalComma();
             this.text.append(Utils.escapeStringLiteral(property)).append(":").append(value.map(Utils::escapeStringLiteral).orJust("null"));
             return this;
         }
 
-        @NotNull
-        JsonObjectBuilder add(@NotNull String property, @NotNull Maybe<StringBuilder> value) {
+        @Nonnull
+        JsonObjectBuilder add(@Nonnull String property, @Nonnull Maybe<StringBuilder> value) {
             optionalComma();
             this.text.append(Utils.escapeStringLiteral(property)).append(":").append(o(value));
             return this;
         }
 
-        @NotNull
-        JsonObjectBuilder add(@NotNull String property, @NotNull ImmutableList<StringBuilder> value) {
+        @Nonnull
+        JsonObjectBuilder add(@Nonnull String property, @Nonnull ImmutableList<StringBuilder> value) {
             optionalComma();
             this.text.append(Utils.escapeStringLiteral(property)).append(":").append(list(value));
             return this;
         }
 
-        @NotNull
-        JsonObjectBuilder addListMaybe(@NotNull String property, @NotNull ImmutableList<Maybe<StringBuilder>> value) { // because type erasure
+        @Nonnull
+        JsonObjectBuilder addListMaybe(@Nonnull String property, @Nonnull ImmutableList<Maybe<StringBuilder>> value) { // because type erasure
             optionalComma();
             this.text.append(Utils.escapeStringLiteral(property)).append(":").append(list(value.map(Serializer::o)));
             return this;
         }
 
-        @NotNull
+        @Nonnull
         StringBuilder done() {
             this.text.append("}");
             return this.text;
@@ -273,579 +273,579 @@ public class Serializer implements Reducer<StringBuilder> {
         }
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public StringBuilder reduceArrayAssignmentTarget(@NotNull ArrayAssignmentTarget node, @NotNull ImmutableList<Maybe<StringBuilder>> elements, @NotNull Maybe<StringBuilder> rest) {
+    public StringBuilder reduceArrayAssignmentTarget(@Nonnull ArrayAssignmentTarget node, @Nonnull ImmutableList<Maybe<StringBuilder>> elements, @Nonnull Maybe<StringBuilder> rest) {
         return b("ArrayAssignmentTarget").addListMaybe("elements", elements).add("rest", rest).done();
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public StringBuilder reduceArrayBinding(@NotNull ArrayBinding node, @NotNull ImmutableList<Maybe<StringBuilder>> elements, @NotNull Maybe<StringBuilder> rest) {
+    public StringBuilder reduceArrayBinding(@Nonnull ArrayBinding node, @Nonnull ImmutableList<Maybe<StringBuilder>> elements, @Nonnull Maybe<StringBuilder> rest) {
         return b("ArrayBinding").addListMaybe("elements", elements).add("rest", rest).done();
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public StringBuilder reduceArrayExpression(@NotNull ArrayExpression node, @NotNull ImmutableList<Maybe<StringBuilder>> elements) {
+    public StringBuilder reduceArrayExpression(@Nonnull ArrayExpression node, @Nonnull ImmutableList<Maybe<StringBuilder>> elements) {
         return b("ArrayExpression").addListMaybe("elements", elements).done();
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public StringBuilder reduceArrowExpression(@NotNull ArrowExpression node, @NotNull StringBuilder params, @NotNull StringBuilder body) {
+    public StringBuilder reduceArrowExpression(@Nonnull ArrowExpression node, @Nonnull StringBuilder params, @Nonnull StringBuilder body) {
         return b("ArrowExpression").add("params", params).add("body", body).done();
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public StringBuilder reduceAssignmentExpression(@NotNull AssignmentExpression node, @NotNull StringBuilder binding, @NotNull StringBuilder expression) {
+    public StringBuilder reduceAssignmentExpression(@Nonnull AssignmentExpression node, @Nonnull StringBuilder binding, @Nonnull StringBuilder expression) {
         return b("AssignmentExpression").add("binding", binding).add("expression", expression).done();
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public StringBuilder reduceAssignmentTargetIdentifier(@NotNull AssignmentTargetIdentifier node) {
+    public StringBuilder reduceAssignmentTargetIdentifier(@Nonnull AssignmentTargetIdentifier node) {
         return b("AssignmentTargetIdentifier").add("name", node.name).done();
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public StringBuilder reduceAssignmentTargetPropertyIdentifier(@NotNull AssignmentTargetPropertyIdentifier node, @NotNull StringBuilder binding, @NotNull Maybe<StringBuilder> init) {
+    public StringBuilder reduceAssignmentTargetPropertyIdentifier(@Nonnull AssignmentTargetPropertyIdentifier node, @Nonnull StringBuilder binding, @Nonnull Maybe<StringBuilder> init) {
         return b("AssignmentTargetPropertyIdentifier").add("binding", binding).add("init", init).done();
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public StringBuilder reduceAssignmentTargetPropertyProperty(@NotNull AssignmentTargetPropertyProperty node, @NotNull StringBuilder name, @NotNull StringBuilder binding) {
+    public StringBuilder reduceAssignmentTargetPropertyProperty(@Nonnull AssignmentTargetPropertyProperty node, @Nonnull StringBuilder name, @Nonnull StringBuilder binding) {
         return b("AssignmentTargetPropertyProperty").add("name", name).add("binding", binding).done();
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public StringBuilder reduceAssignmentTargetWithDefault(@NotNull AssignmentTargetWithDefault node, @NotNull StringBuilder binding, @NotNull StringBuilder init) {
+    public StringBuilder reduceAssignmentTargetWithDefault(@Nonnull AssignmentTargetWithDefault node, @Nonnull StringBuilder binding, @Nonnull StringBuilder init) {
         return b("AssignmentTargetWithDefault").add("binding", binding).add("init", init).done();
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public StringBuilder reduceBinaryExpression(@NotNull BinaryExpression node, @NotNull StringBuilder left, @NotNull StringBuilder right) {
+    public StringBuilder reduceBinaryExpression(@Nonnull BinaryExpression node, @Nonnull StringBuilder left, @Nonnull StringBuilder right) {
         return b("BinaryExpression").add("left", left).add("operator", node.operator).add("right", right).done();
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public StringBuilder reduceBindingIdentifier(@NotNull BindingIdentifier node) {
+    public StringBuilder reduceBindingIdentifier(@Nonnull BindingIdentifier node) {
         return b("BindingIdentifier").add("name", node.name).done();
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public StringBuilder reduceBindingPropertyIdentifier(@NotNull BindingPropertyIdentifier node, @NotNull StringBuilder binding, @NotNull Maybe<StringBuilder> init) {
+    public StringBuilder reduceBindingPropertyIdentifier(@Nonnull BindingPropertyIdentifier node, @Nonnull StringBuilder binding, @Nonnull Maybe<StringBuilder> init) {
         return b("BindingPropertyIdentifier").add("binding", binding).add("init", init).done();
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public StringBuilder reduceBindingPropertyProperty(@NotNull BindingPropertyProperty node, @NotNull StringBuilder name, @NotNull StringBuilder binding) {
+    public StringBuilder reduceBindingPropertyProperty(@Nonnull BindingPropertyProperty node, @Nonnull StringBuilder name, @Nonnull StringBuilder binding) {
         return b("BindingPropertyProperty").add("name", name).add("binding", binding).done();
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public StringBuilder reduceBindingWithDefault(@NotNull BindingWithDefault node, @NotNull StringBuilder binding, @NotNull StringBuilder init) {
+    public StringBuilder reduceBindingWithDefault(@Nonnull BindingWithDefault node, @Nonnull StringBuilder binding, @Nonnull StringBuilder init) {
         return b("BindingWithDefault").add("binding", binding).add("init", init).done();
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public StringBuilder reduceBlock(@NotNull Block node, @NotNull ImmutableList<StringBuilder> statements) {
+    public StringBuilder reduceBlock(@Nonnull Block node, @Nonnull ImmutableList<StringBuilder> statements) {
         return b("Block").add("statements", statements).done();
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public StringBuilder reduceBlockStatement(@NotNull BlockStatement node, @NotNull StringBuilder block) {
+    public StringBuilder reduceBlockStatement(@Nonnull BlockStatement node, @Nonnull StringBuilder block) {
         return b("BlockStatement").add("block", block).done();
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public StringBuilder reduceBreakStatement(@NotNull BreakStatement node) {
+    public StringBuilder reduceBreakStatement(@Nonnull BreakStatement node) {
         return b("BreakStatement").addMaybeString("label", node.label).done();
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public StringBuilder reduceCallExpression(@NotNull CallExpression node, @NotNull StringBuilder callee, @NotNull ImmutableList<StringBuilder> arguments) {
+    public StringBuilder reduceCallExpression(@Nonnull CallExpression node, @Nonnull StringBuilder callee, @Nonnull ImmutableList<StringBuilder> arguments) {
         return b("CallExpression").add("callee", callee).add("arguments", arguments).done();
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public StringBuilder reduceCatchClause(@NotNull CatchClause node, @NotNull StringBuilder binding, @NotNull StringBuilder body) {
+    public StringBuilder reduceCatchClause(@Nonnull CatchClause node, @Nonnull StringBuilder binding, @Nonnull StringBuilder body) {
         return b("CatchClause").add("binding", binding).add("body", body).done();
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public StringBuilder reduceClassDeclaration(@NotNull ClassDeclaration node, @NotNull StringBuilder name, @NotNull Maybe<StringBuilder> _super, @NotNull ImmutableList<StringBuilder> elements) {
+    public StringBuilder reduceClassDeclaration(@Nonnull ClassDeclaration node, @Nonnull StringBuilder name, @Nonnull Maybe<StringBuilder> _super, @Nonnull ImmutableList<StringBuilder> elements) {
         return b("ClassDeclaration").add("name", name).add("super", _super).add("elements", elements).done();
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public StringBuilder reduceClassElement(@NotNull ClassElement node, @NotNull StringBuilder method) {
+    public StringBuilder reduceClassElement(@Nonnull ClassElement node, @Nonnull StringBuilder method) {
         return b("ClassElement").add("isStatic", node.isStatic).add("method", method).done();
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public StringBuilder reduceClassExpression(@NotNull ClassExpression node, @NotNull Maybe<StringBuilder> name, @NotNull Maybe<StringBuilder> _super, @NotNull ImmutableList<StringBuilder> elements) {
+    public StringBuilder reduceClassExpression(@Nonnull ClassExpression node, @Nonnull Maybe<StringBuilder> name, @Nonnull Maybe<StringBuilder> _super, @Nonnull ImmutableList<StringBuilder> elements) {
         return b("ClassExpression").add("name", name).add("super", _super).add("elements", elements).done();
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public StringBuilder reduceCompoundAssignmentExpression(@NotNull CompoundAssignmentExpression node, @NotNull StringBuilder binding, @NotNull StringBuilder expression) {
+    public StringBuilder reduceCompoundAssignmentExpression(@Nonnull CompoundAssignmentExpression node, @Nonnull StringBuilder binding, @Nonnull StringBuilder expression) {
         return b("CompoundAssignmentExpression").add("binding", binding).add("operator", node.operator).add("expression", expression).done();
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public StringBuilder reduceComputedMemberAssignmentTarget(@NotNull ComputedMemberAssignmentTarget node, @NotNull StringBuilder object, @NotNull StringBuilder expression) {
+    public StringBuilder reduceComputedMemberAssignmentTarget(@Nonnull ComputedMemberAssignmentTarget node, @Nonnull StringBuilder object, @Nonnull StringBuilder expression) {
         return b("ComputedMemberAssignmentTarget").add("object", object).add("expression", expression).done();
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public StringBuilder reduceComputedMemberExpression(@NotNull ComputedMemberExpression node, @NotNull StringBuilder object, @NotNull StringBuilder expression) {
+    public StringBuilder reduceComputedMemberExpression(@Nonnull ComputedMemberExpression node, @Nonnull StringBuilder object, @Nonnull StringBuilder expression) {
         return b("ComputedMemberExpression").add("object", object).add("expression", expression).done();
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public StringBuilder reduceComputedPropertyName(@NotNull ComputedPropertyName node, @NotNull StringBuilder expression) {
+    public StringBuilder reduceComputedPropertyName(@Nonnull ComputedPropertyName node, @Nonnull StringBuilder expression) {
         return b("ComputedPropertyName").add("expression", expression).done();
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public StringBuilder reduceConditionalExpression(@NotNull ConditionalExpression node, @NotNull StringBuilder test, @NotNull StringBuilder consequent, @NotNull StringBuilder alternate) {
+    public StringBuilder reduceConditionalExpression(@Nonnull ConditionalExpression node, @Nonnull StringBuilder test, @Nonnull StringBuilder consequent, @Nonnull StringBuilder alternate) {
         return b("ConditionalExpression").add("test", test).add("consequent", consequent).add("alternate", alternate).done();
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public StringBuilder reduceContinueStatement(@NotNull ContinueStatement node) {
+    public StringBuilder reduceContinueStatement(@Nonnull ContinueStatement node) {
         return b("ContinueStatement").addMaybeString("label", node.label).done();
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public StringBuilder reduceDataProperty(@NotNull DataProperty node, @NotNull StringBuilder name, @NotNull StringBuilder expression) {
+    public StringBuilder reduceDataProperty(@Nonnull DataProperty node, @Nonnull StringBuilder name, @Nonnull StringBuilder expression) {
         return b("DataProperty").add("name", name).add("expression", expression).done();
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public StringBuilder reduceDebuggerStatement(@NotNull DebuggerStatement node) {
+    public StringBuilder reduceDebuggerStatement(@Nonnull DebuggerStatement node) {
         return b("DebuggerStatement").done();
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public StringBuilder reduceDirective(@NotNull Directive node) {
+    public StringBuilder reduceDirective(@Nonnull Directive node) {
         return b("Directive").add("rawValue", node.rawValue).done();
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public StringBuilder reduceDoWhileStatement(@NotNull DoWhileStatement node, @NotNull StringBuilder body, @NotNull StringBuilder test) {
+    public StringBuilder reduceDoWhileStatement(@Nonnull DoWhileStatement node, @Nonnull StringBuilder body, @Nonnull StringBuilder test) {
         return b("DoWhileStatement").add("body", body).add("test", test).done();
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public StringBuilder reduceEmptyStatement(@NotNull EmptyStatement node) {
+    public StringBuilder reduceEmptyStatement(@Nonnull EmptyStatement node) {
         return b("EmptyStatement").done();
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public StringBuilder reduceExport(@NotNull Export node, @NotNull StringBuilder declaration) {
+    public StringBuilder reduceExport(@Nonnull Export node, @Nonnull StringBuilder declaration) {
         return b("Export").add("declaration", declaration).done();
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public StringBuilder reduceExportAllFrom(@NotNull ExportAllFrom node) {
+    public StringBuilder reduceExportAllFrom(@Nonnull ExportAllFrom node) {
         return b("ExportAllFrom").add("moduleSpecifier", node.moduleSpecifier).done();
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public StringBuilder reduceExportDefault(@NotNull ExportDefault node, @NotNull StringBuilder body) {
+    public StringBuilder reduceExportDefault(@Nonnull ExportDefault node, @Nonnull StringBuilder body) {
         return b("ExportDefault").add("body", body).done();
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public StringBuilder reduceExportFrom(@NotNull ExportFrom node, @NotNull ImmutableList<StringBuilder> namedExports) {
+    public StringBuilder reduceExportFrom(@Nonnull ExportFrom node, @Nonnull ImmutableList<StringBuilder> namedExports) {
         return b("ExportFrom").add("namedExports", namedExports).add("moduleSpecifier", node.moduleSpecifier).done();
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public StringBuilder reduceExportFromSpecifier(@NotNull ExportFromSpecifier node) {
+    public StringBuilder reduceExportFromSpecifier(@Nonnull ExportFromSpecifier node) {
         return b("ExportFromSpecifier").add("name", node.name).addMaybeString("exportedName", node.exportedName).done();
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public StringBuilder reduceExportLocalSpecifier(@NotNull ExportLocalSpecifier node, @NotNull StringBuilder name) {
+    public StringBuilder reduceExportLocalSpecifier(@Nonnull ExportLocalSpecifier node, @Nonnull StringBuilder name) {
         return b("ExportLocalSpecifier").add("name", name).addMaybeString("exportedName", node.exportedName).done();
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public StringBuilder reduceExportLocals(@NotNull ExportLocals node, @NotNull ImmutableList<StringBuilder> namedExports) {
+    public StringBuilder reduceExportLocals(@Nonnull ExportLocals node, @Nonnull ImmutableList<StringBuilder> namedExports) {
         return b("ExportLocals").add("namedExports", namedExports).done();
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public StringBuilder reduceExpressionStatement(@NotNull ExpressionStatement node, @NotNull StringBuilder expression) {
+    public StringBuilder reduceExpressionStatement(@Nonnull ExpressionStatement node, @Nonnull StringBuilder expression) {
         return b("ExpressionStatement").add("expression", expression).done();
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public StringBuilder reduceForInStatement(@NotNull ForInStatement node, @NotNull StringBuilder left, @NotNull StringBuilder right, @NotNull StringBuilder body) {
+    public StringBuilder reduceForInStatement(@Nonnull ForInStatement node, @Nonnull StringBuilder left, @Nonnull StringBuilder right, @Nonnull StringBuilder body) {
         return b("ForInStatement").add("left", left).add("right", right).add("body", body).done();
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public StringBuilder reduceForOfStatement(@NotNull ForOfStatement node, @NotNull StringBuilder left, @NotNull StringBuilder right, @NotNull StringBuilder body) {
+    public StringBuilder reduceForOfStatement(@Nonnull ForOfStatement node, @Nonnull StringBuilder left, @Nonnull StringBuilder right, @Nonnull StringBuilder body) {
         return b("ForOfStatement").add("left", left).add("right", right).add("body", body).done();
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public StringBuilder reduceForStatement(@NotNull ForStatement node, @NotNull Maybe<StringBuilder> init, @NotNull Maybe<StringBuilder> test, @NotNull Maybe<StringBuilder> update, @NotNull StringBuilder body) {
+    public StringBuilder reduceForStatement(@Nonnull ForStatement node, @Nonnull Maybe<StringBuilder> init, @Nonnull Maybe<StringBuilder> test, @Nonnull Maybe<StringBuilder> update, @Nonnull StringBuilder body) {
         return b("ForStatement").add("init", init).add("test", test).add("update", update).add("body", body).done();
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public StringBuilder reduceFormalParameters(@NotNull FormalParameters node, @NotNull ImmutableList<StringBuilder> items, @NotNull Maybe<StringBuilder> rest) {
+    public StringBuilder reduceFormalParameters(@Nonnull FormalParameters node, @Nonnull ImmutableList<StringBuilder> items, @Nonnull Maybe<StringBuilder> rest) {
         return b("FormalParameters").add("items", items).add("rest", rest).done();
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public StringBuilder reduceFunctionBody(@NotNull FunctionBody node, @NotNull ImmutableList<StringBuilder> directives, @NotNull ImmutableList<StringBuilder> statements) {
+    public StringBuilder reduceFunctionBody(@Nonnull FunctionBody node, @Nonnull ImmutableList<StringBuilder> directives, @Nonnull ImmutableList<StringBuilder> statements) {
         return b("FunctionBody").add("directives", directives).add("statements", statements).done();
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public StringBuilder reduceFunctionDeclaration(@NotNull FunctionDeclaration node, @NotNull StringBuilder name, @NotNull StringBuilder params, @NotNull StringBuilder body) {
+    public StringBuilder reduceFunctionDeclaration(@Nonnull FunctionDeclaration node, @Nonnull StringBuilder name, @Nonnull StringBuilder params, @Nonnull StringBuilder body) {
         return b("FunctionDeclaration").add("isGenerator", node.isGenerator).add("name", name).add("params", params).add("body", body).done();
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public StringBuilder reduceFunctionExpression(@NotNull FunctionExpression node, @NotNull Maybe<StringBuilder> name, @NotNull StringBuilder params, @NotNull StringBuilder body) {
+    public StringBuilder reduceFunctionExpression(@Nonnull FunctionExpression node, @Nonnull Maybe<StringBuilder> name, @Nonnull StringBuilder params, @Nonnull StringBuilder body) {
         return b("FunctionExpression").add("isGenerator", node.isGenerator).add("name", name).add("params", params).add("body", body).done();
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public StringBuilder reduceGetter(@NotNull Getter node, @NotNull StringBuilder name, @NotNull StringBuilder body) {
+    public StringBuilder reduceGetter(@Nonnull Getter node, @Nonnull StringBuilder name, @Nonnull StringBuilder body) {
         return b("Getter").add("name", name).add("body", body).done();
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public StringBuilder reduceIdentifierExpression(@NotNull IdentifierExpression node) {
+    public StringBuilder reduceIdentifierExpression(@Nonnull IdentifierExpression node) {
         return b("IdentifierExpression").add("name", node.name).done();
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public StringBuilder reduceIfStatement(@NotNull IfStatement node, @NotNull StringBuilder test, @NotNull StringBuilder consequent, @NotNull Maybe<StringBuilder> alternate) {
+    public StringBuilder reduceIfStatement(@Nonnull IfStatement node, @Nonnull StringBuilder test, @Nonnull StringBuilder consequent, @Nonnull Maybe<StringBuilder> alternate) {
         return b("IfStatement").add("test", test).add("consequent", consequent).add("alternate", alternate).done();
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public StringBuilder reduceImport(@NotNull Import node, @NotNull Maybe<StringBuilder> defaultBinding, @NotNull ImmutableList<StringBuilder> namedImports) {
+    public StringBuilder reduceImport(@Nonnull Import node, @Nonnull Maybe<StringBuilder> defaultBinding, @Nonnull ImmutableList<StringBuilder> namedImports) {
         return b("Import").add("defaultBinding", defaultBinding).add("namedImports", namedImports).add("moduleSpecifier", node.moduleSpecifier).done();
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public StringBuilder reduceImportNamespace(@NotNull ImportNamespace node, @NotNull Maybe<StringBuilder> defaultBinding, @NotNull StringBuilder namespaceBinding) {
+    public StringBuilder reduceImportNamespace(@Nonnull ImportNamespace node, @Nonnull Maybe<StringBuilder> defaultBinding, @Nonnull StringBuilder namespaceBinding) {
         return b("ImportNamespace").add("defaultBinding", defaultBinding).add("namespaceBinding", namespaceBinding).add("moduleSpecifier", node.moduleSpecifier).done();
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public StringBuilder reduceImportSpecifier(@NotNull ImportSpecifier node, @NotNull StringBuilder binding) {
+    public StringBuilder reduceImportSpecifier(@Nonnull ImportSpecifier node, @Nonnull StringBuilder binding) {
         return b("ImportSpecifier").addMaybeString("name", node.name).add("binding", binding).done();
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public StringBuilder reduceLabeledStatement(@NotNull LabeledStatement node, @NotNull StringBuilder body) {
+    public StringBuilder reduceLabeledStatement(@Nonnull LabeledStatement node, @Nonnull StringBuilder body) {
         return b("LabeledStatement").add("label", node.label).add("body", body).done();
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public StringBuilder reduceLiteralBooleanExpression(@NotNull LiteralBooleanExpression node) {
+    public StringBuilder reduceLiteralBooleanExpression(@Nonnull LiteralBooleanExpression node) {
         return b("LiteralBooleanExpression").add("value", node.value).done();
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public StringBuilder reduceLiteralInfinityExpression(@NotNull LiteralInfinityExpression node) {
+    public StringBuilder reduceLiteralInfinityExpression(@Nonnull LiteralInfinityExpression node) {
         return b("LiteralInfinityExpression").done();
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public StringBuilder reduceLiteralNullExpression(@NotNull LiteralNullExpression node) {
+    public StringBuilder reduceLiteralNullExpression(@Nonnull LiteralNullExpression node) {
         return b("LiteralNullExpression").done();
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public StringBuilder reduceLiteralNumericExpression(@NotNull LiteralNumericExpression node) {
+    public StringBuilder reduceLiteralNumericExpression(@Nonnull LiteralNumericExpression node) {
         return b("LiteralNumericExpression").add("value", node.value).done();
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public StringBuilder reduceLiteralRegExpExpression(@NotNull LiteralRegExpExpression node) {
+    public StringBuilder reduceLiteralRegExpExpression(@Nonnull LiteralRegExpExpression node) {
         return b("LiteralRegExpExpression").add("pattern", node.pattern).add("global", node.global).add("ignoreCase", node.ignoreCase).add("multiLine", node.multiLine).add("sticky", node.sticky).add("unicode", node.unicode).done();
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public StringBuilder reduceLiteralStringExpression(@NotNull LiteralStringExpression node) {
+    public StringBuilder reduceLiteralStringExpression(@Nonnull LiteralStringExpression node) {
         return b("LiteralStringExpression").add("value", node.value).done();
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public StringBuilder reduceMethod(@NotNull Method node, @NotNull StringBuilder name, @NotNull StringBuilder params, @NotNull StringBuilder body) {
+    public StringBuilder reduceMethod(@Nonnull Method node, @Nonnull StringBuilder name, @Nonnull StringBuilder params, @Nonnull StringBuilder body) {
         return b("Method").add("isGenerator", node.isGenerator).add("name", name).add("params", params).add("body", body).done();
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public StringBuilder reduceModule(@NotNull Module node, @NotNull ImmutableList<StringBuilder> directives, @NotNull ImmutableList<StringBuilder> items) {
+    public StringBuilder reduceModule(@Nonnull Module node, @Nonnull ImmutableList<StringBuilder> directives, @Nonnull ImmutableList<StringBuilder> items) {
         return b("Module").add("directives", directives).add("items", items).done();
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public StringBuilder reduceNewExpression(@NotNull NewExpression node, @NotNull StringBuilder callee, @NotNull ImmutableList<StringBuilder> arguments) {
+    public StringBuilder reduceNewExpression(@Nonnull NewExpression node, @Nonnull StringBuilder callee, @Nonnull ImmutableList<StringBuilder> arguments) {
         return b("NewExpression").add("callee", callee).add("arguments", arguments).done();
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public StringBuilder reduceNewTargetExpression(@NotNull NewTargetExpression node) {
+    public StringBuilder reduceNewTargetExpression(@Nonnull NewTargetExpression node) {
         return b("NewTargetExpression").done();
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public StringBuilder reduceObjectAssignmentTarget(@NotNull ObjectAssignmentTarget node, @NotNull ImmutableList<StringBuilder> properties) {
+    public StringBuilder reduceObjectAssignmentTarget(@Nonnull ObjectAssignmentTarget node, @Nonnull ImmutableList<StringBuilder> properties) {
         return b("ObjectAssignmentTarget").add("properties", properties).done();
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public StringBuilder reduceObjectBinding(@NotNull ObjectBinding node, @NotNull ImmutableList<StringBuilder> properties) {
+    public StringBuilder reduceObjectBinding(@Nonnull ObjectBinding node, @Nonnull ImmutableList<StringBuilder> properties) {
         return b("ObjectBinding").add("properties", properties).done();
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public StringBuilder reduceObjectExpression(@NotNull ObjectExpression node, @NotNull ImmutableList<StringBuilder> properties) {
+    public StringBuilder reduceObjectExpression(@Nonnull ObjectExpression node, @Nonnull ImmutableList<StringBuilder> properties) {
         return b("ObjectExpression").add("properties", properties).done();
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public StringBuilder reduceReturnStatement(@NotNull ReturnStatement node, @NotNull Maybe<StringBuilder> expression) {
+    public StringBuilder reduceReturnStatement(@Nonnull ReturnStatement node, @Nonnull Maybe<StringBuilder> expression) {
         return b("ReturnStatement").add("expression", expression).done();
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public StringBuilder reduceScript(@NotNull Script node, @NotNull ImmutableList<StringBuilder> directives, @NotNull ImmutableList<StringBuilder> statements) {
+    public StringBuilder reduceScript(@Nonnull Script node, @Nonnull ImmutableList<StringBuilder> directives, @Nonnull ImmutableList<StringBuilder> statements) {
         return b("Script").add("directives", directives).add("statements", statements).done();
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public StringBuilder reduceSetter(@NotNull Setter node, @NotNull StringBuilder name, @NotNull StringBuilder param, @NotNull StringBuilder body) {
+    public StringBuilder reduceSetter(@Nonnull Setter node, @Nonnull StringBuilder name, @Nonnull StringBuilder param, @Nonnull StringBuilder body) {
         return b("Setter").add("name", name).add("param", param).add("body", body).done();
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public StringBuilder reduceShorthandProperty(@NotNull ShorthandProperty node, @NotNull StringBuilder name) {
+    public StringBuilder reduceShorthandProperty(@Nonnull ShorthandProperty node, @Nonnull StringBuilder name) {
         return b("ShorthandProperty").add("name", name).done();
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public StringBuilder reduceSpreadElement(@NotNull SpreadElement node, @NotNull StringBuilder expression) {
+    public StringBuilder reduceSpreadElement(@Nonnull SpreadElement node, @Nonnull StringBuilder expression) {
         return b("SpreadElement").add("expression", expression).done();
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public StringBuilder reduceStaticMemberAssignmentTarget(@NotNull StaticMemberAssignmentTarget node, @NotNull StringBuilder object) {
+    public StringBuilder reduceStaticMemberAssignmentTarget(@Nonnull StaticMemberAssignmentTarget node, @Nonnull StringBuilder object) {
         return b("StaticMemberAssignmentTarget").add("object", object).add("property", node.property).done();
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public StringBuilder reduceStaticMemberExpression(@NotNull StaticMemberExpression node, @NotNull StringBuilder object) {
+    public StringBuilder reduceStaticMemberExpression(@Nonnull StaticMemberExpression node, @Nonnull StringBuilder object) {
         return b("StaticMemberExpression").add("object", object).add("property", node.property).done();
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public StringBuilder reduceStaticPropertyName(@NotNull StaticPropertyName node) {
+    public StringBuilder reduceStaticPropertyName(@Nonnull StaticPropertyName node) {
         return b("StaticPropertyName").add("value", node.value).done();
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public StringBuilder reduceSuper(@NotNull Super node) {
+    public StringBuilder reduceSuper(@Nonnull Super node) {
         return b("Super").done();
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public StringBuilder reduceSwitchCase(@NotNull SwitchCase node, @NotNull StringBuilder test, @NotNull ImmutableList<StringBuilder> consequent) {
+    public StringBuilder reduceSwitchCase(@Nonnull SwitchCase node, @Nonnull StringBuilder test, @Nonnull ImmutableList<StringBuilder> consequent) {
         return b("SwitchCase").add("test", test).add("consequent", consequent).done();
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public StringBuilder reduceSwitchDefault(@NotNull SwitchDefault node, @NotNull ImmutableList<StringBuilder> consequent) {
+    public StringBuilder reduceSwitchDefault(@Nonnull SwitchDefault node, @Nonnull ImmutableList<StringBuilder> consequent) {
         return b("SwitchDefault").add("consequent", consequent).done();
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public StringBuilder reduceSwitchStatement(@NotNull SwitchStatement node, @NotNull StringBuilder discriminant, @NotNull ImmutableList<StringBuilder> cases) {
+    public StringBuilder reduceSwitchStatement(@Nonnull SwitchStatement node, @Nonnull StringBuilder discriminant, @Nonnull ImmutableList<StringBuilder> cases) {
         return b("SwitchStatement").add("discriminant", discriminant).add("cases", cases).done();
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public StringBuilder reduceSwitchStatementWithDefault(@NotNull SwitchStatementWithDefault node, @NotNull StringBuilder discriminant, @NotNull ImmutableList<StringBuilder> preDefaultCases, @NotNull StringBuilder defaultCase, @NotNull ImmutableList<StringBuilder> postDefaultCases) {
+    public StringBuilder reduceSwitchStatementWithDefault(@Nonnull SwitchStatementWithDefault node, @Nonnull StringBuilder discriminant, @Nonnull ImmutableList<StringBuilder> preDefaultCases, @Nonnull StringBuilder defaultCase, @Nonnull ImmutableList<StringBuilder> postDefaultCases) {
         return b("SwitchStatementWithDefault").add("discriminant", discriminant).add("preDefaultCases", preDefaultCases).add("defaultCase", defaultCase).add("postDefaultCases", postDefaultCases).done();
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public StringBuilder reduceTemplateElement(@NotNull TemplateElement node) {
+    public StringBuilder reduceTemplateElement(@Nonnull TemplateElement node) {
         return b("TemplateElement").add("rawValue", node.rawValue).done();
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public StringBuilder reduceTemplateExpression(@NotNull TemplateExpression node, @NotNull Maybe<StringBuilder> tag, @NotNull ImmutableList<StringBuilder> elements) {
+    public StringBuilder reduceTemplateExpression(@Nonnull TemplateExpression node, @Nonnull Maybe<StringBuilder> tag, @Nonnull ImmutableList<StringBuilder> elements) {
         return b("TemplateExpression").add("tag", tag).add("elements", elements).done();
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public StringBuilder reduceThisExpression(@NotNull ThisExpression node) {
+    public StringBuilder reduceThisExpression(@Nonnull ThisExpression node) {
         return b("ThisExpression").done();
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public StringBuilder reduceThrowStatement(@NotNull ThrowStatement node, @NotNull StringBuilder expression) {
+    public StringBuilder reduceThrowStatement(@Nonnull ThrowStatement node, @Nonnull StringBuilder expression) {
         return b("ThrowStatement").add("expression", expression).done();
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public StringBuilder reduceTryCatchStatement(@NotNull TryCatchStatement node, @NotNull StringBuilder body, @NotNull StringBuilder catchClause) {
+    public StringBuilder reduceTryCatchStatement(@Nonnull TryCatchStatement node, @Nonnull StringBuilder body, @Nonnull StringBuilder catchClause) {
         return b("TryCatchStatement").add("body", body).add("catchClause", catchClause).done();
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public StringBuilder reduceTryFinallyStatement(@NotNull TryFinallyStatement node, @NotNull StringBuilder body, @NotNull Maybe<StringBuilder> catchClause, @NotNull StringBuilder finalizer) {
+    public StringBuilder reduceTryFinallyStatement(@Nonnull TryFinallyStatement node, @Nonnull StringBuilder body, @Nonnull Maybe<StringBuilder> catchClause, @Nonnull StringBuilder finalizer) {
         return b("TryFinallyStatement").add("body", body).add("catchClause", catchClause).add("finalizer", finalizer).done();
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public StringBuilder reduceUnaryExpression(@NotNull UnaryExpression node, @NotNull StringBuilder operand) {
+    public StringBuilder reduceUnaryExpression(@Nonnull UnaryExpression node, @Nonnull StringBuilder operand) {
         return b("UnaryExpression").add("operator", node.operator).add("operand", operand).done();
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public StringBuilder reduceUpdateExpression(@NotNull UpdateExpression node, @NotNull StringBuilder operand) {
+    public StringBuilder reduceUpdateExpression(@Nonnull UpdateExpression node, @Nonnull StringBuilder operand) {
         return b("UpdateExpression").add("isPrefix", node.isPrefix).add("operator", node.operator).add("operand", operand).done();
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public StringBuilder reduceVariableDeclaration(@NotNull VariableDeclaration node, @NotNull ImmutableList<StringBuilder> declarators) {
+    public StringBuilder reduceVariableDeclaration(@Nonnull VariableDeclaration node, @Nonnull ImmutableList<StringBuilder> declarators) {
         return b("VariableDeclaration").add("kind", node.kind).add("declarators", declarators).done();
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public StringBuilder reduceVariableDeclarationStatement(@NotNull VariableDeclarationStatement node, @NotNull StringBuilder declaration) {
+    public StringBuilder reduceVariableDeclarationStatement(@Nonnull VariableDeclarationStatement node, @Nonnull StringBuilder declaration) {
         return b("VariableDeclarationStatement").add("declaration", declaration).done();
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public StringBuilder reduceVariableDeclarator(@NotNull VariableDeclarator node, @NotNull StringBuilder binding, @NotNull Maybe<StringBuilder> init) {
+    public StringBuilder reduceVariableDeclarator(@Nonnull VariableDeclarator node, @Nonnull StringBuilder binding, @Nonnull Maybe<StringBuilder> init) {
         return b("VariableDeclarator").add("binding", binding).add("init", init).done();
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public StringBuilder reduceWhileStatement(@NotNull WhileStatement node, @NotNull StringBuilder test, @NotNull StringBuilder body) {
+    public StringBuilder reduceWhileStatement(@Nonnull WhileStatement node, @Nonnull StringBuilder test, @Nonnull StringBuilder body) {
         return b("WhileStatement").add("test", test).add("body", body).done();
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public StringBuilder reduceWithStatement(@NotNull WithStatement node, @NotNull StringBuilder object, @NotNull StringBuilder body) {
+    public StringBuilder reduceWithStatement(@Nonnull WithStatement node, @Nonnull StringBuilder object, @Nonnull StringBuilder body) {
         return b("WithStatement").add("object", object).add("body", body).done();
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public StringBuilder reduceYieldExpression(@NotNull YieldExpression node, @NotNull Maybe<StringBuilder> expression) {
+    public StringBuilder reduceYieldExpression(@Nonnull YieldExpression node, @Nonnull Maybe<StringBuilder> expression) {
         return b("YieldExpression").add("expression", expression).done();
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public StringBuilder reduceYieldGeneratorExpression(@NotNull YieldGeneratorExpression node, @NotNull StringBuilder expression) {
+    public StringBuilder reduceYieldGeneratorExpression(@Nonnull YieldGeneratorExpression node, @Nonnull StringBuilder expression) {
         return b("YieldGeneratorExpression").add("expression", expression).done();
     }
 }

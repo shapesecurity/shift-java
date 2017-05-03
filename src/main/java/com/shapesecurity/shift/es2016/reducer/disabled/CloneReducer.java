@@ -82,7 +82,7 @@
 //import com.shapesecurity.shift.ast.statement.WithStatement;
 //import Branch;
 //
-//import org.jetbrains.annotations.NotNull;
+//import javax.annotation.Nonnull;
 //
 //public class CloneReducer
 //    implements ReducerP<Script, FunctionBody, ObjectProperty, PropertyName, Identifier, Expression, Directive, Statement, Block, VariableDeclarator, VariableDeclaration, SwitchCase, SwitchDefault, CatchClause> {
@@ -91,501 +91,501 @@
 //  protected CloneReducer() {
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public Script reduceScript(@NotNull Script node, @NotNull ImmutableList<Branch> path, @NotNull FunctionBody body) {
+//  public Script reduceScript(@Nonnull Script node, @Nonnull ImmutableList<Branch> path, @Nonnull FunctionBody body) {
 //    return new Script(body);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public Identifier reduceIdentifier(@NotNull Identifier node, @NotNull ImmutableList<Branch> path) {
+//  public Identifier reduceIdentifier(@Nonnull Identifier node, @Nonnull ImmutableList<Branch> path) {
 //    return new Identifier(node.name);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
 //  public Expression reduceIdentifierExpression(
-//      @NotNull IdentifierExpression node,
-//      @NotNull ImmutableList<Branch> path,
-//      @NotNull Identifier identifier) {
+//      @Nonnull IdentifierExpression node,
+//      @Nonnull ImmutableList<Branch> path,
+//      @Nonnull Identifier identifier) {
 //    return new IdentifierExpression(identifier);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public Expression reduceThisExpression(@NotNull ThisExpression node, @NotNull ImmutableList<Branch> path) {
+//  public Expression reduceThisExpression(@Nonnull ThisExpression node, @Nonnull ImmutableList<Branch> path) {
 //    return new ThisExpression();
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public Expression reduceLiteralBooleanExpression(@NotNull LiteralBooleanExpression node, @NotNull ImmutableList<Branch> path) {
+//  public Expression reduceLiteralBooleanExpression(@Nonnull LiteralBooleanExpression node, @Nonnull ImmutableList<Branch> path) {
 //    return new LiteralBooleanExpression(node.value);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public Expression reduceLiteralStringExpression(@NotNull LiteralStringExpression node, @NotNull ImmutableList<Branch> path) {
+//  public Expression reduceLiteralStringExpression(@Nonnull LiteralStringExpression node, @Nonnull ImmutableList<Branch> path) {
 //    return new LiteralStringExpression(node.value);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public Expression reduceLiteralRegExpExpression(@NotNull LiteralRegExpExpression node, @NotNull ImmutableList<Branch> path) {
+//  public Expression reduceLiteralRegExpExpression(@Nonnull LiteralRegExpExpression node, @Nonnull ImmutableList<Branch> path) {
 //    return new LiteralRegExpExpression(node.value);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public Expression reduceLiteralNumericExpression(@NotNull LiteralNumericExpression node, @NotNull ImmutableList<Branch> path) {
+//  public Expression reduceLiteralNumericExpression(@Nonnull LiteralNumericExpression node, @Nonnull ImmutableList<Branch> path) {
 //    return new LiteralNumericExpression(node.value);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public Expression reduceLiteralInfinityExpression(@NotNull LiteralInfinityExpression node,
-//                                                    @NotNull ImmutableList<Branch> path) {
+//  public Expression reduceLiteralInfinityExpression(@Nonnull LiteralInfinityExpression node,
+//                                                    @Nonnull ImmutableList<Branch> path) {
 //    return new LiteralInfinityExpression();
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public Expression reduceLiteralNullExpression(@NotNull LiteralNullExpression node, @NotNull ImmutableList<Branch> path) {
+//  public Expression reduceLiteralNullExpression(@Nonnull LiteralNullExpression node, @Nonnull ImmutableList<Branch> path) {
 //    return new LiteralNullExpression();
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
 //  public Expression reduceFunctionExpression(
-//      @NotNull FunctionExpression node,
-//      @NotNull ImmutableList<Branch> path,
-//      @NotNull Maybe<Identifier> name,
-//      @NotNull ImmutableList<Identifier> parameters,
-//      @NotNull FunctionBody body) {
+//      @Nonnull FunctionExpression node,
+//      @Nonnull ImmutableList<Branch> path,
+//      @Nonnull Maybe<Identifier> name,
+//      @Nonnull ImmutableList<Identifier> parameters,
+//      @Nonnull FunctionBody body) {
 //    return new FunctionExpression(name, parameters, body);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
 //  public Expression reduceStaticMemberExpression(
-//      @NotNull StaticMemberExpression node,
-//      @NotNull ImmutableList<Branch> path,
-//      @NotNull Expression object,
-//      @NotNull Identifier property) {
+//      @Nonnull StaticMemberExpression node,
+//      @Nonnull ImmutableList<Branch> path,
+//      @Nonnull Expression object,
+//      @Nonnull Identifier property) {
 //    return new StaticMemberExpression(object, property);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
 //  public Expression reduceComputedMemberExpression(
-//      @NotNull ComputedMemberExpression node,
-//      @NotNull ImmutableList<Branch> path,
-//      @NotNull Expression object,
-//      @NotNull Expression expression) {
+//      @Nonnull ComputedMemberExpression node,
+//      @Nonnull ImmutableList<Branch> path,
+//      @Nonnull Expression object,
+//      @Nonnull Expression expression) {
 //    return new ComputedMemberExpression(object, expression);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
 //  public Expression reduceObjectExpression(
-//      @NotNull ObjectExpression node,
-//      @NotNull ImmutableList<Branch> path,
-//      @NotNull ImmutableList<ObjectProperty> properties) {
+//      @Nonnull ObjectExpression node,
+//      @Nonnull ImmutableList<Branch> path,
+//      @Nonnull ImmutableList<ObjectProperty> properties) {
 //    return new ObjectExpression(properties);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
 //  public Expression reduceBinaryExpression(
-//      @NotNull BinaryExpression node,
-//      @NotNull ImmutableList<Branch> path,
-//      @NotNull Expression left,
-//      @NotNull Expression right) {
+//      @Nonnull BinaryExpression node,
+//      @Nonnull ImmutableList<Branch> path,
+//      @Nonnull Expression left,
+//      @Nonnull Expression right) {
 //    return new BinaryExpression(node.operator, left, right);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
 //  public Expression reduceAssignmentExpression(
-//      @NotNull AssignmentExpression node,
-//      @NotNull ImmutableList<Branch> path,
-//      @NotNull Expression binding,
-//      @NotNull Expression expression) {
+//      @Nonnull AssignmentExpression node,
+//      @Nonnull ImmutableList<Branch> path,
+//      @Nonnull Expression binding,
+//      @Nonnull Expression expression) {
 //    return new AssignmentExpression(node.operator, binding, expression);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
 //  public Expression reduceArrayExpression(
-//      @NotNull ArrayExpression node,
-//      @NotNull ImmutableList<Branch> path,
-//      @NotNull ImmutableList<Maybe<Expression>> elements) {
+//      @Nonnull ArrayExpression node,
+//      @Nonnull ImmutableList<Branch> path,
+//      @Nonnull ImmutableList<Maybe<Expression>> elements) {
 //    return new ArrayExpression(elements);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
 //  public Expression reduceNewExpression(
-//      @NotNull NewExpression node,
-//      @NotNull ImmutableList<Branch> path,
-//      @NotNull Expression callee,
-//      @NotNull ImmutableList<Expression> arguments) {
+//      @Nonnull NewExpression node,
+//      @Nonnull ImmutableList<Branch> path,
+//      @Nonnull Expression callee,
+//      @Nonnull ImmutableList<Expression> arguments) {
 //    return new NewExpression(callee, arguments);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
 //  public Expression reduceCallExpression(
-//      @NotNull CallExpression node,
-//      @NotNull ImmutableList<Branch> path,
-//      @NotNull Expression callee,
-//      @NotNull ImmutableList<Expression> arguments) {
+//      @Nonnull CallExpression node,
+//      @Nonnull ImmutableList<Branch> path,
+//      @Nonnull Expression callee,
+//      @Nonnull ImmutableList<Expression> arguments) {
 //    return new CallExpression(callee, arguments);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
 //  public Expression reducePostfixExpression(
-//      @NotNull PostfixExpression node,
-//      @NotNull ImmutableList<Branch> path,
-//      @NotNull Expression operand) {
+//      @Nonnull PostfixExpression node,
+//      @Nonnull ImmutableList<Branch> path,
+//      @Nonnull Expression operand) {
 //    return new PostfixExpression(node.operator, operand);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
 //  public Expression reducePrefixExpression(
-//      @NotNull PrefixExpression node,
-//      @NotNull ImmutableList<Branch> path,
-//      @NotNull Expression operand) {
+//      @Nonnull PrefixExpression node,
+//      @Nonnull ImmutableList<Branch> path,
+//      @Nonnull Expression operand) {
 //    return new PrefixExpression(node.operator, operand);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
 //  public Expression reduceConditionalExpression(
-//      @NotNull ConditionalExpression node,
-//      @NotNull ImmutableList<Branch> path,
-//      @NotNull Expression test,
-//      @NotNull Expression consequent,
-//      @NotNull Expression alternate) {
+//      @Nonnull ConditionalExpression node,
+//      @Nonnull ImmutableList<Branch> path,
+//      @Nonnull Expression test,
+//      @Nonnull Expression consequent,
+//      @Nonnull Expression alternate) {
 //    return new ConditionalExpression(test, consequent, alternate);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
 //  public Statement reduceFunctionDeclaration(
-//      @NotNull FunctionDeclaration node,
-//      @NotNull ImmutableList<Branch> path,
-//      @NotNull Identifier name,
-//      @NotNull ImmutableList<Identifier> params,
-//      @NotNull FunctionBody body) {
+//      @Nonnull FunctionDeclaration node,
+//      @Nonnull ImmutableList<Branch> path,
+//      @Nonnull Identifier name,
+//      @Nonnull ImmutableList<Identifier> params,
+//      @Nonnull FunctionBody body) {
 //    return new FunctionDeclaration(name, params, body);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public Directive reduceUseStrictDirective(@NotNull UseStrictDirective node, @NotNull ImmutableList<Branch> path) {
+//  public Directive reduceUseStrictDirective(@Nonnull UseStrictDirective node, @Nonnull ImmutableList<Branch> path) {
 //    return new UseStrictDirective();
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public Directive reduceUnknownDirective(@NotNull UnknownDirective node, @NotNull ImmutableList<Branch> path) {
+//  public Directive reduceUnknownDirective(@Nonnull UnknownDirective node, @Nonnull ImmutableList<Branch> path) {
 //    return new UnknownDirective(node.value);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
 //  public Statement reduceBlockStatement(
-//      @NotNull BlockStatement node,
-//      @NotNull ImmutableList<Branch> path,
-//      @NotNull Block block) {
+//      @Nonnull BlockStatement node,
+//      @Nonnull ImmutableList<Branch> path,
+//      @Nonnull Block block) {
 //    return new BlockStatement(block);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
 //  public Statement reduceBreakStatement(
-//      @NotNull BreakStatement node,
-//      @NotNull ImmutableList<Branch> path,
-//      @NotNull Maybe<Identifier> label) {
+//      @Nonnull BreakStatement node,
+//      @Nonnull ImmutableList<Branch> path,
+//      @Nonnull Maybe<Identifier> label) {
 //    return new BreakStatement(label);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
 //  public CatchClause reduceCatchClause(
-//      @NotNull CatchClause node,
-//      @NotNull ImmutableList<Branch> path,
-//      @NotNull Identifier binding,
-//      @NotNull Block body) {
+//      @Nonnull CatchClause node,
+//      @Nonnull ImmutableList<Branch> path,
+//      @Nonnull Identifier binding,
+//      @Nonnull Block body) {
 //    return new CatchClause(binding, body);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
 //  public Statement reduceContinueStatement(
-//      @NotNull ContinueStatement node,
-//      @NotNull ImmutableList<Branch> path,
-//      @NotNull Maybe<Identifier> label) {
+//      @Nonnull ContinueStatement node,
+//      @Nonnull ImmutableList<Branch> path,
+//      @Nonnull Maybe<Identifier> label) {
 //    return new ContinueStatement(label);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public Statement reduceDebuggerStatement(@NotNull DebuggerStatement node, @NotNull ImmutableList<Branch> path) {
+//  public Statement reduceDebuggerStatement(@Nonnull DebuggerStatement node, @Nonnull ImmutableList<Branch> path) {
 //    return new DebuggerStatement();
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
 //  public Statement reduceDoWhileStatement(
-//      @NotNull DoWhileStatement node,
-//      @NotNull ImmutableList<Branch> path,
-//      @NotNull Statement body,
-//      @NotNull Expression test) {
+//      @Nonnull DoWhileStatement node,
+//      @Nonnull ImmutableList<Branch> path,
+//      @Nonnull Statement body,
+//      @Nonnull Expression test) {
 //    return new DoWhileStatement(body, test);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public Statement reduceEmptyStatement(@NotNull EmptyStatement node, @NotNull ImmutableList<Branch> path) {
+//  public Statement reduceEmptyStatement(@Nonnull EmptyStatement node, @Nonnull ImmutableList<Branch> path) {
 //    return new EmptyStatement();
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
 //  public Statement reduceExpressionStatement(
-//      @NotNull ExpressionStatement node,
-//      @NotNull ImmutableList<Branch> path,
-//      @NotNull Expression expression) {
+//      @Nonnull ExpressionStatement node,
+//      @Nonnull ImmutableList<Branch> path,
+//      @Nonnull Expression expression) {
 //    return new ExpressionStatement(expression);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
 //  public Statement reduceForInStatement(
-//      @NotNull ForInStatement node,
-//      @NotNull ImmutableList<Branch> path,
-//      @NotNull Either<VariableDeclaration, Expression> left,
-//      @NotNull Expression right,
-//      @NotNull Statement body) {
+//      @Nonnull ForInStatement node,
+//      @Nonnull ImmutableList<Branch> path,
+//      @Nonnull Either<VariableDeclaration, Expression> left,
+//      @Nonnull Expression right,
+//      @Nonnull Statement body) {
 //    return new ForInStatement(left, right, body);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
 //  public Statement reduceForStatement(
-//      @NotNull ForStatement node,
-//      @NotNull ImmutableList<Branch> path,
-//      @NotNull Maybe<Either<VariableDeclaration, Expression>> init,
-//      @NotNull Maybe<Expression> test,
-//      @NotNull Maybe<Expression> update,
-//      @NotNull Statement body) {
+//      @Nonnull ForStatement node,
+//      @Nonnull ImmutableList<Branch> path,
+//      @Nonnull Maybe<Either<VariableDeclaration, Expression>> init,
+//      @Nonnull Maybe<Expression> test,
+//      @Nonnull Maybe<Expression> update,
+//      @Nonnull Statement body) {
 //    return new ForStatement(init, test, update, body);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
 //  public Statement reduceIfStatement(
-//      @NotNull IfStatement node,
-//      @NotNull ImmutableList<Branch> path,
-//      @NotNull Expression test,
-//      @NotNull Statement consequent,
-//      @NotNull Maybe<Statement> alternate) {
+//      @Nonnull IfStatement node,
+//      @Nonnull ImmutableList<Branch> path,
+//      @Nonnull Expression test,
+//      @Nonnull Statement consequent,
+//      @Nonnull Maybe<Statement> alternate) {
 //    return new IfStatement(test, consequent, alternate);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
 //  public Statement reduceLabeledStatement(
-//      @NotNull LabeledStatement node,
-//      @NotNull ImmutableList<Branch> path,
-//      @NotNull Identifier label,
-//      @NotNull Statement body) {
+//      @Nonnull LabeledStatement node,
+//      @Nonnull ImmutableList<Branch> path,
+//      @Nonnull Identifier label,
+//      @Nonnull Statement body) {
 //    return new LabeledStatement(label, body);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
 //  public Statement reduceReturnStatement(
-//      @NotNull ReturnStatement node,
-//      @NotNull ImmutableList<Branch> path,
-//      @NotNull Maybe<Expression> expression) {
+//      @Nonnull ReturnStatement node,
+//      @Nonnull ImmutableList<Branch> path,
+//      @Nonnull Maybe<Expression> expression) {
 //    return new ReturnStatement(expression);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
 //  public SwitchCase reduceSwitchCase(
-//      @NotNull SwitchCase node,
-//      @NotNull ImmutableList<Branch> path,
-//      @NotNull Expression test,
-//      @NotNull ImmutableList<Statement> consequent) {
+//      @Nonnull SwitchCase node,
+//      @Nonnull ImmutableList<Branch> path,
+//      @Nonnull Expression test,
+//      @Nonnull ImmutableList<Statement> consequent) {
 //    return new SwitchCase(test, consequent);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
 //  public SwitchDefault reduceSwitchDefault(
-//      @NotNull SwitchDefault node,
-//      @NotNull ImmutableList<Branch> path,
-//      @NotNull ImmutableList<Statement> consequent) {
+//      @Nonnull SwitchDefault node,
+//      @Nonnull ImmutableList<Branch> path,
+//      @Nonnull ImmutableList<Statement> consequent) {
 //    return new SwitchDefault(consequent);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
 //  public Statement reduceSwitchStatement(
-//      @NotNull SwitchStatement node,
-//      @NotNull ImmutableList<Branch> path,
-//      @NotNull Expression discriminant,
-//      @NotNull ImmutableList<SwitchCase> cases) {
+//      @Nonnull SwitchStatement node,
+//      @Nonnull ImmutableList<Branch> path,
+//      @Nonnull Expression discriminant,
+//      @Nonnull ImmutableList<SwitchCase> cases) {
 //    return new SwitchStatement(discriminant, cases);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
 //  public Statement reduceSwitchStatementWithDefault(
-//      @NotNull SwitchStatementWithDefault node,
-//      @NotNull ImmutableList<Branch> path,
-//      @NotNull Expression discriminant,
-//      @NotNull ImmutableList<SwitchCase> preDefaultCases,
-//      @NotNull SwitchDefault defaultCase,
-//      @NotNull ImmutableList<SwitchCase> postDefaultCases) {
+//      @Nonnull SwitchStatementWithDefault node,
+//      @Nonnull ImmutableList<Branch> path,
+//      @Nonnull Expression discriminant,
+//      @Nonnull ImmutableList<SwitchCase> preDefaultCases,
+//      @Nonnull SwitchDefault defaultCase,
+//      @Nonnull ImmutableList<SwitchCase> postDefaultCases) {
 //    return new SwitchStatementWithDefault(discriminant, preDefaultCases, defaultCase, postDefaultCases);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
 //  public Statement reduceThrowStatement(
-//      @NotNull ThrowStatement node,
-//      @NotNull ImmutableList<Branch> path,
-//      @NotNull Expression expression) {
+//      @Nonnull ThrowStatement node,
+//      @Nonnull ImmutableList<Branch> path,
+//      @Nonnull Expression expression) {
 //    return new ThrowStatement(expression);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
 //  public Statement reduceTryCatchStatement(
-//      @NotNull TryCatchStatement node,
-//      @NotNull ImmutableList<Branch> path,
-//      @NotNull Block block,
-//      @NotNull CatchClause catchClause) {
+//      @Nonnull TryCatchStatement node,
+//      @Nonnull ImmutableList<Branch> path,
+//      @Nonnull Block block,
+//      @Nonnull CatchClause catchClause) {
 //    return new TryCatchStatement(block, catchClause);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
 //  public Statement reduceTryFinallyStatement(
-//      @NotNull TryFinallyStatement node,
-//      @NotNull ImmutableList<Branch> path,
-//      @NotNull Block block,
-//      @NotNull Maybe<CatchClause> catchClause,
-//      @NotNull Block finalizer) {
+//      @Nonnull TryFinallyStatement node,
+//      @Nonnull ImmutableList<Branch> path,
+//      @Nonnull Block block,
+//      @Nonnull Maybe<CatchClause> catchClause,
+//      @Nonnull Block finalizer) {
 //    return new TryFinallyStatement(block, catchClause, finalizer);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
 //  public Statement reduceVariableDeclarationStatement(
-//      @NotNull VariableDeclarationStatement node,
-//      @NotNull ImmutableList<Branch> path,
-//      @NotNull VariableDeclaration declaration) {
+//      @Nonnull VariableDeclarationStatement node,
+//      @Nonnull ImmutableList<Branch> path,
+//      @Nonnull VariableDeclaration declaration) {
 //    return new VariableDeclarationStatement(declaration);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
 //  public VariableDeclaration reduceVariableDeclaration(
-//      @NotNull VariableDeclaration node,
-//      @NotNull ImmutableList<Branch> path,
-//      @NotNull NonEmptyImmutableList<VariableDeclarator> declarators) {
+//      @Nonnull VariableDeclaration node,
+//      @Nonnull ImmutableList<Branch> path,
+//      @Nonnull NonEmptyImmutableList<VariableDeclarator> declarators) {
 //    return new VariableDeclaration(node.kind, declarators);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
 //  public Statement reduceWhileStatement(
-//      @NotNull WhileStatement node,
-//      @NotNull ImmutableList<Branch> path,
-//      @NotNull Expression test,
-//      @NotNull Statement body) {
+//      @Nonnull WhileStatement node,
+//      @Nonnull ImmutableList<Branch> path,
+//      @Nonnull Expression test,
+//      @Nonnull Statement body) {
 //    return new WhileStatement(test, body);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
 //  public Statement reduceWithStatement(
-//      @NotNull WithStatement node,
-//      @NotNull ImmutableList<Branch> path,
-//      @NotNull Expression object,
-//      @NotNull Statement body) {
+//      @Nonnull WithStatement node,
+//      @Nonnull ImmutableList<Branch> path,
+//      @Nonnull Expression object,
+//      @Nonnull Statement body) {
 //    return new WithStatement(object, body);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
 //  public ObjectProperty reduceDataProperty(
-//      @NotNull DataProperty node,
-//      @NotNull ImmutableList<Branch> path,
-//      @NotNull PropertyName name,
-//      @NotNull Expression value) {
+//      @Nonnull DataProperty node,
+//      @Nonnull ImmutableList<Branch> path,
+//      @Nonnull PropertyName name,
+//      @Nonnull Expression value) {
 //    return new DataProperty(name, value);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
 //  public ObjectProperty reduceGetter(
-//      @NotNull Getter node,
-//      @NotNull ImmutableList<Branch> path,
-//      @NotNull PropertyName name,
-//      @NotNull FunctionBody body) {
+//      @Nonnull Getter node,
+//      @Nonnull ImmutableList<Branch> path,
+//      @Nonnull PropertyName name,
+//      @Nonnull FunctionBody body) {
 //    return new Getter(name, body);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
 //  public ObjectProperty reduceSetter(
-//      @NotNull Setter node,
-//      @NotNull ImmutableList<Branch> path,
-//      @NotNull PropertyName name,
-//      @NotNull Identifier parameter,
-//      @NotNull FunctionBody body) {
+//      @Nonnull Setter node,
+//      @Nonnull ImmutableList<Branch> path,
+//      @Nonnull PropertyName name,
+//      @Nonnull Identifier parameter,
+//      @Nonnull FunctionBody body) {
 //    return new Setter(name, parameter, body);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public PropertyName reducePropertyName(@NotNull PropertyName node, @NotNull ImmutableList<Branch> path) {
+//  public PropertyName reducePropertyName(@Nonnull PropertyName node, @Nonnull ImmutableList<Branch> path) {
 //    return new PropertyName(node);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
 //  public FunctionBody reduceFunctionBody(
-//      @NotNull FunctionBody node,
-//      @NotNull ImmutableList<Branch> path,
-//      @NotNull ImmutableList<Directive> directives,
-//      @NotNull ImmutableList<Statement> statements) {
+//      @Nonnull FunctionBody node,
+//      @Nonnull ImmutableList<Branch> path,
+//      @Nonnull ImmutableList<Directive> directives,
+//      @Nonnull ImmutableList<Statement> statements) {
 //    return new FunctionBody(directives, statements);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
 //  public VariableDeclarator reduceVariableDeclarator(
-//      @NotNull VariableDeclarator node,
-//      @NotNull ImmutableList<Branch> path,
-//      @NotNull Identifier binding,
-//      @NotNull Maybe<Expression> init) {
+//      @Nonnull VariableDeclarator node,
+//      @Nonnull ImmutableList<Branch> path,
+//      @Nonnull Identifier binding,
+//      @Nonnull Maybe<Expression> init) {
 //    return new VariableDeclarator(binding, init);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public Block reduceBlock(@NotNull Block node, @NotNull ImmutableList<Branch> path, @NotNull ImmutableList<Statement> statements) {
+//  public Block reduceBlock(@Nonnull Block node, @Nonnull ImmutableList<Branch> path, @Nonnull ImmutableList<Statement> statements) {
 //    return new Block(statements);
 //  }
 //}

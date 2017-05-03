@@ -63,7 +63,7 @@ import com.shapesecurity.shift.es2016.parser.token.EOFToken;
 import com.shapesecurity.shift.es2016.utils.Utils;
 import com.shapesecurity.shift.es2016.reducer.MonoidalReducer;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 public class Validator extends MonoidalReducer<ValidationContext> {
 
@@ -177,9 +177,9 @@ public class Validator extends MonoidalReducer<ValidationContext> {
         return false;
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public ValidationContext reduceAssignmentTargetIdentifier(@NotNull AssignmentTargetIdentifier node) {
+    public ValidationContext reduceAssignmentTargetIdentifier(@Nonnull AssignmentTargetIdentifier node) {
         ValidationContext s = super.reduceAssignmentTargetIdentifier(node);
         if (!checkIsValidIdentifierName(node.name)) {
             s.addError(new ValidationError(node, ValidationErrorMessages.VALID_ASSIGNMENT_TARGET_IDENTIFIER_NAME));
@@ -187,9 +187,9 @@ public class Validator extends MonoidalReducer<ValidationContext> {
         return s;
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public ValidationContext reduceBindingIdentifier(@NotNull BindingIdentifier node) {
+    public ValidationContext reduceBindingIdentifier(@Nonnull BindingIdentifier node) {
         ValidationContext s = super.reduceBindingIdentifier(node);
         if (!checkIsValidIdentifierName(node.name)) {
             if (node.name.equals("*default*")) {
@@ -201,9 +201,9 @@ public class Validator extends MonoidalReducer<ValidationContext> {
         return s;
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public ValidationContext reduceBreakStatement(@NotNull BreakStatement node) {
+    public ValidationContext reduceBreakStatement(@Nonnull BreakStatement node) {
         ValidationContext s = super.reduceBreakStatement(node);
         if (node.label.isJust() && !checkIsValidIdentifierName(node.label.fromJust())) {
             s.addError(new ValidationError(node, ValidationErrorMessages.VALID_BREAK_STATEMENT_LABEL));
@@ -211,9 +211,9 @@ public class Validator extends MonoidalReducer<ValidationContext> {
         return s;
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public ValidationContext reduceContinueStatement(@NotNull ContinueStatement node) {
+    public ValidationContext reduceContinueStatement(@Nonnull ContinueStatement node) {
         ValidationContext s = super.reduceContinueStatement(node);
         if (node.label.isJust() && !checkIsValidIdentifierName(node.label.fromJust())) {
             s.addError(new ValidationError(node, ValidationErrorMessages.VALID_CONTINUE_STATEMENT_LABEL));
@@ -221,9 +221,9 @@ public class Validator extends MonoidalReducer<ValidationContext> {
         return s;
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public ValidationContext reduceDirective(@NotNull Directive node) {
+    public ValidationContext reduceDirective(@Nonnull Directive node) {
         ValidationContext s = super.reduceDirective(node);
         if (!checkIsStringLiteral(node.rawValue)) {
             s.addError(new ValidationError(node, ValidationErrorMessages.VALID_DIRECTIVE));
@@ -231,9 +231,9 @@ public class Validator extends MonoidalReducer<ValidationContext> {
         return s;
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public ValidationContext reduceExportDefault(@NotNull ExportDefault node, @NotNull ValidationContext body) {
+    public ValidationContext reduceExportDefault(@Nonnull ExportDefault node, @Nonnull ValidationContext body) {
         ValidationContext s = super.reduceExportDefault(node, body);
         if (node.body instanceof FunctionDeclaration || node.body instanceof ClassDeclaration) {
             s.clearBindingIdentifiersCalledDefault();
@@ -241,9 +241,9 @@ public class Validator extends MonoidalReducer<ValidationContext> {
         return s;
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public ValidationContext reduceExportLocalSpecifier(@NotNull ExportLocalSpecifier node, @NotNull ValidationContext name) {
+    public ValidationContext reduceExportLocalSpecifier(@Nonnull ExportLocalSpecifier node, @Nonnull ValidationContext name) {
         ValidationContext s = super.reduceExportLocalSpecifier(node, name);
         if (node.exportedName.isJust() && !checkIsValidIdentifierName(node.exportedName.fromJust())) {
             s.addError(new ValidationError(node, ValidationErrorMessages.VALID_EXPORTED_NAME));
@@ -251,9 +251,9 @@ public class Validator extends MonoidalReducer<ValidationContext> {
         return s;
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public ValidationContext reduceExportFromSpecifier(@NotNull ExportFromSpecifier node) {
+    public ValidationContext reduceExportFromSpecifier(@Nonnull ExportFromSpecifier node) {
         ValidationContext s = super.reduceExportFromSpecifier(node);
         if (!checkIsValidIdentifierName(node.name)) {
             s.addError(new ValidationError(node, ValidationErrorMessages.VALID_EXPORT_SPECIFIER_NAME));
@@ -264,9 +264,9 @@ public class Validator extends MonoidalReducer<ValidationContext> {
         return s;
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public ValidationContext reduceForInStatement(@NotNull ForInStatement node, @NotNull ValidationContext left, @NotNull ValidationContext right, @NotNull ValidationContext body) {
+    public ValidationContext reduceForInStatement(@Nonnull ForInStatement node, @Nonnull ValidationContext left, @Nonnull ValidationContext right, @Nonnull ValidationContext body) {
         ValidationContext s = super.reduceForInStatement(node, left, right, body);
         if (node.left instanceof VariableDeclaration) {
             VariableDeclaration varDec = (VariableDeclaration) node.left;
@@ -280,9 +280,9 @@ public class Validator extends MonoidalReducer<ValidationContext> {
         return s;
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public ValidationContext reduceForOfStatement(@NotNull ForOfStatement node, @NotNull ValidationContext left, @NotNull ValidationContext right, @NotNull ValidationContext body) {
+    public ValidationContext reduceForOfStatement(@Nonnull ForOfStatement node, @Nonnull ValidationContext left, @Nonnull ValidationContext right, @Nonnull ValidationContext body) {
         ValidationContext s = super.reduceForOfStatement(node, left, right, body);
         if (node.left instanceof VariableDeclaration) {
             VariableDeclaration varDec = (VariableDeclaration) node.left;
@@ -296,18 +296,18 @@ public class Validator extends MonoidalReducer<ValidationContext> {
         return s;
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public ValidationContext reduceFunctionBody(@NotNull FunctionBody node, @NotNull ImmutableList<ValidationContext> directives, @NotNull ImmutableList<ValidationContext> statements
+    public ValidationContext reduceFunctionBody(@Nonnull FunctionBody node, @Nonnull ImmutableList<ValidationContext> directives, @Nonnull ImmutableList<ValidationContext> statements
     ) {
         ValidationContext s = super.reduceFunctionBody(node, directives, statements);
         s.clearFreeReturnStatements();
         return s;
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public ValidationContext reduceFunctionDeclaration(@NotNull FunctionDeclaration node, @NotNull ValidationContext name, @NotNull ValidationContext params, @NotNull ValidationContext body) {
+    public ValidationContext reduceFunctionDeclaration(@Nonnull FunctionDeclaration node, @Nonnull ValidationContext name, @Nonnull ValidationContext params, @Nonnull ValidationContext body) {
         ValidationContext s = super.reduceFunctionDeclaration(node, name, params, body);
         if (node.isGenerator) {
             s.clearYieldExpressionsNotInGeneratorContext();
@@ -316,9 +316,9 @@ public class Validator extends MonoidalReducer<ValidationContext> {
         return s;
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public ValidationContext reduceFunctionExpression(@NotNull FunctionExpression node, @NotNull Maybe<ValidationContext> name, @NotNull ValidationContext params, @NotNull ValidationContext body) {
+    public ValidationContext reduceFunctionExpression(@Nonnull FunctionExpression node, @Nonnull Maybe<ValidationContext> name, @Nonnull ValidationContext params, @Nonnull ValidationContext body) {
         ValidationContext s = super.reduceFunctionExpression(node, name, params, body);
         if (node.isGenerator) {
             s.clearYieldExpressionsNotInGeneratorContext();
@@ -327,9 +327,9 @@ public class Validator extends MonoidalReducer<ValidationContext> {
         return s;
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public ValidationContext reduceIdentifierExpression(@NotNull IdentifierExpression node) {
+    public ValidationContext reduceIdentifierExpression(@Nonnull IdentifierExpression node) {
         ValidationContext s = super.reduceIdentifierExpression(node);
         if (!checkIsValidIdentifierName(node.name)) {
             s.addError(new ValidationError(node, ValidationErrorMessages.VALID_IDENTIFIER_NAME));
@@ -337,9 +337,9 @@ public class Validator extends MonoidalReducer<ValidationContext> {
         return s;
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public ValidationContext reduceIfStatement(@NotNull IfStatement node, @NotNull ValidationContext test, @NotNull ValidationContext consequent, @NotNull Maybe<ValidationContext> alternate) {
+    public ValidationContext reduceIfStatement(@Nonnull IfStatement node, @Nonnull ValidationContext test, @Nonnull ValidationContext consequent, @Nonnull Maybe<ValidationContext> alternate) {
         ValidationContext s = super.reduceIfStatement(node, test, consequent, alternate);
         if (isProblematicIfStatement(node)) {
             s.addError(new ValidationError(node, ValidationErrorMessages.VALID_IF_STATEMENT));
@@ -347,9 +347,9 @@ public class Validator extends MonoidalReducer<ValidationContext> {
         return s;
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public ValidationContext reduceImportSpecifier(@NotNull ImportSpecifier node, @NotNull ValidationContext binding) {
+    public ValidationContext reduceImportSpecifier(@Nonnull ImportSpecifier node, @Nonnull ValidationContext binding) {
         ValidationContext s = super.reduceImportSpecifier(node, binding);
         if (node.name.isJust() && !checkIsValidIdentifierName(node.name.fromJust())) {
             s.addError(new ValidationError(node, ValidationErrorMessages.VALID_IMPORT_SPECIFIER_NAME));
@@ -357,9 +357,9 @@ public class Validator extends MonoidalReducer<ValidationContext> {
         return s;
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public ValidationContext reduceLabeledStatement(@NotNull LabeledStatement node, @NotNull ValidationContext body) {
+    public ValidationContext reduceLabeledStatement(@Nonnull LabeledStatement node, @Nonnull ValidationContext body) {
         ValidationContext s = super.reduceLabeledStatement(node, body);
         if (!checkIsValidIdentifierName(node.label)) {
             s.addError(new ValidationError(node, ValidationErrorMessages.VALID_LABEL));
@@ -367,9 +367,9 @@ public class Validator extends MonoidalReducer<ValidationContext> {
         return s;
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public ValidationContext reduceLiteralNumericExpression(@NotNull LiteralNumericExpression node) {
+    public ValidationContext reduceLiteralNumericExpression(@Nonnull LiteralNumericExpression node) {
         ValidationContext s = super.reduceLiteralNumericExpression(node);
         if (Double.isNaN(node.value)) {
             s.addError(new ValidationError(node, ValidationErrorMessages.LITERAL_NUMERIC_VALUE_NOT_NAN));
@@ -383,9 +383,9 @@ public class Validator extends MonoidalReducer<ValidationContext> {
         return s;
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public ValidationContext reduceLiteralRegExpExpression(@NotNull LiteralRegExpExpression node) {
+    public ValidationContext reduceLiteralRegExpExpression(@Nonnull LiteralRegExpExpression node) {
         ValidationContext s = super.reduceLiteralRegExpExpression(node);
         if (!checkIsLiteralRegExpPattern(node.pattern)) {
             s.addError(new ValidationError(node, ValidationErrorMessages.VALID_REG_EX_PATTERN));
@@ -393,9 +393,9 @@ public class Validator extends MonoidalReducer<ValidationContext> {
         return s;
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public ValidationContext reduceMethod(@NotNull Method node, @NotNull ValidationContext params, @NotNull ValidationContext body, @NotNull ValidationContext name) {
+    public ValidationContext reduceMethod(@Nonnull Method node, @Nonnull ValidationContext params, @Nonnull ValidationContext body, @Nonnull ValidationContext name) {
         ValidationContext s = super.reduceMethod(node, params, body, name);
         if (node.isGenerator) {
             s.clearYieldExpressionsNotInGeneratorContext();
@@ -404,9 +404,9 @@ public class Validator extends MonoidalReducer<ValidationContext> {
         return s;
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public ValidationContext reduceModule(@NotNull Module node, @NotNull ImmutableList<ValidationContext> directives, @NotNull ImmutableList<ValidationContext> items
+    public ValidationContext reduceModule(@Nonnull Module node, @Nonnull ImmutableList<ValidationContext> directives, @Nonnull ImmutableList<ValidationContext> items
     ) {
         ValidationContext s = super.reduceModule(node, directives, items);
         s.enforceFreeReturnStatements(returnStatement -> new ValidationError(returnStatement, ValidationErrorMessages.RETURN_STATEMENT_IN_FUNCTION_BODY));
@@ -416,18 +416,18 @@ public class Validator extends MonoidalReducer<ValidationContext> {
         return s;
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public ValidationContext reduceReturnStatement(@NotNull ReturnStatement node, @NotNull Maybe<ValidationContext> expression
+    public ValidationContext reduceReturnStatement(@Nonnull ReturnStatement node, @Nonnull Maybe<ValidationContext> expression
     ) {
         ValidationContext s = super.reduceReturnStatement(node, expression);
         s.addFreeReturnStatement(node);
         return s;
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public ValidationContext reduceScript(@NotNull Script node, @NotNull ImmutableList<ValidationContext> directives, @NotNull ImmutableList<ValidationContext> statements
+    public ValidationContext reduceScript(@Nonnull Script node, @Nonnull ImmutableList<ValidationContext> directives, @Nonnull ImmutableList<ValidationContext> statements
     ) {
         ValidationContext s = super.reduceScript(node, directives, statements);
         s.enforceFreeReturnStatements(returnStatement -> new ValidationError(returnStatement, ValidationErrorMessages.RETURN_STATEMENT_IN_FUNCTION_BODY));
@@ -438,9 +438,9 @@ public class Validator extends MonoidalReducer<ValidationContext> {
     }
 
 
-    @NotNull
+    @Nonnull
     @Override
-    public ValidationContext reduceStaticMemberExpression(@NotNull StaticMemberExpression node, @NotNull ValidationContext object) {
+    public ValidationContext reduceStaticMemberExpression(@Nonnull StaticMemberExpression node, @Nonnull ValidationContext object) {
         ValidationContext s = super.reduceStaticMemberExpression(node, object);
         if (!checkIsValidIdentifierName(node.property)) {
             s.addError(new ValidationError(node, ValidationErrorMessages.VALID_STATIC_MEMBER_EXPRESSION_PROPERTY_NAME));
@@ -448,9 +448,9 @@ public class Validator extends MonoidalReducer<ValidationContext> {
         return s;
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public ValidationContext reduceTemplateElement(@NotNull TemplateElement node) {
+    public ValidationContext reduceTemplateElement(@Nonnull TemplateElement node) {
         ValidationContext s = super.reduceTemplateElement(node);
         if (!checkIsStringLiteral(node.rawValue)) {
             s.addError(new ValidationError(node, ValidationErrorMessages.VALID_TEMPLATE_ELEMENT_VALUE));
@@ -458,9 +458,9 @@ public class Validator extends MonoidalReducer<ValidationContext> {
         return s;
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public ValidationContext reduceTemplateExpression(@NotNull TemplateExpression node, @NotNull Maybe<ValidationContext> tag, @NotNull ImmutableList<ValidationContext> elements) {
+    public ValidationContext reduceTemplateExpression(@Nonnull TemplateExpression node, @Nonnull Maybe<ValidationContext> tag, @Nonnull ImmutableList<ValidationContext> elements) {
         ValidationContext s = super.reduceTemplateExpression(node, tag, elements);
         if (elements.length > 0) {
             if (node.elements.length % 2 == 0) {
@@ -483,9 +483,9 @@ public class Validator extends MonoidalReducer<ValidationContext> {
         return s;
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public ValidationContext reduceVariableDeclaration(@NotNull VariableDeclaration node, @NotNull ImmutableList<ValidationContext> declarators) {
+    public ValidationContext reduceVariableDeclaration(@Nonnull VariableDeclaration node, @Nonnull ImmutableList<ValidationContext> declarators) {
         ValidationContext s = super.reduceVariableDeclaration(node, declarators);
         if (node.declarators.length == 0) {
             s.addError(new ValidationError(node, ValidationErrorMessages.NOT_EMPTY_VARIABLE_DECLARATORS_LIST));
@@ -493,9 +493,9 @@ public class Validator extends MonoidalReducer<ValidationContext> {
         return s;
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public ValidationContext reduceVariableDeclarationStatement(@NotNull VariableDeclarationStatement node, @NotNull ValidationContext declaration) {
+    public ValidationContext reduceVariableDeclarationStatement(@Nonnull VariableDeclarationStatement node, @Nonnull ValidationContext declaration) {
         ValidationContext s = super.reduceVariableDeclarationStatement(node, declaration);
         if (node.declaration.kind.equals(VariableDeclarationKind.Const)) {
             node.declaration.declarators.forEach(x -> {
@@ -507,23 +507,23 @@ public class Validator extends MonoidalReducer<ValidationContext> {
         return s;
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public ValidationContext reduceYieldExpression(@NotNull YieldExpression node, @NotNull Maybe<ValidationContext> expression) {
+    public ValidationContext reduceYieldExpression(@Nonnull YieldExpression node, @Nonnull Maybe<ValidationContext> expression) {
         ValidationContext s = super.reduceYieldExpression(node, expression);
         s.addYieldExpressionsNotInGeneratorContext(node);
         return s;
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public ValidationContext reduceYieldGeneratorExpression(@NotNull YieldGeneratorExpression node, @NotNull ValidationContext expression) {
+    public ValidationContext reduceYieldGeneratorExpression(@Nonnull YieldGeneratorExpression node, @Nonnull ValidationContext expression) {
         ValidationContext s = super.reduceYieldGeneratorExpression(node, expression);
         s.addYieldGeneratorExpressionsNotInGeneratorContext(node);
         return s;
     }
 
-    @NotNull
+    @Nonnull
     private Maybe<Statement> trailingStatement(Statement node) {
         if (node instanceof IfStatement) {
             return Maybe.of(((IfStatement) node).alternate.orJust(((IfStatement) node).consequent));

@@ -13,7 +13,7 @@ import com.shapesecurity.shift.es2016.ast.Statement;
 import com.shapesecurity.shift.es2016.reducer.Director;
 import junit.framework.TestCase;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 public abstract class ParserTestCase extends TestCase {
 
@@ -104,7 +104,7 @@ public abstract class ParserTestCase extends TestCase {
         Director.reduceModule(new RangeCheckerReducer(parserWithLocation), node);
     }
 
-    public static void testScriptFailureML(@NotNull String source, int line, int column, int index, @NotNull String error) {
+    public static void testScriptFailureML(@Nonnull String source, int line, int column, int index, @Nonnull String error) {
         try {
             Parser.parseScript(source);
         } catch (JsError jsError) {
@@ -117,15 +117,15 @@ public abstract class ParserTestCase extends TestCase {
         fail("Parsing error not found");
     }
 
-    public static void testScriptFailure(@NotNull String source, int index, @NotNull String error) {
+    public static void testScriptFailure(@Nonnull String source, int index, @Nonnull String error) {
         testScriptFailureML(source, 1, index, index, error);
     }
 
-    public static void testScriptFailure(@NotNull String source, int line, int column, int index, @NotNull String error) {
+    public static void testScriptFailure(@Nonnull String source, int line, int column, int index, @Nonnull String error) {
         testScriptFailureML(source, line, column, index, error);
     }
 
-    public static void testModuleFailureML(@NotNull String source, int line, int column, int index, @NotNull String error) {
+    public static void testModuleFailureML(@Nonnull String source, int line, int column, int index, @Nonnull String error) {
         try {
             Parser.parseModule(source);
         } catch (JsError jsError) {
@@ -138,12 +138,12 @@ public abstract class ParserTestCase extends TestCase {
         fail("Parsing error not found");
     }
 
-    public static void testModuleFailure(@NotNull String source, int index, @NotNull String error) {
+    public static void testModuleFailure(@Nonnull String source, int index, @Nonnull String error) {
         testModuleFailureML(source, 1, index, index, error);
     }
 
 
-    public static void testScriptEarlyError(@NotNull String source, @NotNull String error) throws JsError {
+    public static void testScriptEarlyError(@Nonnull String source, @Nonnull String error) throws JsError {
         Script script = Parser.parseScript(source);
         ImmutableList<EarlyError> errors = EarlyErrorChecker.validate(script);
         assertEquals(1, errors.length);
@@ -151,7 +151,7 @@ public abstract class ParserTestCase extends TestCase {
     }
 
 
-    public static void testModuleEarlyError(@NotNull String source, @NotNull String error) throws JsError {
+    public static void testModuleEarlyError(@Nonnull String source, @Nonnull String error) throws JsError {
         Module module = Parser.parseModule(source);
         ImmutableList<EarlyError> errors = EarlyErrorChecker.validate(module);
         assertEquals(1, errors.length);

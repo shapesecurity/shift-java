@@ -18,29 +18,29 @@ package com.shapesecurity.shift.es2016.scope;
 
 import com.shapesecurity.functional.data.ImmutableList;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 public class Variable {
     /**
      * Variable name *
      */
-    @NotNull
+    @Nonnull
     public final String name;
     /**
      * references of this variable *
      */
-    @NotNull
+    @Nonnull
     public final ImmutableList<Reference> references;
     /**
      * declarations of this variable *
      */
-    @NotNull
+    @Nonnull
     public final ImmutableList<Declaration> declarations;
 
     public Variable(
-            @NotNull String name,
-            @NotNull ImmutableList<Reference> references,
-            @NotNull ImmutableList<Declaration> declarations) {
+            @Nonnull String name,
+            @Nonnull ImmutableList<Reference> references,
+            @Nonnull ImmutableList<Declaration> declarations) {
         this.name = name;
         this.references = references;
         this.declarations = declarations;

@@ -18,15 +18,15 @@ package com.shapesecurity.shift.es2016.validator;
 
 import com.shapesecurity.shift.es2016.ast.Node;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 public class ValidationError {
-    @NotNull
+    @Nonnull
     public final Node node;
-    @NotNull
+    @Nonnull
     public final String message;
 
-    public ValidationError(@NotNull Node node, @NotNull String message) {
+    public ValidationError(@Nonnull Node node, @Nonnull String message) {
         this.node = node;
         this.message = message;
     }

@@ -7,13 +7,13 @@
 //import com.shapesecurity.functional.data.Monoid;
 //import com.shapesecurity.shift.ast.*;
 //
-//import org.jetbrains.annotations.NotNull;
+//import javax.annotation.Nonnull;
 //
 //public class ComposedMonoidalReducer<A, B> extends MonoidalReducer<Pair<A, B>> {
 //    private final MonoidalReducer<A> reducerA;
 //    private final MonoidalReducer<B> reducerB;
 //
-//    protected ComposedMonoidalReducer(@NotNull Monoid<Pair<A, B>> monoidClass, MonoidalReducer<A> reducerA, MonoidalReducer<B> reducerB) {
+//    protected ComposedMonoidalReducer(@Nonnull Monoid<Pair<A, B>> monoidClass, MonoidalReducer<A> reducerA, MonoidalReducer<B> reducerB) {
 //        super(monoidClass);
 //        this.reducerA = reducerA;
 //        this.reducerB = reducerB;
@@ -56,595 +56,595 @@
 //    }
 //
 //
-//    @NotNull
+//    @Nonnull
 //    @Override
-//    public Pair<A, B> reduceArrayBinding(@NotNull ArrayBinding node, @NotNull ImmutableList<Maybe<Pair<A, B>>> elements, @NotNull Maybe<Pair<A, B>> restElement) {
+//    public Pair<A, B> reduceArrayBinding(@Nonnull ArrayBinding node, @Nonnull ImmutableList<Maybe<Pair<A, B>>> elements, @Nonnull Maybe<Pair<A, B>> restElement) {
 //        return new Pair<>(reducerA.reduceArrayBinding(node, elements.map(this::a), a(restElement)), reducerB.reduceArrayBinding(node, elements.map(this::b), b(restElement)));
 //    }
 //
-//    @NotNull
+//    @Nonnull
 //    @Override
 //    public Pair<A, B> reduceArrayExpression(
-//            @NotNull ArrayExpression node,
-//            @NotNull ImmutableList<Maybe<Pair<A, B>>> elements) {
+//            @Nonnull ArrayExpression node,
+//            @Nonnull ImmutableList<Maybe<Pair<A, B>>> elements) {
 //        return new Pair<>(reducerA.reduceArrayExpression(node, elements.map(this::a)), reducerB.reduceArrayExpression(node, elements.map(this::b)));
 //    }
 //
-//    @NotNull
+//    @Nonnull
 //    @Override
-//    public Pair<A, B> reduceArrowExpression(@NotNull ArrowExpression node, @NotNull Pair<A, B> params, @NotNull Pair<A, B> body) {
+//    public Pair<A, B> reduceArrowExpression(@Nonnull ArrowExpression node, @Nonnull Pair<A, B> params, @Nonnull Pair<A, B> body) {
 //        return new Pair<>(reducerA.reduceArrowExpression(node, a(params), a(body)), reducerB.reduceArrowExpression(node, b(params), b(body)));
 //    }
 //
-//    @NotNull
+//    @Nonnull
 //    @Override
 //    public Pair<A, B> reduceAssignmentExpression(
-//            @NotNull AssignmentExpression node,
-//            @NotNull Pair<A, B> binding,
-//            @NotNull Pair<A, B> expression) {
+//            @Nonnull AssignmentExpression node,
+//            @Nonnull Pair<A, B> binding,
+//            @Nonnull Pair<A, B> expression) {
 //        return new Pair<>(reducerA.reduceAssignmentExpression(node, a(binding), a(expression)), reducerB.reduceAssignmentExpression(node, b(binding), b(expression)));
 //    }
 //
-//    @NotNull
+//    @Nonnull
 //    @Override
 //    public Pair<A, B> reduceBinaryExpression(
-//            @NotNull BinaryExpression node,
-//            @NotNull Pair<A, B> left,
-//            @NotNull Pair<A, B> right) {
+//            @Nonnull BinaryExpression node,
+//            @Nonnull Pair<A, B> left,
+//            @Nonnull Pair<A, B> right) {
 //        return new Pair<>(reducerA.reduceBinaryExpression(node, a(left), a(right)), reducerB.reduceBinaryExpression(node, b(left), b(right)));
 //    }
 //
-//    @NotNull
+//    @Nonnull
 //    @Override
-//    public Pair<A, B> reduceBindingIdentifier(@NotNull BindingIdentifier node) {
+//    public Pair<A, B> reduceBindingIdentifier(@Nonnull BindingIdentifier node) {
 //        return new Pair<>(reducerA.reduceBindingIdentifier(node), reducerB.reduceBindingIdentifier(node));
 //    }
 //
-//    @NotNull
+//    @Nonnull
 //    @Override
-//    public Pair<A, B> reduceBindingPropertyIdentifier(@NotNull BindingPropertyIdentifier node, @NotNull Pair<A, B> binding, @NotNull Maybe<Pair<A, B>> init) {
+//    public Pair<A, B> reduceBindingPropertyIdentifier(@Nonnull BindingPropertyIdentifier node, @Nonnull Pair<A, B> binding, @Nonnull Maybe<Pair<A, B>> init) {
 //        return new Pair<>(reducerA.reduceBindingPropertyIdentifier(node, a(binding), a(init)), reducerB.reduceBindingPropertyIdentifier(node, b(binding), b(init)));
 //    }
 //
-//    @NotNull
+//    @Nonnull
 //    @Override
-//    public Pair<A, B> reduceBindingPropertyProperty(@NotNull BindingPropertyProperty node, @NotNull Pair<A, B> name, @NotNull Pair<A, B> binding) {
+//    public Pair<A, B> reduceBindingPropertyProperty(@Nonnull BindingPropertyProperty node, @Nonnull Pair<A, B> name, @Nonnull Pair<A, B> binding) {
 //        return new Pair<>(reducerA.reduceBindingPropertyProperty(node, a(name), a(binding)), reducerB.reduceBindingPropertyProperty(node, b(name), b(binding)));
 //    }
 //
-//    @NotNull
+//    @Nonnull
 //    @Override
-//    public Pair<A, B> reduceBindingWithDefault(@NotNull BindingWithDefault node, @NotNull Pair<A, B> binding, @NotNull Pair<A, B> init) {
+//    public Pair<A, B> reduceBindingWithDefault(@Nonnull BindingWithDefault node, @Nonnull Pair<A, B> binding, @Nonnull Pair<A, B> init) {
 //        return new Pair<>(reducerA.reduceBindingWithDefault(node, a(binding), a(init)), reducerB.reduceBindingWithDefault(node, b(binding), b(init)));
 //    }
 //
-//    @NotNull
+//    @Nonnull
 //    @Override
-//    public Pair<A, B> reduceBlock(@NotNull Block node, @NotNull ImmutableList<Pair<A, B>> statements) {
+//    public Pair<A, B> reduceBlock(@Nonnull Block node, @Nonnull ImmutableList<Pair<A, B>> statements) {
 //        return new Pair<>(reducerA.reduceBlock(node, a(statements)), reducerB.reduceBlock(node, b(statements)));
 //    }
 //
-//    @NotNull
+//    @Nonnull
 //    @Override
-//    public Pair<A, B> reduceBlockStatement(@NotNull BlockStatement node, @NotNull Pair<A, B> block) {
+//    public Pair<A, B> reduceBlockStatement(@Nonnull BlockStatement node, @Nonnull Pair<A, B> block) {
 //        return new Pair<>(reducerA.reduceBlockStatement(node, a(block)), reducerB.reduceBlockStatement(node, b(block)));
 //    }
 //
-//    @NotNull
+//    @Nonnull
 //    @Override
-//    public Pair<A, B> reduceBreakStatement(@NotNull BreakStatement node) {
+//    public Pair<A, B> reduceBreakStatement(@Nonnull BreakStatement node) {
 //        return new Pair<>(reducerA.reduceBreakStatement(node), reducerB.reduceBreakStatement(node));
 //    }
 //
-//    @NotNull
+//    @Nonnull
 //    @Override
 //    public Pair<A, B> reduceCallExpression(
-//            @NotNull CallExpression node,
-//            @NotNull Pair<A, B> callee,
-//            @NotNull ImmutableList<Pair<A, B>> arguments) {
+//            @Nonnull CallExpression node,
+//            @Nonnull Pair<A, B> callee,
+//            @Nonnull ImmutableList<Pair<A, B>> arguments) {
 //        return new Pair<>(reducerA.reduceCallExpression(node, a(callee), a(arguments)), reducerB.reduceCallExpression(node, b(callee), b(arguments)));
 //    }
 //
-//    @NotNull
+//    @Nonnull
 //    @Override
 //    public Pair<A, B> reduceCatchClause(
-//            @NotNull CatchClause node,
-//            @NotNull Pair<A, B> binding,
-//            @NotNull Pair<A, B> body) {
+//            @Nonnull CatchClause node,
+//            @Nonnull Pair<A, B> binding,
+//            @Nonnull Pair<A, B> body) {
 //        return new Pair<>(reducerA.reduceCatchClause(node, a(binding), a(body)), reducerB.reduceCatchClause(node, b(binding), b(body)));
 //    }
 //
-//    @NotNull
+//    @Nonnull
 //    @Override
-//    public Pair<A, B> reduceClassDeclaration(@NotNull ClassDeclaration node, @NotNull Pair<A, B> name, @NotNull Maybe<Pair<A, B>> _super, @NotNull ImmutableList<Pair<A, B>> elements) {
+//    public Pair<A, B> reduceClassDeclaration(@Nonnull ClassDeclaration node, @Nonnull Pair<A, B> name, @Nonnull Maybe<Pair<A, B>> _super, @Nonnull ImmutableList<Pair<A, B>> elements) {
 //        return new Pair<>(reducerA.reduceClassDeclaration(node, a(name), a(_super), a(elements)), reducerB.reduceClassDeclaration(node, b(name), b(_super), b(elements)));
 //    }
 //
-//    @NotNull
+//    @Nonnull
 //    @Override
-//    public Pair<A, B> reduceClassElement(@NotNull ClassElement node, @NotNull Pair<A, B> method) {
+//    public Pair<A, B> reduceClassElement(@Nonnull ClassElement node, @Nonnull Pair<A, B> method) {
 //        return new Pair<>(reducerA.reduceClassElement(node, a(method)), reducerB.reduceClassElement(node, b(method)));
 //    }
 //
-//    @NotNull
+//    @Nonnull
 //    @Override
-//    public Pair<A, B> reduceClassExpression(@NotNull ClassExpression node, @NotNull Maybe<Pair<A, B>> name, @NotNull Maybe<Pair<A, B>> _super, @NotNull ImmutableList<Pair<A, B>> elements) {
+//    public Pair<A, B> reduceClassExpression(@Nonnull ClassExpression node, @Nonnull Maybe<Pair<A, B>> name, @Nonnull Maybe<Pair<A, B>> _super, @Nonnull ImmutableList<Pair<A, B>> elements) {
 //        return new Pair<>(reducerA.reduceClassExpression(node, a(name), a(_super), a(elements)), reducerB.reduceClassExpression(node, b(name), b(_super), b(elements)));
 //    }
 //
-//    @NotNull
+//    @Nonnull
 //    @Override
-//    public Pair<A, B> reduceCompoundAssignmentExpression(@NotNull CompoundAssignmentExpression node, @NotNull Pair<A, B> binding, @NotNull Pair<A, B> expression) {
+//    public Pair<A, B> reduceCompoundAssignmentExpression(@Nonnull CompoundAssignmentExpression node, @Nonnull Pair<A, B> binding, @Nonnull Pair<A, B> expression) {
 //        return new Pair<>(reducerA.reduceCompoundAssignmentExpression(node, a(binding), a(expression)), reducerB.reduceCompoundAssignmentExpression(node, b(binding), b(expression)));
 //    }
 //
-//    @NotNull
+//    @Nonnull
 //    @Override
 //    public Pair<A, B> reduceComputedMemberExpression(
-//            @NotNull ComputedMemberExpression node,
-//            @NotNull Pair<A, B> object,
-//            @NotNull Pair<A, B> expression) {
+//            @Nonnull ComputedMemberExpression node,
+//            @Nonnull Pair<A, B> object,
+//            @Nonnull Pair<A, B> expression) {
 //        return new Pair<>(reducerA.reduceComputedMemberExpression(node, a(object), a(expression)), reducerB.reduceComputedMemberExpression(node, b(object), b(expression)));
 //    }
 //
-//    @NotNull
+//    @Nonnull
 //    @Override
-//    public Pair<A, B> reduceComputedPropertyName(@NotNull ComputedPropertyName node, @NotNull Pair<A, B> expression) {
+//    public Pair<A, B> reduceComputedPropertyName(@Nonnull ComputedPropertyName node, @Nonnull Pair<A, B> expression) {
 //        return new Pair<>(reducerA.reduceComputedPropertyName(node, a(expression)), reducerB.reduceComputedPropertyName(node, b(expression)));
 //    }
 //
-//    @NotNull
+//    @Nonnull
 //    @Override
 //    public Pair<A, B> reduceConditionalExpression(
-//            @NotNull ConditionalExpression node,
-//            @NotNull Pair<A, B> test,
-//            @NotNull Pair<A, B> consequent,
-//            @NotNull Pair<A, B> alternate) {
+//            @Nonnull ConditionalExpression node,
+//            @Nonnull Pair<A, B> test,
+//            @Nonnull Pair<A, B> consequent,
+//            @Nonnull Pair<A, B> alternate) {
 //        return new Pair<>(reducerA.reduceConditionalExpression(node, a(test), a(consequent), a(alternate)), reducerB.reduceConditionalExpression(node, b(test), b(consequent), b(alternate)));
 //    }
 //
-//    @NotNull
+//    @Nonnull
 //    @Override
-//    public Pair<A, B> reduceContinueStatement(@NotNull ContinueStatement node) {
+//    public Pair<A, B> reduceContinueStatement(@Nonnull ContinueStatement node) {
 //        return new Pair<>(reducerA.reduceContinueStatement(node), reducerB.reduceContinueStatement(node));
 //    }
 //
-//    @NotNull
+//    @Nonnull
 //    @Override
 //    public Pair<A, B> reduceDataProperty(
-//            @NotNull DataProperty node,
-//            @NotNull Pair<A, B> name,
-//            @NotNull Pair<A, B> value) {
+//            @Nonnull DataProperty node,
+//            @Nonnull Pair<A, B> name,
+//            @Nonnull Pair<A, B> value) {
 //        return new Pair<>(reducerA.reduceDataProperty(node, a(name), a(value)), reducerB.reduceDataProperty(node, b(name), b(value)));
 //    }
 //
-//    @NotNull
+//    @Nonnull
 //    @Override
-//    public Pair<A, B> reduceDebuggerStatement(@NotNull DebuggerStatement node) {
+//    public Pair<A, B> reduceDebuggerStatement(@Nonnull DebuggerStatement node) {
 //        return new Pair<>(reducerA.reduceDebuggerStatement(node), reducerB.reduceDebuggerStatement(node));
 //    }
 //
-//    @NotNull
+//    @Nonnull
 //    @Override
-//    public Pair<A, B> reduceDirective(@NotNull Directive node) {
+//    public Pair<A, B> reduceDirective(@Nonnull Directive node) {
 //        return new Pair<>(reducerA.reduceDirective(node), reducerB.reduceDirective(node));
 //    }
 //
-//    @NotNull
+//    @Nonnull
 //    @Override
 //    public Pair<A, B> reduceDoWhileStatement(
-//            @NotNull DoWhileStatement node,
-//            @NotNull Pair<A, B> body,
-//            @NotNull Pair<A, B> test) {
+//            @Nonnull DoWhileStatement node,
+//            @Nonnull Pair<A, B> body,
+//            @Nonnull Pair<A, B> test) {
 //        return new Pair<>(reducerA.reduceDoWhileStatement(node, a(body), a(test)), reducerB.reduceDoWhileStatement(node, b(body), b(test)));
 //    }
 //
-//    @NotNull
+//    @Nonnull
 //    @Override
-//    public Pair<A, B> reduceEmptyStatement(@NotNull EmptyStatement node) {
+//    public Pair<A, B> reduceEmptyStatement(@Nonnull EmptyStatement node) {
 //        return new Pair<>(reducerA.reduceEmptyStatement(node), reducerB.reduceEmptyStatement(node));
 //    }
 //
-//    @NotNull
+//    @Nonnull
 //    @Override
-//    public Pair<A, B> reduceExport(@NotNull Export node, @NotNull Pair<A, B> declaration) {
+//    public Pair<A, B> reduceExport(@Nonnull Export node, @Nonnull Pair<A, B> declaration) {
 //        return new Pair<>(reducerA.reduceExport(node, a(declaration)), reducerB.reduceExport(node, b(declaration)));
 //    }
 //
-//    @NotNull
+//    @Nonnull
 //    @Override
-//    public Pair<A, B> reduceExportAllFrom(@NotNull ExportAllFrom node) {
+//    public Pair<A, B> reduceExportAllFrom(@Nonnull ExportAllFrom node) {
 //        return new Pair<>(reducerA.reduceExportAllFrom(node), reducerB.reduceExportAllFrom(node));
 //    }
 //
-//    @NotNull
+//    @Nonnull
 //    @Override
-//    public Pair<A, B> reduceExportDefault(@NotNull ExportDefault node, @NotNull Pair<A, B> body) {
+//    public Pair<A, B> reduceExportDefault(@Nonnull ExportDefault node, @Nonnull Pair<A, B> body) {
 //        return new Pair<>(reducerA.reduceExportDefault(node, a(body)), reducerB.reduceExportDefault(node, b(body)));
 //    }
 //
-//    @NotNull
+//    @Nonnull
 //    @Override
-//    public Pair<A, B> reduceExportFrom(@NotNull ExportFrom node, @NotNull ImmutableList<Pair<A, B>> namedExports) {
+//    public Pair<A, B> reduceExportFrom(@Nonnull ExportFrom node, @Nonnull ImmutableList<Pair<A, B>> namedExports) {
 //        return new Pair<>(reducerA.reduceExportFrom(node, a(namedExports)), reducerB.reduceExportFrom(node, b(namedExports)));
 //    }
 //
-//    @NotNull
+//    @Nonnull
 //    @Override
-//    public Pair<A, B> reduceExportSpecifier(@NotNull ExportSpecifier node) {
+//    public Pair<A, B> reduceExportSpecifier(@Nonnull ExportSpecifier node) {
 //        return new Pair<>(reducerA.reduceExportSpecifier(node), reducerB.reduceExportSpecifier(node));
 //    }
 //
-//    @NotNull
+//    @Nonnull
 //    @Override
-//    public Pair<A, B> reduceExpressionStatement(@NotNull ExpressionStatement node, @NotNull Pair<A, B> expression) {
+//    public Pair<A, B> reduceExpressionStatement(@Nonnull ExpressionStatement node, @Nonnull Pair<A, B> expression) {
 //        return new Pair<>(reducerA.reduceExpressionStatement(node, a(expression)), reducerB.reduceExpressionStatement(node, b(expression)));
 //    }
 //
-//    @NotNull
+//    @Nonnull
 //    @Override
-//    public Pair<A, B> reduceForInStatement(@NotNull ForInStatement node, @NotNull Pair<A, B> left, @NotNull Pair<A, B> right, @NotNull Pair<A, B> body) {
+//    public Pair<A, B> reduceForInStatement(@Nonnull ForInStatement node, @Nonnull Pair<A, B> left, @Nonnull Pair<A, B> right, @Nonnull Pair<A, B> body) {
 //        return new Pair<>(reducerA.reduceForInStatement(node, a(left), a(right), a(body)), reducerB.reduceForInStatement(node, b(left), b(right), b(body)));
 //    }
 //
-//    @NotNull
+//    @Nonnull
 //    @Override
-//    public Pair<A, B> reduceForOfStatement(@NotNull ForOfStatement node, @NotNull Pair<A, B> left, @NotNull Pair<A, B> right, @NotNull Pair<A, B> body) {
+//    public Pair<A, B> reduceForOfStatement(@Nonnull ForOfStatement node, @Nonnull Pair<A, B> left, @Nonnull Pair<A, B> right, @Nonnull Pair<A, B> body) {
 //        return new Pair<>(reducerA.reduceForOfStatement(node, a(left), a(right), a(body)), reducerB.reduceForOfStatement(node, b(left), b(right), b(body)));
 //    }
 //
-//    @NotNull
+//    @Nonnull
 //    @Override
-//    public Pair<A, B> reduceForStatement(@NotNull ForStatement node, @NotNull Maybe<Pair<A, B>> init, @NotNull Maybe<Pair<A, B>> test, @NotNull Maybe<Pair<A, B>> update, @NotNull Pair<A, B> body) {
+//    public Pair<A, B> reduceForStatement(@Nonnull ForStatement node, @Nonnull Maybe<Pair<A, B>> init, @Nonnull Maybe<Pair<A, B>> test, @Nonnull Maybe<Pair<A, B>> update, @Nonnull Pair<A, B> body) {
 //        return new Pair<>(reducerA.reduceForStatement(node, a(init), a(test), a(update), a(body)), reducerB.reduceForStatement(node, b(init), b(test), b(update), b(body)));
 //    }
 //
-//    @NotNull
+//    @Nonnull
 //    @Override
-//    public Pair<A, B> reduceFormalParameters(@NotNull FormalParameters node, @NotNull ImmutableList<Pair<A, B>> items, @NotNull Maybe<Pair<A, B>> rest) {
+//    public Pair<A, B> reduceFormalParameters(@Nonnull FormalParameters node, @Nonnull ImmutableList<Pair<A, B>> items, @Nonnull Maybe<Pair<A, B>> rest) {
 //        return new Pair<>(reducerA.reduceFormalParameters(node, a(items), a(rest)), reducerB.reduceFormalParameters(node, b(items), b(rest)));
 //    }
 //
-//    @NotNull
+//    @Nonnull
 //    @Override
 //    public Pair<A, B> reduceFunctionBody(
-//            @NotNull FunctionBody node,
-//            @NotNull ImmutableList<Pair<A, B>> directives,
-//            @NotNull ImmutableList<Pair<A, B>> statements) {
+//            @Nonnull FunctionBody node,
+//            @Nonnull ImmutableList<Pair<A, B>> directives,
+//            @Nonnull ImmutableList<Pair<A, B>> statements) {
 //        return new Pair<>(reducerA.reduceFunctionBody(node, a(directives), a(statements)), reducerB.reduceFunctionBody(node, b(directives), b(statements)));
 //    }
 //
-//    @NotNull
+//    @Nonnull
 //    @Override
-//    public Pair<A, B> reduceFunctionDeclaration(@NotNull FunctionDeclaration node, @NotNull Pair<A, B> name, @NotNull Pair<A, B> params, @NotNull Pair<A, B> body) {
+//    public Pair<A, B> reduceFunctionDeclaration(@Nonnull FunctionDeclaration node, @Nonnull Pair<A, B> name, @Nonnull Pair<A, B> params, @Nonnull Pair<A, B> body) {
 //        return new Pair<>(reducerA.reduceFunctionDeclaration(node, a(name), a(params), a(body)), reducerB.reduceFunctionDeclaration(node, b(name), b(params), b(body)));
 //    }
 //
-//    @NotNull
+//    @Nonnull
 //    @Override
-//    public Pair<A, B> reduceFunctionExpression(@NotNull FunctionExpression node, @NotNull Maybe<Pair<A, B>> name, @NotNull Pair<A, B> params, @NotNull Pair<A, B> body) {
+//    public Pair<A, B> reduceFunctionExpression(@Nonnull FunctionExpression node, @Nonnull Maybe<Pair<A, B>> name, @Nonnull Pair<A, B> params, @Nonnull Pair<A, B> body) {
 //        return new Pair<>(reducerA.reduceFunctionExpression(node, a(name), a(params), a(body)), reducerB.reduceFunctionExpression(node, b(name), b(params), b(body)));
 //    }
 //
-//    @NotNull
+//    @Nonnull
 //    @Override
-//    public Pair<A, B> reduceGetter(@NotNull Getter node, @NotNull Pair<A, B> name, @NotNull Pair<A, B> body) {
+//    public Pair<A, B> reduceGetter(@Nonnull Getter node, @Nonnull Pair<A, B> name, @Nonnull Pair<A, B> body) {
 //        return new Pair<>(reducerA.reduceGetter(node, a(name), a(body)), reducerB.reduceGetter(node, b(name), b(body)));
 //    }
 //
-//    @NotNull
+//    @Nonnull
 //    @Override
-//    public Pair<A, B> reduceIdentifierExpression(@NotNull IdentifierExpression node) {
+//    public Pair<A, B> reduceIdentifierExpression(@Nonnull IdentifierExpression node) {
 //        return new Pair<>(reducerA.reduceIdentifierExpression(node), reducerB.reduceIdentifierExpression(node));
 //    }
 //
-//    @NotNull
+//    @Nonnull
 //    @Override
 //    public Pair<A, B> reduceIfStatement(
-//            @NotNull IfStatement node,
-//            @NotNull Pair<A, B> test,
-//            @NotNull Pair<A, B> consequent,
-//            @NotNull Maybe<Pair<A, B>> alternate) {
+//            @Nonnull IfStatement node,
+//            @Nonnull Pair<A, B> test,
+//            @Nonnull Pair<A, B> consequent,
+//            @Nonnull Maybe<Pair<A, B>> alternate) {
 //        return new Pair<>(reducerA.reduceIfStatement(node, a(test), a(consequent), a(alternate)), reducerB.reduceIfStatement(node, b(test), b(consequent), b(alternate)));
 //    }
 //
-//    @NotNull
+//    @Nonnull
 //    @Override
-//    public Pair<A, B> reduceImport(@NotNull Import node, @NotNull Maybe<Pair<A, B>> defaultBinding, @NotNull ImmutableList<Pair<A, B>> namedImports) {
+//    public Pair<A, B> reduceImport(@Nonnull Import node, @Nonnull Maybe<Pair<A, B>> defaultBinding, @Nonnull ImmutableList<Pair<A, B>> namedImports) {
 //        return new Pair<>(reducerA.reduceImport(node, a(defaultBinding), a(namedImports)), reducerB.reduceImport(node, b(defaultBinding), b(namedImports)));
 //    }
 //
-//    @NotNull
+//    @Nonnull
 //    @Override
-//    public Pair<A, B> reduceImportNamespace(@NotNull ImportNamespace node, @NotNull Maybe<Pair<A, B>> defaultBinding, @NotNull Pair<A, B> namespaceBinding) {
+//    public Pair<A, B> reduceImportNamespace(@Nonnull ImportNamespace node, @Nonnull Maybe<Pair<A, B>> defaultBinding, @Nonnull Pair<A, B> namespaceBinding) {
 //        return new Pair<>(reducerA.reduceImportNamespace(node, a(defaultBinding), a(namespaceBinding)), reducerB.reduceImportNamespace(node, b(defaultBinding), b(namespaceBinding)));
 //    }
 //
-//    @NotNull
+//    @Nonnull
 //    @Override
-//    public Pair<A, B> reduceImportSpecifier(@NotNull ImportSpecifier node, @NotNull Pair<A, B> binding) {
+//    public Pair<A, B> reduceImportSpecifier(@Nonnull ImportSpecifier node, @Nonnull Pair<A, B> binding) {
 //        return new Pair<>(reducerA.reduceImportSpecifier(node, a(binding)), reducerB.reduceImportSpecifier(node, b(binding)));
 //    }
 //
-//    @NotNull
+//    @Nonnull
 //    @Override
-//    public Pair<A, B> reduceLabeledStatement(@NotNull LabeledStatement node, @NotNull Pair<A, B> body) {
+//    public Pair<A, B> reduceLabeledStatement(@Nonnull LabeledStatement node, @Nonnull Pair<A, B> body) {
 //        return new Pair<>(reducerA.reduceLabeledStatement(node, a(body)), reducerB.reduceLabeledStatement(node, b(body)));
 //    }
 //
-//    @NotNull
+//    @Nonnull
 //    @Override
-//    public Pair<A, B> reduceLiteralBooleanExpression(@NotNull LiteralBooleanExpression node) {
+//    public Pair<A, B> reduceLiteralBooleanExpression(@Nonnull LiteralBooleanExpression node) {
 //        return new Pair<>(reducerA.reduceLiteralBooleanExpression(node), reducerB.reduceLiteralBooleanExpression(node));
 //    }
 //
-//    @NotNull
+//    @Nonnull
 //    @Override
-//    public Pair<A, B> reduceLiteralInfinityExpression(@NotNull LiteralInfinityExpression node) {
+//    public Pair<A, B> reduceLiteralInfinityExpression(@Nonnull LiteralInfinityExpression node) {
 //        return new Pair<>(reducerA.reduceLiteralInfinityExpression(node), reducerB.reduceLiteralInfinityExpression(node));
 //    }
 //
-//    @NotNull
+//    @Nonnull
 //    @Override
-//    public Pair<A, B> reduceLiteralNullExpression(@NotNull LiteralNullExpression node) {
+//    public Pair<A, B> reduceLiteralNullExpression(@Nonnull LiteralNullExpression node) {
 //        return new Pair<>(reducerA.reduceLiteralNullExpression(node), reducerB.reduceLiteralNullExpression(node));
 //    }
 //
-//    @NotNull
+//    @Nonnull
 //    @Override
-//    public Pair<A, B> reduceLiteralNumericExpression(@NotNull LiteralNumericExpression node) {
+//    public Pair<A, B> reduceLiteralNumericExpression(@Nonnull LiteralNumericExpression node) {
 //        return new Pair<>(reducerA.reduceLiteralNumericExpression(node), reducerB.reduceLiteralNumericExpression(node));
 //    }
 //
-//    @NotNull
+//    @Nonnull
 //    @Override
-//    public Pair<A, B> reduceLiteralRegExpExpression(@NotNull LiteralRegExpExpression node) {
+//    public Pair<A, B> reduceLiteralRegExpExpression(@Nonnull LiteralRegExpExpression node) {
 //        return new Pair<>(reducerA.reduceLiteralRegExpExpression(node), reducerB.reduceLiteralRegExpExpression(node));
 //    }
 //
-//    @NotNull
+//    @Nonnull
 //    @Override
-//    public Pair<A, B> reduceLiteralStringExpression(@NotNull LiteralStringExpression node) {
+//    public Pair<A, B> reduceLiteralStringExpression(@Nonnull LiteralStringExpression node) {
 //        return new Pair<>(reducerA.reduceLiteralStringExpression(node), reducerB.reduceLiteralStringExpression(node));
 //    }
 //
-//    @NotNull
+//    @Nonnull
 //    @Override
-//    public Pair<A, B> reduceMethod(@NotNull Method node, @NotNull Pair<A, B> name, @NotNull Pair<A, B> params, @NotNull Pair<A, B> body) {
+//    public Pair<A, B> reduceMethod(@Nonnull Method node, @Nonnull Pair<A, B> name, @Nonnull Pair<A, B> params, @Nonnull Pair<A, B> body) {
 //        return new Pair<>(reducerA.reduceMethod(node, a(name), a(params), a(body)), reducerB.reduceMethod(node, b(name), b(params), b(body)));
 //    }
 //
-//    @NotNull
+//    @Nonnull
 //    @Override
-//    public Pair<A, B> reduceModule(@NotNull Module node, @NotNull ImmutableList<Pair<A, B>> directives, @NotNull ImmutableList<Pair<A, B>> items) {
+//    public Pair<A, B> reduceModule(@Nonnull Module node, @Nonnull ImmutableList<Pair<A, B>> directives, @Nonnull ImmutableList<Pair<A, B>> items) {
 //        return new Pair<>(reducerA.reduceModule(node, a(directives), a(items)), reducerB.reduceModule(node, b(directives), b(items)));
 //    }
 //
-//    @NotNull
+//    @Nonnull
 //    @Override
 //    public Pair<A, B> reduceNewExpression(
-//            @NotNull NewExpression node,
-//            @NotNull Pair<A, B> callee,
-//            @NotNull ImmutableList<Pair<A, B>> arguments) {
+//            @Nonnull NewExpression node,
+//            @Nonnull Pair<A, B> callee,
+//            @Nonnull ImmutableList<Pair<A, B>> arguments) {
 //        return new Pair<>(reducerA.reduceNewExpression(node, a(callee), a(arguments)), reducerB.reduceNewExpression(node, b(callee), b(arguments)));
 //    }
 //
-//    @NotNull
+//    @Nonnull
 //    @Override
-//    public Pair<A, B> reduceNewTargetExpression(@NotNull NewTargetExpression node) {
+//    public Pair<A, B> reduceNewTargetExpression(@Nonnull NewTargetExpression node) {
 //        return new Pair<>(reducerA.reduceNewTargetExpression(node), reducerB.reduceNewTargetExpression(node));
 //    }
 //
-//    @NotNull
+//    @Nonnull
 //    @Override
-//    public Pair<A, B> reduceObjectBinding(@NotNull ObjectBinding node, @NotNull ImmutableList<Pair<A, B>> properties) {
+//    public Pair<A, B> reduceObjectBinding(@Nonnull ObjectBinding node, @Nonnull ImmutableList<Pair<A, B>> properties) {
 //        return new Pair<>(reducerA.reduceObjectBinding(node, a(properties)), reducerB.reduceObjectBinding(node, b(properties)));
 //    }
 //
-//    @NotNull
+//    @Nonnull
 //    @Override
 //    public Pair<A, B> reduceObjectExpression(
-//            @NotNull ObjectExpression node,
-//            @NotNull ImmutableList<Pair<A, B>> properties) {
+//            @Nonnull ObjectExpression node,
+//            @Nonnull ImmutableList<Pair<A, B>> properties) {
 //        return new Pair<>(reducerA.reduceObjectExpression(node, a(properties)), reducerB.reduceObjectExpression(node, b(properties)));
 //    }
 //
-//    @NotNull
+//    @Nonnull
 //    @Override
 //    public Pair<A, B> reduceReturnStatement(
-//            @NotNull ReturnStatement node,
-//            @NotNull Maybe<Pair<A, B>> expression) {
+//            @Nonnull ReturnStatement node,
+//            @Nonnull Maybe<Pair<A, B>> expression) {
 //        return new Pair<>(reducerA.reduceReturnStatement(node, a(expression)), reducerB.reduceReturnStatement(node, b(expression)));
 //    }
 //
-//    @NotNull
+//    @Nonnull
 //    @Override
-//    public Pair<A, B> reduceScript(@NotNull Script node, @NotNull ImmutableList<Pair<A, B>> directives, @NotNull ImmutableList<Pair<A, B>> statements) {
+//    public Pair<A, B> reduceScript(@Nonnull Script node, @Nonnull ImmutableList<Pair<A, B>> directives, @Nonnull ImmutableList<Pair<A, B>> statements) {
 //        return new Pair<>(reducerA.reduceScript(node, a(directives), a(statements)), reducerB.reduceScript(node, b(directives), b(statements)));
 //    }
 //
-//    @NotNull
+//    @Nonnull
 //    @Override
 //    public Pair<A, B> reduceSetter(
-//            @NotNull Setter node,
-//            @NotNull Pair<A, B> name,
-//            @NotNull Pair<A, B> param,
-//            @NotNull Pair<A, B> body) {
+//            @Nonnull Setter node,
+//            @Nonnull Pair<A, B> name,
+//            @Nonnull Pair<A, B> param,
+//            @Nonnull Pair<A, B> body) {
 //        return new Pair<>(reducerA.reduceSetter(node, a(name), a(param), a(body)), reducerB.reduceSetter(node, b(name), b(param), b(body)));
 //    }
 //
-//    @NotNull
+//    @Nonnull
 //    @Override
-//    public Pair<A, B> reduceShorthandProperty(@NotNull ShorthandProperty node) {
+//    public Pair<A, B> reduceShorthandProperty(@Nonnull ShorthandProperty node) {
 //        return new Pair<>(reducerA.reduceShorthandProperty(node), reducerB.reduceShorthandProperty(node));
 //    }
 //
-//    @NotNull
+//    @Nonnull
 //    @Override
-//    public Pair<A, B> reduceSpreadElement(@NotNull SpreadElement node, @NotNull Pair<A, B> expression) {
+//    public Pair<A, B> reduceSpreadElement(@Nonnull SpreadElement node, @Nonnull Pair<A, B> expression) {
 //        return new Pair<>(reducerA.reduceSpreadElement(node, a(expression)), reducerB.reduceSpreadElement(node, b(expression)));
 //    }
 //
-//    @NotNull
+//    @Nonnull
 //    @Override
-//    public Pair<A, B> reduceStaticMemberExpression(@NotNull StaticMemberExpression node, @NotNull Pair<A, B> object) {
+//    public Pair<A, B> reduceStaticMemberExpression(@Nonnull StaticMemberExpression node, @Nonnull Pair<A, B> object) {
 //        return new Pair<>(reducerA.reduceStaticMemberExpression(node, a(object)), reducerB.reduceStaticMemberExpression(node, b(object)));
 //    }
 //
-//    @NotNull
+//    @Nonnull
 //    @Override
-//    public Pair<A, B> reduceStaticPropertyName(@NotNull StaticPropertyName node) {
+//    public Pair<A, B> reduceStaticPropertyName(@Nonnull StaticPropertyName node) {
 //        return new Pair<>(reducerA.reduceStaticPropertyName(node), reducerB.reduceStaticPropertyName(node));
 //    }
 //
-//    @NotNull
+//    @Nonnull
 //    @Override
-//    public Pair<A, B> reduceSuper(@NotNull Super node) {
+//    public Pair<A, B> reduceSuper(@Nonnull Super node) {
 //        return new Pair<>(reducerA.reduceSuper(node), reducerB.reduceSuper(node));
 //    }
 //
-//    @NotNull
+//    @Nonnull
 //    @Override
 //    public Pair<A, B> reduceSwitchCase(
-//            @NotNull SwitchCase node,
-//            @NotNull Pair<A, B> test,
-//            @NotNull ImmutableList<Pair<A, B>> consequent) {
+//            @Nonnull SwitchCase node,
+//            @Nonnull Pair<A, B> test,
+//            @Nonnull ImmutableList<Pair<A, B>> consequent) {
 //        return new Pair<>(reducerA.reduceSwitchCase(node, a(test), a(consequent)), reducerB.reduceSwitchCase(node, b(test), b(consequent)));
 //    }
 //
-//    @NotNull
+//    @Nonnull
 //    @Override
 //    public Pair<A, B> reduceSwitchDefault(
-//            @NotNull SwitchDefault node,
-//            @NotNull ImmutableList<Pair<A, B>> consequent) {
+//            @Nonnull SwitchDefault node,
+//            @Nonnull ImmutableList<Pair<A, B>> consequent) {
 //        return new Pair<>(reducerA.reduceSwitchDefault(node, a(consequent)), reducerB.reduceSwitchDefault(node, b(consequent)));
 //    }
 //
-//    @NotNull
+//    @Nonnull
 //    @Override
 //    public Pair<A, B> reduceSwitchStatement(
-//            @NotNull SwitchStatement node,
-//            @NotNull Pair<A, B> discriminant,
-//            @NotNull ImmutableList<Pair<A, B>> cases) {
+//            @Nonnull SwitchStatement node,
+//            @Nonnull Pair<A, B> discriminant,
+//            @Nonnull ImmutableList<Pair<A, B>> cases) {
 //        return new Pair<>(reducerA.reduceSwitchStatement(node, a(discriminant), a(cases)), reducerB.reduceSwitchStatement(node, b(discriminant), b(cases)));
 //    }
 //
-//    @NotNull
+//    @Nonnull
 //    @Override
 //    public Pair<A, B> reduceSwitchStatementWithDefault(
-//            @NotNull SwitchStatementWithDefault node,
-//            @NotNull Pair<A, B> discriminant,
-//            @NotNull ImmutableList<Pair<A, B>> preDefaultCases,
-//            @NotNull Pair<A, B> defaultCase,
-//            @NotNull ImmutableList<Pair<A, B>> postDefaultCases) {
+//            @Nonnull SwitchStatementWithDefault node,
+//            @Nonnull Pair<A, B> discriminant,
+//            @Nonnull ImmutableList<Pair<A, B>> preDefaultCases,
+//            @Nonnull Pair<A, B> defaultCase,
+//            @Nonnull ImmutableList<Pair<A, B>> postDefaultCases) {
 //        return new Pair<>(reducerA.reduceSwitchStatementWithDefault(node, a(discriminant), a(preDefaultCases), a(defaultCase), a(postDefaultCases)), reducerB.reduceSwitchStatementWithDefault(node, b(discriminant), b(preDefaultCases), b(defaultCase), b(postDefaultCases)));
 //    }
 //
-//    @NotNull
+//    @Nonnull
 //    @Override
-//    public Pair<A, B> reduceTemplateElement(@NotNull TemplateElement node) {
+//    public Pair<A, B> reduceTemplateElement(@Nonnull TemplateElement node) {
 //        return new Pair<>(reducerA.reduceTemplateElement(node), reducerB.reduceTemplateElement(node));
 //    }
 //
-//    @NotNull
+//    @Nonnull
 //    @Override
-//    public Pair<A, B> reduceTemplateExpression(@NotNull TemplateExpression node, @NotNull Maybe<Pair<A, B>> tag, @NotNull ImmutableList<Pair<A, B>> elements) {
+//    public Pair<A, B> reduceTemplateExpression(@Nonnull TemplateExpression node, @Nonnull Maybe<Pair<A, B>> tag, @Nonnull ImmutableList<Pair<A, B>> elements) {
 //        return new Pair<>(reducerA.reduceTemplateExpression(node, a(tag), a(elements)), reducerB.reduceTemplateExpression(node, b(tag), b(elements)));
 //    }
 //
-//    @NotNull
+//    @Nonnull
 //    @Override
-//    public Pair<A, B> reduceThisExpression(@NotNull ThisExpression node) {
+//    public Pair<A, B> reduceThisExpression(@Nonnull ThisExpression node) {
 //        return new Pair<>(reducerA.reduceThisExpression(node), reducerB.reduceThisExpression(node));
 //    }
 //
-//    @NotNull
+//    @Nonnull
 //    @Override
-//    public Pair<A, B> reduceThrowStatement(@NotNull ThrowStatement node, @NotNull Pair<A, B> expression) {
+//    public Pair<A, B> reduceThrowStatement(@Nonnull ThrowStatement node, @Nonnull Pair<A, B> expression) {
 //        return new Pair<>(reducerA.reduceThrowStatement(node, a(expression)), reducerB.reduceThrowStatement(node, b(expression)));
 //    }
 //
-//    @NotNull
+//    @Nonnull
 //    @Override
 //    public Pair<A, B> reduceTryCatchStatement(
-//            @NotNull TryCatchStatement node,
-//            @NotNull Pair<A, B> block,
-//            @NotNull Pair<A, B> catchClause) {
+//            @Nonnull TryCatchStatement node,
+//            @Nonnull Pair<A, B> block,
+//            @Nonnull Pair<A, B> catchClause) {
 //        return new Pair<>(reducerA.reduceTryCatchStatement(node, a(block), a(catchClause)), reducerB.reduceTryCatchStatement(node, b(block), b(catchClause)));
 //    }
 //
-//    @NotNull
+//    @Nonnull
 //    @Override
 //    public Pair<A, B> reduceTryFinallyStatement(
-//            @NotNull TryFinallyStatement node,
-//            @NotNull Pair<A, B> block,
-//            @NotNull Maybe<Pair<A, B>> catchClause,
-//            @NotNull Pair<A, B> finalizer) {
+//            @Nonnull TryFinallyStatement node,
+//            @Nonnull Pair<A, B> block,
+//            @Nonnull Maybe<Pair<A, B>> catchClause,
+//            @Nonnull Pair<A, B> finalizer) {
 //        return new Pair<>(reducerA.reduceTryFinallyStatement(node, a(block), a(catchClause), a(finalizer)), reducerB.reduceTryFinallyStatement(node, b(block), b(catchClause), b(finalizer)));
 //    }
 //
-//    @NotNull
+//    @Nonnull
 //    @Override
-//    public Pair<A, B> reduceUnaryExpression(@NotNull UnaryExpression node, @NotNull Pair<A, B> operand) {
+//    public Pair<A, B> reduceUnaryExpression(@Nonnull UnaryExpression node, @Nonnull Pair<A, B> operand) {
 //        return new Pair<>(reducerA.reduceUnaryExpression(node, a(operand)), reducerB.reduceUnaryExpression(node, b(operand)));
 //    }
 //
-//    @NotNull
+//    @Nonnull
 //    @Override
-//    public Pair<A, B> reduceUpdateExpression(@NotNull UpdateExpression node, @NotNull Pair<A, B> operand) {
+//    public Pair<A, B> reduceUpdateExpression(@Nonnull UpdateExpression node, @Nonnull Pair<A, B> operand) {
 //        return new Pair<>(reducerA.reduceUpdateExpression(node, a(operand)), reducerB.reduceUpdateExpression(node, b(operand)));
 //    }
 //
-//    @NotNull
+//    @Nonnull
 //    @Override
-//    public Pair<A, B> reduceVariableDeclaration(@NotNull VariableDeclaration node, @NotNull ImmutableList<Pair<A, B>> declarators) {
+//    public Pair<A, B> reduceVariableDeclaration(@Nonnull VariableDeclaration node, @Nonnull ImmutableList<Pair<A, B>> declarators) {
 //        return new Pair<>(reducerA.reduceVariableDeclaration(node, a(declarators)), reducerB.reduceVariableDeclaration(node, b(declarators)));
 //    }
 //
-//    @NotNull
+//    @Nonnull
 //    @Override
 //    public Pair<A, B> reduceVariableDeclarationStatement(
-//            @NotNull VariableDeclarationStatement node,
-//            @NotNull Pair<A, B> declaration) {
+//            @Nonnull VariableDeclarationStatement node,
+//            @Nonnull Pair<A, B> declaration) {
 //        return new Pair<>(reducerA.reduceVariableDeclarationStatement(node, a(declaration)), reducerB.reduceVariableDeclarationStatement(node, b(declaration)));
 //    }
 //
-//    @NotNull
+//    @Nonnull
 //    @Override
 //    public Pair<A, B> reduceVariableDeclarator(
-//            @NotNull VariableDeclarator node,
-//            @NotNull Pair<A, B> binding,
-//            @NotNull Maybe<Pair<A, B>> init) {
+//            @Nonnull VariableDeclarator node,
+//            @Nonnull Pair<A, B> binding,
+//            @Nonnull Maybe<Pair<A, B>> init) {
 //        return new Pair<>(reducerA.reduceVariableDeclarator(node, a(binding), a(init)), reducerB.reduceVariableDeclarator(node, b(binding), b(init)));
 //    }
 //
-//    @NotNull
+//    @Nonnull
 //    @Override
 //    public Pair<A, B> reduceWhileStatement(
-//            @NotNull WhileStatement node,
-//            @NotNull Pair<A, B> test,
-//            @NotNull Pair<A, B> body) {
+//            @Nonnull WhileStatement node,
+//            @Nonnull Pair<A, B> test,
+//            @Nonnull Pair<A, B> body) {
 //        return new Pair<>(reducerA.reduceWhileStatement(node, a(test), a(body)), reducerB.reduceWhileStatement(node, b(test), b(body)));
 //    }
 //
-//    @NotNull
+//    @Nonnull
 //    @Override
 //    public Pair<A, B> reduceWithStatement(
-//            @NotNull WithStatement node,
-//            @NotNull Pair<A, B> object,
-//            @NotNull Pair<A, B> body) {
+//            @Nonnull WithStatement node,
+//            @Nonnull Pair<A, B> object,
+//            @Nonnull Pair<A, B> body) {
 //        return new Pair<>(reducerA.reduceWithStatement(node, a(object), a(body)), reducerB.reduceWithStatement(node, b(object), b(body)));
 //    }
 //
-//    @NotNull
+//    @Nonnull
 //    @Override
-//    public Pair<A, B> reduceYieldExpression(@NotNull YieldExpression node, @NotNull Maybe<Pair<A, B>> expression) {
+//    public Pair<A, B> reduceYieldExpression(@Nonnull YieldExpression node, @Nonnull Maybe<Pair<A, B>> expression) {
 //        return new Pair<>(reducerA.reduceYieldExpression(node, a(expression)), reducerB.reduceYieldExpression(node, b(expression)));
 //    }
 //
-//    @NotNull
+//    @Nonnull
 //    @Override
-//    public Pair<A, B> reduceYieldGeneratorExpression(@NotNull YieldGeneratorExpression node, @NotNull Pair<A, B> expression) {
+//    public Pair<A, B> reduceYieldGeneratorExpression(@Nonnull YieldGeneratorExpression node, @Nonnull Pair<A, B> expression) {
 //        return new Pair<>(reducerA.reduceYieldGeneratorExpression(node, a(expression)), reducerB.reduceYieldGeneratorExpression(node, b(expression)));
 //    }
 //}

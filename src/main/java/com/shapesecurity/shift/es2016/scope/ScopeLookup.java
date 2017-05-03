@@ -9,7 +9,7 @@ import com.shapesecurity.shift.es2016.ast.ClassDeclaration;
 import com.shapesecurity.shift.es2016.ast.FunctionDeclaration;
 import com.shapesecurity.shift.es2016.ast.IdentifierExpression;
 import com.shapesecurity.shift.es2016.ast.Node;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.util.IdentityHashMap;
 import java.util.Map;
@@ -17,26 +17,26 @@ import java.util.NoSuchElementException;
 
 
 public class ScopeLookup {
-    @NotNull
+    @Nonnull
     private final Map<BindingIdentifier, Variable> bindingIdentifierDeclarationCache = new IdentityHashMap<>();
-    @NotNull
+    @Nonnull
     private final Map<BindingIdentifier, Variable> bindingIdentifierReferenceCache = new IdentityHashMap<>(); // bi to referenced variable
-    @NotNull
+    @Nonnull
     private final Map<AssignmentTargetIdentifier, Variable> assignmentTargetIdentifierReferenceCache = new IdentityHashMap<>(); // ati to referenced variable
-    @NotNull
+    @Nonnull
     private final Map<IdentifierExpression, Variable> identifierExpressionReferenceCache = new IdentityHashMap<>(); // ie to referenced variable
-    @NotNull
+    @Nonnull
     private final Map<Node, Pair<Variable, Maybe<Variable>>> functionDeclarationCache = new IdentityHashMap<>();
-    @NotNull
+    @Nonnull
     private final Map<Variable, Boolean> isGlobalCache = new IdentityHashMap<>();
-    @NotNull
+    @Nonnull
     private final Map<Node, Scope> nodeScopeCache = new IdentityHashMap<>(); // node to the *outermost* scope associated with it. depends on the assumption that there is a unique such.
 
-    public ScopeLookup(@NotNull GlobalScope scope) {
+    public ScopeLookup(@Nonnull GlobalScope scope) {
         scopeHelper(scope);
     }
 
-    private void scopeHelper(@NotNull Scope scope) {
+    private void scopeHelper(@Nonnull Scope scope) {
         scope.children.forEach(this::scopeHelper); // logic depends on this occurring first.
         for (Variable v : scope.variables()) { // TODO make this functional
             variableHelper(v);
@@ -45,7 +45,7 @@ public class ScopeLookup {
         nodeScopeCache.put(scope.astNode, scope);
     }
 
-    private void variableHelper(@NotNull Variable variable) {
+    private void variableHelper(@Nonnull Variable variable) {
         variable.declarations.forEach(decl -> {
             if (bindingIdentifierDeclarationCache.containsKey(decl.node)) {
                 functionDeclarationCache.put(decl.node, new Pair<>(bindingIdentifierDeclarationCache.get(decl.node), Maybe.of(variable)));
@@ -66,13 +66,13 @@ public class ScopeLookup {
         });
     }
 
-    @NotNull
-    public Maybe<Variable> findVariableDeclaredBy(@NotNull BindingIdentifier bindingIdentifier) { // NB: When used with function declarations, which can declare multiple variables under B.3.3, returns the lexical binding. When used with class declarations, returns the class-local binding.
+    @Nonnull
+    public Maybe<Variable> findVariableDeclaredBy(@Nonnull BindingIdentifier bindingIdentifier) { // NB: When used with function declarations, which can declare multiple variables under B.3.3, returns the lexical binding. When used with class declarations, returns the class-local binding.
         return Maybe.fromNullable(bindingIdentifierDeclarationCache.get(bindingIdentifier));
     }
 
-    @NotNull
-    public Variable findVariableReferencedBy(@NotNull AssignmentTargetIdentifier assignmentTargetIdentifier) {
+    @Nonnull
+    public Variable findVariableReferencedBy(@Nonnull AssignmentTargetIdentifier assignmentTargetIdentifier) {
         Variable v = assignmentTargetIdentifierReferenceCache.get(assignmentTargetIdentifier);
         if (v == null) {
             throw new NoSuchElementException("AssignmentTargetIdentifier not present in AST");
@@ -80,13 +80,13 @@ public class ScopeLookup {
         return v;
     }
 
-    @NotNull
-    public Maybe<Variable> findVariableReferencedBy(@NotNull BindingIdentifier bindingIdentifier) {
+    @Nonnull
+    public Maybe<Variable> findVariableReferencedBy(@Nonnull BindingIdentifier bindingIdentifier) {
         return Maybe.fromNullable(bindingIdentifierReferenceCache.get(bindingIdentifier));
     }
 
-    @NotNull
-    public Variable findVariableReferencedBy(@NotNull IdentifierExpression identifierExpression) {
+    @Nonnull
+    public Variable findVariableReferencedBy(@Nonnull IdentifierExpression identifierExpression) {
         Variable v = identifierExpressionReferenceCache.get(identifierExpression);
         if (v == null) {
             throw new NoSuchElementException("IdentifierExpression not present in AST");
@@ -100,8 +100,8 @@ public class ScopeLookup {
     // Assuming the function declaration occurs somewhere in the AST corresponding to this global scope,
     // there always will be at least one variable declared by the given function.
     // Returns (lexical, variable)
-    @NotNull
-    public Pair<Variable, Maybe<Variable>> findVariablesForFuncDecl(@NotNull final FunctionDeclaration func) {
+    @Nonnull
+    public Pair<Variable, Maybe<Variable>> findVariablesForFuncDecl(@Nonnull final FunctionDeclaration func) {
         if (func.name.name.equals("*default*")) {
             throw new IllegalArgumentException("Can't lookup default exports");
         }
@@ -117,8 +117,8 @@ public class ScopeLookup {
     }
 
     // Class declarations always create two variables. This function returns both: (class-local, outer).
-    @NotNull
-    public Pair<Variable, Variable> findVariablesForClassDecl(@NotNull final ClassDeclaration cl) {
+    @Nonnull
+    public Pair<Variable, Variable> findVariablesForClassDecl(@Nonnull final ClassDeclaration cl) {
         if (cl.name.name.equals("*default*")) {
             throw new IllegalArgumentException("Can't lookup default exports");
         }
@@ -129,12 +129,12 @@ public class ScopeLookup {
         return new Pair<>(vs.left(), vs.right().fromJust());
     }
 
-    public boolean isGlobal(@NotNull Variable variable) {
+    public boolean isGlobal(@Nonnull Variable variable) {
         return isGlobalCache.get(variable);
     }
 
-    @NotNull
-    public Maybe<Scope> findScopeFor(@NotNull Node node) {
+    @Nonnull
+    public Maybe<Scope> findScopeFor(@Nonnull Node node) {
         return Maybe.fromNullable(nodeScopeCache.get(node));
     }
 }

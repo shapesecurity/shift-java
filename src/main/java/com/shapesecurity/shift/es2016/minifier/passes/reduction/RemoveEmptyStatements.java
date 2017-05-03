@@ -35,7 +35,7 @@
 //import com.shapesecurity.shift.minifier.ReductionRule;
 //import com.shapesecurity.shift.visitor.DirtyState;
 //
-//import org.jetbrains.annotations.NotNull;
+//import javax.annotation.Nonnull;
 //
 //public class RemoveEmptyStatements extends ReductionRule {
 //  /* remove empty statements */
@@ -47,33 +47,33 @@
 //    super();
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public DirtyState<Block> transform(@NotNull Block node) {
+//  public DirtyState<Block> transform(@Nonnull Block node) {
 //    ImmutableList<Statement> filteredStatements = node.statements.filter(isNotEmptyStatement);
 //    return filteredStatements.length == node.statements.length ? DirtyState.clean(node) : DirtyState.dirty(
 //        new Block(filteredStatements));
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public DirtyState<FunctionBody> transform(@NotNull FunctionBody node) {
+//  public DirtyState<FunctionBody> transform(@Nonnull FunctionBody node) {
 //    ImmutableList<Statement> filteredStatements = node.statements.filter(isNotEmptyStatement);
 //    return filteredStatements.length == node.statements.length ? DirtyState.clean(node) : DirtyState.dirty(
 //        new FunctionBody(node.directives, filteredStatements));
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public DirtyState<SwitchCase> transform(@NotNull SwitchCase node) {
+//  public DirtyState<SwitchCase> transform(@Nonnull SwitchCase node) {
 //    ImmutableList<Statement> filteredStatements = node.consequent.filter(isNotEmptyStatement);
 //    return filteredStatements.length == node.consequent.length ? DirtyState.clean(node) : DirtyState.dirty(
 //        new SwitchCase(node.test, filteredStatements));
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public DirtyState<SwitchDefault> transform(@NotNull SwitchDefault node) {
+//  public DirtyState<SwitchDefault> transform(@Nonnull SwitchDefault node) {
 //    ImmutableList<Statement> filteredStatements = node.consequent.filter(isNotEmptyStatement);
 //    return filteredStatements.length == node.consequent.length ? DirtyState.clean(node) : DirtyState.dirty(
 //        new SwitchDefault(filteredStatements));
@@ -81,16 +81,16 @@
 //
 //	/* replace statements that contain empty statements with reduced equivalents */
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public DirtyState<Statement> transform(@NotNull DoWhileStatement node) {
+//  public DirtyState<Statement> transform(@Nonnull DoWhileStatement node) {
 //    return node.body instanceof EmptyStatement ? DirtyState.dirty(new WhileStatement(node.test, node.body)) :
 //        DirtyState.clean(node);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public DirtyState<Statement> transform(@NotNull IfStatement node) {
+//  public DirtyState<Statement> transform(@Nonnull IfStatement node) {
 //    boolean consequentEmpty = node.consequent instanceof EmptyStatement;
 //    boolean alternateEmpty = node.alternate.isJust() && node.alternate.fromJust() instanceof EmptyStatement;
 //    if ((alternateEmpty || node.alternate.isNothing()) && consequentEmpty) {
@@ -106,17 +106,17 @@
 //    return DirtyState.clean(node);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public DirtyState<Statement> transform(@NotNull WithStatement node) {
+//  public DirtyState<Statement> transform(@Nonnull WithStatement node) {
 //    return node.body instanceof EmptyStatement ? DirtyState.dirty(new ExpressionStatement(node.object)) :
 //           DirtyState.clean(node);
 //  }
 //
 //  // TODO(michael F.): switch with no preDefaultCases or only a default case
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public DirtyState<Statement> transform(@NotNull SwitchStatement node) {
+//  public DirtyState<Statement> transform(@Nonnull SwitchStatement node) {
 //    return DirtyState.clean(node);
 //  }
 //}

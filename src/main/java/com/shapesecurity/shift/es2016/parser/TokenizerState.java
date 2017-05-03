@@ -1,9 +1,9 @@
 package com.shapesecurity.shift.es2016.parser;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 public class TokenizerState {
-    @NotNull
+    @Nonnull
     public final int index;
     public final int line;
     public final int lineStart;
@@ -13,7 +13,7 @@ public class TokenizerState {
     public final int lastLine;
     public final int lastLineStart;
     public final int lastIndex;
-    @NotNull
+    @Nonnull
     public final Token lookahead;
     public final boolean hasLineTerminatorBeforeNext;
 
@@ -27,7 +27,7 @@ public class TokenizerState {
             int lastIndex,
             int lastLine,
             int lastLineStart,
-            @NotNull Token lookahead,
+            @Nonnull Token lookahead,
             boolean hasLineTerminatorBeforeNext
     ) {
         this.index = index;

@@ -16,7 +16,7 @@
 //
 //package com.shapesecurity.shift.others;
 //
-//import org.jetbrains.annotations.NotNull;
+//import javax.annotation.Nonnull;
 //
 //import com.shapesecurity.functional.data.ImmutableList;
 //import Node;
@@ -24,10 +24,10 @@
 //
 //public abstract class TestReducer extends TestReducerWithPath {
 //
-//  protected abstract void accept(@NotNull Node node);
+//  protected abstract void accept(@Nonnull Node node);
 //
 //  @Override
-//  protected void accept(@NotNull Node node, @NotNull ImmutableList<Branch> path) {
+//  protected void accept(@Nonnull Node node, @Nonnull ImmutableList<Branch> path) {
 //    accept(node);
 //  }
 //}

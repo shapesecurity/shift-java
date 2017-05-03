@@ -22,8 +22,8 @@
 //import Node;
 //import com.shapesecurity.shift.ast.NonEmptyListNode;
 //
-//import org.jetbrains.annotations.NotNull;
-//import org.jetbrains.annotations.Nullable;
+//import javax.annotation.Nonnull;
+//import javax.annotation.Nullable;
 //
 //public final class IndexedBranch implements Branch {
 //  public final int index;
@@ -33,7 +33,7 @@
 //    this.index = index;
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  public static IndexedBranch from(int i) {
 //    if (i < 1024) {
 //      if (cache[i] == null) {
@@ -62,7 +62,7 @@
 //  @SuppressWarnings("unchecked")
 //  @Nullable
 //  @Override
-//  public Node view(@NotNull Node parent) {
+//  public Node view(@Nonnull Node parent) {
 //    if (parent instanceof ListNode) {
 //      ListNode<Object> listNode = (ListNode<Object>) parent;
 //      Object node = listNode.list.index(this.index).toNullable();
@@ -82,9 +82,9 @@
 //  }
 //
 //  @SuppressWarnings("unchecked")
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public Node set(@NotNull Node parent, @NotNull Node child) {
+//  public Node set(@Nonnull Node parent, @Nonnull Node child) {
 //    if (parent instanceof ListNode) {
 //      ListNode<Node> list = (ListNode<Node>) parent;
 //      if (list.genType.elementType.isAssignableFrom(child.genType())) {

@@ -19,20 +19,20 @@ package com.shapesecurity.shift.es2016.parser.token;
 import com.shapesecurity.shift.es2016.parser.TokenType;
 import com.shapesecurity.shift.es2016.parser.SourceRange;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 public class IdentifierToken extends IdentifierLikeToken {
 
-    @NotNull
+    @Nonnull
     private final CharSequence name;
 
-    public IdentifierToken(@NotNull SourceRange slice, @NotNull CharSequence name) {
+    public IdentifierToken(@Nonnull SourceRange slice, @Nonnull CharSequence name) {
         super(TokenType.IDENTIFIER, slice);
         this.name = name;
     }
 
     @Override
-    @NotNull
+    @Nonnull
     public String toString() {
         return String.valueOf(this.name);
     }

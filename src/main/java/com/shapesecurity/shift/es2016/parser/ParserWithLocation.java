@@ -12,36 +12,36 @@ import com.shapesecurity.shift.es2016.ast.Node;
 import com.shapesecurity.shift.es2016.ast.Script;
 import com.shapesecurity.shift.es2016.ast.TemplateElement;
 import com.shapesecurity.shift.es2016.ast.TemplateExpression;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 public class ParserWithLocation {
 	protected HashTable<Node, SourceSpan> locations = HashTable.emptyUsingIdentity();
 
 	public ParserWithLocation() {}
 
-	@NotNull
-	public Script parseScript(@NotNull String text) throws JsError {
+	@Nonnull
+	public Script parseScript(@Nonnull String text) throws JsError {
 		return new ParserWithLocationInternal(text, false).parseScript();
 	}
 
-	@NotNull
-	public Module parseModule(@NotNull String text) throws JsError {
+	@Nonnull
+	public Module parseModule(@Nonnull String text) throws JsError {
 		return new ParserWithLocationInternal(text, true).parseModule();
 	}
 
-	@NotNull
-	public Maybe<SourceSpan> getLocation(@NotNull Node node) {
+	@Nonnull
+	public Maybe<SourceSpan> getLocation(@Nonnull Node node) {
 		return this.locations.get(node);
 	}
 
 	private class ParserWithLocationInternal extends GenericParser<SourceLocation> {
-		protected ParserWithLocationInternal(@NotNull String source, boolean isModule) throws JsError {
+		protected ParserWithLocationInternal(@Nonnull String source, boolean isModule) throws JsError {
 			super(source, isModule);
 		}
 
-		@NotNull
+		@Nonnull
 		@Override
-		protected <T extends Node> T finishNode(@NotNull SourceLocation startLocation, @NotNull T node) {
+		protected <T extends Node> T finishNode(@Nonnull SourceLocation startLocation, @Nonnull T node) {
 			if (node instanceof Script || node instanceof Module) {
 				// Special case: the start/end of the whole-program node is the whole text including leading and trailing whitespace.
 				locations = locations.put(node, new SourceSpan(Maybe.empty(), new SourceLocation(0, 0, 0), new SourceLocation(this.startLine, this.startIndex - this.startLineStart, this.startIndex)));
@@ -83,15 +83,15 @@ public class ParserWithLocation {
 			return node;
 		}
 
-		@NotNull
+		@Nonnull
 		@Override
 		protected SourceLocation startNode() {
 			return this.getLocation();
 		}
 
-		@NotNull
+		@Nonnull
 		@Override
-		protected <T extends Node> T copyNode(@NotNull Node src, @NotNull T dest) {
+		protected <T extends Node> T copyNode(@Nonnull Node src, @Nonnull T dest) {
 			locations.get(src).foreach(srcSpan -> {
 				locations = locations.put(dest, srcSpan);
 			});

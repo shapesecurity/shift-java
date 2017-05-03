@@ -76,19 +76,19 @@
 //import com.shapesecurity.shift.ast.statement.WithStatement;
 //import com.shapesecurity.shift.visitor.DirtyState;
 //
-//import org.jetbrains.annotations.NotNull;
+//import javax.annotation.Nonnull;
 //
 //public class ComposedRule<T extends MinificationRule> extends MinificationRule {
-//  @NotNull
+//  @Nonnull
 //  private final T[] rules;
 //
-//  public ComposedRule(@NotNull T[] rules) {
+//  public ComposedRule(@Nonnull T[] rules) {
 //    super();
 //    this.rules = rules;
 //  }
 //
-//  @NotNull
-//  private DirtyState<Statement> t(@NotNull Statement node) {
+//  @Nonnull
+//  private DirtyState<Statement> t(@Nonnull Statement node) {
 //    boolean dirty = false;
 //    for (T rule : this.rules) {
 //      DirtyState<Statement> transform = rule.transform(node);
@@ -98,8 +98,8 @@
 //    return new DirtyState<>(node, dirty);
 //  }
 //
-//  @NotNull
-//  private DirtyState<Directive> t(@NotNull Directive node) {
+//  @Nonnull
+//  private DirtyState<Directive> t(@Nonnull Directive node) {
 //    boolean dirty = false;
 //    for (T rule : this.rules) {
 //      DirtyState<Directive> transform = rule.transform(node);
@@ -109,8 +109,8 @@
 //    return new DirtyState<>(node, dirty);
 //  }
 //
-//  @NotNull
-//  private DirtyState<Expression> t(@NotNull Expression node) {
+//  @Nonnull
+//  private DirtyState<Expression> t(@Nonnull Expression node) {
 //    boolean dirty = false;
 //    for (T rule : this.rules) {
 //      DirtyState<Expression> transform = rule.transform(node);
@@ -120,8 +120,8 @@
 //    return new DirtyState<>(node, dirty);
 //  }
 //
-//  @NotNull
-//  private DirtyState<PropertyName> t(@NotNull PropertyName node) {
+//  @Nonnull
+//  private DirtyState<PropertyName> t(@Nonnull PropertyName node) {
 //    boolean dirty = false;
 //    for (T rule : this.rules) {
 //      DirtyState<PropertyName> transform = rule.transform(node);
@@ -131,8 +131,8 @@
 //    return new DirtyState<>(node, dirty);
 //  }
 //
-//  @NotNull
-//  private DirtyState<ObjectProperty> t(@NotNull ObjectProperty node) {
+//  @Nonnull
+//  private DirtyState<ObjectProperty> t(@Nonnull ObjectProperty node) {
 //    boolean dirty = false;
 //    for (T rule : this.rules) {
 //      DirtyState<ObjectProperty> transform = rule.transform(node);
@@ -142,8 +142,8 @@
 //    return new DirtyState<>(node, dirty);
 //  }
 //
-//  @NotNull
-//  private DirtyState<SwitchCase> t(@NotNull SwitchCase node) {
+//  @Nonnull
+//  private DirtyState<SwitchCase> t(@Nonnull SwitchCase node) {
 //    boolean dirty = false;
 //    for (T rule : this.rules) {
 //      DirtyState<SwitchCase> transform = rule.transform(node);
@@ -153,8 +153,8 @@
 //    return new DirtyState<>(node, dirty);
 //  }
 //
-//  @NotNull
-//  private DirtyState<SwitchDefault> t(@NotNull SwitchDefault node) {
+//  @Nonnull
+//  private DirtyState<SwitchDefault> t(@Nonnull SwitchDefault node) {
 //    boolean dirty = false;
 //    for (T rule : this.rules) {
 //      DirtyState<SwitchDefault> transform = rule.transform(node);
@@ -164,9 +164,9 @@
 //    return new DirtyState<>(node, dirty);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public DirtyState<CatchClause> transform(@NotNull CatchClause node) {
+//  public DirtyState<CatchClause> transform(@Nonnull CatchClause node) {
 //    boolean dirty = false;
 //    for (T rule : this.rules) {
 //      DirtyState<CatchClause> transform = rule.transform(node);
@@ -176,9 +176,9 @@
 //    return new DirtyState<>(node, dirty);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public DirtyState<Block> transform(@NotNull Block node) {
+//  public DirtyState<Block> transform(@Nonnull Block node) {
 //    boolean dirty = false;
 //    for (T rule : this.rules) {
 //      DirtyState<Block> transform = rule.transform(node);
@@ -188,9 +188,9 @@
 //    return new DirtyState<>(node, dirty);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public DirtyState<VariableDeclarator> transform(@NotNull VariableDeclarator node) {
+//  public DirtyState<VariableDeclarator> transform(@Nonnull VariableDeclarator node) {
 //    boolean dirty = false;
 //    for (T rule : this.rules) {
 //      DirtyState<VariableDeclarator> transform = rule.transform(node);
@@ -200,129 +200,129 @@
 //    return new DirtyState<>(node, dirty);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public DirtyState<Directive> transform(@NotNull UnknownDirective node) {
+//  public DirtyState<Directive> transform(@Nonnull UnknownDirective node) {
 //    return t(node);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public DirtyState<Directive> transform(@NotNull UseStrictDirective node) {
+//  public DirtyState<Directive> transform(@Nonnull UseStrictDirective node) {
 //    return t(node);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public DirtyState<Expression> transform(@NotNull ArrayExpression node) {
+//  public DirtyState<Expression> transform(@Nonnull ArrayExpression node) {
 //    return t(node);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public DirtyState<Expression> transform(@NotNull BinaryExpression node) {
+//  public DirtyState<Expression> transform(@Nonnull BinaryExpression node) {
 //    return t(node);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public DirtyState<Expression> transform(@NotNull CallExpression node) {
+//  public DirtyState<Expression> transform(@Nonnull CallExpression node) {
 //    return t(node);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public DirtyState<Expression> transform(@NotNull ComputedMemberExpression node) {
+//  public DirtyState<Expression> transform(@Nonnull ComputedMemberExpression node) {
 //    return t(node);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public DirtyState<Expression> transform(@NotNull ConditionalExpression node) {
+//  public DirtyState<Expression> transform(@Nonnull ConditionalExpression node) {
 //    return t(node);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public DirtyState<Expression> transform(@NotNull FunctionExpression node) {
+//  public DirtyState<Expression> transform(@Nonnull FunctionExpression node) {
 //    return t(node);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public DirtyState<Expression> transform(@NotNull IdentifierExpression node) {
+//  public DirtyState<Expression> transform(@Nonnull IdentifierExpression node) {
 //    return t(node);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public DirtyState<Expression> transform(@NotNull LiteralBooleanExpression node) {
+//  public DirtyState<Expression> transform(@Nonnull LiteralBooleanExpression node) {
 //    return t(node);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public DirtyState<Expression> transform(@NotNull LiteralNullExpression node) {
+//  public DirtyState<Expression> transform(@Nonnull LiteralNullExpression node) {
 //    return t(node);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public DirtyState<Expression> transform(@NotNull LiteralNumericExpression node) {
+//  public DirtyState<Expression> transform(@Nonnull LiteralNumericExpression node) {
 //    return t(node);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public DirtyState<Expression> transform(@NotNull LiteralRegExpExpression node) {
+//  public DirtyState<Expression> transform(@Nonnull LiteralRegExpExpression node) {
 //    return t(node);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public DirtyState<Expression> transform(@NotNull LiteralStringExpression node) {
+//  public DirtyState<Expression> transform(@Nonnull LiteralStringExpression node) {
 //    return t(node);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public DirtyState<Expression> transform(@NotNull NewExpression node) {
+//  public DirtyState<Expression> transform(@Nonnull NewExpression node) {
 //    return t(node);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public DirtyState<Expression> transform(@NotNull ObjectExpression node) {
+//  public DirtyState<Expression> transform(@Nonnull ObjectExpression node) {
 //    return t(node);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public DirtyState<Expression> transform(@NotNull PostfixExpression node) {
+//  public DirtyState<Expression> transform(@Nonnull PostfixExpression node) {
 //    return t(node);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public DirtyState<Expression> transform(@NotNull PrefixExpression node) {
+//  public DirtyState<Expression> transform(@Nonnull PrefixExpression node) {
 //    return t(node);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public DirtyState<Expression> transform(@NotNull StaticMemberExpression node) {
+//  public DirtyState<Expression> transform(@Nonnull StaticMemberExpression node) {
 //    return t(node);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public DirtyState<Expression> transform(@NotNull ThisExpression node) {
+//  public DirtyState<Expression> transform(@Nonnull ThisExpression node) {
 //    return t(node);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public DirtyState<Identifier> transform(@NotNull Identifier node) {
+//  public DirtyState<Identifier> transform(@Nonnull Identifier node) {
 //    boolean dirty = false;
 //    for (T rule : this.rules) {
 //      DirtyState<Identifier> transform = rule.transform(node);
@@ -332,9 +332,9 @@
 //    return new DirtyState<>(node, dirty);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public DirtyState<FunctionBody> transform(@NotNull FunctionBody node) {
+//  public DirtyState<FunctionBody> transform(@Nonnull FunctionBody node) {
 //    boolean dirty = false;
 //    for (T rule : this.rules) {
 //      DirtyState<FunctionBody> transform = rule.transform(node);
@@ -344,9 +344,9 @@
 //    return new DirtyState<>(node, dirty);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public DirtyState<Script> transform(@NotNull Script node) {
+//  public DirtyState<Script> transform(@Nonnull Script node) {
 //    boolean dirty = false;
 //    for (T rule : this.rules) {
 //      DirtyState<Script> transform = rule.transform(node);
@@ -356,171 +356,171 @@
 //    return new DirtyState<>(node, dirty);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public DirtyState<PropertyName> transform(@NotNull PropertyName node) {
+//  public DirtyState<PropertyName> transform(@Nonnull PropertyName node) {
 //    return t(node);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public DirtyState<ObjectProperty> transform(@NotNull Getter node) {
+//  public DirtyState<ObjectProperty> transform(@Nonnull Getter node) {
 //    return t(node);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public DirtyState<ObjectProperty> transform(@NotNull DataProperty node) {
+//  public DirtyState<ObjectProperty> transform(@Nonnull DataProperty node) {
 //    return t(node);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public DirtyState<ObjectProperty> transform(@NotNull Setter node) {
+//  public DirtyState<ObjectProperty> transform(@Nonnull Setter node) {
 //    return t(node);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public DirtyState<Statement> transform(@NotNull BlockStatement node) {
+//  public DirtyState<Statement> transform(@Nonnull BlockStatement node) {
 //    return t(node);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public DirtyState<Statement> transform(@NotNull BreakStatement node) {
+//  public DirtyState<Statement> transform(@Nonnull BreakStatement node) {
 //    return t(node);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public DirtyState<Statement> transform(@NotNull ContinueStatement node) {
+//  public DirtyState<Statement> transform(@Nonnull ContinueStatement node) {
 //    return t(node);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public DirtyState<Statement> transform(@NotNull DebuggerStatement node) {
+//  public DirtyState<Statement> transform(@Nonnull DebuggerStatement node) {
 //    return t(node);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public DirtyState<Statement> transform(@NotNull DoWhileStatement node) {
+//  public DirtyState<Statement> transform(@Nonnull DoWhileStatement node) {
 //    return t(node);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public DirtyState<Statement> transform(@NotNull EmptyStatement node) {
+//  public DirtyState<Statement> transform(@Nonnull EmptyStatement node) {
 //    return t(node);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public DirtyState<Statement> transform(@NotNull ExpressionStatement node) {
+//  public DirtyState<Statement> transform(@Nonnull ExpressionStatement node) {
 //    return t(node);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public DirtyState<Statement> transform(@NotNull ForInStatement node) {
+//  public DirtyState<Statement> transform(@Nonnull ForInStatement node) {
 //    return t(node);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public DirtyState<Statement> transform(@NotNull ForStatement node) {
+//  public DirtyState<Statement> transform(@Nonnull ForStatement node) {
 //    return t(node);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public DirtyState<Statement> transform(@NotNull FunctionDeclaration node) {
+//  public DirtyState<Statement> transform(@Nonnull FunctionDeclaration node) {
 //    return t(node);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public DirtyState<Statement> transform(@NotNull IfStatement node) {
+//  public DirtyState<Statement> transform(@Nonnull IfStatement node) {
 //    return t(node);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public DirtyState<Statement> transform(@NotNull LabeledStatement node) {
+//  public DirtyState<Statement> transform(@Nonnull LabeledStatement node) {
 //    return t(node);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public DirtyState<Statement> transform(@NotNull ReturnStatement node) {
+//  public DirtyState<Statement> transform(@Nonnull ReturnStatement node) {
 //    return t(node);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public DirtyState<Statement> transform(@NotNull SwitchStatement node) {
+//  public DirtyState<Statement> transform(@Nonnull SwitchStatement node) {
 //    return t(node);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public DirtyState<Statement> transform(@NotNull SwitchStatementWithDefault node) {
+//  public DirtyState<Statement> transform(@Nonnull SwitchStatementWithDefault node) {
 //    return t(node);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public DirtyState<Statement> transform(@NotNull ThrowStatement node) {
+//  public DirtyState<Statement> transform(@Nonnull ThrowStatement node) {
 //    return t(node);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public DirtyState<Statement> transform(@NotNull TryCatchStatement node) {
+//  public DirtyState<Statement> transform(@Nonnull TryCatchStatement node) {
 //    return t(node);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public DirtyState<Statement> transform(@NotNull VariableDeclarationStatement node) {
+//  public DirtyState<Statement> transform(@Nonnull VariableDeclarationStatement node) {
 //    return t(node);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public DirtyState<Statement> transform(@NotNull WhileStatement node) {
+//  public DirtyState<Statement> transform(@Nonnull WhileStatement node) {
 //    return t(node);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public DirtyState<Statement> transform(@NotNull WithStatement node) {
+//  public DirtyState<Statement> transform(@Nonnull WithStatement node) {
 //    return t(node);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public DirtyState<SwitchCase> transform(@NotNull SwitchCase node) {
+//  public DirtyState<SwitchCase> transform(@Nonnull SwitchCase node) {
 //    return t(node);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public DirtyState<SwitchDefault> transform(@NotNull SwitchDefault node) {
+//  public DirtyState<SwitchDefault> transform(@Nonnull SwitchDefault node) {
 //    return t(node);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public DirtyState<Statement> transform(@NotNull TryFinallyStatement node) {
+//  public DirtyState<Statement> transform(@Nonnull TryFinallyStatement node) {
 //    return t(node);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public DirtyState<VariableDeclaration> transform(@NotNull VariableDeclaration node) {
+//  public DirtyState<VariableDeclaration> transform(@Nonnull VariableDeclaration node) {
 //    boolean dirty = false;
 //    for (T rule : this.rules) {
 //      DirtyState<VariableDeclaration> transform = rule.transform(node);

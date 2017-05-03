@@ -16,15 +16,15 @@
 
 package com.shapesecurity.shift.es2016.parser;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 public class SourceRange implements CharSequence {
     public final int start;
     public final int end;
-    @NotNull
+    @Nonnull
     private final CharSequence source;
 
-    public SourceRange(int start, int end, @NotNull CharSequence source) {
+    public SourceRange(int start, int end, @Nonnull CharSequence source) {
         this.start = start;
         this.end = end;
         this.source = source;
@@ -48,12 +48,12 @@ public class SourceRange implements CharSequence {
         return new SourceRange(this.start + start, end + this.start, this.source);
     }
 
-    @NotNull
+    @Nonnull
     public CharSequence getString() {
         return this.source.subSequence(this.start, this.end);
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public String toString() {
         return String.valueOf(this.getString());

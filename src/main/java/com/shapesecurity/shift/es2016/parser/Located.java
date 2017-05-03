@@ -16,15 +16,15 @@
 
 package com.shapesecurity.shift.es2016.parser;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public class Located {
 
     @Nullable
     private SourceLocation loc;
 
-    void setLoc(@NotNull SourceLocation loc) {
+    void setLoc(@Nonnull SourceLocation loc) {
         this.loc = loc;
     }
 

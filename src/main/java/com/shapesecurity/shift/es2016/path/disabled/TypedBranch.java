@@ -20,36 +20,36 @@
 //import Node;
 //import com.shapesecurity.shift.ast.types.GenType;
 //
-//import org.jetbrains.annotations.NotNull;
-//import org.jetbrains.annotations.Nullable;
+//import javax.annotation.Nonnull;
+//import javax.annotation.Nullable;
 //
 //public abstract class TypedBranch<P extends Node, C extends Node> {
-//  @NotNull
+//  @Nonnull
 //  private final GenType parentType;
 //
-//  @NotNull
+//  @Nonnull
 //  private final GenType childType;
 //
-//  TypedBranch(@NotNull GenType parentType, @NotNull GenType childType) {
+//  TypedBranch(@Nonnull GenType parentType, @Nonnull GenType childType) {
 //    this.parentType = parentType;
 //    this.childType = childType;
 //  }
 //
-//  boolean isValidParent(@NotNull GenType type) {
+//  boolean isValidParent(@Nonnull GenType type) {
 //    return this.parentType.isAssignableFrom(type);
 //  }
 //
-//  boolean isValidChild(@NotNull GenType type) {
+//  boolean isValidChild(@Nonnull GenType type) {
 //    return this.childType.isAssignableFrom(type);
 //  }
 //
-//  public boolean isValidChild(@NotNull GenType parentType, @NotNull GenType type) {
+//  public boolean isValidChild(@Nonnull GenType parentType, @Nonnull GenType type) {
 //    return isValidChild(type);
 //  }
 //
 //  @Nullable
-//  public abstract C view(@NotNull P parent);
+//  public abstract C view(@Nonnull P parent);
 //
-//  @NotNull
-//  public abstract P set(@NotNull P parent, @NotNull C child);
+//  @Nonnull
+//  public abstract P set(@Nonnull P parent, @Nonnull C child);
 //}

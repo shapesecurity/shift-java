@@ -2,20 +2,20 @@ package com.shapesecurity.shift.es2016.codegen;
 
 import com.shapesecurity.shift.es2016.ast.Module;
 import com.shapesecurity.shift.es2016.ast.Script;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 public abstract class PrettyCodeGen extends CodeGen {
-	public PrettyCodeGen(@NotNull CodeRepFactory factory) {
+	public PrettyCodeGen(@Nonnull CodeRepFactory factory) {
 		super(factory);
 	}
 
-	@NotNull
-	public static String codeGen(@NotNull Script script) {
+	@Nonnull
+	public static String codeGen(@Nonnull Script script) {
 		return codeGen(script, PRETTY);
 	}
 
-	@NotNull
-	public static String codeGen(@NotNull Module module) {
+	@Nonnull
+	public static String codeGen(@Nonnull Module module) {
 		return codeGen(module, PRETTY);
 	}
 }

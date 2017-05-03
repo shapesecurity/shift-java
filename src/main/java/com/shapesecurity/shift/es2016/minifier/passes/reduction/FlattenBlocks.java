@@ -27,7 +27,7 @@
 //import com.shapesecurity.shift.minifier.ReductionRule;
 //import com.shapesecurity.shift.visitor.DirtyState;
 //
-//import org.jetbrains.annotations.NotNull;
+//import javax.annotation.Nonnull;
 //
 //public class FlattenBlocks extends ReductionRule {
 //  /* flatten blocks in statement position */
@@ -38,33 +38,33 @@
 //              iStatement);
 //  private static final F<Statement, Boolean> isBlockStatement = iStatement -> iStatement instanceof BlockStatement;
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public DirtyState<Block> transform(@NotNull Block node) {
+//  public DirtyState<Block> transform(@Nonnull Block node) {
 //    ImmutableList<Statement> flattenedStatements = node.statements.bind(flattenBlockStatements);
 //    return node.statements.exists(isBlockStatement) ? DirtyState.dirty(new Block(flattenedStatements)) :
 //           DirtyState.clean(node);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public DirtyState<FunctionBody> transform(@NotNull FunctionBody node) {
+//  public DirtyState<FunctionBody> transform(@Nonnull FunctionBody node) {
 //    ImmutableList<Statement> flattenedStatements = node.statements.bind(flattenBlockStatements);
 //    return node.statements.exists(isBlockStatement) ? DirtyState.dirty(new FunctionBody(node.directives,
 //        flattenedStatements)) : DirtyState.clean(node);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public DirtyState<SwitchCase> transform(@NotNull SwitchCase node) {
+//  public DirtyState<SwitchCase> transform(@Nonnull SwitchCase node) {
 //    ImmutableList<Statement> flattenedStatements = node.consequent.bind(flattenBlockStatements);
 //    return node.consequent.exists(isBlockStatement) ? DirtyState.dirty(new SwitchCase(node.test, flattenedStatements)) :
 //           DirtyState.clean(node);
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public DirtyState<SwitchDefault> transform(@NotNull SwitchDefault node) {
+//  public DirtyState<SwitchDefault> transform(@Nonnull SwitchDefault node) {
 //    ImmutableList<Statement> flattenedStatements = node.consequent.bind(flattenBlockStatements);
 //    return node.consequent.exists(isBlockStatement) ? DirtyState.dirty(new SwitchDefault(flattenedStatements)) :
 //           DirtyState.clean(node);

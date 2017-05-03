@@ -20,19 +20,19 @@ import com.shapesecurity.shift.es2016.parser.TokenType;
 import com.shapesecurity.shift.es2016.parser.SourceRange;
 import com.shapesecurity.shift.es2016.parser.Token;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 public class StringLiteralToken extends Token {
     private final String value;
     public final String octal;
 
-    public StringLiteralToken(@NotNull SourceRange slice, @NotNull String value, String octal) {
+    public StringLiteralToken(@Nonnull SourceRange slice, @Nonnull String value, String octal) {
         super(TokenType.STRING, slice);
         this.value = value;
         this.octal = octal;
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public String getValueString() {
         return this.value;

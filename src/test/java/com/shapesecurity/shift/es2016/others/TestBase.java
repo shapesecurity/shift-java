@@ -28,7 +28,7 @@
 //import java.nio.file.Path;
 //import java.nio.file.Paths;
 //
-//import org.jetbrains.annotations.NotNull;
+//import javax.annotation.Nonnull;
 //
 //public class TestBase {
 //  public static final double NANOS_TO_SECONDS = 1e-9;
@@ -46,14 +46,14 @@
 //    return Paths.get(BASE_PATH + '/' + path);
 //  }
 //
-//  @NotNull
-//  protected static String readFile(@NotNull String path) throws IOException {
+//  @Nonnull
+//  protected static String readFile(@Nonnull String path) throws IOException {
 //    byte[] encoded = Files.readAllBytes(getPath(path));
 //    return StandardCharsets.UTF_8.decode(ByteBuffer.wrap(encoded)).toString();
 //  }
 //
-//  @NotNull
-//  protected static String readLibrary(@NotNull String path) throws IOException {
+//  @Nonnull
+//  protected static String readLibrary(@Nonnull String path) throws IOException {
 //    return readFile("libraries/" + path);
 //  }
 //

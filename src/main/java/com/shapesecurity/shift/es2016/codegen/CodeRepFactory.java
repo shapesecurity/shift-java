@@ -4,7 +4,7 @@ import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.functional.data.Maybe;
 import com.shapesecurity.shift.es2016.ast.Expression;
 import com.shapesecurity.shift.es2016.ast.operators.Precedence;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 public class CodeRepFactory {
     protected static final CodeRep[] EMPTY = new CodeRep[0];
@@ -12,98 +12,98 @@ public class CodeRepFactory {
     public CodeRepFactory() {
     }// CodeRep factory methods
 
-    @NotNull
+    @Nonnull
     public CodeRep empty() {
         return new CodeRep.Empty();
     }
 
-    @NotNull
-    public CodeRep expr(@NotNull Expression node, @NotNull Precedence precedence, @NotNull CodeRep a) {
+    @Nonnull
+    public CodeRep expr(@Nonnull Expression node, @Nonnull Precedence precedence, @Nonnull CodeRep a) {
         return node.getPrecedence().ordinal() < precedence.ordinal() ? paren(a) : a;
     }
 
-    @NotNull
-    public CodeRep token(@NotNull String token) {
+    @Nonnull
+    public CodeRep token(@Nonnull String token) {
         return new CodeRep.Token(token);
     }
 
-    @NotNull
-    public CodeRep rawToken(@NotNull String token) {
+    @Nonnull
+    public CodeRep rawToken(@Nonnull String token) {
         return new CodeRep.RawToken(token);
     }
 
-    @NotNull
+    @Nonnull
     public CodeRep num(double value) {
         return new CodeRep.Number(value);
     }
 
-    @NotNull
-    public CodeRep paren(@NotNull CodeRep rep) {
+    @Nonnull
+    public CodeRep paren(@Nonnull CodeRep rep) {
         return new CodeRep.Paren(rep);
     }
 
-    @NotNull
-    public CodeRep bracket(@NotNull CodeRep rep) {
+    @Nonnull
+    public CodeRep bracket(@Nonnull CodeRep rep) {
         return new CodeRep.Bracket(rep);
     }
 
-    @NotNull
-    public CodeRep noIn(@NotNull CodeRep rep) {
+    @Nonnull
+    public CodeRep noIn(@Nonnull CodeRep rep) {
         return new CodeRep.NoIn(rep);
     }
 
-    @NotNull
-    public CodeRep testIn(@NotNull CodeRep state) {
+    @Nonnull
+    public CodeRep testIn(@Nonnull CodeRep state) {
         return state.containsIn() ? new CodeRep.ContainsIn(state) : state;
     }
 
-    @NotNull
-    public CodeRep seq(@NotNull CodeRep[] reps) {
+    @Nonnull
+    public CodeRep seq(@Nonnull CodeRep[] reps) {
         return new CodeRep.Seq(reps);
     }
 
-    @NotNull
-    public CodeRep init(@NotNull CodeRep id, @NotNull Maybe<CodeRep> i) {
+    @Nonnull
+    public CodeRep init(@Nonnull CodeRep id, @Nonnull Maybe<CodeRep> i) {
         return i.maybe(id, init -> new CodeRep.Init(id, init));
     }
 
-    @NotNull
+    @Nonnull
     public CodeRep semi() {
         return new CodeRep.Semi();
     }
 
-    @NotNull
-    public CodeRep commaSep(@NotNull CodeRep[] pieces) {
+    @Nonnull
+    public CodeRep commaSep(@Nonnull CodeRep[] pieces) {
         return new CodeRep.CommaSep(pieces);
     }
 
-    @NotNull
-    public CodeRep brace(@NotNull CodeRep rep) {
+    @Nonnull
+    public CodeRep brace(@Nonnull CodeRep rep) {
         return new CodeRep.Brace(rep);
     }
 
-    @NotNull
+    @Nonnull
     public CodeRep semiOp() {
         return new CodeRep.SemiOp();
     }
 
-    @NotNull
-    public final CodeRep commaSep(@NotNull ImmutableList<CodeRep> reps) {
+    @Nonnull
+    public final CodeRep commaSep(@Nonnull ImmutableList<CodeRep> reps) {
         return commaSep(reps.toArray(EMPTY));
     }
 
-    @NotNull
-    public final CodeRep seq(@NotNull ImmutableList<CodeRep> reps) {
+    @Nonnull
+    public final CodeRep seq(@Nonnull ImmutableList<CodeRep> reps) {
         return seq(reps.toArray(EMPTY));
     }
 
-    @NotNull
-    public CodeRep markContainsIn(@NotNull CodeRep state) {
+    @Nonnull
+    public CodeRep markContainsIn(@Nonnull CodeRep state) {
         return state.containsIn() ? new CodeRep.ContainsIn(state) : state;
     }
 
-    @NotNull
-    public CodeRep markStringLiteralExpressionStatement(@NotNull CodeRep rep) {
+    @Nonnull
+    public CodeRep markStringLiteralExpressionStatement(@Nonnull CodeRep rep) {
         return new CodeRep.StringLiteralExpressionStatement(rep);
     }
 }

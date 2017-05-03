@@ -29,14 +29,14 @@
 //import com.shapesecurity.shift.minifier.ExpansionRule;
 //import com.shapesecurity.shift.visitor.DirtyState;
 //
-//import org.jetbrains.annotations.NotNull;
+//import javax.annotation.Nonnull;
 //
 //public class TopLevelExpressionWithProhibitedFirstToken extends ExpansionRule {
 //  /* prefixes function expressions and object literals in statement position with ! */
 //  public static final TopLevelExpressionWithProhibitedFirstToken INSTANCE =
 //      new TopLevelExpressionWithProhibitedFirstToken();
 //
-//  private static boolean startsWithProhibitedToken(@NotNull Expression expression) {
+//  private static boolean startsWithProhibitedToken(@Nonnull Expression expression) {
 //    if (expression instanceof FunctionExpression || expression instanceof ObjectExpression) {
 //      return true;
 //    }
@@ -52,9 +52,9 @@
 //    return false;
 //  }
 //
-//  @NotNull
+//  @Nonnull
 //  @Override
-//  public DirtyState<Statement> transform(@NotNull ExpressionStatement node) {
+//  public DirtyState<Statement> transform(@Nonnull ExpressionStatement node) {
 //    if (startsWithProhibitedToken(node.expression)) {
 //      return DirtyState.dirty((Statement) new ExpressionStatement(new PrefixExpression(PrefixOperator.LogicalNot,
 //          node.expression)));
