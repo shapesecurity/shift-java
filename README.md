@@ -18,7 +18,7 @@ This project provides Java tooling around the [Shift AST format](https://github.
 
 ## License
 
-    Copyright 2014 Shape Security, Inc.
+    Copyright 2017 Shape Security, Inc.
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
