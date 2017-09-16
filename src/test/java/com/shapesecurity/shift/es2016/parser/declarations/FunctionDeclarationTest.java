@@ -2,25 +2,8 @@ package com.shapesecurity.shift.es2016.parser.declarations;
 
 import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.functional.data.Maybe;
-import com.shapesecurity.shift.es2016.ast.BinaryExpression;
-import com.shapesecurity.shift.es2016.ast.BindingIdentifier;
-import com.shapesecurity.shift.es2016.ast.Block;
-import com.shapesecurity.shift.es2016.ast.CallExpression;
-import com.shapesecurity.shift.es2016.ast.CatchClause;
-import com.shapesecurity.shift.es2016.ast.EmptyStatement;
-import com.shapesecurity.shift.es2016.ast.ExpressionStatement;
-import com.shapesecurity.shift.es2016.ast.FormalParameters;
-import com.shapesecurity.shift.es2016.ast.FunctionBody;
-import com.shapesecurity.shift.es2016.ast.FunctionDeclaration;
-import com.shapesecurity.shift.es2016.ast.IdentifierExpression;
-import com.shapesecurity.shift.es2016.ast.IfStatement;
-import com.shapesecurity.shift.es2016.ast.LiteralNumericExpression;
-import com.shapesecurity.shift.es2016.ast.LiteralStringExpression;
-import com.shapesecurity.shift.es2016.ast.Script;
-import com.shapesecurity.shift.es2016.ast.TryCatchStatement;
+import com.shapesecurity.shift.es2016.ast.*;
 import com.shapesecurity.shift.es2016.ast.operators.BinaryOperator;
-import com.shapesecurity.shift.es2016.ast.Directive;
-import com.shapesecurity.shift.es2016.ast.LabeledStatement;
 import com.shapesecurity.shift.es2016.parser.ParserTestCase;
 import com.shapesecurity.shift.es2016.parser.JsError;
 

@@ -2,26 +2,7 @@ package com.shapesecurity.shift.es2016.parser.declarations;
 
 import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.functional.data.Maybe;
-import com.shapesecurity.shift.es2016.ast.AssignmentExpression;
-import com.shapesecurity.shift.es2016.ast.AssignmentTargetIdentifier;
-import com.shapesecurity.shift.es2016.ast.AssignmentTargetPropertyIdentifier;
-import com.shapesecurity.shift.es2016.ast.AssignmentTargetPropertyProperty;
-import com.shapesecurity.shift.es2016.ast.BindingIdentifier;
-import com.shapesecurity.shift.es2016.ast.BindingPropertyProperty;
-import com.shapesecurity.shift.es2016.ast.BindingWithDefault;
-import com.shapesecurity.shift.es2016.ast.ComputedPropertyName;
-import com.shapesecurity.shift.es2016.ast.ExpressionStatement;
-import com.shapesecurity.shift.es2016.ast.FormalParameters;
-import com.shapesecurity.shift.es2016.ast.FunctionBody;
-import com.shapesecurity.shift.es2016.ast.FunctionDeclaration;
-import com.shapesecurity.shift.es2016.ast.FunctionExpression;
-import com.shapesecurity.shift.es2016.ast.IdentifierExpression;
-import com.shapesecurity.shift.es2016.ast.LiteralNumericExpression;
-import com.shapesecurity.shift.es2016.ast.ObjectAssignmentTarget;
-import com.shapesecurity.shift.es2016.ast.ObjectBinding;
-import com.shapesecurity.shift.es2016.ast.Script;
-import com.shapesecurity.shift.es2016.ast.StaticPropertyName;
-import com.shapesecurity.shift.es2016.ast.YieldExpression;
+import com.shapesecurity.shift.es2016.ast.*;
 import com.shapesecurity.shift.es2016.parser.ParserTestCase;
 import com.shapesecurity.shift.es2016.parser.JsError;
 
@@ -43,6 +24,15 @@ public class GeneratorDeclarationTest extends ParserTestCase {
 
         testScript("function* yield(){}", new FunctionDeclaration(true, new BindingIdentifier("yield"), new FormalParameters(
                 ImmutableList.empty(), Maybe.empty()), new FunctionBody(ImmutableList.empty(), ImmutableList.empty())));
+
+
+        testScript("function* hello() { yield yield z(); }", new FunctionDeclaration(true, new BindingIdentifier("hello"),
+                new FormalParameters(ImmutableList.empty(), Maybe.empty()), new FunctionBody(ImmutableList.empty(),
+                ImmutableList.of(new ExpressionStatement(new YieldExpression(Maybe.of(new YieldExpression(Maybe.of(new CallExpression(new IdentifierExpression("z"), ImmutableList.empty()))))))))));
+
+        testScript("function* hello() { yield* z(); }", new FunctionDeclaration(true, new BindingIdentifier("hello"),
+                new FormalParameters(ImmutableList.empty(), Maybe.empty()), new FunctionBody(ImmutableList.empty(),
+                ImmutableList.of(new ExpressionStatement(new YieldGeneratorExpression(new CallExpression(new IdentifierExpression("z"), ImmutableList.empty())))))));
 
         testScript("function* a(a=yield){}", new FunctionDeclaration(true, new BindingIdentifier("a"), new FormalParameters(
                 ImmutableList.of(new BindingWithDefault(new BindingIdentifier("a"), new YieldExpression(Maybe.empty()))),
@@ -86,6 +76,20 @@ public class GeneratorDeclarationTest extends ParserTestCase {
                                 ))))),
                                 new LiteralNumericExpression(0.0)))
                 )))));
+
+        testScript("function a() { function a() {} function* a() {} }", new FunctionDeclaration(false, new BindingIdentifier("a"),
+                new FormalParameters(ImmutableList.empty(), Maybe.empty()), new FunctionBody(ImmutableList.empty(),
+                ImmutableList.of(new FunctionDeclaration(false, new BindingIdentifier("a"), new FormalParameters(
+                                ImmutableList.empty(), Maybe.empty()), new FunctionBody(ImmutableList.empty(), ImmutableList.empty())),
+                        new FunctionDeclaration(true, new BindingIdentifier("a"), new FormalParameters(ImmutableList.empty(),
+                                Maybe.empty()), new FunctionBody(ImmutableList.empty(), ImmutableList.empty()))))));
+
+        testScript("function* a() { function a() {} function* a() {} }", new FunctionDeclaration(true, new BindingIdentifier("a"),
+                new FormalParameters(ImmutableList.empty(), Maybe.empty()), new FunctionBody(ImmutableList.empty(),
+                ImmutableList.of(new FunctionDeclaration(false, new BindingIdentifier("a"), new FormalParameters(
+                                ImmutableList.empty(), Maybe.empty()), new FunctionBody(ImmutableList.empty(), ImmutableList.empty())),
+                        new FunctionDeclaration(true, new BindingIdentifier("a"), new FormalParameters(ImmutableList.empty(),
+                                Maybe.empty()), new FunctionBody(ImmutableList.empty(), ImmutableList.empty()))))));
 
         testScriptFailure("label: function* a(){}", 15, "Unexpected token \"*\"");
         testScriptFailure("function*g(yield){}", 11, "Unexpected token \"yield\"");
