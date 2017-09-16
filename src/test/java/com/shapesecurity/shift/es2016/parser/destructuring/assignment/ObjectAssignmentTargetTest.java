@@ -58,7 +58,7 @@ public class ObjectAssignmentTargetTest extends ParserTestCase {
         testScript("({yield = 0} = 0);", new AssignmentExpression(new ObjectAssignmentTarget(ImmutableList.of(new AssignmentTargetPropertyIdentifier(new AssignmentTargetIdentifier("yield"), Maybe.of(new LiteralNumericExpression(0.0))))), new LiteralNumericExpression(0.0)));
         testScript("let {a:b=c} = 0;", new VariableDeclarationStatement(new VariableDeclaration(VariableDeclarationKind.Let, ImmutableList.of(new VariableDeclarator(new ObjectBinding(ImmutableList.of(new BindingPropertyProperty(new StaticPropertyName("a"), new BindingWithDefault(new BindingIdentifier("b"), new IdentifierExpression("c"))))), Maybe.of(new LiteralNumericExpression(0.0)))))));
 
-        testScript("(function*() { [...{ x = yield }] = 0; })", new FunctionExpression(true, Maybe.empty(), new FormalParameters(ImmutableList.empty(), Maybe.empty()), new FunctionBody(ImmutableList.empty(),
+        testScript("(function*() { [...{ x = yield }] = 0; })", new FunctionExpression(false, true, Maybe.empty(), new FormalParameters(ImmutableList.empty(), Maybe.empty()), new FunctionBody(ImmutableList.empty(),
                 ImmutableList.of(
                         new ExpressionStatement(new AssignmentExpression(
                                 new ArrayAssignmentTarget(ImmutableList.empty(), Maybe.of(new ObjectAssignmentTarget(ImmutableList.of(new AssignmentTargetPropertyIdentifier(new AssignmentTargetIdentifier("x"), Maybe.of(new YieldExpression(Maybe.empty()))))))),

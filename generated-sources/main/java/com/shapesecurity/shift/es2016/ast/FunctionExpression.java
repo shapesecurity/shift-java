@@ -28,21 +28,22 @@ public class FunctionExpression extends Function implements Expression {
     public final Maybe<BindingIdentifier> name;
 
 
-    public FunctionExpression (boolean isGenerator, @NotNull Maybe<BindingIdentifier> name, @NotNull FormalParameters params, @NotNull FunctionBody body) {
-        super(isGenerator, params, body);
+    public FunctionExpression (boolean isAsync, boolean isGenerator, @NotNull Maybe<BindingIdentifier> name, @NotNull FormalParameters params, @NotNull FunctionBody body) {
+        super(isAsync, isGenerator, params, body);
         this.name = name;
     }
 
 
     @Override
     public boolean equals(Object object) {
-        return object instanceof FunctionExpression && this.isGenerator == ((FunctionExpression) object).isGenerator && this.name.equals(((FunctionExpression) object).name) && this.params.equals(((FunctionExpression) object).params) && this.body.equals(((FunctionExpression) object).body);
+        return object instanceof FunctionExpression && this.isAsync == ((FunctionExpression) object).isAsync && this.isGenerator == ((FunctionExpression) object).isGenerator && this.name.equals(((FunctionExpression) object).name) && this.params.equals(((FunctionExpression) object).params) && this.body.equals(((FunctionExpression) object).body);
     }
 
 
     @Override
     public int hashCode() {
         int code = HashCodeBuilder.put(0, "FunctionExpression");
+        code = HashCodeBuilder.put(code, this.isAsync);
         code = HashCodeBuilder.put(code, this.isGenerator);
         code = HashCodeBuilder.put(code, this.name);
         code = HashCodeBuilder.put(code, this.params);

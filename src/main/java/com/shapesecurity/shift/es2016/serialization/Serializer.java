@@ -39,6 +39,7 @@ import com.shapesecurity.shift.es2016.ast.AssignmentTargetIdentifier;
 import com.shapesecurity.shift.es2016.ast.AssignmentTargetPropertyIdentifier;
 import com.shapesecurity.shift.es2016.ast.AssignmentTargetPropertyProperty;
 import com.shapesecurity.shift.es2016.ast.AssignmentTargetWithDefault;
+import com.shapesecurity.shift.es2016.ast.AwaitExpression;
 import com.shapesecurity.shift.es2016.ast.BinaryExpression;
 import com.shapesecurity.shift.es2016.ast.BindingIdentifier;
 import com.shapesecurity.shift.es2016.ast.BindingPropertyProperty;
@@ -329,6 +330,12 @@ public class Serializer implements Reducer<StringBuilder> {
 
     @Nonnull
     @Override
+    public StringBuilder reduceAwaitExpression(@Nonnull AwaitExpression node, @Nonnull StringBuilder expression) {
+        return b("AwaitExpression").add("expression", expression).done();
+    }
+
+    @Nonnull
+    @Override
     public StringBuilder reduceBinaryExpression(@Nonnull BinaryExpression node, @Nonnull StringBuilder left, @Nonnull StringBuilder right) {
         return b("BinaryExpression").add("left", left).add("operator", node.operator).add("right", right).done();
     }
@@ -552,13 +559,13 @@ public class Serializer implements Reducer<StringBuilder> {
     @Nonnull
     @Override
     public StringBuilder reduceFunctionDeclaration(@Nonnull FunctionDeclaration node, @Nonnull StringBuilder name, @Nonnull StringBuilder params, @Nonnull StringBuilder body) {
-        return b("FunctionDeclaration").add("isGenerator", node.isGenerator).add("name", name).add("params", params).add("body", body).done();
+        return b("FunctionDeclaration").add("isAsync", node.isAsync).add("isGenerator", node.isGenerator).add("name", name).add("params", params).add("body", body).done();
     }
 
     @Nonnull
     @Override
     public StringBuilder reduceFunctionExpression(@Nonnull FunctionExpression node, @Nonnull Maybe<StringBuilder> name, @Nonnull StringBuilder params, @Nonnull StringBuilder body) {
-        return b("FunctionExpression").add("isGenerator", node.isGenerator).add("name", name).add("params", params).add("body", body).done();
+        return b("FunctionExpression").add("isAsync", node.isAsync).add("isGenerator", node.isGenerator).add("name", name).add("params", params).add("body", body).done();
     }
 
     @Nonnull

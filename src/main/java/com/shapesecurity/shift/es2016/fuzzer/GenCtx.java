@@ -45,10 +45,11 @@ class GenCtx {
     final boolean inForInOfStatement;
     final boolean isVariableDeclarationKindConst;
     final boolean allowYieldExpression;
+    final boolean allowAwaitExpression;
 
 
     GenCtx(@Nonnull Random random) {
-        this(random, ImmutableList.empty(), ImmutableList.empty(), ImmutableList.empty(), ImmutableList.empty(), false, false, false, false, true, false, false, false, false);
+        this(random, ImmutableList.empty(), ImmutableList.empty(), ImmutableList.empty(), ImmutableList.empty(), false, false, false, false, true, false, false, false, false, false);
     }
 
     private GenCtx(@Nonnull Random random,
@@ -62,7 +63,8 @@ class GenCtx {
                    boolean allowReturn,
                    boolean inForInOfStatement,
                    boolean isVariableDeclarationKindConst,
-                   boolean allowYieldExpression) {
+                   boolean allowYieldExpression,
+                   boolean allowAwaitExpression) {
         this.random = random;
         this.labels = labels;
         this.iterationLabels = iterationLabels;
@@ -77,6 +79,7 @@ class GenCtx {
         this.inForInOfStatement = inForInOfStatement;
         this.isVariableDeclarationKindConst = isVariableDeclarationKindConst;
         this.allowYieldExpression = allowYieldExpression;
+        this.allowAwaitExpression = allowAwaitExpression;
     }
 
     @Nonnull
@@ -94,7 +97,8 @@ class GenCtx {
                 this.allowReturn,
                 this.inForInOfStatement,
                 this.isVariableDeclarationKindConst,
-                this.allowYieldExpression);
+                this.allowYieldExpression,
+                this.allowAwaitExpression);
     }
 
     @Nonnull
@@ -111,7 +115,8 @@ class GenCtx {
                 this.allowReturn,
                 this.inForInOfStatement,
                 this.isVariableDeclarationKindConst,
-                this.allowYieldExpression);
+                this.allowYieldExpression,
+                this.allowAwaitExpression);
     }
 
     @Nonnull
@@ -129,7 +134,8 @@ class GenCtx {
                 this.allowReturn,
                 this.inForInOfStatement,
                 this.isVariableDeclarationKindConst,
-                this.allowYieldExpression);
+                this.allowYieldExpression,
+                this.allowAwaitExpression);
     }
 
     @Nonnull
@@ -146,7 +152,8 @@ class GenCtx {
                 this.allowReturn,
                 this.inForInOfStatement,
                 this.isVariableDeclarationKindConst,
-                this.allowYieldExpression);
+                this.allowYieldExpression,
+                this.allowAwaitExpression);
     }
 
     @Nonnull
@@ -163,7 +170,8 @@ class GenCtx {
                 this.allowReturn,
                 this.inForInOfStatement,
                 this.isVariableDeclarationKindConst,
-                this.allowYieldExpression);
+                this.allowYieldExpression,
+                this.allowAwaitExpression);
     }
 
     @Nonnull
@@ -182,7 +190,8 @@ class GenCtx {
                 false,
                 this.inForInOfStatement,
                 this.isVariableDeclarationKindConst,
-                this.allowYieldExpression);
+                this.allowYieldExpression,
+                this.allowAwaitExpression);
     }
 
     @Nonnull
@@ -201,7 +210,8 @@ class GenCtx {
                 this.allowReturn,
                 this.inForInOfStatement,
                 this.isVariableDeclarationKindConst,
-                this.allowYieldExpression);
+                this.allowYieldExpression,
+                this.allowAwaitExpression);
     }
 
     @Nonnull
@@ -219,7 +229,8 @@ class GenCtx {
                 this.allowReturn,
                 this.inForInOfStatement,
                 this.isVariableDeclarationKindConst,
-                this.allowYieldExpression);
+                this.allowYieldExpression,
+                this.allowAwaitExpression);
     }
 
     @Nonnull
@@ -237,7 +248,8 @@ class GenCtx {
                 this.allowReturn,
                 this.inForInOfStatement,
                 this.isVariableDeclarationKindConst,
-                this.allowYieldExpression);
+                this.allowYieldExpression,
+                this.allowAwaitExpression);
     }
 
     @Nonnull
@@ -255,7 +267,8 @@ class GenCtx {
                 this.allowReturn,
                 true,
                 this.isVariableDeclarationKindConst,
-                this.allowYieldExpression);
+                this.allowYieldExpression,
+                this.allowAwaitExpression);
     }
 
     @Nonnull
@@ -273,7 +286,8 @@ class GenCtx {
                 this.allowReturn,
                 this.inForInOfStatement,
                 true,
-                this.allowYieldExpression);
+                this.allowYieldExpression,
+                this.allowAwaitExpression);
     }
 
     @Nonnull
@@ -291,6 +305,26 @@ class GenCtx {
                 this.allowReturn,
                 this.inForInOfStatement,
                 this.isVariableDeclarationKindConst,
+                true,
+                false);
+    }
+
+    @Nonnull
+    GenCtx inAsyncFunction() {
+        return new GenCtx(this.random,
+                this.labels,
+                this.iterationLabels,
+                this.labelsInFunctionBoundary,
+                this.iterationLabelsInFunctionBoundary,
+                this.inIteration,
+                this.inSwitch,
+                this.inStrictMode,
+                this.inFunctional,
+                this.allowMissingElse,
+                this.allowReturn,
+                this.inForInOfStatement,
+                this.isVariableDeclarationKindConst,
+                false,
                 true);
     }
 }

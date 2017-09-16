@@ -215,7 +215,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
         }
         switch (this.lookahead.type) {
             case FUNCTION:
-                return this.parseFunctionDeclaration(false, true);
+                return this.parseFunctionDeclaration(false, true, true);
             case CLASS:
                 return this.parseClass(false);
             default:
@@ -423,15 +423,16 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
 
     @Nonnull
     protected Statement parseIfStatementChild() throws JsError {
-        return this.match(TokenType.FUNCTION) ? this.parseFunctionDeclaration(false, false) : this.parseStatement();
+        return this.match(TokenType.FUNCTION) ? this.parseFunctionDeclaration(false, false, false) : this.parseStatement();
     }
 
     @Nonnull
-    protected Statement parseFunctionDeclaration(boolean inDefault, boolean allowGenerator) throws JsError {
+    protected Statement parseFunctionDeclaration(boolean inDefault, boolean allowAsync, boolean allowGenerator) throws JsError {
         AdditionalStateT startState = this.startNode();
         this.lex();
 
         boolean isGenerator = allowGenerator && this.eat(TokenType.MUL);
+        boolean isAsync = allowAsync && this.eat(TokenType.ASYNC);
         boolean previousYield = this.allowYieldExpression;
         BindingIdentifier name;
         if (!this.match(TokenType.LPAREN)) {
@@ -446,16 +447,17 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
         this.allowYieldExpression = isGenerator;
         FunctionBody body = this.parseFunctionBody();
         this.allowYieldExpression = previousYield;
-        return this.finishNode(startState, new FunctionDeclaration(isGenerator, name, params, body));
+        return this.finishNode(startState, new FunctionDeclaration(isAsync, isGenerator, name, params, body));
     }
 
     @Nonnull
-    protected Expression parseFunctionExpression(boolean allowGenerator) throws JsError {
+    protected Expression parseFunctionExpression(boolean allowAsync, boolean allowGenerator) throws JsError {
         AdditionalStateT startState = this.startNode();
         this.lex();
 
         Maybe<BindingIdentifier> name = Maybe.empty();
         boolean isGenerator = allowGenerator && this.eat(TokenType.MUL);
+        boolean isAsync = allowGenerator && this.eat(TokenType.ASYNC);
         boolean previousYield = this.allowYieldExpression;
         this.allowYieldExpression = isGenerator;
         if (!this.match(TokenType.LPAREN)) {
@@ -465,7 +467,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
         this.allowYieldExpression = isGenerator;
         FunctionBody body = this.parseFunctionBody();
         this.allowYieldExpression = previousYield;
-        return this.finishNode(startState, new FunctionExpression(isGenerator, name, params, body));
+        return this.finishNode(startState, new FunctionExpression(isAsync, isGenerator, name, params, body));
     }
 
     @Nonnull
@@ -574,7 +576,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
                 }
                 Expression expr = this.parseExpression().left().fromJust();
                 if (expr instanceof IdentifierExpression && this.eat(TokenType.COLON)) {
-                    Statement labeledBody = this.match(TokenType.FUNCTION) ? this.parseFunctionDeclaration(false, false) : this.parseStatement();
+                    Statement labeledBody = this.match(TokenType.FUNCTION) ? this.parseFunctionDeclaration(false, false, false) : this.parseStatement();
                     return new LabeledStatement(((IdentifierExpression) expr).name, labeledBody);
                 } else {
                     this.consumeSemicolon();
@@ -1586,7 +1588,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
                 return Either.left(this.finishNode(startState, new LiteralNullExpression()));
             case FUNCTION:
                 this.isBindingElement = this.isAssignmentTarget = false;
-                return Either.left(this.finishNode(startState, this.parseFunctionExpression(true)));
+                return Either.left(this.finishNode(startState, this.parseFunctionExpression(true, true)));
             case NUMBER:
                 this.isBindingElement = this.isAssignmentTarget = false;
                 return Either.left(this.parseNumericLiteral());
@@ -2327,13 +2329,13 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
                 decl = new Export(this.parseClass(false));
                 break;
             case FUNCTION:
-                decl = new Export((FunctionDeclaration) this.parseFunctionDeclaration(false, true));
+                decl = new Export((FunctionDeclaration) this.parseFunctionDeclaration(false, true, true));
                 break;
             case DEFAULT:
                 this.lex();
                 switch (this.lookahead.type) {
                     case FUNCTION:
-                        decl = new ExportDefault((FunctionDeclaration) this.parseFunctionDeclaration(true, true));
+                        decl = new ExportDefault((FunctionDeclaration) this.parseFunctionDeclaration(true, true, true));
                         break;
                     case CLASS:
                         decl = new ExportDefault(this.parseClass(true));

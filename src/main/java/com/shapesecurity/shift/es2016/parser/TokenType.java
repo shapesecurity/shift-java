@@ -117,6 +117,7 @@ public enum TokenType {
     IMPORT(TokenClass.Keyword, "import"),
     EXPORT(TokenClass.Keyword, "export"),
     AWAIT(TokenClass.Keyword, "await"),
+    ASYNC(TokenClass.Keyword, "async"),
     ILLEGAL(TokenClass.Illegal, "ILLEGAL"),
     TEMPLATE(TokenClass.TemplateElement, "template");
     @Nonnull

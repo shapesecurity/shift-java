@@ -21,16 +21,16 @@ public class ReturnStatementTest extends ParserTestCase {
 
     @Test
     public void testReturnStatement() throws JsError {
-        testScript("(function(){ return })", new FunctionExpression(false, Maybe.empty(), NO_PARAMETERS,
+        testScript("(function(){ return })", new FunctionExpression(false, false, Maybe.empty(), NO_PARAMETERS,
                 new FunctionBody(ImmutableList.empty(), ImmutableList.of(new ReturnStatement(Maybe.empty())))));
 
-        testScript("(function(){ return; })", new FunctionExpression(false, Maybe.empty(), NO_PARAMETERS,
+        testScript("(function(){ return; })", new FunctionExpression(false, false, Maybe.empty(), NO_PARAMETERS,
                 new FunctionBody(ImmutableList.empty(), ImmutableList.of(new ReturnStatement(Maybe.empty())))));
 
-        testScript("(function(){ return x; })", new FunctionExpression(false, Maybe.empty(), NO_PARAMETERS,
+        testScript("(function(){ return x; })", new FunctionExpression(false, false, Maybe.empty(), NO_PARAMETERS,
                 new FunctionBody(ImmutableList.empty(), ImmutableList.of(new ReturnStatement(Maybe.of(new IdentifierExpression("x")))))));
 
-        testScript("(function(){ return x * y })", new FunctionExpression(false, Maybe.empty(), NO_PARAMETERS,
+        testScript("(function(){ return x * y })", new FunctionExpression(false, false, Maybe.empty(), NO_PARAMETERS,
                 new FunctionBody(ImmutableList.empty(), ImmutableList.of(new ReturnStatement(
                         Maybe.of(new BinaryExpression(new IdentifierExpression("x"), BinaryOperator.Mul, new IdentifierExpression("y")))
                 )))));

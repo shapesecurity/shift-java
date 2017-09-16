@@ -500,6 +500,8 @@ public class Deserializer {
                         return new AssignmentTargetPropertyProperty((PropertyName) deserializeNode(jsonObject.get("name")), (AssignmentTargetAssignmentTargetWithDefault) deserializeNode(jsonObject.get("binding")));
                     case "AssignmentTargetWithDefault":
                         return new AssignmentTargetWithDefault((AssignmentTarget) deserializeNode(jsonObject.get("binding")), (Expression) deserializeNode(jsonObject.get("init")));
+                    case "AwaitExpression":
+                        return new AwaitExpression((Expression) deserializeNode(jsonObject.get("expression")));
                     case "BinaryExpression":
                         return new BinaryExpression((Expression) deserializeNode(jsonObject.get("left")), deserializeBinaryOperator(jsonObject.get("operator")), (Expression) deserializeNode(jsonObject.get("right")));
                     case "BindingIdentifier":
@@ -575,9 +577,9 @@ public class Deserializer {
                     case "FunctionBody":
                         return new FunctionBody(deserializeListDirective(jsonObject.get("directives")), deserializeListStatement(jsonObject.get("statements")));
                     case "FunctionDeclaration":
-                        return new FunctionDeclaration(jsonObject.get("isGenerator").getAsBoolean(), (BindingIdentifier) deserializeNode(jsonObject.get("name")), (FormalParameters) deserializeNode(jsonObject.get("params")), (FunctionBody) deserializeNode(jsonObject.get("body")));
+                        return new FunctionDeclaration(jsonObject.get("isAsync").getAsBoolean(), jsonObject.get("isGenerator").getAsBoolean(), (BindingIdentifier) deserializeNode(jsonObject.get("name")), (FormalParameters) deserializeNode(jsonObject.get("params")), (FunctionBody) deserializeNode(jsonObject.get("body")));
                     case "FunctionExpression":
-                        return new FunctionExpression(jsonObject.get("isGenerator").getAsBoolean(), deserializeMaybeBindingIdentifier(jsonObject.get("name")), (FormalParameters) deserializeNode(jsonObject.get("params")), (FunctionBody) deserializeNode(jsonObject.get("body")));
+                        return new FunctionExpression(jsonObject.get("isAsync").getAsBoolean(), jsonObject.get("isGenerator").getAsBoolean(), deserializeMaybeBindingIdentifier(jsonObject.get("name")), (FormalParameters) deserializeNode(jsonObject.get("params")), (FunctionBody) deserializeNode(jsonObject.get("body")));
                     case "Getter":
                         return new Getter((PropertyName) deserializeNode(jsonObject.get("name")), (FunctionBody) deserializeNode(jsonObject.get("body")));
                     case "IdentifierExpression":

@@ -193,21 +193,21 @@ public class InteractionsTest extends ParserTestCase {
                         ImmutableList.empty())))))));
 
         testScript("/* header */ (function(){ var version = 1; }).call(this)", new CallExpression(
-                new StaticMemberExpression(new FunctionExpression(false, Maybe.empty(), new FormalParameters(
+                new StaticMemberExpression(new FunctionExpression(false, false, Maybe.empty(), new FormalParameters(
                         ImmutableList.empty(), Maybe.empty()), new FunctionBody(ImmutableList.empty(), ImmutableList.of(
                         new VariableDeclarationStatement(new VariableDeclaration(VariableDeclarationKind.Var, ImmutableList.of(
                                 new VariableDeclarator(new BindingIdentifier("version"), Maybe.of(
                                         new LiteralNumericExpression(1.0))))))))), "call"), ImmutableList.of(new ThisExpression())));
 
         testScript("(function(){ var version = 1; /* sync */ }).call(this)", new CallExpression(new StaticMemberExpression(
-                new FunctionExpression(false, Maybe.empty(), new FormalParameters(ImmutableList.empty(), Maybe.empty()),
+                new FunctionExpression(false, false, Maybe.empty(), new FormalParameters(ImmutableList.empty(), Maybe.empty()),
                 new FunctionBody(ImmutableList.empty(), ImmutableList.of(new VariableDeclarationStatement(
                         new VariableDeclaration(VariableDeclarationKind.Var, ImmutableList.of(new VariableDeclarator(
                                 new BindingIdentifier("version"), Maybe.of(new LiteralNumericExpression(1.0))))))))), "call"),
                 ImmutableList.of(new ThisExpression())));
 
         testScript("function f() { /* infinite */ while (true) { } /* bar */ var each; }", new FunctionDeclaration(
-                false, new BindingIdentifier("f"), new FormalParameters(ImmutableList.empty(), Maybe.empty()),
+                false, false, new BindingIdentifier("f"), new FormalParameters(ImmutableList.empty(), Maybe.empty()),
                 new FunctionBody(ImmutableList.empty(), ImmutableList.of(new WhileStatement(new LiteralBooleanExpression(true),
                         new BlockStatement(new Block(ImmutableList.empty()))), new VariableDeclarationStatement(
                         new VariableDeclaration(VariableDeclarationKind.Var, ImmutableList.of(new VariableDeclarator(
@@ -241,7 +241,7 @@ public class InteractionsTest extends ParserTestCase {
                 )))));
 
         // Consise arrow bodies may contain yield as an identifier even in generators.
-        testScript("function* f(){ () => yield; }", new FunctionDeclaration(true, new BindingIdentifier("f"),
+        testScript("function* f(){ () => yield; }", new FunctionDeclaration(false, true, new BindingIdentifier("f"),
                 new FormalParameters(ImmutableList.empty(), Maybe.empty()),
                 new FunctionBody(ImmutableList.empty(), ImmutableList.of(new ExpressionStatement(
                         new ArrowExpression(new FormalParameters(ImmutableList.empty(), Maybe.empty()), new IdentifierExpression("yield"))

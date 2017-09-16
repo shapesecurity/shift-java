@@ -398,10 +398,10 @@ public class ValidatorTest {
 
   @Test
   public void testBindingIdentifierCalledDefaultAndExportDefaultInteraction() {
-    Module test0 = new Module(ImmutableList.empty(), ImmutableList.of(new ExportDefault(new FunctionDeclaration(false, new BindingIdentifier("*default*"), new FormalParameters(ImmutableList.empty(), Maybe.empty()), new FunctionBody(ImmutableList.empty(), ImmutableList.empty())))));
+    Module test0 = new Module(ImmutableList.empty(), ImmutableList.of(new ExportDefault(new FunctionDeclaration(false, false, new BindingIdentifier("*default*"), new FormalParameters(ImmutableList.empty(), Maybe.empty()), new FunctionBody(ImmutableList.empty(), ImmutableList.empty())))));
     assertNoErrors(test0);
 
-    Module test1 = new Module(ImmutableList.empty(), ImmutableList.of(new ExportDefault(new FunctionExpression(false, Maybe.of(new BindingIdentifier("*default*")), new FormalParameters(ImmutableList.empty(), Maybe.empty()), new FunctionBody(ImmutableList.empty(), ImmutableList.empty())))));
+    Module test1 = new Module(ImmutableList.empty(), ImmutableList.of(new ExportDefault(new FunctionExpression(false, false, Maybe.of(new BindingIdentifier("*default*")), new FormalParameters(ImmutableList.empty(), Maybe.empty()), new FunctionBody(ImmutableList.empty(), ImmutableList.empty())))));
     assertCorrectErrors(test1, 1, ValidationErrorMessages.BINDING_IDENTIFIERS_CALLED_DEFAULT);
 
     Module test2 = new Module(ImmutableList.empty(), ImmutableList.of(new ExportDefault(new ClassDeclaration(new BindingIdentifier("*default*"), Maybe.empty(), ImmutableList.empty()))));
@@ -419,16 +419,16 @@ public class ValidatorTest {
     Script test1 = new Script(ImmutableList.empty(), ImmutableList.of(new ReturnStatement(Maybe.of(new IdentifierExpression("a")))));
     assertCorrectErrors(test1, 1, ValidationErrorMessages.RETURN_STATEMENT_IN_FUNCTION_BODY);
 
-    Script test2 = new Script(ImmutableList.empty(), ImmutableList.of(new FunctionDeclaration(false, new BindingIdentifier("a"), new FormalParameters(ImmutableList.empty(), Maybe.empty()), new FunctionBody(ImmutableList.empty(), ImmutableList.of(new ReturnStatement(Maybe.empty()))))));
+    Script test2 = new Script(ImmutableList.empty(), ImmutableList.of(new FunctionDeclaration(false, false, new BindingIdentifier("a"), new FormalParameters(ImmutableList.empty(), Maybe.empty()), new FunctionBody(ImmutableList.empty(), ImmutableList.of(new ReturnStatement(Maybe.empty()))))));
     assertNoErrors(test2);
 
-    Script test3 = new Script(ImmutableList.empty(), ImmutableList.of(new FunctionDeclaration(false, new BindingIdentifier("a"), new FormalParameters(ImmutableList.empty(), Maybe.empty()), new FunctionBody(ImmutableList.empty(), ImmutableList.of(new ReturnStatement(Maybe.of(new ThisExpression())))))));
+    Script test3 = new Script(ImmutableList.empty(), ImmutableList.of(new FunctionDeclaration(false, false, new BindingIdentifier("a"), new FormalParameters(ImmutableList.empty(), Maybe.empty()), new FunctionBody(ImmutableList.empty(), ImmutableList.of(new ReturnStatement(Maybe.of(new ThisExpression())))))));
     assertNoErrors(test3);
 
-    Script test4 = new Script(ImmutableList.empty(), ImmutableList.of(new ExpressionStatement(new FunctionExpression(false, Maybe.of(new BindingIdentifier("a")), new FormalParameters(ImmutableList.empty(), Maybe.empty()), new FunctionBody(ImmutableList.empty(), ImmutableList.of(new ReturnStatement(Maybe.empty())))))));
+    Script test4 = new Script(ImmutableList.empty(), ImmutableList.of(new ExpressionStatement(new FunctionExpression(false, false, Maybe.of(new BindingIdentifier("a")), new FormalParameters(ImmutableList.empty(), Maybe.empty()), new FunctionBody(ImmutableList.empty(), ImmutableList.of(new ReturnStatement(Maybe.empty())))))));
     assertNoErrors(test4);
 
-    Script test5 = new Script(ImmutableList.empty(), ImmutableList.of(new ExpressionStatement(new FunctionExpression(false, Maybe.of(new BindingIdentifier("a")), new FormalParameters(ImmutableList.empty(), Maybe.empty()), new FunctionBody(ImmutableList.empty(), ImmutableList.of(new ReturnStatement(Maybe.of(new ThisExpression()))))))));
+    Script test5 = new Script(ImmutableList.empty(), ImmutableList.of(new ExpressionStatement(new FunctionExpression(false, false, Maybe.of(new BindingIdentifier("a")), new FormalParameters(ImmutableList.empty(), Maybe.empty()), new FunctionBody(ImmutableList.empty(), ImmutableList.of(new ReturnStatement(Maybe.of(new ThisExpression()))))))));
     assertNoErrors(test5);
   }
 
@@ -440,37 +440,37 @@ public class ValidatorTest {
     Script test1 = new Script(ImmutableList.empty(), ImmutableList.of(new ExpressionStatement(new YieldExpression(Maybe.empty()))));
     assertCorrectErrors(test1, 1, ValidationErrorMessages.VALID_YIELD_EXPRESSION_POSITION);
 
-    Script test2 = new Script(ImmutableList.empty(), ImmutableList.of(new FunctionDeclaration(false, new BindingIdentifier("a"), new FormalParameters(ImmutableList.empty(), Maybe.empty()), new FunctionBody(ImmutableList.empty(), ImmutableList.of(new ExpressionStatement(new YieldExpression(Maybe.empty())))))));
+    Script test2 = new Script(ImmutableList.empty(), ImmutableList.of(new FunctionDeclaration(false, false, new BindingIdentifier("a"), new FormalParameters(ImmutableList.empty(), Maybe.empty()), new FunctionBody(ImmutableList.empty(), ImmutableList.of(new ExpressionStatement(new YieldExpression(Maybe.empty())))))));
     assertCorrectErrors(test2, 1, ValidationErrorMessages.VALID_YIELD_EXPRESSION_POSITION);
 
-    Script test3 = new Script(ImmutableList.empty(), ImmutableList.of(new ExpressionStatement(new FunctionExpression(false, Maybe.of(new BindingIdentifier("a")), new FormalParameters(ImmutableList.empty(), Maybe.empty()), new FunctionBody(ImmutableList.empty(), ImmutableList.of(new ExpressionStatement(new YieldExpression(Maybe.empty()))))))));
+    Script test3 = new Script(ImmutableList.empty(), ImmutableList.of(new ExpressionStatement(new FunctionExpression(false, false, Maybe.of(new BindingIdentifier("a")), new FormalParameters(ImmutableList.empty(), Maybe.empty()), new FunctionBody(ImmutableList.empty(), ImmutableList.of(new ExpressionStatement(new YieldExpression(Maybe.empty()))))))));
     assertCorrectErrors(test3, 1, ValidationErrorMessages.VALID_YIELD_EXPRESSION_POSITION);
 
     Script test4 = new Script(ImmutableList.empty(), ImmutableList.of(new ExpressionStatement(new ObjectExpression(ImmutableList.of(new Method(false, new StaticPropertyName("a"), new FormalParameters(ImmutableList.empty(), Maybe.empty()), new FunctionBody(ImmutableList.empty(), ImmutableList.of(new ExpressionStatement(new YieldExpression(Maybe.empty()))))))))));
     assertCorrectErrors(test4, 1, ValidationErrorMessages.VALID_YIELD_EXPRESSION_POSITION);
 
-    Script test5 = new Script(ImmutableList.empty(), ImmutableList.of(new FunctionDeclaration(false, new BindingIdentifier("a"), new FormalParameters(ImmutableList.empty(), Maybe.empty()), new FunctionBody(ImmutableList.empty(), ImmutableList.of(new ExpressionStatement(new YieldExpression(Maybe.of(new ThisExpression()))))))));
+    Script test5 = new Script(ImmutableList.empty(), ImmutableList.of(new FunctionDeclaration(false, false, new BindingIdentifier("a"), new FormalParameters(ImmutableList.empty(), Maybe.empty()), new FunctionBody(ImmutableList.empty(), ImmutableList.of(new ExpressionStatement(new YieldExpression(Maybe.of(new ThisExpression()))))))));
     assertCorrectErrors(test5, 1, ValidationErrorMessages.VALID_YIELD_EXPRESSION_POSITION);
 
-    Script test6 = new Script(ImmutableList.empty(), ImmutableList.of(new ExpressionStatement(new FunctionExpression(false, Maybe.of(new BindingIdentifier("a")), new FormalParameters(ImmutableList.empty(), Maybe.empty()), new FunctionBody(ImmutableList.empty(), ImmutableList.of(new ExpressionStatement(new YieldExpression(Maybe.of(new ThisExpression())))))))));
+    Script test6 = new Script(ImmutableList.empty(), ImmutableList.of(new ExpressionStatement(new FunctionExpression(false, false, Maybe.of(new BindingIdentifier("a")), new FormalParameters(ImmutableList.empty(), Maybe.empty()), new FunctionBody(ImmutableList.empty(), ImmutableList.of(new ExpressionStatement(new YieldExpression(Maybe.of(new ThisExpression())))))))));
     assertCorrectErrors(test6, 1, ValidationErrorMessages.VALID_YIELD_EXPRESSION_POSITION);
 
     Script test7 = new Script(ImmutableList.empty(), ImmutableList.of(new ExpressionStatement(new ObjectExpression(ImmutableList.of(new Method(false, new StaticPropertyName("a"), new FormalParameters(ImmutableList.empty(), Maybe.empty()), new FunctionBody(ImmutableList.empty(), ImmutableList.of(new ExpressionStatement(new YieldExpression(Maybe.of(new ThisExpression())))))))))));
     assertCorrectErrors(test7, 1, ValidationErrorMessages.VALID_YIELD_EXPRESSION_POSITION);
 
-    Script test8 = new Script(ImmutableList.empty(), ImmutableList.of(new FunctionDeclaration(true, new BindingIdentifier("a"), new FormalParameters(ImmutableList.empty(), Maybe.empty()), new FunctionBody(ImmutableList.empty(), ImmutableList.of(new ExpressionStatement(new YieldExpression(Maybe.empty())))))));
+    Script test8 = new Script(ImmutableList.empty(), ImmutableList.of(new FunctionDeclaration(false, true, new BindingIdentifier("a"), new FormalParameters(ImmutableList.empty(), Maybe.empty()), new FunctionBody(ImmutableList.empty(), ImmutableList.of(new ExpressionStatement(new YieldExpression(Maybe.empty())))))));
     assertNoErrors(test8);
 
-    Script test9 = new Script(ImmutableList.empty(), ImmutableList.of(new ExpressionStatement(new FunctionExpression(true, Maybe.of(new BindingIdentifier("a")), new FormalParameters(ImmutableList.empty(), Maybe.empty()), new FunctionBody(ImmutableList.empty(), ImmutableList.of(new ExpressionStatement(new YieldExpression(Maybe.empty()))))))));
+    Script test9 = new Script(ImmutableList.empty(), ImmutableList.of(new ExpressionStatement(new FunctionExpression(false, true, Maybe.of(new BindingIdentifier("a")), new FormalParameters(ImmutableList.empty(), Maybe.empty()), new FunctionBody(ImmutableList.empty(), ImmutableList.of(new ExpressionStatement(new YieldExpression(Maybe.empty()))))))));
     assertNoErrors(test9);
 
     Script test10 = new Script(ImmutableList.empty(), ImmutableList.of(new ExpressionStatement(new ObjectExpression(ImmutableList.of(new Method(true, new StaticPropertyName("a"), new FormalParameters(ImmutableList.empty(), Maybe.empty()), new FunctionBody(ImmutableList.empty(), ImmutableList.of(new ExpressionStatement(new YieldExpression(Maybe.empty()))))))))));
     assertNoErrors(test10);
 
-    Script test11 = new Script(ImmutableList.empty(), ImmutableList.of(new FunctionDeclaration(true, new BindingIdentifier("a"), new FormalParameters(ImmutableList.empty(), Maybe.empty()), new FunctionBody(ImmutableList.empty(), ImmutableList.of(new ExpressionStatement(new YieldExpression(Maybe.of(new ThisExpression()))))))));
+    Script test11 = new Script(ImmutableList.empty(), ImmutableList.of(new FunctionDeclaration(false, true, new BindingIdentifier("a"), new FormalParameters(ImmutableList.empty(), Maybe.empty()), new FunctionBody(ImmutableList.empty(), ImmutableList.of(new ExpressionStatement(new YieldExpression(Maybe.of(new ThisExpression()))))))));
     assertNoErrors(test11);
 
-    Script test12 = new Script(ImmutableList.empty(), ImmutableList.of(new ExpressionStatement(new FunctionExpression(true, Maybe.of(new BindingIdentifier("a")), new FormalParameters(ImmutableList.empty(), Maybe.empty()), new FunctionBody(ImmutableList.empty(), ImmutableList.of(new ExpressionStatement(new YieldExpression(Maybe.of(new ThisExpression())))))))));
+    Script test12 = new Script(ImmutableList.empty(), ImmutableList.of(new ExpressionStatement(new FunctionExpression(false, true, Maybe.of(new BindingIdentifier("a")), new FormalParameters(ImmutableList.empty(), Maybe.empty()), new FunctionBody(ImmutableList.empty(), ImmutableList.of(new ExpressionStatement(new YieldExpression(Maybe.of(new ThisExpression())))))))));
     assertNoErrors(test12);
 
     Script test13 = new Script(ImmutableList.empty(), ImmutableList.of(new ExpressionStatement(new ObjectExpression(ImmutableList.of(new Method(true, new StaticPropertyName("a"), new FormalParameters(ImmutableList.empty(), Maybe.empty()), new FunctionBody(ImmutableList.empty(), ImmutableList.of(new ExpressionStatement(new YieldExpression(Maybe.of(new ThisExpression())))))))))));
@@ -482,19 +482,19 @@ public class ValidatorTest {
     Script test0 = new Script(ImmutableList.empty(), ImmutableList.of(new ExpressionStatement(new YieldGeneratorExpression(new IdentifierExpression("a")))));
     assertCorrectErrors(test0, 1, ValidationErrorMessages.VALID_YIELD_GENERATOR_EXPRESSION_POSITION);
 
-    Script test1 = new Script(ImmutableList.empty(), ImmutableList.of(new FunctionDeclaration(false, new BindingIdentifier("a"), new FormalParameters(ImmutableList.empty(), Maybe.empty()), new FunctionBody(ImmutableList.empty(), ImmutableList.of(new ExpressionStatement(new YieldGeneratorExpression(new ThisExpression())))))));
+    Script test1 = new Script(ImmutableList.empty(), ImmutableList.of(new FunctionDeclaration(false, false, new BindingIdentifier("a"), new FormalParameters(ImmutableList.empty(), Maybe.empty()), new FunctionBody(ImmutableList.empty(), ImmutableList.of(new ExpressionStatement(new YieldGeneratorExpression(new ThisExpression())))))));
     assertCorrectErrors(test1, 1, ValidationErrorMessages.VALID_YIELD_GENERATOR_EXPRESSION_POSITION);
 
-    Script test2 = new Script(ImmutableList.empty(), ImmutableList.of(new ExpressionStatement(new FunctionExpression(false, Maybe.of(new BindingIdentifier("a")), new FormalParameters(ImmutableList.empty(), Maybe.empty()), new FunctionBody(ImmutableList.empty(), ImmutableList.of(new ExpressionStatement(new YieldGeneratorExpression(new ThisExpression()))))))));
+    Script test2 = new Script(ImmutableList.empty(), ImmutableList.of(new ExpressionStatement(new FunctionExpression(false, false, Maybe.of(new BindingIdentifier("a")), new FormalParameters(ImmutableList.empty(), Maybe.empty()), new FunctionBody(ImmutableList.empty(), ImmutableList.of(new ExpressionStatement(new YieldGeneratorExpression(new ThisExpression()))))))));
     assertCorrectErrors(test2, 1, ValidationErrorMessages.VALID_YIELD_GENERATOR_EXPRESSION_POSITION);
 
     Script test3 = new Script(ImmutableList.empty(), ImmutableList.of(new ExpressionStatement(new ObjectExpression(ImmutableList.of(new Method(false, new StaticPropertyName("a"), new FormalParameters(ImmutableList.empty(), Maybe.empty()), new FunctionBody(ImmutableList.empty(), ImmutableList.of(new ExpressionStatement(new YieldGeneratorExpression(new ThisExpression()))))))))));
     assertCorrectErrors(test3, 1, ValidationErrorMessages.VALID_YIELD_GENERATOR_EXPRESSION_POSITION);
 
-    Script test4 = new Script(ImmutableList.empty(), ImmutableList.of(new FunctionDeclaration(true, new BindingIdentifier("a"), new FormalParameters(ImmutableList.empty(), Maybe.empty()), new FunctionBody(ImmutableList.empty(), ImmutableList.of(new ExpressionStatement(new YieldGeneratorExpression(new ThisExpression())))))));
+    Script test4 = new Script(ImmutableList.empty(), ImmutableList.of(new FunctionDeclaration(false, true, new BindingIdentifier("a"), new FormalParameters(ImmutableList.empty(), Maybe.empty()), new FunctionBody(ImmutableList.empty(), ImmutableList.of(new ExpressionStatement(new YieldGeneratorExpression(new ThisExpression())))))));
     assertNoErrors(test4);
 
-    Script test5 = new Script(ImmutableList.empty(), ImmutableList.of(new ExpressionStatement(new FunctionExpression(true, Maybe.of(new BindingIdentifier("a")), new FormalParameters(ImmutableList.empty(), Maybe.empty()), new FunctionBody(ImmutableList.empty(), ImmutableList.of(new ExpressionStatement(new YieldGeneratorExpression(new ThisExpression()))))))));
+    Script test5 = new Script(ImmutableList.empty(), ImmutableList.of(new ExpressionStatement(new FunctionExpression(false, true, Maybe.of(new BindingIdentifier("a")), new FormalParameters(ImmutableList.empty(), Maybe.empty()), new FunctionBody(ImmutableList.empty(), ImmutableList.of(new ExpressionStatement(new YieldGeneratorExpression(new ThisExpression()))))))));
     assertNoErrors(test5);
 
     Script test6 = new Script(ImmutableList.empty(), ImmutableList.of(new ExpressionStatement(new ObjectExpression(ImmutableList.of(new Method(true, new StaticPropertyName("a"), new FormalParameters(ImmutableList.empty(), Maybe.empty()), new FunctionBody(ImmutableList.empty(), ImmutableList.of(new ExpressionStatement(new YieldGeneratorExpression(new ThisExpression()))))))))));

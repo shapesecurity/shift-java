@@ -414,7 +414,7 @@ public class ReconstructingReducer implements Reducer<Node> {
             @Nonnull Node name,
             @Nonnull Node params,
             @Nonnull Node body) {
-        return new FunctionDeclaration(node.isGenerator, (BindingIdentifier) name, (FormalParameters) params, (FunctionBody) body);
+        return new FunctionDeclaration(node.isAsync, node.isGenerator, (BindingIdentifier) name, (FormalParameters) params, (FunctionBody) body);
     }
 
     @Nonnull
@@ -424,7 +424,7 @@ public class ReconstructingReducer implements Reducer<Node> {
             @Nonnull Maybe<Node> name,
             @Nonnull Node params,
             @Nonnull Node body) {
-        return new FunctionExpression(node.isGenerator, name.map(x -> (BindingIdentifier) x), (FormalParameters) params, (FunctionBody) body);
+        return new FunctionExpression(node.isAsync, node.isGenerator, name.map(x -> (BindingIdentifier) x), (FormalParameters) params, (FunctionBody) body);
     }
 
     @Nonnull

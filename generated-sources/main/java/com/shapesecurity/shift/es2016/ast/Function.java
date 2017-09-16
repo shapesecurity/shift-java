@@ -23,6 +23,9 @@ import com.shapesecurity.functional.data.HashCodeBuilder;
 
 public abstract class Function {
     @NotNull
+    public final boolean isAsync;
+
+    @NotNull
     public final boolean isGenerator;
 
     @NotNull
@@ -32,7 +35,8 @@ public abstract class Function {
     public final FunctionBody body;
 
 
-    public Function (boolean isGenerator, @NotNull FormalParameters params, @NotNull FunctionBody body) {
+    public Function (boolean isAsync, boolean isGenerator, @NotNull FormalParameters params, @NotNull FunctionBody body) {
+        this.isAsync = isAsync;
         this.isGenerator = isGenerator;
         this.params = params;
         this.body = body;
@@ -41,13 +45,14 @@ public abstract class Function {
 
     @Override
     public boolean equals(Object object) {
-        return object instanceof Function && this.isGenerator == ((Function) object).isGenerator && this.params.equals(((Function) object).params) && this.body.equals(((Function) object).body);
+        return object instanceof Function && this.isAsync == ((Function) object).isAsync && this.isGenerator == ((Function) object).isGenerator && this.params.equals(((Function) object).params) && this.body.equals(((Function) object).body);
     }
 
 
     @Override
     public int hashCode() {
         int code = HashCodeBuilder.put(0, "Function");
+        code = HashCodeBuilder.put(code, this.isAsync);
         code = HashCodeBuilder.put(code, this.isGenerator);
         code = HashCodeBuilder.put(code, this.params);
         code = HashCodeBuilder.put(code, this.body);

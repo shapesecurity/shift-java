@@ -27,16 +27,16 @@ import org.junit.Test;
 public class NewTargetExpressionTest extends ParserTestCase {
     @Test
     public void testNewTargetExpression() throws JsError {
-        testScript("function f() { new.target; }", new FunctionDeclaration(false, new BindingIdentifier("f"),
+        testScript("function f() { new.target; }", new FunctionDeclaration(false, false, new BindingIdentifier("f"),
                 new FormalParameters(ImmutableList.empty(), Maybe.empty()), new FunctionBody(ImmutableList.empty(),
                 ImmutableList.of(new ExpressionStatement(new NewTargetExpression())))));
 
-        testScript("function f(a = new.target){}", new FunctionDeclaration(false, new BindingIdentifier("f"),
+        testScript("function f(a = new.target){}", new FunctionDeclaration(false, false, new BindingIdentifier("f"),
                 new FormalParameters(ImmutableList.of(new BindingWithDefault(new BindingIdentifier("a"),
                         new NewTargetExpression())), Maybe.empty()), new FunctionBody(ImmutableList.empty(),
                 ImmutableList.empty())));
 
-        testScript("(function f(a = new.target){})", new FunctionExpression(false, Maybe.of(new BindingIdentifier("f")),
+        testScript("(function f(a = new.target){})", new FunctionExpression(false, false, Maybe.of(new BindingIdentifier("f")),
                 new FormalParameters(ImmutableList.of(new BindingWithDefault(new BindingIdentifier("a"),
                         new NewTargetExpression())), Maybe.empty()), new FunctionBody(ImmutableList.empty(),
                 ImmutableList.empty())));
@@ -54,20 +54,20 @@ public class NewTargetExpressionTest extends ParserTestCase {
                 ImmutableList.empty(), ImmutableList.of(new ExpressionStatement(new NewTargetExpression())))
                 ))));
 
-        testScript("function f() { new.\\u0074arget; }", new FunctionDeclaration(false, new BindingIdentifier("f"),
+        testScript("function f() { new.\\u0074arget; }", new FunctionDeclaration(false, false, new BindingIdentifier("f"),
                 new FormalParameters(ImmutableList.empty(), Maybe.empty()), new FunctionBody(ImmutableList.empty(),
                 ImmutableList.of(new ExpressionStatement(new NewTargetExpression())))));
 
-        testScript("function f() { new new.target; }", new FunctionDeclaration(false, new BindingIdentifier("f"),
+        testScript("function f() { new new.target; }", new FunctionDeclaration(false, false, new BindingIdentifier("f"),
                 new FormalParameters(ImmutableList.empty(), Maybe.empty()), new FunctionBody(ImmutableList.empty(),
                 ImmutableList.of(new ExpressionStatement(new NewExpression(new NewTargetExpression(), ImmutableList.empty()))))));
 
-        testScript("function f() { new.target(); }", new FunctionDeclaration(false, new BindingIdentifier("f"),
+        testScript("function f() { new.target(); }", new FunctionDeclaration(false, false, new BindingIdentifier("f"),
                 new FormalParameters(ImmutableList.empty(), Maybe.empty()), new FunctionBody(ImmutableList.empty(),
                 ImmutableList.of(new ExpressionStatement(new CallExpression(new NewTargetExpression(),
                         ImmutableList.empty()))))));
 
-        testScript("function f() { new[\"target\"]; }", new FunctionDeclaration(false, new BindingIdentifier("f"),
+        testScript("function f() { new[\"target\"]; }", new FunctionDeclaration(false, false, new BindingIdentifier("f"),
                 new FormalParameters(ImmutableList.empty(), Maybe.empty()), new FunctionBody(ImmutableList.empty(),
                 ImmutableList.of(new ExpressionStatement(new NewExpression(new ArrayExpression(ImmutableList.of(
                         Maybe.of(new LiteralStringExpression("target")))), ImmutableList.empty()))))));

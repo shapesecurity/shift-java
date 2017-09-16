@@ -71,7 +71,7 @@ public class IncompatibilitiesTest extends ParserTestCase {
         );
 
         testScript("{ function f() {} }",
-                new BlockStatement(new Block(ImmutableList.of(new FunctionDeclaration(false, new BindingIdentifier("f"),
+                new BlockStatement(new Block(ImmutableList.of(new FunctionDeclaration(false, false, new BindingIdentifier("f"),
                         new FormalParameters(ImmutableList.empty(), Maybe.empty()), new FunctionBody(ImmutableList.empty(), ImmutableList.empty())))))
         );
     }
@@ -83,7 +83,7 @@ public class IncompatibilitiesTest extends ParserTestCase {
         // ES6: yield has been moved from the future reserved words list to the keywords list
         testScript("var yield = function yield(){};",
                 new VariableDeclarationStatement(new VariableDeclaration(VariableDeclarationKind.Var, ImmutableList.of(
-                        new VariableDeclarator(new BindingIdentifier("yield"), Maybe.of(new FunctionExpression(false,
+                        new VariableDeclarator(new BindingIdentifier("yield"), Maybe.of(new FunctionExpression(false, false,
                                 Maybe.of(new BindingIdentifier("yield")), new FormalParameters(ImmutableList.empty(), Maybe.empty()),
                                 new FunctionBody(ImmutableList.empty(), ImmutableList.empty()))))
                 ))));

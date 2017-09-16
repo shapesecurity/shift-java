@@ -23,7 +23,7 @@ import org.junit.Test;
 public class SemicolonsTest extends ParserTestCase {
     @Test
     public void testStatements() throws JsError {
-        testScript("function f() { return\n; }", new FunctionDeclaration(false, new BindingIdentifier("f"), new FormalParameters(ImmutableList.empty(), Maybe.empty()),
+        testScript("function f() { return\n; }", new FunctionDeclaration(false, false, new BindingIdentifier("f"), new FormalParameters(ImmutableList.empty(), Maybe.empty()),
                 new FunctionBody(ImmutableList.empty(), ImmutableList.of(new ReturnStatement(Maybe.empty())))));
 
         testScript("if(null) null\n;else null;", new IfStatement(
@@ -48,7 +48,7 @@ public class SemicolonsTest extends ParserTestCase {
         testModule("export function f(){}\n;", new Module(
                 ImmutableList.empty(),
                 ImmutableList.of(
-                        new Export(new FunctionDeclaration(false, new BindingIdentifier("f"), new FormalParameters(ImmutableList.empty(), Maybe.empty()),
+                        new Export(new FunctionDeclaration(false, false, new BindingIdentifier("f"), new FormalParameters(ImmutableList.empty(), Maybe.empty()),
                                 new FunctionBody(ImmutableList.empty(), ImmutableList.empty()))),
                         new EmptyStatement())));
     }

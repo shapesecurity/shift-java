@@ -26,21 +26,22 @@ public class FunctionDeclaration extends Function implements Statement, Function
     public final BindingIdentifier name;
 
 
-    public FunctionDeclaration (boolean isGenerator, @NotNull BindingIdentifier name, @NotNull FormalParameters params, @NotNull FunctionBody body) {
-        super(isGenerator, params, body);
+    public FunctionDeclaration (boolean isAsync, boolean isGenerator, @NotNull BindingIdentifier name, @NotNull FormalParameters params, @NotNull FunctionBody body) {
+        super(isAsync, isGenerator, params, body);
         this.name = name;
     }
 
 
     @Override
     public boolean equals(Object object) {
-        return object instanceof FunctionDeclaration && this.isGenerator == ((FunctionDeclaration) object).isGenerator && this.name.equals(((FunctionDeclaration) object).name) && this.params.equals(((FunctionDeclaration) object).params) && this.body.equals(((FunctionDeclaration) object).body);
+        return object instanceof FunctionDeclaration && this.isAsync == ((FunctionDeclaration) object).isAsync && this.isGenerator == ((FunctionDeclaration) object).isGenerator && this.name.equals(((FunctionDeclaration) object).name) && this.params.equals(((FunctionDeclaration) object).params) && this.body.equals(((FunctionDeclaration) object).body);
     }
 
 
     @Override
     public int hashCode() {
         int code = HashCodeBuilder.put(0, "FunctionDeclaration");
+        code = HashCodeBuilder.put(code, this.isAsync);
         code = HashCodeBuilder.put(code, this.isGenerator);
         code = HashCodeBuilder.put(code, this.name);
         code = HashCodeBuilder.put(code, this.params);

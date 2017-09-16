@@ -657,7 +657,11 @@ public class Fuzzer {
         if (isGenerator) {
             ctx = ctx.inGeneratorFunction();
         }
-        return new FunctionDeclaration(isGenerator, randomBindingIdentifier(ctx, depth - 1), randomFormalParameters(ctx, depth - 1), body);
+        boolean isAsync = ctx.random.nextBoolean();
+        if (isAsync) {
+            ctx = ctx.inAsyncFunction();
+        }
+        return new FunctionDeclaration(isAsync, isGenerator, randomBindingIdentifier(ctx, depth - 1), randomFormalParameters(ctx, depth - 1), body);
     }
 
     @Nonnull
@@ -694,7 +698,11 @@ public class Fuzzer {
         if (isGenerator) {
             ctx = ctx.inGeneratorFunction();
         }
-        return new FunctionExpression(isGenerator, optional(Fuzzer::randomBindingIdentifier).apply(ctx, depth - 1), randomFormalParameters(ctx, depth - 1), body);
+        boolean isAsync = ctx.random.nextBoolean();
+        if (isAsync) {
+            ctx = ctx.inAsyncFunction();
+        }
+        return new FunctionExpression(isAsync, isGenerator, optional(Fuzzer::randomBindingIdentifier).apply(ctx, depth - 1), randomFormalParameters(ctx, depth - 1), body);
     }
 
     @Nonnull
