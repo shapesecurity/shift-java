@@ -13,8 +13,33 @@ import com.shapesecurity.shift.es2016.ast.TemplateElement;
 import com.shapesecurity.shift.es2016.ast.TemplateExpression;
 import javax.annotation.Nonnull;
 
+import static com.shapesecurity.shift.es2016.utils.Utils.isLineTerminator;
+
 public class ParserWithLocation {
+	public static class Comment {
+		public enum Type {
+			SingleLine,
+			MultiLine,
+			HTMLOpen,
+			HTMLClose,
+		}
+
+		public final Type type;
+		public final String text;
+		public final SourceLocation start;
+		public final SourceLocation end;
+
+		public Comment(Type type, String text, SourceLocation start, SourceLocation end) {
+			this.type = type;
+			this.text = text;
+			this.start = start;
+			this.end = end;
+		}
+	}
+
 	protected HashTable<Node, SourceSpan> locations = HashTable.emptyUsingIdentity();
+
+	protected ImmutableList<Comment> comments = ImmutableList.empty();
 
 	public ParserWithLocation() {}
 
@@ -31,6 +56,11 @@ public class ParserWithLocation {
 	@Nonnull
 	public Maybe<SourceSpan> getLocation(@Nonnull Node node) {
 		return this.locations.get(node);
+	}
+
+	@Nonnull
+	public ImmutableList<Comment> getComments() {
+		return this.comments.reverse();
 	}
 
 	private class ParserWithLocationInternal extends GenericParser<SourceLocation> {
@@ -81,5 +111,25 @@ public class ParserWithLocation {
 			return dest;
 		}
 
+		@Override
+		protected void skipSingleLineComment(int offset) {
+			char c = this.source.charAt(this.index);
+			Comment.Type type = c == '/' ? Comment.Type.SingleLine : c == '<' ? Comment.Type.HTMLOpen : Comment.Type.HTMLClose;
+			SourceLocation start = new SourceLocation(this.line, this.index - this.lineStart, this.index);
+			super.skipSingleLineComment(offset);
+			SourceLocation end = new SourceLocation(this.line, this.index - this.lineStart, this.index);
+			int trailingLineTerminatorCharacters = this.source.charAt(this.index - 2) == '\r' ? 2 : isLineTerminator(this.source.charAt(this.index - 1)) ? 1 : 0;
+			String text = this.source.substring(start.offset + offset, end.offset - trailingLineTerminatorCharacters);
+			comments = comments.cons(new Comment(type, text, start, end));
+		}
+
+		@Override
+		protected void skipMultiLineComment() throws JsError {
+			SourceLocation start = new SourceLocation(this.line, this.index - this.lineStart, this.index);
+			super.skipMultiLineComment();
+			SourceLocation end = new SourceLocation(this.line, this.index - this.lineStart, this.index);
+			String text = this.source.substring(start.offset + 2, end.offset - 2);
+			comments = comments.cons(new Comment(Comment.Type.MultiLine, text, start, end));
+		}
 	}
 }
