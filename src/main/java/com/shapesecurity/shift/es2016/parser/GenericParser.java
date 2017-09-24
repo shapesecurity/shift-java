@@ -214,6 +214,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
             throw this.createUnexpected(this.lookahead);
         }
         switch (this.lookahead.type) {
+            case ASYNC:
             case FUNCTION:
                 return this.parseFunctionDeclaration(false, true, true);
             case CLASS:
@@ -423,16 +424,20 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
 
     @Nonnull
     protected Statement parseIfStatementChild() throws JsError {
-        return this.match(TokenType.FUNCTION) ? this.parseFunctionDeclaration(false, false, false) : this.parseStatement();
+        return this.match(TokenType.FUNCTION) || this.match(TokenType.ASYNC) ? this.parseFunctionDeclaration(false, true, false) : this.parseStatement();
     }
 
     @Nonnull
     protected Statement parseFunctionDeclaration(boolean inDefault, boolean allowAsync, boolean allowGenerator) throws JsError {
+        boolean isAsync = false;
+        if(this.match(TokenType.ASYNC)) {
+            isAsync = allowAsync && this.eat(TokenType.ASYNC);
+        }
+
         AdditionalStateT startState = this.startNode();
         this.lex();
 
         boolean isGenerator = allowGenerator && this.eat(TokenType.MUL);
-        boolean isAsync = allowAsync && this.eat(TokenType.ASYNC);
         boolean previousYield = this.allowYieldExpression;
         BindingIdentifier name;
         if (!this.match(TokenType.LPAREN)) {
@@ -567,6 +572,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
                 return this.parseTryStatement();
             case VAR:
                 return this.parseVariableDeclarationStatement();
+            case ASYNC:
             case FUNCTION:
             case CLASS:
                 throw this.createUnexpected(this.lookahead);
@@ -1189,6 +1195,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
             case DEC:
             case DIV:
             case FALSE_LITERAL:
+            case ASYNC:
             case FUNCTION:
             case IDENTIFIER:
             case INC:
@@ -1586,6 +1593,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
                 this.lex();
                 this.isBindingElement = this.isAssignmentTarget = false;
                 return Either.left(this.finishNode(startState, new LiteralNullExpression()));
+            case ASYNC:
             case FUNCTION:
                 this.isBindingElement = this.isAssignmentTarget = false;
                 return Either.left(this.finishNode(startState, this.parseFunctionExpression(true, true)));
@@ -2328,12 +2336,14 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
             case CLASS:
                 decl = new Export(this.parseClass(false));
                 break;
+            case ASYNC:
             case FUNCTION:
                 decl = new Export((FunctionDeclaration) this.parseFunctionDeclaration(false, true, true));
                 break;
             case DEFAULT:
                 this.lex();
                 switch (this.lookahead.type) {
+                    case ASYNC:
                     case FUNCTION:
                         decl = new ExportDefault((FunctionDeclaration) this.parseFunctionDeclaration(true, true, true));
                         break;

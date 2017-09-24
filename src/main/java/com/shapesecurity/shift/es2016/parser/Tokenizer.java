@@ -251,6 +251,9 @@ public class Tokenizer {
                         if (this.moduleIsTheGoalSymbol && cse4(id, 'w', 'a', 'i', 't')) {
                             return TokenType.AWAIT;
                         }
+                        if (cse4(id, 's', 'y', 'n', 'c')) {
+                            return TokenType.ASYNC;
+                        }
                         break;
                     case 'w': // WHILE
                         if (cse4(id, 'h', 'i', 'l', 'e')) {

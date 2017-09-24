@@ -238,6 +238,12 @@ public class CodeGen implements Reducer<CodeRep> {
         return seqVA(binding, factory.token("="), init);
     }
 
+    @Nonnull
+    @Override
+    public CodeRep reduceAwaitExpression(@Nonnull AwaitExpression node, @Nonnull CodeRep expression) {
+        return seqVA(factory.token("await"), p(node.expression, node.getPrecedence(), expression));
+    }
+
     @Override
     @Nonnull
     public CodeRep reduceBinaryExpression(@Nonnull BinaryExpression node, @Nonnull CodeRep left, @Nonnull CodeRep right) {

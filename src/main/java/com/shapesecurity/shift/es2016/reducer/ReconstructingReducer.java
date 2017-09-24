@@ -103,6 +103,14 @@ public class ReconstructingReducer implements Reducer<Node> {
 
     @Nonnull
     @Override
+    public Expression reduceAwaitExpression(
+            @Nonnull AwaitExpression node,
+            @Nonnull Node expression) {
+        return new AwaitExpression((Expression) expression);
+    }
+
+    @Nonnull
+    @Override
     public Expression reduceBinaryExpression(
             @Nonnull BinaryExpression node,
             @Nonnull Node left,
