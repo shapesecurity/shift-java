@@ -45,7 +45,7 @@ public class NewTargetExpressionTest extends ParserTestCase {
                 new BindingWithDefault(new BindingIdentifier("a"), new NewTargetExpression()), new FunctionBody(
                 ImmutableList.empty(), ImmutableList.empty())))));
 
-        testScript("({ m(a = new.target){} })", new ObjectExpression(ImmutableList.of(new Method(false, new StaticPropertyName("m"),
+        testScript("({ m(a = new.target){} })", new ObjectExpression(ImmutableList.of(new Method(false, false, new StaticPropertyName("m"),
                 new FormalParameters(ImmutableList.of(new BindingWithDefault(new BindingIdentifier("a"),
                         new NewTargetExpression())), Maybe.empty()), new FunctionBody(ImmutableList.empty(),
                 ImmutableList.empty())))));

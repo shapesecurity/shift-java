@@ -22,6 +22,7 @@ public interface ValidationErrorMessages {
     String VALID_REG_EX_PATTERN = "pattern field of LiteralRegExpExpression must match the grammar production Pattern (21.2.1)";
     String RETURN_STATEMENT_IN_FUNCTION_BODY = "ReturnStatement must be within a FunctionBody";
     String BINDING_IDENTIFIERS_CALLED_DEFAULT = "BindingIdentifier may only be called \"*default*\" within a FunctionDeclaration or ClassDeclaration";
+    String VALID_AWAIT_EXPRESSION_POSITION = "AwaitExpression is only allowed within FunctionDeclaration or FunctionExpression that are asynchronous";
     String VALID_YIELD_EXPRESSION_POSITION = "YieldExpression is only allowed within FunctionDeclaration or FunctionExpression that are generators";
     String VALID_YIELD_GENERATOR_EXPRESSION_POSITION = "YieldGeneratorExpressions is only allowed within FunctionDeclaration or FunctionExpression that are generators";
     String VALID_STATIC_MEMBER_EXPRESSION_PROPERTY_NAME = "The property field of StaticMemberExpression must be a valid identifier name";

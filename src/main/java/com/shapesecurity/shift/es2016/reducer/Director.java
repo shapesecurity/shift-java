@@ -142,6 +142,13 @@ public final class Director {
     }
 
     @Nonnull
+    public static <State> State reduceAwaitExpression(
+            @Nonnull Reducer<State> reducer,
+            @Nonnull AwaitExpression node) {
+        return reducer.reduceAwaitExpression(node, reduceExpression(reducer, node.expression));
+    }
+
+    @Nonnull
     public static <State> State reduceBinaryExpression(
       @Nonnull Reducer<State> reducer,
       @Nonnull BinaryExpression node) {
@@ -455,6 +462,8 @@ public final class Director {
             return reduceArrowExpression(reducer, (ArrowExpression) node);
         } else if (node instanceof AssignmentExpression) {
             return reduceAssignmentExpression(reducer, (AssignmentExpression) node);
+        } else if (node instanceof AwaitExpression) {
+            return reduceAwaitExpression(reducer, (AwaitExpression) node);
         } else if (node instanceof BinaryExpression) {
             return reduceBinaryExpression(reducer, (BinaryExpression) node);
         } else if (node instanceof CallExpression) {

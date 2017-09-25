@@ -17,11 +17,7 @@
 package com.shapesecurity.shift.es2016.validator;
 
 import com.shapesecurity.functional.data.Monoid;
-import com.shapesecurity.shift.es2016.ast.BindingIdentifier;
-import com.shapesecurity.shift.es2016.ast.ReturnStatement;
-
-import com.shapesecurity.shift.es2016.ast.YieldExpression;
-import com.shapesecurity.shift.es2016.ast.YieldGeneratorExpression;
+import com.shapesecurity.shift.es2016.ast.*;
 
 import javax.annotation.Nonnull;
 
@@ -40,6 +36,8 @@ public class ValidationContext {
     @Nonnull
     private final List<BindingIdentifier> bindingIdentifiersCalledDefault;
     @Nonnull
+    private final List<AwaitExpression> awaitExpressionsNotInAsyncContext;
+    @Nonnull
     private final List<YieldExpression> yieldExpressionsNotInGeneratorContext;
     @Nonnull
     private final List<YieldGeneratorExpression> yieldGeneratorExpressionsNotInGeneratorContext;
@@ -50,6 +48,7 @@ public class ValidationContext {
                 new ArrayList<>(), // errors
                 new ArrayList<>(), // freeReturnStatements
                 new ArrayList<>(), // bindingIdentifiersCalledDefault
+                new ArrayList<>(), // awaitExpressionsNotInAsyncContext
                 new ArrayList<>(), // yieldExpressionsNotInGeneratorContext
                 new ArrayList<>()  // yieldGeneratorExpressionsNotInGeneratorContext
         );
@@ -59,12 +58,14 @@ public class ValidationContext {
             @Nonnull List<ValidationError> errors,
             @Nonnull List<ReturnStatement> freeReturnStatements,
             @Nonnull List<BindingIdentifier> bindingIdentifiersCalledDefault,
+            @Nonnull List<AwaitExpression> awaitExpressionsNotInAsyncContext,
             @Nonnull List<YieldExpression> yieldExpressionsNotInGeneratorContext,
             @Nonnull List<YieldGeneratorExpression> yieldGeneratorExpressionsNotInGeneratorContext
     ) {
         this.errors = errors;
         this.freeReturnStatements = freeReturnStatements;
         this.bindingIdentifiersCalledDefault = bindingIdentifiersCalledDefault;
+        this.awaitExpressionsNotInAsyncContext = awaitExpressionsNotInAsyncContext;
         this.yieldExpressionsNotInGeneratorContext = yieldExpressionsNotInGeneratorContext;
         this.yieldGeneratorExpressionsNotInGeneratorContext = yieldGeneratorExpressionsNotInGeneratorContext;
     }
@@ -95,13 +96,27 @@ public class ValidationContext {
         this.bindingIdentifiersCalledDefault.clear();
     }
 
+    public void addAwaitExpressionsNotInAsyncContext(@Nonnull AwaitExpression node) {
+        this.awaitExpressionsNotInAsyncContext.add(node);
+    }
+
     public void addYieldExpressionsNotInGeneratorContext(@Nonnull YieldExpression node) {
         this.yieldExpressionsNotInGeneratorContext.add(node);
+    }
+
+    public void enforceAwaitExpressionsNotInAsyncContext(Function<AwaitExpression, ValidationError> createError) {
+        this.awaitExpressionsNotInAsyncContext.stream().map(createError::apply).forEach(this::addError);
+        this.awaitExpressionsNotInAsyncContext.clear();
+
     }
 
     public void enforceYieldExpressionsNotInGeneratorContext(Function<YieldExpression, ValidationError> createError) {
         this.yieldExpressionsNotInGeneratorContext.stream().map(createError::apply).forEach(this::addError);
         this.yieldExpressionsNotInGeneratorContext.clear();
+    }
+
+    public void clearAwaitExpressionsNotInAsyncContext() {
+        this.awaitExpressionsNotInAsyncContext.clear();
     }
 
     public void clearYieldExpressionsNotInGeneratorContext() {
@@ -129,6 +144,7 @@ public class ValidationContext {
         this.errors.addAll(other.errors);
         this.freeReturnStatements.addAll(other.freeReturnStatements);
         this.bindingIdentifiersCalledDefault.addAll(other.bindingIdentifiersCalledDefault);
+        this.awaitExpressionsNotInAsyncContext.addAll(other.awaitExpressionsNotInAsyncContext);
         this.yieldExpressionsNotInGeneratorContext.addAll(other.yieldExpressionsNotInGeneratorContext);
         this.yieldGeneratorExpressionsNotInGeneratorContext.addAll(other.yieldGeneratorExpressionsNotInGeneratorContext);
         return this;

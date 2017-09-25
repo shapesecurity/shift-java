@@ -607,7 +607,7 @@ public class Deserializer {
                     case "LiteralStringExpression":
                         return new LiteralStringExpression(jsonObject.get("value").getAsString());
                     case "Method":
-                        return new Method(jsonObject.get("isGenerator").getAsBoolean(), (PropertyName) deserializeNode(jsonObject.get("name")), (FormalParameters) deserializeNode(jsonObject.get("params")), (FunctionBody) deserializeNode(jsonObject.get("body")));
+                        return new Method(jsonObject.get("isAsync").getAsBoolean(), jsonObject.get("isGenerator").getAsBoolean(), (PropertyName) deserializeNode(jsonObject.get("name")), (FormalParameters) deserializeNode(jsonObject.get("params")), (FunctionBody) deserializeNode(jsonObject.get("body")));
                     case "Module":
                         return new Module(deserializeListDirective(jsonObject.get("directives")), deserializeListImportDeclarationExportDeclarationStatement(jsonObject.get("items")));
                     case "NewExpression":

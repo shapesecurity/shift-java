@@ -384,6 +384,12 @@ public class Fuzzer {
         }
     }
 
+
+    @Nonnull
+    private static AwaitExpression randomAwaitExpression(@Nonnull GenCtx ctx, int depth) {
+        return new AwaitExpression(randomExpression(ctx, depth - 1));
+    }
+
     @Nonnull
     private static BindingPropertyIdentifier randomBindingPropertyIdentifier(@Nonnull GenCtx ctx, int depth) {
         return new BindingPropertyIdentifier(randomBindingIdentifier(ctx, depth - 1), optional(Fuzzer::randomExpression).apply(ctx, depth - 1));
@@ -570,6 +576,11 @@ public class Fuzzer {
         Expression expression = choice(expressionGens).apply(ctx, depth - 1).apply(ctx, depth - 1);
         if (!ctx.allowYieldExpression) {
             while (expression instanceof YieldExpression || expression instanceof YieldGeneratorExpression) {
+                expression = choice(expressionGens).apply(ctx, depth - 1).apply(ctx, depth - 1);
+            }
+        }
+        if (!ctx.allowAwaitExpression) {
+            while (expression instanceof AwaitExpression) {
                 expression = choice(expressionGens).apply(ctx, depth - 1).apply(ctx, depth - 1);
             }
         }
@@ -853,7 +864,7 @@ public class Fuzzer {
 
     @Nonnull
     private static Method randomMethod(@Nonnull GenCtx ctx, int depth) {
-        return new Method(false, randomPropertyName(ctx, depth - 1), randomFormalParameters(ctx, depth - 1), randomFunctionBody(ctx, depth - 1));
+        return new Method(false, false, randomPropertyName(ctx, depth - 1), randomFormalParameters(ctx, depth - 1), randomFunctionBody(ctx, depth - 1));
     }
 
     @Nonnull

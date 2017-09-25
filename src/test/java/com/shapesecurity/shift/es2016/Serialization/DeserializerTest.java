@@ -108,6 +108,12 @@ public class DeserializerTest {
     }
 
     @Test
+    public void testAsyncDeclaration() throws IllegalAccessException, NoSuchMethodException, InstantiationException, JSONException, JsError, InvocationTargetException, ClassNotFoundException {
+        testHelperFromScriptCode("async function a(){({await]:a}=0)}");
+        testHelperFromScriptCode("function a() { async function a() {} function a() {} }");
+    }
+
+    @Test
     public void testLexicalDeclaration() throws IllegalAccessException, NoSuchMethodException, InstantiationException, JSONException, JsError, InvocationTargetException, ClassNotFoundException {
         testHelperFromScriptCode("while(true) var a");
         testHelperFromScriptCode("{ let a; }");
@@ -311,6 +317,16 @@ public class DeserializerTest {
         testHelperFromScriptCode("function *a(){yield ++a}");
         testHelperFromScriptCode("function*a(){yield*a}");
         testHelperFromScriptCode("function a(){yield*a}");
+    }
+
+    @Test
+    public void testAwaitExpression() throws IllegalAccessException, NoSuchMethodException, InstantiationException, JSONException, JsError, InvocationTargetException, ClassNotFoundException {
+        testHelperFromScriptCode("async function a(){await\na}");
+        testHelperFromScriptCode("async function a(){await 0}");
+        testHelperFromScriptCode("({set a(await){}})");
+        testHelperFromScriptCode("async function a(){await+0}");
+        testHelperFromScriptCode("async function a(){await class{}}");
+        testHelperFromScriptCode("async function a(){await ++a}");
     }
 
     @Test

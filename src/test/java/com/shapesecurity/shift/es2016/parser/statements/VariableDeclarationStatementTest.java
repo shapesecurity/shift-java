@@ -59,6 +59,9 @@ public class VariableDeclarationStatementTest extends ParserTestCase {
         testScript("var yield;", new VariableDeclarationStatement(new VariableDeclaration(VariableDeclarationKind.Var,
                 ImmutableList.of(new VariableDeclarator(new BindingIdentifier("yield"), Maybe.empty())))));
 
+        testScript("var await;", new VariableDeclarationStatement(new VariableDeclaration(VariableDeclarationKind.Var,
+                ImmutableList.of(new VariableDeclarator(new BindingIdentifier("await"), Maybe.empty())))));
+
         testScript("var let", new VariableDeclarationStatement(new VariableDeclaration(VariableDeclarationKind.Var,
                 ImmutableList.of(new VariableDeclarator(new BindingIdentifier("let"), Maybe.empty())))));
 

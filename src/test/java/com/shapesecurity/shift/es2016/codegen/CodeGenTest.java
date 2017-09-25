@@ -122,6 +122,20 @@ public class CodeGenTest {
     }
 
     @Test
+    public void testAwaitExpression() throws JsError {
+        test("async function f(){await}");
+        test("async function f(){await a}");
+        test("async function f(){await 0}");
+        test("async function f(){await{}}");
+        test("async function f(){await a+b}");
+        test("async function f(){await a=b}");
+        test("async function f(){await(a,b)}");
+        test("async function f(){f(await,await)}");
+        test("async function f(){f(await a,await b)}");
+        test("async function f(){await await await}");
+    }
+    
+    @Test
     public void testBindingPropertyIdentifier() throws JsError {
         test("({a=0}=0)");
     }

@@ -226,14 +226,14 @@ public class InteractionsTest extends ParserTestCase {
                         UpdateOperator.Decrement, new AssignmentTargetIdentifier("i")), BinaryOperator.GreaterThan, new LiteralNumericExpression(0.0))))));
 
         testScript("class A extends B { a() { [super.b] = c } }", new ClassDeclaration(new BindingIdentifier("A"),
-                Maybe.of(new IdentifierExpression("B")), ImmutableList.of(new ClassElement(false, new Method(false, new StaticPropertyName("a"),
+                Maybe.of(new IdentifierExpression("B")), ImmutableList.of(new ClassElement(false, new Method(false, false, new StaticPropertyName("a"),
                 new FormalParameters(ImmutableList.empty(), Maybe.empty()), new FunctionBody(ImmutableList.empty(),
                 ImmutableList.of(new ExpressionStatement(new AssignmentExpression(new ArrayAssignmentTarget(ImmutableList.of(
                         Maybe.of(new StaticMemberAssignmentTarget(new Super(), "b"))), Maybe.empty()),
                         new IdentifierExpression("c"))))))))));
 
         testScript("class A extends B { a() { ({b: super[c]} = d) } }", new ClassDeclaration(new BindingIdentifier("A"),
-                Maybe.of(new IdentifierExpression("B")), ImmutableList.of(new ClassElement(false, new Method(false, new StaticPropertyName("a"),
+                Maybe.of(new IdentifierExpression("B")), ImmutableList.of(new ClassElement(false, new Method(false, false, new StaticPropertyName("a"),
                 new FormalParameters(ImmutableList.empty(), Maybe.empty()), new FunctionBody(ImmutableList.empty(),
                 ImmutableList.of(new ExpressionStatement(new AssignmentExpression(new ObjectAssignmentTarget(ImmutableList.of(
                         new AssignmentTargetPropertyProperty(new StaticPropertyName("b"), new ComputedMemberAssignmentTarget(

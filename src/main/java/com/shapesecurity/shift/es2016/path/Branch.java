@@ -20,82 +20,7 @@ package com.shapesecurity.shift.es2016.path;
 
 
 import com.shapesecurity.functional.data.Maybe;
-import com.shapesecurity.shift.es2016.ast.ArrayAssignmentTarget;
-import com.shapesecurity.shift.es2016.ast.ArrayBinding;
-import com.shapesecurity.shift.es2016.ast.ArrayExpression;
-import com.shapesecurity.shift.es2016.ast.ArrowExpression;
-import com.shapesecurity.shift.es2016.ast.AssignmentExpression;
-import com.shapesecurity.shift.es2016.ast.AssignmentTargetPropertyIdentifier;
-import com.shapesecurity.shift.es2016.ast.AssignmentTargetPropertyProperty;
-import com.shapesecurity.shift.es2016.ast.AssignmentTargetWithDefault;
-import com.shapesecurity.shift.es2016.ast.BinaryExpression;
-import com.shapesecurity.shift.es2016.ast.BindingPropertyIdentifier;
-import com.shapesecurity.shift.es2016.ast.BindingPropertyProperty;
-import com.shapesecurity.shift.es2016.ast.BindingWithDefault;
-import com.shapesecurity.shift.es2016.ast.Block;
-import com.shapesecurity.shift.es2016.ast.BlockStatement;
-import com.shapesecurity.shift.es2016.ast.CallExpression;
-import com.shapesecurity.shift.es2016.ast.CatchClause;
-import com.shapesecurity.shift.es2016.ast.ClassDeclaration;
-import com.shapesecurity.shift.es2016.ast.ClassElement;
-import com.shapesecurity.shift.es2016.ast.ClassExpression;
-import com.shapesecurity.shift.es2016.ast.CompoundAssignmentExpression;
-import com.shapesecurity.shift.es2016.ast.ComputedMemberAssignmentTarget;
-import com.shapesecurity.shift.es2016.ast.ComputedMemberExpression;
-import com.shapesecurity.shift.es2016.ast.ComputedPropertyName;
-import com.shapesecurity.shift.es2016.ast.ConditionalExpression;
-import com.shapesecurity.shift.es2016.ast.DataProperty;
-import com.shapesecurity.shift.es2016.ast.DoWhileStatement;
-import com.shapesecurity.shift.es2016.ast.Export;
-import com.shapesecurity.shift.es2016.ast.ExportDefault;
-import com.shapesecurity.shift.es2016.ast.ExportFrom;
-import com.shapesecurity.shift.es2016.ast.ExportLocalSpecifier;
-import com.shapesecurity.shift.es2016.ast.ExportLocals;
-import com.shapesecurity.shift.es2016.ast.ExpressionStatement;
-import com.shapesecurity.shift.es2016.ast.ForInStatement;
-import com.shapesecurity.shift.es2016.ast.ForOfStatement;
-import com.shapesecurity.shift.es2016.ast.ForStatement;
-import com.shapesecurity.shift.es2016.ast.FormalParameters;
-import com.shapesecurity.shift.es2016.ast.FunctionBody;
-import com.shapesecurity.shift.es2016.ast.FunctionDeclaration;
-import com.shapesecurity.shift.es2016.ast.FunctionExpression;
-import com.shapesecurity.shift.es2016.ast.Getter;
-import com.shapesecurity.shift.es2016.ast.IfStatement;
-import com.shapesecurity.shift.es2016.ast.Import;
-import com.shapesecurity.shift.es2016.ast.ImportNamespace;
-import com.shapesecurity.shift.es2016.ast.ImportSpecifier;
-import com.shapesecurity.shift.es2016.ast.LabeledStatement;
-import com.shapesecurity.shift.es2016.ast.Method;
-import com.shapesecurity.shift.es2016.ast.Module;
-import com.shapesecurity.shift.es2016.ast.NewExpression;
-import com.shapesecurity.shift.es2016.ast.Node;
-import com.shapesecurity.shift.es2016.ast.ObjectAssignmentTarget;
-import com.shapesecurity.shift.es2016.ast.ObjectBinding;
-import com.shapesecurity.shift.es2016.ast.ObjectExpression;
-import com.shapesecurity.shift.es2016.ast.ReturnStatement;
-import com.shapesecurity.shift.es2016.ast.Script;
-import com.shapesecurity.shift.es2016.ast.Setter;
-import com.shapesecurity.shift.es2016.ast.ShorthandProperty;
-import com.shapesecurity.shift.es2016.ast.SpreadElement;
-import com.shapesecurity.shift.es2016.ast.StaticMemberAssignmentTarget;
-import com.shapesecurity.shift.es2016.ast.StaticMemberExpression;
-import com.shapesecurity.shift.es2016.ast.SwitchCase;
-import com.shapesecurity.shift.es2016.ast.SwitchDefault;
-import com.shapesecurity.shift.es2016.ast.SwitchStatement;
-import com.shapesecurity.shift.es2016.ast.SwitchStatementWithDefault;
-import com.shapesecurity.shift.es2016.ast.TemplateExpression;
-import com.shapesecurity.shift.es2016.ast.ThrowStatement;
-import com.shapesecurity.shift.es2016.ast.TryCatchStatement;
-import com.shapesecurity.shift.es2016.ast.TryFinallyStatement;
-import com.shapesecurity.shift.es2016.ast.UnaryExpression;
-import com.shapesecurity.shift.es2016.ast.UpdateExpression;
-import com.shapesecurity.shift.es2016.ast.VariableDeclaration;
-import com.shapesecurity.shift.es2016.ast.VariableDeclarationStatement;
-import com.shapesecurity.shift.es2016.ast.VariableDeclarator;
-import com.shapesecurity.shift.es2016.ast.WhileStatement;
-import com.shapesecurity.shift.es2016.ast.WithStatement;
-import com.shapesecurity.shift.es2016.ast.YieldExpression;
-import com.shapesecurity.shift.es2016.ast.YieldGeneratorExpression;
+import com.shapesecurity.shift.es2016.ast.*;
 
 public abstract class Branch {
     abstract public Maybe<? extends Node> step(Node node);
@@ -158,6 +83,10 @@ public abstract class Branch {
 
     public static AssignmentTargetWithDefaultInit AssignmentTargetWithDefaultInit_() {
         return new AssignmentTargetWithDefaultInit();
+    }
+
+    public static AwaitExpressionExpression AwaitExpressionExpression_() {
+        return new AwaitExpressionExpression();
     }
 
     public static BinaryExpressionLeft BinaryExpressionLeft_() {
@@ -784,6 +713,14 @@ abstract class IndexedBranch extends Branch {
     public Maybe<? extends Node> step(Node node) {
         if (!(node instanceof AssignmentTargetWithDefault)) return Maybe.empty();
         return Maybe.of(((AssignmentTargetWithDefault) node).init);
+    }
+}
+@SuppressWarnings("ConstantConditions")
+class AwaitExpressionExpression extends Branch {
+    @Override
+    public Maybe<? extends Node> step(Node node) {
+        if (!(node instanceof AwaitExpression)) return Maybe.empty();
+        return Maybe.of(((AwaitExpression) node).expression);
     }
 }
 @SuppressWarnings("ConstantConditions")

@@ -23,14 +23,16 @@ import com.shapesecurity.functional.data.HashCodeBuilder;
 
 public class Method extends MethodDefinition {
     @NotNull
+    public final boolean isAsync;
     public final boolean isGenerator;
 
     @NotNull
     public final FormalParameters params;
 
 
-    public Method (boolean isGenerator, @NotNull PropertyName name, @NotNull FormalParameters params, @NotNull FunctionBody body) {
+    public Method (boolean isAsync, boolean isGenerator, @NotNull PropertyName name, @NotNull FormalParameters params, @NotNull FunctionBody body) {
         super(name, body);
+        this.isAsync = isGenerator;
         this.isGenerator = isGenerator;
         this.params = params;
     }
@@ -38,13 +40,14 @@ public class Method extends MethodDefinition {
 
     @Override
     public boolean equals(Object object) {
-        return object instanceof Method && this.isGenerator == ((Method) object).isGenerator && this.name.equals(((Method) object).name) && this.params.equals(((Method) object).params) && this.body.equals(((Method) object).body);
+        return object instanceof Method && this.isAsync == ((Method) object).isAsync && this.isGenerator == ((Method) object).isGenerator && this.name.equals(((Method) object).name) && this.params.equals(((Method) object).params) && this.body.equals(((Method) object).body);
     }
 
 
     @Override
     public int hashCode() {
         int code = HashCodeBuilder.put(0, "Method");
+        code = HashCodeBuilder.put(code, this.isAsync);
         code = HashCodeBuilder.put(code, this.isGenerator);
         code = HashCodeBuilder.put(code, this.name);
         code = HashCodeBuilder.put(code, this.params);

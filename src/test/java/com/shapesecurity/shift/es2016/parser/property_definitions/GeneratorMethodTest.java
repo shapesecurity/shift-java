@@ -17,15 +17,15 @@ import org.junit.Test;
 public class GeneratorMethodTest extends ParserTestCase {
     @Test
     public void testGeneratorMethod() throws JsError {
-        testScript("({*a(){}})", new ObjectExpression(ImmutableList.of(new Method(true, new StaticPropertyName("a"), new FormalParameters(
+        testScript("({*a(){}})", new ObjectExpression(ImmutableList.of(new Method(false, true, new StaticPropertyName("a"), new FormalParameters(
                 ImmutableList.empty(), Maybe.empty()), new FunctionBody(ImmutableList.empty(), ImmutableList.empty())
                 ))));
 
-        testScript("({*yield(){}})", new ObjectExpression(ImmutableList.of(new Method(true, new StaticPropertyName("yield"), new FormalParameters(
+        testScript("({*yield(){}})", new ObjectExpression(ImmutableList.of(new Method(false, true, new StaticPropertyName("yield"), new FormalParameters(
                 ImmutableList.empty(), Maybe.empty()), new FunctionBody(ImmutableList.empty(), ImmutableList.empty())
                 ))));
 
-        testScript("({*[yield](){}})", new ObjectExpression(ImmutableList.of(new Method(true, new ComputedPropertyName(new IdentifierExpression("yield")), new FormalParameters(
+        testScript("({*[yield](){}})", new ObjectExpression(ImmutableList.of(new Method(false, true, new ComputedPropertyName(new IdentifierExpression("yield")), new FormalParameters(
                 ImmutableList.empty(), Maybe.empty()), new FunctionBody(ImmutableList.empty(), ImmutableList.empty())
                 ))));
     }

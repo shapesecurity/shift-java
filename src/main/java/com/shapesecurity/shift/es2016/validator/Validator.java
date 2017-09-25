@@ -313,6 +313,9 @@ public class Validator extends MonoidalReducer<ValidationContext> {
             s.clearYieldExpressionsNotInGeneratorContext();
             s.clearYieldGeneratorExpressionsNotInGeneratorContext();
         }
+        if (node.isAsync) {
+            s.clearAwaitExpressionsNotInAsyncContext();
+        }
         return s;
     }
 
@@ -323,6 +326,9 @@ public class Validator extends MonoidalReducer<ValidationContext> {
         if (node.isGenerator) {
             s.clearYieldExpressionsNotInGeneratorContext();
             s.clearYieldGeneratorExpressionsNotInGeneratorContext();
+        }
+        if (node.isAsync) {
+            s.clearAwaitExpressionsNotInAsyncContext();
         }
         return s;
     }
@@ -401,6 +407,9 @@ public class Validator extends MonoidalReducer<ValidationContext> {
             s.clearYieldExpressionsNotInGeneratorContext();
             s.clearYieldGeneratorExpressionsNotInGeneratorContext();
         }
+        if (node.isAsync) {
+            s.clearAwaitExpressionsNotInAsyncContext();
+        }
         return s;
     }
 
@@ -411,6 +420,7 @@ public class Validator extends MonoidalReducer<ValidationContext> {
         ValidationContext s = super.reduceModule(node, directives, items);
         s.enforceFreeReturnStatements(returnStatement -> new ValidationError(returnStatement, ValidationErrorMessages.RETURN_STATEMENT_IN_FUNCTION_BODY));
         s.enforceBindingIdentifiersCalledDefault(bindingIdentifier -> new ValidationError(bindingIdentifier, ValidationErrorMessages.BINDING_IDENTIFIERS_CALLED_DEFAULT));
+        s.enforceAwaitExpressionsNotInAsyncContext(awaitExpression -> new ValidationError(awaitExpression, ValidationErrorMessages.VALID_AWAIT_EXPRESSION_POSITION));
         s.enforceYieldExpressionsNotInGeneratorContext(yieldExpression -> new ValidationError(yieldExpression, ValidationErrorMessages.VALID_YIELD_EXPRESSION_POSITION));
         s.enforceYieldGeneratorExpressionsNotInGeneratorContext(yieldGeneratorExpression -> new ValidationError(yieldGeneratorExpression, ValidationErrorMessages.VALID_YIELD_GENERATOR_EXPRESSION_POSITION));
         return s;
@@ -432,6 +442,7 @@ public class Validator extends MonoidalReducer<ValidationContext> {
         ValidationContext s = super.reduceScript(node, directives, statements);
         s.enforceFreeReturnStatements(returnStatement -> new ValidationError(returnStatement, ValidationErrorMessages.RETURN_STATEMENT_IN_FUNCTION_BODY));
         s.enforceBindingIdentifiersCalledDefault(bindingIdentifier -> new ValidationError(bindingIdentifier, ValidationErrorMessages.BINDING_IDENTIFIERS_CALLED_DEFAULT));
+        s.enforceAwaitExpressionsNotInAsyncContext(awaitExpression -> new ValidationError(awaitExpression, ValidationErrorMessages.VALID_AWAIT_EXPRESSION_POSITION));
         s.enforceYieldExpressionsNotInGeneratorContext(yieldExpression -> new ValidationError(yieldExpression, ValidationErrorMessages.VALID_YIELD_EXPRESSION_POSITION));
         s.enforceYieldGeneratorExpressionsNotInGeneratorContext(yieldGeneratorExpression -> new ValidationError(yieldGeneratorExpression, ValidationErrorMessages.VALID_YIELD_GENERATOR_EXPRESSION_POSITION));
         return s;
