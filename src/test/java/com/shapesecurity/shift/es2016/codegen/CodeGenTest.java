@@ -39,12 +39,14 @@ import com.shapesecurity.shift.es2016.codegen.location.CodeGenWithLocation;
 import com.shapesecurity.shift.es2016.parser.JsError;
 import com.shapesecurity.shift.es2016.parser.Parser;
 import com.shapesecurity.shift.es2016.parser.ParserWithLocation;
+import com.shapesecurity.shift.es2016.parser.SourceSpan;
 import com.shapesecurity.shift.es2016.reducer.Director;
 import com.shapesecurity.shift.es2016.reducer.MonoidalReducer;
 import com.shapesecurity.shift.es2016.reducer.WrappedReducer;
 import javax.annotation.Nonnull;
 import org.junit.Test;
 
+import static com.shapesecurity.shift.es2016.parser.miscellaneous.LocationTest.assertLocationEquals;
 import static org.junit.Assert.assertEquals;
 
 public class CodeGenTest {
@@ -72,7 +74,20 @@ public class CodeGenTest {
        This approach is kind of hacky: we really just want a visitor. But it does work.
         */
         Director.reduceModule(new WrappedReducer<>((node, unit) -> {
-            assertEquals("Location for " + node.getClass().getSimpleName() + " should be the same according to the parser and the code generator", parserWithLocation.getLocation(node), codeGenWithLocation.getLocation(node));
+            Maybe<SourceSpan> maybeParserLoc = parserWithLocation.getLocation(node);
+            Maybe<SourceSpan> maybeCodegenLoc = codeGenWithLocation.getLocation(node);
+            if (maybeParserLoc.isNothing() && maybeCodegenLoc.isNothing()) {
+                return unit;
+            }
+            if (maybeParserLoc.isNothing()) {
+                throw new AssertionError("Parser location information for " + node.getClass().getSimpleName() + " is missing");
+            }
+            if (maybeCodegenLoc.isNothing()) {
+                throw new AssertionError("CodeGen location information for " + node.getClass().getSimpleName() + " is missing");
+            }
+            SourceSpan parserLoc = maybeParserLoc.fromJust();
+            SourceSpan codegenLoc = maybeCodegenLoc.fromJust();
+            assertLocationEquals(parserLoc, codegenLoc);
             return unit;
         }, new MonoidalReducer<>(Monoid.UNIT)), module);
     }

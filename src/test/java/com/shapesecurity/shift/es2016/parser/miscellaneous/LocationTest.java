@@ -56,18 +56,22 @@ public class LocationTest extends TestCase {
 		assertEquals(expected, actual);
 	}
 
+	public static void assertLocationEquals(@Nonnull SourceSpan actual, @Nonnull SourceSpan expected) {
+		// Manually checking equality gives better error messages.
+		assertEquals("start offset", expected.start.offset, actual.start.offset);
+		assertEquals("start line", expected.start.line, actual.start.line);
+		assertEquals("start column", expected.start.column, actual.start.column);
+		assertEquals("end offset", expected.end.offset, actual.end.offset);
+		assertEquals("end line", expected.end.line, actual.end.line);
+		assertEquals("end column", expected.end.column, actual.end.column);
+	}
+
 	private void checkLocation(@Nonnull Node node, @Nonnull SourceSpan expected) {
 		Maybe<SourceSpan> maybeLocation = this.parserWithLocation.getLocation(node);
 		assertTrue(maybeLocation.isJust());
 
 		SourceSpan location = maybeLocation.fromJust();
-		// Manually checking equality gives better error messages.
-		assertEquals(expected.start.offset, location.start.offset);
-		assertEquals(expected.start.line, location.start.line);
-		assertEquals(expected.start.column, location.start.column);
-		assertEquals(expected.end.offset, location.end.offset);
-		assertEquals(expected.end.line, location.end.line);
-		assertEquals(expected.end.column, location.end.column);
+		assertLocationEquals(location, expected);
 	}
 
 	@Test
