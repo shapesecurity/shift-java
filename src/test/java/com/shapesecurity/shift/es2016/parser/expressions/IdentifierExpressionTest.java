@@ -68,8 +68,6 @@ public class IdentifierExpressionTest extends ParserTestCase {
 
         testScriptFailure("a\u0007", 1, "Unexpected \"\u0007\"");
         testScriptFailure("a\u007F", 1, "Unexpected \"\u007F\"");
-        testModuleFailure("await", 0, "Unexpected token \"await\"");
-        testModuleFailure("function f() { var await }", 19, "Unexpected token \"await\"");
         testScriptFailure("for(let[a].b of 0);", 10, "Unexpected token \".\"");
         testScriptFailure("for(let[a]().b of 0);", 10, "Unexpected token \"(\"");
         testScriptFailure("for(let.a of 0);", 10, "Invalid left-hand side in for-of");

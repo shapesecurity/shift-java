@@ -50,7 +50,6 @@ public class CloneReducerTest extends CloneReducerTestCase {
     @Test
     public void testAsyncDeclaration() throws JsError {
         cloneTestScript("async function a(){}");
-        cloneTestScript("async function a(){await}");
         cloneTestScript("async function a(x){await x}");
     }
 

@@ -123,7 +123,6 @@ public class CodeGenTest {
 
     @Test
     public void testAwaitExpression() throws JsError {
-        test("async function f(){await}");
         test("async function f(){await a}");
         test("async function f(){await 0}");
         test("async function f(){await{}}");
@@ -170,6 +169,7 @@ public class CodeGenTest {
     public void testClassElement() throws JsError {
         test("(class{a(){}})");
         test("(class{*a(){}})");
+        test("(class{async a(){}})");
         test("(class{static a(){}})");
         test("(class{static*a(){}})");
         test("(class{constructor(){}})");

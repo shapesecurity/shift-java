@@ -631,13 +631,13 @@ public class CodeGen implements Reducer<CodeRep> {
     @Override
     @Nonnull
     public CodeRep reduceFunctionDeclaration(@Nonnull FunctionDeclaration node, @Nonnull CodeRep name, @Nonnull CodeRep params, @Nonnull CodeRep body) {
-        return seqVA(factory.token("function"), node.isGenerator ? factory.token("*") : factory.empty(), node.name.name.equals("*default*") ? factory.empty() : name, factory.paren(params), factory.brace(body));
+        return seqVA(node.isAsync ? factory.token("async") : factory.empty(), factory.token("function"), node.isGenerator ? factory.token("*") : factory.empty(), node.name.name.equals("*default*") ? factory.empty() : name, factory.paren(params), factory.brace(body));
     }
 
     @Override
     @Nonnull
     public CodeRep reduceFunctionExpression(@Nonnull FunctionExpression node, @Nonnull Maybe<CodeRep> name, @Nonnull CodeRep params, @Nonnull CodeRep body) {
-        CodeRep state = seqVA(factory.token("function"), node.isGenerator ? factory.token("*") : factory.empty(), name.isJust() ? name.fromJust() : factory.empty(), factory.paren(params), factory.brace(body));
+        CodeRep state = seqVA(node.isAsync ? factory.token("async") : factory.empty(), factory.token("function"), node.isGenerator ? factory.token("*") : factory.empty(), name.isJust() ? name.fromJust() : factory.empty(), factory.paren(params), factory.brace(body));
         state.setStartsWithFunctionOrClass(true);
         return state;
     }
@@ -768,7 +768,7 @@ public class CodeGen implements Reducer<CodeRep> {
     @Nonnull
     @Override
     public CodeRep reduceMethod(@Nonnull Method node, @Nonnull CodeRep name, @Nonnull CodeRep params, @Nonnull CodeRep body) {
-        return seqVA(node.isGenerator ? factory.token("*") : factory.empty(), name, factory.paren(params), factory.brace(body));
+        return seqVA(node.isAsync ? factory.token("async") : factory.empty(), node.isGenerator ? factory.token("*") : factory.empty(), name, factory.paren(params), factory.brace(body));
     }
 
     @Nonnull

@@ -14,7 +14,5 @@ public class AwaitExpressionTest extends ParserTestCase {
         testScript("async function a(){await a}", new FunctionDeclaration(true, false, new BindingIdentifier("a"),
                 new FormalParameters(ImmutableList.empty(), Maybe.empty()), new FunctionBody(ImmutableList.empty(),
                 ImmutableList.of(new ExpressionStatement(new AwaitExpression(new IdentifierExpression("a")))))));
-
-        testScriptFailure("async function a(){await}", 2, 0, 20, "Unexpected token \"}\"");
     }
 }

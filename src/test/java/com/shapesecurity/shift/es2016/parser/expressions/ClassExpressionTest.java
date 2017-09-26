@@ -74,6 +74,10 @@ public class ClassExpressionTest extends ParserTestCase {
                 new ClassElement(false, new Method(false, false, new StaticPropertyName("a"), new FormalParameters(ImmutableList.empty(), Maybe.empty()),
                         new FunctionBody(ImmutableList.empty(), ImmutableList.empty()))))));
 
+        testScript("(class {async a() {}})", new ClassExpression(Maybe.empty(), Maybe.empty(), ImmutableList.of(
+                new ClassElement(false, new Method(true, false, new StaticPropertyName("a"), new FormalParameters(ImmutableList.empty(), Maybe.empty()),
+                        new FunctionBody(ImmutableList.empty(), ImmutableList.empty()))))));
+
         testScript("(class {3() {}})", new ClassExpression(Maybe.empty(), Maybe.empty(), ImmutableList.of(
                 new ClassElement(false, new Method(false, false, new StaticPropertyName("3"), new FormalParameters(ImmutableList.empty(), Maybe.empty()),
                         new FunctionBody(ImmutableList.empty(), ImmutableList.empty()))))));

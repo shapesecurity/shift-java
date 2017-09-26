@@ -24,6 +24,8 @@ import com.shapesecurity.functional.data.HashCodeBuilder;
 public class Method extends MethodDefinition {
     @NotNull
     public final boolean isAsync;
+
+    @NotNull
     public final boolean isGenerator;
 
     @NotNull
@@ -32,7 +34,7 @@ public class Method extends MethodDefinition {
 
     public Method (boolean isAsync, boolean isGenerator, @NotNull PropertyName name, @NotNull FormalParameters params, @NotNull FunctionBody body) {
         super(name, body);
-        this.isAsync = isGenerator;
+        this.isAsync = isAsync;
         this.isGenerator = isGenerator;
         this.params = params;
     }

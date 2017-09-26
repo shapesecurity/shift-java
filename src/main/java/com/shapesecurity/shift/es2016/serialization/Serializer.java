@@ -649,7 +649,7 @@ public class Serializer implements Reducer<StringBuilder> {
     @Nonnull
     @Override
     public StringBuilder reduceMethod(@Nonnull Method node, @Nonnull StringBuilder name, @Nonnull StringBuilder params, @Nonnull StringBuilder body) {
-        return b("Method").add("isGenerator", node.isGenerator).add("name", name).add("params", params).add("body", body).done();
+        return b("Method").add("isAsync", node.isAsync).add("isGenerator", node.isGenerator).add("name", name).add("params", params).add("body", body).done();
     }
 
     @Nonnull

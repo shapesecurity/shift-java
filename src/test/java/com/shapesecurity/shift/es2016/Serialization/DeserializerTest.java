@@ -109,7 +109,6 @@ public class DeserializerTest {
 
     @Test
     public void testAsyncDeclaration() throws IllegalAccessException, NoSuchMethodException, InstantiationException, JSONException, JsError, InvocationTargetException, ClassNotFoundException {
-        testHelperFromScriptCode("async function a(){({await]:a}=0)}");
         testHelperFromScriptCode("function a() { async function a() {} function a() {} }");
     }
 
