@@ -248,7 +248,7 @@ public class Tokenizer {
             case 5:
                 switch (id.charAt(0)) {
                     case 'a':
-                        if (this.moduleIsTheGoalSymbol && cse4(id, 'w', 'a', 'i', 't')) {
+                        if (cse4(id, 'w', 'a', 'i', 't')) {
                             return TokenType.AWAIT;
                         }
                         if (cse4(id, 's', 'y', 'n', 'c')) {
