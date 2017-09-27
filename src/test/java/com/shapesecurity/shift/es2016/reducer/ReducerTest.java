@@ -121,5 +121,6 @@ public class ReducerTest extends VisitorTestCase {
         countLibrary("angular-1.2.5.js", 719, counter);
         countLibrary("mootools-1.4.5.js", 696, counter);
         countLibrary("yui-3.12.0.js", 205, counter);
+        countLibrary("webclientes8.js", 205, counter);
     }
 }

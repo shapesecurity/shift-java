@@ -295,7 +295,7 @@ public class Serializer implements Reducer<StringBuilder> {
     @Nonnull
     @Override
     public StringBuilder reduceArrowExpression(@Nonnull ArrowExpression node, @Nonnull StringBuilder params, @Nonnull StringBuilder body) {
-        return b("ArrowExpression").add("params", params).add("body", body).done();
+        return b("ArrowExpression").add("isAsync", node.isAsync).add("params", params).add("body", body).done();
     }
 
     @Nonnull

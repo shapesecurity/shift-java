@@ -61,7 +61,11 @@ public class ObjectBindingTest extends ParserTestCase {
                 new BindingIdentifier("let"), Maybe.empty()), new BindingPropertyIdentifier(
                 new BindingIdentifier("yield"), Maybe.empty()))), Maybe.of(new LiteralNumericExpression(0.0)))))));
 
-        testScript("(a, b, [c]) => 0", new ArrowExpression(new FormalParameters(ImmutableList.of(new BindingIdentifier("a"),
+        testScript("(a, b, [c]) => 0", new ArrowExpression(false, new FormalParameters(ImmutableList.of(new BindingIdentifier("a"),
+                new BindingIdentifier("b"), new ArrayBinding(ImmutableList.of(Maybe.of(new BindingIdentifier("c"))),
+                        Maybe.empty())), Maybe.empty()), new LiteralNumericExpression(0.0)));
+
+        testScript("async (a, b, [c]) => 0", new ArrowExpression(true, new FormalParameters(ImmutableList.of(new BindingIdentifier("a"),
                 new BindingIdentifier("b"), new ArrayBinding(ImmutableList.of(Maybe.of(new BindingIdentifier("c"))),
                         Maybe.empty())), Maybe.empty()), new LiteralNumericExpression(0.0)));
 

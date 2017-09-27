@@ -69,14 +69,14 @@ public class SuperExpressionTest extends ParserTestCase {
         testScript("class A extends B { constructor() { () => super(); } }", new ClassDeclaration(new BindingIdentifier("A"),
                 Maybe.of(new IdentifierExpression("B")), ImmutableList.of(new ClassElement(false, new Method(false, false, new StaticPropertyName("constructor"),
                 new FormalParameters(ImmutableList.empty(), Maybe.empty()), new FunctionBody(ImmutableList.empty(),
-                ImmutableList.of(new ExpressionStatement(new ArrowExpression(new FormalParameters(ImmutableList.empty(),
+                ImmutableList.of(new ExpressionStatement(new ArrowExpression(false, new FormalParameters(ImmutableList.empty(),
                         Maybe.empty()), new CallExpression(new Super(), ImmutableList.empty())))))
                 )))));
 
         testScript("class A extends B { constructor() { () => { super(); } } }", new ClassDeclaration(
                 new BindingIdentifier("A"), Maybe.of(new IdentifierExpression("B")), ImmutableList.of(new ClassElement(false,
                 new Method(false, false, new StaticPropertyName("constructor"), new FormalParameters(ImmutableList.empty(), Maybe.empty()), new FunctionBody(
-                        ImmutableList.empty(), ImmutableList.of(new ExpressionStatement(new ArrowExpression(new FormalParameters(
+                        ImmutableList.empty(), ImmutableList.of(new ExpressionStatement(new ArrowExpression(false, new FormalParameters(
                         ImmutableList.empty(), Maybe.empty()), new FunctionBody(ImmutableList.empty(), ImmutableList.of(
                     new ExpressionStatement(new CallExpression(new Super(), ImmutableList.empty()))))))))
                         )))));
@@ -116,7 +116,13 @@ public class SuperExpressionTest extends ParserTestCase {
         testScript("class A { a() { () => super.b; } }", new ClassDeclaration(new BindingIdentifier("A"), Maybe.empty(),
                 ImmutableList.of(new ClassElement(false, new Method(false, false, new StaticPropertyName("a"), new FormalParameters(ImmutableList.empty(),
                         Maybe.empty()), new FunctionBody(ImmutableList.empty(), ImmutableList.of(new ExpressionStatement(
-                        new ArrowExpression(new FormalParameters(ImmutableList.empty(), Maybe.empty()), new StaticMemberExpression(
+                        new ArrowExpression(false, new FormalParameters(ImmutableList.empty(), Maybe.empty()), new StaticMemberExpression(
+                                new Super(), "b"))))))))));
+
+        testScript("class A { async a() { () => super.b; } }", new ClassDeclaration(new BindingIdentifier("A"), Maybe.empty(),
+                ImmutableList.of(new ClassElement(false, new Method(false, false, new StaticPropertyName("a"), new FormalParameters(ImmutableList.empty(),
+                        Maybe.empty()), new FunctionBody(ImmutableList.empty(), ImmutableList.of(new ExpressionStatement(
+                        new ArrowExpression(true, new FormalParameters(ImmutableList.empty(), Maybe.empty()), new StaticMemberExpression(
                                 new Super(), "b"))))))))));
 
         testScript("class A { a() { new super.b; } }", new ClassDeclaration(new BindingIdentifier("A"), Maybe.empty(),

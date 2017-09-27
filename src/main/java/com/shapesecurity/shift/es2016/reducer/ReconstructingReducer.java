@@ -57,7 +57,7 @@ public class ReconstructingReducer implements Reducer<Node> {
             @Nonnull ArrowExpression node,
             @Nonnull Node params,
             @Nonnull Node body) {
-        return new ArrowExpression((FormalParameters) params, (FunctionBodyExpression) body);
+        return new ArrowExpression(node.isAsync, (FormalParameters) params, (FunctionBodyExpression) body);
     }
 
     @Nonnull

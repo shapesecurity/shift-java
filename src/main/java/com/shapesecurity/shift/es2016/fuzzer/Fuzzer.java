@@ -293,7 +293,11 @@ public class Fuzzer {
 
     @Nonnull
     private static ArrowExpression randomArrowExpression(@Nonnull GenCtx ctx, int depth) {
-        return new ArrowExpression(randomFormalParameters(ctx, depth - 1), randomFunctionBodyExpression(ctx, depth - 1));
+        boolean isAsync = ctx.random.nextBoolean();
+        if (isAsync) {
+            ctx = ctx.inAsyncArrow();
+        }
+        return new ArrowExpression(isAsync, randomFormalParameters(ctx, depth - 1), randomFunctionBodyExpression(ctx, depth - 1));
     }
 
     @Nonnull

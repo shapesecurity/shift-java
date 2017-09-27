@@ -192,7 +192,7 @@ public class CodeGen implements Reducer<CodeRep> {
         if (node.body instanceof Expression) {
             body = p(node.body, Precedence.ASSIGNMENT, body);
         }
-        return seqVA(params, factory.token("=>"), body);
+        return seqVA(node.isAsync ? factory.token("async") : factory.empty(), params, factory.token("=>"), body);
     }
 
     @Override

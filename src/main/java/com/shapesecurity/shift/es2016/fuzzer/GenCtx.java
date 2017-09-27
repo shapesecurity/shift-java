@@ -327,4 +327,23 @@ class GenCtx {
                 false,
                 true);
     }
+
+    @Nonnull
+    GenCtx inAsyncArrow() {
+        return new GenCtx(this.random,
+                this.labels,
+                this.iterationLabels,
+                this.labelsInFunctionBoundary,
+                this.iterationLabelsInFunctionBoundary,
+                this.inIteration,
+                this.inSwitch,
+                this.inStrictMode,
+                this.inFunctional,
+                this.allowMissingElse,
+                this.allowReturn,
+                this.inForInOfStatement,
+                this.isVariableDeclarationKindConst,
+                this.allowYieldExpression,
+                true);
+    }
 }

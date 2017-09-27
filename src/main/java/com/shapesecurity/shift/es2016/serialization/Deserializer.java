@@ -490,7 +490,7 @@ public class Deserializer {
                     case "ArrayExpression":
                         return new ArrayExpression(deserializeListMaybeSpreadElementExpression(jsonObject.get("elements")));
                     case "ArrowExpression":
-                        return new ArrowExpression((FormalParameters) deserializeNode(jsonObject.get("params")), (FunctionBodyExpression) deserializeNode(jsonObject.get("body")));
+                        return new ArrowExpression(jsonObject.get("isAsync").getAsBoolean(), (FormalParameters) deserializeNode(jsonObject.get("params")), (FunctionBodyExpression) deserializeNode(jsonObject.get("body")));
                     case "AssignmentExpression":
                         return new AssignmentExpression((AssignmentTarget) deserializeNode(jsonObject.get("binding")), (Expression) deserializeNode(jsonObject.get("expression")));
                     case "AssignmentTargetIdentifier":

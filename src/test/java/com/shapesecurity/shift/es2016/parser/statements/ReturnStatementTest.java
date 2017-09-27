@@ -35,7 +35,11 @@ public class ReturnStatementTest extends ParserTestCase {
                         Maybe.of(new BinaryExpression(new IdentifierExpression("x"), BinaryOperator.Mul, new IdentifierExpression("y")))
                 )))));
 
-        testScript("_ => { return 0; }", new ArrowExpression(new FormalParameters(ImmutableList.of(
+        testScript("_ => { return 0; }", new ArrowExpression(false, new FormalParameters(ImmutableList.of(
+                new BindingIdentifier("_")), Maybe.empty()), new FunctionBody(ImmutableList.empty(), ImmutableList.of(
+                new ReturnStatement(Maybe.of(new LiteralNumericExpression(0.0)))))));
+
+        testScript("async _ => { return 0; }", new ArrowExpression(true, new FormalParameters(ImmutableList.of(
                 new BindingIdentifier("_")), Maybe.empty()), new FunctionBody(ImmutableList.empty(), ImmutableList.of(
                 new ReturnStatement(Maybe.of(new LiteralNumericExpression(0.0)))))));
 

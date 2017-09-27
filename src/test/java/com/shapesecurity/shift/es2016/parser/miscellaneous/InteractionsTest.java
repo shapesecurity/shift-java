@@ -244,7 +244,7 @@ public class InteractionsTest extends ParserTestCase {
         testScript("function* f(){ () => yield; }", new FunctionDeclaration(false, true, new BindingIdentifier("f"),
                 new FormalParameters(ImmutableList.empty(), Maybe.empty()),
                 new FunctionBody(ImmutableList.empty(), ImmutableList.of(new ExpressionStatement(
-                        new ArrowExpression(new FormalParameters(ImmutableList.empty(), Maybe.empty()), new IdentifierExpression("yield"))
+                        new ArrowExpression(false, new FormalParameters(ImmutableList.empty(), Maybe.empty()), new IdentifierExpression("yield"))
                 )))));
 
         // CompoundAssignmentExpressions are not valid binding targets

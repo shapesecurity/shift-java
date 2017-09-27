@@ -24,27 +24,32 @@ import com.shapesecurity.shift.es2016.ast.operators.Precedence;
 
 public class ArrowExpression implements Expression {
     @NotNull
+    public final boolean isAsync;
+
+    @NotNull
     public final FormalParameters params;
 
     @NotNull
     public final FunctionBodyExpression body;
 
 
-    public ArrowExpression (@NotNull FormalParameters params, @NotNull FunctionBodyExpression body) {
+    public ArrowExpression (@NotNull boolean isAsync, @NotNull FormalParameters params, @NotNull FunctionBodyExpression body) {
         this.params = params;
         this.body = body;
+        this.isAsync = isAsync;
     }
 
 
     @Override
     public boolean equals(Object object) {
-        return object instanceof ArrowExpression && this.params.equals(((ArrowExpression) object).params) && this.body.equals(((ArrowExpression) object).body);
+        return object instanceof ArrowExpression && this.isAsync == ((ArrowExpression) object).isAsync && this.params.equals(((ArrowExpression) object).params) && this.body.equals(((ArrowExpression) object).body);
     }
 
 
     @Override
     public int hashCode() {
         int code = HashCodeBuilder.put(0, "ArrowExpression");
+        code = HashCodeBuilder.put(code, this.isAsync);
         code = HashCodeBuilder.put(code, this.params);
         code = HashCodeBuilder.put(code, this.body);
         return code;
