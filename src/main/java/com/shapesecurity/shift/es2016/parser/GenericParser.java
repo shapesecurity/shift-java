@@ -12,6 +12,7 @@ package com.shapesecurity.shift.es2016.parser;
 import com.shapesecurity.functional.Pair;
 import com.shapesecurity.functional.data.*;
 import com.shapesecurity.shift.es2016.ast.*;
+import com.shapesecurity.shift.es2016.ast.Module;
 import com.shapesecurity.shift.es2016.ast.operators.BinaryOperator;
 import com.shapesecurity.shift.es2016.ast.operators.CompoundAssignmentOperator;
 import com.shapesecurity.shift.es2016.ast.operators.Precedence;
@@ -438,12 +439,13 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
 
     @Nonnull
     protected Statement parseFunctionDeclaration(boolean inDefault, boolean allowAsync, boolean allowGenerator) throws JsError {
+        AdditionalStateT startState = this.startNode();
+
         boolean isAsync = false;
         if(this.match(TokenType.ASYNC)) {
             isAsync = allowAsync && this.eat(TokenType.ASYNC);
         }
 
-        AdditionalStateT startState = this.startNode();
         this.lex();
 
         boolean isGenerator = allowGenerator && this.eat(TokenType.MUL);
@@ -2049,7 +2051,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
         AdditionalStateT startState = this.startNode();
 
         boolean isGenerator = this.eat(TokenType.MUL);
-        boolean isAsync = this.eat(TokenType.ASYNC);
+        boolean isAsync = false;
 
         Pair<PropertyName, Maybe<Binding>> fromParsePropertyName = this.parsePropertyName();
         PropertyName name = fromParsePropertyName.left();
@@ -2079,6 +2081,12 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
                     return Either.right(this.finishNode(startState, new Setter(name, bindingToParameter(param), body)));
                 }
             }
+        }
+
+        String tokenName = token.toString();
+        if (tokenName.equals("async") && this.lookaheadPropertyName()) {
+            name = this.parsePropertyName().left();
+            isAsync = true;
         }
 
         if (this.match(TokenType.LPAREN)) {
@@ -2168,7 +2176,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
     }
 
     public static boolean isIdentifierName(TokenClass klass) {
-        return (klass.getName().equals("Identifier") || klass.getName().equals("Keyword") || klass.getName().equals("Boolean") || klass.getName().equals("Null") || klass.getName().equals("Yield"));
+        return (klass.getName().equals("Identifier") || klass.getName().equals("Keyword") || klass.getName().equals("Boolean") || klass.getName().equals("Null") || klass.getName().equals("Yield") || klass.getName().equals("Async"));
     }
 
     @Nonnull

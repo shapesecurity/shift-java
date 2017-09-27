@@ -25,6 +25,7 @@ import com.shapesecurity.shift.es2016.ast.operators.CompoundAssignmentOperator;
 import com.shapesecurity.shift.es2016.ast.operators.UnaryOperator;
 import com.shapesecurity.shift.es2016.ast.operators.UpdateOperator;
 import com.shapesecurity.shift.es2016.ast.*;
+import com.shapesecurity.shift.es2016.ast.Module;
 import com.shapesecurity.shift.es2016.utils.Utils;
 
 import javax.annotation.Nonnull;

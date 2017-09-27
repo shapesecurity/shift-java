@@ -4,6 +4,7 @@ import com.shapesecurity.functional.F2;
 import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.functional.data.Maybe;
 import com.shapesecurity.shift.es2016.ast.*;
+import com.shapesecurity.shift.es2016.ast.Module;
 import com.shapesecurity.shift.es2016.reducer.Reducer;
 import javax.annotation.Nonnull;
 

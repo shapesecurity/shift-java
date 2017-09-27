@@ -144,9 +144,7 @@ public class CodeGenTest {
         test("async function f(){await a+b}");
         test("async function f(){await a=b}");
         test("async function f(){await(a,b)}");
-        test("async function f(){f(await,await)}");
         test("async function f(){f(await a,await b)}");
-        test("async function f(){await await await}");
     }
     
     @Test

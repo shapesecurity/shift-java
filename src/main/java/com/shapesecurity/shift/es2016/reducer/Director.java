@@ -23,6 +23,7 @@ import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.functional.data.Maybe;
 
 import com.shapesecurity.shift.es2016.ast.*;
+import com.shapesecurity.shift.es2016.ast.Module;
 import javax.annotation.Nonnull;
 
 public final class Director {

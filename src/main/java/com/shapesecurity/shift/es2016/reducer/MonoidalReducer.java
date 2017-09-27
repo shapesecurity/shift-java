@@ -21,6 +21,7 @@ package com.shapesecurity.shift.es2016.reducer;
 import com.shapesecurity.functional.data.*;
 
 import com.shapesecurity.shift.es2016.ast.*;
+import com.shapesecurity.shift.es2016.ast.Module;
 
 import javax.annotation.Nonnull;
 

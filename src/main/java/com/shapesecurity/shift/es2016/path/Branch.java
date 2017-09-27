@@ -21,6 +21,7 @@ package com.shapesecurity.shift.es2016.path;
 
 import com.shapesecurity.functional.data.Maybe;
 import com.shapesecurity.shift.es2016.ast.*;
+import com.shapesecurity.shift.es2016.ast.Module;
 
 public abstract class Branch {
     abstract public Maybe<? extends Node> step(Node node);
