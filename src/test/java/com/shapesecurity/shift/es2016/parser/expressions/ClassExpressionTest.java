@@ -74,56 +74,51 @@ public class ClassExpressionTest extends ParserTestCase {
 //                new ClassElement(false, new Method(false, false, new StaticPropertyName("a"), new FormalParameters(ImmutableList.empty(), Maybe.empty()),
 //                        new FunctionBody(ImmutableList.empty(), ImmutableList.empty()))))));
 //
-//        testScript("(class {async a() {}})", new ClassExpression(Maybe.empty(), Maybe.empty(), ImmutableList.of(
-//                new ClassElement(false, new Method(true, false, new StaticPropertyName("a"), new FormalParameters(ImmutableList.empty(), Maybe.empty()),
+        testScript("(class {async a() {}})", new ClassExpression(Maybe.empty(), Maybe.empty(), ImmutableList.of(
+                new ClassElement(false, new Method(true, false, new StaticPropertyName("a"), new FormalParameters(ImmutableList.empty(), Maybe.empty()),
+                        new FunctionBody(ImmutableList.empty(), ImmutableList.empty()))))));
+
+        testScript("(class {async() {}})", new ClassExpression(Maybe.empty(), Maybe.empty(), ImmutableList.of(
+                new ClassElement(false, new Method(false, false, new StaticPropertyName("async"), new FormalParameters(ImmutableList.empty(), Maybe.empty()),
+                        new FunctionBody(ImmutableList.empty(), ImmutableList.empty()))))));
+
+
+//        testScript("(class {3() {}})", new ClassExpression(Maybe.empty(), Maybe.empty(), ImmutableList.of(
+//                new ClassElement(false, new Method(false, false, new StaticPropertyName("3"), new FormalParameters(ImmutableList.empty(), Maybe.empty()),
 //                        new FunctionBody(ImmutableList.empty(), ImmutableList.empty()))))));
-
-        testScript("(class {async() {}})", new ClassExpression(Maybe.empty(), Maybe.empty(), ImmutableList.of(
-                new ClassElement(false, new Method(false, false, new StaticPropertyName("async"), new FormalParameters(ImmutableList.empty(), Maybe.empty()),
-                        new FunctionBody(ImmutableList.empty(), ImmutableList.empty()))))));
-
-
-        testScript("(class {async() {}})", new ClassExpression(Maybe.empty(), Maybe.empty(), ImmutableList.of(
-                new ClassElement(false, new Method(false, false, new StaticPropertyName("async"), new FormalParameters(ImmutableList.empty(), Maybe.empty()),
-                        new FunctionBody(ImmutableList.empty(), ImmutableList.empty()))))));
-
-
-        testScript("(class {3() {}})", new ClassExpression(Maybe.empty(), Maybe.empty(), ImmutableList.of(
-                new ClassElement(false, new Method(false, false, new StaticPropertyName("3"), new FormalParameters(ImmutableList.empty(), Maybe.empty()),
-                        new FunctionBody(ImmutableList.empty(), ImmutableList.empty()))))));
-
-        testScript("(class{[3+5](){}})", new ClassExpression(Maybe.empty(), Maybe.empty(), ImmutableList.of(
-                new ClassElement(false, new Method(false, false, new ComputedPropertyName(new BinaryExpression(
-                        new LiteralNumericExpression(3.0), BinaryOperator.Plus, new LiteralNumericExpression(5.0))), new FormalParameters(ImmutableList.empty(), Maybe.empty()),
-                        new FunctionBody(ImmutableList.empty(), ImmutableList.empty()))))));
-
-        testScript("(class extends (a,b) {})", new ClassExpression(Maybe.empty(), Maybe.of(new BinaryExpression(
-                new IdentifierExpression("a"), BinaryOperator.Sequence, new IdentifierExpression("b"))), ImmutableList.empty()));
-
-        testScript("var x = class extends (a,b) {};", new VariableDeclarationStatement(new VariableDeclaration(
-                VariableDeclarationKind.Var, ImmutableList.of(new VariableDeclarator(new BindingIdentifier("x"),
-                Maybe.of(new ClassExpression(Maybe.empty(), Maybe.of(new BinaryExpression(
-                        new IdentifierExpression("a"), BinaryOperator.Sequence, new IdentifierExpression("b"))), ImmutableList.empty())))))));
-
-        testScript("(class {static(){}})", new ClassExpression(Maybe.empty(), Maybe.empty(), ImmutableList.of(
-                new ClassElement(false, new Method(false, false, new StaticPropertyName("static"), new FormalParameters(ImmutableList.empty(), Maybe.empty()),
-                        new FunctionBody(ImmutableList.empty(), ImmutableList.empty()))))));
-
-        testScript("(class {static constructor(){}})", new ClassExpression(Maybe.empty(), Maybe.empty(),
-                ImmutableList.of(new ClassElement(true, new Method(false,false, new StaticPropertyName("constructor"), new FormalParameters(ImmutableList.empty(),
-                        Maybe.empty()), new FunctionBody(ImmutableList.empty(), ImmutableList.empty())
-                        )))));
-
-        testScriptFailure("(class {a:0})", 9, "Only methods are allowed in classes");
-        testScriptFailure("(class {a=0})", 9, "Only methods are allowed in classes");
-        testScriptFailure("(class {a})", 9, "Only methods are allowed in classes");
-        testScriptFailure("(class {3:0})", 9, "Only methods are allowed in classes");
-        testScriptFailure("(class {[3]:0})", 11, "Only methods are allowed in classes");
-        testScriptFailure("(class {)", 8, "Unexpected token \")\"");
-        testScriptFailure("(class extends a,b {})", 16, "Unexpected token \",\"");
-        testScriptFailure("(class extends !a {})", 15, "Unexpected token \"!\"");
-        testScriptFailure("(class [a] {})", 7, "Unexpected token \"[\"");
-        testScriptFailure("(class {[a,b](){}})", 10, "Unexpected token \",\"");
+//
+//        testScript("(class{[3+5](){}})", new ClassExpression(Maybe.empty(), Maybe.empty(), ImmutableList.of(
+//                new ClassElement(false, new Method(false, false, new ComputedPropertyName(new BinaryExpression(
+//                        new LiteralNumericExpression(3.0), BinaryOperator.Plus, new LiteralNumericExpression(5.0))), new FormalParameters(ImmutableList.empty(), Maybe.empty()),
+//                        new FunctionBody(ImmutableList.empty(), ImmutableList.empty()))))));
+//
+//        testScript("(class extends (a,b) {})", new ClassExpression(Maybe.empty(), Maybe.of(new BinaryExpression(
+//                new IdentifierExpression("a"), BinaryOperator.Sequence, new IdentifierExpression("b"))), ImmutableList.empty()));
+//
+//        testScript("var x = class extends (a,b) {};", new VariableDeclarationStatement(new VariableDeclaration(
+//                VariableDeclarationKind.Var, ImmutableList.of(new VariableDeclarator(new BindingIdentifier("x"),
+//                Maybe.of(new ClassExpression(Maybe.empty(), Maybe.of(new BinaryExpression(
+//                        new IdentifierExpression("a"), BinaryOperator.Sequence, new IdentifierExpression("b"))), ImmutableList.empty())))))));
+//
+//        testScript("(class {static(){}})", new ClassExpression(Maybe.empty(), Maybe.empty(), ImmutableList.of(
+//                new ClassElement(false, new Method(false, false, new StaticPropertyName("static"), new FormalParameters(ImmutableList.empty(), Maybe.empty()),
+//                        new FunctionBody(ImmutableList.empty(), ImmutableList.empty()))))));
+//
+//        testScript("(class {static constructor(){}})", new ClassExpression(Maybe.empty(), Maybe.empty(),
+//                ImmutableList.of(new ClassElement(true, new Method(false,false, new StaticPropertyName("constructor"), new FormalParameters(ImmutableList.empty(),
+//                        Maybe.empty()), new FunctionBody(ImmutableList.empty(), ImmutableList.empty())
+//                        )))));
+//
+//        testScriptFailure("(class {a:0})", 9, "Only methods are allowed in classes");
+//        testScriptFailure("(class {a=0})", 9, "Only methods are allowed in classes");
+//        testScriptFailure("(class {a})", 9, "Only methods are allowed in classes");
+//        testScriptFailure("(class {3:0})", 9, "Only methods are allowed in classes");
+//        testScriptFailure("(class {[3]:0})", 11, "Only methods are allowed in classes");
+//        testScriptFailure("(class {)", 8, "Unexpected token \")\"");
+//        testScriptFailure("(class extends a,b {})", 16, "Unexpected token \",\"");
+//        testScriptFailure("(class extends !a {})", 15, "Unexpected token \"!\"");
+//        testScriptFailure("(class [a] {})", 7, "Unexpected token \"[\"");
+//        testScriptFailure("(class {[a,b](){}})", 10, "Unexpected token \",\"");
 
         // TODO
 //    locationSanityTest("(class {})");

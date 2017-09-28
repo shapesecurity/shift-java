@@ -415,7 +415,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
         boolean previousYield = this.allowYieldExpression;
         boolean previousAwait = this.allowAwaitExpression;
         this.allowYieldExpression = false;
-        this.allowAwaitExpression = false;
+        this.allowAwaitExpression = isAsync;
         FunctionBodyExpression
             body = this.match(TokenType.LBRACE) ? this.parseFunctionBody() : this.parseAssignmentExpression().left().fromJust();
         this.allowYieldExpression = previousYield;
