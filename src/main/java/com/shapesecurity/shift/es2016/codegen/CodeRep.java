@@ -21,7 +21,7 @@ import javax.annotation.Nonnull;
 public abstract class CodeRep {
     protected boolean containsIn = false;
     protected boolean containsGroup = false;
-    protected boolean startsWithCurly = false;
+    protected boolean startsWithObjectCurly = false;
     protected boolean startsWithFunctionOrClass = false;
     protected boolean startsWithLet = false;
     protected boolean startsWithLetSquareBracket = false;
@@ -48,12 +48,12 @@ public abstract class CodeRep {
         this.containsGroup = containsGroup;
     }
 
-    public boolean startsWithCurly() {
-        return this.startsWithCurly;
+    public boolean startsWithObjectCurly() {
+        return this.startsWithObjectCurly;
     }
 
-    public void setStartsWithCurly(boolean startsWithCurly) {
-        this.startsWithCurly = startsWithCurly;
+    public void startsWithObjectCurly(boolean startsWithObjectCurly) {
+        this.startsWithObjectCurly = startsWithObjectCurly;
     }
 
     public boolean startsWithFunctionOrClass() {

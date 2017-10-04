@@ -184,7 +184,7 @@ public class CodeGen implements Reducer<CodeRep> {
             // FormalParameters unconditionally include parentheses, but they're not necessary here
             params = this.reduceBindingIdentifier((BindingIdentifier) node.params.items.maybeHead().fromJust());
         }
-        if (body.startsWithCurly()) {
+        if (body.startsWithObjectCurly()) {
             body = factory.paren(body);
         }
         if (node.body instanceof Expression) {
@@ -198,7 +198,7 @@ public class CodeGen implements Reducer<CodeRep> {
     public CodeRep reduceAssignmentExpression(@Nonnull AssignmentExpression node, @Nonnull CodeRep leftCode, @Nonnull CodeRep expression) {
         CodeRep rightCode = expression;
         boolean containsIn = expression.containsIn();
-        boolean startsWithCurly = leftCode.startsWithCurly();
+        boolean startsWithCurly = leftCode.startsWithObjectCurly();
         boolean startsWithLetSquareBracket = leftCode.startsWithLetSquareBracket();
         boolean startsWithFunctionOrClass = leftCode.startsWithFunctionOrClass();
         if (node.expression.getPrecedence().ordinal() < node.getPrecedence().ordinal()) {
@@ -207,7 +207,7 @@ public class CodeGen implements Reducer<CodeRep> {
         }
         CodeRep toReturn = seqVA(leftCode, factory.token("="), rightCode);
         toReturn.setContainsIn(containsIn);
-        toReturn.setStartsWithCurly(startsWithCurly);
+        toReturn.startsWithObjectCurly(startsWithCurly);
         toReturn.setStartsWithLetSquareBracket(startsWithLetSquareBracket);
         toReturn.setStartsWithFunctionOrClass(startsWithFunctionOrClass);
         return toReturn;
@@ -241,7 +241,7 @@ public class CodeGen implements Reducer<CodeRep> {
     @Nonnull
     public CodeRep reduceBinaryExpression(@Nonnull BinaryExpression node, @Nonnull CodeRep left, @Nonnull CodeRep right) {
         CodeRep leftCode = left;
-        boolean startsWithCurly = left.startsWithCurly();
+        boolean startsWithCurly = left.startsWithObjectCurly();
         boolean startsWithLetSquareBracket = left.startsWithLetSquareBracket();
         boolean startsWithFunctionOrClass = left.startsWithFunctionOrClass();
         boolean leftContainsIn = left.containsIn();
@@ -261,7 +261,7 @@ public class CodeGen implements Reducer<CodeRep> {
         CodeRep toReturn = seqVA(leftCode, factory.token(node.operator.getName()), rightCode);
         toReturn.setContainsIn(leftContainsIn || rightContainsIn || node.operator.equals(BinaryOperator.In));
         toReturn.setContainsGroup(node.operator.equals(BinaryOperator.Sequence));
-        toReturn.setStartsWithCurly(startsWithCurly);
+        toReturn.startsWithObjectCurly(startsWithCurly);
         toReturn.setStartsWithLetSquareBracket(startsWithLetSquareBracket);
         toReturn.setStartsWithFunctionOrClass(startsWithFunctionOrClass);
         return toReturn;
@@ -322,7 +322,7 @@ public class CodeGen implements Reducer<CodeRep> {
         } else {
             result = seqVA(callee, factory.paren(factory.commaSep(arguments)));
         }
-        result.setStartsWithCurly(callee.startsWithCurly());
+        result.startsWithObjectCurly(callee.startsWithObjectCurly());
         result.setStartsWithLetSquareBracket(callee.startsWithLetSquareBracket());
         result.setStartsWithFunctionOrClass(callee.startsWithFunctionOrClass());
         return result;
@@ -374,7 +374,7 @@ public class CodeGen implements Reducer<CodeRep> {
     public CodeRep reduceCompoundAssignmentExpression(@Nonnull CompoundAssignmentExpression node, @Nonnull CodeRep binding, @Nonnull CodeRep expression) {
         CodeRep rightCode = expression;
         boolean containsIn = expression.containsIn();
-        boolean startsWithCurly = binding.startsWithCurly();
+        boolean startsWithCurly = binding.startsWithObjectCurly();
         boolean startsWithLetSquareBracket = binding.startsWithLetSquareBracket();
         boolean startsWithFunctionOrClass = binding.startsWithFunctionOrClass();
         if (node.expression.getPrecedence().ordinal() < node.getPrecedence().ordinal()) {
@@ -383,7 +383,7 @@ public class CodeGen implements Reducer<CodeRep> {
         }
         CodeRep toReturn = seqVA(binding, factory.token(node.operator.getName()), rightCode);
         toReturn.setContainsIn(containsIn);
-        toReturn.setStartsWithCurly(startsWithCurly);
+        toReturn.startsWithObjectCurly(startsWithCurly);
         toReturn.setStartsWithLetSquareBracket(startsWithLetSquareBracket);
         toReturn.setStartsWithFunctionOrClass(startsWithFunctionOrClass);
         return toReturn;
@@ -401,7 +401,7 @@ public class CodeGen implements Reducer<CodeRep> {
         }
         result.setStartsWithLetSquareBracket(startsWithLetSquareBracket);
         result.setStartsWithLet(object.startsWithLet());
-        result.setStartsWithCurly(object.startsWithCurly());
+        result.startsWithObjectCurly(object.startsWithObjectCurly());
         result.setStartsWithFunctionOrClass(object.startsWithFunctionOrClass());
         return result;
     }
@@ -418,7 +418,7 @@ public class CodeGen implements Reducer<CodeRep> {
         }
         result.setStartsWithLetSquareBracket(startsWithLetSquareBracket);
         result.setStartsWithLet(object.startsWithLet());
-        result.setStartsWithCurly(object.startsWithCurly());
+        result.startsWithObjectCurly(object.startsWithObjectCurly());
         result.setStartsWithFunctionOrClass(object.startsWithFunctionOrClass());
         return result;
     }
@@ -433,13 +433,13 @@ public class CodeGen implements Reducer<CodeRep> {
     @Nonnull
     public CodeRep reduceConditionalExpression(@Nonnull ConditionalExpression node, @Nonnull CodeRep test, @Nonnull CodeRep consequent, @Nonnull CodeRep alternate) {
         boolean containsIn = test.containsIn() || alternate.containsIn();
-        boolean startsWithCurly = test.startsWithCurly();
+        boolean startsWithCurly = test.startsWithObjectCurly();
         boolean startsWithLetSquareBracket = test.startsWithLetSquareBracket();
         boolean startsWithFunctionOrClass = test.startsWithFunctionOrClass();
 
         CodeRep toReturn = seqVA(p(node.test, Precedence.LOGICAL_OR, test), factory.token("?"), p(node.consequent, Precedence.ASSIGNMENT, consequent), factory.token(":"), p(node.alternate, Precedence.ASSIGNMENT, alternate));
         toReturn.setContainsIn(containsIn);
-        toReturn.setStartsWithCurly(startsWithCurly);
+        toReturn.startsWithObjectCurly(startsWithCurly);
         toReturn.setStartsWithLetSquareBracket(startsWithLetSquareBracket);
         toReturn.setStartsWithFunctionOrClass(startsWithFunctionOrClass);
         return toReturn;
@@ -553,7 +553,7 @@ public class CodeGen implements Reducer<CodeRep> {
         if (expressionStatement.expression instanceof LiteralStringExpression) {
             return factory.markStringLiteralExpressionStatement(expression);
         }
-        boolean needsParens = expression.startsWithCurly() || expression.startsWithLetSquareBracket() || expression.startsWithFunctionOrClass();
+        boolean needsParens = expression.startsWithObjectCurly() || expression.startsWithLetSquareBracket() || expression.startsWithFunctionOrClass();
         return seqVA((needsParens ? factory.paren(expression) : expression), factory.semiOp());
     }
 
@@ -790,7 +790,7 @@ public class CodeGen implements Reducer<CodeRep> {
     @Override
     public CodeRep reduceObjectAssignmentTarget(@Nonnull ObjectAssignmentTarget node, @Nonnull ImmutableList<CodeRep> properties) {
         CodeRep state = factory.brace(factory.commaSep(properties));
-        state.setStartsWithCurly(true);
+        state.startsWithObjectCurly(true);
         return state;
     }
 
@@ -798,7 +798,7 @@ public class CodeGen implements Reducer<CodeRep> {
     @Override
     public CodeRep reduceObjectBinding(@Nonnull ObjectBinding node, @Nonnull ImmutableList<CodeRep> properties) {
         CodeRep state = factory.brace(factory.commaSep(properties));
-        state.setStartsWithCurly(true);
+        state.startsWithObjectCurly(true);
         return state;
     }
 
@@ -806,7 +806,7 @@ public class CodeGen implements Reducer<CodeRep> {
     @Nonnull
     public CodeRep reduceObjectExpression(@Nonnull ObjectExpression node, @Nonnull ImmutableList<CodeRep> properties) {
         CodeRep result = factory.brace(factory.commaSep(properties));
-        result.setStartsWithCurly(true);
+        result.startsWithObjectCurly(true);
         return result;
     }
 
@@ -860,7 +860,7 @@ public class CodeGen implements Reducer<CodeRep> {
             state = seqVA(object, factory.token("."), factory.token(node.property));
         }
         state.setStartsWithLet(object.startsWithLet());
-        state.setStartsWithCurly(object.startsWithCurly());
+        state.startsWithObjectCurly(object.startsWithObjectCurly());
         state.setStartsWithLetSquareBracket(object.startsWithLetSquareBracket());
         state.setStartsWithFunctionOrClass(object.startsWithFunctionOrClass());
         return state;
@@ -877,7 +877,7 @@ public class CodeGen implements Reducer<CodeRep> {
             state = seqVA(object, factory.token("."), factory.token(node.property));
         }
         state.setStartsWithLet(object.startsWithLet());
-        state.setStartsWithCurly(object.startsWithCurly());
+        state.startsWithObjectCurly(object.startsWithObjectCurly());
         state.setStartsWithLetSquareBracket(object.startsWithLetSquareBracket());
         state.setStartsWithFunctionOrClass(object.startsWithFunctionOrClass());
         return state;
@@ -969,7 +969,7 @@ public class CodeGen implements Reducer<CodeRep> {
         }
         state = seqVA(state, factory.token("`"));
         if (node.tag.isJust()) {
-            state.setStartsWithCurly(tag.fromJust().startsWithCurly());
+            state.startsWithObjectCurly(tag.fromJust().startsWithObjectCurly());
             state.setStartsWithLetSquareBracket(tag.fromJust().startsWithLetSquareBracket());
             state.setStartsWithFunctionOrClass(tag.fromJust().startsWithFunctionOrClass());
         }
@@ -1023,7 +1023,7 @@ public class CodeGen implements Reducer<CodeRep> {
             return seqVA(factory.token(node.operator.getName()), operand);
         } else {
             CodeRep toReturn = toReturn = seqVA(operand, factory.token(node.operator.getName()));
-            toReturn.setStartsWithCurly(operand.startsWithCurly());
+            toReturn.startsWithObjectCurly(operand.startsWithObjectCurly());
             toReturn.setStartsWithLetSquareBracket(operand.startsWithLetSquareBracket());
             toReturn.setStartsWithFunctionOrClass(operand.startsWithFunctionOrClass());
             return toReturn;

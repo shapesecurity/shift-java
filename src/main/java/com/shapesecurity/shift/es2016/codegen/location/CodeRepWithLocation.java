@@ -49,13 +49,13 @@ public class CodeRepWithLocation extends CodeRep {
 	}
 
 	@Override
-	public boolean startsWithCurly() {
-		return this.inner.startsWithCurly();
+	public boolean startsWithObjectCurly() {
+		return this.inner.startsWithObjectCurly();
 	}
 
 	@Override
-	public void setStartsWithCurly(boolean startsWithCurly) {
-		this.inner.setStartsWithCurly(startsWithCurly);
+	public void startsWithObjectCurly(boolean startsWithObjectCurly) {
+		this.inner.startsWithObjectCurly(startsWithObjectCurly);
 	}
 
 	@Override
