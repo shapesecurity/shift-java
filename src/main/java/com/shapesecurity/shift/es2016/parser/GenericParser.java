@@ -195,11 +195,11 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
         this.inFunctionBody = true;
         this.module = false;
 
-        this.expect(TokenType.LBRACE);
         AdditionalStateT startState = this.startNode();
+        this.expect(TokenType.LBRACE);
         FunctionBody body = this.parseBody(this::parseStatementListItem, FunctionBody::new);
-        body = this.finishNode(startState, body);
         this.expect(TokenType.RBRACE);
+        body = this.finishNode(startState, body);
 
         this.inFunctionBody = oldInFunctionBody;
         this.module = oldModule;
