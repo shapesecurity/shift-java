@@ -6,7 +6,6 @@ import com.shapesecurity.functional.data.Maybe;
 import com.shapesecurity.shift.es2016.ast.BindingIdentifier;
 import com.shapesecurity.shift.es2016.ast.ExpressionTemplateElement;
 import com.shapesecurity.shift.es2016.ast.FormalParameters;
-import com.shapesecurity.shift.es2016.ast.FunctionBody;
 import com.shapesecurity.shift.es2016.ast.Module;
 import com.shapesecurity.shift.es2016.ast.Node;
 import com.shapesecurity.shift.es2016.ast.Script;
@@ -46,14 +45,6 @@ public class ParserWithLocation {
 				// Special case: the start/end of the whole-program node is the whole text including leading and trailing whitespace.
 				locations = locations.put(node, new SourceSpan(Maybe.empty(), new SourceLocation(0, 0, 0), new SourceLocation(this.startLine, this.startIndex - this.startLineStart, this.startIndex)));
 				return node;
-			} else if (node instanceof FormalParameters) {
-				FormalParameters parameters = (FormalParameters) node;
-				if (parameters.items.isEmpty() && parameters.rest.isNothing()) {
-					// Special case: formal parameters which contains no nodes span no tokens, so the usual logic of "start of first contained token through end of last contained token" doesn't work. We choose to define it to start and end immediately after the opening parenthesis.
-					SourceLocation endLocation = this.getLastTokenEndLocation();
-					locations = locations.put(node, new SourceSpan(Maybe.empty(), endLocation, endLocation));
-					return node;
-				}
 			} else if (node instanceof BindingIdentifier && ((BindingIdentifier) node).name.equals("*default*")) {
 				// Special case: synthetic BindingIdentifier for export-default declarations should not have a location
 				return node;

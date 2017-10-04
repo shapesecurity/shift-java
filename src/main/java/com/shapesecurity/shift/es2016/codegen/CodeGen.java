@@ -119,7 +119,7 @@ public class CodeGen implements Reducer<CodeRep> {
         return true;
     }
 
-    private boolean isComplexArrowHead(@Nonnull FormalParameters params) {
+    public static boolean isComplexArrowHead(@Nonnull FormalParameters params) {
         return (params.rest.isJust() || params.items.length != 1 || !(params.items.maybeHead().fromJust() instanceof BindingIdentifier));
     }
 
@@ -180,8 +180,9 @@ public class CodeGen implements Reducer<CodeRep> {
     @Nonnull
     @Override
     public CodeRep reduceArrowExpression(@Nonnull ArrowExpression node, @Nonnull CodeRep params, @Nonnull CodeRep body) {
-        if (isComplexArrowHead(node.params)) {
-            params = factory.paren(params);
+        if (!isComplexArrowHead(node.params)) {
+            // FormalParameters unconditionally include parentheses, but they're not necessary here
+            params = this.reduceBindingIdentifier((BindingIdentifier) node.params.items.maybeHead().fromJust());
         }
         if (body.startsWithCurly()) {
             body = factory.paren(body);
@@ -605,7 +606,7 @@ public class CodeGen implements Reducer<CodeRep> {
     @Nonnull
     @Override
     public CodeRep reduceFormalParameters(@Nonnull FormalParameters node, @Nonnull ImmutableList<CodeRep> items, @Nonnull Maybe<CodeRep> rest) {
-        return factory.commaSep(rest.maybe(items, r -> items.append(ImmutableList.of(seqVA(factory.token("..."), r)))));
+        return factory.paren(factory.commaSep(rest.maybe(items, r -> items.append(ImmutableList.of(seqVA(factory.token("..."), r))))));
     }
 
     @Override
@@ -623,13 +624,13 @@ public class CodeGen implements Reducer<CodeRep> {
     @Override
     @Nonnull
     public CodeRep reduceFunctionDeclaration(@Nonnull FunctionDeclaration node, @Nonnull CodeRep name, @Nonnull CodeRep params, @Nonnull CodeRep body) {
-        return seqVA(factory.token("function"), node.isGenerator ? factory.token("*") : factory.empty(), node.name.name.equals("*default*") ? factory.empty() : name, factory.paren(params), body);
+        return seqVA(factory.token("function"), node.isGenerator ? factory.token("*") : factory.empty(), node.name.name.equals("*default*") ? factory.empty() : name, params, body);
     }
 
     @Override
     @Nonnull
     public CodeRep reduceFunctionExpression(@Nonnull FunctionExpression node, @Nonnull Maybe<CodeRep> name, @Nonnull CodeRep params, @Nonnull CodeRep body) {
-        CodeRep state = seqVA(factory.token("function"), node.isGenerator ? factory.token("*") : factory.empty(), name.isJust() ? name.fromJust() : factory.empty(), factory.paren(params), body);
+        CodeRep state = seqVA(factory.token("function"), node.isGenerator ? factory.token("*") : factory.empty(), name.isJust() ? name.fromJust() : factory.empty(), params, body);
         state.setStartsWithFunctionOrClass(true);
         return state;
     }
@@ -760,7 +761,7 @@ public class CodeGen implements Reducer<CodeRep> {
     @Nonnull
     @Override
     public CodeRep reduceMethod(@Nonnull Method node, @Nonnull CodeRep name, @Nonnull CodeRep params, @Nonnull CodeRep body) {
-        return seqVA(node.isGenerator ? factory.token("*") : factory.empty(), name, factory.paren(params), body);
+        return seqVA(node.isGenerator ? factory.token("*") : factory.empty(), name, params, body);
     }
 
     @Nonnull
