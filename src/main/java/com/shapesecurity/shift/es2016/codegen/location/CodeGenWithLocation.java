@@ -39,15 +39,20 @@ public class CodeGenWithLocation extends WrappedReducer<CodeRep> {
 			this.meta = new LocationMeta();
 			this.wrap = (node, codeRep) -> {
 				if (node instanceof ArrowExpression && !CodeGen.isComplexArrowHead(((ArrowExpression) node).params)) {
-					if (codeRep instanceof CodeRep.Seq && ((CodeRep.Seq) codeRep).children.length > 0) {
+					if (codeRep instanceof CodeRep.Seq && ((CodeRep.Seq) codeRep).children.length > 1) {
 						CodeRep[] children = ((CodeRep.Seq) codeRep).children;
 						CodeRep bindingRep = children[0];
-						if (!(bindingRep instanceof CodeRepWithLocation)) {
-							// This is an awful hack. The default CodeGen replaces the CodeRep for a simple FormalParameters node of an ArrowExpression with a CodeRep for just the sole BindingIdentifier, so that it doesn't include parentheses.
-							// Since that means we lose our WithLocation wrapper, we have to manually add it back here.
+						CodeRep arrowToken = children[1];
+						if (bindingRep instanceof CodeRep.Token && arrowToken instanceof CodeRep.Token && "=>".equals(((CodeRep.Token) arrowToken).token)) {
+							// The default CodeGen replaces the CodeRep for a simple FormalParameters node of an ArrowExpression with a CodeRep for just the sole BindingIdentifier, so that it doesn't include parentheses.
+							// This test mostly confirms that the CodeRep looks like we expect in that case: a token for the BindingIdentifier, followed by a token for the arrow itself.
+							// If so, we manually reconstruct `CodeRepWithLocation`s for the BindingIdentifier and FormalParameters nodes.
 							CodeRepWithLocation bindingRepWithLocation = new CodeRepWithLocation(bindingRep, ((ArrowExpression) node).params.items.maybeHead().fromJust(), this.meta);
 							CodeRepWithLocation paramsRepWithLocation = new CodeRepWithLocation(bindingRepWithLocation, ((ArrowExpression) node).params, this.meta);
-							children[0] = paramsRepWithLocation;
+							CodeRep[] newChildren = new CodeRep[children.length];
+							newChildren[0] = paramsRepWithLocation;
+							System.arraycopy(children, 1, newChildren, 1, children.length - 1);
+							codeRep = new CodeRep.Seq(newChildren);
 						}
 					}
 				}

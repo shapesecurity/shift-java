@@ -100,7 +100,7 @@ public abstract class CodeRep {
 
     public static final class Token extends CodeRep {
         @Nonnull
-        private final String token;
+        public final String token;
 
         public Token(@Nonnull String token) {
             super();
