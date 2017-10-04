@@ -222,7 +222,7 @@ public class LocationTest extends TestCase {
 		Statement statement = (Statement) this.tree.items.maybeHead().fromJust();
 		Expression expression = ((ExpressionStatement) statement).expression;
 		FormalParameters params = ((ArrowExpression) expression).params;
-		checkText(params, "a,b");
+		checkText(params, "(a,b)");
 
 		FunctionBody body = (FunctionBody) ((ArrowExpression) expression).body;
 		checkLocation(body, new SourceSpan(
@@ -272,8 +272,8 @@ public class LocationTest extends TestCase {
 		FormalParameters params = functionDeclaration.params;
 		checkLocation(params, new SourceSpan(
 				Maybe.empty(),
-				new SourceLocation(0, 24, 24),
-				new SourceLocation(0, 24, 24) // i.e. immediately after the opening parenthesis, not including any whitespace.
+				new SourceLocation(0, 23, 23),
+				new SourceLocation(1, 1, 26) // i.e. around the parentheses, including internal whitespace.
 		));
 
 		FunctionBody body = functionDeclaration.body;

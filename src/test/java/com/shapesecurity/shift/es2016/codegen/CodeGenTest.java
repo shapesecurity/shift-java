@@ -25,6 +25,7 @@ import com.shapesecurity.shift.es2016.ast.EmptyStatement;
 import com.shapesecurity.shift.es2016.ast.ExpressionStatement;
 import com.shapesecurity.shift.es2016.ast.ForInStatement;
 import com.shapesecurity.shift.es2016.ast.ForStatement;
+import com.shapesecurity.shift.es2016.ast.FormalParameters;
 import com.shapesecurity.shift.es2016.ast.IdentifierExpression;
 import com.shapesecurity.shift.es2016.ast.IfStatement;
 import com.shapesecurity.shift.es2016.ast.LabeledStatement;
