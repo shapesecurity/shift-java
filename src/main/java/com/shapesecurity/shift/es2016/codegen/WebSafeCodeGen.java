@@ -113,7 +113,7 @@ public class WebSafeCodeGen extends CodeGen {
 		}
 		state = seqVA(state, factory.token("`"));
 		if (node.tag.isJust()) {
-			state.setStartsWithCurly(tag.fromJust().startsWithCurly());
+			state.startsWithObjectCurly(tag.fromJust().startsWithObjectCurly());
 			state.setStartsWithLetSquareBracket(tag.fromJust().startsWithLetSquareBracket());
 			state.setStartsWithFunctionOrClass(tag.fromJust().startsWithFunctionOrClass());
 		}
