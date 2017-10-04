@@ -227,8 +227,8 @@ public class LocationTest extends TestCase {
 		FunctionBody body = (FunctionBody) ((ArrowExpression) expression).body;
 		checkLocation(body, new SourceSpan(
 				Maybe.empty(),
-				new SourceLocation(0, 8, 8),
-				new SourceLocation(0, 8, 8) // i.e. not including the braces.
+				new SourceLocation(0, 7, 7),
+				new SourceLocation(0, 9, 9) // i.e. including the braces.
 		));
 	}
 
@@ -279,8 +279,8 @@ public class LocationTest extends TestCase {
 		FunctionBody body = functionDeclaration.body;
 		checkLocation(body, new SourceSpan(
 				Maybe.empty(),
-				new SourceLocation(1, 2, 27),
-				new SourceLocation(1, 2, 27) // i.e. immediately after the brace, not including any whitespace.
+				new SourceLocation(1, 1, 26),
+				new SourceLocation(2, 1, 29) // i.e. around the braces, including internal whitespace.
 		));
 	}
 }
