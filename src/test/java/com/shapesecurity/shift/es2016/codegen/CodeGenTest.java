@@ -808,7 +808,11 @@ public class CodeGenTest {
     public void testReturnStatement() throws JsError {
         test("function a(){return}");
         test("function a(){return 0}");
+        test("async function a(){return await 0}");
         test("function a(){return function a(){return 0}}");
+        test("function a(){return async function a(){return 0}}");
+        test("function a(){return()=>{}}");
+        test("function a(){return async()=>{}}");
     }
 
     @Test

@@ -1630,11 +1630,16 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
         if (this.match(TokenType.LPAREN)) {
             return this.parseGroupExpression(preParenStartState, false);
         }
+        AdditionalStateT startState = this.startNode();
         if (this.match(TokenType.ASYNC)) {
             this.eat(TokenType.ASYNC);
-            return this.parseGroupExpression(preParenStartState, true);
+            if (!this.match(TokenType.LPAREN)) {
+                this.isBindingElement = this.isAssignmentTarget = false;
+                return Either.left(this.finishNode(startState, this.parseFunctionExpression(true, false)));
+            } else {
+                return this.parseGroupExpression(preParenStartState, true);
+            }
         }
-        AdditionalStateT startState = this.startNode();
 
         switch (this.lookahead.type) {
             case AWAIT:

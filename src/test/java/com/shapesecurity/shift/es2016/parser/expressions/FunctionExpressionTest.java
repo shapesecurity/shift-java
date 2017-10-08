@@ -32,6 +32,9 @@ public class FunctionExpressionTest extends ParserTestCase {
         testScript("(function(){})", new FunctionExpression(false, false, Maybe.empty(), new FormalParameters(ImmutableList.empty(),
                 Maybe.empty()), new FunctionBody(ImmutableList.empty(), ImmutableList.empty())));
 
+        testScript("(async function(){})", new FunctionExpression(true, false, Maybe.empty(), new FormalParameters(ImmutableList.empty(),
+                Maybe.empty()), new FunctionBody(ImmutableList.empty(), ImmutableList.empty())));
+
         testScript("(function x() { y; z() });", new FunctionExpression(false, false, Maybe.of(new BindingIdentifier("x")),
                 new FormalParameters(ImmutableList.empty(), Maybe.empty()), new FunctionBody(ImmutableList.empty(),
                 ImmutableList.of(new ExpressionStatement(new IdentifierExpression("y")), new ExpressionStatement(
