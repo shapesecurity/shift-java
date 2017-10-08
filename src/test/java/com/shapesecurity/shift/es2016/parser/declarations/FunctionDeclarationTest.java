@@ -45,6 +45,16 @@ public class FunctionDeclarationTest extends ParserTestCase {
                         Maybe.empty()), new FunctionBody(ImmutableList.empty(), ImmutableList.of(new ExpressionStatement(
                 new CallExpression(new IdentifierExpression("z"), ImmutableList.empty()))))));
 
+        testScript("function hello(a,) { z(); }", new FunctionDeclaration(false, false, new BindingIdentifier("hello"),
+                new FormalParameters(ImmutableList.of(new BindingIdentifier("a")),
+                        Maybe.empty()), new FunctionBody(ImmutableList.empty(), ImmutableList.of(new ExpressionStatement(
+                new CallExpression(new IdentifierExpression("z"), ImmutableList.empty()))))));
+
+        testScript("function hello(a, b,) { z(); }", new FunctionDeclaration(false, false, new BindingIdentifier("hello"),
+                new FormalParameters(ImmutableList.of(new BindingIdentifier("a"), new BindingIdentifier("b")),
+                        Maybe.empty()), new FunctionBody(ImmutableList.empty(), ImmutableList.of(new ExpressionStatement(
+                new CallExpression(new IdentifierExpression("z"), ImmutableList.empty()))))));
+
         testScript("function universe(__proto__) { }", new FunctionDeclaration(false, false, new BindingIdentifier("universe"),
                 new FormalParameters(ImmutableList.of(new BindingIdentifier("__proto__")), Maybe.empty()), new FunctionBody(
                 ImmutableList.empty(), ImmutableList.empty())));
@@ -97,6 +107,7 @@ public class FunctionDeclarationTest extends ParserTestCase {
                         ImmutableList.empty())), Maybe.empty()))))));
 
         testScriptFailure("a: function* a(){}", 11, "Unexpected token \"*\"");
+        testScriptFailure("function a(,){}", 11, "Unexpected token \",\"");
         testScriptFailure("for(;;) function a(){}", 8, "Unexpected token \"function\"");
         testScriptFailure("for(a in b) function c(){}", 12, "Unexpected token \"function\"");
         testScriptFailure("for(a of b) function c(){}", 12, "Unexpected token \"function\"");

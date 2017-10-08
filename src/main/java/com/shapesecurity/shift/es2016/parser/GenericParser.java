@@ -513,10 +513,12 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
                     break;
                 }
                 items.add(this.parseParam());
+                if (!this.match(TokenType.RPAREN)) {
+                    this.expect(TokenType.COMMA);
+                }
                 if (this.match(TokenType.RPAREN)) {
                     break;
                 }
-                this.expect(TokenType.COMMA);
             }
         }
         FormalParameters params = this.finishNode(paramsLocation, new FormalParameters(ImmutableList.from(items).map(this::bindingToParameter), Maybe.fromNullable(rest)));
