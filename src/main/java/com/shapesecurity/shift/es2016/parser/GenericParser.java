@@ -1615,12 +1615,13 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
     }
 
     @Nonnull
-    protected Expression parseAsyncExpression() throws JsError {
+    protected Either<Expression, AssignmentTarget> parseAsyncExpression() throws JsError {
         this.eat(TokenType.ASYNC);
         if (this.match(TokenType.LPAREN)) {
-            return this.parseFunctionExpression(true, false);
+            AdditionalStateT preParenStartState = this.startNode();
+            return this.parseGroupExpression(preParenStartState, true);
         } else {
-            return this.parseFunctionExpression(true, false);
+            return Either.left(this.parseFunctionExpression(true, false));
         }
     }
 
@@ -1634,24 +1635,20 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
         if (this.match(TokenType.ASYNC)) {
             this.eat(TokenType.ASYNC);
             if (!this.match(TokenType.LPAREN)) {
-                this.isBindingElement = this.isAssignmentTarget = false;
-                return Either.left(this.finishNode(startState, this.parseFunctionExpression(true, false)));
+                return this.parseAsyncExpression();
             } else {
                 return this.parseGroupExpression(preParenStartState, true);
             }
         }
 
         switch (this.lookahead.type) {
-            case AWAIT:
-                if (this.allowAwaitExpression) {
-                    throw this.createUnexpected(this.lookahead);
-                }
-                // falls through
             case YIELD:
                 if (this.allowYieldExpression) {
                     throw this.createUnexpected(this.lookahead);
                 }
                 // falls through
+            case AWAIT:
+                this.eat(TokenType.AWAIT);
             case LET:
             case IDENTIFIER:
                 return Either.left(this.finishNode(startState, new IdentifierExpression(this.lex().toString())));
@@ -1669,7 +1666,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
                 return Either.left(this.finishNode(startState, new LiteralNullExpression()));
             case ASYNC:
                 this.isBindingElement = this.isAssignmentTarget = false;
-                return Either.left(this.finishNode(startState, this.parseAsyncExpression()));
+                return Either.left(this.finishNode(startState, this.parseAsyncExpression().left().fromJust()));
             case FUNCTION:
                 this.isBindingElement = this.isAssignmentTarget = false;
                 return Either.left(this.finishNode(startState, this.parseFunctionExpression(false, true)));

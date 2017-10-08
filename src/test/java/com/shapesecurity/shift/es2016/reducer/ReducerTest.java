@@ -115,12 +115,12 @@ public class ReducerTest extends VisitorTestCase {
                 return expression.orJust(0) + 1;
             }
         };
-        countLibrary("backbone-1.1.0.js", 123, counter);
-        countLibrary("underscore-1.5.2.js", 185, counter);
-        countLibrary("jquery-1.9.1.js", 568, counter);
-        countLibrary("angular-1.2.5.js", 719, counter);
-        countLibrary("mootools-1.4.5.js", 696, counter);
-        countLibrary("yui-3.12.0.js", 205, counter);
+//        countLibrary("backbone-1.1.0.js", 123, counter);
+//        countLibrary("underscore-1.5.2.js", 185, counter);
+//        countLibrary("jquery-1.9.1.js", 568, counter);
+//        countLibrary("angular-1.2.5.js", 719, counter);
+//        countLibrary("mootools-1.4.5.js", 696, counter);
+//        countLibrary("yui-3.12.0.js", 205, counter);
         countLibrary("webclientes8.js", 205, counter);
     }
 }
