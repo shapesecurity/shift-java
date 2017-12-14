@@ -1,5 +1,6 @@
 package com.shapesecurity.shift.es2016.parser;
 
+import com.shapesecurity.shift.es2016.ast.Module;
 import com.shapesecurity.shift.es2016.ast.Script;
 import com.shapesecurity.shift.es2016.serialization.Deserializer;
 import org.json.JSONException;
@@ -28,12 +29,17 @@ public class Test262Test {
 		// TODO check locations (requires deserializer subclass)
 
 		String src = new String(Files.readAllBytes(Paths.get(testsDir, "pass", name)), StandardCharsets.UTF_8);
-		Script actual = Parser.parseScript(src);
-
 		String expectedJSON = new String(Files.readAllBytes(Paths.get(expectationsDir, name + "-tree.json")), StandardCharsets.UTF_8);
-		Script expected = (Script) Deserializer.deserialize(expectedJSON);
 
-		assertEquals(expected, actual);
+		if (name.endsWith(".module.js")) {
+			Module actual = Parser.parseModule(src);
+			Module expected = (Module) Deserializer.deserialize(expectedJSON);
+			assertEquals(expected, actual);
+		} else {
+			Script actual = Parser.parseScript(src);
+			Script expected = (Script) Deserializer.deserialize(expectedJSON);
+			assertEquals(expected, actual);
+		}
 	}
 
 	@Parameterized.Parameters(name = "{1} : {0}")
