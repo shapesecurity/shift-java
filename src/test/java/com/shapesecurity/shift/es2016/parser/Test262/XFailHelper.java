@@ -1,6 +1,11 @@
 package com.shapesecurity.shift.es2016.parser.Test262;
 
+import org.junit.Test;
+
+import java.io.File;
 import java.util.Set;
+
+import static org.junit.Assert.assertTrue;
 
 public class XFailHelper {
 	public static void wrap(String name, Set<String> xfail, TestCase test) throws Exception {
@@ -22,4 +27,12 @@ public class XFailHelper {
 	public interface TestCase {
 		void test(String name) throws Exception; // We need our own interface so it can throw
 	}
+
+	@Test
+	public void ensureTestsExist() {
+		for (String f : PassTest.xfail) {
+			assertTrue((new File(PassTest.testsDir, f)).exists());
+		}
+	}
+
 }
