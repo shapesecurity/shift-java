@@ -30,37 +30,55 @@ public class PassTest {
 	static final String expectationsDir = "test/shift-parser-expectations/expectations/";
 
 	static final Set<String> xfail = new HashSet<>(Arrays.asList(
-			"00c79d09c52df3ec.js", // something about destructuring
-			"05b849122b429743.js", // Java's unicode support appears to be out of date
-			"0d137e8a97ffe083.js", // yield flag passes to nested functions
-			"0f88c334715d2489.js", // yield precedence issue
-			"1093d98f5fc0758d.js", // something about destructuring parameters
-			"151d4db59b774864.js", // Java's unicode support appears to be out of date
-			"15d9592709b947a0.js", // something about destructuring parameters
-			"177fef3d002eb873.js", // yield flag passes to nested functions
-			"3f44c09167d5753d.js", // Java's unicode support appears to be out of date
-			"431ecef8c85d4d24.js", // Java's unicode support appears to be out of date
-			"465b79616fdc9794.js", // Java's unicode support appears to be out of date
-			"489e6113a41ef33f.js", // '&' and '|' have the wrong relative precedence
-			"4e1a0da46ca45afe.js", // something about destructuring parameters
-			"5dd65055dace49bc.js", // something about destructuring
-			"6b76b8761a049c19.js", // yield flag passes to nested functions
-			"72d79750e81ef03d.js", // deserializer breaks on **
-			"7dab6e55461806c9.js", // yield precedence issue
-			"901fca17189cd709.js", // yield flag passes to nested functions
-			"988e362ed9ddcac5.js", // deserializer breaks on **
-			"99fceed987b8ec3d.js", // something about destructuring parameters
-			"9bcae7c7f00b4e3c.js", // something about destructuring parameters
-			"a43df1aea659fab8.js", // '&' and '|' have the wrong relative precedence
-			"c3699b982b33926b.js", // '&' and '|' have the wrong relative precedence
-			"c546a199e87abaad.js", // for-in destructing containing in breaks
-			"cb211fadccb029c7.js", // yield precedence issue
-			"cbc644a20893a549.js", // '&' and '|' have the wrong relative precedence
-			"cd2f5476a739c80a.js", // can't use 'in' as argument to 'new'
-			"ce968fcdf3a1987c.js", // yield precedence issue
-			"db3c01738aaf0b92.js", // deserializer breaks on **
-			"e1387fe892984e2b.js", // something about destructuring parameters
-			"ec97990c2cc5e0e8.js", // '&' and '|' have the wrong relative precedence
+			// BUG: something about destructuring
+			"00c79d09c52df3ec.js",
+			"5dd65055dace49bc.js",
+
+			// BUG: Java's unicode support appears to be out of date
+			"05b849122b429743.js",
+			"3f44c09167d5753d.js",
+			"431ecef8c85d4d24.js",
+			"151d4db59b774864.js",
+			"465b79616fdc9794.js",
+
+			// BUG: yield flag passes to nested functions
+			"0d137e8a97ffe083.js",
+			"177fef3d002eb873.js",
+			"6b76b8761a049c19.js",
+			"901fca17189cd709.js",
+
+			// BUG: yield precedence issue
+			"0f88c334715d2489.js",
+			"7dab6e55461806c9.js",
+			"cb211fadccb029c7.js",
+			"ce968fcdf3a1987c.js",
+
+			// BUG: something about destructuring parameters
+			"1093d98f5fc0758d.js",
+			"15d9592709b947a0.js",
+			"4e1a0da46ca45afe.js",
+			"99fceed987b8ec3d.js",
+			"9bcae7c7f00b4e3c.js",
+			"e1387fe892984e2b.js",
+
+			// BUG: something about '&'
+			"489e6113a41ef33f.js",
+			"a43df1aea659fab8.js",
+			"c3699b982b33926b.js",
+			"cbc644a20893a549.js",
+			"ec97990c2cc5e0e8.js",
+
+			// BUG: deserializer breaks on **
+			"72d79750e81ef03d.js",
+			"988e362ed9ddcac5.js",
+			"db3c01738aaf0b92.js",
+
+			// BUG: for-in destructing containing in breaks doesn't work
+			"c546a199e87abaad.js",
+
+			// BUG: can't use 'in' as argument to 'new'
+			"cd2f5476a739c80a.js",
+
 			"" // empty line to make git diffs nicer
 	));
 

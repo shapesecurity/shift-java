@@ -27,15 +27,19 @@ public class FailTest {
 	static final String testsDir = "test/test262-parser-tests/fail/";
 
 	static final Set<String> xfail = new HashSet<>(Arrays.asList(
-			"13ce2dd24993176a.js", // destructuring in for loop head requires initialization
-			"29fb02620b662387.js", // destructuring in for loop head requires initialization
-			"37cb7557997d4fd6.js", // destructuring in for loop head requires initialization
-			"40449ddc6ec37b35.js", // arrow precedence
-			"4ff4b78ff3e2de6e.js", // arrow precedence
-			"6b9bc191e6f5ef69.js", // destructuring in for loop head requires initialization
-			"a651ee9d0db08692.js", // destructuring in for loop head requires initialization
-			"ca3dd7ea0b4626dd.js", // arrow precedence
-			"d17d3aebb6a3cf43.js", // destructuring in for loop head requires initialization
+			// BUG: destructuring in for loop head requires initialization
+			"13ce2dd24993176a.js",
+			"29fb02620b662387.js",
+			"37cb7557997d4fd6.js",
+			"6b9bc191e6f5ef69.js",
+			"a651ee9d0db08692.js",
+			"d17d3aebb6a3cf43.js",
+
+			// BUG: arrow precedence
+			"40449ddc6ec37b35.js",
+			"4ff4b78ff3e2de6e.js",
+			"ca3dd7ea0b4626dd.js",
+			
 			"" // empty line to make git diffs nicer
 	));
 
