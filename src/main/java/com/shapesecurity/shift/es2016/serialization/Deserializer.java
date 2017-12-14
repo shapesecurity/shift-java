@@ -20,10 +20,10 @@ public class Deserializer {
 
     public static Node deserialize(String toDeserialize) throws JSONException, IllegalAccessException, InstantiationException, ClassNotFoundException, NoSuchMethodException {
         JsonElement json = new JsonParser().parse(toDeserialize);
-        return deserializeNode(json);
+        return new Deserializer().deserializeNode(json);
     }
 
-    private static BinaryOperator deserializeBinaryOperator(JsonElement jsonElement) {
+    protected BinaryOperator deserializeBinaryOperator(JsonElement jsonElement) {
         String operatorString = jsonElement.getAsString();
         switch (operatorString) {
             case ",":
@@ -79,7 +79,7 @@ public class Deserializer {
         }
     }
 
-    private static CompoundAssignmentOperator deserializeCompoundAssignmentOperator(JsonElement jsonElement) {
+    protected CompoundAssignmentOperator deserializeCompoundAssignmentOperator(JsonElement jsonElement) {
         String operatorString = jsonElement.getAsString();
         switch (operatorString) {
             case "+=":
@@ -109,7 +109,7 @@ public class Deserializer {
         }
     }
 
-    private static UnaryOperator deserializeUnaryOperator(JsonElement jsonElement) {
+    protected UnaryOperator deserializeUnaryOperator(JsonElement jsonElement) {
         String operatorString = jsonElement.getAsString();
         switch (operatorString) {
             case "+":
@@ -131,7 +131,7 @@ public class Deserializer {
         }
     }
 
-    private static UpdateOperator deserializeUpdateOperator(JsonElement jsonElement) {
+    protected UpdateOperator deserializeUpdateOperator(JsonElement jsonElement) {
         String operatorString = jsonElement.getAsString();
         switch (operatorString) {
             case "++":
@@ -143,7 +143,7 @@ public class Deserializer {
         }
     }
 
-    private static VariableDeclarationKind deserializeVariableDeclarationKind(JsonElement jsonElement) {
+    protected VariableDeclarationKind deserializeVariableDeclarationKind(JsonElement jsonElement) {
         String kindString = jsonElement.getAsString();
         switch (kindString) {
             case "var":
@@ -157,7 +157,7 @@ public class Deserializer {
         }
     }
 
-    private static ImmutableList<Maybe<AssignmentTargetAssignmentTargetWithDefault>> deserializeListMaybeAssignmentTargetAssignmentTargetWithDefault(JsonElement jsonElement) throws ClassNotFoundException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+    protected ImmutableList<Maybe<AssignmentTargetAssignmentTargetWithDefault>> deserializeListMaybeAssignmentTargetAssignmentTargetWithDefault(JsonElement jsonElement) throws ClassNotFoundException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         JsonArray jsonArray = jsonElement.getAsJsonArray();
         if (jsonArray.size() == 0) {
           return ImmutableList.empty();
@@ -174,14 +174,14 @@ public class Deserializer {
         }
     }
 
-    private static Maybe<AssignmentTarget> deserializeMaybeAssignmentTarget(JsonElement jsonElement) throws ClassNotFoundException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+    protected Maybe<AssignmentTarget> deserializeMaybeAssignmentTarget(JsonElement jsonElement) throws ClassNotFoundException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         if (jsonElement.isJsonNull()) {
             return Maybe.empty();
         }
         return Maybe.of((AssignmentTarget) deserializeNode(jsonElement));
     }
 
-    private static ImmutableList<Maybe<BindingBindingWithDefault>> deserializeListMaybeBindingBindingWithDefault(JsonElement jsonElement) throws ClassNotFoundException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+    protected ImmutableList<Maybe<BindingBindingWithDefault>> deserializeListMaybeBindingBindingWithDefault(JsonElement jsonElement) throws ClassNotFoundException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         JsonArray jsonArray = jsonElement.getAsJsonArray();
         if (jsonArray.size() == 0) {
           return ImmutableList.empty();
@@ -198,14 +198,14 @@ public class Deserializer {
         }
     }
 
-    private static Maybe<Binding> deserializeMaybeBinding(JsonElement jsonElement) throws ClassNotFoundException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+    protected Maybe<Binding> deserializeMaybeBinding(JsonElement jsonElement) throws ClassNotFoundException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         if (jsonElement.isJsonNull()) {
             return Maybe.empty();
         }
         return Maybe.of((Binding) deserializeNode(jsonElement));
     }
 
-    private static ImmutableList<Maybe<SpreadElementExpression>> deserializeListMaybeSpreadElementExpression(JsonElement jsonElement) throws ClassNotFoundException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+    protected ImmutableList<Maybe<SpreadElementExpression>> deserializeListMaybeSpreadElementExpression(JsonElement jsonElement) throws ClassNotFoundException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         JsonArray jsonArray = jsonElement.getAsJsonArray();
         if (jsonArray.size() == 0) {
           return ImmutableList.empty();
@@ -222,14 +222,14 @@ public class Deserializer {
         }
     }
 
-    private static Maybe<Expression> deserializeMaybeExpression(JsonElement jsonElement) throws ClassNotFoundException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+    protected Maybe<Expression> deserializeMaybeExpression(JsonElement jsonElement) throws ClassNotFoundException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         if (jsonElement.isJsonNull()) {
             return Maybe.empty();
         }
         return Maybe.of((Expression) deserializeNode(jsonElement));
     }
 
-    private static ImmutableList<Statement> deserializeListStatement(JsonElement jsonElement) throws ClassNotFoundException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+    protected ImmutableList<Statement> deserializeListStatement(JsonElement jsonElement) throws ClassNotFoundException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         JsonArray jsonArray = jsonElement.getAsJsonArray();
         if (jsonArray.size() == 0) {
           return ImmutableList.empty();
@@ -243,7 +243,7 @@ public class Deserializer {
         }
     }
 
-    private static Maybe<String> deserializeMaybeString(JsonElement jsonElement) {
+    protected Maybe<String> deserializeMaybeString(JsonElement jsonElement) {
         if (jsonElement.isJsonNull()) {
             return Maybe.empty();
         } else {
@@ -251,7 +251,7 @@ public class Deserializer {
         }
     }
 
-    private static ImmutableList<SpreadElementExpression> deserializeListSpreadElementExpression(JsonElement jsonElement) throws ClassNotFoundException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+    protected ImmutableList<SpreadElementExpression> deserializeListSpreadElementExpression(JsonElement jsonElement) throws ClassNotFoundException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         JsonArray jsonArray = jsonElement.getAsJsonArray();
         if (jsonArray.size() == 0) {
           return ImmutableList.empty();
@@ -265,7 +265,7 @@ public class Deserializer {
         }
     }
 
-    private static ImmutableList<ClassElement> deserializeListClassElement(JsonElement jsonElement) throws ClassNotFoundException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+    protected ImmutableList<ClassElement> deserializeListClassElement(JsonElement jsonElement) throws ClassNotFoundException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         JsonArray jsonArray = jsonElement.getAsJsonArray();
         if (jsonArray.size() == 0) {
           return ImmutableList.empty();
@@ -279,14 +279,14 @@ public class Deserializer {
         }
     }
 
-    private static Maybe<BindingIdentifier> deserializeMaybeBindingIdentifier(JsonElement jsonElement) throws ClassNotFoundException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+    protected Maybe<BindingIdentifier> deserializeMaybeBindingIdentifier(JsonElement jsonElement) throws ClassNotFoundException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         if (jsonElement.isJsonNull()) {
             return Maybe.empty();
         }
         return Maybe.of((BindingIdentifier) deserializeNode(jsonElement));
     }
 
-    private static ImmutableList<ExportFromSpecifier> deserializeListExportFromSpecifier(JsonElement jsonElement) throws ClassNotFoundException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+    protected ImmutableList<ExportFromSpecifier> deserializeListExportFromSpecifier(JsonElement jsonElement) throws ClassNotFoundException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         JsonArray jsonArray = jsonElement.getAsJsonArray();
         if (jsonArray.size() == 0) {
           return ImmutableList.empty();
@@ -300,7 +300,7 @@ public class Deserializer {
         }
     }
 
-    private static ImmutableList<ExportLocalSpecifier> deserializeListExportLocalSpecifier(JsonElement jsonElement) throws ClassNotFoundException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+    protected ImmutableList<ExportLocalSpecifier> deserializeListExportLocalSpecifier(JsonElement jsonElement) throws ClassNotFoundException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         JsonArray jsonArray = jsonElement.getAsJsonArray();
         if (jsonArray.size() == 0) {
           return ImmutableList.empty();
@@ -314,14 +314,14 @@ public class Deserializer {
         }
     }
 
-    private static Maybe<VariableDeclarationExpression> deserializeMaybeVariableDeclarationExpression(JsonElement jsonElement) throws ClassNotFoundException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+    protected Maybe<VariableDeclarationExpression> deserializeMaybeVariableDeclarationExpression(JsonElement jsonElement) throws ClassNotFoundException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         if (jsonElement.isJsonNull()) {
             return Maybe.empty();
         }
         return Maybe.of((VariableDeclarationExpression) deserializeNode(jsonElement));
     }
 
-    private static ImmutableList<Parameter> deserializeListParameter(JsonElement jsonElement) throws ClassNotFoundException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+    protected ImmutableList<Parameter> deserializeListParameter(JsonElement jsonElement) throws ClassNotFoundException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         JsonArray jsonArray = jsonElement.getAsJsonArray();
         if (jsonArray.size() == 0) {
           return ImmutableList.empty();
@@ -335,7 +335,7 @@ public class Deserializer {
         }
     }
 
-    private static ImmutableList<Directive> deserializeListDirective(JsonElement jsonElement) throws ClassNotFoundException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+    protected ImmutableList<Directive> deserializeListDirective(JsonElement jsonElement) throws ClassNotFoundException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         JsonArray jsonArray = jsonElement.getAsJsonArray();
         if (jsonArray.size() == 0) {
           return ImmutableList.empty();
@@ -349,14 +349,14 @@ public class Deserializer {
         }
     }
 
-    private static Maybe<Statement> deserializeMaybeStatement(JsonElement jsonElement) throws ClassNotFoundException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+    protected Maybe<Statement> deserializeMaybeStatement(JsonElement jsonElement) throws ClassNotFoundException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         if (jsonElement.isJsonNull()) {
             return Maybe.empty();
         }
         return Maybe.of((Statement) deserializeNode(jsonElement));
     }
 
-    private static ImmutableList<ImportSpecifier> deserializeListImportSpecifier(JsonElement jsonElement) throws ClassNotFoundException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+    protected ImmutableList<ImportSpecifier> deserializeListImportSpecifier(JsonElement jsonElement) throws ClassNotFoundException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         JsonArray jsonArray = jsonElement.getAsJsonArray();
         if (jsonArray.size() == 0) {
           return ImmutableList.empty();
@@ -370,7 +370,7 @@ public class Deserializer {
         }
     }
 
-    private static ImmutableList<ImportDeclarationExportDeclarationStatement> deserializeListImportDeclarationExportDeclarationStatement(JsonElement jsonElement) throws ClassNotFoundException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+    protected ImmutableList<ImportDeclarationExportDeclarationStatement> deserializeListImportDeclarationExportDeclarationStatement(JsonElement jsonElement) throws ClassNotFoundException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         JsonArray jsonArray = jsonElement.getAsJsonArray();
         if (jsonArray.size() == 0) {
           return ImmutableList.empty();
@@ -384,7 +384,7 @@ public class Deserializer {
         }
     }
 
-    private static ImmutableList<AssignmentTargetProperty> deserializeListAssignmentTargetProperty(JsonElement jsonElement) throws ClassNotFoundException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+    protected ImmutableList<AssignmentTargetProperty> deserializeListAssignmentTargetProperty(JsonElement jsonElement) throws ClassNotFoundException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         JsonArray jsonArray = jsonElement.getAsJsonArray();
         if (jsonArray.size() == 0) {
           return ImmutableList.empty();
@@ -398,7 +398,7 @@ public class Deserializer {
         }
     }
 
-    private static ImmutableList<BindingProperty> deserializeListBindingProperty(JsonElement jsonElement) throws ClassNotFoundException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+    protected ImmutableList<BindingProperty> deserializeListBindingProperty(JsonElement jsonElement) throws ClassNotFoundException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         JsonArray jsonArray = jsonElement.getAsJsonArray();
         if (jsonArray.size() == 0) {
           return ImmutableList.empty();
@@ -412,7 +412,7 @@ public class Deserializer {
         }
     }
 
-    private static ImmutableList<ObjectProperty> deserializeListObjectProperty(JsonElement jsonElement) throws ClassNotFoundException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+    protected ImmutableList<ObjectProperty> deserializeListObjectProperty(JsonElement jsonElement) throws ClassNotFoundException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         JsonArray jsonArray = jsonElement.getAsJsonArray();
         if (jsonArray.size() == 0) {
           return ImmutableList.empty();
@@ -426,7 +426,7 @@ public class Deserializer {
         }
     }
 
-    private static ImmutableList<SwitchCase> deserializeListSwitchCase(JsonElement jsonElement) throws ClassNotFoundException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+    protected ImmutableList<SwitchCase> deserializeListSwitchCase(JsonElement jsonElement) throws ClassNotFoundException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         JsonArray jsonArray = jsonElement.getAsJsonArray();
         if (jsonArray.size() == 0) {
           return ImmutableList.empty();
@@ -440,7 +440,7 @@ public class Deserializer {
         }
     }
 
-    private static ImmutableList<ExpressionTemplateElement> deserializeListExpressionTemplateElement(JsonElement jsonElement) throws ClassNotFoundException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+    protected ImmutableList<ExpressionTemplateElement> deserializeListExpressionTemplateElement(JsonElement jsonElement) throws ClassNotFoundException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         JsonArray jsonArray = jsonElement.getAsJsonArray();
         if (jsonArray.size() == 0) {
           return ImmutableList.empty();
@@ -454,14 +454,14 @@ public class Deserializer {
         }
     }
 
-    private static Maybe<CatchClause> deserializeMaybeCatchClause(JsonElement jsonElement) throws ClassNotFoundException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+    protected Maybe<CatchClause> deserializeMaybeCatchClause(JsonElement jsonElement) throws ClassNotFoundException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         if (jsonElement.isJsonNull()) {
             return Maybe.empty();
         }
         return Maybe.of((CatchClause) deserializeNode(jsonElement));
     }
 
-    private static ImmutableList<VariableDeclarator> deserializeListVariableDeclarator(JsonElement jsonElement) throws ClassNotFoundException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+    protected ImmutableList<VariableDeclarator> deserializeListVariableDeclarator(JsonElement jsonElement) throws ClassNotFoundException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         JsonArray jsonArray = jsonElement.getAsJsonArray();
         if (jsonArray.size() == 0) {
           return ImmutableList.empty();
@@ -476,7 +476,7 @@ public class Deserializer {
     }
 
 
-    private static Node deserializeNode(JsonElement jsonElement) throws ClassNotFoundException, IllegalAccessException, InstantiationException, NoSuchMethodException {
+    protected Node deserializeNode(JsonElement jsonElement) throws ClassNotFoundException, IllegalAccessException, InstantiationException, NoSuchMethodException {
         if (jsonElement.isJsonObject()) {
             JsonObject jsonObject = jsonElement.getAsJsonObject();
             if (jsonObject.has("type")) {

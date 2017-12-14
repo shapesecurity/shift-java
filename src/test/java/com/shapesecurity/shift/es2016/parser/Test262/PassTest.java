@@ -1,18 +1,31 @@
 package com.shapesecurity.shift.es2016.parser.Test262;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import com.shapesecurity.functional.data.HashTable;
+import com.shapesecurity.functional.data.ImmutableList;
+import com.shapesecurity.functional.data.Maybe;
+import com.shapesecurity.functional.data.NonEmptyImmutableList;
 import com.shapesecurity.shift.es2016.ast.Module;
+import com.shapesecurity.shift.es2016.ast.Node;
 import com.shapesecurity.shift.es2016.ast.Script;
 import com.shapesecurity.shift.es2016.parser.EarlyErrorChecker;
 import com.shapesecurity.shift.es2016.parser.JsError;
 import com.shapesecurity.shift.es2016.parser.Parser;
+import com.shapesecurity.shift.es2016.parser.ParserWithLocation;
+import com.shapesecurity.shift.es2016.parser.SourceLocation;
+import com.shapesecurity.shift.es2016.parser.SourceSpan;
 import com.shapesecurity.shift.es2016.serialization.Deserializer;
 import org.json.JSONException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
+import javax.annotation.Nonnull;
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -85,19 +98,28 @@ public class PassTest {
 			"" // empty line to make git diffs nicer
 	));
 
-	static void check(String name) throws JsError, IOException, ClassNotFoundException, NoSuchMethodException, InstantiationException, JSONException, IllegalAccessException {
-		// TODO check locations (requires deserializer subclass)
+	static void assertEqual(ImmutableList<String> path, Node actual, Node expected, HashTable actualLocations, HashTable expectedLocation) { // path is for better errors
+		// Lol reflection
+		if (actual.getClass() != expected.getClass()) {
+			throw new RuntimeException("Nodes are of different type at path " + path.foldLeft((acc, s) -> acc + "->" + s, "root"));
+		}
+		Field[] fields = actual.getClass().getDeclaredFields();
 
+	}
+
+	static void check(String name) throws JsError, IOException, ClassNotFoundException, NoSuchMethodException, InstantiationException, JSONException, IllegalAccessException {
 		String src = new String(Files.readAllBytes(Paths.get(testsDir, name)), StandardCharsets.UTF_8);
 		String expectedJSON = new String(Files.readAllBytes(Paths.get(expectationsDir, name + "-tree.json")), StandardCharsets.UTF_8);
 
 		if (name.endsWith(".module.js")) {
-			Module actual = Parser.parseModule(src);
+			ParserWithLocation parser = new ParserWithLocation();
+			Module actual = parser.parseModule(src);
 			if (EarlyErrorChecker.validate(actual).isNotEmpty()) {
 				throw new RuntimeException("Pass test throws early error!");
 			}
 
-			Module expected = (Module) Deserializer.deserialize(expectedJSON);
+			DeserializerWithLocation deserializer = new DeserializerWithLocation();
+			Module expected = (Module) deserializer.deserializeNode(new JsonParser().parse(expectedJSON));
 			if (!expected.equals(actual)) {
 				// TODO: a more informative tree-equality check with a treewalker
 				throw new RuntimeException("Trees don't match!");
@@ -130,5 +152,43 @@ public class PassTest {
 	@Test
 	public void test() throws Exception {
 		XFailHelper.wrap(this.name, xfail, PassTest::check);
+	}
+
+	static class DeserializerWithLocation extends Deserializer {
+		protected HashTable<Node, SourceSpan> locations = HashTable.emptyUsingIdentity();
+
+		@Nonnull
+		public Maybe<SourceSpan> getLocation(@Nonnull Node node) {
+			return this.locations.get(node);
+		}
+
+		public DeserializerWithLocation() {}
+
+		@Override
+		protected Node deserializeNode(JsonElement jsonElement) throws ClassNotFoundException, IllegalAccessException, InstantiationException, NoSuchMethodException {
+			Node result = super.deserializeNode(jsonElement);
+			if (result != null) {
+				JsonObject jsonObject = jsonElement.getAsJsonObject();
+				if (jsonObject.has("loc")) {
+					JsonObject loc = jsonObject.getAsJsonObject("loc");
+					JsonObject start = loc.getAsJsonObject("start");
+					SourceLocation startLoc = new SourceLocation(
+							start.getAsJsonPrimitive("line").getAsInt(),
+							start.getAsJsonPrimitive("column").getAsInt(),
+							start.getAsJsonPrimitive("offset").getAsInt()
+					);
+
+					JsonObject end = loc.getAsJsonObject("end");
+					SourceLocation endLoc = new SourceLocation(
+							end.getAsJsonPrimitive("line").getAsInt(),
+							end.getAsJsonPrimitive("column").getAsInt(),
+							end.getAsJsonPrimitive("offset").getAsInt()
+					);
+
+					locations = locations.put(result, new SourceSpan(Maybe.empty(), startLoc, endLoc));
+				}
+			}
+			return result;
+		}
 	}
 }

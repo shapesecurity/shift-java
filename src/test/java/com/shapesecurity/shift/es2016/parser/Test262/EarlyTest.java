@@ -108,15 +108,11 @@ public class EarlyTest {
 			if (name.endsWith(".module.js")) {
 				Module tree = Parser.parseModule(src);
 				parsed = true;
-				if (EarlyErrorChecker.validate(tree).isEmpty()) {
-					validated = true;
-				}
+				validated = EarlyErrorChecker.validate(tree).isEmpty();
 			} else {
 				Script tree = Parser.parseScript(src);
 				parsed = true;
-				if (EarlyErrorChecker.validate(tree).isEmpty()) {
-					validated = true;
-				}
+				validated = EarlyErrorChecker.validate(tree).isEmpty();
 			}
 		} catch (JsError e) {
 			// Just swallow it
