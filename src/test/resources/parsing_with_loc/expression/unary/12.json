@@ -1,1 +1,0 @@
-{"type":"Script","body":{"type":"FunctionBody","directives":[],"statements":[{"type":"ExpressionStatement","expression":{"type":"PrefixExpression","operator":"typeof","operand":{"type":"IdentifierExpression","identifier":{"type":"Identifier","name":"x","range":[7,8]},"range":[7,8]},"range":[0,8]},"range":[0,8]}],"range":[0,8]},"range":[0,8],"source":"typeof x"}

@@ -1,1 +1,0 @@
-{"type":"Script","body":{"type":"FunctionBody","directives":[],"statements":[{"type":"ExpressionStatement","expression":{"type":"LiteralNumericExpression","value":42.0,"range":[9,11]},"range":[9,11]}],"range":[9,11]},"range":[9,11],"source":"/*a\r\nb*/ 42"}

@@ -1,1 +1,0 @@
-{"type":"Script","body":{"type":"FunctionBody","directives":[],"statements":[{"type":"ExpressionStatement","expression":{"type":"PrefixExpression","operator":"++","operand":{"type":"IdentifierExpression","identifier":{"type":"Identifier","name":"x","range":[2,3]},"range":[2,3]},"range":[0,3]},"range":[0,3]}],"range":[0,3]},"range":[0,3],"source":"++x"}

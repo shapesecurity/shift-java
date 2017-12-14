@@ -1,1 +1,0 @@
-{"type":"Script","body":{"type":"FunctionBody","directives":[],"statements":[{"type":"FunctionDeclaration","name":{"type":"Identifier","name":"arguments","range":[9,18]},"parameters":[],"body":{"type":"FunctionBody","directives":[],"statements":[],"range":[21,24]},"range":[0,24]}],"range":[0,24]},"range":[0,24],"source":"function arguments() { }"}

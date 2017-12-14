@@ -1,1 +1,0 @@
-{"type":"Script","body":{"type":"FunctionBody","directives":[],"statements":[{"type":"FunctionDeclaration","name":{"type":"Identifier","name":"test"},"parameters":[{"type":"Identifier","name":"t"},{"type":"Identifier","name":"t"}],"body":{"type":"FunctionBody","directives":[],"statements":[]}}]},"source":"function test(t, t) { }"}

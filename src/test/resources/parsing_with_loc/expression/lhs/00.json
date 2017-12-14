@@ -1,1 +1,0 @@
-{"type":"Script","body":{"type":"FunctionBody","directives":[],"statements":[{"type":"ExpressionStatement","expression":{"type":"NewExpression","callee":{"type":"IdentifierExpression","identifier":{"type":"Identifier","name":"Button","range":[4,10]},"range":[4,10]},"arguments":[],"range":[0,10]},"range":[0,10]}],"range":[0,10]},"range":[0,10],"source":"new Button"}

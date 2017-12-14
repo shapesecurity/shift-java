@@ -1,1 +1,0 @@
-{"type":"Script","body":{"type":"FunctionBody","directives":[],"statements":[{"type":"LabeledStatement","label":{"type":"Identifier","name":"start"},"body":{"type":"WhileStatement","test":{"type":"LiteralBooleanExpression","value":true},"body":{"type":"BreakStatement","label":{"type":"Identifier","name":"start"}}}}]},"source":"start: while (true) break start"}

@@ -1,1 +1,0 @@
-{"type":"Script","body":{"type":"FunctionBody","directives":[],"statements":[{"type":"SwitchStatement","discriminant":{"type":"IdentifierExpression","identifier":{"type":"Identifier","name":"x","range":[8,9]},"range":[8,9]},"cases":[],"range":[0,13]}],"range":[0,13]},"range":[0,13],"source":"switch (x) {}"}

@@ -1,1 +1,0 @@
-{"type":"Script","body":{"type":"FunctionBody","directives":[],"statements":[{"type":"ExpressionStatement","expression":{"type":"CallExpression","callee":{"type":"IdentifierExpression","identifier":{"type":"Identifier","name":"foo","range":[5,8]},"range":[5,8]},"arguments":[],"range":[0,13]},"range":[0,13]}],"range":[0,13]},"range":[0,13],"source":"(    foo  )()"}

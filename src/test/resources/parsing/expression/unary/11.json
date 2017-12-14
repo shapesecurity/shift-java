@@ -1,1 +1,0 @@
-{"type":"Script","body":{"type":"FunctionBody","directives":[],"statements":[{"type":"ExpressionStatement","expression":{"type":"PrefixExpression","operator":"delete","operand":{"type":"IdentifierExpression","identifier":{"type":"Identifier","name":"x"}}}}]},"source":"delete x"}

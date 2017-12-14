@@ -1,1 +1,0 @@
-{"type":"Script","body":{"type":"FunctionBody","directives":[],"statements":[{"type":"ThrowStatement","expression":{"type":"ObjectExpression","properties":[{"type":"DataProperty","name":{"type":"PropertyName","value":"message","kind":"identifier"},"value":{"type":"LiteralStringExpression","value":"Error"}}]}}]},"source":"throw { message: \"Error\" }"}
