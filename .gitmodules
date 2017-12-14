@@ -1,6 +1,6 @@
 [submodule "src/test/resources/test262-parser-tests"]
 	path = src/test/resources/test262-parser-tests
-	url = git@github.com:tc39/test262-parser-tests.git
+	url = https://github.com/tc39/test262-parser-tests.git
 [submodule "src/test/resources/shift-parser-expectations"]
 	path = src/test/resources/shift-parser-expectations
-	url = git@github.com:shapesecurity/shift-parser-expectations.git
+	url = https://github.com/shapesecurity/shift-parser-expectations.git
