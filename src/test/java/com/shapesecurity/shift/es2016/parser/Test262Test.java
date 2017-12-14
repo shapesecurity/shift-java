@@ -15,6 +15,8 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -24,6 +26,11 @@ import static org.junit.Assert.assertEquals;
 public class Test262Test {
 	static final String testsDir = "test/test262-parser-tests/";
 	static final String expectationsDir = "test/shift-parser-expectations/expectations/";
+
+	private static final Set<String> xfail = new HashSet<>(Arrays.asList(
+			"05b849122b429743.js" // Java's unicode support appears to be out of date
+	));
+	// TODO have some test to ensure all xfail tests actually exist
 
 	private static void checkPass(String name) throws JsError, IOException, ClassNotFoundException, NoSuchMethodException, InstantiationException, JSONException, IllegalAccessException {
 		// TODO check locations (requires deserializer subclass)
@@ -58,7 +65,7 @@ public class Test262Test {
 
 		return Stream.of(pass, early, fail)
 				.flatMap(x -> x)
-				.collect(Collectors.toList());
+				.collect(Collectors.toList()); // TODO consider just splitting this into multiple test classes
 	}
 
 	@Parameterized.Parameter
@@ -69,14 +76,25 @@ public class Test262Test {
 
 	@Test
 	public void test() throws Exception {
-		switch (this.type) {
-			case PASS:
-				checkPass(this.name);
-				break;
-			case EARLY:
-				// TODO
-			case FAIL:
-				// TODO
+		boolean passed = false;
+		try {
+			switch (this.type) {
+				case PASS:
+					checkPass(this.name);
+					break;
+				case EARLY:
+					// TODO
+				case FAIL:
+					// TODO
+			}
+			passed = true;
+		} catch (Exception e) {
+			if (!xfail.contains(name)) {
+				throw e;
+			} // else swallow the exception and thus pass
+		}
+		if (passed && xfail.contains(name)) {
+			throw new RuntimeException("Test marked as xfail, but passed");
 		}
 	}
 
