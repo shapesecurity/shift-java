@@ -2,6 +2,7 @@ package com.shapesecurity.shift.es2016.parser.Test262;
 
 import com.shapesecurity.shift.es2016.ast.Module;
 import com.shapesecurity.shift.es2016.ast.Script;
+import com.shapesecurity.shift.es2016.parser.EarlyErrorChecker;
 import com.shapesecurity.shift.es2016.parser.JsError;
 import com.shapesecurity.shift.es2016.parser.Parser;
 import com.shapesecurity.shift.es2016.serialization.Deserializer;
@@ -62,7 +63,6 @@ public class PassTest {
 			"ec97990c2cc5e0e8.js", // '&' and '|' have the wrong relative precedence
 			"" // empty line to make git diffs nicer
 	));
-	// TODO have some test to ensure all xfail tests actually exist
 
 	static void checkPass(String name) throws JsError, IOException, ClassNotFoundException, NoSuchMethodException, InstantiationException, JSONException, IllegalAccessException {
 		// TODO check locations (requires deserializer subclass)
@@ -77,12 +77,14 @@ public class PassTest {
 				// TODO: a more informative tree-equality check with a treewalker
 				throw new RuntimeException("Trees don't match!");
 			}
+			EarlyErrorChecker.validate(actual);
 		} else {
 			Script actual = Parser.parseScript(src);
 			Script expected = (Script) Deserializer.deserialize(expectedJSON);
 			if (!expected.equals(actual)) {
 				throw new RuntimeException("Trees don't match!");
 			}
+			EarlyErrorChecker.validate(actual);
 		}
 	}
 
