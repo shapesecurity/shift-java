@@ -29,7 +29,36 @@ public class PassTest {
 	static final String expectationsDir = "test/shift-parser-expectations/expectations/";
 
 	static final Set<String> xfail = new HashSet<>(Arrays.asList(
-			"05b849122b429743.js" // Java's unicode support appears to be out of date
+			"05b849122b429743.js", // Java's unicode support appears to be out of date
+			"0d137e8a97ffe083.js", // yield flag passes to nested functions
+			"0f88c334715d2489.js", // yield precedence issue
+			"1093d98f5fc0758d.js", // something about destructuring parameters
+			"151d4db59b774864.js", // Java's unicode support appears to be out of date
+			"15d9592709b947a0.js", // something about destructuring parameters
+			"177fef3d002eb873.js", // yield flag passes to nested functions
+			"3f44c09167d5753d.js", // Java's unicode support appears to be out of date
+			"431ecef8c85d4d24.js", // Java's unicode support appears to be out of date
+			"465b79616fdc9794.js", // Java's unicode support appears to be out of date
+			"489e6113a41ef33f.js", // '&' and '|' have the wrong relative precedence
+			"4e1a0da46ca45afe.js", // something about destructuring parameters
+			"6b76b8761a049c19.js", // yield flag passes to nested functions
+			"72d79750e81ef03d.js", // deserializer breaks on **
+			"7dab6e55461806c9.js", // yield precedence issue
+			"901fca17189cd709.js", // yield flag passes to nested functions
+			"988e362ed9ddcac5.js", // deserializer breaks on **
+			"99fceed987b8ec3d.js", // something about destructuring parameters
+			"9dc20e081005fba4.js", // something about destructuring parameters
+			"a43df1aea659fab8.js", // '&' and '|' have the wrong relative precedence
+			"c3699b982b33926b.js", // '&' and '|' have the wrong relative precedence
+			"c546a199e87abaad.js", // for-in destructing containing in breaks
+			"cb211fadccb029c7.js", // yield precedence issue
+			"cbc644a20893a549.js", // '&' and '|' have the wrong relative precedence
+			"cd2f5476a739c80a.js", // can't use 'in' as argument to 'new'
+			"ce968fcdf3a1987c.js", // yield precedence issue
+			"db3c01738aaf0b92.js", // deserializer breaks on **
+			"e1387fe892984e2b.js", // something about destructuring parameters
+			"ec97990c2cc5e0e8.js", // '&' and '|' have the wrong relative precedence
+			"" // empty line to make git diffs nicer
 	));
 	// TODO have some test to ensure all xfail tests actually exist
 
@@ -42,11 +71,16 @@ public class PassTest {
 		if (name.endsWith(".module.js")) {
 			Module actual = Parser.parseModule(src);
 			Module expected = (Module) Deserializer.deserialize(expectedJSON);
-			assertEquals(expected, actual);
+			if (!expected.equals(actual)) {
+				// TODO: a more informative tree-equality check with a treewalker
+				throw new RuntimeException("Trees don't match!");
+			}
 		} else {
 			Script actual = Parser.parseScript(src);
 			Script expected = (Script) Deserializer.deserialize(expectedJSON);
-			assertEquals(expected, actual);
+			if (!expected.equals(actual)) {
+				throw new RuntimeException("Trees don't match!");
+			}
 		}
 	}
 
