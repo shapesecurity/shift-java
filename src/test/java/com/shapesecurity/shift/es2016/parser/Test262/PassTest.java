@@ -26,8 +26,8 @@ import static org.junit.Assert.assertEquals;
 
 @RunWith(Parameterized.class)
 public class PassTest {
-	static final String testsDir = "test/test262-parser-tests/pass/";
-	static final String expectationsDir = "test/shift-parser-expectations/expectations/";
+	static final String testsDir = "src/test/resources/test262-parser-tests/pass/";
+	static final String expectationsDir = "src/test/resources/shift-parser-expectations/expectations/";
 
 	static final Set<String> xfail = new HashSet<>(Arrays.asList(
 			// BUG: something about destructuring

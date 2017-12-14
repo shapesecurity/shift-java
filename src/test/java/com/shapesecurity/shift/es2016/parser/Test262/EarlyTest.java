@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 
 @RunWith(Parameterized.class)
 public class EarlyTest {
-	static final String testsDir = "test/test262-parser-tests/early/";
+	static final String testsDir = "src/test/resources/test262-parser-tests/early/";
 
 	static final Set<String> xfail = new HashSet<>(Arrays.asList(
 			// BUG: duplicate default export is not caught

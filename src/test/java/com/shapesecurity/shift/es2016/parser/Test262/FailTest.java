@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 
 @RunWith(Parameterized.class)
 public class FailTest {
-	static final String testsDir = "test/test262-parser-tests/fail/";
+	static final String testsDir = "src/test/resources/test262-parser-tests/fail/";
 
 	static final Set<String> xfail = new HashSet<>(Arrays.asList(
 			// BUG: destructuring in for loop head requires initialization
