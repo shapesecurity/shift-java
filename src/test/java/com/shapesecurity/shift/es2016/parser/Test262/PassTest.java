@@ -79,6 +79,9 @@ public class PassTest {
 			// BUG: can't use 'in' as argument to 'new'
 			"cd2f5476a739c80a.js",
 
+			// BUG: exports are treated as declarations
+			"e2470430b235b9bb.module.js",
+
 			"" // empty line to make git diffs nicer
 	));
 
@@ -90,19 +93,26 @@ public class PassTest {
 
 		if (name.endsWith(".module.js")) {
 			Module actual = Parser.parseModule(src);
+			if (EarlyErrorChecker.validate(actual).isNotEmpty()) {
+				throw new RuntimeException("Pass test throws early error!");
+			}
+
 			Module expected = (Module) Deserializer.deserialize(expectedJSON);
 			if (!expected.equals(actual)) {
 				// TODO: a more informative tree-equality check with a treewalker
 				throw new RuntimeException("Trees don't match!");
 			}
-			EarlyErrorChecker.validate(actual);
 		} else {
 			Script actual = Parser.parseScript(src);
+
+			if (EarlyErrorChecker.validate(actual).isNotEmpty()) {
+				throw new RuntimeException("Pass test throws early error!");
+			}
+
 			Script expected = (Script) Deserializer.deserialize(expectedJSON);
 			if (!expected.equals(actual)) {
 				throw new RuntimeException("Trees don't match!");
 			}
-			EarlyErrorChecker.validate(actual);
 		}
 	}
 

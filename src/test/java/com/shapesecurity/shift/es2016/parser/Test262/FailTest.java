@@ -1,10 +1,7 @@
 package com.shapesecurity.shift.es2016.parser.Test262;
 
-import com.shapesecurity.shift.es2016.ast.Module;
-import com.shapesecurity.shift.es2016.ast.Script;
 import com.shapesecurity.shift.es2016.parser.JsError;
 import com.shapesecurity.shift.es2016.parser.Parser;
-import org.json.JSONException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -19,8 +16,6 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
-
-import static org.junit.Assert.assertEquals;
 
 @RunWith(Parameterized.class)
 public class FailTest {
@@ -39,7 +34,7 @@ public class FailTest {
 			"40449ddc6ec37b35.js",
 			"4ff4b78ff3e2de6e.js",
 			"ca3dd7ea0b4626dd.js",
-			
+
 			"" // empty line to make git diffs nicer
 	));
 

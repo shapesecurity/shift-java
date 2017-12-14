@@ -33,6 +33,14 @@ public class XFailHelper {
 		for (String f : PassTest.xfail) {
 			assertTrue((new File(PassTest.testsDir, f)).exists());
 		}
+
+		for (String f : EarlyTest.xfail) {
+			assertTrue((new File(EarlyTest.testsDir, f)).exists());
+		}
+
+		for (String f : FailTest.xfail) {
+			assertTrue((new File(FailTest.testsDir, f)).exists());
+		}
 	}
 
 }
