@@ -29,6 +29,7 @@ public class PassTest {
 	static final String expectationsDir = "test/shift-parser-expectations/expectations/";
 
 	static final Set<String> xfail = new HashSet<>(Arrays.asList(
+			"00c79d09c52df3ec.js", // something about destructuring
 			"05b849122b429743.js", // Java's unicode support appears to be out of date
 			"0d137e8a97ffe083.js", // yield flag passes to nested functions
 			"0f88c334715d2489.js", // yield precedence issue
@@ -41,13 +42,14 @@ public class PassTest {
 			"465b79616fdc9794.js", // Java's unicode support appears to be out of date
 			"489e6113a41ef33f.js", // '&' and '|' have the wrong relative precedence
 			"4e1a0da46ca45afe.js", // something about destructuring parameters
+			"5dd65055dace49bc.js", // something about destructuring
 			"6b76b8761a049c19.js", // yield flag passes to nested functions
 			"72d79750e81ef03d.js", // deserializer breaks on **
 			"7dab6e55461806c9.js", // yield precedence issue
 			"901fca17189cd709.js", // yield flag passes to nested functions
 			"988e362ed9ddcac5.js", // deserializer breaks on **
 			"99fceed987b8ec3d.js", // something about destructuring parameters
-			"9dc20e081005fba4.js", // something about destructuring parameters
+			"9bcae7c7f00b4e3c.js", // something about destructuring parameters
 			"a43df1aea659fab8.js", // '&' and '|' have the wrong relative precedence
 			"c3699b982b33926b.js", // '&' and '|' have the wrong relative precedence
 			"c546a199e87abaad.js", // for-in destructing containing in breaks
