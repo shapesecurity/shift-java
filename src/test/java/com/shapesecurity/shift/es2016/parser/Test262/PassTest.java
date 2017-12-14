@@ -64,7 +64,7 @@ public class PassTest {
 			"" // empty line to make git diffs nicer
 	));
 
-	static void checkPass(String name) throws JsError, IOException, ClassNotFoundException, NoSuchMethodException, InstantiationException, JSONException, IllegalAccessException {
+	static void check(String name) throws JsError, IOException, ClassNotFoundException, NoSuchMethodException, InstantiationException, JSONException, IllegalAccessException {
 		// TODO check locations (requires deserializer subclass)
 
 		String src = new String(Files.readAllBytes(Paths.get(testsDir, name)), StandardCharsets.UTF_8);
@@ -90,8 +90,8 @@ public class PassTest {
 
 	@Parameterized.Parameters(name = "{0}")
 	public static Collection<Object[]> data() {
-		File[] passFiles = (new File(testsDir)).listFiles();
-		return Arrays.stream(passFiles)
+		File[] files = (new File(testsDir)).listFiles();
+		return Arrays.stream(files)
 				.map(f -> new Object[]{ f.getName() })
 				.collect(Collectors.toList());
 	}
@@ -101,6 +101,6 @@ public class PassTest {
 
 	@Test
 	public void test() throws Exception {
-		XFailHelper.wrap(this.name, xfail, PassTest::checkPass);
+		XFailHelper.wrap(this.name, xfail, PassTest::check);
 	}
 }
