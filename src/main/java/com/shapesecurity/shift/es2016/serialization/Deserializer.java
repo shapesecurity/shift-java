@@ -56,6 +56,8 @@ public class Deserializer {
                 return BinaryOperator.Div;
             case "%":
                 return BinaryOperator.Rem;
+            case "**":
+                return BinaryOperator.Exp;
             case "<":
                 return BinaryOperator.LessThan;
             case "<=":
@@ -92,6 +94,8 @@ public class Deserializer {
                 return CompoundAssignmentOperator.AssignDiv;
             case "%=":
                 return CompoundAssignmentOperator.AssignRem;
+            case "**=":
+                return CompoundAssignmentOperator.AssignExp;
             case "<<=":
                 return CompoundAssignmentOperator.AssignLeftShift;
             case ">>=":
