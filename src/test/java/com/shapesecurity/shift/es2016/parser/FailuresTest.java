@@ -171,7 +171,7 @@ public class FailuresTest extends ParserTestCase {
         testScriptFailure("#=", 0, "Unexpected \"#\"");
         testScriptFailure("**", 0, "Unexpected token \"**\"");
         testScriptFailure("({a = 0});", 2, "Illegal property initializer");
-        testScriptFailure("({a: 0, b = 0});", 8, "Illegal property initializer");
+        testScriptFailure("({a: 0, b = 0});", 13, "Invalid left-hand side in assignment");
         testScriptFailure("({a: b = 0, c, c = 0});", 15, "Illegal property initializer");
         testScriptFailure("[{a = 0}];", 2, "Illegal property initializer");
         testScriptFailure("[+{a = 0}];", 3, "Illegal property initializer");

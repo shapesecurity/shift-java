@@ -708,9 +708,6 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
 
     @Nonnull
     protected AssignmentTargetProperty transformDestructuring(ObjectProperty objectProperty) throws JsError {
-        if (this.firstExprError != null) {
-            throw this.firstExprError;
-        }
         if (objectProperty instanceof DataProperty) {
             DataProperty dataProperty = (DataProperty) objectProperty;
             return this.copyNode(dataProperty, new AssignmentTargetPropertyProperty(dataProperty.name, this.transformDestructuringWithDefault(dataProperty.expression)));
