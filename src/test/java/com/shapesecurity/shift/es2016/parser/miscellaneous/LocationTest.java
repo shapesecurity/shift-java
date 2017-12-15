@@ -142,22 +142,22 @@ public class LocationTest extends TestCase {
 		Statement statement = (Statement) this.tree.items.maybeHead().fromJust();
 		checkLocation(statement, new SourceSpan(
 				Maybe.empty(),
-				new SourceLocation(0, 0, 0),
-				new SourceLocation(1, 3, 6)
+				new SourceLocation(1, 0, 0),
+				new SourceLocation(2, 3, 6)
 		));
 
 		Expression expression = ((ExpressionStatement) statement).expression;
 		checkLocation(expression, new SourceSpan(
 				Maybe.empty(),
-				new SourceLocation(0, 0, 0),
-				new SourceLocation(1, 2, 5)
+				new SourceLocation(1, 0, 0),
+				new SourceLocation(2, 2, 5)
 		));
 
 		ExpressionTemplateElement element = ((TemplateExpression) expression).elements.index(0).fromJust();
 		checkLocation(element, new SourceSpan(
 				Maybe.empty(),
-				new SourceLocation(0, 1, 1),
-				new SourceLocation(1, 1, 4)
+				new SourceLocation(1, 1, 1),
+				new SourceLocation(2, 1, 4)
 		));
 	}
 
@@ -169,22 +169,22 @@ public class LocationTest extends TestCase {
 		Statement statement = (Statement) this.tree.items.maybeHead().fromJust();
 		checkLocation(statement, new SourceSpan(
 				Maybe.empty(),
-				new SourceLocation(0, 0, 0),
-				new SourceLocation(1, 3, 7)
+				new SourceLocation(1, 0, 0),
+				new SourceLocation(2, 3, 7)
 		));
 
 		Expression expression = ((ExpressionStatement) statement).expression;
 		checkLocation(expression, new SourceSpan(
 				Maybe.empty(),
-				new SourceLocation(0, 0, 0),
-				new SourceLocation(1, 2, 6)
+				new SourceLocation(1, 0, 0),
+				new SourceLocation(2, 2, 6)
 		));
 
 		ExpressionTemplateElement element = ((TemplateExpression) expression).elements.index(0).fromJust();
 		checkLocation(element, new SourceSpan(
 				Maybe.empty(),
-				new SourceLocation(0, 1, 1),
-				new SourceLocation(1, 1, 5)
+				new SourceLocation(1, 1, 1),
+				new SourceLocation(2, 1, 5)
 		));
 	}
 
@@ -196,22 +196,22 @@ public class LocationTest extends TestCase {
 		Statement statement = (Statement) this.tree.items.maybeHead().fromJust();
 		checkLocation(statement, new SourceSpan(
 				Maybe.empty(),
-				new SourceLocation(0, 0, 0),
-				new SourceLocation(4, 3, 9)
+				new SourceLocation(1, 0, 0),
+				new SourceLocation(5, 3, 9)
 		));
 
 		Expression expression = ((ExpressionStatement) statement).expression;
 		checkLocation(expression, new SourceSpan(
 				Maybe.empty(),
-				new SourceLocation(0, 0, 0),
-				new SourceLocation(4, 2, 8)
+				new SourceLocation(1, 0, 0),
+				new SourceLocation(5, 2, 8)
 		));
 
 		ExpressionTemplateElement element = ((TemplateExpression) expression).elements.index(0).fromJust();
 		checkLocation(element, new SourceSpan(
 				Maybe.empty(),
-				new SourceLocation(0, 1, 1),
-				new SourceLocation(4, 1, 7)
+				new SourceLocation(1, 1, 1),
+				new SourceLocation(5, 1, 7)
 		));
 	}
 
@@ -227,8 +227,8 @@ public class LocationTest extends TestCase {
 		FunctionBody body = (FunctionBody) ((ArrowExpression) expression).body;
 		checkLocation(body, new SourceSpan(
 				Maybe.empty(),
-				new SourceLocation(0, 7, 7),
-				new SourceLocation(0, 9, 9) // i.e. including the braces.
+				new SourceLocation(1, 7, 7),
+				new SourceLocation(1, 9, 9) // i.e. including the braces.
 		));
 	}
 
@@ -272,15 +272,15 @@ public class LocationTest extends TestCase {
 		FormalParameters params = functionDeclaration.params;
 		checkLocation(params, new SourceSpan(
 				Maybe.empty(),
-				new SourceLocation(0, 23, 23),
-				new SourceLocation(1, 1, 26) // i.e. around the parentheses, including internal whitespace.
+				new SourceLocation(1, 23, 23),
+				new SourceLocation(2, 1, 26) // i.e. around the parentheses, including internal whitespace.
 		));
 
 		FunctionBody body = functionDeclaration.body;
 		checkLocation(body, new SourceSpan(
 				Maybe.empty(),
-				new SourceLocation(1, 1, 26),
-				new SourceLocation(2, 1, 29) // i.e. around the braces, including internal whitespace.
+				new SourceLocation(2, 1, 26),
+				new SourceLocation(3, 1, 29) // i.e. around the braces, including internal whitespace.
 		));
 	}
 }
