@@ -28,6 +28,7 @@ import com.shapesecurity.shift.es2016.ast.Method;
 import com.shapesecurity.shift.es2016.ast.MethodDefinition;
 import com.shapesecurity.shift.es2016.ast.NewTargetExpression;
 import com.shapesecurity.shift.es2016.ast.Node;
+import com.shapesecurity.shift.es2016.ast.Program;
 import com.shapesecurity.shift.es2016.ast.StaticPropertyName;
 import com.shapesecurity.shift.es2016.ast.Super;
 import com.shapesecurity.shift.es2016.ast.SwitchStatementWithDefault;
@@ -68,6 +69,7 @@ import com.shapesecurity.shift.es2016.ast.WithStatement;
 import com.shapesecurity.shift.es2016.reducer.Director;
 import com.shapesecurity.shift.es2016.utils.Utils;
 import com.shapesecurity.shift.es2016.reducer.MonoidalReducer;
+import com.sun.org.apache.xpath.internal.operations.Mod;
 
 import javax.annotation.Nonnull;
 
@@ -86,6 +88,13 @@ public class EarlyErrorChecker extends MonoidalReducer<EarlyErrorState> {
 
     public static ImmutableList<EarlyError> validate(Module module) {
         return EarlyErrorChecker.extract(Director.reduceModule(new EarlyErrorChecker(), module));
+    }
+
+    public static ImmutableList<EarlyError> validate(Program program) {
+        if (program instanceof Script) {
+            return validate((Script) program);
+        }
+        return validate((Module) program);
     }
 
     private boolean isStrictFunctionBody(@Nonnull FunctionBody functionBody) {
