@@ -462,13 +462,13 @@ public class Tokenizer {
     @Nonnull
     protected JsError createErrorWithLocation(@Nonnull SourceLocation location, @Nonnull String message, @Nonnull Object... args) {
         String msg = String.format(message, args);
-        return new JsError(location.offset, location.line + 1, location.column, msg);
+        return new JsError(location.offset, location.line, location.column, msg);
     }
 
     @Nonnull
     SourceLocation getLocation() {
         if (this.lastCachedSourceLocation != this.index) {
-            this.cachedSourceLocation = new SourceLocation(this.startLine, this.startIndex - this.startLineStart, this.startIndex);
+            this.cachedSourceLocation = new SourceLocation(this.startLine + 1, this.startIndex - this.startLineStart, this.startIndex);
             this.lastCachedSourceLocation = this.index;
         }
         return this.cachedSourceLocation;
@@ -477,7 +477,7 @@ public class Tokenizer {
     @Nonnull
     SourceLocation getLastTokenEndLocation() {
         if (this.lastCachedSourceEndLocation != this.lastIndex) {
-            this.cachedSourceEndLocation = new SourceLocation(this.lastLine, this.lastIndex - this.lastLineStart, this.lastIndex);
+            this.cachedSourceEndLocation = new SourceLocation(this.lastLine + 1, this.lastIndex - this.lastLineStart, this.lastIndex);
             this.lastCachedSourceEndLocation = this.lastIndex;
         }
         return this.cachedSourceEndLocation;

@@ -23,7 +23,7 @@ public class TokenStreamWithLocation extends TokenStream {
 	public SourceLocation getLocation() {
 		int index = this.writer.length();
 		if (this.lastCachedSourceLocation != this.writer.length()) {
-			this.cachedSourceLocation = new SourceLocation(this.line, index - this.lineStart, index);
+			this.cachedSourceLocation = new SourceLocation(this.line + 1, index - this.lineStart, index);
 			this.lastCachedSourceLocation = index;
 		}
 		return this.cachedSourceLocation;

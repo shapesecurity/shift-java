@@ -73,7 +73,7 @@ public class ParserWithLocation {
 		protected <T extends Node> T finishNode(@Nonnull SourceLocation startLocation, @Nonnull T node) {
 			if (node instanceof Script || node instanceof Module) {
 				// Special case: the start/end of the whole-program node is the whole text including leading and trailing whitespace.
-				locations = locations.put(node, new SourceSpan(Maybe.empty(), new SourceLocation(0, 0, 0), new SourceLocation(this.startLine, this.startIndex - this.startLineStart, this.startIndex)));
+				locations = locations.put(node, new SourceSpan(Maybe.empty(), new SourceLocation(1, 0, 0), new SourceLocation(this.startLine + 1, this.startIndex - this.startLineStart, this.startIndex)));
 				return node;
 			} else if (node instanceof BindingIdentifier && ((BindingIdentifier) node).name.equals("*default*")) {
 				// Special case: synthetic BindingIdentifier for export-default declarations should not have a location
@@ -115,9 +115,9 @@ public class ParserWithLocation {
 		protected void skipSingleLineComment(int offset) {
 			char c = this.source.charAt(this.index);
 			Comment.Type type = c == '/' ? Comment.Type.SingleLine : c == '<' ? Comment.Type.HTMLOpen : Comment.Type.HTMLClose;
-			SourceLocation start = new SourceLocation(this.line, this.index - this.lineStart, this.index);
+			SourceLocation start = new SourceLocation(this.line + 1, this.index - this.lineStart, this.index);
 			super.skipSingleLineComment(offset);
-			SourceLocation end = new SourceLocation(this.line, this.index - this.lineStart, this.index);
+			SourceLocation end = new SourceLocation(this.line + 1, this.index - this.lineStart, this.index);
 			int trailingLineTerminatorCharacters = this.source.charAt(this.index - 2) == '\r' ? 2 : isLineTerminator(this.source.charAt(this.index - 1)) ? 1 : 0;
 			String text = this.source.substring(start.offset + offset, end.offset - trailingLineTerminatorCharacters);
 			comments = comments.cons(new Comment(type, text, start, end));
@@ -125,9 +125,9 @@ public class ParserWithLocation {
 
 		@Override
 		protected void skipMultiLineComment() throws JsError {
-			SourceLocation start = new SourceLocation(this.line, this.index - this.lineStart, this.index);
+			SourceLocation start = new SourceLocation(this.line + 1, this.index - this.lineStart, this.index);
 			super.skipMultiLineComment();
-			SourceLocation end = new SourceLocation(this.line, this.index - this.lineStart, this.index);
+			SourceLocation end = new SourceLocation(this.line + 1, this.index - this.lineStart, this.index);
 			String text = this.source.substring(start.offset + 2, end.offset - 2);
 			comments = comments.cons(new Comment(Comment.Type.MultiLine, text, start, end));
 		}
