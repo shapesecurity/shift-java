@@ -100,34 +100,35 @@ public class PassTest {
 
 	static void check(String name) throws JsError, IOException, ClassNotFoundException, NoSuchMethodException, InstantiationException, JSONException, IllegalAccessException {
 		String src = new String(Files.readAllBytes(Paths.get(testsDir, name)), StandardCharsets.UTF_8);
-		String expectedJSON = new String(Files.readAllBytes(Paths.get(expectationsDir, name + "-tree.json")), StandardCharsets.UTF_8);
-
 		ParserWithLocation parser = new ParserWithLocation();
 		Program actual = name.endsWith(".module.js") ? parser.parseModule(src) : parser.parseScript(src);
+
 		if (EarlyErrorChecker.validate(actual).isNotEmpty()) {
 			throw new RuntimeException("Pass test throws early error!");
 		}
 
+		String expectedJSON = new String(Files.readAllBytes(Paths.get(expectationsDir, name + "-tree.json")), StandardCharsets.UTF_8);
 		DeserializerWithLocation deserializer = new DeserializerWithLocation();
 		Program expected = (Program) deserializer.deserializeNode(new JsonParser().parse(expectedJSON));
+
 		if (expected.equals(actual)) {
 			// check locations
 			for (Pair<BranchGetter, Node> p : new BranchIterator(actual)) {
-				Node actualNode = p.right;
 				Node expectedNode = p.left.apply(expected).fromJust();
+				Node actualNode = p.right;
 
-				Maybe<SourceSpan> maybeActualLocation = parser.getLocation(actualNode);
 				Maybe<SourceSpan> maybeExpectedLocation = deserializer.getLocation(expectedNode);
+				Maybe<SourceSpan> maybeActualLocation = parser.getLocation(actualNode);
 
-				if (maybeActualLocation.isJust() && maybeExpectedLocation.isNothing()) {
+				if (maybeExpectedLocation.isNothing() && maybeActualLocation.isJust()) {
 					throw new RuntimeException("Node unexpectedly has location (root" + p.left.toString() + ")");
 				}
-				if (maybeActualLocation.isNothing() && maybeExpectedLocation.isJust()) {
+				if (maybeExpectedLocation.isJust() && maybeActualLocation.isNothing()) {
 					throw new RuntimeException("Node unexpectedly lacks location (root" + p.left.toString() + ")");
 				}
-				if (maybeActualLocation.isJust() && maybeExpectedLocation.isJust()) {
-					SourceSpan actualLocation = maybeActualLocation.fromJust();
+				if (maybeExpectedLocation.isJust() && maybeActualLocation.isJust()) {
 					SourceSpan expectedLocation = maybeExpectedLocation.fromJust();
+					SourceSpan actualLocation = maybeActualLocation.fromJust();
 
 					assertEquals("start line (root" + p.left.toString() + ")", expectedLocation.start.line, actualLocation.start.line);
 					assertEquals("start column (root" + p.left.toString() + ")", expectedLocation.start.column, actualLocation.start.column);
@@ -139,12 +140,13 @@ public class PassTest {
 			}
 
 			// check comments
-			ImmutableList<ParserWithLocation.Comment> actualComments = parser.getComments();
-
 			String commentsJSON = new String(Files.readAllBytes(Paths.get(expectationsDir, name + "-comments.json")), StandardCharsets.UTF_8);
 			ImmutableList<ParserWithLocation.Comment> expectedComments = Deserializer.deserializeComments(commentsJSON);
 
+			ImmutableList<ParserWithLocation.Comment> actualComments = parser.getComments();
+
 			assertEquals(expectedComments.length, actualComments.length);
+
 			for (Pair<ParserWithLocation.Comment, ParserWithLocation.Comment> p : expectedComments.zipWith(Pair::of, actualComments)) {
 				ParserWithLocation.Comment expectedComment = p.left;
 				ParserWithLocation.Comment actualComment = p.right;
@@ -158,7 +160,6 @@ public class PassTest {
 				assertEquals(expectedComment.end.column, actualComment.end.column);
 				assertEquals(expectedComment.end.offset, actualComment.end.offset);
 			}
-
 		} else {
 			// TODO: a more informative tree-equality check with a treewalker
 			throw new RuntimeException("Trees don't match!");
