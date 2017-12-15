@@ -3,6 +3,7 @@ package com.shapesecurity.shift.es2016.parser.Test262;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.shapesecurity.functional.Pair;
 import com.shapesecurity.functional.data.HashTable;
 import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.functional.data.Maybe;
@@ -16,6 +17,8 @@ import com.shapesecurity.shift.es2016.parser.Parser;
 import com.shapesecurity.shift.es2016.parser.ParserWithLocation;
 import com.shapesecurity.shift.es2016.parser.SourceLocation;
 import com.shapesecurity.shift.es2016.parser.SourceSpan;
+import com.shapesecurity.shift.es2016.path.BranchGetter;
+import com.shapesecurity.shift.es2016.path.BranchIterator;
 import com.shapesecurity.shift.es2016.serialization.Deserializer;
 import org.json.JSONException;
 import org.junit.Test;
@@ -43,10 +46,6 @@ public class PassTest {
 	static final String expectationsDir = "src/test/resources/shift-parser-expectations/expectations/";
 
 	static final Set<String> xfail = new HashSet<>(Arrays.asList(
-			// BUG: something about destructuring
-			"00c79d09c52df3ec.js",
-			"5dd65055dace49bc.js",
-
 			// BUG: Java's unicode support appears to be out of date
 			"05b849122b429743.js",
 			"3f44c09167d5753d.js",
@@ -98,15 +97,6 @@ public class PassTest {
 			"" // empty line to make git diffs nicer
 	));
 
-	static void assertEqual(ImmutableList<String> path, Node actual, Node expected, HashTable actualLocations, HashTable expectedLocation) { // path is for better errors
-		// Lol reflection
-		if (actual.getClass() != expected.getClass()) {
-			throw new RuntimeException("Nodes are of different type at path " + path.foldLeft((acc, s) -> acc + "->" + s, "root"));
-		}
-		Field[] fields = actual.getClass().getDeclaredFields();
-
-	}
-
 	static void check(String name) throws JsError, IOException, ClassNotFoundException, NoSuchMethodException, InstantiationException, JSONException, IllegalAccessException {
 		String src = new String(Files.readAllBytes(Paths.get(testsDir, name)), StandardCharsets.UTF_8);
 		String expectedJSON = new String(Files.readAllBytes(Paths.get(expectationsDir, name + "-tree.json")), StandardCharsets.UTF_8);
@@ -120,7 +110,34 @@ public class PassTest {
 
 			DeserializerWithLocation deserializer = new DeserializerWithLocation();
 			Module expected = (Module) deserializer.deserializeNode(new JsonParser().parse(expectedJSON));
-			if (!expected.equals(actual)) {
+			if (expected.equals(actual)) {
+				// Trees match; check locations
+				for (Pair<BranchGetter, Node> p : new BranchIterator(actual)) {
+					Node actualNode = p.right;
+					Node expectedNode = p.left.apply(expected).fromJust();
+
+					Maybe<SourceSpan> maybeActualLocation = parser.getLocation(actualNode);
+					Maybe<SourceSpan> maybeExpectedLocation = deserializer.getLocation(expectedNode);
+
+					if (maybeActualLocation.isJust() && maybeExpectedLocation.isNothing()) {
+						throw new RuntimeException("Node unexpectedly has location"); // TODO which node
+					}
+					if (maybeActualLocation.isNothing() && maybeExpectedLocation.isNothing()) {
+						throw new RuntimeException("Node unexpectedly lacks location");
+					}
+					if (maybeActualLocation.isJust() && maybeExpectedLocation.isJust()) {
+						SourceSpan actualLocation = maybeActualLocation.fromJust();
+						SourceSpan expectedLocation = maybeExpectedLocation.fromJust();
+
+						assertEquals("start line", expectedLocation.start.line, actualLocation.start.line);
+						assertEquals("start column", expectedLocation.start.column, actualLocation.start.column);
+						assertEquals("start offset", expectedLocation.start.offset, actualLocation.start.offset);
+						assertEquals("end line", expectedLocation.end.line, actualLocation.end.line);
+						assertEquals("end column", expectedLocation.end.column, actualLocation.end.column);
+						assertEquals("end offset", expectedLocation.end.offset, actualLocation.end.offset);
+					}
+				}
+			} else {
 				// TODO: a more informative tree-equality check with a treewalker
 				throw new RuntimeException("Trees don't match!");
 			}
