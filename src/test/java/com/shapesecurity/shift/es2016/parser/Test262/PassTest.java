@@ -10,6 +10,7 @@ import com.shapesecurity.functional.data.Maybe;
 import com.shapesecurity.functional.data.NonEmptyImmutableList;
 import com.shapesecurity.shift.es2016.ast.Module;
 import com.shapesecurity.shift.es2016.ast.Node;
+import com.shapesecurity.shift.es2016.ast.Program;
 import com.shapesecurity.shift.es2016.ast.Script;
 import com.shapesecurity.shift.es2016.parser.EarlyErrorChecker;
 import com.shapesecurity.shift.es2016.parser.JsError;
@@ -101,57 +102,46 @@ public class PassTest {
 		String src = new String(Files.readAllBytes(Paths.get(testsDir, name)), StandardCharsets.UTF_8);
 		String expectedJSON = new String(Files.readAllBytes(Paths.get(expectationsDir, name + "-tree.json")), StandardCharsets.UTF_8);
 
-		if (name.endsWith(".module.js")) {
-			ParserWithLocation parser = new ParserWithLocation();
-			Module actual = parser.parseModule(src);
-			if (EarlyErrorChecker.validate(actual).isNotEmpty()) {
-				throw new RuntimeException("Pass test throws early error!");
-			}
+		ParserWithLocation parser = new ParserWithLocation();
+		Program actual = name.endsWith(".module.js") ? parser.parseModule(src) : parser.parseScript(src);
+		if (EarlyErrorChecker.validate(actual).isNotEmpty()) {
+			throw new RuntimeException("Pass test throws early error!");
+		}
 
-			DeserializerWithLocation deserializer = new DeserializerWithLocation();
-			Module expected = (Module) deserializer.deserializeNode(new JsonParser().parse(expectedJSON));
-			if (expected.equals(actual)) {
-				// Trees match; check locations
-				for (Pair<BranchGetter, Node> p : new BranchIterator(actual)) {
-					Node actualNode = p.right;
-					Node expectedNode = p.left.apply(expected).fromJust();
+		DeserializerWithLocation deserializer = new DeserializerWithLocation();
+		Program expected = (Program) deserializer.deserializeNode(new JsonParser().parse(expectedJSON));
+		if (expected.equals(actual)) {
+			// check locations
+			for (Pair<BranchGetter, Node> p : new BranchIterator(actual)) {
+				Node actualNode = p.right;
+				Node expectedNode = p.left.apply(expected).fromJust();
 
-					Maybe<SourceSpan> maybeActualLocation = parser.getLocation(actualNode);
-					Maybe<SourceSpan> maybeExpectedLocation = deserializer.getLocation(expectedNode);
+				Maybe<SourceSpan> maybeActualLocation = parser.getLocation(actualNode);
+				Maybe<SourceSpan> maybeExpectedLocation = deserializer.getLocation(expectedNode);
 
-					if (maybeActualLocation.isJust() && maybeExpectedLocation.isNothing()) {
-						throw new RuntimeException("Node unexpectedly has location"); // TODO which node
-					}
-					if (maybeActualLocation.isNothing() && maybeExpectedLocation.isNothing()) {
-						throw new RuntimeException("Node unexpectedly lacks location");
-					}
-					if (maybeActualLocation.isJust() && maybeExpectedLocation.isJust()) {
-						SourceSpan actualLocation = maybeActualLocation.fromJust();
-						SourceSpan expectedLocation = maybeExpectedLocation.fromJust();
-
-						assertEquals("start line (root" + p.left.toString() + ")", expectedLocation.start.line, actualLocation.start.line);
-						assertEquals("start column (root" + p.left.toString() + ")", expectedLocation.start.column, actualLocation.start.column);
-						assertEquals("start offset (root" + p.left.toString() + ")", expectedLocation.start.offset, actualLocation.start.offset);
-						assertEquals("end line (root" + p.left.toString() + ")", expectedLocation.end.line, actualLocation.end.line);
-						assertEquals("end column (root" + p.left.toString() + ")", expectedLocation.end.column, actualLocation.end.column);
-						assertEquals("end offset (root" + p.left.toString() + ")", expectedLocation.end.offset, actualLocation.end.offset);
-					}
+				if (maybeActualLocation.isJust() && maybeExpectedLocation.isNothing()) {
+					throw new RuntimeException("Node unexpectedly has location (root" + p.left.toString() + ")");
 				}
-			} else {
-				// TODO: a more informative tree-equality check with a treewalker
-				throw new RuntimeException("Trees don't match!");
+				if (maybeActualLocation.isNothing() && maybeExpectedLocation.isJust()) {
+					throw new RuntimeException("Node unexpectedly lacks location (root" + p.left.toString() + ")");
+				}
+				if (maybeActualLocation.isJust() && maybeExpectedLocation.isJust()) {
+					SourceSpan actualLocation = maybeActualLocation.fromJust();
+					SourceSpan expectedLocation = maybeExpectedLocation.fromJust();
+
+					assertEquals("start line (root" + p.left.toString() + ")", expectedLocation.start.line, actualLocation.start.line);
+					assertEquals("start column (root" + p.left.toString() + ")", expectedLocation.start.column, actualLocation.start.column);
+					assertEquals("start offset (root" + p.left.toString() + ")", expectedLocation.start.offset, actualLocation.start.offset);
+					assertEquals("end line (root" + p.left.toString() + ")", expectedLocation.end.line, actualLocation.end.line);
+					assertEquals("end column (root" + p.left.toString() + ")", expectedLocation.end.column, actualLocation.end.column);
+					assertEquals("end offset (root" + p.left.toString() + ")", expectedLocation.end.offset, actualLocation.end.offset);
+				}
 			}
+
+			// check comments
 		} else {
-			Script actual = Parser.parseScript(src);
-
-			if (EarlyErrorChecker.validate(actual).isNotEmpty()) {
-				throw new RuntimeException("Pass test throws early error!");
-			}
-
-			Script expected = (Script) Deserializer.deserialize(expectedJSON);
-			if (!expected.equals(actual)) {
-				throw new RuntimeException("Trees don't match!");
-			}
+			// TODO: a more informative tree-equality check with a treewalker
+			throw new RuntimeException("Trees don't match!");
 		}
 	}
 
