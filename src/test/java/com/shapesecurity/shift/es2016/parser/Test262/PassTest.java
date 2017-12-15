@@ -129,12 +129,12 @@ public class PassTest {
 						SourceSpan actualLocation = maybeActualLocation.fromJust();
 						SourceSpan expectedLocation = maybeExpectedLocation.fromJust();
 
-						assertEquals("start line", expectedLocation.start.line, actualLocation.start.line);
-						assertEquals("start column", expectedLocation.start.column, actualLocation.start.column);
-						assertEquals("start offset", expectedLocation.start.offset, actualLocation.start.offset);
-						assertEquals("end line", expectedLocation.end.line, actualLocation.end.line);
-						assertEquals("end column", expectedLocation.end.column, actualLocation.end.column);
-						assertEquals("end offset", expectedLocation.end.offset, actualLocation.end.offset);
+						assertEquals("start line (root" + p.left.toString() + ")", expectedLocation.start.line, actualLocation.start.line);
+						assertEquals("start column (root" + p.left.toString() + ")", expectedLocation.start.column, actualLocation.start.column);
+						assertEquals("start offset (root" + p.left.toString() + ")", expectedLocation.start.offset, actualLocation.start.offset);
+						assertEquals("end line (root" + p.left.toString() + ")", expectedLocation.end.line, actualLocation.end.line);
+						assertEquals("end column (root" + p.left.toString() + ")", expectedLocation.end.column, actualLocation.end.column);
+						assertEquals("end offset (root" + p.left.toString() + ")", expectedLocation.end.offset, actualLocation.end.offset);
 					}
 				}
 			} else {
