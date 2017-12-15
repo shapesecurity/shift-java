@@ -33,11 +33,14 @@ import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import static org.junit.Assert.assertEquals;
 
@@ -141,7 +144,7 @@ public class PassTest {
 
 			// check comments
 			String commentsJSON = new String(Files.readAllBytes(Paths.get(expectationsDir, name + "-comments.json")), StandardCharsets.UTF_8);
-			ImmutableList<ParserWithLocation.Comment> expectedComments = Deserializer.deserializeComments(commentsJSON);
+			ImmutableList<ParserWithLocation.Comment> expectedComments = deserializeComments(commentsJSON);
 
 			ImmutableList<ParserWithLocation.Comment> actualComments = parser.getComments();
 
@@ -161,8 +164,24 @@ public class PassTest {
 				assertEquals(expectedComment.end.offset, actualComment.end.offset);
 			}
 		} else {
-			// TODO: a more informative tree-equality check with a treewalker
-			throw new RuntimeException("Trees don't match!");
+			// Trees don't match. To give a useful error message, we find a relatively low node present in both trees which differs.
+			List<Pair<BranchGetter, Node>> locations = new ArrayList<>();
+			(new BranchIterator(expected)).forEach(locations::add);
+			for (int i = locations.size() - 1; i >= 0; --i) { // reverse order so we never report a parent when a child would do
+				BranchGetter location = locations.get(i).left;
+				Node expectedNode = locations.get(i).right;
+				Maybe<? extends Node> maybeActual = location.apply(actual);
+
+				if (maybeActual.isJust() && !maybeActual.fromJust().equals(expectedNode)) {
+					Class actualClass = maybeActual.fromJust().getClass();
+					if (actualClass.equals(expectedNode.getClass())) {
+						throw new RuntimeException("Trees differ - nodes of the same type but differ structurally (at root" + location.toString() + ")");
+					} else {
+						throw new RuntimeException("Trees differ - expected " + expectedNode.getClass().getSimpleName() + " but got " + actualClass.getSimpleName() + " (at root" + location.toString() + ")");
+					}
+				}
+			}
+			throw new RuntimeException("Unreachable - trees unequal but have no unequal nodes");
 		}
 	}
 
@@ -218,5 +237,42 @@ public class PassTest {
 			}
 			return result;
 		}
+	}
+
+	public static ImmutableList<ParserWithLocation.Comment> deserializeComments(String toDeserialize) {
+		JsonElement comments = new JsonParser().parse(toDeserialize);
+		return ImmutableList.from(
+				StreamSupport.stream(comments.getAsJsonArray().spliterator(), false)
+						.map(c -> {
+							JsonObject comment = c.getAsJsonObject();
+							ParserWithLocation.Comment.Type type;
+							switch (comment.getAsJsonPrimitive("type").getAsString()) {
+								case "SingleLine":
+									type = ParserWithLocation.Comment.Type.SingleLine;
+									break;
+								case "MultiLine":
+									type = ParserWithLocation.Comment.Type.MultiLine;
+									break;
+								case "HTMLOpen":
+									type = ParserWithLocation.Comment.Type.HTMLOpen;
+									break;
+								case "HTMLClose":
+									type = ParserWithLocation.Comment.Type.HTMLClose;
+									break;
+								default:
+									throw new RuntimeException("Comment of unrecognized type");
+							}
+							String text = comment.getAsJsonPrimitive("text").getAsString();
+							JsonObject start = comment.getAsJsonObject("start");
+							JsonObject end = comment.getAsJsonObject("end");
+							return new ParserWithLocation.Comment(
+									type,
+									text,
+									new SourceLocation(start.getAsJsonPrimitive("line").getAsInt(), start.getAsJsonPrimitive("column").getAsInt(), start.getAsJsonPrimitive("offset").getAsInt()),
+									new SourceLocation(end.getAsJsonPrimitive("line").getAsInt(), end.getAsJsonPrimitive("column").getAsInt(), end.getAsJsonPrimitive("offset").getAsInt())
+							);
+						})
+						.collect(Collectors.toList())
+		);
 	}
 }

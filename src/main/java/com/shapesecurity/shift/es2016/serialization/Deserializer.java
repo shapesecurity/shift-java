@@ -27,43 +27,6 @@ public class Deserializer {
         return new Deserializer().deserializeNode(json);
     }
 
-    public static ImmutableList<ParserWithLocation.Comment> deserializeComments(String toDeserialize) {
-        JsonElement comments = new JsonParser().parse(toDeserialize);
-        return ImmutableList.from(
-                StreamSupport.stream(comments.getAsJsonArray().spliterator(), false)
-                    .map(c -> {
-                        JsonObject comment = c.getAsJsonObject();
-                        ParserWithLocation.Comment.Type type;
-                        switch (comment.getAsJsonPrimitive("type").getAsString()) {
-                            case "SingleLine":
-                                type = ParserWithLocation.Comment.Type.SingleLine;
-                                break;
-                            case "MultiLine":
-                                type = ParserWithLocation.Comment.Type.MultiLine;
-                                break;
-                            case "HTMLOpen":
-                                type = ParserWithLocation.Comment.Type.HTMLOpen;
-                                break;
-                            case "HTMLClose":
-                                type = ParserWithLocation.Comment.Type.HTMLClose;
-                                break;
-                            default:
-                                throw new RuntimeException("Comment of unrecognized type");
-                        }
-                        String text = comment.getAsJsonPrimitive("text").getAsString();
-                        JsonObject start = comment.getAsJsonObject("start");
-                        JsonObject end = comment.getAsJsonObject("end");
-                        return new ParserWithLocation.Comment(
-                                type,
-                                text,
-                                new SourceLocation(start.getAsJsonPrimitive("line").getAsInt(), start.getAsJsonPrimitive("column").getAsInt(), start.getAsJsonPrimitive("offset").getAsInt()),
-                                new SourceLocation(end.getAsJsonPrimitive("line").getAsInt(), end.getAsJsonPrimitive("column").getAsInt(), end.getAsJsonPrimitive("offset").getAsInt())
-                        );
-                    })
-                    .collect(Collectors.toList())
-        );
-    }
-
     protected BinaryOperator deserializeBinaryOperator(JsonElement jsonElement) {
         String operatorString = jsonElement.getAsString();
         switch (operatorString) {
