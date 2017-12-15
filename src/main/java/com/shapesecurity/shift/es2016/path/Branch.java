@@ -28,6 +28,8 @@ import java.util.Objects;
 public abstract class Branch {
 	abstract public Maybe<? extends Node> step(Node node);
 
+  abstract public String propertyName();
+
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) return true;
@@ -617,6 +619,10 @@ class ArrayAssignmentTargetElements extends IndexedBranch {
 		if (!(node instanceof ArrayAssignmentTarget)) return Maybe.empty();
 		return ((ArrayAssignmentTarget) node).elements.index(index).orJust(Maybe.empty());
 	}
+
+	public String propertyName() {
+		return "elements[" + Integer.toString(index) + "]";
+	}
 }
 
 class ArrayAssignmentTargetRest extends Branch {
@@ -624,6 +630,10 @@ class ArrayAssignmentTargetRest extends Branch {
 	public Maybe<? extends Node> step(Node node) {
 		if (!(node instanceof ArrayAssignmentTarget)) return Maybe.empty();
 		return ((ArrayAssignmentTarget) node).rest;
+	}
+
+	public String propertyName() {
+		return "rest";
 	}
 }
 
@@ -637,6 +647,10 @@ class ArrayBindingElements extends IndexedBranch {
 		if (!(node instanceof ArrayBinding)) return Maybe.empty();
 		return ((ArrayBinding) node).elements.index(index).orJust(Maybe.empty());
 	}
+
+	public String propertyName() {
+		return "elements[" + Integer.toString(index) + "]";
+	}
 }
 
 class ArrayBindingRest extends Branch {
@@ -644,6 +658,10 @@ class ArrayBindingRest extends Branch {
 	public Maybe<? extends Node> step(Node node) {
 		if (!(node instanceof ArrayBinding)) return Maybe.empty();
 		return ((ArrayBinding) node).rest;
+	}
+
+	public String propertyName() {
+		return "rest";
 	}
 }
 
@@ -657,6 +675,10 @@ class ArrayExpressionElements extends IndexedBranch {
 		if (!(node instanceof ArrayExpression)) return Maybe.empty();
 		return ((ArrayExpression) node).elements.index(index).orJust(Maybe.empty());
 	}
+
+	public String propertyName() {
+		return "elements[" + Integer.toString(index) + "]";
+	}
 }
 
 class ArrowExpressionParams extends Branch {
@@ -664,6 +686,10 @@ class ArrowExpressionParams extends Branch {
 	public Maybe<? extends Node> step(Node node) {
 		if (!(node instanceof ArrowExpression)) return Maybe.empty();
 		return Maybe.of(((ArrowExpression) node).params);
+	}
+
+	public String propertyName() {
+		return "params";
 	}
 }
 
@@ -673,6 +699,10 @@ class ArrowExpressionBody extends Branch {
 		if (!(node instanceof ArrowExpression)) return Maybe.empty();
 		return Maybe.of(((ArrowExpression) node).body);
 	}
+
+	public String propertyName() {
+		return "body";
+	}
 }
 
 class AssignmentExpressionBinding extends Branch {
@@ -680,6 +710,10 @@ class AssignmentExpressionBinding extends Branch {
 	public Maybe<? extends Node> step(Node node) {
 		if (!(node instanceof AssignmentExpression)) return Maybe.empty();
 		return Maybe.of(((AssignmentExpression) node).binding);
+	}
+
+	public String propertyName() {
+		return "binding";
 	}
 }
 
@@ -689,6 +723,10 @@ class AssignmentExpressionExpression extends Branch {
 		if (!(node instanceof AssignmentExpression)) return Maybe.empty();
 		return Maybe.of(((AssignmentExpression) node).expression);
 	}
+
+	public String propertyName() {
+		return "expression";
+	}
 }
 
 class AssignmentTargetPropertyIdentifierBinding extends Branch {
@@ -696,6 +734,10 @@ class AssignmentTargetPropertyIdentifierBinding extends Branch {
 	public Maybe<? extends Node> step(Node node) {
 		if (!(node instanceof AssignmentTargetPropertyIdentifier)) return Maybe.empty();
 		return Maybe.of(((AssignmentTargetPropertyIdentifier) node).binding);
+	}
+
+	public String propertyName() {
+		return "binding";
 	}
 }
 
@@ -705,6 +747,10 @@ class AssignmentTargetPropertyIdentifierInit extends Branch {
 		if (!(node instanceof AssignmentTargetPropertyIdentifier)) return Maybe.empty();
 		return ((AssignmentTargetPropertyIdentifier) node).init;
 	}
+
+	public String propertyName() {
+		return "init";
+	}
 }
 
 class AssignmentTargetPropertyPropertyName extends Branch {
@@ -712,6 +758,10 @@ class AssignmentTargetPropertyPropertyName extends Branch {
 	public Maybe<? extends Node> step(Node node) {
 		if (!(node instanceof AssignmentTargetPropertyProperty)) return Maybe.empty();
 		return Maybe.of(((AssignmentTargetPropertyProperty) node).name);
+	}
+
+	public String propertyName() {
+		return "name";
 	}
 }
 
@@ -721,6 +771,10 @@ class AssignmentTargetPropertyPropertyBinding extends Branch {
 		if (!(node instanceof AssignmentTargetPropertyProperty)) return Maybe.empty();
 		return Maybe.of(((AssignmentTargetPropertyProperty) node).binding);
 	}
+
+	public String propertyName() {
+		return "binding";
+	}
 }
 
 class AssignmentTargetWithDefaultBinding extends Branch {
@@ -728,6 +782,10 @@ class AssignmentTargetWithDefaultBinding extends Branch {
 	public Maybe<? extends Node> step(Node node) {
 		if (!(node instanceof AssignmentTargetWithDefault)) return Maybe.empty();
 		return Maybe.of(((AssignmentTargetWithDefault) node).binding);
+	}
+
+	public String propertyName() {
+		return "binding";
 	}
 }
 
@@ -737,6 +795,10 @@ class AssignmentTargetWithDefaultInit extends Branch {
 		if (!(node instanceof AssignmentTargetWithDefault)) return Maybe.empty();
 		return Maybe.of(((AssignmentTargetWithDefault) node).init);
 	}
+
+	public String propertyName() {
+		return "init";
+	}
 }
 
 class BinaryExpressionLeft extends Branch {
@@ -744,6 +806,10 @@ class BinaryExpressionLeft extends Branch {
 	public Maybe<? extends Node> step(Node node) {
 		if (!(node instanceof BinaryExpression)) return Maybe.empty();
 		return Maybe.of(((BinaryExpression) node).left);
+	}
+
+	public String propertyName() {
+		return "left";
 	}
 }
 
@@ -753,6 +819,10 @@ class BinaryExpressionRight extends Branch {
 		if (!(node instanceof BinaryExpression)) return Maybe.empty();
 		return Maybe.of(((BinaryExpression) node).right);
 	}
+
+	public String propertyName() {
+		return "right";
+	}
 }
 
 class BindingPropertyIdentifierBinding extends Branch {
@@ -760,6 +830,10 @@ class BindingPropertyIdentifierBinding extends Branch {
 	public Maybe<? extends Node> step(Node node) {
 		if (!(node instanceof BindingPropertyIdentifier)) return Maybe.empty();
 		return Maybe.of(((BindingPropertyIdentifier) node).binding);
+	}
+
+	public String propertyName() {
+		return "binding";
 	}
 }
 
@@ -769,6 +843,10 @@ class BindingPropertyIdentifierInit extends Branch {
 		if (!(node instanceof BindingPropertyIdentifier)) return Maybe.empty();
 		return ((BindingPropertyIdentifier) node).init;
 	}
+
+	public String propertyName() {
+		return "init";
+	}
 }
 
 class BindingPropertyPropertyName extends Branch {
@@ -776,6 +854,10 @@ class BindingPropertyPropertyName extends Branch {
 	public Maybe<? extends Node> step(Node node) {
 		if (!(node instanceof BindingPropertyProperty)) return Maybe.empty();
 		return Maybe.of(((BindingPropertyProperty) node).name);
+	}
+
+	public String propertyName() {
+		return "name";
 	}
 }
 
@@ -785,6 +867,10 @@ class BindingPropertyPropertyBinding extends Branch {
 		if (!(node instanceof BindingPropertyProperty)) return Maybe.empty();
 		return Maybe.of(((BindingPropertyProperty) node).binding);
 	}
+
+	public String propertyName() {
+		return "binding";
+	}
 }
 
 class BindingWithDefaultBinding extends Branch {
@@ -793,6 +879,10 @@ class BindingWithDefaultBinding extends Branch {
 		if (!(node instanceof BindingWithDefault)) return Maybe.empty();
 		return Maybe.of(((BindingWithDefault) node).binding);
 	}
+
+	public String propertyName() {
+		return "binding";
+	}
 }
 
 class BindingWithDefaultInit extends Branch {
@@ -800,6 +890,10 @@ class BindingWithDefaultInit extends Branch {
 	public Maybe<? extends Node> step(Node node) {
 		if (!(node instanceof BindingWithDefault)) return Maybe.empty();
 		return Maybe.of(((BindingWithDefault) node).init);
+	}
+
+	public String propertyName() {
+		return "init";
 	}
 }
 
@@ -813,6 +907,10 @@ class BlockStatements extends IndexedBranch {
 		if (!(node instanceof Block)) return Maybe.empty();
 		return ((Block) node).statements.index(index);
 	}
+
+	public String propertyName() {
+		return "statements[" + Integer.toString(index) + "]";
+	}
 }
 
 class BlockStatementBlock extends Branch {
@@ -821,6 +919,10 @@ class BlockStatementBlock extends Branch {
 		if (!(node instanceof BlockStatement)) return Maybe.empty();
 		return Maybe.of(((BlockStatement) node).block);
 	}
+
+	public String propertyName() {
+		return "block";
+	}
 }
 
 class CallExpressionCallee extends Branch {
@@ -828,6 +930,10 @@ class CallExpressionCallee extends Branch {
 	public Maybe<? extends Node> step(Node node) {
 		if (!(node instanceof CallExpression)) return Maybe.empty();
 		return Maybe.of(((CallExpression) node).callee);
+	}
+
+	public String propertyName() {
+		return "callee";
 	}
 }
 
@@ -841,6 +947,10 @@ class CallExpressionArguments extends IndexedBranch {
 		if (!(node instanceof CallExpression)) return Maybe.empty();
 		return ((CallExpression) node).arguments.index(index);
 	}
+
+	public String propertyName() {
+		return "arguments[" + Integer.toString(index) + "]";
+	}
 }
 
 class CatchClauseBinding extends Branch {
@@ -848,6 +958,10 @@ class CatchClauseBinding extends Branch {
 	public Maybe<? extends Node> step(Node node) {
 		if (!(node instanceof CatchClause)) return Maybe.empty();
 		return Maybe.of(((CatchClause) node).binding);
+	}
+
+	public String propertyName() {
+		return "binding";
 	}
 }
 
@@ -857,6 +971,10 @@ class CatchClauseBody extends Branch {
 		if (!(node instanceof CatchClause)) return Maybe.empty();
 		return Maybe.of(((CatchClause) node).body);
 	}
+
+	public String propertyName() {
+		return "body";
+	}
 }
 
 class ClassDeclarationName extends Branch {
@@ -865,6 +983,10 @@ class ClassDeclarationName extends Branch {
 		if (!(node instanceof ClassDeclaration)) return Maybe.empty();
 		return Maybe.of(((ClassDeclaration) node).name);
 	}
+
+	public String propertyName() {
+		return "name";
+	}
 }
 
 class ClassDeclarationSuper extends Branch {
@@ -872,6 +994,10 @@ class ClassDeclarationSuper extends Branch {
 	public Maybe<? extends Node> step(Node node) {
 		if (!(node instanceof ClassDeclaration)) return Maybe.empty();
 		return ((ClassDeclaration) node)._super;
+	}
+
+	public String propertyName() {
+		return "super";
 	}
 }
 
@@ -885,6 +1011,10 @@ class ClassDeclarationElements extends IndexedBranch {
 		if (!(node instanceof ClassDeclaration)) return Maybe.empty();
 		return ((ClassDeclaration) node).elements.index(index);
 	}
+
+	public String propertyName() {
+		return "elements[" + Integer.toString(index) + "]";
+	}
 }
 
 class ClassElementMethod extends Branch {
@@ -892,6 +1022,10 @@ class ClassElementMethod extends Branch {
 	public Maybe<? extends Node> step(Node node) {
 		if (!(node instanceof ClassElement)) return Maybe.empty();
 		return Maybe.of(((ClassElement) node).method);
+	}
+
+	public String propertyName() {
+		return "method";
 	}
 }
 
@@ -901,6 +1035,10 @@ class ClassExpressionName extends Branch {
 		if (!(node instanceof ClassExpression)) return Maybe.empty();
 		return ((ClassExpression) node).name;
 	}
+
+	public String propertyName() {
+		return "name";
+	}
 }
 
 class ClassExpressionSuper extends Branch {
@@ -908,6 +1046,10 @@ class ClassExpressionSuper extends Branch {
 	public Maybe<? extends Node> step(Node node) {
 		if (!(node instanceof ClassExpression)) return Maybe.empty();
 		return ((ClassExpression) node)._super;
+	}
+
+	public String propertyName() {
+		return "super";
 	}
 }
 
@@ -921,6 +1063,10 @@ class ClassExpressionElements extends IndexedBranch {
 		if (!(node instanceof ClassExpression)) return Maybe.empty();
 		return ((ClassExpression) node).elements.index(index);
 	}
+
+	public String propertyName() {
+		return "elements[" + Integer.toString(index) + "]";
+	}
 }
 
 class CompoundAssignmentExpressionBinding extends Branch {
@@ -928,6 +1074,10 @@ class CompoundAssignmentExpressionBinding extends Branch {
 	public Maybe<? extends Node> step(Node node) {
 		if (!(node instanceof CompoundAssignmentExpression)) return Maybe.empty();
 		return Maybe.of(((CompoundAssignmentExpression) node).binding);
+	}
+
+	public String propertyName() {
+		return "binding";
 	}
 }
 
@@ -937,6 +1087,10 @@ class CompoundAssignmentExpressionExpression extends Branch {
 		if (!(node instanceof CompoundAssignmentExpression)) return Maybe.empty();
 		return Maybe.of(((CompoundAssignmentExpression) node).expression);
 	}
+
+	public String propertyName() {
+		return "expression";
+	}
 }
 
 class ComputedMemberAssignmentTargetObject extends Branch {
@@ -944,6 +1098,10 @@ class ComputedMemberAssignmentTargetObject extends Branch {
 	public Maybe<? extends Node> step(Node node) {
 		if (!(node instanceof ComputedMemberAssignmentTarget)) return Maybe.empty();
 		return Maybe.of(((ComputedMemberAssignmentTarget) node).object);
+	}
+
+	public String propertyName() {
+		return "object";
 	}
 }
 
@@ -953,6 +1111,10 @@ class ComputedMemberAssignmentTargetExpression extends Branch {
 		if (!(node instanceof ComputedMemberAssignmentTarget)) return Maybe.empty();
 		return Maybe.of(((ComputedMemberAssignmentTarget) node).expression);
 	}
+
+	public String propertyName() {
+		return "expression";
+	}
 }
 
 class ComputedMemberExpressionObject extends Branch {
@@ -960,6 +1122,10 @@ class ComputedMemberExpressionObject extends Branch {
 	public Maybe<? extends Node> step(Node node) {
 		if (!(node instanceof ComputedMemberExpression)) return Maybe.empty();
 		return Maybe.of(((ComputedMemberExpression) node).object);
+	}
+
+	public String propertyName() {
+		return "object";
 	}
 }
 
@@ -969,6 +1135,10 @@ class ComputedMemberExpressionExpression extends Branch {
 		if (!(node instanceof ComputedMemberExpression)) return Maybe.empty();
 		return Maybe.of(((ComputedMemberExpression) node).expression);
 	}
+
+	public String propertyName() {
+		return "expression";
+	}
 }
 
 class ComputedPropertyNameExpression extends Branch {
@@ -976,6 +1146,10 @@ class ComputedPropertyNameExpression extends Branch {
 	public Maybe<? extends Node> step(Node node) {
 		if (!(node instanceof ComputedPropertyName)) return Maybe.empty();
 		return Maybe.of(((ComputedPropertyName) node).expression);
+	}
+
+	public String propertyName() {
+		return "expression";
 	}
 }
 
@@ -985,6 +1159,10 @@ class ConditionalExpressionTest extends Branch {
 		if (!(node instanceof ConditionalExpression)) return Maybe.empty();
 		return Maybe.of(((ConditionalExpression) node).test);
 	}
+
+	public String propertyName() {
+		return "test";
+	}
 }
 
 class ConditionalExpressionConsequent extends Branch {
@@ -992,6 +1170,10 @@ class ConditionalExpressionConsequent extends Branch {
 	public Maybe<? extends Node> step(Node node) {
 		if (!(node instanceof ConditionalExpression)) return Maybe.empty();
 		return Maybe.of(((ConditionalExpression) node).consequent);
+	}
+
+	public String propertyName() {
+		return "consequent";
 	}
 }
 
@@ -1001,6 +1183,10 @@ class ConditionalExpressionAlternate extends Branch {
 		if (!(node instanceof ConditionalExpression)) return Maybe.empty();
 		return Maybe.of(((ConditionalExpression) node).alternate);
 	}
+
+	public String propertyName() {
+		return "alternate";
+	}
 }
 
 class DataPropertyName extends Branch {
@@ -1008,6 +1194,10 @@ class DataPropertyName extends Branch {
 	public Maybe<? extends Node> step(Node node) {
 		if (!(node instanceof DataProperty)) return Maybe.empty();
 		return Maybe.of(((DataProperty) node).name);
+	}
+
+	public String propertyName() {
+		return "name";
 	}
 }
 
@@ -1017,6 +1207,10 @@ class DataPropertyExpression extends Branch {
 		if (!(node instanceof DataProperty)) return Maybe.empty();
 		return Maybe.of(((DataProperty) node).expression);
 	}
+
+	public String propertyName() {
+		return "expression";
+	}
 }
 
 class DoWhileStatementBody extends Branch {
@@ -1024,6 +1218,10 @@ class DoWhileStatementBody extends Branch {
 	public Maybe<? extends Node> step(Node node) {
 		if (!(node instanceof DoWhileStatement)) return Maybe.empty();
 		return Maybe.of(((DoWhileStatement) node).body);
+	}
+
+	public String propertyName() {
+		return "body";
 	}
 }
 
@@ -1033,6 +1231,10 @@ class DoWhileStatementTest extends Branch {
 		if (!(node instanceof DoWhileStatement)) return Maybe.empty();
 		return Maybe.of(((DoWhileStatement) node).test);
 	}
+
+	public String propertyName() {
+		return "test";
+	}
 }
 
 class ExportDeclaration extends Branch {
@@ -1041,6 +1243,10 @@ class ExportDeclaration extends Branch {
 		if (!(node instanceof Export)) return Maybe.empty();
 		return Maybe.of(((Export) node).declaration);
 	}
+
+	public String propertyName() {
+		return "declaration";
+	}
 }
 
 class ExportDefaultBody extends Branch {
@@ -1048,6 +1254,10 @@ class ExportDefaultBody extends Branch {
 	public Maybe<? extends Node> step(Node node) {
 		if (!(node instanceof ExportDefault)) return Maybe.empty();
 		return Maybe.of(((ExportDefault) node).body);
+	}
+
+	public String propertyName() {
+		return "body";
 	}
 }
 
@@ -1061,6 +1271,10 @@ class ExportFromNamedExports extends IndexedBranch {
 		if (!(node instanceof ExportFrom)) return Maybe.empty();
 		return ((ExportFrom) node).namedExports.index(index);
 	}
+
+	public String propertyName() {
+		return "namedExports[" + Integer.toString(index) + "]";
+	}
 }
 
 class ExportLocalSpecifierName extends Branch {
@@ -1068,6 +1282,10 @@ class ExportLocalSpecifierName extends Branch {
 	public Maybe<? extends Node> step(Node node) {
 		if (!(node instanceof ExportLocalSpecifier)) return Maybe.empty();
 		return Maybe.of(((ExportLocalSpecifier) node).name);
+	}
+
+	public String propertyName() {
+		return "name";
 	}
 }
 
@@ -1081,6 +1299,10 @@ class ExportLocalsNamedExports extends IndexedBranch {
 		if (!(node instanceof ExportLocals)) return Maybe.empty();
 		return ((ExportLocals) node).namedExports.index(index);
 	}
+
+	public String propertyName() {
+		return "namedExports[" + Integer.toString(index) + "]";
+	}
 }
 
 class ExpressionStatementExpression extends Branch {
@@ -1088,6 +1310,10 @@ class ExpressionStatementExpression extends Branch {
 	public Maybe<? extends Node> step(Node node) {
 		if (!(node instanceof ExpressionStatement)) return Maybe.empty();
 		return Maybe.of(((ExpressionStatement) node).expression);
+	}
+
+	public String propertyName() {
+		return "expression";
 	}
 }
 
@@ -1097,6 +1323,10 @@ class ForInStatementLeft extends Branch {
 		if (!(node instanceof ForInStatement)) return Maybe.empty();
 		return Maybe.of(((ForInStatement) node).left);
 	}
+
+	public String propertyName() {
+		return "left";
+	}
 }
 
 class ForInStatementRight extends Branch {
@@ -1104,6 +1334,10 @@ class ForInStatementRight extends Branch {
 	public Maybe<? extends Node> step(Node node) {
 		if (!(node instanceof ForInStatement)) return Maybe.empty();
 		return Maybe.of(((ForInStatement) node).right);
+	}
+
+	public String propertyName() {
+		return "right";
 	}
 }
 
@@ -1113,6 +1347,10 @@ class ForInStatementBody extends Branch {
 		if (!(node instanceof ForInStatement)) return Maybe.empty();
 		return Maybe.of(((ForInStatement) node).body);
 	}
+
+	public String propertyName() {
+		return "body";
+	}
 }
 
 class ForOfStatementLeft extends Branch {
@@ -1120,6 +1358,10 @@ class ForOfStatementLeft extends Branch {
 	public Maybe<? extends Node> step(Node node) {
 		if (!(node instanceof ForOfStatement)) return Maybe.empty();
 		return Maybe.of(((ForOfStatement) node).left);
+	}
+
+	public String propertyName() {
+		return "left";
 	}
 }
 
@@ -1129,6 +1371,10 @@ class ForOfStatementRight extends Branch {
 		if (!(node instanceof ForOfStatement)) return Maybe.empty();
 		return Maybe.of(((ForOfStatement) node).right);
 	}
+
+	public String propertyName() {
+		return "right";
+	}
 }
 
 class ForOfStatementBody extends Branch {
@@ -1136,6 +1382,10 @@ class ForOfStatementBody extends Branch {
 	public Maybe<? extends Node> step(Node node) {
 		if (!(node instanceof ForOfStatement)) return Maybe.empty();
 		return Maybe.of(((ForOfStatement) node).body);
+	}
+
+	public String propertyName() {
+		return "body";
 	}
 }
 
@@ -1145,6 +1395,10 @@ class ForStatementInit extends Branch {
 		if (!(node instanceof ForStatement)) return Maybe.empty();
 		return ((ForStatement) node).init;
 	}
+
+	public String propertyName() {
+		return "init";
+	}
 }
 
 class ForStatementTest extends Branch {
@@ -1152,6 +1406,10 @@ class ForStatementTest extends Branch {
 	public Maybe<? extends Node> step(Node node) {
 		if (!(node instanceof ForStatement)) return Maybe.empty();
 		return ((ForStatement) node).test;
+	}
+
+	public String propertyName() {
+		return "test";
 	}
 }
 
@@ -1161,6 +1419,10 @@ class ForStatementUpdate extends Branch {
 		if (!(node instanceof ForStatement)) return Maybe.empty();
 		return ((ForStatement) node).update;
 	}
+
+	public String propertyName() {
+		return "update";
+	}
 }
 
 class ForStatementBody extends Branch {
@@ -1168,6 +1430,10 @@ class ForStatementBody extends Branch {
 	public Maybe<? extends Node> step(Node node) {
 		if (!(node instanceof ForStatement)) return Maybe.empty();
 		return Maybe.of(((ForStatement) node).body);
+	}
+
+	public String propertyName() {
+		return "body";
 	}
 }
 
@@ -1181,6 +1447,10 @@ class FormalParametersItems extends IndexedBranch {
 		if (!(node instanceof FormalParameters)) return Maybe.empty();
 		return ((FormalParameters) node).items.index(index);
 	}
+
+	public String propertyName() {
+		return "items[" + Integer.toString(index) + "]";
+	}
 }
 
 class FormalParametersRest extends Branch {
@@ -1188,6 +1458,10 @@ class FormalParametersRest extends Branch {
 	public Maybe<? extends Node> step(Node node) {
 		if (!(node instanceof FormalParameters)) return Maybe.empty();
 		return ((FormalParameters) node).rest;
+	}
+
+	public String propertyName() {
+		return "rest";
 	}
 }
 
@@ -1201,6 +1475,10 @@ class FunctionBodyDirectives extends IndexedBranch {
 		if (!(node instanceof FunctionBody)) return Maybe.empty();
 		return ((FunctionBody) node).directives.index(index);
 	}
+
+	public String propertyName() {
+		return "directives[" + Integer.toString(index) + "]";
+	}
 }
 
 class FunctionBodyStatements extends IndexedBranch {
@@ -1213,6 +1491,10 @@ class FunctionBodyStatements extends IndexedBranch {
 		if (!(node instanceof FunctionBody)) return Maybe.empty();
 		return ((FunctionBody) node).statements.index(index);
 	}
+
+	public String propertyName() {
+		return "statements[" + Integer.toString(index) + "]";
+	}
 }
 
 class FunctionDeclarationName extends Branch {
@@ -1220,6 +1502,10 @@ class FunctionDeclarationName extends Branch {
 	public Maybe<? extends Node> step(Node node) {
 		if (!(node instanceof FunctionDeclaration)) return Maybe.empty();
 		return Maybe.of(((FunctionDeclaration) node).name);
+	}
+
+	public String propertyName() {
+		return "name";
 	}
 }
 
@@ -1229,6 +1515,10 @@ class FunctionDeclarationParams extends Branch {
 		if (!(node instanceof FunctionDeclaration)) return Maybe.empty();
 		return Maybe.of(((FunctionDeclaration) node).params);
 	}
+
+	public String propertyName() {
+		return "params";
+	}
 }
 
 class FunctionDeclarationBody extends Branch {
@@ -1236,6 +1526,10 @@ class FunctionDeclarationBody extends Branch {
 	public Maybe<? extends Node> step(Node node) {
 		if (!(node instanceof FunctionDeclaration)) return Maybe.empty();
 		return Maybe.of(((FunctionDeclaration) node).body);
+	}
+
+	public String propertyName() {
+		return "body";
 	}
 }
 
@@ -1245,6 +1539,10 @@ class FunctionExpressionName extends Branch {
 		if (!(node instanceof FunctionExpression)) return Maybe.empty();
 		return ((FunctionExpression) node).name;
 	}
+
+	public String propertyName() {
+		return "name";
+	}
 }
 
 class FunctionExpressionParams extends Branch {
@@ -1252,6 +1550,10 @@ class FunctionExpressionParams extends Branch {
 	public Maybe<? extends Node> step(Node node) {
 		if (!(node instanceof FunctionExpression)) return Maybe.empty();
 		return Maybe.of(((FunctionExpression) node).params);
+	}
+
+	public String propertyName() {
+		return "params";
 	}
 }
 
@@ -1261,6 +1563,10 @@ class FunctionExpressionBody extends Branch {
 		if (!(node instanceof FunctionExpression)) return Maybe.empty();
 		return Maybe.of(((FunctionExpression) node).body);
 	}
+
+	public String propertyName() {
+		return "body";
+	}
 }
 
 class GetterName extends Branch {
@@ -1268,6 +1574,10 @@ class GetterName extends Branch {
 	public Maybe<? extends Node> step(Node node) {
 		if (!(node instanceof Getter)) return Maybe.empty();
 		return Maybe.of(((Getter) node).name);
+	}
+
+	public String propertyName() {
+		return "name";
 	}
 }
 
@@ -1277,6 +1587,10 @@ class GetterBody extends Branch {
 		if (!(node instanceof Getter)) return Maybe.empty();
 		return Maybe.of(((Getter) node).body);
 	}
+
+	public String propertyName() {
+		return "body";
+	}
 }
 
 class IfStatementTest extends Branch {
@@ -1284,6 +1598,10 @@ class IfStatementTest extends Branch {
 	public Maybe<? extends Node> step(Node node) {
 		if (!(node instanceof IfStatement)) return Maybe.empty();
 		return Maybe.of(((IfStatement) node).test);
+	}
+
+	public String propertyName() {
+		return "test";
 	}
 }
 
@@ -1293,6 +1611,10 @@ class IfStatementConsequent extends Branch {
 		if (!(node instanceof IfStatement)) return Maybe.empty();
 		return Maybe.of(((IfStatement) node).consequent);
 	}
+
+	public String propertyName() {
+		return "consequent";
+	}
 }
 
 class IfStatementAlternate extends Branch {
@@ -1301,6 +1623,10 @@ class IfStatementAlternate extends Branch {
 		if (!(node instanceof IfStatement)) return Maybe.empty();
 		return ((IfStatement) node).alternate;
 	}
+
+	public String propertyName() {
+		return "alternate";
+	}
 }
 
 class ImportDefaultBinding extends Branch {
@@ -1308,6 +1634,10 @@ class ImportDefaultBinding extends Branch {
 	public Maybe<? extends Node> step(Node node) {
 		if (!(node instanceof Import)) return Maybe.empty();
 		return ((Import) node).defaultBinding;
+	}
+
+	public String propertyName() {
+		return "defaultBinding";
 	}
 }
 
@@ -1321,6 +1651,10 @@ class ImportNamedImports extends IndexedBranch {
 		if (!(node instanceof Import)) return Maybe.empty();
 		return ((Import) node).namedImports.index(index);
 	}
+
+	public String propertyName() {
+		return "namedImports[" + Integer.toString(index) + "]";
+	}
 }
 
 class ImportNamespaceDefaultBinding extends Branch {
@@ -1328,6 +1662,10 @@ class ImportNamespaceDefaultBinding extends Branch {
 	public Maybe<? extends Node> step(Node node) {
 		if (!(node instanceof ImportNamespace)) return Maybe.empty();
 		return ((ImportNamespace) node).defaultBinding;
+	}
+
+	public String propertyName() {
+		return "defaultBinding";
 	}
 }
 
@@ -1337,6 +1675,10 @@ class ImportNamespaceNamespaceBinding extends Branch {
 		if (!(node instanceof ImportNamespace)) return Maybe.empty();
 		return Maybe.of(((ImportNamespace) node).namespaceBinding);
 	}
+
+	public String propertyName() {
+		return "namespaceBinding";
+	}
 }
 
 class ImportSpecifierBinding extends Branch {
@@ -1344,6 +1686,10 @@ class ImportSpecifierBinding extends Branch {
 	public Maybe<? extends Node> step(Node node) {
 		if (!(node instanceof ImportSpecifier)) return Maybe.empty();
 		return Maybe.of(((ImportSpecifier) node).binding);
+	}
+
+	public String propertyName() {
+		return "binding";
 	}
 }
 
@@ -1353,6 +1699,10 @@ class LabeledStatementBody extends Branch {
 		if (!(node instanceof LabeledStatement)) return Maybe.empty();
 		return Maybe.of(((LabeledStatement) node).body);
 	}
+
+	public String propertyName() {
+		return "body";
+	}
 }
 
 class MethodName extends Branch {
@@ -1360,6 +1710,10 @@ class MethodName extends Branch {
 	public Maybe<? extends Node> step(Node node) {
 		if (!(node instanceof Method)) return Maybe.empty();
 		return Maybe.of(((Method) node).name);
+	}
+
+	public String propertyName() {
+		return "name";
 	}
 }
 
@@ -1369,6 +1723,10 @@ class MethodParams extends Branch {
 		if (!(node instanceof Method)) return Maybe.empty();
 		return Maybe.of(((Method) node).params);
 	}
+
+	public String propertyName() {
+		return "params";
+	}
 }
 
 class MethodBody extends Branch {
@@ -1376,6 +1734,10 @@ class MethodBody extends Branch {
 	public Maybe<? extends Node> step(Node node) {
 		if (!(node instanceof Method)) return Maybe.empty();
 		return Maybe.of(((Method) node).body);
+	}
+
+	public String propertyName() {
+		return "body";
 	}
 }
 
@@ -1389,6 +1751,10 @@ class ModuleDirectives extends IndexedBranch {
 		if (!(node instanceof Module)) return Maybe.empty();
 		return ((Module) node).directives.index(index);
 	}
+
+	public String propertyName() {
+		return "directives[" + Integer.toString(index) + "]";
+	}
 }
 
 class ModuleItems extends IndexedBranch {
@@ -1401,6 +1767,10 @@ class ModuleItems extends IndexedBranch {
 		if (!(node instanceof Module)) return Maybe.empty();
 		return ((Module) node).items.index(index);
 	}
+
+	public String propertyName() {
+		return "items[" + Integer.toString(index) + "]";
+	}
 }
 
 class NewExpressionCallee extends Branch {
@@ -1408,6 +1778,10 @@ class NewExpressionCallee extends Branch {
 	public Maybe<? extends Node> step(Node node) {
 		if (!(node instanceof NewExpression)) return Maybe.empty();
 		return Maybe.of(((NewExpression) node).callee);
+	}
+
+	public String propertyName() {
+		return "callee";
 	}
 }
 
@@ -1421,6 +1795,10 @@ class NewExpressionArguments extends IndexedBranch {
 		if (!(node instanceof NewExpression)) return Maybe.empty();
 		return ((NewExpression) node).arguments.index(index);
 	}
+
+	public String propertyName() {
+		return "arguments[" + Integer.toString(index) + "]";
+	}
 }
 
 class ObjectAssignmentTargetProperties extends IndexedBranch {
@@ -1432,6 +1810,10 @@ class ObjectAssignmentTargetProperties extends IndexedBranch {
 	public Maybe<? extends Node> step(Node node) {
 		if (!(node instanceof ObjectAssignmentTarget)) return Maybe.empty();
 		return ((ObjectAssignmentTarget) node).properties.index(index);
+	}
+
+	public String propertyName() {
+		return "properties[" + Integer.toString(index) + "]";
 	}
 }
 
@@ -1445,6 +1827,10 @@ class ObjectBindingProperties extends IndexedBranch {
 		if (!(node instanceof ObjectBinding)) return Maybe.empty();
 		return ((ObjectBinding) node).properties.index(index);
 	}
+
+	public String propertyName() {
+		return "properties[" + Integer.toString(index) + "]";
+	}
 }
 
 class ObjectExpressionProperties extends IndexedBranch {
@@ -1457,6 +1843,10 @@ class ObjectExpressionProperties extends IndexedBranch {
 		if (!(node instanceof ObjectExpression)) return Maybe.empty();
 		return ((ObjectExpression) node).properties.index(index);
 	}
+
+	public String propertyName() {
+		return "properties[" + Integer.toString(index) + "]";
+	}
 }
 
 class ReturnStatementExpression extends Branch {
@@ -1464,6 +1854,10 @@ class ReturnStatementExpression extends Branch {
 	public Maybe<? extends Node> step(Node node) {
 		if (!(node instanceof ReturnStatement)) return Maybe.empty();
 		return ((ReturnStatement) node).expression;
+	}
+
+	public String propertyName() {
+		return "expression";
 	}
 }
 
@@ -1477,6 +1871,10 @@ class ScriptDirectives extends IndexedBranch {
 		if (!(node instanceof Script)) return Maybe.empty();
 		return ((Script) node).directives.index(index);
 	}
+
+	public String propertyName() {
+		return "directives[" + Integer.toString(index) + "]";
+	}
 }
 
 class ScriptStatements extends IndexedBranch {
@@ -1489,6 +1887,10 @@ class ScriptStatements extends IndexedBranch {
 		if (!(node instanceof Script)) return Maybe.empty();
 		return ((Script) node).statements.index(index);
 	}
+
+	public String propertyName() {
+		return "statements[" + Integer.toString(index) + "]";
+	}
 }
 
 class SetterName extends Branch {
@@ -1496,6 +1898,10 @@ class SetterName extends Branch {
 	public Maybe<? extends Node> step(Node node) {
 		if (!(node instanceof Setter)) return Maybe.empty();
 		return Maybe.of(((Setter) node).name);
+	}
+
+	public String propertyName() {
+		return "name";
 	}
 }
 
@@ -1505,6 +1911,10 @@ class SetterParam extends Branch {
 		if (!(node instanceof Setter)) return Maybe.empty();
 		return Maybe.of(((Setter) node).param);
 	}
+
+	public String propertyName() {
+		return "param";
+	}
 }
 
 class SetterBody extends Branch {
@@ -1512,6 +1922,10 @@ class SetterBody extends Branch {
 	public Maybe<? extends Node> step(Node node) {
 		if (!(node instanceof Setter)) return Maybe.empty();
 		return Maybe.of(((Setter) node).body);
+	}
+
+	public String propertyName() {
+		return "body";
 	}
 }
 
@@ -1521,6 +1935,10 @@ class ShorthandPropertyName extends Branch {
 		if (!(node instanceof ShorthandProperty)) return Maybe.empty();
 		return Maybe.of(((ShorthandProperty) node).name);
 	}
+
+	public String propertyName() {
+		return "name";
+	}
 }
 
 class SpreadElementExpression extends Branch {
@@ -1528,6 +1946,10 @@ class SpreadElementExpression extends Branch {
 	public Maybe<? extends Node> step(Node node) {
 		if (!(node instanceof SpreadElement)) return Maybe.empty();
 		return Maybe.of(((SpreadElement) node).expression);
+	}
+
+	public String propertyName() {
+		return "expression";
 	}
 }
 
@@ -1537,6 +1959,10 @@ class StaticMemberAssignmentTargetObject extends Branch {
 		if (!(node instanceof StaticMemberAssignmentTarget)) return Maybe.empty();
 		return Maybe.of(((StaticMemberAssignmentTarget) node).object);
 	}
+
+	public String propertyName() {
+		return "object";
+	}
 }
 
 class StaticMemberExpressionObject extends Branch {
@@ -1545,6 +1971,10 @@ class StaticMemberExpressionObject extends Branch {
 		if (!(node instanceof StaticMemberExpression)) return Maybe.empty();
 		return Maybe.of(((StaticMemberExpression) node).object);
 	}
+
+	public String propertyName() {
+		return "object";
+	}
 }
 
 class SwitchCaseTest extends Branch {
@@ -1552,6 +1982,10 @@ class SwitchCaseTest extends Branch {
 	public Maybe<? extends Node> step(Node node) {
 		if (!(node instanceof SwitchCase)) return Maybe.empty();
 		return Maybe.of(((SwitchCase) node).test);
+	}
+
+	public String propertyName() {
+		return "test";
 	}
 }
 
@@ -1565,6 +1999,10 @@ class SwitchCaseConsequent extends IndexedBranch {
 		if (!(node instanceof SwitchCase)) return Maybe.empty();
 		return ((SwitchCase) node).consequent.index(index);
 	}
+
+	public String propertyName() {
+		return "consequent[" + Integer.toString(index) + "]";
+	}
 }
 
 class SwitchDefaultConsequent extends IndexedBranch {
@@ -1577,6 +2015,10 @@ class SwitchDefaultConsequent extends IndexedBranch {
 		if (!(node instanceof SwitchDefault)) return Maybe.empty();
 		return ((SwitchDefault) node).consequent.index(index);
 	}
+
+	public String propertyName() {
+		return "consequent[" + Integer.toString(index) + "]";
+	}
 }
 
 class SwitchStatementDiscriminant extends Branch {
@@ -1584,6 +2026,10 @@ class SwitchStatementDiscriminant extends Branch {
 	public Maybe<? extends Node> step(Node node) {
 		if (!(node instanceof SwitchStatement)) return Maybe.empty();
 		return Maybe.of(((SwitchStatement) node).discriminant);
+	}
+
+	public String propertyName() {
+		return "discriminant";
 	}
 }
 
@@ -1597,6 +2043,10 @@ class SwitchStatementCases extends IndexedBranch {
 		if (!(node instanceof SwitchStatement)) return Maybe.empty();
 		return ((SwitchStatement) node).cases.index(index);
 	}
+
+	public String propertyName() {
+		return "cases[" + Integer.toString(index) + "]";
+	}
 }
 
 class SwitchStatementWithDefaultDiscriminant extends Branch {
@@ -1604,6 +2054,10 @@ class SwitchStatementWithDefaultDiscriminant extends Branch {
 	public Maybe<? extends Node> step(Node node) {
 		if (!(node instanceof SwitchStatementWithDefault)) return Maybe.empty();
 		return Maybe.of(((SwitchStatementWithDefault) node).discriminant);
+	}
+
+	public String propertyName() {
+		return "discriminant";
 	}
 }
 
@@ -1617,6 +2071,10 @@ class SwitchStatementWithDefaultPreDefaultCases extends IndexedBranch {
 		if (!(node instanceof SwitchStatementWithDefault)) return Maybe.empty();
 		return ((SwitchStatementWithDefault) node).preDefaultCases.index(index);
 	}
+
+	public String propertyName() {
+		return "preDefaultCases[" + Integer.toString(index) + "]";
+	}
 }
 
 class SwitchStatementWithDefaultDefaultCase extends Branch {
@@ -1624,6 +2082,10 @@ class SwitchStatementWithDefaultDefaultCase extends Branch {
 	public Maybe<? extends Node> step(Node node) {
 		if (!(node instanceof SwitchStatementWithDefault)) return Maybe.empty();
 		return Maybe.of(((SwitchStatementWithDefault) node).defaultCase);
+	}
+
+	public String propertyName() {
+		return "defaultCase";
 	}
 }
 
@@ -1637,6 +2099,10 @@ class SwitchStatementWithDefaultPostDefaultCases extends IndexedBranch {
 		if (!(node instanceof SwitchStatementWithDefault)) return Maybe.empty();
 		return ((SwitchStatementWithDefault) node).postDefaultCases.index(index);
 	}
+
+	public String propertyName() {
+		return "postDefaultCases[" + Integer.toString(index) + "]";
+	}
 }
 
 class TemplateExpressionTag extends Branch {
@@ -1644,6 +2110,10 @@ class TemplateExpressionTag extends Branch {
 	public Maybe<? extends Node> step(Node node) {
 		if (!(node instanceof TemplateExpression)) return Maybe.empty();
 		return ((TemplateExpression) node).tag;
+	}
+
+	public String propertyName() {
+		return "tag";
 	}
 }
 
@@ -1657,6 +2127,10 @@ class TemplateExpressionElements extends IndexedBranch {
 		if (!(node instanceof TemplateExpression)) return Maybe.empty();
 		return ((TemplateExpression) node).elements.index(index);
 	}
+
+	public String propertyName() {
+		return "elements[" + Integer.toString(index) + "]";
+	}
 }
 
 class ThrowStatementExpression extends Branch {
@@ -1664,6 +2138,10 @@ class ThrowStatementExpression extends Branch {
 	public Maybe<? extends Node> step(Node node) {
 		if (!(node instanceof ThrowStatement)) return Maybe.empty();
 		return Maybe.of(((ThrowStatement) node).expression);
+	}
+
+	public String propertyName() {
+		return "expression";
 	}
 }
 
@@ -1673,6 +2151,10 @@ class TryCatchStatementBody extends Branch {
 		if (!(node instanceof TryCatchStatement)) return Maybe.empty();
 		return Maybe.of(((TryCatchStatement) node).body);
 	}
+
+	public String propertyName() {
+		return "body";
+	}
 }
 
 class TryCatchStatementCatchClause extends Branch {
@@ -1680,6 +2162,10 @@ class TryCatchStatementCatchClause extends Branch {
 	public Maybe<? extends Node> step(Node node) {
 		if (!(node instanceof TryCatchStatement)) return Maybe.empty();
 		return Maybe.of(((TryCatchStatement) node).catchClause);
+	}
+
+	public String propertyName() {
+		return "catchClause";
 	}
 }
 
@@ -1689,6 +2175,10 @@ class TryFinallyStatementBody extends Branch {
 		if (!(node instanceof TryFinallyStatement)) return Maybe.empty();
 		return Maybe.of(((TryFinallyStatement) node).body);
 	}
+
+	public String propertyName() {
+		return "body";
+	}
 }
 
 class TryFinallyStatementCatchClause extends Branch {
@@ -1696,6 +2186,10 @@ class TryFinallyStatementCatchClause extends Branch {
 	public Maybe<? extends Node> step(Node node) {
 		if (!(node instanceof TryFinallyStatement)) return Maybe.empty();
 		return ((TryFinallyStatement) node).catchClause;
+	}
+
+	public String propertyName() {
+		return "catchClause";
 	}
 }
 
@@ -1705,6 +2199,10 @@ class TryFinallyStatementFinalizer extends Branch {
 		if (!(node instanceof TryFinallyStatement)) return Maybe.empty();
 		return Maybe.of(((TryFinallyStatement) node).finalizer);
 	}
+
+	public String propertyName() {
+		return "finalizer";
+	}
 }
 
 class UnaryExpressionOperand extends Branch {
@@ -1713,6 +2211,10 @@ class UnaryExpressionOperand extends Branch {
 		if (!(node instanceof UnaryExpression)) return Maybe.empty();
 		return Maybe.of(((UnaryExpression) node).operand);
 	}
+
+	public String propertyName() {
+		return "operand";
+	}
 }
 
 class UpdateExpressionOperand extends Branch {
@@ -1720,6 +2222,10 @@ class UpdateExpressionOperand extends Branch {
 	public Maybe<? extends Node> step(Node node) {
 		if (!(node instanceof UpdateExpression)) return Maybe.empty();
 		return Maybe.of(((UpdateExpression) node).operand);
+	}
+
+	public String propertyName() {
+		return "operand";
 	}
 }
 
@@ -1733,6 +2239,10 @@ class VariableDeclarationDeclarators extends IndexedBranch {
 		if (!(node instanceof VariableDeclaration)) return Maybe.empty();
 		return ((VariableDeclaration) node).declarators.index(index);
 	}
+
+	public String propertyName() {
+		return "declarators[" + Integer.toString(index) + "]";
+	}
 }
 
 class VariableDeclarationStatementDeclaration extends Branch {
@@ -1740,6 +2250,10 @@ class VariableDeclarationStatementDeclaration extends Branch {
 	public Maybe<? extends Node> step(Node node) {
 		if (!(node instanceof VariableDeclarationStatement)) return Maybe.empty();
 		return Maybe.of(((VariableDeclarationStatement) node).declaration);
+	}
+
+	public String propertyName() {
+		return "declaration";
 	}
 }
 
@@ -1749,6 +2263,10 @@ class VariableDeclaratorBinding extends Branch {
 		if (!(node instanceof VariableDeclarator)) return Maybe.empty();
 		return Maybe.of(((VariableDeclarator) node).binding);
 	}
+
+	public String propertyName() {
+		return "binding";
+	}
 }
 
 class VariableDeclaratorInit extends Branch {
@@ -1756,6 +2274,10 @@ class VariableDeclaratorInit extends Branch {
 	public Maybe<? extends Node> step(Node node) {
 		if (!(node instanceof VariableDeclarator)) return Maybe.empty();
 		return ((VariableDeclarator) node).init;
+	}
+
+	public String propertyName() {
+		return "init";
 	}
 }
 
@@ -1765,6 +2287,10 @@ class WhileStatementTest extends Branch {
 		if (!(node instanceof WhileStatement)) return Maybe.empty();
 		return Maybe.of(((WhileStatement) node).test);
 	}
+
+	public String propertyName() {
+		return "test";
+	}
 }
 
 class WhileStatementBody extends Branch {
@@ -1772,6 +2298,10 @@ class WhileStatementBody extends Branch {
 	public Maybe<? extends Node> step(Node node) {
 		if (!(node instanceof WhileStatement)) return Maybe.empty();
 		return Maybe.of(((WhileStatement) node).body);
+	}
+
+	public String propertyName() {
+		return "body";
 	}
 }
 
@@ -1781,6 +2311,10 @@ class WithStatementObject extends Branch {
 		if (!(node instanceof WithStatement)) return Maybe.empty();
 		return Maybe.of(((WithStatement) node).object);
 	}
+
+	public String propertyName() {
+		return "object";
+	}
 }
 
 class WithStatementBody extends Branch {
@@ -1788,6 +2322,10 @@ class WithStatementBody extends Branch {
 	public Maybe<? extends Node> step(Node node) {
 		if (!(node instanceof WithStatement)) return Maybe.empty();
 		return Maybe.of(((WithStatement) node).body);
+	}
+
+	public String propertyName() {
+		return "body";
 	}
 }
 
@@ -1797,6 +2335,10 @@ class YieldExpressionExpression extends Branch {
 		if (!(node instanceof YieldExpression)) return Maybe.empty();
 		return ((YieldExpression) node).expression;
 	}
+
+	public String propertyName() {
+		return "expression";
+	}
 }
 
 class YieldGeneratorExpressionExpression extends Branch {
@@ -1804,5 +2346,9 @@ class YieldGeneratorExpressionExpression extends Branch {
 	public Maybe<? extends Node> step(Node node) {
 		if (!(node instanceof YieldGeneratorExpression)) return Maybe.empty();
 		return Maybe.of(((YieldGeneratorExpression) node).expression);
+	}
+
+	public String propertyName() {
+		return "expression";
 	}
 }

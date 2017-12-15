@@ -44,4 +44,10 @@ public class BranchGetter {
     public int hashCode() {
         return Objects.hash(directions);
     }
+
+    @Override
+    public String toString() {
+        // This is mostly intended for use in test output.
+        return this.directions.foldRight((b, acc) -> acc + "." + b.propertyName(), ""); // right instead of left because directions are stored in reverse order internally
+    }
 }
