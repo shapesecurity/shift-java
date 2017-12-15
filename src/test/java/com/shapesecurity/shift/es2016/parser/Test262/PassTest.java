@@ -139,6 +139,26 @@ public class PassTest {
 			}
 
 			// check comments
+			ImmutableList<ParserWithLocation.Comment> actualComments = parser.getComments();
+
+			String commentsJSON = new String(Files.readAllBytes(Paths.get(expectationsDir, name + "-comments.json")), StandardCharsets.UTF_8);
+			ImmutableList<ParserWithLocation.Comment> expectedComments = Deserializer.deserializeComments(commentsJSON);
+
+			assertEquals(expectedComments.length, actualComments.length);
+			for (Pair<ParserWithLocation.Comment, ParserWithLocation.Comment> p : expectedComments.zipWith(Pair::of, actualComments)) {
+				ParserWithLocation.Comment expectedComment = p.left;
+				ParserWithLocation.Comment actualComment = p.right;
+
+				assertEquals(expectedComment.type, actualComment.type);
+				assertEquals(expectedComment.text, actualComment.text);
+				assertEquals(expectedComment.start.line, actualComment.start.line);
+				assertEquals(expectedComment.start.column, actualComment.start.column);
+				assertEquals(expectedComment.start.offset, actualComment.start.offset);
+				assertEquals(expectedComment.end.line, actualComment.end.line);
+				assertEquals(expectedComment.end.column, actualComment.end.column);
+				assertEquals(expectedComment.end.offset, actualComment.end.offset);
+			}
+
 		} else {
 			// TODO: a more informative tree-equality check with a treewalker
 			throw new RuntimeException("Trees don't match!");
