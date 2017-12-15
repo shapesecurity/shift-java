@@ -7,14 +7,11 @@ import com.shapesecurity.functional.Pair;
 import com.shapesecurity.functional.data.HashTable;
 import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.functional.data.Maybe;
-import com.shapesecurity.functional.data.NonEmptyImmutableList;
-import com.shapesecurity.shift.es2016.ast.Module;
 import com.shapesecurity.shift.es2016.ast.Node;
 import com.shapesecurity.shift.es2016.ast.Program;
-import com.shapesecurity.shift.es2016.ast.Script;
+import com.shapesecurity.shift.es2016.parser.EarlyError;
 import com.shapesecurity.shift.es2016.parser.EarlyErrorChecker;
 import com.shapesecurity.shift.es2016.parser.JsError;
-import com.shapesecurity.shift.es2016.parser.Parser;
 import com.shapesecurity.shift.es2016.parser.ParserWithLocation;
 import com.shapesecurity.shift.es2016.parser.SourceLocation;
 import com.shapesecurity.shift.es2016.parser.SourceSpan;
@@ -29,7 +26,6 @@ import org.junit.runners.Parameterized;
 import javax.annotation.Nonnull;
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -106,8 +102,9 @@ public class PassTest {
 		ParserWithLocation parser = new ParserWithLocation();
 		Program actual = name.endsWith(".module.js") ? parser.parseModule(src) : parser.parseScript(src);
 
-		if (EarlyErrorChecker.validate(actual).isNotEmpty()) {
-			throw new RuntimeException("Pass test throws early error!");
+		ImmutableList<EarlyError> earlyErrors = EarlyErrorChecker.validate(actual);
+		if (earlyErrors.isNotEmpty()) {
+			throw new RuntimeException("Pass test throws early error: " + earlyErrors.maybeHead().fromJust().message);
 		}
 
 		String expectedJSON = new String(Files.readAllBytes(Paths.get(expectationsDir, name + "-tree.json")), StandardCharsets.UTF_8);

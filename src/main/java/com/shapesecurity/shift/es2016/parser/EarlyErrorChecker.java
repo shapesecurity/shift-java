@@ -69,7 +69,6 @@ import com.shapesecurity.shift.es2016.ast.WithStatement;
 import com.shapesecurity.shift.es2016.reducer.Director;
 import com.shapesecurity.shift.es2016.utils.Utils;
 import com.shapesecurity.shift.es2016.reducer.MonoidalReducer;
-import com.sun.org.apache.xpath.internal.operations.Mod;
 
 import javax.annotation.Nonnull;
 
