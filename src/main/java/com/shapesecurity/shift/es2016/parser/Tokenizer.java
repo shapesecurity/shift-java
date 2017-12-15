@@ -488,7 +488,7 @@ public class Tokenizer {
         return new SourceRange(start, this.index, this.source);
     }
 
-    private void skipSingleLineComment(int offset) {
+    protected void skipSingleLineComment(int offset) {
         this.index += offset;
         while (this.index < this.source.length()) {
             char ch = this.source.charAt(this.index);
@@ -505,7 +505,7 @@ public class Tokenizer {
         }
     }
 
-    private void skipMultiLineComment() throws JsError {
+    protected void skipMultiLineComment() throws JsError {
         this.index += 2;
         int length = this.source.length();
         int i = this.index;
