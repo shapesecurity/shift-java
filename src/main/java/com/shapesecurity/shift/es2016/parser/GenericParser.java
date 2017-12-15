@@ -1977,7 +1977,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
         this.expect(TokenType.COLON);
 
         PropertyName name = keyOrMethod.left().fromJust();
-        Either<Expression, AssignmentTarget> val = this.parseAssignmentExpressionOrTarget();
+        Either<Expression, AssignmentTarget> val = this.inheritCoverGrammar(this::parseAssignmentExpressionOrTarget);
 
         return val.map(
                 expr -> this.finishNode(startState, new DataProperty(name, expr)),

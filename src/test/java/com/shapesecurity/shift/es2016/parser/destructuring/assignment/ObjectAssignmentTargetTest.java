@@ -11,6 +11,7 @@ import com.shapesecurity.shift.es2016.ast.AssignmentTargetWithDefault;
 import com.shapesecurity.shift.es2016.ast.BindingIdentifier;
 import com.shapesecurity.shift.es2016.ast.BindingPropertyProperty;
 import com.shapesecurity.shift.es2016.ast.BindingWithDefault;
+import com.shapesecurity.shift.es2016.ast.CallExpression;
 import com.shapesecurity.shift.es2016.ast.ComputedPropertyName;
 import com.shapesecurity.shift.es2016.ast.ExpressionStatement;
 import com.shapesecurity.shift.es2016.ast.FormalParameters;
@@ -20,6 +21,7 @@ import com.shapesecurity.shift.es2016.ast.IdentifierExpression;
 import com.shapesecurity.shift.es2016.ast.LiteralNumericExpression;
 import com.shapesecurity.shift.es2016.ast.ObjectAssignmentTarget;
 import com.shapesecurity.shift.es2016.ast.ObjectBinding;
+import com.shapesecurity.shift.es2016.ast.StaticMemberAssignmentTarget;
 import com.shapesecurity.shift.es2016.ast.StaticPropertyName;
 import com.shapesecurity.shift.es2016.ast.VariableDeclaration;
 import com.shapesecurity.shift.es2016.ast.VariableDeclarationKind;
@@ -67,6 +69,31 @@ public class ObjectAssignmentTargetTest extends ParserTestCase {
                         ))
                 )
         )));
+
+        testScript(
+                "({d=0,f:h().a} = 0)",
+                new AssignmentExpression(
+                        new ObjectAssignmentTarget(
+                                ImmutableList.of(
+                                        new AssignmentTargetPropertyIdentifier(
+                                                new AssignmentTargetIdentifier("d"),
+                                                Maybe.of(new LiteralNumericExpression(0.0))
+                                        ),
+                                        new AssignmentTargetPropertyProperty(
+                                                new StaticPropertyName("f"),
+                                                new StaticMemberAssignmentTarget(
+                                                        new CallExpression(
+                                                                new IdentifierExpression("h"),
+                                                                ImmutableList.empty()
+                                                        ),
+                                                        "a"
+                                                )
+                                        )
+                                )
+                        ),
+                        new LiteralNumericExpression(0.0)
+                )
+        );
 
         testScriptFailure("({a = 0});", 2, "Illegal property initializer");
         testScriptFailure("({a} += 0);", 5, "Invalid left-hand side in assignment");
