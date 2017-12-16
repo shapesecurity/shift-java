@@ -74,13 +74,6 @@ public class PassTest {
 		"9bcae7c7f00b4e3c.js",
 		"e1387fe892984e2b.js",
 
-		// BUG: something about '&'
-		"489e6113a41ef33f.js",
-		"a43df1aea659fab8.js",
-		"c3699b982b33926b.js",
-		"cbc644a20893a549.js",
-		"ec97990c2cc5e0e8.js",
-
 		// BUG: for-in destructing containing in breaks doesn't work
 		"c546a199e87abaad.js",
 
