@@ -114,6 +114,29 @@ public class PassTest {
 			"" // empty line to make git diffs nicer
 	));
 
+	static void assertTreesEqual(Program expected, Program actual) {
+		if (expected.equals(actual)) return;
+
+		// To give a useful error message, we find a relatively low node present in both trees which differs.
+		List<Pair<BranchGetter, Node>> locations = new ArrayList<>();
+		(new BranchIterator(expected)).forEach(locations::add);
+		for (int i = locations.size() - 1; i >= 0; --i) { // reverse order so we never report a parent when a child would do
+			BranchGetter location = locations.get(i).left;
+			Node expectedNode = locations.get(i).right;
+			Maybe<? extends Node> maybeActual = location.apply(actual);
+
+			if (maybeActual.isJust() && !maybeActual.fromJust().equals(expectedNode)) {
+				Class actualClass = maybeActual.fromJust().getClass();
+				if (actualClass.equals(expectedNode.getClass())) {
+					throw new RuntimeException("Trees differ - nodes of the same type but differ structurally (at root" + location.toString() + ")");
+				} else {
+					throw new RuntimeException("Trees differ - expected " + expectedNode.getClass().getSimpleName() + " but got " + actualClass.getSimpleName() + " (at root" + location.toString() + ")");
+				}
+			}
+		}
+		throw new RuntimeException("Unreachable - trees unequal but have no unequal nodes");
+	}
+
 	static void check(String name) throws JsError, IOException, ClassNotFoundException, NoSuchMethodException, InstantiationException, JSONException, IllegalAccessException {
 		String src = new String(Files.readAllBytes(Paths.get(testsDir, name)), StandardCharsets.UTF_8);
 		ParserWithLocation parser = new ParserWithLocation();
@@ -128,82 +151,63 @@ public class PassTest {
 		DeserializerWithLocation deserializer = new DeserializerWithLocation();
 		Program expected = (Program) deserializer.deserializeNode(new JsonParser().parse(expectedJSON));
 
-		if (expected.equals(actual)) {
-			// check locations
-			for (Pair<BranchGetter, Node> p : new BranchIterator(actual)) {
-				Node expectedNode = p.left.apply(expected).fromJust();
-				Node actualNode = p.right;
 
-				Maybe<SourceSpan> maybeExpectedLocation = deserializer.getLocation(expectedNode);
-				Maybe<SourceSpan> maybeActualLocation = parser.getLocation(actualNode);
+		// check trees
+		assertTreesEqual(expected, actual);
 
-				if (maybeExpectedLocation.isNothing() && maybeActualLocation.isJust()) {
-					throw new RuntimeException("Node unexpectedly has location (root" + p.left.toString() + ")");
-				}
-				if (maybeExpectedLocation.isJust() && maybeActualLocation.isNothing()) {
-					throw new RuntimeException("Node unexpectedly lacks location (root" + p.left.toString() + ")");
-				}
-				if (maybeExpectedLocation.isJust() && maybeActualLocation.isJust()) {
-					SourceSpan expectedLocation = maybeExpectedLocation.fromJust();
-					SourceSpan actualLocation = maybeActualLocation.fromJust();
+		// check locations
+		for (Pair<BranchGetter, Node> p : new BranchIterator(actual)) {
+			Node expectedNode = p.left.apply(expected).fromJust();
+			Node actualNode = p.right;
 
-					assertEquals("start line (root" + p.left.toString() + ")", expectedLocation.start.line, actualLocation.start.line);
-					assertEquals("start column (root" + p.left.toString() + ")", expectedLocation.start.column, actualLocation.start.column);
-					assertEquals("start offset (root" + p.left.toString() + ")", expectedLocation.start.offset, actualLocation.start.offset);
-					assertEquals("end line (root" + p.left.toString() + ")", expectedLocation.end.line, actualLocation.end.line);
-					assertEquals("end column (root" + p.left.toString() + ")", expectedLocation.end.column, actualLocation.end.column);
-					assertEquals("end offset (root" + p.left.toString() + ")", expectedLocation.end.offset, actualLocation.end.offset);
-				}
+			Maybe<SourceSpan> maybeExpectedLocation = deserializer.getLocation(expectedNode);
+			Maybe<SourceSpan> maybeActualLocation = parser.getLocation(actualNode);
+
+			if (maybeExpectedLocation.isNothing() && maybeActualLocation.isJust()) {
+				throw new RuntimeException("Node unexpectedly has location (root" + p.left.toString() + ")");
 			}
-
-			// check comments
-			String commentsJSON = new String(Files.readAllBytes(Paths.get(expectationsDir, name + "-comments.json")), StandardCharsets.UTF_8);
-			ImmutableList<ParserWithLocation.Comment> expectedComments = deserializeComments(commentsJSON);
-
-			ImmutableList<ParserWithLocation.Comment> actualComments = parser.getComments();
-
-			assertEquals(expectedComments.length, actualComments.length);
-
-			for (Pair<ParserWithLocation.Comment, ParserWithLocation.Comment> p : expectedComments.zipWith(Pair::of, actualComments)) {
-				ParserWithLocation.Comment expectedComment = p.left;
-				ParserWithLocation.Comment actualComment = p.right;
-
-				assertEquals(expectedComment.type, actualComment.type);
-				assertEquals(expectedComment.text, actualComment.text);
-				assertEquals(expectedComment.start.line, actualComment.start.line);
-				assertEquals(expectedComment.start.column, actualComment.start.column);
-				assertEquals(expectedComment.start.offset, actualComment.start.offset);
-				assertEquals(expectedComment.end.line, actualComment.end.line);
-				assertEquals(expectedComment.end.column, actualComment.end.column);
-				assertEquals(expectedComment.end.offset, actualComment.end.offset);
+			if (maybeExpectedLocation.isJust() && maybeActualLocation.isNothing()) {
+				throw new RuntimeException("Node unexpectedly lacks location (root" + p.left.toString() + ")");
 			}
+			if (maybeExpectedLocation.isJust() && maybeActualLocation.isJust()) {
+				SourceSpan expectedLocation = maybeExpectedLocation.fromJust();
+				SourceSpan actualLocation = maybeActualLocation.fromJust();
 
-			String codegened = CodeGen.codeGen(actual);
-			Program codegenedAndParsed = name.endsWith(".module.js") ? parser.parseModule(codegened) : parser.parseScript(codegened);
-
-			if (!actual.equals(codegenedAndParsed)) {
-				throw new RuntimeException("parse != parse->codegened->parse");
+				assertEquals("start line (root" + p.left.toString() + ")", expectedLocation.start.line, actualLocation.start.line);
+				assertEquals("start column (root" + p.left.toString() + ")", expectedLocation.start.column, actualLocation.start.column);
+				assertEquals("start offset (root" + p.left.toString() + ")", expectedLocation.start.offset, actualLocation.start.offset);
+				assertEquals("end line (root" + p.left.toString() + ")", expectedLocation.end.line, actualLocation.end.line);
+				assertEquals("end column (root" + p.left.toString() + ")", expectedLocation.end.column, actualLocation.end.column);
+				assertEquals("end offset (root" + p.left.toString() + ")", expectedLocation.end.offset, actualLocation.end.offset);
 			}
-		} else {
-			// Trees don't match. To give a useful error message, we find a relatively low node present in both trees which differs.
-			List<Pair<BranchGetter, Node>> locations = new ArrayList<>();
-			(new BranchIterator(expected)).forEach(locations::add);
-			for (int i = locations.size() - 1; i >= 0; --i) { // reverse order so we never report a parent when a child would do
-				BranchGetter location = locations.get(i).left;
-				Node expectedNode = locations.get(i).right;
-				Maybe<? extends Node> maybeActual = location.apply(actual);
-
-				if (maybeActual.isJust() && !maybeActual.fromJust().equals(expectedNode)) {
-					Class actualClass = maybeActual.fromJust().getClass();
-					if (actualClass.equals(expectedNode.getClass())) {
-						throw new RuntimeException("Trees differ - nodes of the same type but differ structurally (at root" + location.toString() + ")");
-					} else {
-						throw new RuntimeException("Trees differ - expected " + expectedNode.getClass().getSimpleName() + " but got " + actualClass.getSimpleName() + " (at root" + location.toString() + ")");
-					}
-				}
-			}
-			throw new RuntimeException("Unreachable - trees unequal but have no unequal nodes");
 		}
+
+		// check comments
+		String commentsJSON = new String(Files.readAllBytes(Paths.get(expectationsDir, name + "-comments.json")), StandardCharsets.UTF_8);
+		ImmutableList<ParserWithLocation.Comment> expectedComments = deserializeComments(commentsJSON);
+
+		ImmutableList<ParserWithLocation.Comment> actualComments = parser.getComments();
+
+		assertEquals(expectedComments.length, actualComments.length);
+
+		for (Pair<ParserWithLocation.Comment, ParserWithLocation.Comment> p : expectedComments.zipWith(Pair::of, actualComments)) {
+			ParserWithLocation.Comment expectedComment = p.left;
+			ParserWithLocation.Comment actualComment = p.right;
+
+			assertEquals(expectedComment.type, actualComment.type);
+			assertEquals(expectedComment.text, actualComment.text);
+			assertEquals(expectedComment.start.line, actualComment.start.line);
+			assertEquals(expectedComment.start.column, actualComment.start.column);
+			assertEquals(expectedComment.start.offset, actualComment.start.offset);
+			assertEquals(expectedComment.end.line, actualComment.end.line);
+			assertEquals(expectedComment.end.column, actualComment.end.column);
+			assertEquals(expectedComment.end.offset, actualComment.end.offset);
+		}
+
+		// check codegen
+		String codegened = CodeGen.codeGen(actual);
+		Program codegenedAndParsed = name.endsWith(".module.js") ? parser.parseModule(codegened) : parser.parseScript(codegened);
+		assertTreesEqual(actual, codegenedAndParsed);
 	}
 
 	@Parameterized.Parameters(name = "{0}")
