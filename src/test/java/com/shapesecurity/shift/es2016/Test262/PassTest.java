@@ -1,4 +1,4 @@
-package com.shapesecurity.shift.es2016.parser.Test262;
+package com.shapesecurity.shift.es2016.Test262;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -9,6 +9,7 @@ import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.functional.data.Maybe;
 import com.shapesecurity.shift.es2016.ast.Node;
 import com.shapesecurity.shift.es2016.ast.Program;
+import com.shapesecurity.shift.es2016.codegen.CodeGen;
 import com.shapesecurity.shift.es2016.parser.EarlyError;
 import com.shapesecurity.shift.es2016.parser.EarlyErrorChecker;
 import com.shapesecurity.shift.es2016.parser.JsError;
@@ -94,6 +95,22 @@ public class PassTest {
 			// BUG: exports are treated as declarations
 			"e2470430b235b9bb.module.js",
 
+			// BUG(s): codegen produces invalid or unequal output
+			"0426f15dac46e92d.js",
+			"08358cb4732d8ce1.js",
+			"17302b9b0cab0c69.module.js",
+			"4d2c7020de650d40.js",
+			"589dc8ad3b9aa28f.js",
+			"5c3d125ce5f032aa.js",
+			"6ffd0afb19f0a92c.js",
+			"87a9b0d1d80812cc.js",
+			"b92bdcf6c2591e5c.js",
+			"d2332f9187c6a20a.module.js",
+			"da9e16ac9fd5b61d.js",
+			"dc6037a43bed9588.js",
+			"f5b89028dfa29f27.js",
+			"f7f611e6fdb5b9fc.js",
+
 			"" // empty line to make git diffs nicer
 	));
 
@@ -159,6 +176,13 @@ public class PassTest {
 				assertEquals(expectedComment.end.line, actualComment.end.line);
 				assertEquals(expectedComment.end.column, actualComment.end.column);
 				assertEquals(expectedComment.end.offset, actualComment.end.offset);
+			}
+
+			String codegened = CodeGen.codeGen(actual);
+			Program codegenedAndParsed = name.endsWith(".module.js") ? parser.parseModule(codegened) : parser.parseScript(codegened);
+
+			if (!actual.equals(codegenedAndParsed)) {
+				throw new RuntimeException("parse != parse->codegened->parse");
 			}
 		} else {
 			// Trees don't match. To give a useful error message, we find a relatively low node present in both trees which differs.

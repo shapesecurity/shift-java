@@ -50,6 +50,14 @@ public class CodeGen implements Reducer<CodeRep> {
         return codeGen(module, COMPACT);
     }
 
+    @Nonnull
+    public static String codeGen(@Nonnull Program program) {
+        if (program instanceof Script) {
+            return codeGen((Script) program);
+        }
+        return codeGen((Module) program);
+    }
+
     protected static String codeGen(@Nonnull Script script, @Nonnull CodeGen codeGen) {
         StringBuilder sb = new StringBuilder();
         TokenStream ts = new TokenStream(sb);

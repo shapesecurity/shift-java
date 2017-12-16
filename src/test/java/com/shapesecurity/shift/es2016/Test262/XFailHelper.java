@@ -1,4 +1,4 @@
-package com.shapesecurity.shift.es2016.parser.Test262;
+package com.shapesecurity.shift.es2016.Test262;
 
 import org.junit.Test;
 
