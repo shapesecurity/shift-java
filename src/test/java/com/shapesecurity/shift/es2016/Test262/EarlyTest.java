@@ -27,11 +27,6 @@ public class EarlyTest {
 	static final String testsDir = "src/test/resources/test262-parser-tests/early/";
 
 	static final Set<String> xfail = new HashSet<>(Arrays.asList(
-		// BUG: duplicate default export is not caught
-		"13d24ad99ac46c21.module.js",
-		"b118f7ba23d3f8dd.module.js",
-		"e777215433af6809.module.js",
-
 		// BUG: 'use strict' is not banned in functions with destructuring parameters
 		"3d5969e02c02bd8f.js",
 		"94fac3e2a049dac5.js",

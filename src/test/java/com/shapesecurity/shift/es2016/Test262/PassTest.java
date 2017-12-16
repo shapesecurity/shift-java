@@ -66,9 +66,6 @@ public class PassTest {
 		"cb211fadccb029c7.js",
 		"ce968fcdf3a1987c.js",
 
-		// BUG: exports are treated as declarations
-		"e2470430b235b9bb.module.js",
-
 		// BUG(s): codegen produces invalid or unequal output
 		"0426f15dac46e92d.js",
 		"08358cb4732d8ce1.js",
