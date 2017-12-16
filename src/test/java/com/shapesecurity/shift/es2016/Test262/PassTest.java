@@ -66,14 +66,6 @@ public class PassTest {
 		"cb211fadccb029c7.js",
 		"ce968fcdf3a1987c.js",
 
-		// BUG: something about destructuring parameters
-		"1093d98f5fc0758d.js",
-		"15d9592709b947a0.js",
-		"4e1a0da46ca45afe.js",
-		"99fceed987b8ec3d.js",
-		"9bcae7c7f00b4e3c.js",
-		"e1387fe892984e2b.js",
-
 		// BUG: exports are treated as declarations
 		"e2470430b235b9bb.module.js",
 

@@ -40,9 +40,6 @@ public class EarlyTest {
 		"ccecca0820018fef.js",
 		"f9d44f5aa2f3ffc3.js",
 
-		// BUG: something about destructuring parameters
-		"97c457b4a0ab3909.js",
-
 		// BUG: RegEx issues
 		// https://github.com/shapesecurity/shift-parser-js/issues/130
 		"0e631216f7271fce.js",
