@@ -263,19 +263,13 @@ public class PassTest {
 	}
 
 	static void check(String name) throws JsError, IOException, ClassNotFoundException, NoSuchMethodException, InstantiationException, JSONException, IllegalAccessException {
-		String src = new String(Files.readAllBytes(Paths.get(testsDir, name)), StandardCharsets.UTF_8);
-		ParserWithLocation parser = new ParserWithLocation();
-		Program actual = name.endsWith(".module.js") ? parser.parseModule(src) : parser.parseScript(src);
-
-		ImmutableList<EarlyError> earlyErrors = EarlyErrorChecker.validate(actual);
-		if (earlyErrors.isNotEmpty()) {
-			throw new RuntimeException("Pass test throws early error: " + earlyErrors.maybeHead().fromJust().message);
-		}
-
 		String expectedJSON = new String(Files.readAllBytes(Paths.get(expectationsDir, name + "-tree.json")), StandardCharsets.UTF_8);
 		DeserializerWithLocation deserializer = new DeserializerWithLocation();
 		Program expected = (Program) deserializer.deserializeNode(new JsonParser().parse(expectedJSON));
 
+		String src = new String(Files.readAllBytes(Paths.get(testsDir, name)), StandardCharsets.UTF_8);
+		ParserWithLocation parser = new ParserWithLocation();
+		Program actual = name.endsWith(".module.js") ? parser.parseModule(src) : parser.parseScript(src);
 
 		// check trees
 		assertTreesEqual(expected, actual);
@@ -329,10 +323,16 @@ public class PassTest {
 			assertEquals(expectedComment.end.offset, actualComment.end.offset);
 		}
 
+		// check early error checker
+		ImmutableList<EarlyError> earlyErrors = EarlyErrorChecker.validate(actual);
+		if (earlyErrors.isNotEmpty()) {
+			throw new RuntimeException("Pass test throws early error: " + earlyErrors.maybeHead().fromJust().message);
+		}
+
 		// check validator
 		ImmutableList<ValidationError> validationErrors = Validator.validate(actual);
 		if (validationErrors.isNotEmpty()) {
-			throw new RuntimeException("Pass test " + name + " fails to validate: " + validationErrors.maybeHead().fromJust().message);
+			throw new RuntimeException("Pass test fails to validate: " + validationErrors.maybeHead().fromJust().message);
 		}
 
 		// check codegen
