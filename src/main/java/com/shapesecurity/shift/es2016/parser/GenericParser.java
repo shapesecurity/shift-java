@@ -1213,8 +1213,10 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
         switch (this.lookahead.type) {
             case ADD:
             case ASSIGN_DIV:
+            case BIT_NOT:
             case CLASS:
             case DEC:
+            case DELETE:
             case DIV:
             case FALSE_LITERAL:
             case FUNCTION:
@@ -1233,8 +1235,10 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
             case SUPER:
             case THIS:
             case TRUE_LITERAL:
-            case YIELD:
+            case TYPEOF:
             case TEMPLATE:
+            case VOID:
+            case YIELD:
                 return true;
         }
         return false;

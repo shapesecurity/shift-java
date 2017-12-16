@@ -57,12 +57,6 @@ public class PassTest {
 		"151d4db59b774864.js",
 		"465b79616fdc9794.js",
 
-		// BUG: yield precedence issue
-		"0f88c334715d2489.js",
-		"7dab6e55461806c9.js",
-		"cb211fadccb029c7.js",
-		"ce968fcdf3a1987c.js",
-
 		// BUG(s): codegen produces invalid or unequal output
 		"08358cb4732d8ce1.js",
 		"4d2c7020de650d40.js",
