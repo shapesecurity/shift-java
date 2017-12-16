@@ -37,7 +37,7 @@ public class Deserializer {
             case "^":
                 return BinaryOperator.BitwiseXor;
             case "&":
-                return BinaryOperator.LogicalAnd;
+                return BinaryOperator.BitwiseAnd;
             case "+":
                 return BinaryOperator.Plus;
             case "-":
