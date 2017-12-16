@@ -77,9 +77,6 @@ public class PassTest {
 		// BUG: for-in destructing containing in breaks doesn't work
 		"c546a199e87abaad.js",
 
-		// BUG: can't use 'in' as argument to 'new'
-		"cd2f5476a739c80a.js",
-
 		// BUG: exports are treated as declarations
 		"e2470430b235b9bb.module.js",
 

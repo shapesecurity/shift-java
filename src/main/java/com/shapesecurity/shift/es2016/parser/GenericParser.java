@@ -1428,7 +1428,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
     protected Either3<ExpressionSuper, FormalParameters, AssignmentTarget> parseLeftHandSideExpression(boolean allowCall) throws JsError {
         AdditionalStateT startState = this.startNode();
         boolean previousAllowIn = this.allowIn;
-        this.allowIn = allowCall;
+        this.allowIn = true;
 
         Either3<ExpressionSuper, FormalParameters, AssignmentTarget> expr;
         Token token = this.lookahead;
