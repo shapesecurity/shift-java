@@ -10,13 +10,9 @@ import com.shapesecurity.shift.es2016.ast.operators.CompoundAssignmentOperator;
 import com.shapesecurity.shift.es2016.ast.operators.UnaryOperator;
 import com.shapesecurity.shift.es2016.ast.operators.UpdateOperator;
 
-import com.shapesecurity.shift.es2016.parser.ParserWithLocation;
-import com.shapesecurity.shift.es2016.parser.SourceLocation;
 import org.json.JSONException;
 
 import java.util.ArrayList;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 public class Deserializer {
 
