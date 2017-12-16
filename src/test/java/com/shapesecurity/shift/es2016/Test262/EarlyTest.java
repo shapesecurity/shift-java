@@ -27,14 +27,6 @@ public class EarlyTest {
 	static final String testsDir = "src/test/resources/test262-parser-tests/early/";
 
 	static final Set<String> xfail = new HashSet<>(Arrays.asList(
-		// BUG: 'use strict' is not banned in functions with destructuring parameters
-		"3d5969e02c02bd8f.js",
-		"94fac3e2a049dac5.js",
-		"b8a915136484b7c6.js",
-		"bd320eba790d65a4.js",
-		"ccecca0820018fef.js",
-		"f9d44f5aa2f3ffc3.js",
-
 		// BUG: RegEx issues
 		// https://github.com/shapesecurity/shift-parser-js/issues/130
 		"0e631216f7271fce.js",

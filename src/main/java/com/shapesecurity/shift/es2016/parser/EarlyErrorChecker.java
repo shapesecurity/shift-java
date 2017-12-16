@@ -167,6 +167,9 @@ public class EarlyErrorChecker extends MonoidalReducer<EarlyErrorState> {
         params = params.addErrors(params.yieldExpressions.map(ErrorMessages.YIELD_IN_ARROW_PARAMS));
 
         EarlyErrorState s = super.reduceArrowExpression(node, params, body);
+        if (node.body instanceof FunctionBody && !isSimpleParameterList(node.params) && isStrictFunctionBody((FunctionBody) node.body)) {
+            s = s.addError(ErrorMessages.COMPLEX_PARAMS_WITH_USE_STRICT.apply(node));
+        }
         s = s.clearYieldExpressions();
         return s.observeVarBoundary();
     }
@@ -493,6 +496,9 @@ public class EarlyErrorChecker extends MonoidalReducer<EarlyErrorState> {
             body = body.enforceStrictErrors();
         }
         EarlyErrorState s = super.reduceFunctionDeclaration(node, name, params, body);
+        if (!isSimpleParameterList(node.params) && isStrictFunctionBody(node.body)) {
+            s = s.addError(ErrorMessages.COMPLEX_PARAMS_WITH_USE_STRICT.apply(node));
+        }
         s = s.clearYieldExpressions();
         s = s.observeFunctionDeclaration();
         return s;
@@ -524,6 +530,9 @@ public class EarlyErrorChecker extends MonoidalReducer<EarlyErrorState> {
             body = body.enforceStrictErrors();
         }
         EarlyErrorState s = super.reduceFunctionExpression(node, name, params, body);
+        if (!isSimpleParameterList(node.params) && isStrictFunctionBody(node.body)) {
+            s = s.addError(ErrorMessages.COMPLEX_PARAMS_WITH_USE_STRICT.apply(node));
+        }
         s = s.clearBoundNames();
         s = s.clearYieldExpressions();
         s = s.observeVarBoundary();
@@ -645,6 +654,9 @@ public class EarlyErrorChecker extends MonoidalReducer<EarlyErrorState> {
             body = body.enforceStrictErrors();
         }
         EarlyErrorState s = super.reduceMethod(node, name, params, body);
+        if (!isSimpleParameterList(node.params) && isStrictFunctionBody(node.body)) {
+            s = s.addError(ErrorMessages.COMPLEX_PARAMS_WITH_USE_STRICT.apply(node));
+        }
         s = s.clearYieldExpressions();
         s = s.observeVarBoundary();
         return s;
@@ -743,6 +755,9 @@ public class EarlyErrorChecker extends MonoidalReducer<EarlyErrorState> {
             body = body.enforceStrictErrors();
         }
         EarlyErrorState s = super.reduceSetter(node, name, param, body);
+        if (!(node.param instanceof BindingIdentifier) && isStrictFunctionBody(node.body)) {
+            s = s.addError(ErrorMessages.COMPLEX_PARAMS_WITH_USE_STRICT.apply(node));
+        }
         s = s.observeVarBoundary();
         return s;
     }

@@ -122,5 +122,6 @@ interface ErrorMessages {
     F<Node, EarlyError> YIELD_IN_ARROW_BODY = node -> new EarlyError(node, "Concise arrow bodies must not contain yield expressions");
     F<Node, EarlyError> YIELD_IN_ARROW_PARAMS = node -> new EarlyError(node, "Arrow parameters must not contain yield expressions");
     F<Node, EarlyError> YIELD_IN_GENERATOR_PARAMS = node -> new EarlyError(node, "Generator parameters must not contain yield expressions");
+    F<Node, EarlyError> COMPLEX_PARAMS_WITH_USE_STRICT = node -> new EarlyError(node, "Functions with non-simple parameter lists may not contain a \"use strict\" directive");
 
 }
