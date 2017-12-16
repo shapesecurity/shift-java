@@ -610,28 +610,31 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
             if (this.match(TokenType.VAR) || isForDecl) {
                 boolean previousAllowIn = this.allowIn;
                 this.allowIn = false;
-                VariableDeclarationExpression init = this.parseVariableDeclaration(false);
+                VariableDeclaration init = this.parseVariableDeclaration(false);
                 this.allowIn = previousAllowIn;
-                if (((VariableDeclaration) init).declarators.length == 1 && (this.match((TokenType.IN)) || this.matchContextualKeyword("of"))) {
+                if (init.declarators.length == 1 && (this.match((TokenType.IN)) || this.matchContextualKeyword("of"))) {
                     if (this.match(TokenType.IN)) {
-                        if (!(((VariableDeclaration) init).declarators.index(0).fromJust().init).equals(Maybe.empty())) {
+                        if (!(init.declarators.index(0).fromJust().init).equals(Maybe.empty())) {
                             throw this.createError(ErrorMessages.INVALID_VAR_INIT_FOR_IN);
                         }
                         this.lex();
                         right = this.parseExpression().left();
                         Statement body = this.getIteratorStatementEpilogue();
-                        return new ForInStatement((VariableDeclarationAssignmentTarget) init, right.fromJust(), body);
+                        return new ForInStatement(init, right.fromJust(), body);
                     } else {
-                        if (!(((VariableDeclaration) init).declarators.index(0).fromJust().init).equals(Maybe.empty())) {
+                        if (!(init.declarators.index(0).fromJust().init).equals(Maybe.empty())) {
                             throw this.createError(ErrorMessages.INVALID_VAR_INIT_FOR_OF);
                         }
                         this.lex();
                         right = this.parseAssignmentExpression().left();
                         Statement body = this.getIteratorStatementEpilogue();
-                        return new ForOfStatement((VariableDeclarationAssignmentTarget) init, right.fromJust(), body);
+                        return new ForOfStatement(init, right.fromJust(), body);
                     }
                 } else {
                     this.expect(TokenType.SEMICOLON);
+                    if (init.declarators.exists(f -> (!(f.binding instanceof BindingIdentifier) && f.init.isNothing()))) {
+                        throw this.createError(ErrorMessages.UNINITIALIZED_BINDINGPATTERN_IN_FOR_INIT);
+                    }
                     if (!this.match(TokenType.SEMICOLON)) {
                         test = this.parseExpression().left();
                     }
