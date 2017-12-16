@@ -246,7 +246,7 @@ public class EarlyErrorsTest extends ParserTestCase {
         testScriptEarlyError("for(let a, let;;);", "Lexical declarations must not have a binding named \"let\"");
         testScriptEarlyError("for(const let = 0;;);", "Lexical declarations must not have a binding named \"let\"");
         testScriptEarlyError("for(const a = 0, let = 1;;);", "Lexical declarations must not have a binding named \"let\"");
-        testScriptEarlyError("for(let [let];;);", "Lexical declarations must not have a binding named \"let\"");
+        testScriptEarlyError("for(let [let] = 0;;);", "Lexical declarations must not have a binding named \"let\"");
         // It is a Syntax Error if the BoundNames of BindingList contains any duplicate entries.
         testScriptEarlyError("let a, a;", "Duplicate binding \"a\"");
         testScriptEarlyError("let a, b, a;", "Duplicate binding \"a\"");
@@ -262,7 +262,7 @@ public class EarlyErrorsTest extends ParserTestCase {
         testScriptEarlyError("let x\\u{61}, x\\u{0061};", "Duplicate binding \"xa\"");
         testScriptEarlyError("let x\\u{E01D5}, x\uDB40\uDDD5;", "Duplicate binding \"x\uDB40\uDDD5\"");
         testScriptEarlyError("for(let a, a;;);", "Duplicate binding \"a\"");
-        testScriptEarlyError("for(let [a, a];;);", "Duplicate binding \"a\"");
+        testScriptEarlyError("for(let [a, a] = 0;;);", "Duplicate binding \"a\"");
         testScriptEarlyError("for(const a = 0, a = 1;;);", "Duplicate binding \"a\"");
         testScriptEarlyError("for(const [a, a] = 0;;);", "Duplicate binding \"a\"");
         // It is a Syntax Error if Initializer is not present and IsConstantDeclaration of the LexicalDeclaration containing this production is true.
