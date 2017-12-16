@@ -2046,15 +2046,18 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
                     name = this.parsePropertyName().left();
                     this.expect(TokenType.LPAREN);
                     this.expect(TokenType.RPAREN);
+                    boolean previousYield = this.allowYieldExpression;
+                    this.allowYieldExpression = false;
                     FunctionBody body = this.parseFunctionBody();
+                    this.allowYieldExpression = previousYield;
                     return Either.right(this.finishNode(startState, new Getter(name, body)));
                 } else if (tokenName.equals("set") && this.lookaheadPropertyName()) {
                     name = this.parsePropertyName().left();
+                    boolean previousYield = this.allowYieldExpression;
+                    this.allowYieldExpression = false;
                     this.expect(TokenType.LPAREN);
                     BindingBindingWithDefault param = this.parseBindingElement();
                     this.expect(TokenType.RPAREN);
-                    boolean previousYield = this.allowYieldExpression;
-                    this.allowYieldExpression = false;
                     FunctionBody body = this.parseFunctionBody();
                     this.allowYieldExpression = previousYield;
                     return Either.right(this.finishNode(startState, new Setter(name, bindingToParameter(param), body)));
@@ -2154,8 +2157,6 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
             name = Maybe.of(this.parseBindingIdentifier());
         }
 
-        boolean previousParamYield = this.allowYieldExpression;
-        this.allowYieldExpression = false;
         if (this.eat(TokenType.EXTENDS)) {
             Either3<ExpressionSuper, FormalParameters, AssignmentTarget> fromParseLeftHandSideExpression = this.isolateCoverGrammar(() -> this.parseLeftHandSideExpression(true));
             if (fromParseLeftHandSideExpression.isLeft()) {
@@ -2186,7 +2187,6 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
                 throw this.createError("Only methods are allowed in classes");
             }
         }
-        this.allowYieldExpression = previousParamYield;
         return this.finishNode(startState, new ClassExpression(name, heritage, ImmutableList.from(elements)));
     }
 
