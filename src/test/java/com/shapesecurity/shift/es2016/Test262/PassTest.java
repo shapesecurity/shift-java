@@ -74,9 +74,6 @@ public class PassTest {
 		"9bcae7c7f00b4e3c.js",
 		"e1387fe892984e2b.js",
 
-		// BUG: for-in destructing containing in breaks doesn't work
-		"c546a199e87abaad.js",
-
 		// BUG: exports are treated as declarations
 		"e2470430b235b9bb.module.js",
 
