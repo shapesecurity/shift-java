@@ -263,7 +263,10 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
         if (this.match(TokenType.LPAREN)) {
             throw this.createUnexpected(this.lookahead);
         }
+        boolean previousAllowIn = this.allowIn;
+        this.allowIn = true;
         Binding binding = this.parseBindingTarget();
+        this.allowIn = previousAllowIn;
         if (bindingPatternsMustHaveInit && !(binding instanceof BindingIdentifier) && !this.match(TokenType.ASSIGN)) {
             this.expect(TokenType.ASSIGN);
         }
