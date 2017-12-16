@@ -345,18 +345,12 @@ public class EarlyErrorChecker extends MonoidalReducer<EarlyErrorState> {
         return s;
     }
 
-    // TODO no exportAllFrom?
-
     @Nonnull
     @Override
     public EarlyErrorState reduceExportDefault(@Nonnull ExportDefault node, @Nonnull EarlyErrorState body) {
         EarlyErrorState s = super.reduceExportDefault(node, body);
         s = s.functionDeclarationNamesAreLexical();
-        if ((node.body instanceof FunctionDeclaration && !((FunctionDeclaration) node.body).name.name.equals("*default*"))
-                || (node.body instanceof ClassDeclaration && !((ClassDeclaration) node.body).name.name.equals("*default*"))) {
-            s = s.exportDeclaredNames();
-        }
-        s = s.exportName("*default*", node);
+        s = s.exportName("default", node);
         return s;
     }
 
