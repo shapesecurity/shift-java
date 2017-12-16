@@ -478,11 +478,11 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
         AdditionalStateT startState = this.startNode();
         this.expect(TokenType.LPAREN);
         ArrayList<BindingBindingWithDefault> items = new ArrayList<>();
-        BindingIdentifier rest = null;
+        Binding rest = null;
         if (!this.match(TokenType.RPAREN)) {
             while (!this.eof()) {
                 if (this.eat(TokenType.ELLIPSIS)) {
-                    rest = parseBindingIdentifier();
+                    rest = parseBindingTarget();
                     break;
                 }
                 items.add(this.parseParam());
