@@ -1,1 +1,0 @@
-{"type":"Script","body":{"type":"FunctionBody","directives":[],"statements":[{"type":"VariableDeclarationStatement","declaration":{"type":"VariableDeclaration","kind":"var","declarators":[{"type":"VariableDeclarator","binding":{"type":"Identifier","name":"x"},"init":null}]}}]},"source":"var x /* comment */;"}

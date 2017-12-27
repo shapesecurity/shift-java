@@ -1,1 +1,0 @@
-{"type":"Script","body":{"type":"FunctionBody","directives":[],"statements":[{"type":"VariableDeclarationStatement","declaration":{"type":"VariableDeclaration","kind":"let","declarators":[{"type":"VariableDeclarator","binding":{"type":"Identifier","name":"x","range":[4,5]},"init":null,"range":[4,5]}],"range":[0,5]},"range":[0,5]}],"range":[0,5]},"range":[0,5],"source":"let x"}

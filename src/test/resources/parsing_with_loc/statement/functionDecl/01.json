@@ -1,1 +1,0 @@
-{"type":"Script","body":{"type":"FunctionBody","directives":[],"statements":[{"type":"FunctionDeclaration","name":{"type":"Identifier","name":"eval","range":[9,13]},"parameters":[],"body":{"type":"FunctionBody","directives":[],"statements":[],"range":[16,19]},"range":[0,19]}],"range":[0,19]},"range":[0,19],"source":"function eval() { }"}

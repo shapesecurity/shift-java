@@ -1,1 +1,0 @@
-{"type":"Script","body":{"type":"FunctionBody","directives":[],"statements":[{"type":"ExpressionStatement","expression":{"type":"AssignmentExpression","operator":"=","binding":{"type":"IdentifierExpression","identifier":{"type":"Identifier","name":"日本語"}},"expression":{"type":"ArrayExpression","elements":[]}}}]},"source":"日本語 = []"}

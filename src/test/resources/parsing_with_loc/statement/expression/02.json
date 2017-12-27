@@ -1,1 +1,0 @@
-{"type":"Script","body":{"type":"FunctionBody","directives":[],"statements":[{"type":"ExpressionStatement","expression":{"type":"IdentifierExpression","identifier":{"type":"Identifier","name":"\\u0061","range":[0,6]},"range":[0,6]},"range":[0,6]}],"range":[0,6]},"range":[0,6],"source":"\\u0061"}

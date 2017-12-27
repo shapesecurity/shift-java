@@ -1,1 +1,0 @@
-{"type":"Script","body":{"type":"FunctionBody","directives":[],"statements":[{"type":"TryStatement","body":{"type":"Block","statements":[]},"handler":{"type":"CatchClause","binding":{"type":"Identifier","name":"e"},"body":{"type":"Block","statements":[]}},"finalizer":null}]},"source":"try { } catch (e) { }"}

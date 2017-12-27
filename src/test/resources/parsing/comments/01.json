@@ -1,1 +1,0 @@
-{"type":"Script","body":{"type":"FunctionBody","directives":[],"statements":[{"type":"ExpressionStatement","expression":{"type":"LiteralNumericExpression","value":42.0}}]},"source":"42 /* block comment 1 */ /* block comment 2 */"}

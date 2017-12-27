@@ -1,1 +1,0 @@
-{"type":"Script","body":{"type":"FunctionBody","directives":[],"statements":[{"type":"LabeledStatement","label":{"type":"Identifier","name":"start"},"body":{"type":"ForStatement","init":null,"test":null,"update":null,"body":{"type":"BreakStatement","label":{"type":"Identifier","name":"start"}}}}]},"source":"start: for (;;) break start"}
