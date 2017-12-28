@@ -57,9 +57,6 @@ public class PassTest {
 		"151d4db59b774864.js",
 		"465b79616fdc9794.js",
 
-		// BUG: yield flag passes to nested functions
-		"177fef3d002eb873.js",
-
 		// BUG: yield precedence issue
 		"0f88c334715d2489.js",
 		"7dab6e55461806c9.js",
@@ -70,8 +67,6 @@ public class PassTest {
 		"08358cb4732d8ce1.js",
 		"4d2c7020de650d40.js",
 		"5c3d125ce5f032aa.js",
-		"6ffd0afb19f0a92c.js",
-		"b92bdcf6c2591e5c.js",
 		"d2332f9187c6a20a.module.js",
 		"da9e16ac9fd5b61d.js",
 		"dc6037a43bed9588.js",
