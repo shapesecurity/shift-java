@@ -305,11 +305,18 @@ public class CodeGen implements Reducer<CodeRep> {
     @Override
     @Nonnull
     public CodeRep reduceCallExpression(@Nonnull CallExpression node, @Nonnull CodeRep callee, @Nonnull ImmutableList<CodeRep> arguments) {
+        ImmutableList<CodeRep> parenthesizedArgs = arguments.mapWithIndex((i, r) -> {
+            SpreadElementExpression arg = node.arguments.index(i).fromJust();
+            if (arg instanceof SpreadElement) {
+                return r;
+            }
+            return p(arg, Precedence.ASSIGNMENT, r);
+        });
         CodeRep result;
         if (node.callee instanceof Expression) {
-            result = seqVA(p(node.callee, node.getPrecedence(), callee), factory.paren(factory.commaSep(arguments)));
+            result = seqVA(p(node.callee, node.getPrecedence(), callee), factory.paren(factory.commaSep(parenthesizedArgs)));
         } else {
-            result = seqVA(callee, factory.paren(factory.commaSep(arguments)));
+            result = seqVA(callee, factory.paren(factory.commaSep(parenthesizedArgs)));
         }
         result.startsWithObjectCurly(callee.startsWithObjectCurly());
         result.setStartsWithLetSquareBracket(callee.startsWithLetSquareBracket());
