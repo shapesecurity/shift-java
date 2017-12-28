@@ -335,7 +335,7 @@ public class CodeGen implements Reducer<CodeRep> {
     public CodeRep reduceClassDeclaration(@Nonnull ClassDeclaration node, @Nonnull CodeRep name, @Nonnull Maybe<CodeRep> _super, @Nonnull ImmutableList<CodeRep> elements) {
         CodeRep state = seqVA(factory.token("class"), name);
         if (_super.isJust()) {
-            state = seqVA(state, factory.token("extends"), _super.fromJust());
+            state = seqVA(state, factory.token("extends"), p(node._super.fromJust(), Precedence.NEW, _super.fromJust()));
         }
         state = seqVA(state, factory.token("{"), factory.seq(elements), factory.token("}"));
         return state;
@@ -358,7 +358,7 @@ public class CodeGen implements Reducer<CodeRep> {
             state = seqVA(state, name.fromJust());
         }
         if (_super.isJust()) {
-            state = seqVA(state, factory.token("extends"), _super.fromJust());
+            state = seqVA(state, factory.token("extends"), p(node._super.fromJust(), Precedence.NEW, _super.fromJust()));
         }
         state = seqVA(state, factory.token("{"), factory.seq(elements), factory.token("}"));
         state.setStartsWithFunctionOrClass(true);
