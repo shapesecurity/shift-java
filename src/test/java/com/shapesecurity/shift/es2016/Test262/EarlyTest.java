@@ -1,6 +1,7 @@
 package com.shapesecurity.shift.es2016.Test262;
 
 import com.shapesecurity.shift.es2016.ast.Module;
+import com.shapesecurity.shift.es2016.ast.Program;
 import com.shapesecurity.shift.es2016.ast.Script;
 import com.shapesecurity.shift.es2016.parser.EarlyErrorChecker;
 import com.shapesecurity.shift.es2016.parser.JsError;
@@ -105,15 +106,9 @@ public class EarlyTest {
 		boolean parsed = false;
 		boolean validated = false;
 		try {
-			if (name.endsWith(".module.js")) {
-				Module tree = Parser.parseModule(src);
-				parsed = true;
-				validated = EarlyErrorChecker.validate(tree).isEmpty();
-			} else {
-				Script tree = Parser.parseScript(src);
-				parsed = true;
-				validated = EarlyErrorChecker.validate(tree).isEmpty();
-			}
+			Program tree = name.endsWith(".module.js") ? Parser.parseModule(src) : Parser.parseScript(src);
+			parsed = true;
+			validated = EarlyErrorChecker.validate(tree).isEmpty();
 		} catch (JsError e) {
 			// Just swallow it
 		}

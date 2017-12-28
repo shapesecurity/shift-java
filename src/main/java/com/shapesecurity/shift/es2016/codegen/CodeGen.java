@@ -41,34 +41,14 @@ public class CodeGen implements Reducer<CodeRep> {
     }
 
     @Nonnull
-    public static String codeGen(@Nonnull Script script) {
-        return codeGen(script, COMPACT);
-    }
-
-    @Nonnull
-    public static String codeGen(@Nonnull Module module) {
-        return codeGen(module, COMPACT);
-    }
-
-    @Nonnull
     public static String codeGen(@Nonnull Program program) {
-        if (program instanceof Script) {
-            return codeGen((Script) program);
-        }
-        return codeGen((Module) program);
+        return codeGen(program, COMPACT);
     }
 
-    protected static String codeGen(@Nonnull Script script, @Nonnull CodeGen codeGen) {
+    protected static String codeGen(@Nonnull Program program, @Nonnull CodeGen codeGen) {
         StringBuilder sb = new StringBuilder();
         TokenStream ts = new TokenStream(sb);
-        Director.reduceScript(codeGen, script).emit(ts, false);
-        return sb.toString();
-    }
-
-    protected static String codeGen(@Nonnull Module module, @Nonnull CodeGen codeGen) {
-        StringBuilder sb = new StringBuilder();
-        TokenStream ts = new TokenStream(sb);
-        Director.reduceModule(codeGen, module).emit(ts, false);
+        Director.reduceProgram(codeGen, program).emit(ts, false);
         return sb.toString();
     }
 

@@ -81,19 +81,8 @@ public class EarlyErrorChecker extends MonoidalReducer<EarlyErrorState> {
         return state.errors;
     }
 
-    public static ImmutableList<EarlyError> validate(Script script) {
-        return EarlyErrorChecker.extract(Director.reduceScript(new EarlyErrorChecker(), script));
-    }
-
-    public static ImmutableList<EarlyError> validate(Module module) {
-        return EarlyErrorChecker.extract(Director.reduceModule(new EarlyErrorChecker(), module));
-    }
-
     public static ImmutableList<EarlyError> validate(Program program) {
-        if (program instanceof Script) {
-            return validate((Script) program);
-        }
-        return validate((Module) program);
+        return EarlyErrorChecker.extract(Director.reduceProgram(new EarlyErrorChecker(), program));
     }
 
     private boolean isStrictFunctionBody(@Nonnull FunctionBody functionBody) {
