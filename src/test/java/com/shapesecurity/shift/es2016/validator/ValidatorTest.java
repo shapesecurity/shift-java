@@ -323,10 +323,10 @@ public class ValidatorTest {
     Script test0 = new Script(ImmutableList.empty(), ImmutableList.of(new ExpressionStatement(new TemplateExpression(Maybe.empty(), ImmutableList.of(new TemplateElement("abc"))))));
     assertNoErrors(test0);
 
-    Script test1 = new Script(ImmutableList.empty(), ImmutableList.of(new ExpressionStatement(new TemplateExpression(Maybe.empty(), ImmutableList.of(new TemplateElement("\"abc'"))))));
+    Script test1 = new Script(ImmutableList.empty(), ImmutableList.of(new ExpressionStatement(new TemplateExpression(Maybe.empty(), ImmutableList.of(new TemplateElement("${"))))));
     assertCorrectErrors(test1, 1, ValidationErrorMessages.VALID_TEMPLATE_ELEMENT_VALUE);
 
-    Script test2 = new Script(ImmutableList.empty(), ImmutableList.of(new ExpressionStatement(new TemplateExpression(Maybe.empty(), ImmutableList.of(new TemplateElement("'abc\""))))));
+    Script test2 = new Script(ImmutableList.empty(), ImmutableList.of(new ExpressionStatement(new TemplateExpression(Maybe.empty(), ImmutableList.of(new TemplateElement("`"))))));
     assertCorrectErrors(test2, 1, ValidationErrorMessages.VALID_TEMPLATE_ELEMENT_VALUE);
   }
 

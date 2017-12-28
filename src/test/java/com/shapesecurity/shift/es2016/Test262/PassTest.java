@@ -77,12 +77,6 @@ public class PassTest {
 		"dafb7abe5b9b44f5.js",
 		"eaee2c64dfc46b6a.js",
 		"ed32642380a6e603.js",
-		"efb88a0b6e2e170e.js",
-
-		// BUG: multiline templates are wrong somehow
-		"45ed987996568823.js",
-		"6d8c97119162ad95.js",
-		"94be09b126b946b8.js",
 
 		"" // empty line to make git diffs nicer
 	));
