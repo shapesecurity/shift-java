@@ -532,7 +532,8 @@ public class CodeGen implements Reducer<CodeRep> {
     public CodeRep reduceExportLocals(@Nonnull ExportLocals node, @Nonnull ImmutableList<CodeRep> namedExports) {
         return seqVA(
                 factory.token("export"),
-                factory.brace(factory.commaSep(namedExports))
+                factory.brace(factory.commaSep(namedExports)),
+                factory.semiOp()
         );
     }
 

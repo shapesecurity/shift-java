@@ -68,7 +68,6 @@ public class PassTest {
 
 		// BUG(s): codegen produces invalid or unequal output
 		"08358cb4732d8ce1.js",
-		"17302b9b0cab0c69.module.js",
 		"4d2c7020de650d40.js",
 		"589dc8ad3b9aa28f.js",
 		"5c3d125ce5f032aa.js",
