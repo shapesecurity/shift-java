@@ -299,13 +299,13 @@ public class ValidatorTest {
 
   @Test
   public void testLiteralRegExpExpression() {
-    Script test0 = new Script(ImmutableList.empty(), ImmutableList.of(new ExpressionStatement(new LiteralRegExpExpression("@", false, false, false, false, false))));
+    Script test0 = new Script(ImmutableList.empty(), ImmutableList.of(new ExpressionStatement(new LiteralRegExpExpression("[", false, false, false, false, false))));
     assertCorrectErrors(test0, 1, ValidationErrorMessages.VALID_REG_EX_PATTERN);
 
     Script test3 = new Script(ImmutableList.empty(), ImmutableList.of(new ExpressionStatement(new LiteralRegExpExpression("[a-z]foo\\\\/bar=([^=\\\\s])+", false, false, false, false, false))));
     assertNoErrors(test3);
 
-    Script test4 = new Script(ImmutableList.empty(), ImmutableList.of(new ExpressionStatement(new LiteralRegExpExpression("/[a-z]/", true, false, false, false, false))));
+    Script test4 = new Script(ImmutableList.empty(), ImmutableList.of(new ExpressionStatement(new LiteralRegExpExpression("[a-z]", true, false, false, false, false))));
     assertNoErrors(test4);
   }
 

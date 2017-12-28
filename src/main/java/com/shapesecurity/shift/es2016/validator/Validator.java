@@ -73,8 +73,8 @@ public class Validator extends MonoidalReducer<ValidationContext> {
 
     private static boolean checkIsLiteralRegExpPattern(String pattern) {
         // copied from tokenizer for getting a regex token
+        // TODO this probably needs to be rewritten to be more strict and depend on the flags
         int index = 0;
-        boolean terminated = false;
         boolean classMarker = false;
         while (index < pattern.length()) {
             char ch = pattern.charAt(index);
@@ -92,34 +92,14 @@ public class Validator extends MonoidalReducer<ValidationContext> {
                     if (ch == ']') {
                         classMarker = false;
                     }
-                } else {
-                    if (ch == '/') {
-                        terminated = true;
-                        index++;
-                        break;
-                    } else if (ch == '[') {
-                        classMarker = true;
-                    }
+                } else if (ch == '[') {
+                    classMarker = true;
                 }
                 index++;
             }
         }
 
-        if (!terminated) {
-            return false;
-        }
-
-        while (index < pattern.length()) {
-            char ch = pattern.charAt(index);
-            if (ch == '\\') {
-                return false;
-            }
-            if (!Utils.isIdentifierPart(ch)) {
-                break;
-            }
-            index++;
-        }
-        return true;
+        return !classMarker;
     }
 
     public static boolean checkIsValidIdentifierName(String name) {
