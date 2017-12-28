@@ -753,4 +753,9 @@ public class EarlyErrorsTest extends ParserTestCase {
         testScriptEarlyError("try {} catch(e) { for(var e of 0); }", "Duplicate binding \"e\"");
 
     }
+
+    @Test
+    public void testNonErrors() throws JsError {
+        testScriptNoEarlyError("'use strict';var await;");
+    }
 }
