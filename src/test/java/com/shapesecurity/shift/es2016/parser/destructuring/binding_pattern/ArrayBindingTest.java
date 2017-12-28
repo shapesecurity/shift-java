@@ -29,6 +29,7 @@ public class ArrayBindingTest extends ParserTestCase {
         testScript("var [a, ...a] = 0;", new VariableDeclarationStatement(new VariableDeclaration(VariableDeclarationKind.Var, ImmutableList.of(new VariableDeclarator(new ArrayBinding(ImmutableList.of(Maybe.of(new BindingIdentifier("a"))), Maybe.of(new BindingIdentifier("a"))), Maybe.of(new LiteralNumericExpression(0.0)))))));
         testScript("try {} catch ([e]) {}", new TryCatchStatement(new Block(ImmutableList.empty()), new CatchClause(new ArrayBinding(ImmutableList.of(Maybe.of(new BindingIdentifier("e"))), Maybe.empty()), new Block(ImmutableList.empty()))));
         testScript("try {} catch ([e, ...a]) {}", new TryCatchStatement(new Block(ImmutableList.empty()), new CatchClause(new ArrayBinding(ImmutableList.of(Maybe.of(new BindingIdentifier("e"))), Maybe.of(new BindingIdentifier("a"))), new Block(ImmutableList.empty()))));
+        testScript("for (let [a = b] of [0, c = 0]);");
 
         testScriptFailure("var [a.b] = 0", 6, "Unexpected token \".\"");
         testScriptFailure("var ([x]) = 0", 4, "Unexpected token \"(\"");

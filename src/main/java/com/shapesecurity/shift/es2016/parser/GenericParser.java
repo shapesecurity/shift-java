@@ -1765,7 +1765,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
                         this.isBindingElement = this.isAssignmentTarget = false;
                     }
                 } else {
-                    Either<Expression, AssignmentTarget> expr = this.parseAssignmentExpressionOrTarget(); //TODO inherit cover grammar
+                    Either<Expression, AssignmentTarget> expr = this.inheritCoverGrammar(this::parseAssignmentExpressionOrTarget);
                     if (allExpressionsSoFar) {
                         if (expr.isLeft()) {
                             exprs.add(expr.left().map(x -> (SpreadElementExpression) x));
