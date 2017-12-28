@@ -66,10 +66,6 @@ public class PassTest {
 		"f5b89028dfa29f27.js",
 		"f7f611e6fdb5b9fc.js",
 
-		// BUG: serializer outputs malformed escape
-		"0b1fc7208759253b.js",
-		"e5a7d56b798ec7e6.js",
-
 		// BUG: validator asserts parsed identifier is not an identifier
 		"31237b174ba6047a.js",
 		"58cb05d17f7ec010.js",
