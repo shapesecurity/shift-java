@@ -303,7 +303,7 @@ public class PassTest {
 
 		// check comments
 		String commentsJSON = new String(Files.readAllBytes(Paths.get(expectationsDir, name + "-comments.json")), StandardCharsets.UTF_8);
-		ImmutableList<ParserWithLocation.Comment> expectedComments = deserializeComments(commentsJSON);
+		ImmutableList<ParserWithLocation.Comment> expectedComments = deserializeComments(new JsonParser().parse(commentsJSON));
 
 		ImmutableList<ParserWithLocation.Comment> actualComments = parser.getComments();
 
@@ -400,8 +400,7 @@ public class PassTest {
 		}
 	}
 
-	public static ImmutableList<ParserWithLocation.Comment> deserializeComments(String toDeserialize) {
-		JsonElement comments = new JsonParser().parse(toDeserialize);
+	public static ImmutableList<ParserWithLocation.Comment> deserializeComments(JsonElement comments) {
 		return ImmutableList.from(
 			StreamSupport.stream(comments.getAsJsonArray().spliterator(), false)
 				.map(c -> {
