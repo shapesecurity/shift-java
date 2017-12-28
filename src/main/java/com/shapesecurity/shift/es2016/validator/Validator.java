@@ -54,6 +54,7 @@ import com.shapesecurity.shift.es2016.ast.VariableDeclarationKind;
 import com.shapesecurity.shift.es2016.ast.VariableDeclarationStatement;
 import com.shapesecurity.shift.es2016.ast.YieldExpression;
 import com.shapesecurity.shift.es2016.ast.YieldGeneratorExpression;
+import com.shapesecurity.shift.es2016.parser.TokenType;
 import com.shapesecurity.shift.es2016.parser.token.StringLiteralToken;
 import com.shapesecurity.shift.es2016.reducer.Director;
 import com.shapesecurity.shift.es2016.parser.JsError;
@@ -140,6 +141,16 @@ public class Validator extends MonoidalReducer<ValidationContext> {
             }
         }
         return true;
+    }
+
+    private boolean checkIsTemplateElement(String rawValue) {
+        try {
+            Tokenizer tokenizer = new Tokenizer('`' + rawValue + '`', false);
+            Token token = tokenizer.lex();
+            return token.type == TokenType.TEMPLATE && tokenizer.lookahead.type == TokenType.EOS;
+        } catch(JsError e) {
+            return false;
+        }
     }
 
     private boolean isProblematicIfStatement(IfStatement node) {
@@ -432,7 +443,7 @@ public class Validator extends MonoidalReducer<ValidationContext> {
     @Override
     public ValidationContext reduceTemplateElement(@Nonnull TemplateElement node) {
         ValidationContext s = super.reduceTemplateElement(node);
-        if (!checkIsStringLiteral(node.rawValue)) {
+        if (!checkIsTemplateElement(node.rawValue)) {
             s.addError(new ValidationError(node, ValidationErrorMessages.VALID_TEMPLATE_ELEMENT_VALUE));
         }
         return s;
