@@ -22,20 +22,20 @@ public class FailTest {
 	static final String testsDir = "src/test/resources/test262-parser-tests/fail/";
 
 	static final Set<String> xfail = new HashSet<>(Arrays.asList(
-			// BUG: destructuring in for loop head requires initialization
-			"13ce2dd24993176a.js",
-			"29fb02620b662387.js",
-			"37cb7557997d4fd6.js",
-			"6b9bc191e6f5ef69.js",
-			"a651ee9d0db08692.js",
-			"d17d3aebb6a3cf43.js",
+		// BUG: destructuring in for loop head requires initialization
+		"13ce2dd24993176a.js",
+		"29fb02620b662387.js",
+		"37cb7557997d4fd6.js",
+		"6b9bc191e6f5ef69.js",
+		"a651ee9d0db08692.js",
+		"d17d3aebb6a3cf43.js",
 
-			// BUG: arrow precedence
-			"40449ddc6ec37b35.js",
-			"4ff4b78ff3e2de6e.js",
-			"ca3dd7ea0b4626dd.js",
+		// BUG: arrow precedence
+		"40449ddc6ec37b35.js",
+		"4ff4b78ff3e2de6e.js",
+		"ca3dd7ea0b4626dd.js",
 
-			"" // empty line to make git diffs nicer
+		"" // empty line to make git diffs nicer
 	));
 
 	static void check(String name) throws IOException {

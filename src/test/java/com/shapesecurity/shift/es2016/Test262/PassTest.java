@@ -50,193 +50,193 @@ public class PassTest {
 	static final String expectationsDir = "src/test/resources/shift-parser-expectations/expectations/";
 
 	static final Set<String> xfail = new HashSet<>(Arrays.asList(
-			// BUG: Java's unicode support appears to be out of date
-			"05b849122b429743.js",
-			"3f44c09167d5753d.js",
-			"431ecef8c85d4d24.js",
-			"151d4db59b774864.js",
-			"465b79616fdc9794.js",
+		// BUG: Java's unicode support appears to be out of date
+		"05b849122b429743.js",
+		"3f44c09167d5753d.js",
+		"431ecef8c85d4d24.js",
+		"151d4db59b774864.js",
+		"465b79616fdc9794.js",
 
-			// BUG: yield flag passes to nested functions
-			"0d137e8a97ffe083.js",
-			"177fef3d002eb873.js",
-			"6b76b8761a049c19.js",
-			"901fca17189cd709.js",
+		// BUG: yield flag passes to nested functions
+		"0d137e8a97ffe083.js",
+		"177fef3d002eb873.js",
+		"6b76b8761a049c19.js",
+		"901fca17189cd709.js",
 
-			// BUG: yield precedence issue
-			"0f88c334715d2489.js",
-			"7dab6e55461806c9.js",
-			"cb211fadccb029c7.js",
-			"ce968fcdf3a1987c.js",
+		// BUG: yield precedence issue
+		"0f88c334715d2489.js",
+		"7dab6e55461806c9.js",
+		"cb211fadccb029c7.js",
+		"ce968fcdf3a1987c.js",
 
-			// BUG: something about destructuring parameters
-			"1093d98f5fc0758d.js",
-			"15d9592709b947a0.js",
-			"4e1a0da46ca45afe.js",
-			"99fceed987b8ec3d.js",
-			"9bcae7c7f00b4e3c.js",
-			"e1387fe892984e2b.js",
+		// BUG: something about destructuring parameters
+		"1093d98f5fc0758d.js",
+		"15d9592709b947a0.js",
+		"4e1a0da46ca45afe.js",
+		"99fceed987b8ec3d.js",
+		"9bcae7c7f00b4e3c.js",
+		"e1387fe892984e2b.js",
 
-			// BUG: something about '&'
-			"489e6113a41ef33f.js",
-			"a43df1aea659fab8.js",
-			"c3699b982b33926b.js",
-			"cbc644a20893a549.js",
-			"ec97990c2cc5e0e8.js",
+		// BUG: something about '&'
+		"489e6113a41ef33f.js",
+		"a43df1aea659fab8.js",
+		"c3699b982b33926b.js",
+		"cbc644a20893a549.js",
+		"ec97990c2cc5e0e8.js",
 
-			// BUG: deserializer breaks on **
-			"72d79750e81ef03d.js",
-			"988e362ed9ddcac5.js",
-			"db3c01738aaf0b92.js",
+		// BUG: deserializer breaks on **
+		"72d79750e81ef03d.js",
+		"988e362ed9ddcac5.js",
+		"db3c01738aaf0b92.js",
 
-			// BUG: for-in destructing containing in breaks doesn't work
-			"c546a199e87abaad.js",
+		// BUG: for-in destructing containing in breaks doesn't work
+		"c546a199e87abaad.js",
 
-			// BUG: can't use 'in' as argument to 'new'
-			"cd2f5476a739c80a.js",
+		// BUG: can't use 'in' as argument to 'new'
+		"cd2f5476a739c80a.js",
 
-			// BUG: exports are treated as declarations
-			"e2470430b235b9bb.module.js",
+		// BUG: exports are treated as declarations
+		"e2470430b235b9bb.module.js",
 
-			// BUG(s): codegen produces invalid or unequal output
-			"0426f15dac46e92d.js",
-			"08358cb4732d8ce1.js",
-			"17302b9b0cab0c69.module.js",
-			"4d2c7020de650d40.js",
-			"589dc8ad3b9aa28f.js",
-			"5c3d125ce5f032aa.js",
-			"6ffd0afb19f0a92c.js",
-			"87a9b0d1d80812cc.js",
-			"b92bdcf6c2591e5c.js",
-			"d2332f9187c6a20a.module.js",
-			"da9e16ac9fd5b61d.js",
-			"dc6037a43bed9588.js",
-			"f5b89028dfa29f27.js",
-			"f7f611e6fdb5b9fc.js",
+		// BUG(s): codegen produces invalid or unequal output
+		"0426f15dac46e92d.js",
+		"08358cb4732d8ce1.js",
+		"17302b9b0cab0c69.module.js",
+		"4d2c7020de650d40.js",
+		"589dc8ad3b9aa28f.js",
+		"5c3d125ce5f032aa.js",
+		"6ffd0afb19f0a92c.js",
+		"87a9b0d1d80812cc.js",
+		"b92bdcf6c2591e5c.js",
+		"d2332f9187c6a20a.module.js",
+		"da9e16ac9fd5b61d.js",
+		"dc6037a43bed9588.js",
+		"f5b89028dfa29f27.js",
+		"f7f611e6fdb5b9fc.js",
 
-			// BUG: serializer outputs malformed escape
-			"0b1fc7208759253b.js",
-			"e5a7d56b798ec7e6.js",
+		// BUG: serializer outputs malformed escape
+		"0b1fc7208759253b.js",
+		"e5a7d56b798ec7e6.js",
 
-			// BUG: validator asserts parsed regex is invalid
-			"027abe815032df72.js",
-			"046b1012ef9b0e26.js",
-			"06981f39d0844079.js",
-			"0ffdc03e2ffcb5dc.js",
-			"111668493e3e0823.js",
-			"14f95b3c9a9e7480.js",
-			"17cc7c10e02028be.js",
-			"18f05b95a72dffa1.js",
-			"1908280b73954ef7.js",
-			"1a1c717109ab67e1.js",
-			"1de765c987733026.js",
-			"206ebb4e67a6daa9.js",
-			"24e299720285b6c1.js",
-			"26a4b2dddf53ab39.js",
-			"27ac24465c731ff9.js",
-			"29ef8a7a1cbfda7f.js",
-			"2e8a88da875f40c7.js",
-			"31237b174ba6047a.js",
-			"31ad88cae27258b7.js",
-			"3b1fca65828182ab.js",
-			"3f8b15109761ea65.js",
-			"4412172b5dc13cd6.js",
-			"45ed987996568823.js",
-			"47fce5046a1b2098.js",
-			"495c05812d179d67.js",
-			"4ad6e3a59e27e9b1.js",
-			"4b6559716b2f7b21.js",
-			"4dc600d5ae71e8eb.js",
-			"4f805a43cc2e8854.js",
-			"52f2f30356750b9b.js",
-			"56fd564979894636.js",
-			"58cb05d17f7ec010.js",
-			"596746323492fbfd.js",
-			"5bae374be95382c6.js",
-			"645e8cce491528cd.js",
-			"66e383bfd18e66ab.js",
-			"680880af107834e8.js",
-			"6823058797ddd563.js",
-			"6861bb23b186f65a.js",
-			"6d8c97119162ad95.js",
-			"6db7dbc9b1365dfa.module.js",
-			"6f6e870785069487.js",
-			"739bef73b11c87de.js",
-			"779e65d6349f1616.js",
-			"784cbc06d5ade346.js",
-			"78c215fabdf13bae.js",
-			"78ea6e4e98c18f91.js",
-			"7c027cdbc7f493b2.js",
-			"7e094109208fc749.js",
-			"8290412f79ac2bb6.js",
-			"8411f3c15e3e8529.js",
-			"94846b0ae1cac1a2.js",
-			"94be09b126b946b8.js",
-			"982835d8c977075c.js",
-			"a0079146ab045c26.js",
-			"a0b7bf790311b763.js",
-			"a6b7dab7088e5269.js",
-			"a8b832d61af9cdc4.js",
-			"abd5e4aa1a9f99ba.js",
-			"b3717dd9314332d2.js",
-			"b9a5f5c8c12525c7.js",
-			"bc89b2b2f1e19f9e.js",
-			"bdfc6c05edd19925.js",
-			"bf49ec8d96884562.js",
-			"c1914072e996ddbe.js",
-			"c78c8fbfbd3e779e.js",
-			"c83a2dcf75fa419a.js",
-			"c87859666bd18c8c.js",
-			"c88c5d1e7e9574b6.js",
-			"caf6539007d41b5e.js",
-			"cc561e319220c789.js",
-			"cdf43a987840ece8.js",
-			"d3f70f4410bb8346.js",
-			"d53aef16fe683218.js",
-			"d55a93310a309c43.js",
-			"d59a168fe5b7c787.js",
-			"d59a6667e160c0b3.js",
-			"dad51383642e0d27.js",
-			"dadccefeaae19dbf.js",
-			"dec1ae80150e1664.js",
-			"c78c8fbfbd3e779e.js",
-			"c83a2dcf75fa419a.js",
-			"c87859666bd18c8c.js",
-			"c88c5d1e7e9574b6.js",
-			"caf6539007d41b5e.js",
-			"cc561e319220c789.js",
-			"cdf43a987840ece8.js",
-			"d3f70f4410bb8346.js",
-			"d53aef16fe683218.js",
-			"d55a93310a309c43.js",
-			"d59a168fe5b7c787.js",
-			"d59a6667e160c0b3.js",
-			"dad51383642e0d27.js",
-			"dadccefeaae19dbf.js",
-			"dec1ae80150e1664.js",
-			"e4a43066905a597b.js",
-			"e6ac25f6aa73a2be.js",
-			"ec782937135d4f32.js",
-			"f0f9e218a70eba5c.js",
-			"f1643d0e6c7fde9a.js",
-			"f2d394b74219a023.js",
-			"f3219596b50bb381.js",
-			"f80f30fbdd7e7b19.js",
-			"fb7c5656640f6ec7.js",
-			"fc020c065098cbd5.js",
-			"ff902593b25092d1.js",
-			"fffe7e78a7ce9f9a.js",
+		// BUG: validator asserts parsed regex is invalid
+		"027abe815032df72.js",
+		"046b1012ef9b0e26.js",
+		"06981f39d0844079.js",
+		"0ffdc03e2ffcb5dc.js",
+		"111668493e3e0823.js",
+		"14f95b3c9a9e7480.js",
+		"17cc7c10e02028be.js",
+		"18f05b95a72dffa1.js",
+		"1908280b73954ef7.js",
+		"1a1c717109ab67e1.js",
+		"1de765c987733026.js",
+		"206ebb4e67a6daa9.js",
+		"24e299720285b6c1.js",
+		"26a4b2dddf53ab39.js",
+		"27ac24465c731ff9.js",
+		"29ef8a7a1cbfda7f.js",
+		"2e8a88da875f40c7.js",
+		"31237b174ba6047a.js",
+		"31ad88cae27258b7.js",
+		"3b1fca65828182ab.js",
+		"3f8b15109761ea65.js",
+		"4412172b5dc13cd6.js",
+		"45ed987996568823.js",
+		"47fce5046a1b2098.js",
+		"495c05812d179d67.js",
+		"4ad6e3a59e27e9b1.js",
+		"4b6559716b2f7b21.js",
+		"4dc600d5ae71e8eb.js",
+		"4f805a43cc2e8854.js",
+		"52f2f30356750b9b.js",
+		"56fd564979894636.js",
+		"58cb05d17f7ec010.js",
+		"596746323492fbfd.js",
+		"5bae374be95382c6.js",
+		"645e8cce491528cd.js",
+		"66e383bfd18e66ab.js",
+		"680880af107834e8.js",
+		"6823058797ddd563.js",
+		"6861bb23b186f65a.js",
+		"6d8c97119162ad95.js",
+		"6db7dbc9b1365dfa.module.js",
+		"6f6e870785069487.js",
+		"739bef73b11c87de.js",
+		"779e65d6349f1616.js",
+		"784cbc06d5ade346.js",
+		"78c215fabdf13bae.js",
+		"78ea6e4e98c18f91.js",
+		"7c027cdbc7f493b2.js",
+		"7e094109208fc749.js",
+		"8290412f79ac2bb6.js",
+		"8411f3c15e3e8529.js",
+		"94846b0ae1cac1a2.js",
+		"94be09b126b946b8.js",
+		"982835d8c977075c.js",
+		"a0079146ab045c26.js",
+		"a0b7bf790311b763.js",
+		"a6b7dab7088e5269.js",
+		"a8b832d61af9cdc4.js",
+		"abd5e4aa1a9f99ba.js",
+		"b3717dd9314332d2.js",
+		"b9a5f5c8c12525c7.js",
+		"bc89b2b2f1e19f9e.js",
+		"bdfc6c05edd19925.js",
+		"bf49ec8d96884562.js",
+		"c1914072e996ddbe.js",
+		"c78c8fbfbd3e779e.js",
+		"c83a2dcf75fa419a.js",
+		"c87859666bd18c8c.js",
+		"c88c5d1e7e9574b6.js",
+		"caf6539007d41b5e.js",
+		"cc561e319220c789.js",
+		"cdf43a987840ece8.js",
+		"d3f70f4410bb8346.js",
+		"d53aef16fe683218.js",
+		"d55a93310a309c43.js",
+		"d59a168fe5b7c787.js",
+		"d59a6667e160c0b3.js",
+		"dad51383642e0d27.js",
+		"dadccefeaae19dbf.js",
+		"dec1ae80150e1664.js",
+		"c78c8fbfbd3e779e.js",
+		"c83a2dcf75fa419a.js",
+		"c87859666bd18c8c.js",
+		"c88c5d1e7e9574b6.js",
+		"caf6539007d41b5e.js",
+		"cc561e319220c789.js",
+		"cdf43a987840ece8.js",
+		"d3f70f4410bb8346.js",
+		"d53aef16fe683218.js",
+		"d55a93310a309c43.js",
+		"d59a168fe5b7c787.js",
+		"d59a6667e160c0b3.js",
+		"dad51383642e0d27.js",
+		"dadccefeaae19dbf.js",
+		"dec1ae80150e1664.js",
+		"e4a43066905a597b.js",
+		"e6ac25f6aa73a2be.js",
+		"ec782937135d4f32.js",
+		"f0f9e218a70eba5c.js",
+		"f1643d0e6c7fde9a.js",
+		"f2d394b74219a023.js",
+		"f3219596b50bb381.js",
+		"f80f30fbdd7e7b19.js",
+		"fb7c5656640f6ec7.js",
+		"fc020c065098cbd5.js",
+		"ff902593b25092d1.js",
+		"fffe7e78a7ce9f9a.js",
 
-			// BUG: validator asserts parsed identifier is not an identifier
-			"c85fbdb8c97e0534.js",
-			"dafb7abe5b9b44f5.js",
-			"c85fbdb8c97e0534.js",
-			"dafb7abe5b9b44f5.js",
-			"eaee2c64dfc46b6a.js",
-			"ed32642380a6e603.js",
-			"efb88a0b6e2e170e.js",
+		// BUG: validator asserts parsed identifier is not an identifier
+		"c85fbdb8c97e0534.js",
+		"dafb7abe5b9b44f5.js",
+		"c85fbdb8c97e0534.js",
+		"dafb7abe5b9b44f5.js",
+		"eaee2c64dfc46b6a.js",
+		"ed32642380a6e603.js",
+		"efb88a0b6e2e170e.js",
 
-			"" // empty line to make git diffs nicer
+		"" // empty line to make git diffs nicer
 	));
 
 	static void assertTreesEqual(Program expected, Program actual) {
@@ -403,37 +403,37 @@ public class PassTest {
 	public static ImmutableList<ParserWithLocation.Comment> deserializeComments(String toDeserialize) {
 		JsonElement comments = new JsonParser().parse(toDeserialize);
 		return ImmutableList.from(
-				StreamSupport.stream(comments.getAsJsonArray().spliterator(), false)
-						.map(c -> {
-							JsonObject comment = c.getAsJsonObject();
-							ParserWithLocation.Comment.Type type;
-							switch (comment.getAsJsonPrimitive("type").getAsString()) {
-								case "SingleLine":
-									type = ParserWithLocation.Comment.Type.SingleLine;
-									break;
-								case "MultiLine":
-									type = ParserWithLocation.Comment.Type.MultiLine;
-									break;
-								case "HTMLOpen":
-									type = ParserWithLocation.Comment.Type.HTMLOpen;
-									break;
-								case "HTMLClose":
-									type = ParserWithLocation.Comment.Type.HTMLClose;
-									break;
-								default:
-									throw new RuntimeException("Comment of unrecognized type");
-							}
-							String text = comment.getAsJsonPrimitive("text").getAsString();
-							JsonObject start = comment.getAsJsonObject("start");
-							JsonObject end = comment.getAsJsonObject("end");
-							return new ParserWithLocation.Comment(
-									type,
-									text,
-									new SourceLocation(start.getAsJsonPrimitive("line").getAsInt(), start.getAsJsonPrimitive("column").getAsInt(), start.getAsJsonPrimitive("offset").getAsInt()),
-									new SourceLocation(end.getAsJsonPrimitive("line").getAsInt(), end.getAsJsonPrimitive("column").getAsInt(), end.getAsJsonPrimitive("offset").getAsInt())
-							);
-						})
-						.collect(Collectors.toList())
+			StreamSupport.stream(comments.getAsJsonArray().spliterator(), false)
+				.map(c -> {
+					JsonObject comment = c.getAsJsonObject();
+					ParserWithLocation.Comment.Type type;
+					switch (comment.getAsJsonPrimitive("type").getAsString()) {
+						case "SingleLine":
+							type = ParserWithLocation.Comment.Type.SingleLine;
+							break;
+						case "MultiLine":
+							type = ParserWithLocation.Comment.Type.MultiLine;
+							break;
+						case "HTMLOpen":
+							type = ParserWithLocation.Comment.Type.HTMLOpen;
+							break;
+						case "HTMLClose":
+							type = ParserWithLocation.Comment.Type.HTMLClose;
+							break;
+						default:
+							throw new RuntimeException("Comment of unrecognized type");
+					}
+					String text = comment.getAsJsonPrimitive("text").getAsString();
+					JsonObject start = comment.getAsJsonObject("start");
+					JsonObject end = comment.getAsJsonObject("end");
+					return new ParserWithLocation.Comment(
+						type,
+						text,
+						new SourceLocation(start.getAsJsonPrimitive("line").getAsInt(), start.getAsJsonPrimitive("column").getAsInt(), start.getAsJsonPrimitive("offset").getAsInt()),
+						new SourceLocation(end.getAsJsonPrimitive("line").getAsInt(), end.getAsJsonPrimitive("column").getAsInt(), end.getAsJsonPrimitive("offset").getAsInt())
+					);
+				})
+				.collect(Collectors.toList())
 		);
 	}
 }
