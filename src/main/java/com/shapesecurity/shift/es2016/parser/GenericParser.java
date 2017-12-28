@@ -1333,6 +1333,8 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
         }
         this.lex();
 
+        this.isAssignmentTarget = this.isBindingElement = false;
+
         Expression right = this.isolateCoverGrammar(this::parseExponentiationExpression).left().fromJust();
         return Either3.left(this.finishNode(startState, new BinaryExpression(left.left().fromJust(), BinaryOperator.Exp, right)));
     }

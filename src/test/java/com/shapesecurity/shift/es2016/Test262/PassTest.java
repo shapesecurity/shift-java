@@ -84,9 +84,6 @@ public class PassTest {
 		"cbc644a20893a549.js",
 		"ec97990c2cc5e0e8.js",
 
-		// BUG: deserializer breaks on **
-		"988e362ed9ddcac5.js",
-
 		// BUG: for-in destructing containing in breaks doesn't work
 		"c546a199e87abaad.js",
 
