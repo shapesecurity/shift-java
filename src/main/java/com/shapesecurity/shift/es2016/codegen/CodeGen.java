@@ -333,7 +333,7 @@ public class CodeGen implements Reducer<CodeRep> {
     @Nonnull
     @Override
     public CodeRep reduceClassDeclaration(@Nonnull ClassDeclaration node, @Nonnull CodeRep name, @Nonnull Maybe<CodeRep> _super, @Nonnull ImmutableList<CodeRep> elements) {
-        CodeRep state = seqVA(factory.token("class"), name);
+        CodeRep state = seqVA(factory.token("class"), node.name.name.equals("*default*") ? factory.empty() : name);
         if (_super.isJust()) {
             state = seqVA(state, factory.token("extends"), p(node._super.fromJust(), Precedence.NEW, _super.fromJust()));
         }

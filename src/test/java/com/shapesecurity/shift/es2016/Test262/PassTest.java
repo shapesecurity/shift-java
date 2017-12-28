@@ -67,7 +67,6 @@ public class PassTest {
 		"08358cb4732d8ce1.js",
 		"4d2c7020de650d40.js",
 		"5c3d125ce5f032aa.js",
-		"d2332f9187c6a20a.module.js",
 		"da9e16ac9fd5b61d.js",
 		"dc6037a43bed9588.js",
 		"f5b89028dfa29f27.js",
