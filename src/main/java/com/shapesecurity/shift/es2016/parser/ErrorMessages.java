@@ -54,6 +54,7 @@ interface ErrorMessages {
     String INVALID_VAR_INIT_FOR_IN = "Invalid variable declaration in for-in statement";
     String INVALID_VAR_INIT_FOR_OF = "Invalid variable declaration in for-of statement";
     String ILLEGAL_PROPERTY = "Illegal property initializer";
+    String UNEXPECTED_ARROW = "Arrows may not appear in this position";
 
     // not in error.js, but already used in java version
     String STRICT_RESERVED_WORD = "Use of future reserved word in strict mode";
