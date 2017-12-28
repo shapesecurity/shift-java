@@ -1072,6 +1072,20 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
         return result;
     }
 
+    /* A note on the parsing of expressions:
+     * Many of the intermediate parseFoo helpers return Eithers.
+     * The rule they follow is this:
+     *  - If they encounter something which can only be the parameter list of an arrow, such as `()`,
+     *     and an arrow can appear there, return an Either containing a FormalParameters node.
+     *  - If they encounter something which can only be an AssignmentTarget, such as `{ a = 0 }`,
+     *     return an Either containing an AssignmentTarget.
+     *  - Otherwise, return an Either containing an Expression. In some cases, like `a`, this might
+     *     later be converted to an arrow head or AssignmentTarget once more context is read. In other
+     *     cases, like `0`, no such conversion is possible, and parsing will fail if later context
+     *     implies the Expression should be treated as an arrow head or AssignmentTarget.
+     *  - There is no case where something can be either an arrow head or AssignmentTarget but not
+     *     an expression, so there's no need to represent that case.
+     */
     @Nonnull
     protected Either<Expression, AssignmentTarget> parseAssignmentExpression() throws JsError {
         return this.isolateCoverGrammar(this::parseAssignmentExpressionOrTarget);

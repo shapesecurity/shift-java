@@ -106,8 +106,7 @@ public final class Either3<A, B, C> {
 		if (this == o) return true;
 		if (o == null || getClass() != o.getClass()) return false;
 		Either3<?, ?, ?> either3 = (Either3<?, ?, ?>) o;
-		return Objects.equals(data, either3.data) &&
-				tag == either3.tag;
+		return tag == either3.tag && Objects.equals(data, either3.data);
 	}
 
 	@Override
