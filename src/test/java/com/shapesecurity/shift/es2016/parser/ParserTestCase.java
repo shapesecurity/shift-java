@@ -157,4 +157,10 @@ public abstract class ParserTestCase extends TestCase {
         assertEquals(1, errors.length);
         assertEquals(error, errors.maybeHead().fromJust().message);
     }
+
+    public static void testScriptNoEarlyError(@Nonnull String source) throws JsError {
+        Script script = Parser.parseScript(source);
+        ImmutableList<EarlyError> errors = EarlyErrorChecker.validate(script);
+        assertEquals(0, errors.length);
+    }
 }

@@ -151,7 +151,6 @@ public final class Utils {
 
     public static boolean isReservedWord(@Nonnull String word) {
         switch (word) {
-            case "await":
             case "break":
             case "case":
             case "catch":
