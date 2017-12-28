@@ -678,6 +678,7 @@ public class CodeGenTest {
     @Test
     public void testObjectExpression() throws JsError {
         test("({})");
+        test("({\"-1\":0})");
         test("({a:1})", "({a:1,})");
         test("({}.a--)");
         test("({1:1})", "({1.0:1})");
