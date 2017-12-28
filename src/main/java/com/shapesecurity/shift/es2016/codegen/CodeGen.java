@@ -24,6 +24,7 @@ import com.shapesecurity.shift.es2016.ast.operators.BinaryOperator;
 import com.shapesecurity.shift.es2016.ast.operators.Precedence;
 import com.shapesecurity.shift.es2016.reducer.Director;
 import com.shapesecurity.shift.es2016.reducer.Reducer;
+import com.shapesecurity.shift.es2016.utils.D2A;
 import com.shapesecurity.shift.es2016.utils.Utils;
 import javax.annotation.Nonnull;
 
@@ -879,10 +880,11 @@ public class CodeGen implements Reducer<CodeRep> {
         } else {
             try {
                 double n = Double.parseDouble(node.value);
-                return factory.num(n);
-            } catch (NumberFormatException ignored) {
-                return factory.token(Utils.escapeStringLiteral(node.value));
-            }
+                if (n >= 0 && D2A.d2a(n).equals(node.value)) {
+                    return factory.num(n);
+                }
+            } catch (NumberFormatException ignored) {}
+            return factory.token(Utils.escapeStringLiteral(node.value));
         }
     }
 
