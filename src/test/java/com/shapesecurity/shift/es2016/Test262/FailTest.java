@@ -30,11 +30,6 @@ public class FailTest {
 		"a651ee9d0db08692.js",
 		"d17d3aebb6a3cf43.js",
 
-		// BUG: arrow precedence
-		"40449ddc6ec37b35.js",
-		"4ff4b78ff3e2de6e.js",
-		"ca3dd7ea0b4626dd.js",
-
 		"" // empty line to make git diffs nicer
 	));
 
