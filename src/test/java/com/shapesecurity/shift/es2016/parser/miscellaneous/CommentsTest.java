@@ -18,5 +18,6 @@ public class CommentsTest extends ParserTestCase {
         testScript(" \t --> comment");
         testScript(" \t /* block comment */  --> comment");
         testScript("/* block comment */--> comment");
+        testScript("0/*\n*/--> a comment");
     }
 }

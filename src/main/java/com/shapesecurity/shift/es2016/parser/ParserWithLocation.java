@@ -124,12 +124,13 @@ public class ParserWithLocation {
 		}
 
 		@Override
-		protected void skipMultiLineComment() throws JsError {
+		protected boolean skipMultiLineComment() throws JsError {
 			SourceLocation start = new SourceLocation(this.line + 1, this.index - this.lineStart, this.index);
-			super.skipMultiLineComment();
+			boolean isLineStart = super.skipMultiLineComment();
 			SourceLocation end = new SourceLocation(this.line + 1, this.index - this.lineStart, this.index);
 			String text = this.source.substring(start.offset + 2, end.offset - 2);
 			comments = comments.cons(new Comment(Comment.Type.MultiLine, text, start, end));
+			return isLineStart;
 		}
 	}
 }
