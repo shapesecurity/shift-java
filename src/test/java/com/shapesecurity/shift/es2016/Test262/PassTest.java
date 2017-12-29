@@ -50,34 +50,6 @@ public class PassTest {
 	static final String expectationsDir = "src/test/resources/shift-parser-expectations/expectations/";
 
 	static final Set<String> xfail = new HashSet<>(Arrays.asList(
-		// BUG: Java's unicode support appears to be out of date
-		"05b849122b429743.js",
-		"3f44c09167d5753d.js",
-		"431ecef8c85d4d24.js",
-		"151d4db59b774864.js",
-		"465b79616fdc9794.js",
-
-		// BUG(s): codegen produces invalid or unequal output
-		"08358cb4732d8ce1.js",
-		"4d2c7020de650d40.js",
-		"5c3d125ce5f032aa.js",
-		"da9e16ac9fd5b61d.js",
-		"dc6037a43bed9588.js",
-		"f5b89028dfa29f27.js",
-		"f7f611e6fdb5b9fc.js",
-
-		// BUG: validator asserts parsed identifier is not an identifier
-		"31237b174ba6047a.js",
-		"58cb05d17f7ec010.js",
-		"596746323492fbfd.js",
-		"abd5e4aa1a9f99ba.js",
-		"c85fbdb8c97e0534.js",
-		"dafb7abe5b9b44f5.js",
-		"c85fbdb8c97e0534.js",
-		"dafb7abe5b9b44f5.js",
-		"eaee2c64dfc46b6a.js",
-		"ed32642380a6e603.js",
-
 		"" // empty line to make git diffs nicer
 	));
 

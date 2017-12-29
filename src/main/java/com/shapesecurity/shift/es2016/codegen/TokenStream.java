@@ -26,7 +26,7 @@ import java.util.regex.Pattern;
 public class TokenStream {
     @Nonnull
     protected final StringBuilder writer;
-    protected char lastChar = (char) -1;
+    protected int lastCodePoint = -1;
     @Nullable
     protected String lastNumber;
     protected boolean optionalSemi;
@@ -67,17 +67,22 @@ public class TokenStream {
             if (String.valueOf(tokenStr).equals(".")) {
                 this.writer.append(numberNeedsDoubleDot(this.lastNumber) ? ".." : ".");
                 this.lastNumber = null;
-                this.lastChar = '.';
+                this.lastCodePoint = '.';
                 return;
             }
         }
         this.lastNumber = null;
-        char rightChar = tokenStr.charAt(0);
-        char lastChar = this.lastChar;
-        this.lastChar = tokenStr.charAt(tokenStr.length() - 1);
-        if ((lastChar == '+' || lastChar == '-') && lastChar == rightChar ||
-                Utils.isIdentifierPart(lastChar) && Utils.isIdentifierPart(rightChar) ||
-                lastChar == '/' && (rightChar == 'i' || rightChar == '/')) {
+        int rightCodePoint = tokenStr.codePointAt(0);
+        int lastCodePoint = this.lastCodePoint;
+        char lastChar = tokenStr.charAt(tokenStr.length() - 1);
+        if (lastChar >= 0xDC00 && lastChar <= 0xDFFF) {
+            this.lastCodePoint = tokenStr.codePointAt(tokenStr.length() - 2);
+        } else {
+            this.lastCodePoint = lastChar;
+        }
+        if ((lastCodePoint == '+' || lastCodePoint == '-') && lastCodePoint == rightCodePoint ||
+                Utils.isIdentifierPart(lastCodePoint) && Utils.isIdentifierPart(rightCodePoint) ||
+                lastCodePoint == '/' && (rightCodePoint == 'i' || rightCodePoint == '/')) {
             this.writer.append(' ');
         }
         if (this.writer.length() >= 2 && tokenStr.equals("--") && this.writer.substring(this.writer.length() - 2,

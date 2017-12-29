@@ -104,7 +104,7 @@ public class Validator extends MonoidalReducer<ValidationContext> {
     }
 
     public static boolean checkIsValidIdentifierName(String name) {
-        return name.length() > 0 && Utils.isIdentifierStart(name.charAt(0)) && name.chars().allMatch(Utils::isIdentifierPart);
+        return name.length() > 0 && Utils.isIdentifierStart(name.codePointAt(0)) && name.codePoints().skip(1).allMatch(Utils::isIdentifierPart);
     }
 
     public static ImmutableList<ValidationError> validate(Program program) {

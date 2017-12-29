@@ -11,10 +11,11 @@ class WebSafeTokenStream extends TokenStream {
 	@Override
 	public void put(@Nonnull String tokenStr) {
 		if (
-			this.lastChar == '<' && (tokenStr.startsWith("script") || tokenStr.startsWith("/script")) ||
-            Utils.isIdentifierPart(this.lastChar) && (Utils.isIdentifierPart(tokenStr.charAt(0)) || tokenStr.charAt(0) == '\\')
+			this.lastCodePoint == '<' && (tokenStr.startsWith("script") || tokenStr.startsWith("/script")) ||
+            Utils.isIdentifierPart(this.lastCodePoint) && (Utils.isIdentifierPart(tokenStr.charAt(0)) || tokenStr.charAt(0) == '\\')
 		) {
-			writer.append(this.lastChar = ' ');
+			this.lastCodePoint = ' ';
+			writer.append(' ');
 		}
 		super.put(tokenStr);
 	}
