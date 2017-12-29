@@ -2,6 +2,7 @@
 
 const ID_Start = require('unicode-9.0.0/Binary_Property/ID_Start/code-points.js');
 const ID_Continue = require('unicode-9.0.0/Binary_Property/ID_Continue/code-points.js');
+const Space_Separator = require('unicode-9.0.0/General_Category/Space_Separator/code-points.js');
 
 
 function asFourHexDigits(cp) {
@@ -42,3 +43,4 @@ function toRegex(array) {
 
 console.log('IdentifierStart:\n' + toRegex(ID_Start));
 console.log('IdentifierContinue:\n' + toRegex([].concat(ID_Continue, [0x200c, 0x200d])));
+console.log('Whitespace:\n' + toRegex([].concat(Space_Separator, [0x00a0, 0xfeff])));
