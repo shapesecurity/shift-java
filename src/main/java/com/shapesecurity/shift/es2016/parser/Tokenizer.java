@@ -505,9 +505,11 @@ public class Tokenizer {
         }
     }
 
-    protected void skipMultiLineComment() throws JsError {
+    protected boolean skipMultiLineComment() throws JsError {
+        // returns true iff this contains a linebreak
         this.index += 2;
         int length = this.source.length();
+        boolean isLineStart = false;
         int i = this.index;
         while (i < length) {
             char ch = this.source.charAt(i);
@@ -517,17 +519,19 @@ public class Tokenizer {
                         // Block comment ends with '*/'.
                         if (i + 1 < length && this.source.charAt(i + 1) == '/') {
                             this.index = i + 2;
-                            return;
+                            return isLineStart;
                         }
                         i++;
                         break;
                     case '\n':
+                        isLineStart = true;
                         this.hasLineTerminatorBeforeNext = true;
                         i++;
                         this.lineStart = i;
                         this.line++;
                         break;
                     case '\r':
+                        isLineStart = true;
                         this.hasLineTerminatorBeforeNext = true;
                         if (i < length - 1 && this.source.charAt(i + 1) == '\n') {
                             i++;
@@ -540,6 +544,7 @@ public class Tokenizer {
                         i++;
                 }
             } else if (ch == 0x2028 || ch == 0x2029) {
+                isLineStart = true;
                 this.hasLineTerminatorBeforeNext = true;
                 i++;
                 this.lineStart = i;
@@ -578,7 +583,8 @@ public class Tokenizer {
                     this.skipSingleLineComment(2);
                     isLineStart = true;
                 } else if (ch == '*') {
-                    this.skipMultiLineComment();
+                    boolean isMultilineWithTerminator = this.skipMultiLineComment();
+                    isLineStart = isMultilineWithTerminator || isLineStart;
                 } else {
                     break;
                 }
