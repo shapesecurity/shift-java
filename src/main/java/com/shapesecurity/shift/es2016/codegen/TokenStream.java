@@ -26,7 +26,7 @@ import java.util.regex.Pattern;
 public class TokenStream {
     @Nonnull
     protected final StringBuilder writer;
-    protected int lastCodePoint = -1;
+    protected int lastCodePoint = 0;
     @Nullable
     protected String lastNumber;
     protected boolean optionalSemi;
