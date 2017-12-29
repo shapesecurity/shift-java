@@ -6,15 +6,15 @@ const Other_ID_Start = require('unicode-9.0.0/Binary_Property/Other_ID_Start/cod
 
 
 function asFourHexDigits(cp) {
-  return cp.toString(16).padStart(4, 0);
+  return cp.toString(16).padStart(4, '0');
 }
 
 function escape(cp) {
   if (cp < 0xFFFF) {
     return '\\u' + asFourHexDigits(cp);
   }
-  let cu1 = Math.floor((cp - 0x10000) / 0x400) + 0xD800;
-  let cu2 = (cp - 0x10000) % 0x400 + 0xDC00;
+  const cu1 = Math.floor((cp - 0x10000) / 0x400) + 0xD800;
+  const cu2 = (cp - 0x10000) % 0x400 + 0xDC00;
   return '\\u' + asFourHexDigits(cu1) + '\\u' + asFourHexDigits(cu2);
 }
 
