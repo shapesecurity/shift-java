@@ -23,11 +23,11 @@ function toRegex(array) {
   for (let i = 0; i < sorted.length; ++i) {
     const cp = sorted[i];
     if (cp < 128) continue; // exclude ascii
-    if (sorted[i + 1] === cp + 1 && sorted[i + 2] === cp + 2) {
+    if (i + 2 < sorted.length && sorted[i + 1] === cp + 1 && sorted[i + 2] === cp + 2) {
       // i.e. we have a range
       i += 2;
       let offset = 2;
-      while (i < sorted.length && sorted[i + 1] === cp + offset + 1) {
+      while (i + 1 < sorted.length && sorted[i + 1] === cp + offset + 1) {
         ++i;
         ++offset;
       }
