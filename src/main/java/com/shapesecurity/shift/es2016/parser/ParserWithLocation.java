@@ -11,11 +11,13 @@ import com.shapesecurity.shift.es2016.ast.Node;
 import com.shapesecurity.shift.es2016.ast.Script;
 import com.shapesecurity.shift.es2016.ast.TemplateElement;
 import com.shapesecurity.shift.es2016.ast.TemplateExpression;
+import com.shapesecurity.shift.es2016.utils.WithLocation;
+
 import javax.annotation.Nonnull;
 
 import static com.shapesecurity.shift.es2016.utils.Utils.isLineTerminator;
 
-public class ParserWithLocation {
+public class ParserWithLocation implements WithLocation {
 	public static class Comment {
 		public enum Type {
 			SingleLine,

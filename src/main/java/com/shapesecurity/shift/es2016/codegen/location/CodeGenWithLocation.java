@@ -5,6 +5,7 @@ import com.shapesecurity.functional.data.Maybe;
 import com.shapesecurity.shift.es2016.ast.ArrowExpression;
 import com.shapesecurity.shift.es2016.ast.Module;
 import com.shapesecurity.shift.es2016.ast.Node;
+import com.shapesecurity.shift.es2016.ast.Program;
 import com.shapesecurity.shift.es2016.ast.Script;
 import com.shapesecurity.shift.es2016.codegen.CodeGen;
 import com.shapesecurity.shift.es2016.codegen.CodeRep;
@@ -13,9 +14,11 @@ import com.shapesecurity.shift.es2016.parser.SourceSpan;
 import com.shapesecurity.shift.es2016.reducer.Director;
 import com.shapesecurity.shift.es2016.reducer.Reducer;
 import com.shapesecurity.shift.es2016.reducer.WrappedReducer;
+import com.shapesecurity.shift.es2016.utils.WithLocation;
+
 import javax.annotation.Nonnull;
 
-public class CodeGenWithLocation extends WrappedReducer<CodeRep> {
+public class CodeGenWithLocation extends WrappedReducer<CodeRep> implements WithLocation {
 	@Nonnull
 	protected LocationMeta meta;
 
@@ -66,17 +69,10 @@ public class CodeGenWithLocation extends WrappedReducer<CodeRep> {
 		this(new CtorArgs(codeGen));
 	}
 
-	public String codeGen(@Nonnull Script script) {
+	public String codeGen(@Nonnull Program program) {
 		StringBuilder sb = new StringBuilder();
 		TokenStreamWithLocation ts = new TokenStreamWithLocation(sb, this.meta);
-		Director.reduceScript(this, script).emit(ts, false);
-		return sb.toString();
-	}
-
-	public String codeGen(@Nonnull Module module) {
-		StringBuilder sb = new StringBuilder();
-		TokenStreamWithLocation ts = new TokenStreamWithLocation(sb, this.meta);
-		Director.reduceModule(this, module).emit(ts, false);
+		Director.reduceProgram(this, program).emit(ts, false);
 		return sb.toString();
 	}
 
