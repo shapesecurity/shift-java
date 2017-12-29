@@ -2,7 +2,6 @@
 
 const ID_Start = require('unicode-9.0.0/Binary_Property/ID_Start/code-points.js');
 const ID_Continue = require('unicode-9.0.0/Binary_Property/ID_Continue/code-points.js');
-const Other_ID_Start = require('unicode-9.0.0/Binary_Property/Other_ID_Start/code-points.js');
 
 
 function asFourHexDigits(cp) {
@@ -19,27 +18,27 @@ function escape(cp) {
 }
 
 function toRegex(array) {
-  const sorted = [...array].sort((a, b) => a - b);
-  const alternatives = [];
-  for (let i = 0; i < array.length; ++i) {
-    const cp = array[i];
+  const sorted = [...new Set(array)].sort((a, b) => a - b);
+  const classes = [];
+  for (let i = 0; i < sorted.length; ++i) {
+    const cp = sorted[i];
     if (cp < 128) continue; // exclude ascii
-    if (array[i + 1] === cp + 1 && array[i + 2] === cp + 2) {
+    if (sorted[i + 1] === cp + 1 && sorted[i + 2] === cp + 2) {
       // i.e. we have a range
       i += 2;
       let offset = 2;
-      while (i < array.length && array[i + 1] === cp + offset + 1) {
+      while (i < sorted.length && sorted[i + 1] === cp + offset + 1) {
         ++i;
         ++offset;
       }
-      alternatives.push('[' + escape(cp) + '-' + escape(array[i]) + ']');
+      classes.push(escape(cp) + '-' + escape(sorted[i]));
     } else {
-      alternatives.push(escape(cp));
+      classes.push(escape(cp));
     }
   }
-  return alternatives.join('|');
+  return '[' + classes.join('') + ']';
 }
 
 
 console.log('IdentifierStart:\n' + toRegex(ID_Start));
-console.log('IdentifierContinue:\n' + toRegex(Other_ID_Start.concat(ID_Continue, [0x200c, 0x200d])));
+console.log('IdentifierContinue:\n' + toRegex([].concat(ID_Continue, [0x200c, 0x200d])));
