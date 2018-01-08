@@ -18,18 +18,18 @@
 
 package com.shapesecurity.shift.es2016.ast;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.shapesecurity.functional.data.HashCodeBuilder;
 import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.functional.data.Maybe;
 import com.shapesecurity.shift.es2016.ast.operators.Precedence;
 
 public class ArrayExpression implements Expression {
-    @NotNull
+    @Nonnull
     public final ImmutableList<Maybe<SpreadElementExpression>> elements;
 
 
-    public ArrayExpression (@NotNull ImmutableList<Maybe<SpreadElementExpression>> elements) {
+    public ArrayExpression (@Nonnull ImmutableList<Maybe<SpreadElementExpression>> elements) {
         this.elements = elements;
     }
 
@@ -48,7 +48,7 @@ public class ArrayExpression implements Expression {
     }
 
     @Override
-    @NotNull
+    @Nonnull
     public Precedence getPrecedence() {
         return Precedence.PRIMARY;
     }

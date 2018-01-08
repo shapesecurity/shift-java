@@ -18,13 +18,13 @@
 
 package com.shapesecurity.shift.es2016.ast;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.shapesecurity.functional.data.HashCodeBuilder;
 
 public class AssignmentTargetIdentifier extends VariableReference implements SimpleAssignmentTarget {
 
 
-    public AssignmentTargetIdentifier (@NotNull String name) {
+    public AssignmentTargetIdentifier (@Nonnull String name) {
         super(name);
     }
 

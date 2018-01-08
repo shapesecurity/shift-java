@@ -18,16 +18,16 @@
 
 package com.shapesecurity.shift.es2016.ast;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.shapesecurity.functional.data.HashCodeBuilder;
 import com.shapesecurity.functional.data.ImmutableList;
 
 public class ObjectAssignmentTarget implements Node, AssignmentTargetPattern {
-    @NotNull
+    @Nonnull
     public final ImmutableList<AssignmentTargetProperty> properties;
 
 
-    public ObjectAssignmentTarget (@NotNull ImmutableList<AssignmentTargetProperty> properties) {
+    public ObjectAssignmentTarget (@Nonnull ImmutableList<AssignmentTargetProperty> properties) {
         this.properties = properties;
     }
 

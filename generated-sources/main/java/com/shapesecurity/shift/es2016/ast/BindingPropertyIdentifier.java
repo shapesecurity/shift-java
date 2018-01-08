@@ -18,19 +18,19 @@
 
 package com.shapesecurity.shift.es2016.ast;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.shapesecurity.functional.data.HashCodeBuilder;
 import com.shapesecurity.functional.data.Maybe;
 
 public class BindingPropertyIdentifier implements BindingProperty {
-    @NotNull
+    @Nonnull
     public final BindingIdentifier binding;
 
-    @NotNull
+    @Nonnull
     public final Maybe<Expression> init;
 
 
-    public BindingPropertyIdentifier (@NotNull BindingIdentifier binding, @NotNull Maybe<Expression> init) {
+    public BindingPropertyIdentifier (@Nonnull BindingIdentifier binding, @Nonnull Maybe<Expression> init) {
         this.binding = binding;
         this.init = init;
     }

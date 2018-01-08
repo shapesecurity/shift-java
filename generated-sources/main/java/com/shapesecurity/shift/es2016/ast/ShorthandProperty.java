@@ -18,15 +18,15 @@
 
 package com.shapesecurity.shift.es2016.ast;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.shapesecurity.functional.data.HashCodeBuilder;
 
 public class ShorthandProperty implements ObjectProperty {
-    @NotNull
+    @Nonnull
     public final IdentifierExpression name;
 
 
-    public ShorthandProperty (@NotNull IdentifierExpression name) {
+    public ShorthandProperty (@Nonnull IdentifierExpression name) {
         this.name = name;
     }
 

@@ -18,25 +18,25 @@
 
 package com.shapesecurity.shift.es2016.ast;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.shapesecurity.functional.data.HashCodeBuilder;
 import com.shapesecurity.functional.data.ImmutableList;
 
 public class SwitchStatementWithDefault implements Statement {
-    @NotNull
+    @Nonnull
     public final Expression discriminant;
 
-    @NotNull
+    @Nonnull
     public final ImmutableList<SwitchCase> preDefaultCases;
 
-    @NotNull
+    @Nonnull
     public final SwitchDefault defaultCase;
 
-    @NotNull
+    @Nonnull
     public final ImmutableList<SwitchCase> postDefaultCases;
 
 
-    public SwitchStatementWithDefault (@NotNull Expression discriminant, @NotNull ImmutableList<SwitchCase> preDefaultCases, @NotNull SwitchDefault defaultCase, @NotNull ImmutableList<SwitchCase> postDefaultCases) {
+    public SwitchStatementWithDefault (@Nonnull Expression discriminant, @Nonnull ImmutableList<SwitchCase> preDefaultCases, @Nonnull SwitchDefault defaultCase, @Nonnull ImmutableList<SwitchCase> postDefaultCases) {
         this.discriminant = discriminant;
         this.preDefaultCases = preDefaultCases;
         this.defaultCase = defaultCase;

@@ -18,20 +18,20 @@
 
 package com.shapesecurity.shift.es2016.ast;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.shapesecurity.functional.data.HashCodeBuilder;
 import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.functional.data.Maybe;
 
 public class Import extends ImportDeclaration {
-    @NotNull
+    @Nonnull
     public final Maybe<BindingIdentifier> defaultBinding;
 
-    @NotNull
+    @Nonnull
     public final ImmutableList<ImportSpecifier> namedImports;
 
 
-    public Import (@NotNull Maybe<BindingIdentifier> defaultBinding, @NotNull ImmutableList<ImportSpecifier> namedImports, @NotNull String moduleSpecifier) {
+    public Import (@Nonnull Maybe<BindingIdentifier> defaultBinding, @Nonnull ImmutableList<ImportSpecifier> namedImports, @Nonnull String moduleSpecifier) {
         super(moduleSpecifier);
         this.defaultBinding = defaultBinding;
         this.namedImports = namedImports;

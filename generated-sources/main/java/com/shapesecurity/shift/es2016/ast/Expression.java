@@ -18,10 +18,10 @@
 
 package com.shapesecurity.shift.es2016.ast;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.shapesecurity.shift.es2016.ast.operators.Precedence;
 
 public interface Expression extends Node, ExpressionSuper, FunctionDeclarationClassDeclarationExpression, SpreadElementExpression, FunctionBodyExpression, ExpressionTemplateElement, VariableDeclarationExpression {
-    @NotNull
+    @Nonnull
     public Precedence getPrecedence();
 }

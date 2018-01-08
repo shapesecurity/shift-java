@@ -18,31 +18,31 @@
 
 package com.shapesecurity.shift.es2016.ast;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.shapesecurity.functional.data.HashCodeBuilder;
 import com.shapesecurity.shift.es2016.ast.operators.Precedence;
 
 public class LiteralRegExpExpression implements Expression {
-    @NotNull
+    @Nonnull
     public final String pattern;
 
-    @NotNull
+    @Nonnull
     public final boolean global;
 
-    @NotNull
+    @Nonnull
     public final boolean ignoreCase;
 
-    @NotNull
+    @Nonnull
     public final boolean multiLine;
 
-    @NotNull
+    @Nonnull
     public final boolean sticky;
 
-    @NotNull
+    @Nonnull
     public final boolean unicode;
 
 
-    public LiteralRegExpExpression (@NotNull String pattern, boolean global, boolean ignoreCase, boolean multiLine, boolean sticky, boolean unicode) {
+    public LiteralRegExpExpression (@Nonnull String pattern, boolean global, boolean ignoreCase, boolean multiLine, boolean sticky, boolean unicode) {
         this.pattern = pattern;
         this.global = global;
         this.ignoreCase = ignoreCase;
@@ -71,7 +71,7 @@ public class LiteralRegExpExpression implements Expression {
     }
 
     @Override
-    @NotNull
+    @Nonnull
     public Precedence getPrecedence() {
         return Precedence.PRIMARY;
     }

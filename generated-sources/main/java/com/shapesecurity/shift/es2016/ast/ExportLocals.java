@@ -18,16 +18,16 @@
 
 package com.shapesecurity.shift.es2016.ast;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.shapesecurity.functional.data.HashCodeBuilder;
 import com.shapesecurity.functional.data.ImmutableList;
 
 public class ExportLocals implements ExportDeclaration {
-    @NotNull
+    @Nonnull
     public final ImmutableList<ExportLocalSpecifier> namedExports;
 
 
-    public ExportLocals (@NotNull ImmutableList<ExportLocalSpecifier> namedExports) {
+    public ExportLocals (@Nonnull ImmutableList<ExportLocalSpecifier> namedExports) {
         this.namedExports = namedExports;
     }
 

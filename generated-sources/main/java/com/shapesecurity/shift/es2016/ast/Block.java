@@ -18,16 +18,16 @@
 
 package com.shapesecurity.shift.es2016.ast;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.shapesecurity.functional.data.HashCodeBuilder;
 import com.shapesecurity.functional.data.ImmutableList;
 
 public class Block implements Node {
-    @NotNull
+    @Nonnull
     public final ImmutableList<Statement> statements;
 
 
-    public Block (@NotNull ImmutableList<Statement> statements) {
+    public Block (@Nonnull ImmutableList<Statement> statements) {
         this.statements = statements;
     }
 

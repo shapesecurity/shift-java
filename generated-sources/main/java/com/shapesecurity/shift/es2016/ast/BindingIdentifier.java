@@ -18,13 +18,13 @@
 
 package com.shapesecurity.shift.es2016.ast;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.shapesecurity.functional.data.HashCodeBuilder;
 
 public class BindingIdentifier extends VariableReference implements Binding {
 
 
-    public BindingIdentifier (@NotNull String name) {
+    public BindingIdentifier (@Nonnull String name) {
         super(name);
     }
 

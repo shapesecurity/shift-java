@@ -18,12 +18,12 @@
 
 package com.shapesecurity.shift.es2016.ast;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.shapesecurity.functional.data.HashCodeBuilder;
 import com.shapesecurity.shift.es2016.ast.operators.Precedence;
 
 public class LiteralBooleanExpression implements Expression {
-    @NotNull
+    @Nonnull
     public final boolean value;
 
 
@@ -46,7 +46,7 @@ public class LiteralBooleanExpression implements Expression {
     }
 
     @Override
-    @NotNull
+    @Nonnull
     public Precedence getPrecedence() {
         return Precedence.PRIMARY;
     }

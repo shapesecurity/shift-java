@@ -18,18 +18,18 @@
 
 package com.shapesecurity.shift.es2016.ast;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.shapesecurity.functional.data.HashCodeBuilder;
 
 public class AssignmentTargetPropertyProperty implements AssignmentTargetProperty {
-    @NotNull
+    @Nonnull
     public final PropertyName name;
 
-    @NotNull
+    @Nonnull
     public final AssignmentTargetAssignmentTargetWithDefault binding;
 
 
-    public AssignmentTargetPropertyProperty (@NotNull PropertyName name, @NotNull AssignmentTargetAssignmentTargetWithDefault binding) {
+    public AssignmentTargetPropertyProperty (@Nonnull PropertyName name, @Nonnull AssignmentTargetAssignmentTargetWithDefault binding) {
         this.name = name;
         this.binding = binding;
     }

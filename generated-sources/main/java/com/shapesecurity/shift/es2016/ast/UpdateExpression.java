@@ -18,23 +18,23 @@
 
 package com.shapesecurity.shift.es2016.ast;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.shapesecurity.functional.data.HashCodeBuilder;
 import com.shapesecurity.shift.es2016.ast.operators.UpdateOperator;
 import com.shapesecurity.shift.es2016.ast.operators.Precedence;
 
 public class UpdateExpression implements Expression {
-    @NotNull
+    @Nonnull
     public final boolean isPrefix;
 
-    @NotNull
+    @Nonnull
     public final UpdateOperator operator;
 
-    @NotNull
+    @Nonnull
     public final SimpleAssignmentTarget operand;
 
 
-    public UpdateExpression (boolean isPrefix, @NotNull UpdateOperator operator, @NotNull SimpleAssignmentTarget operand) {
+    public UpdateExpression (boolean isPrefix, @Nonnull UpdateOperator operator, @Nonnull SimpleAssignmentTarget operand) {
         this.isPrefix = isPrefix;
         this.operator = operator;
         this.operand = operand;
@@ -57,7 +57,7 @@ public class UpdateExpression implements Expression {
     }
 
     @Override
-    @NotNull
+    @Nonnull
     public Precedence getPrecedence() {
         return this.isPrefix ? Precedence.PREFIX : Precedence.POSTFIX;
     }

@@ -18,17 +18,17 @@
 
 package com.shapesecurity.shift.es2016.ast;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.shapesecurity.functional.data.HashCodeBuilder;
 import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.shift.es2016.ast.operators.Precedence;
 
 public class ObjectExpression implements Expression {
-    @NotNull
+    @Nonnull
     public final ImmutableList<ObjectProperty> properties;
 
 
-    public ObjectExpression (@NotNull ImmutableList<ObjectProperty> properties) {
+    public ObjectExpression (@Nonnull ImmutableList<ObjectProperty> properties) {
         this.properties = properties;
     }
 
@@ -47,7 +47,7 @@ public class ObjectExpression implements Expression {
     }
 
     @Override
-    @NotNull
+    @Nonnull
     public Precedence getPrecedence() {
         return Precedence.PRIMARY;
     }

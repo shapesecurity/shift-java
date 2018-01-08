@@ -18,18 +18,18 @@
 
 package com.shapesecurity.shift.es2016.ast;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.shapesecurity.functional.data.HashCodeBuilder;
 
 public class LabeledStatement implements Statement {
-    @NotNull
+    @Nonnull
     public final String label;
 
-    @NotNull
+    @Nonnull
     public final Statement body;
 
 
-    public LabeledStatement (@NotNull String label, @NotNull Statement body) {
+    public LabeledStatement (@Nonnull String label, @Nonnull Statement body) {
         this.label = label;
         this.body = body;
     }

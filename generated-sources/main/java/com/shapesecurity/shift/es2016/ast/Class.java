@@ -18,20 +18,20 @@
 
 package com.shapesecurity.shift.es2016.ast;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.shapesecurity.functional.data.HashCodeBuilder;
 import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.functional.data.Maybe;
 
 public abstract class Class {
-    @NotNull
+    @Nonnull
     public final Maybe<Expression> _super;
 
-    @NotNull
+    @Nonnull
     public final ImmutableList<ClassElement> elements;
 
 
-    public Class (@NotNull Maybe<Expression> _super, @NotNull ImmutableList<ClassElement> elements) {
+    public Class (@Nonnull Maybe<Expression> _super, @Nonnull ImmutableList<ClassElement> elements) {
         this._super = _super;
         this.elements = elements;
     }

@@ -18,15 +18,15 @@
 
 package com.shapesecurity.shift.es2016.ast;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.shapesecurity.functional.data.HashCodeBuilder;
 
 public abstract class MemberAssignmentTarget implements Node, SimpleAssignmentTarget {
-    @NotNull
+    @Nonnull
     public final ExpressionSuper object;
 
 
-    public MemberAssignmentTarget (@NotNull ExpressionSuper object) {
+    public MemberAssignmentTarget (@Nonnull ExpressionSuper object) {
         this.object = object;
     }
 

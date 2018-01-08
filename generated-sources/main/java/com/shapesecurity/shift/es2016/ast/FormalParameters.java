@@ -18,20 +18,20 @@
 
 package com.shapesecurity.shift.es2016.ast;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.shapesecurity.functional.data.HashCodeBuilder;
 import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.functional.data.Maybe;
 
 public class FormalParameters implements Node {
-    @NotNull
+    @Nonnull
     public final ImmutableList<Parameter> items;
 
-    @NotNull
+    @Nonnull
     public final Maybe<Binding> rest;
 
 
-    public FormalParameters (@NotNull ImmutableList<Parameter> items, @NotNull Maybe<Binding> rest) {
+    public FormalParameters (@Nonnull ImmutableList<Parameter> items, @Nonnull Maybe<Binding> rest) {
         this.items = items;
         this.rest = rest;
     }

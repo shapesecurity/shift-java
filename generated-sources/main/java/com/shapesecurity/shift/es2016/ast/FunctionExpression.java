@@ -18,17 +18,17 @@
 
 package com.shapesecurity.shift.es2016.ast;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.shapesecurity.functional.data.HashCodeBuilder;
 import com.shapesecurity.functional.data.Maybe;
 import com.shapesecurity.shift.es2016.ast.operators.Precedence;
 
 public class FunctionExpression extends Function implements Expression {
-    @NotNull
+    @Nonnull
     public final Maybe<BindingIdentifier> name;
 
 
-    public FunctionExpression (boolean isGenerator, @NotNull Maybe<BindingIdentifier> name, @NotNull FormalParameters params, @NotNull FunctionBody body) {
+    public FunctionExpression (boolean isGenerator, @Nonnull Maybe<BindingIdentifier> name, @Nonnull FormalParameters params, @Nonnull FunctionBody body) {
         super(isGenerator, params, body);
         this.name = name;
     }
@@ -51,7 +51,7 @@ public class FunctionExpression extends Function implements Expression {
     }
 
     @Override
-    @NotNull
+    @Nonnull
     public Precedence getPrecedence() {
         return Precedence.PRIMARY;
     }

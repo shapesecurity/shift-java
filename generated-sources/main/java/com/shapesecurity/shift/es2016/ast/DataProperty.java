@@ -18,15 +18,15 @@
 
 package com.shapesecurity.shift.es2016.ast;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.shapesecurity.functional.data.HashCodeBuilder;
 
 public class DataProperty extends NamedObjectProperty {
-    @NotNull
+    @Nonnull
     public final Expression expression;
 
 
-    public DataProperty (@NotNull PropertyName name, @NotNull Expression expression) {
+    public DataProperty (@Nonnull PropertyName name, @Nonnull Expression expression) {
         super(name);
         this.expression = expression;
     }

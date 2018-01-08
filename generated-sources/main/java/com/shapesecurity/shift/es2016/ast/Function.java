@@ -18,21 +18,21 @@
 
 package com.shapesecurity.shift.es2016.ast;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.shapesecurity.functional.data.HashCodeBuilder;
 
 public abstract class Function {
-    @NotNull
+    @Nonnull
     public final boolean isGenerator;
 
-    @NotNull
+    @Nonnull
     public final FormalParameters params;
 
-    @NotNull
+    @Nonnull
     public final FunctionBody body;
 
 
-    public Function (boolean isGenerator, @NotNull FormalParameters params, @NotNull FunctionBody body) {
+    public Function (boolean isGenerator, @Nonnull FormalParameters params, @Nonnull FunctionBody body) {
         this.isGenerator = isGenerator;
         this.params = params;
         this.body = body;

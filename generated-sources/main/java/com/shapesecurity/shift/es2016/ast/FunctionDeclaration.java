@@ -18,15 +18,15 @@
 
 package com.shapesecurity.shift.es2016.ast;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.shapesecurity.functional.data.HashCodeBuilder;
 
 public class FunctionDeclaration extends Function implements Statement, FunctionDeclarationClassDeclarationVariableDeclaration, FunctionDeclarationClassDeclarationExpression {
-    @NotNull
+    @Nonnull
     public final BindingIdentifier name;
 
 
-    public FunctionDeclaration (boolean isGenerator, @NotNull BindingIdentifier name, @NotNull FormalParameters params, @NotNull FunctionBody body) {
+    public FunctionDeclaration (boolean isGenerator, @Nonnull BindingIdentifier name, @Nonnull FormalParameters params, @Nonnull FunctionBody body) {
         super(isGenerator, params, body);
         this.name = name;
     }

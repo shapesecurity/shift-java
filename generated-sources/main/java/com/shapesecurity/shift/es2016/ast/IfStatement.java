@@ -18,22 +18,22 @@
 
 package com.shapesecurity.shift.es2016.ast;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.shapesecurity.functional.data.HashCodeBuilder;
 import com.shapesecurity.functional.data.Maybe;
 
 public class IfStatement implements Statement {
-    @NotNull
+    @Nonnull
     public final Expression test;
 
-    @NotNull
+    @Nonnull
     public final Statement consequent;
 
-    @NotNull
+    @Nonnull
     public final Maybe<Statement> alternate;
 
 
-    public IfStatement (@NotNull Expression test, @NotNull Statement consequent, @NotNull Maybe<Statement> alternate) {
+    public IfStatement (@Nonnull Expression test, @Nonnull Statement consequent, @Nonnull Maybe<Statement> alternate) {
         this.test = test;
         this.consequent = consequent;
         this.alternate = alternate;

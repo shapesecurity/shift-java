@@ -18,16 +18,16 @@
 
 package com.shapesecurity.shift.es2016.ast;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.shapesecurity.functional.data.HashCodeBuilder;
 import com.shapesecurity.functional.data.Maybe;
 
 public class ReturnStatement implements Statement {
-    @NotNull
+    @Nonnull
     public final Maybe<Expression> expression;
 
 
-    public ReturnStatement (@NotNull Maybe<Expression> expression) {
+    public ReturnStatement (@Nonnull Maybe<Expression> expression) {
         this.expression = expression;
     }
 

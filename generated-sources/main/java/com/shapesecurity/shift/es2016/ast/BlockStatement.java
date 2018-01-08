@@ -18,15 +18,15 @@
 
 package com.shapesecurity.shift.es2016.ast;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.shapesecurity.functional.data.HashCodeBuilder;
 
 public class BlockStatement implements Statement {
-    @NotNull
+    @Nonnull
     public final Block block;
 
 
-    public BlockStatement (@NotNull Block block) {
+    public BlockStatement (@Nonnull Block block) {
         this.block = block;
     }
 

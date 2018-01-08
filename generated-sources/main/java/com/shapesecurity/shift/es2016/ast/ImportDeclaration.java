@@ -18,15 +18,15 @@
 
 package com.shapesecurity.shift.es2016.ast;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.shapesecurity.functional.data.HashCodeBuilder;
 
 public abstract class ImportDeclaration implements Node, ImportDeclarationExportDeclarationStatement {
-    @NotNull
+    @Nonnull
     public final String moduleSpecifier;
 
 
-    public ImportDeclaration (@NotNull String moduleSpecifier) {
+    public ImportDeclaration (@Nonnull String moduleSpecifier) {
         this.moduleSpecifier = moduleSpecifier;
     }
 

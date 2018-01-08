@@ -18,13 +18,13 @@
 
 package com.shapesecurity.shift.es2016.ast;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.shapesecurity.functional.data.HashCodeBuilder;
 
 public class Getter extends MethodDefinition {
 
 
-    public Getter (@NotNull PropertyName name, @NotNull FunctionBody body) {
+    public Getter (@Nonnull PropertyName name, @Nonnull FunctionBody body) {
         super(name, body);
     }
 

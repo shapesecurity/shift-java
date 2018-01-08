@@ -18,15 +18,15 @@
 
 package com.shapesecurity.shift.es2016.ast;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.shapesecurity.functional.data.HashCodeBuilder;
 
 public class WhileStatement extends IterationStatement {
-    @NotNull
+    @Nonnull
     public final Expression test;
 
 
-    public WhileStatement (@NotNull Expression test, @NotNull Statement body) {
+    public WhileStatement (@Nonnull Expression test, @Nonnull Statement body) {
         super(body);
         this.test = test;
     }

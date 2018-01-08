@@ -18,22 +18,22 @@
 
 package com.shapesecurity.shift.es2016.ast;
 
-import com.shapesecurity.shift.es2016.ast.operators.Precedence;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.shapesecurity.functional.data.HashCodeBuilder;
+import com.shapesecurity.shift.es2016.ast.operators.Precedence;
 
 public class ConditionalExpression implements Expression {
-    @NotNull
+    @Nonnull
     public final Expression test;
 
-    @NotNull
+    @Nonnull
     public final Expression consequent;
 
-    @NotNull
+    @Nonnull
     public final Expression alternate;
 
 
-    public ConditionalExpression (@NotNull Expression test, @NotNull Expression consequent, @NotNull Expression alternate) {
+    public ConditionalExpression (@Nonnull Expression test, @Nonnull Expression consequent, @Nonnull Expression alternate) {
         this.test = test;
         this.consequent = consequent;
         this.alternate = alternate;
@@ -56,7 +56,7 @@ public class ConditionalExpression implements Expression {
     }
 
     @Override
-    @NotNull
+    @Nonnull
     public Precedence getPrecedence() {
         return Precedence.CONDITIONAL;
     }

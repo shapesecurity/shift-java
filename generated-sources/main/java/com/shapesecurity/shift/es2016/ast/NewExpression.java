@@ -18,20 +18,20 @@
 
 package com.shapesecurity.shift.es2016.ast;
 
-import com.shapesecurity.shift.es2016.ast.operators.Precedence;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.shapesecurity.functional.data.HashCodeBuilder;
 import com.shapesecurity.functional.data.ImmutableList;
+import com.shapesecurity.shift.es2016.ast.operators.Precedence;
 
 public class NewExpression implements Expression {
-    @NotNull
+    @Nonnull
     public final Expression callee;
 
-    @NotNull
+    @Nonnull
     public final ImmutableList<SpreadElementExpression> arguments;
 
 
-    public NewExpression (@NotNull Expression callee, @NotNull ImmutableList<SpreadElementExpression> arguments) {
+    public NewExpression (@Nonnull Expression callee, @Nonnull ImmutableList<SpreadElementExpression> arguments) {
         this.callee = callee;
         this.arguments = arguments;
     }
@@ -52,7 +52,7 @@ public class NewExpression implements Expression {
     }
 
     @Override
-    @NotNull
+    @Nonnull
     public Precedence getPrecedence() {
         return this.arguments.isEmpty() ? Precedence.NEW : Precedence.MEMBER;
     }

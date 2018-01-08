@@ -18,15 +18,15 @@
 
 package com.shapesecurity.shift.es2016.ast;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.shapesecurity.functional.data.HashCodeBuilder;
 
 public class DoWhileStatement extends IterationStatement {
-    @NotNull
+    @Nonnull
     public final Expression test;
 
 
-    public DoWhileStatement (@NotNull Statement body, @NotNull Expression test) {
+    public DoWhileStatement (@Nonnull Statement body, @Nonnull Expression test) {
         super(body);
         this.test = test;
     }

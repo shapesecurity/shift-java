@@ -18,16 +18,16 @@
 
 package com.shapesecurity.shift.es2016.ast;
 
-import com.shapesecurity.shift.es2016.ast.operators.Precedence;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.shapesecurity.functional.data.HashCodeBuilder;
+import com.shapesecurity.shift.es2016.ast.operators.Precedence;
 
 public class LiteralStringExpression implements Expression {
-    @NotNull
+    @Nonnull
     public final String value;
 
 
-    public LiteralStringExpression (@NotNull String value) {
+    public LiteralStringExpression (@Nonnull String value) {
         this.value = value;
     }
 
@@ -46,7 +46,7 @@ public class LiteralStringExpression implements Expression {
     }
 
     @Override
-    @NotNull
+    @Nonnull
     public Precedence getPrecedence() {
         return Precedence.PRIMARY;
     }

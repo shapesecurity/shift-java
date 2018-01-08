@@ -18,14 +18,14 @@
 
 package com.shapesecurity.shift.es2016.ast;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.shapesecurity.functional.data.HashCodeBuilder;
 import com.shapesecurity.shift.es2016.ast.operators.Precedence;
 
 public class IdentifierExpression extends VariableReference implements Expression {
 
 
-    public IdentifierExpression (@NotNull String name) {
+    public IdentifierExpression (@Nonnull String name) {
         super(name);
     }
 
@@ -44,7 +44,7 @@ public class IdentifierExpression extends VariableReference implements Expressio
     }
 
     @Override
-    @NotNull
+    @Nonnull
     public Precedence getPrecedence() {
         return Precedence.PRIMARY;
     }

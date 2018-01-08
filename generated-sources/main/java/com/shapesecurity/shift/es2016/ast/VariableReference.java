@@ -18,15 +18,15 @@
 
 package com.shapesecurity.shift.es2016.ast;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.shapesecurity.functional.data.HashCodeBuilder;
 
 public abstract class VariableReference implements Node {
-    @NotNull
+    @Nonnull
     public final String name;
 
 
-    public VariableReference (@NotNull String name) {
+    public VariableReference (@Nonnull String name) {
         this.name = name;
     }
 

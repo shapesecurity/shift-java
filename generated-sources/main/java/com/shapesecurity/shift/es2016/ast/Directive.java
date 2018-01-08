@@ -18,15 +18,15 @@
 
 package com.shapesecurity.shift.es2016.ast;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.shapesecurity.functional.data.HashCodeBuilder;
 
 public class Directive implements Node {
-    @NotNull
+    @Nonnull
     public final String rawValue;
 
 
-    public Directive (@NotNull String rawValue) {
+    public Directive (@Nonnull String rawValue) {
         this.rawValue = rawValue;
     }
 

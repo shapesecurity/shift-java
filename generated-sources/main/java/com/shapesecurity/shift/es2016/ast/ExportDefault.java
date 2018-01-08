@@ -18,15 +18,15 @@
 
 package com.shapesecurity.shift.es2016.ast;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.shapesecurity.functional.data.HashCodeBuilder;
 
 public class ExportDefault implements ExportDeclaration {
-    @NotNull
+    @Nonnull
     public final FunctionDeclarationClassDeclarationExpression body;
 
 
-    public ExportDefault (@NotNull FunctionDeclarationClassDeclarationExpression body) {
+    public ExportDefault (@Nonnull FunctionDeclarationClassDeclarationExpression body) {
         this.body = body;
     }
 

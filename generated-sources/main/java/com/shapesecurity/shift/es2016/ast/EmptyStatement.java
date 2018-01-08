@@ -18,6 +18,7 @@
 
 package com.shapesecurity.shift.es2016.ast;
 
+import javax.annotation.Nonnull;
 import com.shapesecurity.functional.data.HashCodeBuilder;
 
 public class EmptyStatement implements Statement {
