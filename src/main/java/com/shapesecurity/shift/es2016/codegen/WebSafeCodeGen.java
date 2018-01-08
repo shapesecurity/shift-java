@@ -6,7 +6,11 @@ import com.shapesecurity.functional.data.Maybe;
 import com.shapesecurity.shift.es2016.ast.AssignmentTargetIdentifier;
 import com.shapesecurity.shift.es2016.ast.BindingIdentifier;
 import com.shapesecurity.shift.es2016.ast.Directive;
+import com.shapesecurity.shift.es2016.ast.ExportAllFrom;
+import com.shapesecurity.shift.es2016.ast.ExportFrom;
 import com.shapesecurity.shift.es2016.ast.IdentifierExpression;
+import com.shapesecurity.shift.es2016.ast.Import;
+import com.shapesecurity.shift.es2016.ast.ImportNamespace;
 import com.shapesecurity.shift.es2016.ast.LiteralRegExpExpression;
 import com.shapesecurity.shift.es2016.ast.LiteralStringExpression;
 import com.shapesecurity.shift.es2016.ast.Module;
@@ -17,6 +21,8 @@ import com.shapesecurity.shift.es2016.reducer.Director;
 import com.shapesecurity.shift.es2016.utils.Utils;
 import javax.annotation.Nonnull;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -91,6 +97,54 @@ public class WebSafeCodeGen extends CodeGen {
 	public CodeRep reduceDirective(@Nonnull Directive node) {
 		String delim = node.rawValue.matches("^(?:[^\"]|\\\\.)*$") ? "\"" : "\'";
 		return seqVA(factory.token(delim + safe(node.rawValue) + delim), factory.semiOp());
+	}
+
+	@Nonnull
+	@Override
+	public CodeRep reduceExportAllFrom(@Nonnull ExportAllFrom node) {
+		return seqVA(factory.token("export"), factory.token("*"), factory.token("from"), factory.token(safe(Utils.escapeStringLiteral(node.moduleSpecifier))), factory.semiOp());
+
+	}
+
+	@Nonnull
+	@Override
+	public CodeRep reduceExportFrom(@Nonnull ExportFrom node, @Nonnull ImmutableList<CodeRep> namedExports) {
+		return seqVA(
+				factory.token("export"),
+				factory.brace(factory.commaSep(namedExports)),
+				seqVA(factory.token("from"), factory.token(safe(Utils.escapeStringLiteral(node.moduleSpecifier))), factory.semiOp())
+		);
+	}
+
+	@Nonnull
+	@Override
+	public CodeRep reduceImport(@Nonnull Import node, @Nonnull Maybe<CodeRep> defaultBinding, @Nonnull ImmutableList<CodeRep> namedImports) {
+		List<CodeRep> bindings = new ArrayList<>();
+		if (defaultBinding.isJust()) {
+			bindings.add(defaultBinding.fromJust());
+		}
+		if (namedImports.length > 0) {
+			bindings.add(factory.brace(factory.commaSep(namedImports)));
+		}
+		if (bindings.size() == 0) {
+			return seqVA(factory.token("import"), factory.token(safe(Utils.escapeStringLiteral(node.moduleSpecifier))), factory.semiOp());
+		}
+		return seqVA(factory.token("import"), factory.commaSep(ImmutableList.from(bindings)), factory.token("from"), factory.token(safe(Utils.escapeStringLiteral(node.moduleSpecifier))), factory.semiOp());
+	}
+
+	@Nonnull
+	@Override
+	public CodeRep reduceImportNamespace(@Nonnull ImportNamespace node, @Nonnull Maybe<CodeRep> defaultBinding, @Nonnull CodeRep namespaceBinding) {
+		return seqVA(
+				factory.token("import"),
+				defaultBinding.maybe(factory.empty(), b -> seqVA(b, factory.token(","))),
+				factory.token("*"),
+				factory.token("as"),
+				namespaceBinding,
+				factory.token("from"),
+				factory.token(safe(Utils.escapeStringLiteral(node.moduleSpecifier))),
+				factory.semiOp()
+		);
 	}
 
 	@Nonnull

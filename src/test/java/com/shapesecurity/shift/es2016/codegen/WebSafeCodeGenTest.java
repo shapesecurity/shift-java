@@ -38,6 +38,12 @@ public class WebSafeCodeGenTest {
 		testWithoutEq("\"\\x00\"", "\"\0\"");
 		testWithoutEq("`\\x00`", "`\0`");
 		testWithoutEq("`\\x00${0}\\x00${0}\\x00`", "`\0${0}\0${0}\0`");
+
+		test("import\"\\x00\"","import \"\0\";");
+		test("import*as a from\"\\x00\"","import * as a from \"\0\";");
+		test("import{a}from\"\\x00\"","import{a} from \"\0\";");
+		test("export*from\"\\x00\"","export * from \"\0\";");
+		test("export{a}from\"\\x00\"","export{a} from \"\0\";");
 	}
 
 	@Test
