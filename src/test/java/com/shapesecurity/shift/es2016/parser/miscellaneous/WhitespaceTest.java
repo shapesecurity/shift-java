@@ -98,7 +98,7 @@ public class WhitespaceTest extends ParserTestCase {
 
         testScript("throw /* \u202a */ e", new ThrowStatement(new IdentifierExpression("e")));
 
-        testScript("new\u0020\u0009\u000B\u000C\u00A0\u1680\u180E\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200A\u202F\u205F\u3000\uFEFFa",
+        testScript("new\u0020\u0009\u000B\u000C\u00A0\u1680\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200A\u202F\u205F\u3000\uFEFFa",
                 new NewExpression(new IdentifierExpression("a"), ImmutableList.empty()));
 
         testScript("{0\n1\r2\u20283\u20294}", new BlockStatement(new Block(ImmutableList.of(new ExpressionStatement(
@@ -109,5 +109,8 @@ public class WhitespaceTest extends ParserTestCase {
         testScriptFailure("throw /* \n */ e", 2, 4, 14, "Illegal newline after throw");
         testScriptFailure("throw /* \u2028 */ e", 2, 4, 14, "Illegal newline after throw");
         testScriptFailure("throw /* \u2029 */ e", 2, 4, 14, "Illegal newline after throw");
+
+        testScriptFailure("\u180e", 1, 0, 0, "Unexpected \"\u180e\"");
+
     }
 }
