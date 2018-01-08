@@ -18,22 +18,22 @@
 
 package com.shapesecurity.shift.es2016.ast;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.shapesecurity.functional.data.HashCodeBuilder;
 import com.shapesecurity.functional.data.Maybe;
 
 public class TryFinallyStatement implements Statement {
-    @NotNull
+    @Nonnull
     public final Block body;
 
-    @NotNull
+    @Nonnull
     public final Maybe<CatchClause> catchClause;
 
-    @NotNull
+    @Nonnull
     public final Block finalizer;
 
 
-    public TryFinallyStatement (@NotNull Block body, @NotNull Maybe<CatchClause> catchClause, @NotNull Block finalizer) {
+    public TryFinallyStatement (@Nonnull Block body, @Nonnull Maybe<CatchClause> catchClause, @Nonnull Block finalizer) {
         this.body = body;
         this.catchClause = catchClause;
         this.finalizer = finalizer;

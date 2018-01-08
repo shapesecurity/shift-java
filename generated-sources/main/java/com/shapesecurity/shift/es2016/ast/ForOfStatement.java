@@ -18,18 +18,18 @@
 
 package com.shapesecurity.shift.es2016.ast;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.shapesecurity.functional.data.HashCodeBuilder;
 
 public class ForOfStatement extends IterationStatement {
-    @NotNull
+    @Nonnull
     public final VariableDeclarationAssignmentTarget left;
 
-    @NotNull
+    @Nonnull
     public final Expression right;
 
 
-    public ForOfStatement (@NotNull VariableDeclarationAssignmentTarget left, @NotNull Expression right, @NotNull Statement body) {
+    public ForOfStatement (@Nonnull VariableDeclarationAssignmentTarget left, @Nonnull Expression right, @Nonnull Statement body) {
         super(body);
         this.left = left;
         this.right = right;

@@ -18,22 +18,22 @@
 
 package com.shapesecurity.shift.es2016.ast;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.shapesecurity.functional.data.HashCodeBuilder;
 import com.shapesecurity.functional.data.Maybe;
 
 public class ForStatement extends IterationStatement {
-    @NotNull
+    @Nonnull
     public final Maybe<VariableDeclarationExpression> init;
 
-    @NotNull
+    @Nonnull
     public final Maybe<Expression> test;
 
-    @NotNull
+    @Nonnull
     public final Maybe<Expression> update;
 
 
-    public ForStatement (@NotNull Maybe<VariableDeclarationExpression> init, @NotNull Maybe<Expression> test, @NotNull Maybe<Expression> update, @NotNull Statement body) {
+    public ForStatement (@Nonnull Maybe<VariableDeclarationExpression> init, @Nonnull Maybe<Expression> test, @Nonnull Maybe<Expression> update, @Nonnull Statement body) {
         super(body);
         this.init = init;
         this.test = test;

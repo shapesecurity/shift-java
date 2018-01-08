@@ -18,15 +18,15 @@
 
 package com.shapesecurity.shift.es2016.ast;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.shapesecurity.functional.data.HashCodeBuilder;
 
 public class Setter extends MethodDefinition {
-    @NotNull
+    @Nonnull
     public final Parameter param;
 
 
-    public Setter (@NotNull PropertyName name, @NotNull Parameter param, @NotNull FunctionBody body) {
+    public Setter (@Nonnull PropertyName name, @Nonnull Parameter param, @Nonnull FunctionBody body) {
         super(name, body);
         this.param = param;
     }

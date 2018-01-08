@@ -18,21 +18,21 @@
 
 package com.shapesecurity.shift.es2016.ast;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.shapesecurity.functional.data.HashCodeBuilder;
 import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.functional.data.Maybe;
 import com.shapesecurity.shift.es2016.ast.operators.Precedence;
 
 public class TemplateExpression implements Expression {
-    @NotNull
+    @Nonnull
     public final Maybe<Expression> tag;
 
-    @NotNull
+    @Nonnull
     public final ImmutableList<ExpressionTemplateElement> elements;
 
 
-    public TemplateExpression (@NotNull Maybe<Expression> tag, @NotNull ImmutableList<ExpressionTemplateElement> elements) {
+    public TemplateExpression (@Nonnull Maybe<Expression> tag, @Nonnull ImmutableList<ExpressionTemplateElement> elements) {
         this.tag = tag;
         this.elements = elements;
     }
@@ -53,7 +53,7 @@ public class TemplateExpression implements Expression {
     }
 
     @Override
-    @NotNull
+    @Nonnull
     public Precedence getPrecedence() {
         return this.tag.map(tag -> {
             Precedence tagPrecedence = tag.getPrecedence();

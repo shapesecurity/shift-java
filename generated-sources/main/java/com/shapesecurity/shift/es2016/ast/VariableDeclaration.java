@@ -18,19 +18,20 @@
 
 package com.shapesecurity.shift.es2016.ast;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.shapesecurity.functional.data.HashCodeBuilder;
 import com.shapesecurity.functional.data.ImmutableList;
+import com.shapesecurity.shift.es2016.ast.VariableDeclarationKind;
 
 public class VariableDeclaration implements Node, FunctionDeclarationClassDeclarationVariableDeclaration, VariableDeclarationAssignmentTarget, VariableDeclarationExpression {
-    @NotNull
+    @Nonnull
     public final VariableDeclarationKind kind;
 
-    @NotNull
+    @Nonnull
     public final ImmutableList<VariableDeclarator> declarators;
 
 
-    public VariableDeclaration (@NotNull VariableDeclarationKind kind, @NotNull ImmutableList<VariableDeclarator> declarators) {
+    public VariableDeclaration (@Nonnull VariableDeclarationKind kind, @Nonnull ImmutableList<VariableDeclarator> declarators) {
         this.kind = kind;
         this.declarators = declarators;
     }

@@ -18,19 +18,19 @@
 
 package com.shapesecurity.shift.es2016.ast;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.shapesecurity.functional.data.HashCodeBuilder;
 import com.shapesecurity.shift.es2016.ast.operators.Precedence;
 
 public class ArrowExpression implements Expression {
-    @NotNull
+    @Nonnull
     public final FormalParameters params;
 
-    @NotNull
+    @Nonnull
     public final FunctionBodyExpression body;
 
 
-    public ArrowExpression (@NotNull FormalParameters params, @NotNull FunctionBodyExpression body) {
+    public ArrowExpression (@Nonnull FormalParameters params, @Nonnull FunctionBodyExpression body) {
         this.params = params;
         this.body = body;
     }
@@ -51,7 +51,7 @@ public class ArrowExpression implements Expression {
     }
 
     @Override
-    @NotNull
+    @Nonnull
     public Precedence getPrecedence() {
         return Precedence.ASSIGNMENT;
     }

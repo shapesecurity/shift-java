@@ -18,19 +18,19 @@
 
 package com.shapesecurity.shift.es2016.ast;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.shapesecurity.functional.data.HashCodeBuilder;
 import com.shapesecurity.functional.data.Maybe;
 
 public class ImportNamespace extends ImportDeclaration {
-    @NotNull
+    @Nonnull
     public final Maybe<BindingIdentifier> defaultBinding;
 
-    @NotNull
+    @Nonnull
     public final BindingIdentifier namespaceBinding;
 
 
-    public ImportNamespace (@NotNull Maybe<BindingIdentifier> defaultBinding, @NotNull BindingIdentifier namespaceBinding, @NotNull String moduleSpecifier) {
+    public ImportNamespace (@Nonnull Maybe<BindingIdentifier> defaultBinding, @Nonnull BindingIdentifier namespaceBinding, @Nonnull String moduleSpecifier) {
         super(moduleSpecifier);
         this.defaultBinding = defaultBinding;
         this.namespaceBinding = namespaceBinding;

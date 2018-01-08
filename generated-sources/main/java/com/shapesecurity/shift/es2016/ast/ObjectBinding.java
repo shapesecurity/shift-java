@@ -18,16 +18,16 @@
 
 package com.shapesecurity.shift.es2016.ast;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.shapesecurity.functional.data.HashCodeBuilder;
 import com.shapesecurity.functional.data.ImmutableList;
 
 public class ObjectBinding implements Node, BindingPattern {
-    @NotNull
+    @Nonnull
     public final ImmutableList<BindingProperty> properties;
 
 
-    public ObjectBinding (@NotNull ImmutableList<BindingProperty> properties) {
+    public ObjectBinding (@Nonnull ImmutableList<BindingProperty> properties) {
         this.properties = properties;
     }
 

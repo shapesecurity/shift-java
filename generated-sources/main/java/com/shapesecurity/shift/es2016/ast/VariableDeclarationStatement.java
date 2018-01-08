@@ -18,15 +18,15 @@
 
 package com.shapesecurity.shift.es2016.ast;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.shapesecurity.functional.data.HashCodeBuilder;
 
 public class VariableDeclarationStatement implements Statement {
-    @NotNull
+    @Nonnull
     public final VariableDeclaration declaration;
 
 
-    public VariableDeclarationStatement (@NotNull VariableDeclaration declaration) {
+    public VariableDeclarationStatement (@Nonnull VariableDeclaration declaration) {
         this.declaration = declaration;
     }
 

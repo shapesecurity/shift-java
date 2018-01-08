@@ -18,16 +18,16 @@
 
 package com.shapesecurity.shift.es2016.ast;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.shapesecurity.functional.data.HashCodeBuilder;
 import com.shapesecurity.functional.data.Maybe;
 
 public class BreakStatement implements Statement {
-    @NotNull
+    @Nonnull
     public final Maybe<String> label;
 
 
-    public BreakStatement (@NotNull Maybe<String> label) {
+    public BreakStatement (@Nonnull Maybe<String> label) {
         this.label = label;
     }
 

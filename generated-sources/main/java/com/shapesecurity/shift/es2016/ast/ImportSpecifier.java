@@ -18,19 +18,19 @@
 
 package com.shapesecurity.shift.es2016.ast;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.shapesecurity.functional.data.HashCodeBuilder;
 import com.shapesecurity.functional.data.Maybe;
 
 public class ImportSpecifier implements Node {
-    @NotNull
+    @Nonnull
     public final Maybe<String> name;
 
-    @NotNull
+    @Nonnull
     public final BindingIdentifier binding;
 
 
-    public ImportSpecifier (@NotNull Maybe<String> name, @NotNull BindingIdentifier binding) {
+    public ImportSpecifier (@Nonnull Maybe<String> name, @Nonnull BindingIdentifier binding) {
         this.name = name;
         this.binding = binding;
     }

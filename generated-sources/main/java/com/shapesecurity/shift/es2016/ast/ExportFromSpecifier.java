@@ -18,19 +18,19 @@
 
 package com.shapesecurity.shift.es2016.ast;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.shapesecurity.functional.data.HashCodeBuilder;
 import com.shapesecurity.functional.data.Maybe;
 
 public class ExportFromSpecifier implements Node {
-    @NotNull
+    @Nonnull
     public final String name;
 
-    @NotNull
+    @Nonnull
     public final Maybe<String> exportedName;
 
 
-    public ExportFromSpecifier (@NotNull String name, @NotNull Maybe<String> exportedName) {
+    public ExportFromSpecifier (@Nonnull String name, @Nonnull Maybe<String> exportedName) {
         this.name = name;
         this.exportedName = exportedName;
     }

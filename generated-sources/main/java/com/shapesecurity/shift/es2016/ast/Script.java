@@ -18,19 +18,19 @@
 
 package com.shapesecurity.shift.es2016.ast;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.shapesecurity.functional.data.HashCodeBuilder;
 import com.shapesecurity.functional.data.ImmutableList;
 
 public class Script implements Program {
-    @NotNull
+    @Nonnull
     public final ImmutableList<Directive> directives;
 
-    @NotNull
+    @Nonnull
     public final ImmutableList<Statement> statements;
 
 
-    public Script (@NotNull ImmutableList<Directive> directives, @NotNull ImmutableList<Statement> statements) {
+    public Script (@Nonnull ImmutableList<Directive> directives, @Nonnull ImmutableList<Statement> statements) {
         this.directives = directives;
         this.statements = statements;
     }

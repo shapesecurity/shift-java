@@ -18,15 +18,15 @@
 
 package com.shapesecurity.shift.es2016.ast;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.shapesecurity.functional.data.HashCodeBuilder;
 
 public class SpreadElement implements Node, SpreadElementExpression {
-    @NotNull
+    @Nonnull
     public final Expression expression;
 
 
-    public SpreadElement (@NotNull Expression expression) {
+    public SpreadElement (@Nonnull Expression expression) {
         this.expression = expression;
     }
 

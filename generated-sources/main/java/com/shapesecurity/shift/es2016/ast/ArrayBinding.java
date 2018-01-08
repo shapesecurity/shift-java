@@ -18,20 +18,20 @@
 
 package com.shapesecurity.shift.es2016.ast;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.shapesecurity.functional.data.HashCodeBuilder;
 import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.functional.data.Maybe;
 
 public class ArrayBinding implements Node, BindingPattern {
-    @NotNull
+    @Nonnull
     public final ImmutableList<Maybe<BindingBindingWithDefault>> elements;
 
-    @NotNull
+    @Nonnull
     public final Maybe<Binding> rest;
 
 
-    public ArrayBinding (@NotNull ImmutableList<Maybe<BindingBindingWithDefault>> elements, @NotNull Maybe<Binding> rest) {
+    public ArrayBinding (@Nonnull ImmutableList<Maybe<BindingBindingWithDefault>> elements, @Nonnull Maybe<Binding> rest) {
         this.elements = elements;
         this.rest = rest;
     }

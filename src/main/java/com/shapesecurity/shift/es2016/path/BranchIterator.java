@@ -24,7 +24,7 @@ import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.functional.data.Maybe;
 import com.shapesecurity.shift.es2016.ast.*;
 import com.shapesecurity.shift.es2016.ast.SpreadElementExpression;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.util.Iterator;
 
@@ -38,7 +38,7 @@ public class BranchIterator implements Iterable<Pair<BranchGetter, Node>> {
 		this.root = root;
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public Iterator<Pair<BranchGetter, Node>> iterator() {
 		return new Iter(this.root);

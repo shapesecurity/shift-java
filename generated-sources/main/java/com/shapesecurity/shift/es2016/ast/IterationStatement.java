@@ -18,15 +18,15 @@
 
 package com.shapesecurity.shift.es2016.ast;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.shapesecurity.functional.data.HashCodeBuilder;
 
 public abstract class IterationStatement implements Statement {
-    @NotNull
+    @Nonnull
     public final Statement body;
 
 
-    public IterationStatement (@NotNull Statement body) {
+    public IterationStatement (@Nonnull Statement body) {
         this.body = body;
     }
 

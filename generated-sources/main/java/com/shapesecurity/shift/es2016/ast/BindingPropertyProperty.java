@@ -18,18 +18,18 @@
 
 package com.shapesecurity.shift.es2016.ast;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.shapesecurity.functional.data.HashCodeBuilder;
 
 public class BindingPropertyProperty implements BindingProperty {
-    @NotNull
+    @Nonnull
     public final PropertyName name;
 
-    @NotNull
+    @Nonnull
     public final BindingBindingWithDefault binding;
 
 
-    public BindingPropertyProperty (@NotNull PropertyName name, @NotNull BindingBindingWithDefault binding) {
+    public BindingPropertyProperty (@Nonnull PropertyName name, @Nonnull BindingBindingWithDefault binding) {
         this.name = name;
         this.binding = binding;
     }

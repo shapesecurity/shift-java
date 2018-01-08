@@ -28,7 +28,7 @@ import java.util.Objects;
 public abstract class Branch {
 	abstract public Maybe<? extends Node> step(Node node);
 
-  abstract public String propertyName();
+	abstract public String propertyName();
 
 	@Override
 	public boolean equals(Object o) {

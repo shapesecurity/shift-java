@@ -18,17 +18,17 @@
 
 package com.shapesecurity.shift.es2016.ast;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.shapesecurity.functional.data.HashCodeBuilder;
 import com.shapesecurity.functional.data.Maybe;
 import com.shapesecurity.shift.es2016.ast.operators.Precedence;
 
 public class YieldExpression implements Expression {
-    @NotNull
+    @Nonnull
     public final Maybe<Expression> expression;
 
 
-    public YieldExpression (@NotNull Maybe<Expression> expression) {
+    public YieldExpression (@Nonnull Maybe<Expression> expression) {
         this.expression = expression;
     }
 
@@ -47,7 +47,7 @@ public class YieldExpression implements Expression {
     }
 
     @Override
-    @NotNull
+    @Nonnull
     public Precedence getPrecedence() {
         return Precedence.ASSIGNMENT;
     }

@@ -18,15 +18,15 @@
 
 package com.shapesecurity.shift.es2016.ast;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.shapesecurity.functional.data.HashCodeBuilder;
 
 public class ThrowStatement implements Statement {
-    @NotNull
+    @Nonnull
     public final Expression expression;
 
 
-    public ThrowStatement (@NotNull Expression expression) {
+    public ThrowStatement (@Nonnull Expression expression) {
         this.expression = expression;
     }
 

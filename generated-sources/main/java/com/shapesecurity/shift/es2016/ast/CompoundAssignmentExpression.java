@@ -18,23 +18,23 @@
 
 package com.shapesecurity.shift.es2016.ast;
 
-import com.shapesecurity.shift.es2016.ast.operators.CompoundAssignmentOperator;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.shapesecurity.functional.data.HashCodeBuilder;
+import com.shapesecurity.shift.es2016.ast.operators.CompoundAssignmentOperator;
 import com.shapesecurity.shift.es2016.ast.operators.Precedence;
 
 public class CompoundAssignmentExpression implements Expression {
-    @NotNull
+    @Nonnull
     public final SimpleAssignmentTarget binding;
 
-    @NotNull
+    @Nonnull
     public final CompoundAssignmentOperator operator;
 
-    @NotNull
+    @Nonnull
     public final Expression expression;
 
 
-    public CompoundAssignmentExpression (@NotNull SimpleAssignmentTarget binding, @NotNull CompoundAssignmentOperator operator, @NotNull Expression expression) {
+    public CompoundAssignmentExpression (@Nonnull SimpleAssignmentTarget binding, @Nonnull CompoundAssignmentOperator operator, @Nonnull Expression expression) {
         this.binding = binding;
         this.operator = operator;
         this.expression = expression;
@@ -57,7 +57,7 @@ public class CompoundAssignmentExpression implements Expression {
     }
 
     @Override
-    @NotNull
+    @Nonnull
     public Precedence getPrecedence() {
         return Precedence.ASSIGNMENT;
     }

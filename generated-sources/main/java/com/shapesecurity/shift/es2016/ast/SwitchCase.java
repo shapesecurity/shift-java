@@ -18,19 +18,19 @@
 
 package com.shapesecurity.shift.es2016.ast;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.shapesecurity.functional.data.HashCodeBuilder;
 import com.shapesecurity.functional.data.ImmutableList;
 
 public class SwitchCase implements Node {
-    @NotNull
+    @Nonnull
     public final Expression test;
 
-    @NotNull
+    @Nonnull
     public final ImmutableList<Statement> consequent;
 
 
-    public SwitchCase (@NotNull Expression test, @NotNull ImmutableList<Statement> consequent) {
+    public SwitchCase (@Nonnull Expression test, @Nonnull ImmutableList<Statement> consequent) {
         this.test = test;
         this.consequent = consequent;
     }

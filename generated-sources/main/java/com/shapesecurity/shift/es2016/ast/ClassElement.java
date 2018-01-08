@@ -18,18 +18,18 @@
 
 package com.shapesecurity.shift.es2016.ast;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.shapesecurity.functional.data.HashCodeBuilder;
 
 public class ClassElement implements Node {
-    @NotNull
+    @Nonnull
     public final boolean isStatic;
 
-    @NotNull
+    @Nonnull
     public final MethodDefinition method;
 
 
-    public ClassElement (boolean isStatic, @NotNull MethodDefinition method) {
+    public ClassElement (boolean isStatic, @Nonnull MethodDefinition method) {
         this.isStatic = isStatic;
         this.method = method;
     }

@@ -18,16 +18,16 @@
 
 package com.shapesecurity.shift.es2016.ast;
 
-import com.shapesecurity.shift.es2016.ast.operators.Precedence;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.shapesecurity.functional.data.HashCodeBuilder;
+import com.shapesecurity.shift.es2016.ast.operators.Precedence;
 
 public class YieldGeneratorExpression implements Expression {
-    @NotNull
+    @Nonnull
     public final Expression expression;
 
 
-    public YieldGeneratorExpression (@NotNull Expression expression) {
+    public YieldGeneratorExpression (@Nonnull Expression expression) {
         this.expression = expression;
     }
 
@@ -46,7 +46,7 @@ public class YieldGeneratorExpression implements Expression {
     }
 
     @Override
-    @NotNull
+    @Nonnull
     public Precedence getPrecedence() {
         return Precedence.ASSIGNMENT;
     }

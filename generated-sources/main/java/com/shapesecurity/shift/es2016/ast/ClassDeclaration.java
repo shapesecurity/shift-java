@@ -18,19 +18,17 @@
 
 package com.shapesecurity.shift.es2016.ast;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.shapesecurity.functional.data.HashCodeBuilder;
 import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.functional.data.Maybe;
 
-import java.lang.*;
-
 public class ClassDeclaration extends Class implements Statement, FunctionDeclarationClassDeclarationVariableDeclaration, FunctionDeclarationClassDeclarationExpression {
-    @NotNull
+    @Nonnull
     public final BindingIdentifier name;
 
 
-    public ClassDeclaration (@NotNull BindingIdentifier name, @NotNull Maybe<Expression> _super, @NotNull ImmutableList<ClassElement> elements) {
+    public ClassDeclaration (@Nonnull BindingIdentifier name, @Nonnull Maybe<Expression> _super, @Nonnull ImmutableList<ClassElement> elements) {
         super(_super, elements);
         this.name = name;
     }

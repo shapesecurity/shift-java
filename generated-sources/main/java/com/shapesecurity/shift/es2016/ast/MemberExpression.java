@@ -18,16 +18,16 @@
 
 package com.shapesecurity.shift.es2016.ast;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.shapesecurity.functional.data.HashCodeBuilder;
 import com.shapesecurity.shift.es2016.ast.operators.Precedence;
 
 public abstract class MemberExpression implements Expression {
-    @NotNull
+    @Nonnull
     public final ExpressionSuper object;
 
 
-    public MemberExpression (@NotNull ExpressionSuper object) {
+    public MemberExpression (@Nonnull ExpressionSuper object) {
         this.object = object;
     }
 
@@ -46,7 +46,7 @@ public abstract class MemberExpression implements Expression {
     }
 
     @Override
-    @NotNull
+    @Nonnull
     public Precedence getPrecedence() {
         if (this.object instanceof Super) {
           return Precedence.MEMBER;

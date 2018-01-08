@@ -18,18 +18,18 @@
 
 package com.shapesecurity.shift.es2016.ast;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.shapesecurity.functional.data.HashCodeBuilder;
 
 public class BindingWithDefault implements Node, Parameter, BindingBindingWithDefault {
-    @NotNull
+    @Nonnull
     public final Binding binding;
 
-    @NotNull
+    @Nonnull
     public final Expression init;
 
 
-    public BindingWithDefault (@NotNull Binding binding, @NotNull Expression init) {
+    public BindingWithDefault (@Nonnull Binding binding, @Nonnull Expression init) {
         this.binding = binding;
         this.init = init;
     }

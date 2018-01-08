@@ -18,16 +18,16 @@
 
 package com.shapesecurity.shift.es2016.ast;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.shapesecurity.functional.data.HashCodeBuilder;
 import com.shapesecurity.functional.data.ImmutableList;
 
 public class SwitchDefault implements Node {
-    @NotNull
+    @Nonnull
     public final ImmutableList<Statement> consequent;
 
 
-    public SwitchDefault (@NotNull ImmutableList<Statement> consequent) {
+    public SwitchDefault (@Nonnull ImmutableList<Statement> consequent) {
         this.consequent = consequent;
     }
 

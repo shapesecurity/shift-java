@@ -18,18 +18,18 @@
 
 package com.shapesecurity.shift.es2016.ast;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.shapesecurity.functional.data.HashCodeBuilder;
 
 public class CatchClause implements Node {
-    @NotNull
+    @Nonnull
     public final Binding binding;
 
-    @NotNull
+    @Nonnull
     public final Block body;
 
 
-    public CatchClause (@NotNull Binding binding, @NotNull Block body) {
+    public CatchClause (@Nonnull Binding binding, @Nonnull Block body) {
         this.binding = binding;
         this.body = body;
     }

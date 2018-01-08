@@ -18,15 +18,15 @@
 
 package com.shapesecurity.shift.es2016.ast;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.shapesecurity.functional.data.HashCodeBuilder;
 
 public class ExportAllFrom implements ExportDeclaration {
-    @NotNull
+    @Nonnull
     public final String moduleSpecifier;
 
 
-    public ExportAllFrom (@NotNull String moduleSpecifier) {
+    public ExportAllFrom (@Nonnull String moduleSpecifier) {
         this.moduleSpecifier = moduleSpecifier;
     }
 

@@ -18,18 +18,18 @@
 
 package com.shapesecurity.shift.es2016.ast;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.shapesecurity.functional.data.HashCodeBuilder;
 
 public class Method extends MethodDefinition {
-    @NotNull
+    @Nonnull
     public final boolean isGenerator;
 
-    @NotNull
+    @Nonnull
     public final FormalParameters params;
 
 
-    public Method (boolean isGenerator, @NotNull PropertyName name, @NotNull FormalParameters params, @NotNull FunctionBody body) {
+    public Method (boolean isGenerator, @Nonnull PropertyName name, @Nonnull FormalParameters params, @Nonnull FunctionBody body) {
         super(name, body);
         this.isGenerator = isGenerator;
         this.params = params;

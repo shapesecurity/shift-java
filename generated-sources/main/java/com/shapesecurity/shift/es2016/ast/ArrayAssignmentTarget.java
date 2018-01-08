@@ -18,20 +18,20 @@
 
 package com.shapesecurity.shift.es2016.ast;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.shapesecurity.functional.data.HashCodeBuilder;
 import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.functional.data.Maybe;
 
 public class ArrayAssignmentTarget implements Node, AssignmentTargetPattern {
-    @NotNull
+    @Nonnull
     public final ImmutableList<Maybe<AssignmentTargetAssignmentTargetWithDefault>> elements;
 
-    @NotNull
+    @Nonnull
     public final Maybe<AssignmentTarget> rest;
 
 
-    public ArrayAssignmentTarget (@NotNull ImmutableList<Maybe<AssignmentTargetAssignmentTargetWithDefault>> elements, @NotNull Maybe<AssignmentTarget> rest) {
+    public ArrayAssignmentTarget (@Nonnull ImmutableList<Maybe<AssignmentTargetAssignmentTargetWithDefault>> elements, @Nonnull Maybe<AssignmentTarget> rest) {
         this.elements = elements;
         this.rest = rest;
     }

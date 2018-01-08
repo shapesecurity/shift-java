@@ -18,23 +18,23 @@
 
 package com.shapesecurity.shift.es2016.ast;
 
+import javax.annotation.Nonnull;
+import com.shapesecurity.functional.data.HashCodeBuilder;
 import com.shapesecurity.shift.es2016.ast.operators.BinaryOperator;
 import com.shapesecurity.shift.es2016.ast.operators.Precedence;
-import org.jetbrains.annotations.NotNull;
-import com.shapesecurity.functional.data.HashCodeBuilder;
 
 public class BinaryExpression implements Expression {
-    @NotNull
+    @Nonnull
     public final Expression left;
 
-    @NotNull
+    @Nonnull
     public final BinaryOperator operator;
 
-    @NotNull
+    @Nonnull
     public final Expression right;
 
 
-    public BinaryExpression (@NotNull Expression left, @NotNull BinaryOperator operator, @NotNull Expression right) {
+    public BinaryExpression (@Nonnull Expression left, @Nonnull BinaryOperator operator, @Nonnull Expression right) {
         this.left = left;
         this.operator = operator;
         this.right = right;
@@ -57,7 +57,7 @@ public class BinaryExpression implements Expression {
     }
 
     @Override
-    @NotNull
+    @Nonnull
     public Precedence getPrecedence() {
         return this.operator.getPrecedence();
     }

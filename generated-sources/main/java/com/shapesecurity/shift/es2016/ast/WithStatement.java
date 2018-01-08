@@ -18,18 +18,18 @@
 
 package com.shapesecurity.shift.es2016.ast;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.shapesecurity.functional.data.HashCodeBuilder;
 
 public class WithStatement implements Statement {
-    @NotNull
+    @Nonnull
     public final Expression object;
 
-    @NotNull
+    @Nonnull
     public final Statement body;
 
 
-    public WithStatement (@NotNull Expression object, @NotNull Statement body) {
+    public WithStatement (@Nonnull Expression object, @Nonnull Statement body) {
         this.object = object;
         this.body = body;
     }

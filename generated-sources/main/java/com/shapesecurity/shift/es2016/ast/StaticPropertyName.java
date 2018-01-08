@@ -18,15 +18,15 @@
 
 package com.shapesecurity.shift.es2016.ast;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.shapesecurity.functional.data.HashCodeBuilder;
 
 public class StaticPropertyName implements PropertyName {
-    @NotNull
+    @Nonnull
     public final String value;
 
 
-    public StaticPropertyName (@NotNull String value) {
+    public StaticPropertyName (@Nonnull String value) {
         this.value = value;
     }
 

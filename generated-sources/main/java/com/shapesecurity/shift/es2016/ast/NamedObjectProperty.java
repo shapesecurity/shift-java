@@ -18,15 +18,15 @@
 
 package com.shapesecurity.shift.es2016.ast;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.shapesecurity.functional.data.HashCodeBuilder;
 
 public abstract class NamedObjectProperty implements ObjectProperty {
-    @NotNull
+    @Nonnull
     public final PropertyName name;
 
 
-    public NamedObjectProperty (@NotNull PropertyName name) {
+    public NamedObjectProperty (@Nonnull PropertyName name) {
         this.name = name;
     }
 

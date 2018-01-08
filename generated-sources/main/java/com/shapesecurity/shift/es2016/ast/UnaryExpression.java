@@ -18,20 +18,20 @@
 
 package com.shapesecurity.shift.es2016.ast;
 
-import com.shapesecurity.shift.es2016.ast.operators.UnaryOperator;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.shapesecurity.functional.data.HashCodeBuilder;
+import com.shapesecurity.shift.es2016.ast.operators.UnaryOperator;
 import com.shapesecurity.shift.es2016.ast.operators.Precedence;
 
 public class UnaryExpression implements Expression {
-    @NotNull
+    @Nonnull
     public final UnaryOperator operator;
 
-    @NotNull
+    @Nonnull
     public final Expression operand;
 
 
-    public UnaryExpression (@NotNull UnaryOperator operator, @NotNull Expression operand) {
+    public UnaryExpression (@Nonnull UnaryOperator operator, @Nonnull Expression operand) {
         this.operator = operator;
         this.operand = operand;
     }
@@ -52,7 +52,7 @@ public class UnaryExpression implements Expression {
     }
 
     @Override
-    @NotNull
+    @Nonnull
     public Precedence getPrecedence() {
         return Precedence.PREFIX;
     }

@@ -18,19 +18,19 @@
 
 package com.shapesecurity.shift.es2016.ast;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.shapesecurity.functional.data.HashCodeBuilder;
 import com.shapesecurity.functional.data.Maybe;
 
 public class VariableDeclarator implements Node {
-    @NotNull
+    @Nonnull
     public final Binding binding;
 
-    @NotNull
+    @Nonnull
     public final Maybe<Expression> init;
 
 
-    public VariableDeclarator (@NotNull Binding binding, @NotNull Maybe<Expression> init) {
+    public VariableDeclarator (@Nonnull Binding binding, @Nonnull Maybe<Expression> init) {
         this.binding = binding;
         this.init = init;
     }

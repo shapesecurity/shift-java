@@ -18,18 +18,18 @@
 
 package com.shapesecurity.shift.es2016.ast;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.shapesecurity.functional.data.HashCodeBuilder;
 
 public class TryCatchStatement implements Statement {
-    @NotNull
+    @Nonnull
     public final Block body;
 
-    @NotNull
+    @Nonnull
     public final CatchClause catchClause;
 
 
-    public TryCatchStatement (@NotNull Block body, @NotNull CatchClause catchClause) {
+    public TryCatchStatement (@Nonnull Block body, @Nonnull CatchClause catchClause) {
         this.body = body;
         this.catchClause = catchClause;
     }

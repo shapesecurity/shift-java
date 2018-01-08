@@ -18,15 +18,15 @@
 
 package com.shapesecurity.shift.es2016.ast;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.shapesecurity.functional.data.HashCodeBuilder;
 
 public class ComputedPropertyName implements PropertyName {
-    @NotNull
+    @Nonnull
     public final Expression expression;
 
 
-    public ComputedPropertyName (@NotNull Expression expression) {
+    public ComputedPropertyName (@Nonnull Expression expression) {
         this.expression = expression;
     }
 

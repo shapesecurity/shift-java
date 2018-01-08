@@ -18,15 +18,15 @@
 
 package com.shapesecurity.shift.es2016.ast;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.shapesecurity.functional.data.HashCodeBuilder;
 
 public abstract class MethodDefinition extends NamedObjectProperty {
-    @NotNull
+    @Nonnull
     public final FunctionBody body;
 
 
-    public MethodDefinition (@NotNull PropertyName name, @NotNull FunctionBody body) {
+    public MethodDefinition (@Nonnull PropertyName name, @Nonnull FunctionBody body) {
         super(name);
         this.body = body;
     }
