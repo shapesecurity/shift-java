@@ -10,6 +10,8 @@ import com.shapesecurity.functional.data.Maybe;
 import com.shapesecurity.shift.es2016.ast.Node;
 import com.shapesecurity.shift.es2016.ast.Program;
 import com.shapesecurity.shift.es2016.codegen.CodeGen;
+import com.shapesecurity.shift.es2016.codegen.CodeRepFactory;
+import com.shapesecurity.shift.es2016.codegen.location.CodeGenWithLocation;
 import com.shapesecurity.shift.es2016.parser.EarlyError;
 import com.shapesecurity.shift.es2016.parser.EarlyErrorChecker;
 import com.shapesecurity.shift.es2016.parser.JsError;
@@ -20,6 +22,7 @@ import com.shapesecurity.shift.es2016.path.BranchGetter;
 import com.shapesecurity.shift.es2016.path.BranchIterator;
 import com.shapesecurity.shift.es2016.serialization.Deserializer;
 import com.shapesecurity.shift.es2016.serialization.Serializer;
+import com.shapesecurity.shift.es2016.utils.WithLocation;
 import com.shapesecurity.shift.es2016.validator.ValidationError;
 import com.shapesecurity.shift.es2016.validator.Validator;
 import org.json.JSONException;
@@ -76,25 +79,13 @@ public class PassTest {
 		throw new RuntimeException("Unreachable - trees unequal but have no unequal nodes");
 	}
 
-	static void check(String name) throws JsError, IOException, ClassNotFoundException, NoSuchMethodException, InstantiationException, JSONException, IllegalAccessException {
-		String expectedJSON = new String(Files.readAllBytes(Paths.get(expectationsDir, name + "-tree.json")), StandardCharsets.UTF_8);
-		DeserializerWithLocation deserializer = new DeserializerWithLocation();
-		Program expected = (Program) deserializer.deserializeNode(new JsonParser().parse(expectedJSON));
-
-		String src = new String(Files.readAllBytes(Paths.get(testsDir, name)), StandardCharsets.UTF_8);
-		ParserWithLocation parser = new ParserWithLocation();
-		Program actual = name.endsWith(".module.js") ? parser.parseModule(src) : parser.parseScript(src);
-
-		// check trees
-		assertTreesEqual(expected, actual);
-
-		// check locations
+	static void assertLocationsEqual(Program expected, Program actual, WithLocation expectedLocations, WithLocation actualLocations) {
 		for (Pair<BranchGetter, Node> p : new BranchIterator(actual)) {
 			Node expectedNode = p.left.apply(expected).fromJust();
 			Node actualNode = p.right;
 
-			Maybe<SourceSpan> maybeExpectedLocation = deserializer.getLocation(expectedNode);
-			Maybe<SourceSpan> maybeActualLocation = parser.getLocation(actualNode);
+			Maybe<SourceSpan> maybeExpectedLocation = expectedLocations.getLocation(expectedNode);
+			Maybe<SourceSpan> maybeActualLocation = actualLocations.getLocation(actualNode);
 
 			if (maybeExpectedLocation.isNothing() && maybeActualLocation.isJust()) {
 				throw new RuntimeException("Node unexpectedly has location (root" + p.left.toString() + ")");
@@ -114,6 +105,22 @@ public class PassTest {
 				assertEquals("end offset (root" + p.left.toString() + ")", expectedLocation.end.offset, actualLocation.end.offset);
 			}
 		}
+	}
+
+	static void check(String name) throws JsError, IOException, ClassNotFoundException, NoSuchMethodException, InstantiationException, JSONException, IllegalAccessException {
+		String expectedJSON = new String(Files.readAllBytes(Paths.get(expectationsDir, name + "-tree.json")), StandardCharsets.UTF_8);
+		DeserializerWithLocation deserializer = new DeserializerWithLocation();
+		Program expected = (Program) deserializer.deserializeNode(new JsonParser().parse(expectedJSON));
+
+		String src = new String(Files.readAllBytes(Paths.get(testsDir, name)), StandardCharsets.UTF_8);
+		ParserWithLocation parser = new ParserWithLocation();
+		Program actual = name.endsWith(".module.js") ? parser.parseModule(src) : parser.parseScript(src);
+
+		// check trees
+		assertTreesEqual(expected, actual);
+
+		// check locations
+		assertLocationsEqual(expected, actual, deserializer, parser);
 
 		// check comments
 		String commentsJSON = new String(Files.readAllBytes(Paths.get(expectationsDir, name + "-comments.json")), StandardCharsets.UTF_8);
@@ -150,9 +157,12 @@ public class PassTest {
 		}
 
 		// check codegen
-		String codegened = CodeGen.codeGen(actual);
-		Program codegenedAndParsed = name.endsWith(".module.js") ? parser.parseModule(codegened) : parser.parseScript(codegened);
-		assertTreesEqual(actual, codegenedAndParsed);
+		CodeGenWithLocation codeGen = new CodeGenWithLocation(new CodeGen(new CodeRepFactory()));
+		String codegened = codeGen.codeGen(actual);
+		ParserWithLocation codeGenParser = new ParserWithLocation();
+		Program codeGenedAndParsed = name.endsWith(".module.js") ? codeGenParser.parseModule(codegened) : codeGenParser.parseScript(codegened);
+		assertTreesEqual(actual, codeGenedAndParsed);
+		assertLocationsEqual(actual, codeGenedAndParsed, codeGen, codeGenParser);
 
 		// check serializer and deserializer
 		String serialized = Serializer.serialize(actual);
@@ -176,7 +186,7 @@ public class PassTest {
 		XFailHelper.wrap(this.name, xfail, PassTest::check);
 	}
 
-	static class DeserializerWithLocation extends Deserializer {
+	static class DeserializerWithLocation extends Deserializer implements WithLocation {
 		protected HashTable<Node, SourceSpan> locations = HashTable.emptyUsingIdentity();
 
 		@Nonnull

@@ -38,6 +38,13 @@ public class TokenStreamWithLocation extends TokenStream {
 	@Override
 	public void putRaw(@Nonnull String tokenStr) {
 		this.meta.startNodes(this.getLocation());
+
+		Matcher linebreakMatcher = linebreakPattern.matcher(tokenStr);
+		while (linebreakMatcher.find()) {
+			this.line++;
+			this.lineStart = this.writer.length() + linebreakMatcher.end();
+		}
+
 		this.writer.append(tokenStr);
 	}
 
@@ -90,7 +97,7 @@ public class TokenStreamWithLocation extends TokenStream {
 
 		this.meta.startNodes(this.getLocation());
 
-		Matcher linebreakMatcher = linebreakPattern.matcher(tokenStr); // consider replacing with walking the string manually
+		Matcher linebreakMatcher = linebreakPattern.matcher(tokenStr);
 		while (linebreakMatcher.find()) {
 			this.line++;
 			this.lineStart = this.writer.length() + linebreakMatcher.end();
