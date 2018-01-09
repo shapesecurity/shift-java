@@ -49,7 +49,11 @@ public class WebSafeCodeGen extends CodeGen {
 	@Override
 	@Nonnull
 	public CodeRep reduceLiteralRegExpExpression(@Nonnull LiteralRegExpExpression node) {
-		return factory.token("/" + safe(node.pattern + "/") + buildFlags(node));
+		String safened = safe(node.pattern + "/");
+		if (!safened.equals(node.pattern + "/")) {
+			throw new RuntimeException("WebSafeCodegen cannot safely output ASTs containing regex literals which require escaping");
+		}
+		return factory.token("/" + safened + buildFlags(node));
 	}
 
 	@Nonnull
@@ -92,6 +96,7 @@ public class WebSafeCodeGen extends CodeGen {
 	@Nonnull
 	@Override
 	public CodeRep reduceTemplateExpression(@Nonnull TemplateExpression node, @Nonnull Maybe<CodeRep> tag, @Nonnull ImmutableList<CodeRep> elements) {
+		boolean isTagged = node.tag.isJust();
 		CodeRep state = node.tag.maybe(factory.empty(), t -> p(t, node.getPrecedence(), tag.fromJust()));
 		state = seqVA(state, factory.token("`"));
 		for (int i = 0, l = node.elements.length; i < l; ++i) {
@@ -100,7 +105,12 @@ public class WebSafeCodeGen extends CodeGen {
 				if (i > 0) {
 					d += "}";
 				}
-				d += safe(((TemplateElement) node.elements.index(i).fromJust()).rawValue);
+				String original = ((TemplateElement) node.elements.index(i).fromJust()).rawValue;
+				String safened = safe(original);
+				if (isTagged && !safened.equals(original)) {
+					throw new RuntimeException("WebSafeCodegen cannot safely output ASTs containing tagged templates which require escaping");
+				}
+				d += safened;
 				if (i < l - 1) {
 					d += "${";
 				}
