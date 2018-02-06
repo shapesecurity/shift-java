@@ -31,6 +31,14 @@ public class WebSafeCodeGen extends CodeGen {
 	public WebSafeCodeGen(@Nonnull CodeRepFactory factory) {
 		super(factory);
 	}
+	public WebSafeCodeGen(@Nonnull FormattedCodeRepFactory factory) { super(factory); }
+
+	@Nonnull
+	public static String prettyCodeGen(@Nonnull Script script) {
+		StringBuilder sb = new StringBuilder();
+		Director.reduceScript(new WebSafeCodeGen(new FormattedCodeRepFactory()), script).emit(new WebSafeTokenStream(sb), false);
+		return sb.toString();
+	}
 
 	@Nonnull
 	public static String codeGen(@Nonnull Script script) {
