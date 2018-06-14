@@ -967,7 +967,7 @@ public class Tokenizer {
                     break;
                 case '\\':
                 {
-                    String octal = this.scanStringEscape("", null).right();
+                    String octal = this.scanStringEscape(null).right();
                     if (octal != null) {
                         throw this.createILLEGAL();
                     }
@@ -1001,7 +1001,7 @@ public class Tokenizer {
 
     @Nonnull
     private Token scanStringLiteral() throws JsError {
-        String str = "";
+        StringBuilder str = new StringBuilder();
         char quote = this.source.charAt(this.index);
         int start = this.index;
         this.index++;
@@ -1011,15 +1011,15 @@ public class Tokenizer {
             char ch = this.source.charAt(this.index);
             if (ch == quote) {
                 index++;
-                return new StringLiteralToken(this.getSlice(start), str, octal);
+                return new StringLiteralToken(this.getSlice(start), str.toString(), octal);
             } else if (ch == '\\') {
-                Pair<String, String> info = this.scanStringEscape(str, octal);
-                str = info.left();
+                Pair<String, String> info = this.scanStringEscape(octal);
+                str.append(info.left());
                 octal = info.right();
             } else if (Utils.isLineTerminator(ch)) {
                 throw this.createILLEGAL();
             } else {
-                str += ch;
+                str.append(ch);
                 this.index++;
             }
         }
@@ -1028,7 +1028,8 @@ public class Tokenizer {
     }
 
     @Nonnull
-    private Pair<String, String> scanStringEscape(String str, String octal) throws JsError {
+    private Pair<String, String> scanStringEscape(String octal) throws JsError {
+        String cooked;
         this.index++;
         if (this.index == this.source.length()) {
             throw this.createILLEGAL();
@@ -1037,15 +1038,15 @@ public class Tokenizer {
         if (!Utils.isLineTerminator(ch)) {
             switch (ch) {
                 case 'n':
-                    str += "\n";
+                    cooked = "\n";
                     this.index++;
                     break;
                 case 'r':
-                    str += "\r";
+                    cooked = "\r";
                     this.index++;
                     break;
                 case 't':
-                    str += "\t";
+                    cooked = "\t";
                     this.index++;
                     break;
                 case 'u':
@@ -1059,18 +1060,18 @@ public class Tokenizer {
                     if (unescaped < 0) {
                         throw this.createILLEGAL();
                     }
-                    str += fromCodePoint(unescaped);
+                    cooked = fromCodePoint(unescaped);
                     break;
                 case 'b':
-                    str += "\b";
+                    cooked = "\b";
                     this.index++;
                     break;
                 case 'f':
-                    str += "\f";
+                    cooked = "\f";
                     this.index++;
                     break;
                 case 'v':
-                    str += "\u000B";
+                    cooked = "\u000B";
                     this.index++;
                     break;
                 default:
@@ -1096,15 +1097,16 @@ public class Tokenizer {
                             }
                             ch = this.source.charAt(this.index);
                         }
-                        str += fromCodePoint(code);
+                        cooked = fromCodePoint(code);
                     } else if (ch == '8' || ch == '9') {
                         throw this.createILLEGAL();
                     } else {
-                        str += ch;
+                        cooked = Character.toString(ch);
                         this.index++;
                     }
             }
         } else {
+            cooked = "";
             this.index++;
             if (ch == '\r' && this.source.charAt(this.index) == '\n') {
                 this.index++;
@@ -1112,7 +1114,7 @@ public class Tokenizer {
             this.lineStart = this.index;
             this.line++;
         }
-        return new Pair<>(str, octal);
+        return new Pair<>(cooked, octal);
     }
 
     @Nonnull
