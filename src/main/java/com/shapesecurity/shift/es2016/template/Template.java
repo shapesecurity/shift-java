@@ -1,24 +1,34 @@
 package com.shapesecurity.shift.es2016.template;
 
+import com.shapesecurity.functional.F;
+import com.shapesecurity.functional.F2;
 import com.shapesecurity.functional.Pair;
 import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.functional.data.Maybe;
 import com.shapesecurity.shift.es2016.ast.BindingIdentifier;
 import com.shapesecurity.shift.es2016.ast.Node;
 import com.shapesecurity.shift.es2016.ast.Program;
+import com.shapesecurity.shift.es2016.ast.Script;
+import com.shapesecurity.shift.es2016.parser.JsError;
 import com.shapesecurity.shift.es2016.parser.ParserWithLocation;
 import com.shapesecurity.shift.es2016.parser.SourceSpan;
-import com.shapesecurity.shift.es2016.reducer.Flattener2;
-import com.shapesecurity.shift.es2016.serialization.Serializer;
+import com.shapesecurity.shift.es2016.reducer.Director;
+import com.shapesecurity.shift.es2016.reducer.Flattener;
+import com.shapesecurity.shift.es2016.reducer.ReconstructingReducer;
+import com.shapesecurity.shift.es2016.reducer.Reducer;
+import com.shapesecurity.shift.es2016.reducer.WrappedReducer;
 import com.shapesecurity.shift.es2016.utils.WithLocation;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
+import java.util.IdentityHashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -49,6 +59,14 @@ public class Template {
 			this.start = start;
 			this.comment = comment;
 		}
+	}
+
+	public static Program replace(Program tree, F2<Node, Node, Maybe<Node>> getReplacement) {
+		Reducer<Node> replacer = new WrappedReducer<>(
+			(originalNode, newNode) -> getReplacement.apply(newNode, originalNode).orJust(newNode),
+			new ReconstructingReducer() // TODO LazyCloneReducer
+		);
+		return (Program) Director.reduceProgram(replacer, tree);
 	}
 
 	static final Pattern commentRegex = Pattern.compile("^# ([^#]+) (?:# ([^#]+) )?#$");
@@ -85,7 +103,7 @@ public class Template {
 			return ImmutableList.empty();
 		}
 
-		ImmutableList<Node> nodes = Flattener2.flatten(tree);
+		ImmutableList<Node> nodes = Flattener.flatten(tree);
 		ImmutableList<Pair<Node, SourceSpan>> nodeAndLocations = Maybe.catMaybes(nodes.map(node -> {
 			Maybe<SourceSpan> maybeLocation = locations.getLocation(node);
 			if (maybeLocation.isNothing()) {
@@ -151,5 +169,39 @@ public class Template {
 		}
 
 		return ImmutableList.from(out);
+	}
+
+	public static Program applyTemplate(String source, Map<String, F<Node, Node>> newNodes) throws JsError {
+		ParserWithLocation parserWithLocation = new ParserWithLocation();
+		Script tree = parserWithLocation.parseScript(source);
+		ImmutableList<NodeInfo> namePairs = findNodes(tree, parserWithLocation, parserWithLocation.getComments());
+		IdentityHashMap<Node, String> nodeToName = new IdentityHashMap<>();
+		for (NodeInfo info : namePairs) {
+			if (nodeToName.containsKey(info.node)) {
+				throw new IllegalArgumentException("One node has two names: " + info.name + " and " + nodeToName.get(info.node));
+			}
+			nodeToName.put(info.node, info.name);
+		}
+
+		Set<String> foundNames = new HashSet<>();
+		namePairs.forEach(nodeInfo -> foundNames.add(nodeInfo.name));
+		Set<String> providedNames = newNodes.keySet();
+
+		for (String name : providedNames) {
+			if (!foundNames.contains(name)) {
+				throw new IllegalArgumentException("Provided replacement for node named " + name + ", but no corresponding node was found");
+			}
+		}
+		for (String name : foundNames) {
+			if (!providedNames.contains(name)) {
+				throw new IllegalArgumentException("Found node named " + name + ", but no correspnoding replacement was provided");
+			}
+		}
+
+		F2<Node, Node, Maybe<Node>> getReplacement = (newNode, originalNode) ->
+			nodeToName.containsKey(originalNode)
+				? Maybe.of(newNodes.get(nodeToName.get(originalNode)).apply(newNode)) // we know this is safe because of the checks above
+				: Maybe.empty();
+		return replace(tree, getReplacement);
 	}
 }
