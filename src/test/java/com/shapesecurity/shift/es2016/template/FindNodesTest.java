@@ -3,6 +3,8 @@ package com.shapesecurity.shift.es2016.template;
 import com.shapesecurity.functional.F;
 import com.shapesecurity.functional.Pair;
 import com.shapesecurity.functional.data.ImmutableList;
+import com.shapesecurity.functional.data.Maybe;
+import com.shapesecurity.functional.data.NonEmptyImmutableList;
 import com.shapesecurity.shift.es2016.ast.Node;
 import com.shapesecurity.shift.es2016.ast.Program;
 import com.shapesecurity.shift.es2016.parser.JsError;
@@ -10,6 +12,9 @@ import com.shapesecurity.shift.es2016.parser.ParserWithLocation;
 import com.shapesecurity.shift.es2016.path.Branch;
 import com.shapesecurity.shift.es2016.path.BranchGetter;
 import junit.framework.TestCase;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class FindNodesTest extends TestCase {
 	private final BranchGetter firstStmt = new BranchGetter().d(Branch.ScriptStatements_(0));
@@ -90,6 +95,27 @@ public class FindNodesTest extends TestCase {
 			Pair.of("foo", firstExpr.d(Branch.BinaryExpressionRight_())),
 			Pair.of("bar", (new BranchGetter()).d(Branch.ScriptStatements_(1)).d(Branch.ExpressionStatementExpression_()).d(Branch.BinaryExpressionRight_()))
 		));
+	}
+
+	public void testCustomMatcher() throws JsError {
+		String source = "a + /*$ foo $*/ b;";
+		F<String, Maybe<Pair<String, Maybe<Class<? extends Node>>>>> commentMatcher = string -> {
+			Matcher matcher = Pattern.compile("^\\$ ([^$]+) \\$$").matcher(string);
+			if (!matcher.matches()) {
+				return Maybe.empty();
+			}
+			return Maybe.of(Pair.of(matcher.group(1), Maybe.empty()));
+		};
+
+		ParserWithLocation parserWithLocation = new ParserWithLocation();
+		Program tree = parserWithLocation.parseScript(source);
+		ImmutableList<Template.NodeInfo> result = Template.findNodes(tree, parserWithLocation, parserWithLocation.getComments(), commentMatcher);
+		assertEquals(1, result.length);
+		Template.NodeInfo info = result.maybeHead().fromJust();
+
+		assertEquals(info.name, "foo");
+		assertEquals(info.comment, parserWithLocation.getComments().maybeHead().fromJust());
+		assertEquals(info.node, firstExpr.d(Branch.BinaryExpressionRight_()).apply(tree).fromJust());
 	}
 
 	public void testWrongType() throws JsError {

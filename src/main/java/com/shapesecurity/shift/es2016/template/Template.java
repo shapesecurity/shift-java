@@ -18,6 +18,7 @@ import com.shapesecurity.shift.es2016.reducer.ReconstructingReducer;
 import com.shapesecurity.shift.es2016.reducer.Reducer;
 import com.shapesecurity.shift.es2016.reducer.WrappedReducer;
 import com.shapesecurity.shift.es2016.utils.WithLocation;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -86,7 +87,8 @@ public class Template {
 	}
 
 	static final Pattern commentRegex = Pattern.compile("^# ([^#]+) (?:# ([^#]+) )?#$");
-	public static Maybe<Pair<String, Maybe<Class<? extends Node>>>> parseComment(String text) {
+	@NotNull
+	public static Maybe<Pair<String, Maybe<Class<? extends Node>>>> defaultParseComment(String text) {
 		Matcher matcher = commentRegex.matcher(text);
 		if (!matcher.matches()) {
 			return Maybe.empty();
@@ -103,9 +105,12 @@ public class Template {
 	}
 
 	public static ImmutableList<NodeInfo> findNodes(Program tree, WithLocation locations, ImmutableList<ParserWithLocation.Comment> comments) {
-		// TODO: allow custom matcher
+		return findNodes(tree, locations, comments, Template::defaultParseComment);
+	}
+
+	public static ImmutableList<NodeInfo> findNodes(Program tree, WithLocation locations, ImmutableList<ParserWithLocation.Comment> comments, F<String, Maybe<Pair<String, Maybe<Class<? extends Node>>>>> parseComment) {
 		ImmutableList<Marker> markers = Maybe.catMaybes(
-			comments.map(c -> parseComment(c.text).map(p -> new Marker(p.left, p.right, c.start.offset, c)))
+			comments.map(c -> parseComment.apply(c.text).map(p -> new Marker(p.left, p.right, c.start.offset, c)))
 		);
 
 		if (markers.isEmpty()) {
