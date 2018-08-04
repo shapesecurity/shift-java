@@ -97,8 +97,18 @@ public class FindNodesTest extends TestCase {
 		));
 	}
 
+	public void testMultipleLabelsOnOneNode() throws JsError {
+		String source = "" +
+			"a + /*# foo #*/ /*# bar #*/ b;\n";
+		BranchGetter branchGetter = firstExpr.d(Branch.BinaryExpressionRight_());
+		checkNodes(source, ImmutableList.of(
+			Pair.of("foo", branchGetter),
+			Pair.of("bar", branchGetter)
+		));
+	}
+
 	public void testCustomMatcher() throws JsError {
-		String source = "a + /*$ foo $*/ b;";
+		String source = "a + /*$ label $*/ b;";
 		F<String, Maybe<Pair<String, Maybe<Class<? extends Node>>>>> commentMatcher = string -> {
 			Matcher matcher = Pattern.compile("^\\$ ([^$]+) \\$$").matcher(string);
 			if (!matcher.matches()) {
@@ -113,7 +123,7 @@ public class FindNodesTest extends TestCase {
 		assertEquals(1, result.length);
 		Template.NodeInfo info = result.maybeHead().fromJust();
 
-		assertEquals(info.name, "foo");
+		assertEquals(info.name, "label");
 		assertEquals(info.comment, parserWithLocation.getComments().maybeHead().fromJust());
 		assertEquals(info.node, firstExpr.d(Branch.BinaryExpressionRight_()).apply(tree).fromJust());
 	}
@@ -132,5 +142,22 @@ public class FindNodesTest extends TestCase {
 
 	public void testTrailingLabel() throws JsError {
 		fails("a /*# label #*/");
+	}
+
+	public void testAmbiguous() throws JsError {
+		fails(" /*# label #*/ a"); // can be either the ExpressionStatement or the Expression
+	}
+
+	public void testMissingLocationInfo() throws JsError {
+		String source = "a + /*# label #*/ b;";
+		ParserWithLocation parserWithLocation = new ParserWithLocation();
+		Program tree = parserWithLocation.parseScript(source);
+
+		try {
+			Template.findNodes(tree, new ParserWithLocation(), parserWithLocation.getComments());
+			throw new RuntimeException("should not have succeeded without location info");
+		} catch (IllegalArgumentException e) {
+			// pass
+		}
 	}
 }

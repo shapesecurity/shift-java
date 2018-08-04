@@ -208,7 +208,7 @@ public class Template {
 		}
 		for (String name : foundNames) {
 			if (!providedNames.contains(name)) {
-				throw new IllegalArgumentException("Found node named " + name + ", but no correspnoding replacement was provided");
+				throw new IllegalArgumentException("Found node named " + name + ", but no corresponding replacement was provided");
 			}
 		}
 
