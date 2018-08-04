@@ -100,6 +100,10 @@ public class FindNodesTest extends TestCase {
 		fails("a + /*# label # NotAType #*/ 0");
 	}
 
+	public void testNotATypeName() throws JsError {
+		fails("a + /*# label # Not A Type #*/ 0");
+	}
+
 	public void testTrailingLabel() throws JsError {
 		fails("a /*# label #*/");
 	}

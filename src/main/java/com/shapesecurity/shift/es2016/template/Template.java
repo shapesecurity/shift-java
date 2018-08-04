@@ -29,6 +29,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -69,6 +70,21 @@ public class Template {
 		return (Program) Director.reduceProgram(replacer, tree);
 	}
 
+	private static final Predicate<String> isTypeName = Pattern.compile("^[a-zA-Z]+$").asPredicate();
+	public static Class<? extends Node> getNodeType(String typeName) {
+		if (!isTypeName.test(typeName)) {
+			throw new IllegalArgumentException("\"" + typeName + "\" is not a valid node type name");
+		}
+		try {
+			Class type = Class.forName("com.shapesecurity.shift.es2016.ast." + typeName); // This is kind of awful, but... it does work...
+			@SuppressWarnings("unchecked")
+			Class<? extends Node> nodeType = (Class<? extends Node>) type;
+			return nodeType;
+		} catch (ClassNotFoundException | ClassCastException e) {
+			throw new IllegalArgumentException("Unrecognized node type \"" + typeName + "\"");
+		}
+	}
+
 	static final Pattern commentRegex = Pattern.compile("^# ([^#]+) (?:# ([^#]+) )?#$");
 	public static Maybe<Pair<String, Maybe<Class<? extends Node>>>> parseComment(String text) {
 		Matcher matcher = commentRegex.matcher(text);
@@ -80,14 +96,7 @@ public class Template {
 		String typeName = matcher.group(2);
 
 		if (typeName != null) {
-			try {
-				Class type = Class.forName("com.shapesecurity.shift.es2016.ast." + typeName); // This is kind of awful, but... it does work...
-				@SuppressWarnings("unchecked")
-				Class<? extends Node> nodeType = (Class<? extends Node>) type;
-				return Maybe.of(Pair.of(name, Maybe.of(nodeType)));
-			} catch (ClassNotFoundException | ClassCastException e) {
-				throw new IllegalArgumentException("Unrecognized node type \"" + typeName + "\"");
-			}
+			return Maybe.of(Pair.of(name, Maybe.of(getNodeType(typeName))));
 		}
 
 		return Maybe.of(Pair.of(name, Maybe.empty()));
