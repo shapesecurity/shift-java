@@ -51,13 +51,13 @@ public class Template {
 
 	static class Marker {
 		final String name;
-		final Predicate<Node> typeCheck;
+		final Predicate<Node> predicate;
 		final int start;
 		final ParserWithLocation.Comment comment;
 
-		Marker(String name, Predicate<Node> typeCheck, int start, ParserWithLocation.Comment comment) {
+		Marker(String name, Predicate<Node> predicate, int start, ParserWithLocation.Comment comment) {
 			this.name = name;
-			this.typeCheck = typeCheck;
+			this.predicate = predicate;
 			this.start = start;
 			this.comment = comment;
 		}
@@ -160,7 +160,7 @@ public class Template {
 			}
 
 			Stream<Pair<Node, Integer>> nodeStream = currentBlockOfNodes.right.stream();
-			List<Pair<Node, Integer>> ofCorrectType = nodeStream.filter(p -> marker.typeCheck.test(p.left)).collect(Collectors.toList());
+			List<Pair<Node, Integer>> ofCorrectType = nodeStream.filter(p -> marker.predicate.test(p.left)).collect(Collectors.toList());
 			if (ofCorrectType.isEmpty()) {
 				throw new IllegalArgumentException("Couldn't find any nodes of satisfying predicate for marker " + marker.name);
 			}
