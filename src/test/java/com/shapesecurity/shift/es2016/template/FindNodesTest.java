@@ -137,8 +137,8 @@ public class FindNodesTest extends TestCase {
 		assertEquals(info.node, firstExpr.d(Branch.BinaryExpressionRight_()).apply(tree).fromJust());
 	}
 
-	public void testCustomTypeCheck() throws JsError {
-		String source = "a + /*$ b $*/ b + /*$ c $*/ c + /*$ d $*/ d;";
+	public void testCustomPredicate() throws JsError {
+		String source = "a + /*$ b $*/ b + /*$ c $*/ c + /*$ d $*/ (d + e);";
 
 		F<String, Maybe<Pair<String, Predicate<Node>>>> commentMatcher = string -> {
 			Matcher matcher = Pattern.compile("^\\$ ([^$]+) \\$$").matcher(string);
@@ -146,10 +146,7 @@ public class FindNodesTest extends TestCase {
 				return Maybe.empty();
 			}
 			String name = matcher.group(1);
-			return Maybe.of(Pair.of(name, node -> {
-				assertEquals(IdentifierExpression.class, node.getClass());
-				return ((IdentifierExpression) node).name.equals(name);
-			}));
+			return Maybe.of(Pair.of(name, node -> node instanceof IdentifierExpression && ((IdentifierExpression) node).name.equals(name)));
 		};
 
 		ParserWithLocation parserWithLocation = new ParserWithLocation();
@@ -170,7 +167,7 @@ public class FindNodesTest extends TestCase {
 		Template.NodeInfo d = result.index(2).fromJust();
 		assertEquals(d.name, "d");
 		assertEquals(d.comment, comments.index(2).fromJust());
-		assertEquals(d.node, firstExpr.d(Branch.BinaryExpressionRight_()).apply(tree).fromJust());
+		assertEquals(d.node, firstExpr.d(Branch.BinaryExpressionRight_()).d(Branch.BinaryExpressionLeft_()).apply(tree).fromJust());
 	}
 
 	public void testWrongType() throws JsError {
