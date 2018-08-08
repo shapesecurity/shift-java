@@ -51,13 +51,13 @@ public class Template {
 
 	static class Marker {
 		final String name;
-		final Maybe<Class<? extends Node>> type;
+		final Predicate<Node> typeCheck;
 		final int start;
 		final ParserWithLocation.Comment comment;
 
-		Marker(String name, Maybe<Class<? extends Node>> type, int start, ParserWithLocation.Comment comment) {
+		Marker(String name, Predicate<Node> typeCheck, int start, ParserWithLocation.Comment comment) {
 			this.name = name;
-			this.type = type;
+			this.typeCheck = typeCheck;
 			this.start = start;
 			this.comment = comment;
 		}
@@ -72,7 +72,7 @@ public class Template {
 	}
 
 	private static final Predicate<String> isTypeName = Pattern.compile("^[a-zA-Z]+$").asPredicate();
-	public static Class<? extends Node> getNodeType(String typeName) {
+	private static Predicate<Node> makeTypeCheck(String typeName) {
 		if (!isTypeName.test(typeName)) {
 			throw new IllegalArgumentException("\"" + typeName + "\" is not a valid node type name");
 		}
@@ -80,7 +80,10 @@ public class Template {
 			Class type = Class.forName("com.shapesecurity.shift.es2016.ast." + typeName); // This is kind of awful, but... it does work...
 			@SuppressWarnings("unchecked")
 			Class<? extends Node> nodeType = (Class<? extends Node>) type;
-			return nodeType;
+			if (nodeType.isInterface()) {
+				throw new IllegalArgumentException("Node type \"" + typeName + "\" is an interface");
+			}
+			return nodeType::isInstance;
 		} catch (ClassNotFoundException | ClassCastException e) {
 			throw new IllegalArgumentException("Unrecognized node type \"" + typeName + "\"");
 		}
@@ -88,7 +91,7 @@ public class Template {
 
 	static final Pattern commentRegex = Pattern.compile("^# ([^#]+) (?:# ([^#]+) )?#$");
 	@NotNull
-	public static Maybe<Pair<String, Maybe<Class<? extends Node>>>> defaultParseComment(String text) {
+	private static Maybe<Pair<String, Predicate<Node>>> defaultParseComment(String text) {
 		Matcher matcher = commentRegex.matcher(text);
 		if (!matcher.matches()) {
 			return Maybe.empty();
@@ -98,17 +101,17 @@ public class Template {
 		String typeName = matcher.group(2);
 
 		if (typeName != null) {
-			return Maybe.of(Pair.of(name, Maybe.of(getNodeType(typeName))));
+			return Maybe.of(Pair.of(name, makeTypeCheck(typeName)));
 		}
 
-		return Maybe.of(Pair.of(name, Maybe.empty()));
+		return Maybe.of(Pair.of(name, node -> true));
 	}
 
 	public static ImmutableList<NodeInfo> findNodes(Program tree, WithLocation locations, ImmutableList<ParserWithLocation.Comment> comments) {
 		return findNodes(tree, locations, comments, Template::defaultParseComment);
 	}
 
-	public static ImmutableList<NodeInfo> findNodes(Program tree, WithLocation locations, ImmutableList<ParserWithLocation.Comment> comments, F<String, Maybe<Pair<String, Maybe<Class<? extends Node>>>>> parseComment) {
+	public static ImmutableList<NodeInfo> findNodes(Program tree, WithLocation locations, ImmutableList<ParserWithLocation.Comment> comments, F<String, Maybe<Pair<String, Predicate<Node>>>> parseComment) {
 		ImmutableList<Marker> markers = Maybe.catMaybes(
 			comments.map(c -> parseComment.apply(c.text).map(p -> new Marker(p.left, p.right, c.start.offset, c)))
 		);
@@ -157,9 +160,9 @@ public class Template {
 			}
 
 			Stream<Pair<Node, Integer>> nodeStream = currentBlockOfNodes.right.stream();
-			List<Pair<Node, Integer>> ofCorrectType = marker.type.map(type -> nodeStream.filter(p -> type.isInstance(p.left))).orJust(nodeStream).collect(Collectors.toList());
+			List<Pair<Node, Integer>> ofCorrectType = nodeStream.filter(p -> marker.typeCheck.test(p.left)).collect(Collectors.toList());
 			if (ofCorrectType.isEmpty()) {
-				throw new IllegalArgumentException("Couldn't find any nodes of type " + marker.type.fromJust().getSimpleName() + " for marker " + marker.name);
+				throw new IllegalArgumentException("Couldn't find any nodes of satisfying predicate for marker " + marker.name);
 			}
 			if (ofCorrectType.size() == 1) {
 				// common case

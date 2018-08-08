@@ -5,6 +5,7 @@ import com.shapesecurity.functional.Pair;
 import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.functional.data.Maybe;
 import com.shapesecurity.functional.data.NonEmptyImmutableList;
+import com.shapesecurity.shift.es2016.ast.IdentifierExpression;
 import com.shapesecurity.shift.es2016.ast.Node;
 import com.shapesecurity.shift.es2016.ast.Program;
 import com.shapesecurity.shift.es2016.parser.JsError;
@@ -13,6 +14,7 @@ import com.shapesecurity.shift.es2016.path.Branch;
 import com.shapesecurity.shift.es2016.path.BranchGetter;
 import junit.framework.TestCase;
 
+import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -45,6 +47,13 @@ public class FindNodesTest extends TestCase {
 				}
 			}
 			throw new RuntimeException("couldn't find label \"" + label.left + "\"");
+		}
+
+		// assert sorted
+		int prev = -1;
+		for (Template.NodeInfo info : result) {
+			assertTrue(prev < info.comment.start.offset);
+			prev = info.comment.start.offset;
 		}
 	}
 
@@ -109,12 +118,12 @@ public class FindNodesTest extends TestCase {
 
 	public void testCustomMatcher() throws JsError {
 		String source = "a + /*$ label $*/ b;";
-		F<String, Maybe<Pair<String, Maybe<Class<? extends Node>>>>> commentMatcher = string -> {
+		F<String, Maybe<Pair<String, Predicate<Node>>>> commentMatcher = string -> {
 			Matcher matcher = Pattern.compile("^\\$ ([^$]+) \\$$").matcher(string);
 			if (!matcher.matches()) {
 				return Maybe.empty();
 			}
-			return Maybe.of(Pair.of(matcher.group(1), Maybe.empty()));
+			return Maybe.of(Pair.of(matcher.group(1), node -> true));
 		};
 
 		ParserWithLocation parserWithLocation = new ParserWithLocation();
@@ -128,8 +137,48 @@ public class FindNodesTest extends TestCase {
 		assertEquals(info.node, firstExpr.d(Branch.BinaryExpressionRight_()).apply(tree).fromJust());
 	}
 
+	public void testCustomTypeCheck() throws JsError {
+		String source = "a + /*$ b $*/ b + /*$ c $*/ c + /*$ d $*/ d;";
+
+		F<String, Maybe<Pair<String, Predicate<Node>>>> commentMatcher = string -> {
+			Matcher matcher = Pattern.compile("^\\$ ([^$]+) \\$$").matcher(string);
+			if (!matcher.matches()) {
+				return Maybe.empty();
+			}
+			String name = matcher.group(1);
+			return Maybe.of(Pair.of(name, node -> {
+				assertEquals(IdentifierExpression.class, node.getClass());
+				return ((IdentifierExpression) node).name.equals(name);
+			}));
+		};
+
+		ParserWithLocation parserWithLocation = new ParserWithLocation();
+		Program tree = parserWithLocation.parseScript(source);
+		ImmutableList<ParserWithLocation.Comment> comments = parserWithLocation.getComments();
+		ImmutableList<Template.NodeInfo> result = Template.findNodes(tree, parserWithLocation, comments, commentMatcher);
+		assertEquals(3, result.length);
+		Template.NodeInfo b = result.index(0).fromJust();
+		assertEquals(b.name, "b");
+		assertEquals(b.comment, comments.index(0).fromJust());
+		assertEquals(b.node, firstExpr.d(Branch.BinaryExpressionLeft_()).d(Branch.BinaryExpressionLeft_()).d(Branch.BinaryExpressionRight_()).apply(tree).fromJust());
+
+		Template.NodeInfo c = result.index(1).fromJust();
+		assertEquals(c.name, "c");
+		assertEquals(c.comment, comments.index(1).fromJust());
+		assertEquals(c.node, firstExpr.d(Branch.BinaryExpressionLeft_()).d(Branch.BinaryExpressionRight_()).apply(tree).fromJust());
+
+		Template.NodeInfo d = result.index(2).fromJust();
+		assertEquals(d.name, "d");
+		assertEquals(d.comment, comments.index(2).fromJust());
+		assertEquals(d.node, firstExpr.d(Branch.BinaryExpressionRight_()).apply(tree).fromJust());
+	}
+
 	public void testWrongType() throws JsError {
 		fails("a + /*# label # IdentifierExpression #*/ 0");
+	}
+
+	public void testInterfaceType() throws JsError {
+		fails("a + /*# label # SpreadElementExpression #*/ 0");
 	}
 
 	public void testNotAType() throws JsError {
