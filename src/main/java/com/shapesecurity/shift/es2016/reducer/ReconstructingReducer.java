@@ -394,8 +394,9 @@ public class ReconstructingReducer implements Reducer<Node> {
     public FormalParameters reduceFormalParameters(
             @Nonnull FormalParameters node,
             @Nonnull ImmutableList<Node> items,
-            @Nonnull Maybe<Node> rest) {
-        return new FormalParameters(items.map(x -> (Parameter) x), rest.map(x -> (Binding) x));
+            @Nonnull Maybe<Node> rest,
+            boolean hasTrailingComma) {
+        return new FormalParameters(items.map(x -> (Parameter) x), rest.map(x -> (Binding) x), hasTrailingComma);
     }
 
     @Nonnull

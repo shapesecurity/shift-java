@@ -194,20 +194,20 @@ public class InteractionsTest extends ParserTestCase {
 
         testScript("/* header */ (function(){ var version = 1; }).call(this)", new CallExpression(
                 new StaticMemberExpression(new FunctionExpression(false, Maybe.empty(), new FormalParameters(
-                        ImmutableList.empty(), Maybe.empty()), new FunctionBody(ImmutableList.empty(), ImmutableList.of(
+                        ImmutableList.empty(), Maybe.empty(), false), new FunctionBody(ImmutableList.empty(), ImmutableList.of(
                         new VariableDeclarationStatement(new VariableDeclaration(VariableDeclarationKind.Var, ImmutableList.of(
                                 new VariableDeclarator(new BindingIdentifier("version"), Maybe.of(
                                         new LiteralNumericExpression(1.0))))))))), "call"), ImmutableList.of(new ThisExpression())));
 
         testScript("(function(){ var version = 1; /* sync */ }).call(this)", new CallExpression(new StaticMemberExpression(
-                new FunctionExpression(false, Maybe.empty(), new FormalParameters(ImmutableList.empty(), Maybe.empty()),
+                new FunctionExpression(false, Maybe.empty(), new FormalParameters(ImmutableList.empty(), Maybe.empty(), false),
                 new FunctionBody(ImmutableList.empty(), ImmutableList.of(new VariableDeclarationStatement(
                         new VariableDeclaration(VariableDeclarationKind.Var, ImmutableList.of(new VariableDeclarator(
                                 new BindingIdentifier("version"), Maybe.of(new LiteralNumericExpression(1.0))))))))), "call"),
                 ImmutableList.of(new ThisExpression())));
 
         testScript("function f() { /* infinite */ while (true) { } /* bar */ var each; }", new FunctionDeclaration(
-                false, new BindingIdentifier("f"), new FormalParameters(ImmutableList.empty(), Maybe.empty()),
+                false, new BindingIdentifier("f"), new FormalParameters(ImmutableList.empty(), Maybe.empty(), false),
                 new FunctionBody(ImmutableList.empty(), ImmutableList.of(new WhileStatement(new LiteralBooleanExpression(true),
                         new BlockStatement(new Block(ImmutableList.empty()))), new VariableDeclarationStatement(
                         new VariableDeclaration(VariableDeclarationKind.Var, ImmutableList.of(new VariableDeclarator(
@@ -227,14 +227,14 @@ public class InteractionsTest extends ParserTestCase {
 
         testScript("class A extends B { a() { [super.b] = c } }", new ClassDeclaration(new BindingIdentifier("A"),
                 Maybe.of(new IdentifierExpression("B")), ImmutableList.of(new ClassElement(false, new Method(false, new StaticPropertyName("a"),
-                new FormalParameters(ImmutableList.empty(), Maybe.empty()), new FunctionBody(ImmutableList.empty(),
+                new FormalParameters(ImmutableList.empty(), Maybe.empty(), false), new FunctionBody(ImmutableList.empty(),
                 ImmutableList.of(new ExpressionStatement(new AssignmentExpression(new ArrayAssignmentTarget(ImmutableList.of(
                         Maybe.of(new StaticMemberAssignmentTarget(new Super(), "b"))), Maybe.empty()),
                         new IdentifierExpression("c"))))))))));
 
         testScript("class A extends B { a() { ({b: super[c]} = d) } }", new ClassDeclaration(new BindingIdentifier("A"),
                 Maybe.of(new IdentifierExpression("B")), ImmutableList.of(new ClassElement(false, new Method(false, new StaticPropertyName("a"),
-                new FormalParameters(ImmutableList.empty(), Maybe.empty()), new FunctionBody(ImmutableList.empty(),
+                new FormalParameters(ImmutableList.empty(), Maybe.empty(), false), new FunctionBody(ImmutableList.empty(),
                 ImmutableList.of(new ExpressionStatement(new AssignmentExpression(new ObjectAssignmentTarget(ImmutableList.of(
                         new AssignmentTargetPropertyProperty(new StaticPropertyName("b"), new ComputedMemberAssignmentTarget(
                                 new Super(), new IdentifierExpression("c"))))), new IdentifierExpression("d")))))
@@ -242,9 +242,9 @@ public class InteractionsTest extends ParserTestCase {
 
         // Consise arrow bodies may contain yield as an identifier even in generators.
         testScript("function* f(){ () => yield; }", new FunctionDeclaration(true, new BindingIdentifier("f"),
-                new FormalParameters(ImmutableList.empty(), Maybe.empty()),
+                new FormalParameters(ImmutableList.empty(), Maybe.empty(), false),
                 new FunctionBody(ImmutableList.empty(), ImmutableList.of(new ExpressionStatement(
-                        new ArrowExpression(new FormalParameters(ImmutableList.empty(), Maybe.empty()), new IdentifierExpression("yield"))
+                        new ArrowExpression(new FormalParameters(ImmutableList.empty(), Maybe.empty(), false), new IdentifierExpression("yield"))
                 )))));
 
         // CompoundAssignmentExpressions are not valid binding targets

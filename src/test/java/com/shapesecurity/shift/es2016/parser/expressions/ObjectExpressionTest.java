@@ -149,28 +149,28 @@ public class ObjectExpressionTest extends ParserTestCase {
         testScript("({a, b})", new ObjectExpression(ImmutableList.of(new ShorthandProperty(new IdentifierExpression("a")), new ShorthandProperty(new IdentifierExpression("b")))));
 
         testScript("({a(){}})", new ObjectExpression(ImmutableList.of(new Method(false, new StaticPropertyName("a"), new FormalParameters(
-                ImmutableList.empty(), Maybe.empty()), new FunctionBody(ImmutableList.empty(), ImmutableList.empty())
+                ImmutableList.empty(), Maybe.empty(), false), new FunctionBody(ImmutableList.empty(), ImmutableList.empty())
                 ))));
 
         testScript("({a(){let a;}})", new ObjectExpression(ImmutableList.of(new Method(false, new StaticPropertyName("a"), new FormalParameters(
-                ImmutableList.empty(), Maybe.empty()), new FunctionBody(ImmutableList.empty(), ImmutableList.of(
+                ImmutableList.empty(), Maybe.empty(), false), new FunctionBody(ImmutableList.empty(), ImmutableList.of(
                 new VariableDeclarationStatement(new VariableDeclaration(VariableDeclarationKind.Let, ImmutableList.of(
                         new VariableDeclarator(new BindingIdentifier("a"), Maybe.empty()))))))))));
 
         testScript("({a(b){}})", new ObjectExpression(ImmutableList.of(new Method(false, new StaticPropertyName("a"), new FormalParameters(
-                ImmutableList.of(new BindingIdentifier("b")), Maybe.empty()), new FunctionBody(ImmutableList.empty(),
+                ImmutableList.of(new BindingIdentifier("b")), Maybe.empty(), false), new FunctionBody(ImmutableList.empty(),
                 ImmutableList.empty())))));
 
         testScript("({a(b,...c){}})", new ObjectExpression(ImmutableList.of(new Method(false, new StaticPropertyName("a"), new FormalParameters(
-                ImmutableList.of(new BindingIdentifier("b")), Maybe.of(new BindingIdentifier("c"))), new FunctionBody(
+                ImmutableList.of(new BindingIdentifier("b")), Maybe.of(new BindingIdentifier("c")), false), new FunctionBody(
                 ImmutableList.empty(), ImmutableList.empty())))));
 
         testScript("({a(b,c){}})", new ObjectExpression(ImmutableList.of(new Method(false, new StaticPropertyName("a"), new FormalParameters(
-                ImmutableList.of(new BindingIdentifier("b"), new BindingIdentifier("c")), Maybe.empty()), new FunctionBody(
+                ImmutableList.of(new BindingIdentifier("b"), new BindingIdentifier("c")), Maybe.empty(), false), new FunctionBody(
                 ImmutableList.empty(), ImmutableList.empty())))));
 
         testScript("({a(b,c){let d;}})", new ObjectExpression(ImmutableList.of(new Method(false, new StaticPropertyName("a"), new FormalParameters(
-                ImmutableList.of(new BindingIdentifier("b"), new BindingIdentifier("c")), Maybe.empty()), new FunctionBody(
+                ImmutableList.of(new BindingIdentifier("b"), new BindingIdentifier("c")), Maybe.empty(), false), new FunctionBody(
                 ImmutableList.empty(), ImmutableList.of(new VariableDeclarationStatement(new VariableDeclaration(
                 VariableDeclarationKind.Let, ImmutableList.of(new VariableDeclarator(new BindingIdentifier("d"),
                 Maybe.empty()))))))))));

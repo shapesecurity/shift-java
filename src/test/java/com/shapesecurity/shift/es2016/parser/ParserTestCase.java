@@ -17,7 +17,7 @@ import javax.annotation.Nonnull;
 
 public abstract class ParserTestCase extends TestCase {
 
-    protected static FormalParameters NO_PARAMETERS = new FormalParameters(ImmutableList.empty(), Maybe.empty());
+    protected static FormalParameters NO_PARAMETERS = new FormalParameters(ImmutableList.empty(), Maybe.empty(), false);
 
     public static void testScript(String source) throws JsError {
         Parser.parseScript(source);

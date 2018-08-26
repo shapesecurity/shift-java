@@ -575,7 +575,7 @@ public class Deserializer {
                     case "ForStatement":
                         return new ForStatement(deserializeMaybeVariableDeclarationExpression(jsonObject.get("init")), deserializeMaybeExpression(jsonObject.get("test")), deserializeMaybeExpression(jsonObject.get("update")), (Statement) deserializeNode(jsonObject.get("body")));
                     case "FormalParameters":
-                        return new FormalParameters(deserializeListParameter(jsonObject.get("items")), deserializeMaybeBinding(jsonObject.get("rest")));
+                        return new FormalParameters(deserializeListParameter(jsonObject.get("items")), deserializeMaybeBinding(jsonObject.get("rest")), jsonObject.get("hasTrailingComma") == null ? false : jsonObject.get("hasTrailingComma").getAsBoolean());
                     case "FunctionBody":
                         return new FunctionBody(deserializeListDirective(jsonObject.get("directives")), deserializeListStatement(jsonObject.get("statements")));
                     case "FunctionDeclaration":

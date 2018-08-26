@@ -30,16 +30,18 @@ public class FormalParameters implements Node {
     @Nonnull
     public final Maybe<Binding> rest;
 
+    public final boolean hasTrailingComma;
 
-    public FormalParameters (@Nonnull ImmutableList<Parameter> items, @Nonnull Maybe<Binding> rest) {
+    public FormalParameters (@Nonnull ImmutableList<Parameter> items, @Nonnull Maybe<Binding> rest, boolean hasTrailingComma) {
         this.items = items;
         this.rest = rest;
+        this.hasTrailingComma = hasTrailingComma;
     }
 
 
     @Override
     public boolean equals(Object object) {
-        return object instanceof FormalParameters && this.items.equals(((FormalParameters) object).items) && this.rest.equals(((FormalParameters) object).rest);
+        return object instanceof FormalParameters && this.items.equals(((FormalParameters) object).items) && this.rest.equals(((FormalParameters) object).rest) && this.hasTrailingComma == ((FormalParameters) object).hasTrailingComma;
     }
 
 
@@ -48,6 +50,7 @@ public class FormalParameters implements Node {
         int code = HashCodeBuilder.put(0, "FormalParameters");
         code = HashCodeBuilder.put(code, this.items);
         code = HashCodeBuilder.put(code, this.rest);
+        code = HashCodeBuilder.put(code, this.hasTrailingComma);
         return code;
     }
 

@@ -37,57 +37,57 @@ public class SuperExpressionTest extends ParserTestCase {
     public void testSuperExpression() throws JsError {
         testScript("(class extends B { constructor() { super() } });", new ClassExpression(Maybe.empty(), Maybe.of(
                 new IdentifierExpression("B")), ImmutableList.of(new ClassElement(false, new Method(false, new StaticPropertyName("constructor"),
-                new FormalParameters(ImmutableList.empty(), Maybe.empty()), new FunctionBody(ImmutableList.empty(),
+                new FormalParameters(ImmutableList.empty(), Maybe.empty(), false), new FunctionBody(ImmutableList.empty(),
                 ImmutableList.of(new ExpressionStatement(new CallExpression(new Super(), ImmutableList.empty()))))
                 )))));
 
         testScript("class A extends B { constructor() { super() } }", new ClassDeclaration(new BindingIdentifier("A"),
                 Maybe.of(new IdentifierExpression("B")), ImmutableList.of(new ClassElement(false, new Method(false, new StaticPropertyName("constructor"),
-                new FormalParameters(ImmutableList.empty(), Maybe.empty()), new FunctionBody(ImmutableList.empty(),
+                new FormalParameters(ImmutableList.empty(), Maybe.empty(), false), new FunctionBody(ImmutableList.empty(),
                 ImmutableList.of(new ExpressionStatement(new CallExpression(new Super(), ImmutableList.empty()))))
                 )))));
 
         testScript("class A extends B { \"constructor\"() { super() } }", new ClassDeclaration(new BindingIdentifier("A"),
                 Maybe.of(new IdentifierExpression("B")), ImmutableList.of(new ClassElement(false, new Method(false, new StaticPropertyName("constructor"),
-                new FormalParameters(ImmutableList.empty(), Maybe.empty()), new FunctionBody(ImmutableList.empty(),
+                new FormalParameters(ImmutableList.empty(), Maybe.empty(), false), new FunctionBody(ImmutableList.empty(),
                 ImmutableList.of(new ExpressionStatement(new CallExpression(new Super(), ImmutableList.empty()))))
                 )))));
 
         testScript("class A extends B { constructor(a = super()){} }", new ClassDeclaration(new BindingIdentifier("A"),
                 Maybe.of(new IdentifierExpression("B")), ImmutableList.of(new ClassElement(false, new Method(false, new StaticPropertyName("constructor"),
                 new FormalParameters(ImmutableList.of(new BindingWithDefault(new BindingIdentifier("a"),
-                    new CallExpression(new Super(), ImmutableList.empty()))), Maybe.empty()), new FunctionBody(ImmutableList.empty(),
+                    new CallExpression(new Super(), ImmutableList.empty()))), Maybe.empty(), false), new FunctionBody(ImmutableList.empty(),
                 ImmutableList.empty()))))));
 
         testScript("class A extends B { constructor() { ({a: super()}); } }", new ClassDeclaration(new BindingIdentifier("A"),
                 Maybe.of(new IdentifierExpression("B")), ImmutableList.of(new ClassElement(false, new Method(false, new StaticPropertyName("constructor"),
-                new FormalParameters(ImmutableList.empty(), Maybe.empty()), new FunctionBody(ImmutableList.empty(),
+                new FormalParameters(ImmutableList.empty(), Maybe.empty(), false), new FunctionBody(ImmutableList.empty(),
                 ImmutableList.of(new ExpressionStatement(new ObjectExpression(ImmutableList.of(new DataProperty(new StaticPropertyName("a"),
                     new CallExpression(new Super(), ImmutableList.empty())))))))
                 )))));
 
         testScript("class A extends B { constructor() { () => super(); } }", new ClassDeclaration(new BindingIdentifier("A"),
                 Maybe.of(new IdentifierExpression("B")), ImmutableList.of(new ClassElement(false, new Method(false, new StaticPropertyName("constructor"),
-                new FormalParameters(ImmutableList.empty(), Maybe.empty()), new FunctionBody(ImmutableList.empty(),
+                new FormalParameters(ImmutableList.empty(), Maybe.empty(), false), new FunctionBody(ImmutableList.empty(),
                 ImmutableList.of(new ExpressionStatement(new ArrowExpression(new FormalParameters(ImmutableList.empty(),
-                        Maybe.empty()), new CallExpression(new Super(), ImmutableList.empty())))))
+                        Maybe.empty(), false), new CallExpression(new Super(), ImmutableList.empty())))))
                 )))));
 
         testScript("class A extends B { constructor() { () => { super(); } } }", new ClassDeclaration(
                 new BindingIdentifier("A"), Maybe.of(new IdentifierExpression("B")), ImmutableList.of(new ClassElement(false,
-                new Method(false, new StaticPropertyName("constructor"), new FormalParameters(ImmutableList.empty(), Maybe.empty()), new FunctionBody(
+                new Method(false, new StaticPropertyName("constructor"), new FormalParameters(ImmutableList.empty(), Maybe.empty(), false), new FunctionBody(
                         ImmutableList.empty(), ImmutableList.of(new ExpressionStatement(new ArrowExpression(new FormalParameters(
-                        ImmutableList.empty(), Maybe.empty()), new FunctionBody(ImmutableList.empty(), ImmutableList.of(
+                        ImmutableList.empty(), Maybe.empty(), false), new FunctionBody(ImmutableList.empty(), ImmutableList.of(
                     new ExpressionStatement(new CallExpression(new Super(), ImmutableList.empty()))))))))
                         )))));
 
         testScript("({ a() { super.b(); } });", new ObjectExpression(ImmutableList.of(new Method(false, new StaticPropertyName("a"),
-                new FormalParameters(ImmutableList.empty(), Maybe.empty()), new FunctionBody(ImmutableList.empty(),
+                new FormalParameters(ImmutableList.empty(), Maybe.empty(), false), new FunctionBody(ImmutableList.empty(),
                 ImmutableList.of(new ExpressionStatement(new CallExpression(new StaticMemberExpression(new Super(), "b"),
                         ImmutableList.empty()))))))));
 
         testScript("({ *a() { super.b = 0; } });", new ObjectExpression(ImmutableList.of(new Method(true, new StaticPropertyName("a"),
-                new FormalParameters(ImmutableList.empty(), Maybe.empty()), new FunctionBody(ImmutableList.empty(),
+                new FormalParameters(ImmutableList.empty(), Maybe.empty(), false), new FunctionBody(ImmutableList.empty(),
                 ImmutableList.of(new ExpressionStatement(new AssignmentExpression(new StaticMemberAssignmentTarget(new Super(), "b"),
                         new LiteralNumericExpression(0.0)))))))));
 
@@ -104,35 +104,35 @@ public class SuperExpressionTest extends ParserTestCase {
 
         testScript("(class { constructor() { super.x } });", new ClassExpression(Maybe.empty(), Maybe.empty(),
                 ImmutableList.of(new ClassElement(false, new Method(false, new StaticPropertyName("constructor"), new FormalParameters(ImmutableList.empty(),
-                        Maybe.empty()), new FunctionBody(ImmutableList.empty(), ImmutableList.of(new ExpressionStatement(
+                        Maybe.empty(), false), new FunctionBody(ImmutableList.empty(), ImmutableList.of(new ExpressionStatement(
                         new StaticMemberExpression(new Super(), "x")))))))));
 
         testScript("class A extends B { constructor() { super.x } }", new ClassDeclaration(new BindingIdentifier("A"),
                 Maybe.of(new IdentifierExpression("B")), ImmutableList.of(new ClassElement(false, new Method(false, new StaticPropertyName("constructor"),
-                new FormalParameters(ImmutableList.empty(), Maybe.empty()), new FunctionBody(ImmutableList.empty(),
+                new FormalParameters(ImmutableList.empty(), Maybe.empty(), false), new FunctionBody(ImmutableList.empty(),
                 ImmutableList.of(new ExpressionStatement(new StaticMemberExpression(new Super(), "x"))))
                 )))));
 
         testScript("class A { a() { () => super.b; } }", new ClassDeclaration(new BindingIdentifier("A"), Maybe.empty(),
                 ImmutableList.of(new ClassElement(false, new Method(false, new StaticPropertyName("a"), new FormalParameters(ImmutableList.empty(),
-                        Maybe.empty()), new FunctionBody(ImmutableList.empty(), ImmutableList.of(new ExpressionStatement(
-                        new ArrowExpression(new FormalParameters(ImmutableList.empty(), Maybe.empty()), new StaticMemberExpression(
+                        Maybe.empty(), false), new FunctionBody(ImmutableList.empty(), ImmutableList.of(new ExpressionStatement(
+                        new ArrowExpression(new FormalParameters(ImmutableList.empty(), Maybe.empty(), false), new StaticMemberExpression(
                                 new Super(), "b"))))))))));
 
         testScript("class A { a() { new super.b; } }", new ClassDeclaration(new BindingIdentifier("A"), Maybe.empty(),
                 ImmutableList.of(new ClassElement(false, new Method(false, new StaticPropertyName("a"), new FormalParameters(ImmutableList.empty(),
-                        Maybe.empty()), new FunctionBody(ImmutableList.empty(), ImmutableList.of(new ExpressionStatement(
+                        Maybe.empty(), false), new FunctionBody(ImmutableList.empty(), ImmutableList.of(new ExpressionStatement(
                         new NewExpression(new StaticMemberExpression(new Super(), "b"), ImmutableList.empty()))))
                         )))));
 
         testScript("class A { a() { new super.b(); } }", new ClassDeclaration(new BindingIdentifier("A"), Maybe.empty(),
                 ImmutableList.of(new ClassElement(false, new Method(false, new StaticPropertyName("a"), new FormalParameters(ImmutableList.empty(),
-                        Maybe.empty()), new FunctionBody(ImmutableList.empty(), ImmutableList.of(new ExpressionStatement(
+                        Maybe.empty(), false), new FunctionBody(ImmutableList.empty(), ImmutableList.of(new ExpressionStatement(
                         new NewExpression(new StaticMemberExpression(new Super(), "b"), ImmutableList.empty()))))
                         )))));
 
         testScript("({ *f() { yield super.f(); } });", new ObjectExpression(ImmutableList.of(
-            new Method(true, new StaticPropertyName("f"), new FormalParameters(ImmutableList.empty(), Maybe.empty()), new FunctionBody(ImmutableList.empty(), ImmutableList.of(
+            new Method(true, new StaticPropertyName("f"), new FormalParameters(ImmutableList.empty(), Maybe.empty(), false), new FunctionBody(ImmutableList.empty(), ImmutableList.of(
                 new ExpressionStatement(new YieldExpression(Maybe.of(new CallExpression(new StaticMemberExpression(new Super(), "f"), ImmutableList.empty()))))
             )))
         )));

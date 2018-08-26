@@ -431,6 +431,7 @@ public class CodeGenTest {
         test("function*f(){}");
         test("function f(a){}");
         test("function f(a,b){}");
+        test("function f(a,b,){}");
         test("function f(a,b,...rest){}");
     }
 
