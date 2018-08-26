@@ -31,54 +31,54 @@ public class GeneratorDeclarationTest extends ParserTestCase {
     @Test
     public void testGeneratorDeclarationTest() throws JsError {
         testScript("function* a(){}", new FunctionDeclaration(true, new BindingIdentifier("a"), new FormalParameters(
-                ImmutableList.empty(), Maybe.empty()), new FunctionBody(ImmutableList.empty(), ImmutableList.empty())));
+                ImmutableList.empty(), Maybe.empty(), false), new FunctionBody(ImmutableList.empty(), ImmutableList.empty())));
 
         testScript("function* a(){yield}", new FunctionDeclaration(true, new BindingIdentifier("a"), new FormalParameters(
-                ImmutableList.empty(), Maybe.empty()), new FunctionBody(ImmutableList.empty(), ImmutableList.of(
+                ImmutableList.empty(), Maybe.empty(), false), new FunctionBody(ImmutableList.empty(), ImmutableList.of(
                 new ExpressionStatement(new YieldExpression(Maybe.empty()))))));
 
         testScript("function* a(){yield a}", new FunctionDeclaration(true, new BindingIdentifier("a"), new FormalParameters(
-                ImmutableList.empty(), Maybe.empty()), new FunctionBody(ImmutableList.empty(), ImmutableList.of(
+                ImmutableList.empty(), Maybe.empty(), false), new FunctionBody(ImmutableList.empty(), ImmutableList.of(
                 new ExpressionStatement(new YieldExpression(Maybe.of(new IdentifierExpression("a"))))))));
 
         testScript("function* yield(){}", new FunctionDeclaration(true, new BindingIdentifier("yield"), new FormalParameters(
-                ImmutableList.empty(), Maybe.empty()), new FunctionBody(ImmutableList.empty(), ImmutableList.empty())));
+                ImmutableList.empty(), Maybe.empty(), false), new FunctionBody(ImmutableList.empty(), ImmutableList.empty())));
 
         testScript("function* a(a=yield){}", new FunctionDeclaration(true, new BindingIdentifier("a"), new FormalParameters(
                 ImmutableList.of(new BindingWithDefault(new BindingIdentifier("a"), new YieldExpression(Maybe.empty()))),
-                Maybe.empty()), new FunctionBody(ImmutableList.empty(), ImmutableList.empty())));
+                Maybe.empty(), false), new FunctionBody(ImmutableList.empty(), ImmutableList.empty())));
 
         testScript("function* a({[yield]:a}){}", new FunctionDeclaration(true, new BindingIdentifier("a"),
                 new FormalParameters(ImmutableList.of(new ObjectBinding(ImmutableList.of(new BindingPropertyProperty(
                         new ComputedPropertyName(new YieldExpression(Maybe.empty())), new BindingIdentifier("a"))))),
-                        Maybe.empty()), new FunctionBody(ImmutableList.empty(), ImmutableList.empty())));
+                        Maybe.empty(), false), new FunctionBody(ImmutableList.empty(), ImmutableList.empty())));
 
         testScript("function* a(){({[yield]:a}=0)}", new FunctionDeclaration(true, new BindingIdentifier("a"),
-                new FormalParameters(ImmutableList.empty(), Maybe.empty()), new FunctionBody(ImmutableList.empty(),
+                new FormalParameters(ImmutableList.empty(), Maybe.empty(), false), new FunctionBody(ImmutableList.empty(),
                 ImmutableList.of(new ExpressionStatement(new AssignmentExpression(new ObjectAssignmentTarget(ImmutableList.of(
                         new AssignmentTargetPropertyProperty(new ComputedPropertyName(new YieldExpression(Maybe.empty())),
                                 new AssignmentTargetIdentifier("a")))), new LiteralNumericExpression(0.0)))))));
 
         testScript("function* a() {} function a() {}", new Script(ImmutableList.empty(), ImmutableList.of(
                 new FunctionDeclaration(true, new BindingIdentifier("a"), new FormalParameters(ImmutableList.empty(),
-                        Maybe.empty()), new FunctionBody(ImmutableList.empty(), ImmutableList.empty())), new FunctionDeclaration(false,
-                        new BindingIdentifier("a"), new FormalParameters(ImmutableList.empty(), Maybe.empty()),
+                        Maybe.empty(), false), new FunctionBody(ImmutableList.empty(), ImmutableList.empty())), new FunctionDeclaration(false,
+                        new BindingIdentifier("a"), new FormalParameters(ImmutableList.empty(), Maybe.empty(), false),
                         new FunctionBody(ImmutableList.empty(), ImmutableList.empty())))));
 
         testScript("function a() { function* a() {} function a() {} }", new FunctionDeclaration(false, new BindingIdentifier("a"),
-                new FormalParameters(ImmutableList.empty(), Maybe.empty()), new FunctionBody(ImmutableList.empty(),
+                new FormalParameters(ImmutableList.empty(), Maybe.empty(), false), new FunctionBody(ImmutableList.empty(),
                 ImmutableList.of(new FunctionDeclaration(true, new BindingIdentifier("a"), new FormalParameters(
-                                ImmutableList.empty(), Maybe.empty()), new FunctionBody(ImmutableList.empty(), ImmutableList.empty())),
+                                ImmutableList.empty(), Maybe.empty(), false), new FunctionBody(ImmutableList.empty(), ImmutableList.empty())),
                         new FunctionDeclaration(false, new BindingIdentifier("a"), new FormalParameters(ImmutableList.empty(),
-                                Maybe.empty()), new FunctionBody(ImmutableList.empty(), ImmutableList.empty()))))));
+                                Maybe.empty(), false), new FunctionBody(ImmutableList.empty(), ImmutableList.empty()))))));
 
-        testScript("function*g() { (function*(x = yield){}); }", new FunctionDeclaration(true, new BindingIdentifier("g"), new FormalParameters(ImmutableList.empty(), Maybe.empty()),
+        testScript("function*g() { (function*(x = yield){}); }", new FunctionDeclaration(true, new BindingIdentifier("g"), new FormalParameters(ImmutableList.empty(), Maybe.empty(), false),
                 new FunctionBody(ImmutableList.empty(), ImmutableList.of(new ExpressionStatement(new FunctionExpression(true, Maybe.empty(),
-                        new FormalParameters(ImmutableList.of(new BindingWithDefault(new BindingIdentifier("x"), new YieldExpression(Maybe.empty()))), Maybe.empty()),
+                        new FormalParameters(ImmutableList.of(new BindingWithDefault(new BindingIdentifier("x"), new YieldExpression(Maybe.empty()))), Maybe.empty(), false),
                         new FunctionBody(ImmutableList.empty(), ImmutableList.empty()))
                 )))));
 
-        testScript("function*g() {x = { x: { x = yield } } = 0;}", new FunctionDeclaration(true, new BindingIdentifier("g"), new FormalParameters(ImmutableList.empty(), Maybe.empty()),
+        testScript("function*g() {x = { x: { x = yield } } = 0;}", new FunctionDeclaration(true, new BindingIdentifier("g"), new FormalParameters(ImmutableList.empty(), Maybe.empty(), false),
                 new FunctionBody(ImmutableList.empty(), ImmutableList.of(new ExpressionStatement(
                         new AssignmentExpression(new AssignmentTargetIdentifier("x"), new AssignmentExpression(new ObjectAssignmentTarget(ImmutableList.of(
                                 new AssignmentTargetPropertyProperty(new StaticPropertyName("x"), new ObjectAssignmentTarget(ImmutableList.of(

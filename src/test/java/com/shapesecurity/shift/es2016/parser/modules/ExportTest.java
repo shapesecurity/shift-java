@@ -91,11 +91,11 @@ public class ExportTest extends ParserTestCase {
                 Maybe.empty(), ImmutableList.empty())));
 
         testModule("export function A(){} /* no semi */ false", new Export(new FunctionDeclaration(false, new BindingIdentifier("A"),
-                new FormalParameters(ImmutableList.empty(), Maybe.empty()), new FunctionBody(ImmutableList.empty(),
+                new FormalParameters(ImmutableList.empty(), Maybe.empty(), false), new FunctionBody(ImmutableList.empty(),
                 ImmutableList.empty()))));
 
         testModule("export default function (){} /* no semi */ false", new ExportDefault(new FunctionDeclaration(false,
-                new BindingIdentifier("*default*"), new FormalParameters(ImmutableList.empty(), Maybe.empty()),
+                new BindingIdentifier("*default*"), new FormalParameters(ImmutableList.empty(), Maybe.empty(), false),
                 new FunctionBody(ImmutableList.empty(), ImmutableList.empty()))));
 
         testModule("export default class {} /* no semi */ false", new ExportDefault(new ClassDeclaration(
@@ -107,14 +107,14 @@ public class ExportTest extends ParserTestCase {
         testModule("export default a", new ExportDefault(new IdentifierExpression("a")));
 
         testModule("export default function a(){}", new ExportDefault(new FunctionDeclaration(false, new BindingIdentifier("a"),
-                new FormalParameters(ImmutableList.empty(), Maybe.empty()), new FunctionBody(ImmutableList.empty(),
+                new FormalParameters(ImmutableList.empty(), Maybe.empty(), false), new FunctionBody(ImmutableList.empty(),
                 ImmutableList.empty()))));
 
         testModule("export default class a{}", new ExportDefault(new ClassDeclaration(new BindingIdentifier("a"),
                 Maybe.empty(), ImmutableList.empty())));
 
         testModule("export default function* a(){}", new ExportDefault(new FunctionDeclaration(true, new BindingIdentifier("a"),
-                new FormalParameters(ImmutableList.empty(), Maybe.empty()), new FunctionBody(ImmutableList.empty(),
+                new FormalParameters(ImmutableList.empty(), Maybe.empty(), false), new FunctionBody(ImmutableList.empty(),
                 ImmutableList.empty()))));
 
         testModule("export default 0;0", new Module(ImmutableList.empty(), ImmutableList.of(new ExportDefault(
@@ -122,7 +122,7 @@ public class ExportTest extends ParserTestCase {
 
         testModule("export function f(){};0", new Module(ImmutableList.empty(), ImmutableList.of(new Export(
                         new FunctionDeclaration(false, new BindingIdentifier("f"), new FormalParameters(ImmutableList.empty(),
-                                Maybe.empty()), new FunctionBody(ImmutableList.empty(), ImmutableList.empty()))), new EmptyStatement(),
+                                Maybe.empty(), false), new FunctionBody(ImmutableList.empty(), ImmutableList.empty()))), new EmptyStatement(),
                 new ExpressionStatement(new LiteralNumericExpression(0.0)))));
 
         testModule("export class A{};0", new Module(ImmutableList.empty(), ImmutableList.of(new Export(new ClassDeclaration(

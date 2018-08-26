@@ -357,7 +357,8 @@ public interface Reducer<State> {
     State reduceFormalParameters(
             @Nonnull FormalParameters node,
             @Nonnull ImmutableList<State> items,
-            @Nonnull Maybe<State> rest);
+            @Nonnull Maybe<State> rest,
+            boolean hasTrailingComma);
 
     @Nonnull
     State reduceFunctionBody(

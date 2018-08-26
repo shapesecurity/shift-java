@@ -398,8 +398,8 @@ public class Flattener extends MonoidalReducer<ImmutableList<Node>> {
 
     @Nonnull
     @Override
-    public ImmutableList<Node> reduceFormalParameters(@Nonnull FormalParameters node, @Nonnull ImmutableList<ImmutableList<Node>> items, @Nonnull Maybe<ImmutableList<Node>> rest) {
-        return ImmutableList.<Node>of(node).append(super.reduceFormalParameters(node, items, rest));
+    public ImmutableList<Node> reduceFormalParameters(@Nonnull FormalParameters node, @Nonnull ImmutableList<ImmutableList<Node>> items, @Nonnull Maybe<ImmutableList<Node>> rest, boolean hasTrailingComma) {
+        return ImmutableList.<Node>of(node).append(super.reduceFormalParameters(node, items, rest, hasTrailingComma));
     }
 
     @Nonnull

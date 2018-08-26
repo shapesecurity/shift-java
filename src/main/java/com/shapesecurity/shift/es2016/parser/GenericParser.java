@@ -386,8 +386,8 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
     }
 
     @Nonnull
-    protected FormalParameters finishArrowParams(ArrayList<BindingBindingWithDefault> params, Maybe<Binding> rest, AdditionalStateT startState) {
-        return this.finishNode(startState, new FormalParameters(ImmutableList.from(params).map(this::bindingToParameter), rest));
+    protected FormalParameters finishArrowParams(ArrayList<BindingBindingWithDefault> params, Maybe<Binding> rest, boolean hasTrailingComma, AdditionalStateT startState) {
+        return this.finishNode(startState, new FormalParameters(ImmutableList.from(params).map(this::bindingToParameter), rest, hasTrailingComma));
     }
 
     @Nonnull
@@ -479,6 +479,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
         this.expect(TokenType.LPAREN);
         ArrayList<BindingBindingWithDefault> items = new ArrayList<>();
         Binding rest = null;
+        boolean hasTrailingComma = false;
         if (!this.match(TokenType.RPAREN)) {
             while (!this.eof()) {
                 if (this.eat(TokenType.ELLIPSIS)) {
@@ -486,14 +487,20 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
                     break;
                 }
                 items.add(this.parseParam());
+                 if (this.match(TokenType.COMMA)) {
+                    this.eat(TokenType.COMMA);
+                    if (this.match(TokenType.RPAREN)) {
+                        hasTrailingComma = true;
+                        break;
+                    }
+                }
                 if (this.match(TokenType.RPAREN)) {
                     break;
                 }
-                this.expect(TokenType.COMMA);
             }
         }
         this.expect(TokenType.RPAREN);
-        return this.finishNode(startState, new FormalParameters(ImmutableList.from(items).map(this::bindingToParameter), Maybe.fromNullable(rest)));
+        return this.finishNode(startState, new FormalParameters(ImmutableList.from(items).map(this::bindingToParameter), Maybe.fromNullable(rest), hasTrailingComma));
     }
 
     @Nonnull
@@ -1114,7 +1121,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
                 this.firstExprError = null;
                 ArrayList<BindingBindingWithDefault> params = new ArrayList<>();
                 params.add(this.targetToBinding(this.transformDestructuring(expr.left().fromJust())));
-                return Either.left(this.parseArrowExpressionTail(this.finishArrowParams(params, Maybe.empty(), startState), startState));
+                return Either.left(this.parseArrowExpressionTail(this.finishArrowParams(params, Maybe.empty(), false, startState), startState));
             }
         } else {
             expr = this.parseConditionalExpression();
@@ -1919,13 +1926,13 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
 
         if (this.match(TokenType.RPAREN)) {
             this.lex();
-            FormalParameters paramsNode = this.finishArrowParams(new ArrayList<>(), Maybe.empty(), preParenStartState);
+            FormalParameters paramsNode = this.finishArrowParams(new ArrayList<>(), Maybe.empty(), false, preParenStartState);
             this.isBindingElement = this.isAssignmentTarget = false;
             return Either3.middle(paramsNode);
         } else if (this.eat(TokenType.ELLIPSIS)) {
             Maybe<Binding> rest = Maybe.of(this.parseBindingTarget());
             this.expect(TokenType.RPAREN);
-            FormalParameters paramsNode = this.finishArrowParams(new ArrayList<>(), rest, preParenStartState);
+            FormalParameters paramsNode = this.finishArrowParams(new ArrayList<>(), rest, false, preParenStartState);
             this.isBindingElement = this.isAssignmentTarget = false;
             return Either3.middle(paramsNode);
         }
@@ -1942,8 +1949,13 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
         }
 
         boolean mustBeArrowParameterList = false;
+        boolean hasTrailingComma = false;
 
         while (this.eat(TokenType.COMMA)) {
+            if (this.match(TokenType.RPAREN)) {
+                hasTrailingComma = true;
+                break;
+            }
             this.isAssignmentTarget = false;
             if (this.match(TokenType.ELLIPSIS)) {
                 if (!this.isBindingElement) {
@@ -1952,7 +1964,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
                 this.lex();
                 Maybe<Binding> rest = Maybe.of(this.parseBindingTarget());
                 this.expect(TokenType.RPAREN);
-                FormalParameters paramsNode = this.finishArrowParams(params, rest, preParenStartState);
+                FormalParameters paramsNode = this.finishArrowParams(params, rest, false, preParenStartState);
                 return Either3.middle(paramsNode);
             }
 
@@ -1985,7 +1997,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
                 throw this.createErrorWithLocation(startLocation, this.match(TokenType.ASSIGN) ? ErrorMessages.INVALID_LHS_IN_ASSIGNMENT : ErrorMessages.ILLEGAL_ARROW_FUNCTION_PARAMS);
             }
             this.isBindingElement = false;
-            return Either3.middle(this.finishArrowParams(params, Maybe.empty(), preParenStartState));
+            return Either3.middle(this.finishArrowParams(params, Maybe.empty(), hasTrailingComma, preParenStartState));
         } else {
             // Ensure assignment pattern:
             this.isBindingElement = false;
