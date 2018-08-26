@@ -382,8 +382,8 @@ public class WrappedReducer<T> implements Reducer<T> {
 
 	@Nonnull
 	@Override
-	public T reduceFormalParameters(@Nonnull FormalParameters node, @Nonnull ImmutableList<T> items, @Nonnull Maybe<T> rest) {
-		return wrap.apply(node, reducer.reduceFormalParameters(node, items, rest));
+	public T reduceFormalParameters(@Nonnull FormalParameters node, @Nonnull ImmutableList<T> items, @Nonnull Maybe<T> rest, boolean hasTrailingComma) {
+		return wrap.apply(node, reducer.reduceFormalParameters(node, items, rest, hasTrailingComma));
 	}
 
 	@Nonnull

@@ -73,16 +73,16 @@ public class WhitespaceTest extends ParserTestCase {
         testScript("0 ;", new LiteralNumericExpression(0.0));
 
         testScript("(function(){ return\nx; })", new FunctionExpression(false, Maybe.empty(), new FormalParameters(
-                ImmutableList.empty(), Maybe.empty()), new FunctionBody(ImmutableList.empty(), ImmutableList.of(
+                ImmutableList.empty(), Maybe.empty(), false), new FunctionBody(ImmutableList.empty(), ImmutableList.of(
                 new ReturnStatement(Maybe.empty()), new ExpressionStatement(new IdentifierExpression("x"))))));
 
         testScript("(function(){ return // Comment\nx; })", new FunctionExpression(false, Maybe.empty(),
-                new FormalParameters(ImmutableList.empty(), Maybe.empty()), new FunctionBody(ImmutableList.empty(),
+                new FormalParameters(ImmutableList.empty(), Maybe.empty(), false), new FunctionBody(ImmutableList.empty(),
                 ImmutableList.of(new ReturnStatement(Maybe.empty()), new ExpressionStatement(
                         new IdentifierExpression("x"))))));
 
         testScript("(function(){ return/* Multiline\nComment */x; })", new FunctionExpression(false, Maybe.empty(),
-                new FormalParameters(ImmutableList.empty(), Maybe.empty()), new FunctionBody(ImmutableList.empty(),
+                new FormalParameters(ImmutableList.empty(), Maybe.empty(), false), new FunctionBody(ImmutableList.empty(),
                 ImmutableList.of(new ReturnStatement(Maybe.empty()), new ExpressionStatement(
                         new IdentifierExpression("x"))))));
 

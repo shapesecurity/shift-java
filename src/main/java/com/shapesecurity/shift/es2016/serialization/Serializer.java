@@ -540,8 +540,8 @@ public class Serializer implements Reducer<StringBuilder> {
 
     @Nonnull
     @Override
-    public StringBuilder reduceFormalParameters(@Nonnull FormalParameters node, @Nonnull ImmutableList<StringBuilder> items, @Nonnull Maybe<StringBuilder> rest) {
-        return b("FormalParameters").add("items", items).add("rest", rest).done();
+    public StringBuilder reduceFormalParameters(@Nonnull FormalParameters node, @Nonnull ImmutableList<StringBuilder> items, @Nonnull Maybe<StringBuilder> rest, boolean hasTrailingComma) {
+        return b("FormalParameters").add("items", items).add("rest", rest).add("hasTrailingComma", hasTrailingComma).done();
     }
 
     @Nonnull

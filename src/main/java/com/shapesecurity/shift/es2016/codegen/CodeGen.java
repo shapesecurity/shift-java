@@ -22,6 +22,7 @@ import com.shapesecurity.functional.data.NonEmptyImmutableList;
 import com.shapesecurity.shift.es2016.ast.*;
 import com.shapesecurity.shift.es2016.ast.operators.BinaryOperator;
 import com.shapesecurity.shift.es2016.ast.operators.Precedence;
+import com.shapesecurity.shift.es2016.parser.TokenType;
 import com.shapesecurity.shift.es2016.reducer.Director;
 import com.shapesecurity.shift.es2016.reducer.Reducer;
 import com.shapesecurity.shift.es2016.utils.D2A;
@@ -602,8 +603,9 @@ public class CodeGen implements Reducer<CodeRep> {
 
     @Nonnull
     @Override
-    public CodeRep reduceFormalParameters(@Nonnull FormalParameters node, @Nonnull ImmutableList<CodeRep> items, @Nonnull Maybe<CodeRep> rest) {
-        return factory.paren(factory.commaSep(rest.maybe(items, r -> items.append(ImmutableList.of(seqVA(factory.token("..."), r))))));
+    public CodeRep reduceFormalParameters(@Nonnull FormalParameters node, @Nonnull ImmutableList<CodeRep> items, @Nonnull Maybe<CodeRep> rest, boolean hasTrailingComma) {
+        CodeRep paramList = factory.commaSep(rest.maybe(items, r -> items.append(ImmutableList.of(seqVA(factory.token("..."), r)))));
+        return factory.paren(hasTrailingComma ? factory.seq(new CodeRep[]{paramList, factory.token(",")}) : paramList);
     }
 
     @Override

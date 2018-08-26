@@ -525,7 +525,8 @@ public class MonoidalReducer<State> implements Reducer<State> {
     public State reduceFormalParameters(
             @Nonnull FormalParameters node,
             @Nonnull ImmutableList<State> items,
-            @Nonnull Maybe<State> rest) {
+            @Nonnull Maybe<State> rest,
+            boolean hasTrailingComma) {
         return append(fold(items), o(rest));
     }
 

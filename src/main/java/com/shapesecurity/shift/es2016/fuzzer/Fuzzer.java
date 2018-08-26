@@ -613,7 +613,10 @@ public class Fuzzer {
 
     @Nonnull
     private static FormalParameters randomFormalParameters(@Nonnull GenCtx ctx, int depth) {
-        return new FormalParameters(many(Fuzzer::randomParameter).apply(ctx, depth - 1), optional(Fuzzer::randomBinding).apply(ctx, depth - 1));
+        boolean mayHaveTrailingComma = ctx.random.nextBoolean();
+        ImmutableList<Parameter> parameters = many(Fuzzer::randomParameter).apply(ctx, depth - 1);
+        Maybe<Binding> rest = optional(Fuzzer::randomBinding).apply(ctx, depth - 1);
+        return new FormalParameters(parameters, rest, parameters.length > 0 && rest.isNothing() && mayHaveTrailingComma );
     }
 
     @Nonnull

@@ -243,7 +243,7 @@ public final class ScopeAnalyzer extends MonoidalReducer<State> {
 
     @Nonnull
     @Override
-    public State reduceFormalParameters(@Nonnull FormalParameters node, @Nonnull ImmutableList<State> items, @Nonnull Maybe<State> rest) {
+    public State reduceFormalParameters(@Nonnull FormalParameters node, @Nonnull ImmutableList<State> items, @Nonnull Maybe<State> rest, boolean hasTrailingComma) {
         return items.mapWithIndex((F2<Integer, State, Pair>) Pair::new)
                 .foldLeft((x, y) ->
                         new State(x, ((State) y.right()).hasParameterExpressions ? ((State) y.right()).finish(node.items.index((Integer) y.left()).fromJust(), Scope.Type.ParameterExpression) : ((State) y.right())),

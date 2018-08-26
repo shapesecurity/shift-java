@@ -53,7 +53,7 @@ public class IfStatementTest extends ParserTestCase {
         testScript("if (morning) (function(){})",
                 new IfStatement(new IdentifierExpression("morning"),
                         new ExpressionStatement(new FunctionExpression(false, Maybe.empty(), new FormalParameters(
-                                ImmutableList.empty(), Maybe.empty()), new FunctionBody(ImmutableList.empty(), ImmutableList.empty()))),
+                                ImmutableList.empty(), Maybe.empty(), false), new FunctionBody(ImmutableList.empty(), ImmutableList.empty()))),
                         Maybe.empty())
         );
 

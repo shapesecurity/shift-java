@@ -548,7 +548,7 @@ public final class Director {
     public static <State> State reduceFormalParameters(
       @Nonnull Reducer<State> reducer,
       @Nonnull FormalParameters node) {
-        return reducer.reduceFormalParameters(node, reduceListParameter(reducer, node.items), reduceMaybeBinding(reducer, node.rest));
+        return reducer.reduceFormalParameters(node, reduceListParameter(reducer, node.items), reduceMaybeBinding(reducer, node.rest), node.hasTrailingComma);
     }
 
     @Nonnull

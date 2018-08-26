@@ -36,7 +36,7 @@ public class ReturnStatementTest extends ParserTestCase {
                 )))));
 
         testScript("_ => { return 0; }", new ArrowExpression(new FormalParameters(ImmutableList.of(
-                new BindingIdentifier("_")), Maybe.empty()), new FunctionBody(ImmutableList.empty(), ImmutableList.of(
+                new BindingIdentifier("_")), Maybe.empty(), false), new FunctionBody(ImmutableList.empty(), ImmutableList.of(
                 new ReturnStatement(Maybe.of(new LiteralNumericExpression(0.0)))))));
 
         testScriptFailure("return;", 0, "Illegal return statement");

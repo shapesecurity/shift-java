@@ -444,8 +444,8 @@ public class EarlyErrorChecker extends MonoidalReducer<EarlyErrorState> {
 
     @Nonnull
     @Override
-    public EarlyErrorState reduceFormalParameters(@Nonnull FormalParameters node, @Nonnull ImmutableList<EarlyErrorState> items, @Nonnull Maybe<EarlyErrorState> rest) {
-        return super.reduceFormalParameters(node, items, rest)
+    public EarlyErrorState reduceFormalParameters(@Nonnull FormalParameters node, @Nonnull ImmutableList<EarlyErrorState> items, @Nonnull Maybe<EarlyErrorState> rest, boolean hasTrailingComma) {
+        return super.reduceFormalParameters(node, items, rest, hasTrailingComma)
                 .observeLexicalDeclaration();
     }
 
