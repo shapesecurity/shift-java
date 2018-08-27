@@ -3,6 +3,7 @@ package com.shapesecurity.shift.es2016.scope;
 import com.shapesecurity.functional.Pair;
 import com.shapesecurity.functional.data.HashTable;
 import com.shapesecurity.functional.data.ImmutableList;
+import com.shapesecurity.functional.data.NonEmptyImmutableList;
 import com.shapesecurity.shift.es2016.ast.AssignmentTargetIdentifier;
 import com.shapesecurity.shift.es2016.ast.BindingIdentifier;
 import com.shapesecurity.shift.es2016.ast.IdentifierExpression;
@@ -116,9 +117,9 @@ public class ScopeSerializer {
         }
     }
 
-    private ImmutableList<Reference> collectThrough(HashTable<String, ImmutableList<Reference>> through) {
+    private ImmutableList<Reference> collectThrough(HashTable<String, NonEmptyImmutableList<Reference>> through) {
         List<Reference> references = new ArrayList<>();
-        for (Pair<String, ImmutableList<Reference>> entry : through.entries()) {
+        for (Pair<String, NonEmptyImmutableList<Reference>> entry : through.entries()) {
             for (Reference reference : entry.right()) {
                 references.add(reference);
             }

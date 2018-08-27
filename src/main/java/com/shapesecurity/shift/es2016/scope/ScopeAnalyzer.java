@@ -283,7 +283,7 @@ public final class ScopeAnalyzer extends MonoidalReducer<State> {
     public State reduceIdentifierExpression(@Nonnull IdentifierExpression node) {
         Reference ref = new Reference(node);
         return new State(
-                HashTable.<String, ImmutableList<Reference>>emptyUsingEquality().put(node.name, ImmutableList.of(ref)),
+                HashTable.<String, NonEmptyImmutableList<Reference>>emptyUsingEquality().put(node.name, ImmutableList.of(ref)),
                 HashTable.emptyUsingEquality(),
                 HashTable.emptyUsingEquality(),
                 HashTable.emptyUsingEquality(),
@@ -393,7 +393,7 @@ public final class ScopeAnalyzer extends MonoidalReducer<State> {
         public final boolean dynamic;
         public final boolean hasParameterExpressions; // to decide if function parameters are in a different scope than function variables. only meaningful on `params` states and their children. true iff `params` has any default values or computed member accesses among its children.
         @Nonnull
-        public final HashTable<String, ImmutableList<Reference>> freeIdentifiers;
+        public final HashTable<String, NonEmptyImmutableList<Reference>> freeIdentifiers;
         @Nonnull
         public final HashTable<String, ImmutableList<Declaration>> functionScopedDeclarations;
         @Nonnull
@@ -413,7 +413,7 @@ public final class ScopeAnalyzer extends MonoidalReducer<State> {
          * Fully saturated constructor
          */
         private State(
-                @Nonnull HashTable<String, ImmutableList<Reference>> freeIdentifiers,
+                @Nonnull HashTable<String, NonEmptyImmutableList<Reference>> freeIdentifiers,
                 @Nonnull HashTable<String, ImmutableList<Declaration>> functionScopedDeclarations,
                 @Nonnull HashTable<String, ImmutableList<Declaration>> blockScopedDeclarations,
                 @Nonnull HashTable<String, ImmutableList<Declaration>> functionDeclarations,
@@ -457,7 +457,7 @@ public final class ScopeAnalyzer extends MonoidalReducer<State> {
          */
         @SuppressWarnings({"AccessingNonPublicFieldOfAnotherObject", "ObjectEquality"})
         private State(@Nonnull State a, @Nonnull State b) {
-            this.freeIdentifiers = a.freeIdentifiers.merge(b.freeIdentifiers, ImmutableList::append);
+            this.freeIdentifiers = a.freeIdentifiers.merge(b.freeIdentifiers, (NonEmptyImmutableList<Reference> list1, NonEmptyImmutableList<Reference> list2) -> (NonEmptyImmutableList<Reference>)list1.append(list2));
             this.functionScopedDeclarations = a.functionScopedDeclarations.merge(b.functionScopedDeclarations, ImmutableList::append);
             this.blockScopedDeclarations = a.blockScopedDeclarations.merge(b.blockScopedDeclarations, ImmutableList::append);
             this.functionDeclarations = a.functionDeclarations.merge(b.functionDeclarations, ImmutableList::append);
@@ -483,7 +483,7 @@ public final class ScopeAnalyzer extends MonoidalReducer<State> {
             ImmutableList<Variable> variables = ImmutableList.empty();
 
             HashTable<String, ImmutableList<Declaration>> functionScope = HashTable.emptyUsingEquality();
-            HashTable<String, ImmutableList<Reference>> freeIdentifiers = this.freeIdentifiers;
+            HashTable<String, NonEmptyImmutableList<Reference>> freeIdentifiers = this.freeIdentifiers;
             HashTable<String, ImmutableList<Declaration>> potentiallyVarScopedFunctionDeclarations = this.potentiallyVarScopedFunctionDeclarations;
             ImmutableList<Scope> children = this.children;
 
@@ -514,7 +514,7 @@ public final class ScopeAnalyzer extends MonoidalReducer<State> {
                     for (Pair<String, ImmutableList<Declaration>> entry2 : this.blockScopedDeclarations.merge(this.functionDeclarations, ImmutableList::append).entries()) {
                         String name2 = entry2.left();
                         ImmutableList<Declaration> declarations2 = entry2.right();
-                        ImmutableList<Reference> references2 = freeIdentifiers.get(name2).orJust(ImmutableList.empty());
+                        ImmutableList<Reference> references2 = freeIdentifiers.get(name2).map(referenceList -> (ImmutableList<Reference>)referenceList).orJust(ImmutableList.empty());
                         variables3 = ImmutableList.cons(new Variable(name2, references2, declarations2), variables3);
                         freeIdentifiers = freeIdentifiers.remove(name2);
                     }
@@ -536,7 +536,7 @@ public final class ScopeAnalyzer extends MonoidalReducer<State> {
                         for (Pair<String, ImmutableList<Declaration>> entry : newDeclarations.entries()) {
                             String name = entry.left();
                             ImmutableList<Declaration> declarations = entry.right();
-                            ImmutableList<Reference> references = freeIdentifiers.get(name).orJust(ImmutableList.empty());
+                            ImmutableList<Reference> references = freeIdentifiers.get(name).map(referenceList -> (ImmutableList<Reference>)referenceList).orJust(ImmutableList.empty());
                             variables = ImmutableList.cons(new Variable(name, references, declarations), variables);
                             freeIdentifiers = freeIdentifiers.remove(name);
                         }
@@ -563,7 +563,7 @@ public final class ScopeAnalyzer extends MonoidalReducer<State> {
                     for (Pair<String, ImmutableList<Declaration>> entry : newDeclarations.entries()) {
                         String name = entry.left();
                         ImmutableList<Declaration> declarations = entry.right();
-                        ImmutableList<Reference> references = freeIdentifiers.get(name).orJust(ImmutableList.empty());
+                        ImmutableList<Reference> references = freeIdentifiers.get(name).map(referenceList -> (ImmutableList<Reference>)referenceList).orJust(ImmutableList.empty());
                         variables = ImmutableList.cons(new Variable(name, references, declarations), variables);
                         freeIdentifiers = freeIdentifiers.remove(name);
                     }
@@ -654,19 +654,19 @@ public final class ScopeAnalyzer extends MonoidalReducer<State> {
 
         @Nonnull
         private State addReferences(@Nonnull Accessibility accessibility, boolean keepBindingsForParent) {
-            HashTable<String, ImmutableList<Reference>> free = this.freeIdentifiers;
+            HashTable<String, NonEmptyImmutableList<Reference>> free = this.freeIdentifiers;
             for (BindingIdentifier binding : this.bindingsForParent) {
                 assert accessibility.isWrite(); // todo confirm and remove
                 Reference ref = new Reference(binding);
-                ImmutableList<Reference> refs = free.get(binding.name).orJust(ImmutableList.empty());
-                refs = refs.cons(ref);
-                free = free.put(binding.name, refs);
+                ImmutableList<Reference> refs = free.get(binding.name).map(referenceList -> (ImmutableList<Reference>)referenceList).orJust(ImmutableList.empty());
+                NonEmptyImmutableList<Reference> refsNonEmpty = refs.cons(ref);
+                free = free.put(binding.name, refsNonEmpty);
             }
             for (AssignmentTargetIdentifier ati : this.atsForParent) {
                 Reference ref = new Reference(ati, accessibility);
-                ImmutableList<Reference> refs = free.get(ati.name).orJust(ImmutableList.empty());
-                refs = refs.cons(ref);
-                free = free.put(ati.name, refs);
+                ImmutableList<Reference> refs = free.get(ati.name).map(referenceList -> (ImmutableList<Reference>)referenceList).orJust(ImmutableList.empty());
+                NonEmptyImmutableList<Reference> refsNonEmpty = refs.cons(ref);
+                free = free.put(ati.name, refsNonEmpty);
             }
             return new State(
                     free,

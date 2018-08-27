@@ -17,6 +17,7 @@
 package com.shapesecurity.shift.es2016.scope;
 
 import com.shapesecurity.functional.data.HashTable;
+import com.shapesecurity.functional.data.NonEmptyImmutableList;
 import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.functional.data.Maybe;
 import com.shapesecurity.shift.es2016.ast.Node;
@@ -32,7 +33,7 @@ public class Scope {
     @Nonnull
     public final Node astNode;
     @Nonnull
-    public final HashTable<String, ImmutableList<Reference>> through;
+    public final HashTable<String, NonEmptyImmutableList<Reference>> through;
     @Nonnull
     public final ImmutableList<Scope> children;
     @Nonnull
@@ -43,7 +44,7 @@ public class Scope {
     Scope(
             @Nonnull ImmutableList<Scope> children,
             @Nonnull ImmutableList<Variable> variables,
-            @Nonnull HashTable<String, ImmutableList<Reference>> through,
+            @Nonnull HashTable<String, NonEmptyImmutableList<Reference>> through,
             @Nonnull Type type,
             boolean isDynamic,
             @Nonnull Node astNode) {
