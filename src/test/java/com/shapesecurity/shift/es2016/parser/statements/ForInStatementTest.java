@@ -2,21 +2,8 @@ package com.shapesecurity.shift.es2016.parser.statements;
 
 import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.functional.data.Maybe;
-import com.shapesecurity.shift.es2016.ast.ArrayAssignmentTarget;
-import com.shapesecurity.shift.es2016.ast.AssignmentTargetIdentifier;
-import com.shapesecurity.shift.es2016.ast.AssignmentTargetPropertyIdentifier;
-import com.shapesecurity.shift.es2016.ast.BindingIdentifier;
-import com.shapesecurity.shift.es2016.ast.CallExpression;
-import com.shapesecurity.shift.es2016.ast.EmptyStatement;
-import com.shapesecurity.shift.es2016.ast.ExpressionStatement;
-import com.shapesecurity.shift.es2016.ast.ForInStatement;
-import com.shapesecurity.shift.es2016.ast.IdentifierExpression;
-import com.shapesecurity.shift.es2016.ast.LiteralNumericExpression;
-import com.shapesecurity.shift.es2016.ast.ObjectAssignmentTarget;
-import com.shapesecurity.shift.es2016.ast.StaticMemberAssignmentTarget;
-import com.shapesecurity.shift.es2016.ast.VariableDeclaration;
-import com.shapesecurity.shift.es2016.ast.VariableDeclarationKind;
-import com.shapesecurity.shift.es2016.ast.VariableDeclarator;
+import com.shapesecurity.shift.es2016.ast.*;
+import com.shapesecurity.shift.es2016.ast.operators.BinaryOperator;
 import com.shapesecurity.shift.es2016.parser.ParserTestCase;
 import com.shapesecurity.shift.es2016.parser.JsError;
 
@@ -57,6 +44,14 @@ public class ForInStatementTest extends ParserTestCase {
         testScript("for(const a in b);", new ForInStatement(new VariableDeclaration(VariableDeclarationKind.Const,
                 ImmutableList.of(new VariableDeclarator(new BindingIdentifier("a"), Maybe.empty()))),
                 new IdentifierExpression("b"), new EmptyStatement()));
+
+        testScript("for(let a in b, c);", new ForInStatement(new VariableDeclaration(VariableDeclarationKind.Let,
+                ImmutableList.of(new VariableDeclarator(new BindingIdentifier("a"), Maybe.empty()))),
+                new BinaryExpression(new IdentifierExpression("b"), BinaryOperator.Sequence, new IdentifierExpression("c")), new EmptyStatement()));
+
+        testScript("for(a in b, c);", new ForInStatement(new AssignmentTargetIdentifier("a"),
+                new BinaryExpression(new IdentifierExpression("b"), BinaryOperator.Sequence, new IdentifierExpression("c")),
+                new EmptyStatement()));
 
         testScript("for([{a=0}] in b);", new ForInStatement(
                 new ArrayAssignmentTarget(ImmutableList.of(Maybe.of(
