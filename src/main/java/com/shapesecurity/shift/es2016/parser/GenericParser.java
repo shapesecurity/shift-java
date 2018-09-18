@@ -1739,7 +1739,8 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
             } else {
                 AdditionalStateT elementLocation = this.startNode();
                 if (this.eat(TokenType.ELLIPSIS)) {
-                    Either<SpreadElementExpression, AssignmentTarget> expr = this.parseAssignmentExpressionOrTarget().mapLeft(x -> (SpreadElementExpression) x); //TODO inherit cover grammar
+                    // the following mapLeft seems useless, but is necessary unfortunately (type inference)
+                    Either<SpreadElementExpression, AssignmentTarget> expr = this.inheritCoverGrammar(this::parseAssignmentExpressionOrTarget).mapLeft(exp -> exp);
                     if (expr.isLeft()) {
                         exprs.add(Maybe.of(this.finishNode(elementLocation, new SpreadElement((Expression) expr.left().fromJust()))));
                     } else {
