@@ -2,21 +2,8 @@ package com.shapesecurity.shift.es2016.parser.statements;
 
 import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.functional.data.Maybe;
-import com.shapesecurity.shift.es2016.ast.ArrayAssignmentTarget;
-import com.shapesecurity.shift.es2016.ast.ArrayBinding;
-import com.shapesecurity.shift.es2016.ast.AssignmentTargetIdentifier;
-import com.shapesecurity.shift.es2016.ast.AssignmentTargetPropertyIdentifier;
-import com.shapesecurity.shift.es2016.ast.BindingIdentifier;
-import com.shapesecurity.shift.es2016.ast.CallExpression;
-import com.shapesecurity.shift.es2016.ast.EmptyStatement;
-import com.shapesecurity.shift.es2016.ast.ExpressionStatement;
-import com.shapesecurity.shift.es2016.ast.ForOfStatement;
-import com.shapesecurity.shift.es2016.ast.IdentifierExpression;
-import com.shapesecurity.shift.es2016.ast.LiteralNumericExpression;
-import com.shapesecurity.shift.es2016.ast.ObjectAssignmentTarget;
-import com.shapesecurity.shift.es2016.ast.VariableDeclaration;
-import com.shapesecurity.shift.es2016.ast.VariableDeclarationKind;
-import com.shapesecurity.shift.es2016.ast.VariableDeclarator;
+import com.shapesecurity.shift.es2016.ast.*;
+import com.shapesecurity.shift.es2016.ast.operators.BinaryOperator;
 import com.shapesecurity.shift.es2016.parser.ParserTestCase;
 import com.shapesecurity.shift.es2016.parser.JsError;
 
@@ -62,6 +49,9 @@ public class ForOfStatementTest extends ParserTestCase {
 
         testScriptFailure("for(let of 0);", 11, "Unexpected number");
         testScriptFailure("for(this of 0);", 9, "Invalid left-hand side in for-of");
+
+        testScriptFailure("for(let a of b, c);", 14, "Unexpected token \",\"");
+        testScriptFailure("for(a of b, c);", 10, "Unexpected token \",\"");
 
         testScriptFailure("for(var a = 0 of b);", 14, "Invalid variable declaration in for-of statement");
         testScriptFailure("for(let a = 0 of b);", 14, "Invalid variable declaration in for-of statement");
