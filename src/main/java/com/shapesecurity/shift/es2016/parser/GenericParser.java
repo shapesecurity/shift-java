@@ -668,7 +668,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
                         return new ForInStatement(target, right.fromJust(), this.getIteratorStatementEpilogue());
                     } else {
                         this.lex();
-                        right = this.parseExpression().left();
+                        right = this.parseAssignmentExpression().left();
                         return new ForOfStatement(target, right.fromJust(), this.getIteratorStatementEpilogue());
                     }
                 } else {
