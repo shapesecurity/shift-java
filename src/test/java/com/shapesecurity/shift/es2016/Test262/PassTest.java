@@ -53,7 +53,12 @@ public class PassTest {
 	static final String expectationsDir = "src/test/resources/shift-parser-expectations/expectations/";
 
 	static final Set<String> xfail = new HashSet<>(Arrays.asList(
-		"" // empty line to make git diffs nicer
+			// Invalid tests
+			// https://github.com/tc39/test262-parser-tests/issues/20
+			"e4a43066905a597b.js",
+			"78c215fabdf13bae.js",
+			"bf49ec8d96884562.js",
+			"66e383bfd18e66ab.js"
 	));
 
 	static void assertTreesEqual(Program expected, Program actual) {

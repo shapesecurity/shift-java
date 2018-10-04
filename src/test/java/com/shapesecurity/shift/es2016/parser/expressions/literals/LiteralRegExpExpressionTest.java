@@ -12,7 +12,7 @@ public class LiteralRegExpExpressionTest extends ParserTestCase {
     public void testLiteralRegExpExpressionTest() throws JsError {
         testScript("/a/", new LiteralRegExpExpression("a", false, false, false, false, false));
         testScript("/\\0/", new LiteralRegExpExpression("\\0", false, false, false, false, false));
-        testScript("/\\1/u", new LiteralRegExpExpression("\\1", false, false, false, false, true));
+        testScript("/\\1()/u", new LiteralRegExpExpression("\\1()", false, false, false, false, true));
         testScript("/a/;", new LiteralRegExpExpression("a", false, false, false, false, false));
         testScript("/a/i", new LiteralRegExpExpression("a", false, true, false, false, false));
         testScript("/a/i;", new LiteralRegExpExpression("a", false, true, false, false, false));
@@ -39,14 +39,14 @@ public class LiteralRegExpExpressionTest extends ParserTestCase {
 
         testScript("/{/;", new LiteralRegExpExpression("{", false, false, false, false, false));
         testScript("/}/;", new LiteralRegExpExpression("}", false, false, false, false, false));
-        testScript("/}?/u;", new LiteralRegExpExpression("}?", false, false, false, false, true));
-        testScript("/{*/u;", new LiteralRegExpExpression("{*", false, false, false, false, true));
+        testScriptFailure("/}?/u;", 5, "Invalid regular expression");
+        testScriptFailure("/{*/u;", 5, "Invalid regular expression");
         testScript("/{}/;", new LiteralRegExpExpression("{}", false, false, false, false, false));
         testScript("/.{.}/;", new LiteralRegExpExpression(".{.}", false, false, false, false, false));
         testScript("/[\\w-\\s]/;", new LiteralRegExpExpression("[\\w-\\s]", false, false, false, false, false));
         testScript("/[\\s-\\w]/;", new LiteralRegExpExpression("[\\s-\\w]", false, false, false, false, false));
         testScript("/(?=.)*/;", new LiteralRegExpExpression("(?=.)*", false, false, false, false, false));
         testScript("/(?!.){0,}?/;", new LiteralRegExpExpression("(?!.){0,}?", false, false, false, false, false));
-        testScript("/(?!.){0,}?/u", new LiteralRegExpExpression("(?!.){0,}?", false, false, false, false, true));
+        testScriptFailure("/(?!.){0,}?/u", 13, "Invalid regular expression");
     }
 }
