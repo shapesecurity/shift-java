@@ -114,7 +114,9 @@ public class CloneReducerTest extends CloneReducerTestCase {
     public void testLiteralRegExpExpression() throws JsError{
         cloneTestScript("/a/");
         cloneTestScript("/\\0/");
-        cloneTestScript("/\\1/u");
+        cloneTestScript("/\\0/u");
+        cloneTestScript("/\\1/");
+        cloneTestScript("/\\1()/u");
         cloneTestScript("/a/;");
         cloneTestScript("/a/i");
         cloneTestScript("/a/i;");
@@ -139,15 +141,12 @@ public class CloneReducerTest extends CloneReducerTestCase {
         cloneTestScript("/0/g.test");
         cloneTestScript("/{/;");
         cloneTestScript("/}/;");
-        cloneTestScript("/}?/u;");
-        cloneTestScript("/{*/u;");
         cloneTestScript("/{}/;");
         cloneTestScript("/.{.}/;");
         cloneTestScript("/[\\w-\\s]/;");
         cloneTestScript("/[\\s-\\w]/;");
         cloneTestScript("/(?=.)*/;");
         cloneTestScript("/(?!.){0,}?/;");
-        cloneTestScript("/(?!.){0,}?/u");
     }
 
     @Test
