@@ -19,6 +19,7 @@ public class XFailHelper {
 				"regexp-dotall",
 				"regexp-unicode-property-escapes",
 				"regexp-named-groups",
+				"regexp-lookbehind",
 				"class-fields-public",
 				"class-fields-private",
 				"class-static-fields-public",
