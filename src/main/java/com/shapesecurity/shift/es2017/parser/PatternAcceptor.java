@@ -16,8 +16,12 @@ import javax.annotation.Nonnull;
 
 import java.util.*;
 
+import static com.shapesecurity.shift.es2017.utils.Utils.isIdentifierPart;
+import static com.shapesecurity.shift.es2017.utils.Utils.isIdentifierStart;
+
 public class PatternAcceptor {
 
+    @Nonnull
     public final String pattern;
     public final boolean unicode;
 
@@ -26,10 +30,14 @@ public class PatternAcceptor {
     private static final String[] hexDigits = new String[]{"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f", "A", "B", "C", "D", "E", "F"};
     private static final String syntaxCharacters = "^$\\.*+?()[]{}|";
     private static final String[] syntaxCharacterArray = syntaxCharacters.split("");
-    private static final String extendedSyntaxCharacters = "^$.*+?()[|";
+    private static final String extendedSyntaxCharacters = "^$\\.*+?()[|";
     private static final String[] controlCharacters = new String[]{"a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"};
 
     private static final HashMap<String, Integer> controlEscapeCharacterValues = new HashMap<>();
+    private static final HashSet<String> utf16GeneralCategoryValues = new HashSet<>(Arrays.asList("Cased_Letter", "LC", "Close_Punctuation", "Pe", "Connector_Punctuation", "Pc", "Control", "Cc", "cntrl", "Currency_Symbol", "Sc", "Dash_Punctuation", "Pd", "Decimal_Number", "Nd", "digit", "Enclosing_Mark", "Me", "Final_Punctuation", "Pf", "Format", "Cf", "Initial_Punctuation", "Pi", "Letter", "L", "Letter_Number", "Nl", "Line_Separator", "Zl", "Lowercase_Letter", "Ll", "Mark", "M", "Combining_Mark", "Math_Symbol", "Sm", "Modifier_Letter", "Lm", "Modifier_Symbol", "Sk", "Nonspacing_Mark", "Mn", "Number", "N", "Open_Punctuation", "Ps", "Other", "C", "Other_Letter", "Lo", "Other_Number", "No", "Other_Punctuation", "Po", "Other_Symbol", "So", "Paragraph_Separator", "Zp", "Private_Use", "Co", "Punctuation", "P", "punct", "Separator", "Z", "Space_Separator", "Zs", "Spacing_Mark", "Mc", "Surrogate", "Cs", "Symbol", "S", "Titlecase_Letter", "Lt", "Unassigned", "Cn", "Uppercase_Letter", "Lu"));
+    private static final HashSet<String> utf16ScriptCategoryValues = new HashSet<>(Arrays.asList("Adlam", "Adlm", "Ahom", "Anatolian_Hieroglyphs", "Hluw", "Arabic", "Arab", "Armenian", "Armn", "Avestan", "Avst", "Balinese", "Bali", "Bamum", "Bamu", "Bassa_Vah", "Bass", "Batak", "Batk", "Bengali", "Beng", "Bhaiksuki", "Bhks", "Bopomofo", "Bopo", "Brahmi", "Brah", "Braille", "Brai", "Buginese", "Bugi", "Buhid", "Buhd", "Canadian_Aboriginal", "Cans", "Carian", "Cari", "Caucasian_Albanian", "Aghb", "Chakma", "Cakm", "Cham", "Cherokee", "Cher", "Common", "Zyyy", "Coptic", "Copt", "Qaac", "Cuneiform", "Xsux", "Cypriot", "Cprt", "Cyrillic", "Cyrl", "Deseret", "Dsrt", "Devanagari", "Deva", "Dogra", "Dogr", "Duployan", "Dupl", "Egyptian_Hieroglyphs", "Egyp", "Elbasan", "Elba", "Ethiopic", "Ethi", "Georgian", "Geor", "Glagolitic", "Glag", "Gothic", "Goth", "Grantha", "Gran", "Greek", "Grek", "Gujarati", "Gujr", "Gunjala_Gondi", "Gong", "Gurmukhi", "Guru", "Han", "Hani", "Hangul", "Hang", "Hanifi_Rohingya", "Rohg", "Hanunoo", "Hano", "Hatran", "Hatr", "Hebrew", "Hebr", "Hiragana", "Hira", "Imperial_Aramaic", "Armi", "Inherited", "Zinh", "Qaai", "Inscriptional_Pahlavi", "Phli", "Inscriptional_Parthian", "Prti", "Javanese", "Java", "Kaithi", "Kthi", "Kannada", "Knda", "Katakana", "Kana", "Kayah_Li", "Kali", "Kharoshthi", "Khar", "Khmer", "Khmr", "Khojki", "Khoj", "Khudawadi", "Sind", "Lao", "Laoo", "Latin", "Latn", "Lepcha", "Lepc", "Limbu", "Limb", "Linear_A", "Lina", "Linear_B", "Linb", "Lisu", "Lycian", "Lyci", "Lydian", "Lydi", "Mahajani", "Mahj", "Makasar", "Maka", "Malayalam", "Mlym", "Mandaic", "Mand", "Manichaean", "Mani", "Marchen", "Marc", "Medefaidrin", "Medf", "Masaram_Gondi", "Gonm", "Meetei_Mayek", "Mtei", "Mende_Kikakui", "Mend", "Meroitic_Cursive", "Merc", "Meroitic_Hieroglyphs", "Mero", "Miao", "Plrd", "Modi", "Mongolian", "Mong", "Mro", "Mroo", "Multani", "Mult", "Myanmar", "Mymr", "Nabataean", "Nbat", "New_Tai_Lue", "Talu", "Newa", "Nko", "Nkoo", "Nushu", "Nshu", "Ogham", "Ogam", "Ol_Chiki", "Olck", "Old_Hungarian", "Hung", "Old_Italic", "Ital", "Old_North_Arabian", "Narb", "Old_Permic", "Perm", "Old_Persian", "Xpeo", "Old_Sogdian", "Sogo", "Old_South_Arabian", "Sarb", "Old_Turkic", "Orkh", "Oriya", "Orya", "Osage", "Osge", "Osmanya", "Osma", "Pahawh_Hmong", "Hmng", "Palmyrene", "Palm", "Pau_Cin_Hau", "Pauc", "Phags_Pa", "Phag", "Phoenician", "Phnx", "Psalter_Pahlavi", "Phlp", "Rejang", "Rjng", "Runic", "Runr", "Samaritan", "Samr", "Saurashtra", "Saur", "Sharada", "Shrd", "Shavian", "Shaw", "Siddham", "Sidd", "SignWriting", "Sgnw", "Sinhala", "Sinh", "Sogdian", "Sogd", "Sora_Sompeng", "Sora", "Soyombo", "Soyo", "Sundanese", "Sund", "Syloti_Nagri", "Sylo", "Syriac", "Syrc", "Tagalog", "Tglg", "Tagbanwa", "Tagb", "Tai_Le", "Tale", "Tai_Tham", "Lana", "Tai_Viet", "Tavt", "Takri", "Takr", "Tamil", "Taml", "Tangut", "Tang", "Telugu", "Telu", "Thaana", "Thaa", "Thai", "Tibetan", "Tibt", "Tifinagh", "Tfng", "Tirhuta", "Tirh", "Ugaritic", "Ugar", "Vai", "Vaii", "Warang_Citi", "Wara", "Yi", "Yiii", "Zanabazar_Square", "Zanb"));
+    private static final HashSet<String> utf16LonePropertyValues = new HashSet<>(Arrays.asList("ASCII", "ASCII_Hex_Digit", "AHex", "Alphabetic", "Alpha", "Any", "Assigned", "Bidi_Control", "Bidi_C", "Bidi_Mirrored", "Bidi_M", "Case_Ignorable", "CI", "Cased", "Changes_When_Casefolded", "CWCF", "Changes_When_Casemapped", "CWCM", "Changes_When_Lowercased", "CWL", "Changes_When_NFKC_Casefolded", "CWKCF", "Changes_When_Titlecased", "CWT", "Changes_When_Uppercased", "CWU", "Dash", "Default_Ignorable_Code_Point", "DI", "Deprecated", "Dep", "Diacritic", "Dia", "Emoji", "Emoji_Component", "Emoji_Modifier", "Emoji_Modifier_Base", "Emoji_Presentation", "Extended_Pictographic", "Extender", "Ext", "Grapheme_Base", "Gr_Base", "Grapheme_Extend", "Gr_Ext", "Hex_Digit", "Hex", "IDS_Binary_Operator", "IDSB", "IDS_Trinary_Operator", "IDST", "ID_Continue", "IDC", "ID_Start", "IDS", "Ideographic", "Ideo", "Join_Control", "Join_C", "Logical_Order_Exception", "LOE", "Lowercase", "Lower", "Math", "Noncharacter_Code_Point", "NChar", "Pattern_Syntax", "Pat_Syn", "Pattern_White_Space", "Pat_WS", "Quotation_Mark", "QMark", "Radical", "Regional_Indicator", "RI", "Sentence_Terminal", "STerm", "Soft_Dotted", "SD", "Terminal_Punctuation", "Term", "Unified_Ideograph", "UIdeo", "Uppercase", "Upper", "Variation_Selector", "VS", "White_Space", "space", "XID_Continue", "XIDC", "XID_Start", "XIDS"));
+    private static final HashMap<String, HashSet<String>> utf16NonBinaryPropertyNames = new HashMap<>();
 
     static {
         controlEscapeCharacterValues.put("f", (int) '\f');
@@ -37,16 +45,30 @@ public class PatternAcceptor {
         controlEscapeCharacterValues.put("r", (int) '\r');
         controlEscapeCharacterValues.put("t", (int) '\t');
         controlEscapeCharacterValues.put("v", 0x11); // \v in javascript
+
+        utf16LonePropertyValues.addAll(utf16GeneralCategoryValues);
+        utf16NonBinaryPropertyNames.put("General_Category", utf16GeneralCategoryValues);
+        utf16NonBinaryPropertyNames.put("gc", utf16GeneralCategoryValues);
+        utf16NonBinaryPropertyNames.put("Script", utf16ScriptCategoryValues);
+        utf16NonBinaryPropertyNames.put("sc", utf16ScriptCategoryValues);
+        utf16NonBinaryPropertyNames.put("Script_Extensions", utf16ScriptCategoryValues);
+        utf16NonBinaryPropertyNames.put("scx", utf16ScriptCategoryValues);
     }
 
     private static final String[] controlEscapeCharacters = controlEscapeCharacterValues.keySet().toArray(new String[0]);
-    
+    private static final ImmutableSet<String> blockedIdentityEscapes = ImmutableSet.ofUsingEquality("c", "k");
+
     private class State {
         private int index;
+        @Nonnull
         private ImmutableSet<String> backreferenceNames;
+        @Nonnull
         private ImmutableSet<String> groupingNames;
         private int largestBackreference;
         private int capturingGroups;
+        // \\k with no group name is only illegal when no group names are found
+        private boolean failedNamedBackreferenceParse;
+        // set of blocked identity escapes (defaults to "\c" and can contain "\k")
 
         private State(@Nonnull State state) {
             this.index = state.index;
@@ -54,6 +76,7 @@ public class PatternAcceptor {
             this.groupingNames = state.groupingNames;
             this.largestBackreference = state.largestBackreference;
             this.capturingGroups = state.capturingGroups;
+            this.failedNamedBackreferenceParse = state.failedNamedBackreferenceParse;
         }
 
         public State() {
@@ -62,6 +85,11 @@ public class PatternAcceptor {
             this.groupingNames = ImmutableSet.emptyUsingEquality();
             this.largestBackreference = 0;
             this.capturingGroups = 0;
+            this.failedNamedBackreferenceParse = false;
+        }
+
+        public void backreferenceName(@Nonnull String name) {
+            this.backreferenceNames = this.backreferenceNames.put(name);
         }
 
         public void backreference(int num) {
@@ -70,25 +98,36 @@ public class PatternAcceptor {
             }
         }
 
+        public boolean hasGroupingNames() {
+            return groupingNames.length() > 0;
+        }
+
         public boolean verifyBackreferences() {
             if (PatternAcceptor.this.unicode) {
-                if (this.largestBackreference > this.capturingGroups) {
+                if (this.failedNamedBackreferenceParse || this.largestBackreference > this.capturingGroups) {
                     return false;
                 }
             }
-            for (String backreferenceName : this.backreferenceNames) {
-                if (!groupingNames.contains(backreferenceName)) {
-                    return false;
+            // "\k" is an invalid escape anywhere if we have a grouping name defined anywhere.
+            if (this.failedNamedBackreferenceParse && this.hasGroupingNames()) {
+                return false;
+            }
+            if (this.hasGroupingNames() || PatternAcceptor.this.unicode) {
+                for (String backreferenceName : this.backreferenceNames) {
+                    if (!groupingNames.contains(backreferenceName)) {
+                        return false;
+                    }
                 }
             }
             return true;
         }
 
+        @Nonnull
         public State backtrackOnFailure() {
             return new State(this);
         }
 
-        public boolean backtrackOnFailure(F<State, Boolean> predicate) {
+        public boolean backtrackOnFailure(@Nonnull F<State, Boolean> predicate) {
             State state = this.backtrackOnFailure();
             boolean accepted = predicate.apply(state);
             if (accepted) {
@@ -97,7 +136,8 @@ public class PatternAcceptor {
             return accepted;
         }
 
-        public <B> Maybe<B> backtrackOnFailureMaybe(F<State, Maybe<B>> predicate) {
+        @Nonnull
+        public <B> Maybe<B> backtrackOnFailureMaybe(@Nonnull F<State, Maybe<B>> predicate) {
             State state = this.backtrackOnFailure();
             Maybe<B> accepted = predicate.apply(state);
             if (accepted.isJust()) {
@@ -106,14 +146,16 @@ public class PatternAcceptor {
             return accepted;
         }
 
-        private void absorb(State otherState) {
+        private void absorb(@Nonnull State otherState) {
             this.index = otherState.index;
             this.backreferenceNames = otherState.backreferenceNames;
             this.largestBackreference = otherState.largestBackreference;
             this.groupingNames = otherState.groupingNames;
             this.capturingGroups = otherState.capturingGroups;
+            this.failedNamedBackreferenceParse = otherState.failedNamedBackreferenceParse;
         }
 
+        @Nonnull
         public Maybe<String> nextCodePoint() {
             if (this.index >= pattern.length()) {
                 return Maybe.empty();
@@ -136,6 +178,7 @@ public class PatternAcceptor {
             return true;
         }
 
+        @Nonnull
         public Maybe<String> eatAny(@Nonnull String... strings) {
             for (String string : strings) {
                 if (this.eat(string)) {
@@ -145,6 +188,7 @@ public class PatternAcceptor {
             return Maybe.empty();
         }
 
+        @Nonnull
         public Maybe<String> eatAny(@Nonnull String[]... stringArrays) {
             for (String[] strings : stringArrays) {
                 for (String string : strings) {
@@ -156,10 +200,12 @@ public class PatternAcceptor {
             return Maybe.empty();
         }
 
+        @Nonnull
         public String collect(@Nonnull String[]... stringArrays) {
             return collect(Maybe.empty(), stringArrays);
         }
 
+        @Nonnull
         public String collect(Maybe<Integer> limit, @Nonnull String[]... stringArrays) {
             StringBuilder stringBuilder = new StringBuilder();
             boolean isJust = limit.isJust();
@@ -196,6 +242,64 @@ public class PatternAcceptor {
             return this.index >= pattern.length();
         }
 
+
+        private Maybe<String> eatUnicodeOrCharacter() {
+            if (this.empty()) {
+                return Maybe.empty();
+            }
+            return this.backtrackOnFailureMaybe(state -> {
+                if (state.match("\\u")) {
+                    state.skipCodePoint();
+                    Maybe<Integer> maybeCharacterValue = acceptUnicodeEscape(state);
+                    return maybeCharacterValue.map(value -> new String(Character.toChars(value)));
+                }
+                Maybe<String> character = state.nextCodePoint();
+                if (character.isJust()) {
+                    state.skipCodePoint();
+                }
+                return character;
+            });
+        }
+
+        @Nonnull
+        public Maybe<Integer> eatIdentifierStart() {
+            if (this.empty()) {
+                return Maybe.empty();
+            }
+            return this.backtrackOnFailureMaybe(state -> {
+                Maybe<String> maybeCharacter = state.eatUnicodeOrCharacter();
+                if (maybeCharacter.isNothing()) {
+                    return Maybe.empty();
+                }
+                String character = maybeCharacter.fromJust();
+                if (character.equals("_") || character.equals("$") || isIdentifierStart(character.codePointAt(0))) {
+                    return Maybe.of(character.codePointAt(0));
+                }
+                return Maybe.empty();
+            });
+        }
+
+        @Nonnull
+        public Maybe<Integer> eatIdentifierPart() {
+            if (this.empty()) {
+                return Maybe.empty();
+            }
+            return this.backtrackOnFailureMaybe(state -> {
+                Maybe<String> maybeCharacter = state.eatUnicodeOrCharacter();
+                if (maybeCharacter.isNothing()) {
+                    return Maybe.empty();
+                }
+                String character = maybeCharacter.fromJust();
+                if (character.equals("\\u200C") || character.equals("\\u200D") || character.equals("$") || isIdentifierPart(character.codePointAt(0))) {
+                    return Maybe.of(character.codePointAt(0));
+                }
+                return Maybe.empty();
+            });
+        }
+
+        public void flagFailedNamedBackreferenceParse() {
+            this.failedNamedBackreferenceParse = true;
+        }
     }
 
     private PatternAcceptor(@Nonnull String pattern, boolean unicode) {
@@ -241,9 +345,7 @@ public class PatternAcceptor {
             }
         } while(state.eat("|"));
         if (terminator.isJust()) {
-            if (!state.eat(terminator.fromJust())) {
-                return false;
-            }
+            return state.eat(terminator.fromJust());
         }
         return true;
     }
@@ -284,9 +386,9 @@ public class PatternAcceptor {
         return state.eatAny("^", "$", "\\b", "\\B").isJust() ||
                 acceptLabeledGroup(subState -> {
                     if (this.unicode) {
-                        return subState.eatAny("?=", "?!").isJust();
+                        return subState.eatAny("?=", "?!", "?<=", "?<!").isJust();
                     }
-                    return false;
+                    return subState.eatAny("?<=", "?<!").isJust();
                 }).apply(state);
     }
 
@@ -385,6 +487,12 @@ public class PatternAcceptor {
                     }
                     return acceptAtomEscape(subState);
                 }) ||
+                state.backtrackOnFailure(subState -> {
+                    if (!subState.eat("\\")) {
+                        return false;
+                    }
+                    return subState.match("c");
+                }) ||
                 acceptCharacterClass(state) ||
                 acceptLabeledGroup(subState -> subState.eat("?:")).apply(state) ||
                 acceptGrouping(state);
@@ -399,18 +507,70 @@ public class PatternAcceptor {
             if (!state.eat("(")) {
                 return false;
             }
+            Maybe<String> groupName = state.backtrackOnFailureMaybe(subState -> {
+                if (!subState.eat("?")) {
+                    return Maybe.empty();
+                }
+                return acceptGroupName(subState);
+            });
             if (!acceptDisjunction(state, Maybe.of(")"))) {
                 return false;
+            }
+            if (groupName.isJust()) {
+                if (state.groupingNames.contains(groupName.fromJust())) {
+                    return false;
+                }
+                state.groupingNames = state.groupingNames.put(groupName.fromJust());
             }
             ++state.capturingGroups;
             return true;
         });
     }
 
+    private boolean acceptGroupNameBackreference(State superState) {
+        return superState.backtrackOnFailure(state -> {
+            if (!state.eat("k")) {
+                return false;
+            }
+            Maybe<String> name = acceptGroupName(state);
+            if (name.isNothing()) {
+                state.flagFailedNamedBackreferenceParse();
+                // keep going but fail later if we find a grouping name definition for non-unicode and when we haven't matched a group yet
+                return !this.unicode && !state.hasGroupingNames();
+            }
+            state.backreferenceName(name.fromJust());
+            return true;
+        });
+    }
+
+    private Maybe<String> acceptGroupName(State superState) {
+        return superState.backtrackOnFailureMaybe(state -> {
+            if (!state.eat("<")) {
+                return Maybe.empty();
+            }
+            Maybe<String> start = state.eatIdentifierStart().map(i -> new String(Character.toChars(i)));
+            if (start.isNothing()) {
+                return Maybe.empty();
+            }
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.append(start.fromJust());
+            Maybe<String> part;
+            while ((part = state.eatIdentifierPart().map(i -> new String(Character.toChars(i)))).isJust()) {
+                stringBuilder.append(part.fromJust());
+            }
+            if (!state.eat(">")) {
+                return Maybe.empty();
+            }
+            return Maybe.of(stringBuilder.toString());
+        });
+    }
+
+
     private boolean acceptAtomEscape(State state) {
         return acceptDecimalEscape(state) ||
-                acceptCharacterClassEscape(state) ||
-                acceptCharacterEscape(state).map(i -> true).orJust(false);
+            acceptCharacterClassEscape(state) ||
+            acceptCharacterEscape(state).map(i -> true).orJust(false) ||
+            acceptGroupNameBackreference(state);
     }
 
     private boolean acceptDecimalEscape(State superState) {
@@ -434,7 +594,49 @@ public class PatternAcceptor {
     }
 
     private boolean acceptCharacterClassEscape(State state) {
-        return state.eatAny("d", "D", "s", "S", "w", "W").isJust();
+        if (state.eatAny("d", "D", "s", "S", "w", "W").isJust()) {
+            return true;
+        }
+        return this.unicode && state.backtrackOnFailure(subState -> {
+            if(!(subState.eat("p{") || subState.eat("P{"))) {
+                return false;
+            }
+            if (!acceptUnicodePropertyValueExpression(subState)) {
+                return false;
+            }
+            return subState.eat("}");
+        });
+    }
+
+
+    private String acceptUnicodePropertyName(State state) {
+        return state.collect(controlCharacters, new String[]{"_"});
+    }
+
+    private String acceptUnicodePropertyValue(State state) {
+        return state.collect(controlCharacters, decimalDigits, new String[]{"_"});
+    }
+
+    private boolean acceptLoneUnicodePropertyNameOrValue(State state) {
+        return utf16LonePropertyValues.contains(acceptUnicodePropertyValue(state));
+    }
+
+    private boolean acceptUnicodePropertyValueExpression(State superState) {
+        return superState.backtrackOnFailure(state -> {
+            String name = acceptUnicodePropertyName(state);
+            if (name.length() == 0 || !state.eat("=")) {
+                return false;
+            }
+            String value = acceptUnicodePropertyValue(state);
+            if (value.length() == 0) {
+                return false;
+            }
+            HashSet<String> nonBinaryNames = utf16NonBinaryPropertyNames.get(name);
+            if (nonBinaryNames == null) {
+                return false;
+            }
+            return nonBinaryNames.contains(value);
+        }) || superState.backtrackOnFailure(this::acceptLoneUnicodePropertyNameOrValue);
     }
 
     @Nonnull
@@ -457,7 +659,7 @@ public class PatternAcceptor {
             }
             int value = Integer.parseInt(hex, 16);
 
-            if (value >= 0xD800 && value <= 0xDBFF) {
+            if (this.unicode && value >= 0xD800 && value <= 0xDBFF) {
                 Maybe<Integer> surrogatePairValue = state.backtrackOnFailureMaybe(subState -> {
                     if (!subState.eat("\\u")) {
                         return Maybe.empty();
@@ -565,7 +767,7 @@ public class PatternAcceptor {
                         return Maybe.empty();
                     }
                     Maybe<String> maybeCharacter = subState.nextCodePoint();
-                    if (maybeCharacter.isJust() && !maybeCharacter.fromJust().equals("c")) {
+                    if (maybeCharacter.isJust() && !blockedIdentityEscapes.contains(maybeCharacter.fromJust())) {
                         subState.skipCodePoint();
                         return Maybe.of(maybeCharacter.fromJust().codePointAt(0));
                     }
