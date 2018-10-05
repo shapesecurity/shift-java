@@ -409,11 +409,15 @@ public class PatternAcceptor {
             if (context.match("{")) {
                 return context.goDeeper(subContext -> {
                     subContext.expect("{");
-                    if (!acceptDecimal(subContext)) {
+                    String decimal1 = subContext.collect(decimalDigits);
+                    if (decimal1.length() == 0) {
                         return false;
                     }
-                    if (subContext.eat(",") && subContext.matchAny(decimalDigits) && !acceptDecimal(subContext)) {
-                        return false;
+                    if (subContext.eat(",") && subContext.matchAny(decimalDigits)) {
+                        String decimal2 = subContext.collect(decimalDigits);
+                        if (Integer.parseInt(decimal1) > Integer.parseInt(decimal2)) {
+                            return false;
+                        }
                     }
                     subContext.expect("}");
                     subContext.eat("?");
