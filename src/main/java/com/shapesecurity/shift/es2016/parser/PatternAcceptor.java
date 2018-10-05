@@ -103,21 +103,9 @@ public class PatternAcceptor {
             this.nParenthesis = 0;
         }
 
-        public boolean addGrouping(@Nonnull Maybe<String> name) {
-            if (name.isJust()) {
-                System.out.println("xxxxx");
-                if (this.groupingNames.contains(name.fromJust())) {
-                    System.out.println("nnnnn");
-                    return false;
-                }
-                this.groupingNames = this.groupingNames.put(name.fromJust());
-            }
+        public boolean addGrouping() {
             this.nParenthesis++;
             return true;
-        }
-
-        public void backreferenceName(@Nonnull String name) {
-            this.backreferenceNames = this.backreferenceNames.put(name);
         }
 
         public void backreference(int num) {
@@ -197,48 +185,6 @@ public class PatternAcceptor {
             }
             this.index += str.length();
             return true;
-        }
-
-        public Maybe<Integer> eatIdentifierStart() {
-            if (this.index >= pattern.length()) {
-                return Maybe.empty();
-            }
-            return this.goDeeperExtended(context -> {
-                int characterValue = 0;
-                if (context.match("\\u")) {
-                    context.skip(1);
-                    characterValue = acceptUnicodeEscape(context).fromJust();
-                } else {
-                    characterValue = pattern.codePointAt(context.index);
-                    context.index += Character.toChars(characterValue).length;
-                }
-                String character = new String(Character.toChars(characterValue));
-                if (character.equals("_") || character.equals("$") || isIdentifierStart(characterValue)) {
-                    return Maybe.of(characterValue);
-                }
-                return Maybe.empty();
-            });
-        }
-
-        public Maybe<Integer> eatIdentifierPart() {
-            if (this.index >= pattern.length()) {
-                return Maybe.empty();
-            }
-            return this.goDeeperExtended(context -> {
-                int characterValue = 0;
-                if (context.match("\\u")) {
-                    context.skip(1);
-                    characterValue = acceptUnicodeEscape(context).fromJust();
-                } else {
-                    characterValue = pattern.codePointAt(context.index);
-                    context.index += Character.toChars(characterValue).length;
-                }
-                String character = new String(Character.toChars(characterValue));
-                if (character.equals("\\u200C") || character.equals("\\u200D") || character.equals("$") || isIdentifierPart(characterValue)) {
-                    return Maybe.of(characterValue);
-                }
-                return Maybe.empty();
-            });
         }
 
         public Maybe<String> eatAny(@Nonnull String... strings) {
@@ -397,9 +343,9 @@ public class PatternAcceptor {
         return context.eatAny("^", "$", "\\b", "\\B").isJust() ||
                 acceptLabeledGroup(subContext -> {
                     if (uFlag) {
-                        return subContext.eatAny("?=", "?!", "?<=", "?<!").isJust();
+                        return subContext.eatAny("?=", "?!").isJust();
                     }
-                    return subContext.eatAny( "?<=", "?<!").isJust();
+                    return false;
                 }).apply(context);
     }
 
@@ -487,9 +433,6 @@ public class PatternAcceptor {
         boolean matched = context.eat(".") ||
                 context.goDeeper(subContext -> {
                     subContext.expect("\\");
-                    if (subContext.match("c")) {
-                        return true;
-                    }
                     return acceptAtomEscape(subContext);
                 }) ||
                 acceptCharacterClass(context) ||
@@ -504,28 +447,17 @@ public class PatternAcceptor {
     private boolean acceptGrouping(Context superContext) {
         return superContext.goDeeper(context -> {
             context.expect("(");
-            String[] groupName = new String[1];
-            context.goDeeper(subContext -> {
-                subContext.expect("?");
-                Maybe<String> maybeGroupName = acceptGroupName(subContext);
-                if (maybeGroupName.isJust()) {
-                    groupName[0] = maybeGroupName.fromJust();
-                    return true;
-                }
-                return false;
-            });
             if (!acceptDisjunction(context, Maybe.of(")"))) {
                 return false;
             }
-            return context.addGrouping(Maybe.fromNullable(groupName[0]));
+            return context.addGrouping();
         });
     }
 
     private boolean acceptAtomEscape(Context context) {
         return acceptDecimalEscape(context) ||
                 acceptCharacterClassEscape(context) ||
-                acceptCharacterEscape(context).map(i -> true).orJust(false) ||
-                acceptGroupNameBackreference(context);
+                acceptCharacterEscape(context).map(i -> true).orJust(false);
     }
 
     private boolean acceptDecimalEscape(Context superContext) {
@@ -536,7 +468,7 @@ public class PatternAcceptor {
                 return false;
             }
             digits.append(firstDecimal.fromJust());
-            Maybe<String> digit = Maybe.empty();
+            Maybe<String> digit;
             while ((digit = context.eatAny(decimalDigits)).isJust()) {
                 digits.append(digit.fromJust());
             }
@@ -546,45 +478,7 @@ public class PatternAcceptor {
     }
 
     private boolean acceptCharacterClassEscape(Context context) {
-        if (context.eatAny("d", "D", "s", "S", "w", "W").isJust()) {
-            return true;
-        }
-        return this.uFlag && context.goDeeper(subContext -> {
-            if(!(subContext.eat("p{") || subContext.eat("P{"))) {
-                return false;
-            }
-            if (!acceptUnicodePropertyValueExpression(subContext)) {
-                return false;
-            }
-            return context.eat("}");
-        });
-    }
-
-    private String acceptUnicodePropertyName(Context context) {
-        return context.collect(controlCharacters, new String[]{"_"});
-    }
-
-    private String acceptUnicodePropertyValue(Context context) {
-        return context.collect(controlCharacters, decimalDigits, new String[]{"_"});
-    }
-
-    private boolean acceptLoneUnicodePropertyNameOrValue(Context context) {
-        return utf16LonePropertyValues.contains(acceptUnicodePropertyValue(context));
-    }
-
-    private boolean acceptUnicodePropertyValueExpression(Context superContext) {
-        return superContext.goDeeper(context -> {
-            String name = acceptUnicodePropertyName(context);
-            if (name.length() == 0) {
-                return false;
-            }
-            context.expect("=");
-            String value = acceptUnicodePropertyValue(context);
-            if (value.length() == 0) {
-                return false;
-            }
-            return utf16NonBinaryPropertyNames.get(name).contains(value);
-        }) || superContext.goDeeper(this::acceptLoneUnicodePropertyNameOrValue);
+        return context.eatAny("d", "D", "s", "S", "w", "W").isJust();
     }
 
     private Maybe<Integer> acceptUnicodeEscape(Context superContext) {
@@ -693,16 +587,16 @@ public class PatternAcceptor {
                 }),
                 context -> {
                     if(uFlag && context.eat("/")) {
-                        return Maybe.<Integer>of((int) "/".charAt(0));
+                        return Maybe.of((int) "/".charAt(0));
                     }
-                    return Maybe.<Integer>empty();
+                    return Maybe.empty();
                 },
                 context -> context.goDeeperExtended(subContext -> {
                     if (uFlag) {
                         return Maybe.empty();
                     }
                     Maybe<String> maybeCharacter = subContext.nextCodePoint();
-                    if (maybeCharacter.isJust() && !maybeCharacter.fromJust().equals("c") && !maybeCharacter.fromJust().equals("k")) {
+                    if (maybeCharacter.isJust() && !maybeCharacter.fromJust().equals("c")) {
                         subContext.skip(1);
                         return Maybe.of(maybeCharacter.fromJust().codePointAt(0));
                     }
@@ -711,38 +605,8 @@ public class PatternAcceptor {
         ).apply(superContext);
     }
 
-    private boolean acceptGroupNameBackreference(Context superContext) {
-        return superContext.goDeeper(context -> {
-            context.expect("k");
-            Maybe<String> name = acceptGroupName(context);
-            if (name.isNothing()) {
-                return false;
-            }
-            context.backreferenceName(name.fromJust());
-            return true;
-        });
-    }
-
-    private Maybe<String> acceptGroupName(Context superContext) {
-        return superContext.goDeeperExtended(context -> {
-            context.expect("<");
-            Maybe<String> start = context.eatIdentifierStart().map(i -> new String(Character.toChars(i)));
-            if (start.isNothing()) {
-                return Maybe.empty();
-            }
-            StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.append(start.fromJust());
-            Maybe<String> part;
-            while ((part = context.eatIdentifierPart().map(i -> new String(Character.toChars(i)))).isJust()) {
-                stringBuilder.append(part.fromJust());
-            }
-            context.expect(">");
-            return Maybe.of(stringBuilder.toString());
-        });
-    }
-
     private Maybe<Integer> acceptClassEscape(Context superContext) {
-        return this.<Integer>maybeLogicalOr(
+        return this.maybeLogicalOr(
                 context -> context.goDeeperExtended(subContext -> {
                     subContext.expect("b");
                     return Maybe.of(0x0008); // backspace
@@ -755,7 +619,7 @@ public class PatternAcceptor {
                 },
                 context -> context.goDeeperExtended(subContext -> {
                     if (uFlag || !subContext.eat("c")) {
-                        return Maybe.<Integer>empty();
+                        return Maybe.empty();
                     }
                     return subContext.eatAny(decimalDigits, new String[]{"_"}).map(str -> str.codePointAt(0) % 32);
                 }),
@@ -766,15 +630,15 @@ public class PatternAcceptor {
 
     private Maybe<Integer> acceptClassAtomNoDash(Context context) {
         if (context.eat("\\")) {
-            return this.<Integer>maybeLogicalOr(
-                    this::acceptClassEscape,
-                    subContext -> subContext.goDeeperExtended(subContext2 -> {
-                        if (subContext2.match("c")) {
-                            return Maybe.of(0x005C); // reverse solidus
-                        }
-                        return Maybe.empty();
-                    })
-            ).apply(context);
+			return this.maybeLogicalOr(
+					this::acceptClassEscape,
+					subContext -> subContext.goDeeperExtended(subContext2 -> {
+						if (subContext2.match("c")) {
+							return Maybe.of(0x005C); // reverse solidus
+						}
+						return Maybe.empty();
+					})
+			).apply(context);
         }
         Maybe<String> nextCodePoint = context.nextCodePoint();
         if (nextCodePoint.isNothing() || nextCodePoint.fromJust().equals("]") || nextCodePoint.fromJust().equals("-")) {

@@ -25,12 +25,8 @@ public class LiteralRegExpExpressionTest extends ParserTestCase {
             "/\\BX/",
             "/(?=t|v|X|.|$||)/",
             "/(?!t|v|X|.|$||)/",
-            "/(?<=t|v|X|.|$||)/",
-            "/(?<!t|v|X|.|$||)/",
             "/(?=t|v|X|.|$||)/u",
             "/(?!t|v|X|.|$||)/u",
-            "/(?<=t|v|X|.|$||)/u",
-            "/(?<!t|v|X|.|$||)/u",
             "/(?=t|v|X|.|$||)*/",
             "/(?!t|v|X|.|$||)*/",
             "/X*/",
@@ -129,7 +125,6 @@ public class LiteralRegExpExpressionTest extends ParserTestCase {
             "/{5.}/",
             "/{5,X}/",
             "/{5,10X}/",
-            "/\\c/",
             "/[\\c]/",
             "/[\\c]/u",
             "/[\\5]/",
@@ -143,7 +138,6 @@ public class LiteralRegExpExpressionTest extends ParserTestCase {
             "/[\\9]/",
             "/[\\-]/u",
             "/[\\-]/",
-            "/(?<test>)\\k<test>/",
             "/\\ud800\\u1000/u",
             "/\\u{10}/u",
             "/[\\1]/",
@@ -160,6 +154,10 @@ public class LiteralRegExpExpressionTest extends ParserTestCase {
             "/(?<!t|v|X|.|$||)*/",
             "/(?<=t|v|X|.|$||)*/u",
             "/(?<!t|v|X|.|$||)*/u",
+            "/(?<=t|v|X|.|$||)/",
+            "/(?<!t|v|X|.|$||)/",
+            "/(?<=t|v|X|.|$||)/u",
+            "/(?<!t|v|X|.|$||)/u",
             "/X{10,5}/",
             "/X{10,5}?/",
             "/\\123/u",
@@ -183,15 +181,15 @@ public class LiteralRegExpExpressionTest extends ParserTestCase {
             "/[\\1]/u",
             "/[\\9]/u",
             "/\\c/u",
+            "/(?<test>)/",
             "/(?<\">)/",
             "/(?<test>)(?<test>)/",
-            "/\\k<\">/",
-            "/\\k<f>/",
             "/\\xZZ/u",
             "/\\ud800\\uZZ/u",
             "/\\uZZ/u",
             "/\\u{ZZ}/u",
-            "/5{5,1G}/u"
+            "/5{5,1G}/u",
+            "/\\c/u"
     };
 
     @Test
@@ -239,6 +237,7 @@ public class LiteralRegExpExpressionTest extends ParserTestCase {
 
 
         for (String regex : expectedToPass) {
+            System.out.println(regex);
             testScript(regex);
         }
 
