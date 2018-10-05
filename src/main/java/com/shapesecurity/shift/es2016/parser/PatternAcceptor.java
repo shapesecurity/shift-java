@@ -9,6 +9,7 @@
 package com.shapesecurity.shift.es2016.parser;
 
 import com.shapesecurity.functional.F;
+import com.shapesecurity.functional.data.ImmutableSet;
 import com.shapesecurity.functional.data.Maybe;
 
 import javax.annotation.Nonnull;
@@ -81,45 +82,57 @@ public class PatternAcceptor {
 
     private class Context {
         private int index;
-        private HashSet<String> backreferenceNames = new HashSet<>();
-        private HashSet<String> groupingNames = new HashSet<>();
-        private List<Integer> backreferences = new LinkedList<>();
-        private int nParenthesis = 0;
+        private ImmutableSet<String> backreferenceNames;
+        private ImmutableSet<String> groupingNames;
+        private ImmutableSet<Integer> backreferences;
+        private int nParenthesis;
 
-        private Context(int index) {
-            this.index = index;
+        private Context(@Nonnull Context context) {
+            this.index = context.index;
+            this.backreferenceNames = context.backreferenceNames;
+            this.groupingNames = context.groupingNames;
+            this.backreferences = context.backreferences;
+            this.nParenthesis = context.nParenthesis;
         }
 
         public Context() {
-            this(0);
+            this.index = 0;
+            this.backreferenceNames = ImmutableSet.emptyUsingEquality();
+            this.groupingNames = ImmutableSet.emptyUsingEquality();
+            this.backreferences = ImmutableSet.emptyUsingEquality();
+            this.nParenthesis = 0;
         }
 
         public boolean addGrouping(@Nonnull Maybe<String> name) {
             if (name.isJust()) {
+                System.out.println("xxxxx");
                 if (this.groupingNames.contains(name.fromJust())) {
+                    System.out.println("nnnnn");
                     return false;
                 }
-                this.groupingNames.add(name.fromJust());
+                this.groupingNames = this.groupingNames.put(name.fromJust());
             }
             this.nParenthesis++;
             return true;
         }
 
         public void backreferenceName(@Nonnull String name) {
-            backreferenceNames.add(name);
+            this.backreferenceNames = this.backreferenceNames.put(name);
         }
 
         public void backreference(int num) {
-            backreferences.add(num);
+            this.backreferences = this.backreferences.put(num);
         }
 
         public boolean verifyBackreferences() {
-            for (Integer backreference : backreferences) {
-                if (backreference > nParenthesis) {
-                    return false;
+            if (uFlag) {
+                for (Integer backreference : this.backreferences) {
+                    if (backreference > nParenthesis) {
+                        return false;
+                    }
                 }
             }
-            for (String backreferenceName : backreferenceNames) {
+            for (String backreferenceName : this.backreferenceNames) {
                 if (!groupingNames.contains(backreferenceName)) {
                     return false;
                 }
@@ -128,7 +141,7 @@ public class PatternAcceptor {
         }
 
         public Context goDeeper() {
-            return new Context(this.index);
+            return new Context(this);
         }
 
         public boolean goDeeper(F<Context, Boolean> predicate) {
@@ -157,7 +170,7 @@ public class PatternAcceptor {
             }
         }
 
-        public void absorb(Context otherContext) {
+        private void absorb(Context otherContext) {
             this.index = otherContext.index;
             this.backreferenceNames = otherContext.backreferenceNames;
             this.backreferences = otherContext.backreferences;
@@ -196,8 +209,8 @@ public class PatternAcceptor {
                     context.skip(1);
                     characterValue = acceptUnicodeEscape(context).fromJust();
                 } else {
-                    characterValue = pattern.codePointAt(this.index);
-                    this.index += Character.toChars(characterValue).length;
+                    characterValue = pattern.codePointAt(context.index);
+                    context.index += Character.toChars(characterValue).length;
                 }
                 String character = new String(Character.toChars(characterValue));
                 if (character.equals("_") || character.equals("$") || isIdentifierStart(characterValue)) {
@@ -217,8 +230,8 @@ public class PatternAcceptor {
                     context.skip(1);
                     characterValue = acceptUnicodeEscape(context).fromJust();
                 } else {
-                    characterValue = pattern.codePointAt(this.index);
-                    this.index += Character.toChars(characterValue).length;
+                    characterValue = pattern.codePointAt(context.index);
+                    context.index += Character.toChars(characterValue).length;
                 }
                 String character = new String(Character.toChars(characterValue));
                 if (character.equals("\\u200C") || character.equals("\\u200D") || character.equals("$") || isIdentifierPart(characterValue)) {
@@ -318,10 +331,7 @@ public class PatternAcceptor {
         } catch (RegexException e) {
             return false;
         }
-        if (this.uFlag && !context.verifyBackreferences()) {
-            return false;
-        }
-        return true;
+        return context.verifyBackreferences();
     }
 
     private <B> F<Context, Maybe<B>> maybeLogicalOr(F<Context, Maybe<B>>... expressions) {
@@ -503,14 +513,11 @@ public class PatternAcceptor {
                     return true;
                 }
                 return false;
-           });
-           if (!acceptDisjunction(context, Maybe.of(")"))) {
-               return false;
-           }
-           if (!context.addGrouping(Maybe.fromNullable(groupName[0]))) {
-               return false;
+            });
+            if (!acceptDisjunction(context, Maybe.of(")"))) {
+                return false;
             }
-           return true;
+            return context.addGrouping(Maybe.fromNullable(groupName[0]));
         });
     }
 
@@ -594,16 +601,23 @@ public class PatternAcceptor {
                 return Maybe.empty();
             }
             int value = Integer.parseInt(hex, 16);
-            if (value >= 0xD800 && value <= 0xDBFF && context.eat("\\u")) {
-                String hex2 = context.collect(4, hexDigits);
-                if (hex2.length() != 4) {
-                    return Maybe.empty();
+
+            if (value >= 0xD800 && value <= 0xDBFF) {
+                Maybe<Integer> surrogatePairValue = context.goDeeperExtended(subContext -> {
+                    subContext.expect("\\u");
+                    String hex2 = subContext.collect(4, hexDigits);
+                    if (hex2.length() != 4) {
+                        return Maybe.empty();
+                    }
+                    int value2 = Integer.parseInt(hex2, 16);
+                    if (value2 < 0xDC00 || value2 >= 0xE000) {
+                        return Maybe.empty();
+                    }
+                    return Maybe.of(0x10000 + ((value & 0x3FF) << 10) + (value2 & 0x03FF));
+                });
+                if (surrogatePairValue.isJust()) {
+                    return surrogatePairValue;
                 }
-                int value2 = Integer.parseInt(hex2, 16);
-                if (value2 < 0xDC00 || value2 >= 0xE000) {
-                    return Maybe.empty();
-                }
-                return Maybe.of(0x10000 + ((value & 0x3FF) << 10) + (value2 & 0x03FF));
             }
             return Maybe.of(value);
         });

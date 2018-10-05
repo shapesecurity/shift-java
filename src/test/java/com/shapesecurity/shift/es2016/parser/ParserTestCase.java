@@ -117,6 +117,16 @@ public abstract class ParserTestCase extends TestCase {
         fail("Parsing error not found");
     }
 
+    public static void testScriptFailure(@Nonnull String source, @Nonnull String error) {
+        try {
+            Parser.parseScript(source);
+        } catch (JsError jsError) {
+            assertEquals(error, jsError.getDescription());
+            return;
+        }
+        fail("Parsing error not found");
+    }
+
     public static void testScriptFailure(@Nonnull String source, int index, @Nonnull String error) {
         testScriptFailureML(source, 1, index, index, error);
     }
