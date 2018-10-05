@@ -237,12 +237,10 @@ public class LiteralRegExpExpressionTest extends ParserTestCase {
 
 
         for (String regex : expectedToPass) {
-            System.out.println(regex);
             testScript(regex);
         }
 
         for (String regex : expectedToFail) {
-            System.out.println(regex);
             testScriptFailure(regex, "Invalid regular expression");
         }
     }
