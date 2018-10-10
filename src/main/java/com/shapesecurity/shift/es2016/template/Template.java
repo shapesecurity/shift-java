@@ -37,6 +37,21 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class Template {
+	final Script tree;
+	final ImmutableList<NodeInfo> namePairs;
+
+	Template(String source) {
+		ParserWithLocation parserWithLocation = new ParserWithLocation();
+		try {
+			Script tree = parserWithLocation.parseScript(source);
+			ImmutableList<Template.NodeInfo> namePairs = findNodes(tree, parserWithLocation, parserWithLocation.getComments());
+			this.tree = tree;
+			this.namePairs = namePairs;
+		} catch (JsError e) {
+			throw new IllegalArgumentException("template failed to parse");
+		}
+	}
+
 	public static class NodeInfo {
 		public final String name;
 		public final Node node;
@@ -60,16 +75,6 @@ public class Template {
 			this.predicate = predicate;
 			this.start = start;
 			this.comment = comment;
-		}
-	}
-
-	public static class BuiltTemplate {
-		final Script tree;
-		final ImmutableList<NodeInfo> namePairs;
-
-		BuiltTemplate(Script tree, ImmutableList<NodeInfo> namePairs) {
-			this.tree = tree;
-			this.namePairs = namePairs;
 		}
 	}
 
@@ -198,13 +203,6 @@ public class Template {
 		return ImmutableList.from(out);
 	}
 
-	public static BuiltTemplate buildTemplate(String source) throws JsError {
-		ParserWithLocation parserWithLocation = new ParserWithLocation();
-		Script tree = parserWithLocation.parseScript(source);
-		ImmutableList<Template.NodeInfo> namePairs = findNodes(tree, parserWithLocation, parserWithLocation.getComments());
-		return new BuiltTemplate(tree, namePairs);
-	}
-
 	public static Program applyTemplate(String source, Map<String, F<Node, Node>> newNodes) throws JsError {
 		ParserWithLocation parserWithLocation = new ParserWithLocation();
 		Script tree = parserWithLocation.parseScript(source);
@@ -212,7 +210,7 @@ public class Template {
 		return applyTemplate(tree, namePairs, newNodes);
 	}
 
-	public static Program applyTemplate(BuiltTemplate builtTemplate, Map<String, F<Node, Node>> newNodes) throws JsError {
+	public static Program applyTemplate(Template builtTemplate, Map<String, F<Node, Node>> newNodes) throws JsError {
 		return applyTemplate(builtTemplate.tree, builtTemplate.namePairs, newNodes);
 	}
 
