@@ -15,6 +15,7 @@ import junit.framework.TestCase;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.shapesecurity.shift.es2016.template.Template.buildTemplate;
 import static com.shapesecurity.shift.es2016.template.Template.findNodes;
 
 public class ApplyTemplateTest extends TestCase {
@@ -61,6 +62,20 @@ public class ApplyTemplateTest extends TestCase {
 
 		newNodes.put("label", node -> new LiteralNumericExpression(2));
 		result = Template.applyTemplate(tree, namePairs, newNodes);
+		assertEquals(Parser.parseScript("a + 2"), result);
+	}
+
+	public void testReusableAPI2() throws JsError {
+		String source = "a + /*# label #*/ b";
+		Template.BuiltTemplate builtTemplate = buildTemplate(source);
+
+		HashMap<String, F<Node, Node>> newNodes = new HashMap<>();
+		newNodes.put("label", node -> new LiteralNumericExpression(1));
+		Program result = Template.applyTemplate(builtTemplate, newNodes);
+		assertEquals(Parser.parseScript("a + 1"), result);
+
+		newNodes.put("label", node -> new LiteralNumericExpression(2));
+		result = Template.applyTemplate(builtTemplate, newNodes);
 		assertEquals(Parser.parseScript("a + 2"), result);
 	}
 

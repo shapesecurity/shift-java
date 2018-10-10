@@ -63,6 +63,16 @@ public class Template {
 		}
 	}
 
+	public static class BuiltTemplate {
+		final Script tree;
+		final ImmutableList<NodeInfo> namePairs;
+
+		BuiltTemplate(Script tree, ImmutableList<NodeInfo> namePairs) {
+			this.tree = tree;
+			this.namePairs = namePairs;
+		}
+	}
+
 	public static Program replace(Program tree, F2<Node, Node, Maybe<Node>> getReplacement) {
 		Reducer<Node> replacer = new WrappedReducer<>(
 			(originalNode, newNode) -> getReplacement.apply(newNode, originalNode).orJust(newNode),
@@ -188,11 +198,22 @@ public class Template {
 		return ImmutableList.from(out);
 	}
 
+	public static BuiltTemplate buildTemplate(String source) throws JsError {
+		ParserWithLocation parserWithLocation = new ParserWithLocation();
+		Script tree = parserWithLocation.parseScript(source);
+		ImmutableList<Template.NodeInfo> namePairs = findNodes(tree, parserWithLocation, parserWithLocation.getComments());
+		return new BuiltTemplate(tree, namePairs);
+	}
+
 	public static Program applyTemplate(String source, Map<String, F<Node, Node>> newNodes) throws JsError {
 		ParserWithLocation parserWithLocation = new ParserWithLocation();
 		Script tree = parserWithLocation.parseScript(source);
 		ImmutableList<NodeInfo> namePairs = findNodes(tree, parserWithLocation, parserWithLocation.getComments());
 		return applyTemplate(tree, namePairs, newNodes);
+	}
+
+	public static Program applyTemplate(BuiltTemplate builtTemplate, Map<String, F<Node, Node>> newNodes) throws JsError {
+		return applyTemplate(builtTemplate.tree, builtTemplate.namePairs, newNodes);
 	}
 
 	public static Program applyTemplate(Program tree, ImmutableList<NodeInfo> namePairs, Map<String, F<Node, Node>> newNodes) throws JsError {
