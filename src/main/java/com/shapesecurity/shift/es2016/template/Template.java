@@ -192,6 +192,10 @@ public class Template {
 		ParserWithLocation parserWithLocation = new ParserWithLocation();
 		Script tree = parserWithLocation.parseScript(source);
 		ImmutableList<NodeInfo> namePairs = findNodes(tree, parserWithLocation, parserWithLocation.getComments());
+		return applyTemplate(tree, namePairs, newNodes);
+	}
+
+	public static Program applyTemplate(Program tree, ImmutableList<NodeInfo> namePairs, Map<String, F<Node, Node>> newNodes) throws JsError {
 		IdentityHashMap<Node, String> nodeToName = new IdentityHashMap<>();
 		for (NodeInfo info : namePairs) {
 			if (nodeToName.containsKey(info.node)) {
