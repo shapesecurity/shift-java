@@ -40,7 +40,7 @@ public class Template {
 	final Script tree;
 	final ImmutableList<NodeInfo> namePairs;
 
-	Template(String source) {
+	public Template(String source) {
 		ParserWithLocation parserWithLocation = new ParserWithLocation();
 		try {
 			Script tree = parserWithLocation.parseScript(source);
