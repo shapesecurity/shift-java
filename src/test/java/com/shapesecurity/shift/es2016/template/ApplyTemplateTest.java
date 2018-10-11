@@ -78,6 +78,21 @@ public class ApplyTemplateTest extends TestCase {
 		assertEquals(Parser.parseScript("a + 2"), result);
 	}
 
+	public void testReusableAPI3() throws JsError {
+		String source = "a + /*# label #*/ b";
+		Template builtTemplate = new Template(source);
+
+		HashMap<String, F<Node, Node>> newNodes = new HashMap<>();
+		newNodes.put("label", node -> new LiteralNumericExpression(1));
+		Program result = builtTemplate.apply(newNodes);
+		assertEquals(Parser.parseScript("a + 1"), result);
+
+		newNodes.put("label", node -> new LiteralNumericExpression(2));
+		result = builtTemplate.apply(newNodes);
+		assertEquals(Parser.parseScript("a + 2"), result);
+	}
+
+
 	public void testNodeBased() throws JsError {
 		String source = " /*# increment # LiteralNumericExpression #*/ 42 + /*# increment #*/ 128";
 		String expected = "43 + 129";
