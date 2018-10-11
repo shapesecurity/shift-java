@@ -52,6 +52,10 @@ public class Template {
 		}
 	}
 
+	public Program apply(Map<String, F<Node, Node>> newNodes) {
+		return Template.applyTemplate(this, newNodes);
+	}
+
 	public static class NodeInfo {
 		public final String name;
 		public final Node node;
@@ -210,11 +214,11 @@ public class Template {
 		return applyTemplate(tree, namePairs, newNodes);
 	}
 
-	public static Program applyTemplate(Template builtTemplate, Map<String, F<Node, Node>> newNodes) throws JsError {
+	public static Program applyTemplate(Template builtTemplate, Map<String, F<Node, Node>> newNodes) {
 		return applyTemplate(builtTemplate.tree, builtTemplate.namePairs, newNodes);
 	}
 
-	public static Program applyTemplate(Program tree, ImmutableList<NodeInfo> namePairs, Map<String, F<Node, Node>> newNodes) throws JsError {
+	public static Program applyTemplate(Program tree, ImmutableList<NodeInfo> namePairs, Map<String, F<Node, Node>> newNodes) {
 		IdentityHashMap<Node, String> nodeToName = new IdentityHashMap<>();
 		for (NodeInfo info : namePairs) {
 			if (nodeToName.containsKey(info.node)) {
