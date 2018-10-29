@@ -84,6 +84,11 @@
             <artifactId>jsr305</artifactId>
             <version>3.0.2</version>
         </dependency>
+		<dependency>
+			<groupId>org.yaml</groupId>
+			<artifactId>snakeyaml</artifactId>
+			<version>1.16</version>
+		</dependency>
     </dependencies>
 
 	<properties>

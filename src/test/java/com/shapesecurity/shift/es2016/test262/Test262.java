@@ -9,6 +9,7 @@ import com.shapesecurity.shift.es2016.parser.JsError;
 import com.shapesecurity.shift.es2016.parser.Parser;
 import org.junit.Assert;
 import org.junit.Test;
+import org.yaml.snakeyaml.Yaml;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -20,6 +21,8 @@ import java.nio.file.Paths;
 import java.util.*;
 
 public class Test262 {
+
+	private static final Yaml yamlParser = new Yaml();
 
 	private static final HashSet<String> xfailParse = new HashSet<>(Arrays.asList(
 			// shift-java#198
@@ -40,6 +43,46 @@ public class Test262 {
 			"src/test/resources/test262/test/language/expressions/object/method-definition/async-super-call-body.js",
 			"src/test/resources/test262/test/language/expressions/object/method-definition/async-super-call-param.js",
 			"src/test/resources/test262/test/language/expressions/object/method-definition/object-method-returns-promise.js",
+
+			"src/test/resources/test262/test/built-ins/AsyncFunction/AsyncFunction-is-extensible.js",
+			"src/test/resources/test262/test/built-ins/AsyncFunction/AsyncFunctionPrototype-prototype.js",
+			"src/test/resources/test262/test/built-ins/AsyncFunction/instance-prototype-property.js",
+			"src/test/resources/test262/test/built-ins/AsyncFunction/AsyncFunction-length.js",
+			"src/test/resources/test262/test/built-ins/AsyncFunction/AsyncFunctionPrototype-to-string.js",
+			"src/test/resources/test262/test/built-ins/AsyncFunction/AsyncFunction.js",
+			"src/test/resources/test262/test/built-ins/AsyncFunction/AsyncFunctionPrototype-is-extensible.js",
+			"src/test/resources/test262/test/built-ins/AsyncFunction/instance-has-name.js",
+			"src/test/resources/test262/test/built-ins/AsyncFunction/instance-construct.js",
+			"src/test/resources/test262/test/built-ins/AsyncFunction/AsyncFunction-is-subclass.js",
+			"src/test/resources/test262/test/built-ins/AsyncFunction/AsyncFunction-construct.js",
+			"src/test/resources/test262/test/built-ins/AsyncFunction/AsyncFunction-name.js",
+			"src/test/resources/test262/test/built-ins/AsyncFunction/AsyncFunction-prototype.js",
+			"src/test/resources/test262/test/built-ins/AsyncFunction/instance-length.js",
+			"src/test/resources/test262/test/language/statements/async-function/evaluation-this-value-passed.js",
+			"src/test/resources/test262/test/language/statements/async-function/evaluation-default-that-throws.js",
+			"src/test/resources/test262/test/language/statements/async-function/syntax-declaration.js",
+			"src/test/resources/test262/test/language/statements/async-function/declaration-returns-promise.js",
+			"src/test/resources/test262/test/language/statements/async-function/evaluation-this-value-global.js",
+			"src/test/resources/test262/test/language/statements/async-function/evaluation-body.js",
+			"src/test/resources/test262/test/language/statements/async-function/evaluation-body-that-returns.js",
+			"src/test/resources/test262/test/language/statements/async-function/evaluation-body-that-throws.js",
+			"src/test/resources/test262/test/language/statements/async-function/evaluation-unmapped-arguments.js",
+			"src/test/resources/test262/test/language/statements/async-function/evaluation-body-that-returns-after-await.js",
+			"src/test/resources/test262/test/language/statements/async-function/evaluation-mapped-arguments.js",
+			"src/test/resources/test262/test/language/statements/async-function/evaluation-body-that-throws-after-await.js",
+			"src/test/resources/test262/test/language/statements/async-function/syntax-declaration-line-terminators-allowed.js",
+			"src/test/resources/test262/test/language/expressions/async-function/syntax-expression-is-PrimaryExpression.js",
+			"src/test/resources/test262/test/language/expressions/async-function/expression-returns-promise.js",
+			"src/test/resources/test262/test/language/expressions/await/await-awaits-thenable-not-callable.js",
+			"src/test/resources/test262/test/language/expressions/await/await-in-nested-function.js",
+			"src/test/resources/test262/test/language/expressions/await/await-awaits-thenables.js",
+			"src/test/resources/test262/test/language/expressions/await/await-BindingIdentifier-in-global.js",
+			"src/test/resources/test262/test/language/expressions/await/syntax-await-has-UnaryExpression.js",
+			"src/test/resources/test262/test/language/expressions/await/await-throws-rejections.js",
+			"src/test/resources/test262/test/language/expressions/await/await-in-nested-generator.js",
+			"src/test/resources/test262/test/language/expressions/await/await-awaits-thenables-that-throw.js",
+			"src/test/resources/test262/test/language/expressions/await/syntax-await-has-UnaryExpression-with-MultiplicativeExpression.js",
+			"src/test/resources/test262/test/language/expressions/async-arrow-function/arrow-returns-promise.js",
 
 			// yield not implemented
 			"src/test/resources/test262/test/language/statements/class/definition/methods-gen-yield-as-label.js",
@@ -66,6 +109,10 @@ public class Test262 {
 			"src/test/resources/test262/test/language/expressions/arrow-function/params-trailing-comma.js",
 			"src/test/resources/test262/test/language/expressions/function/params-trailing-comma-length.js",
 			"src/test/resources/test262/test/language/expressions/function/params-trailing-comma.js",
+			"src/test/resources/test262/test/language/statements/generators/params-trailing-comma-length.js",
+			"src/test/resources/test262/test/language/statements/generators/params-trailing-comma.js",
+			"src/test/resources/test262/test/language/expressions/generators/params-trailing-comma-length.js",
+			"src/test/resources/test262/test/language/expressions/generators/params-trailing-comma.js",
 
 			// broken test
 			"src/test/resources/test262/test/language/module-code/namespace/internals/set-prototype-of-null.js",
@@ -92,24 +139,54 @@ public class Test262 {
 			"src/test/resources/test262/test/language/statements/for-of/dstr-obj-id-identifier-yield-expr.js",
 
 			// shift-java#208
-			"src/test/resources/test262/test/language/global-code/decl-lex-restricted-global.js"
-	));
+			"src/test/resources/test262/test/language/global-code/decl-lex-restricted-global.js",
 
-	private static final HashSet<String> skip = new HashSet<>(Arrays.asList(
-			// async/await not implemented
-			"src/test/resources/test262/test/language/expressions/async-arrow-function",
-			"src/test/resources/test262/test/language/expressions/async-function",
-			"src/test/resources/test262/test/language/statements/async-function",
-			"src/test/resources/test262/test/built-ins/AsyncFunction",
-			"src/test/resources/test262/test/language/expressions/await",
 			// no regex acceptor
-			"src/test/resources/test262/test/language/literals/regexp",
-			// generators not implemented
-			"src/test/resources/test262/test/language/expressions/generators",
-			"src/test/resources/test262/test/language/statements/generators",
+			"src/test/resources/test262/test/language/literals/regexp/u-invalid-non-empty-class-ranges.js",
+			"src/test/resources/test262/test/language/literals/regexp/u-unicode-esc-non-hex.js",
+			"src/test/resources/test262/test/language/literals/regexp/invalid-braced-quantifier-range.js",
+			"src/test/resources/test262/test/language/literals/regexp/u-invalid-oob-decimal-escape.js",
+			"src/test/resources/test262/test/language/literals/regexp/u-invalid-non-empty-class-ranges-no-dash-a.js",
+			"src/test/resources/test262/test/language/literals/regexp/u-invalid-identity-escape.js",
+			"src/test/resources/test262/test/language/literals/regexp/u-invalid-legacy-octal-escape.js",
+			"src/test/resources/test262/test/language/literals/regexp/u-unicode-esc-bounds.js",
+			"src/test/resources/test262/test/language/literals/regexp/u-invalid-non-empty-class-ranges-no-dash-b.js",
+			"src/test/resources/test262/test/language/literals/regexp/invalid-braced-quantifier-lower.js",
+			"src/test/resources/test262/test/language/literals/regexp/u-invalid-class-escape.js",
+			"src/test/resources/test262/test/language/literals/regexp/u-invalid-non-empty-class-ranges-no-dash-ab.js",
+			"src/test/resources/test262/test/language/literals/regexp/invalid-braced-quantifier-exact.js",
+			"src/test/resources/test262/test/language/literals/regexp/u-invalid-quantifiable-assertion.js",
+			"src/test/resources/test262/test/language/literals/regexp/early-err-pattern.js",
+			"src/test/resources/test262/test/language/literals/regexp/u-invalid-extended-pattern-char.js",
+			"src/test/resources/test262/test/language/literals/regexp/u-dec-esc.js",
 
 			// no module early errors
-			"src/test/resources/test262/test/language/module-code"
+			"src/test/resources/test262/test/language/module-code/instn-star-star-cycle.js",
+			"src/test/resources/test262/test/language/module-code/instn-iee-err-circular.js",
+			"src/test/resources/test262/test/language/module-code/instn-resolve-empty-import.js",
+			"src/test/resources/test262/test/language/module-code/instn-iee-err-dflt-thru-star.js",
+			"src/test/resources/test262/test/language/module-code/instn-resolve-err-syntax.js",
+			"src/test/resources/test262/test/language/module-code/instn-named-err-not-found-as.js",
+			"src/test/resources/test262/test/language/module-code/instn-iee-err-ambiguous.js",
+			"src/test/resources/test262/test/language/module-code/instn-named-err-ambiguous.js",
+			"src/test/resources/test262/test/language/module-code/instn-resolve-empty-export.js",
+			"src/test/resources/test262/test/language/module-code/instn-iee-err-circular-as.js",
+			"src/test/resources/test262/test/language/module-code/instn-iee-err-not-found-as.js",
+			"src/test/resources/test262/test/language/module-code/instn-resolve-err-reference.js",
+			"src/test/resources/test262/test/language/module-code/instn-named-err-ambiguous-as.js",
+			"src/test/resources/test262/test/language/module-code/instn-named-err-dflt-thru-star-dflt.js",
+			"src/test/resources/test262/test/language/module-code/instn-named-err-dflt-thru-star-as.js",
+			"src/test/resources/test262/test/language/module-code/instn-named-err-not-found.js",
+			"src/test/resources/test262/test/language/module-code/instn-iee-err-ambiguous-as.js",
+			"src/test/resources/test262/test/language/module-code/eval-rqstd-abrupt.js",
+			"src/test/resources/test262/test/language/module-code/instn-named-star-cycle.js",
+			"src/test/resources/test262/test/language/module-code/instn-iee-star-cycle.js",
+			"src/test/resources/test262/test/language/module-code/instn-iee-err-dflt-thru-star-as.js",
+			"src/test/resources/test262/test/language/module-code/instn-named-err-not-found-dflt.js",
+			"src/test/resources/test262/test/language/module-code/instn-resolve-order-src.js",
+			"src/test/resources/test262/test/language/module-code/instn-iee-err-not-found.js",
+			"src/test/resources/test262/test/language/module-code/instn-resolve-order-depth.js",
+			"src/test/resources/test262/test/language/module-code/instn-star-err-not-found.js"
 	));
 
 	private static final String testsDir = "src/test/resources/test262/test/";
@@ -149,84 +226,57 @@ public class Test262 {
 		if (test262CommentEnd < 0) {
 			return null;
 		}
-
-		// extract categories -- accounting for various authors indentations.
-		Scanner scanner = new Scanner(source.substring(test262CommentBegin, test262CommentEnd));
-		int baseIndentation = -10;
-		StringBuilder currentBlock = new StringBuilder();
-		String currentName = null;
-		HashMap<String, String> categories = new HashMap<>();
-		while (scanner.hasNextLine()) {
-			String line = scanner.nextLine();
-			int indentation = 0;
-			for (int i = 0; i < line.length(); i++) {
-				char c = line.charAt(i);
-				if (c == ' ') {
-					indentation++;
-				} else if (c == '\t') {
-					indentation += 2;
-				} else {
-					break;
-				}
-			}
-
-			if (baseIndentation == -10 || indentation <= baseIndentation) {
-				line = line.substring(indentation);
-				int colonOffset = line.indexOf(":");
-				if (colonOffset > 0) {
-					if (baseIndentation == -10) {
-						baseIndentation = indentation;
-					}
-					if (currentName != null) {
-						categories.put(currentName, currentBlock.toString());
-					}
-					currentBlock = new StringBuilder();
-					currentName = line.substring(0, colonOffset);
-					currentBlock.append(line.substring(colonOffset + 1)).append("\n");
-				}
-			} else {
-				currentBlock.append(line).append("\n");
-			}
+		String yaml = source.substring(test262CommentBegin, test262CommentEnd);
+		Object rawParsedYaml = yamlParser.load(yaml);
+		if (!(rawParsedYaml instanceof Map)) {
+			return null;
 		}
-		if (currentName != null) {
-			categories.put(currentName, currentBlock.toString());
-		}
+		Map<String, Object> parsedYaml = (Map<String, Object>) rawParsedYaml;
 		// extract flags and negative
-		String negative = categories.get("negative");
+		Object rawNegative = parsedYaml.get("negative");
 		Test262Negative negativeEnum = Test262Negative.NONE;
-		if (negative != null) {
-			if (negative.contains("phase: parse")) {
-				negativeEnum = Test262Negative.PARSE;
-			} else if (negative.contains("phase: early")) {
-				negativeEnum = Test262Negative.EARLY;
-			} else {
-				negativeEnum = Test262Negative.EXECUTE;
+		if (rawNegative != null) {
+			if (!(rawNegative instanceof Map)) {
+				return null;
+			}
+			Map<String, Object> negative = (Map<String, Object>) rawNegative;
+			String phase = (String) negative.get("phase");
+			if (phase == null) {
+				return null;
+			}
+			switch (phase) {
+				case "parse":
+					negativeEnum = Test262Negative.PARSE;
+					break;
+				case "early":
+					negativeEnum = Test262Negative.EARLY;
+					break;
+				default:
+					negativeEnum = Test262Negative.EXECUTE;
+					break;
 			}
 		}
-		String flags = categories.get("flags");
+		Object rawFlags = parsedYaml.get("flags");
 		boolean noStrict = false;
 		boolean onlyStrict = false;
 		boolean async = false;
 		boolean module = false;
-		if (flags != null) {
-			int flagStart = flags.indexOf("[");
-			if (flagStart < 0) {
-				return null;
-			}
-			int flagEnd = flags.indexOf("]", flagStart);
-			if (flagEnd < 0) {
-				return null;
-			}
-			String[] flagArray = flags.substring(flagStart + 1, flagEnd).split(", *");
-			for (String flag : flagArray) {
-				if (flag.equals("noStrict")) {
-					noStrict = true;
-				} else if (flag.equals("onlyStrict")) {
-					onlyStrict = true;
-				} else if (flag.equals("async")) {
-					async = true;
-				} else if (flag.equals("module")) {
-					module = true;
+		if (rawFlags != null) {
+			ArrayList<String> flags = (ArrayList<String>) rawFlags;
+			for (String flag : flags) {
+				switch (flag) {
+					case "noStrict":
+						noStrict = true;
+						break;
+					case "onlyStrict":
+						onlyStrict = true;
+						break;
+					case "async":
+						async = true;
+						break;
+					case "module":
+						module = true;
+						break;
 				}
 			}
 		}
@@ -251,9 +301,6 @@ public class Test262 {
 
 	private void runTest(@Nonnull Path path) throws IOException {
 		if (Files.isDirectory(path) || !path.toString().endsWith(".js")) {
-			return;
-		}
-		if (skip.contains(path.getParent().toString())) {
 			return;
 		}
 		String source = new String(Files.readAllBytes(path), StandardCharsets.UTF_8);
