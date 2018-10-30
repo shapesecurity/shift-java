@@ -16,17 +16,10 @@ import javax.annotation.Nonnull;
 
 import java.util.*;
 
-import static com.shapesecurity.shift.es2016.utils.Utils.isIdentifierPart;
-import static com.shapesecurity.shift.es2016.utils.Utils.isIdentifierStart;
-
 public class PatternAcceptor {
 
     public final String pattern;
-    public final boolean gFlag;
-    public final boolean iFlag;
-    public final boolean mFlag;
-    public final boolean yFlag;
-    public final boolean uFlag;
+    public final boolean unicode;
 
     private static final String[] decimalDigits = new String[]{"0", "1", "2", "3", "4", "5", "6", "7", "8", "9"};
     private static final String[] octalDigits = new String[]{"0", "1", "2", "3", "4", "5", "6", "7"};
@@ -35,17 +28,6 @@ public class PatternAcceptor {
     private static final String[] syntaxCharacterArray = "^$\\.*+?()[]{}|".split("");
     private static final String extendedSyntaxCharacters = "^$\\.*+?()[|";
     private static final String[] controlCharacters = new String[]{"a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"};
-
-    private static final HashSet<String> utf16GeneralCategoryValues = new HashSet<>(Arrays.asList("Cased_Letter", "LC", "Close_Punctuation", "Pe", "Connector_Punctuation", "Pc", "Control", "Cc", "cntrl", "Currency_Symbol", "Sc", "Dash_Punctuation", "Pd", "Decimal_Number", "Nd", "digit", "Enclosing_Mark", "Me", "Final_Punctuation", "Pf", "Format", "Cf", "Initial_Punctuation", "Pi", "Letter", "L", "Letter_Number", "Nl", "Line_Separator", "Zl", "Lowercase_Letter", "Ll", "Mark", "M", "Combining_Mark", "Math_Symbol", "Sm", "Modifier_Letter", "Lm", "Modifier_Symbol", "Sk", "Nonspacing_Mark", "Mn", "Number", "N", "Open_Punctuation", "Ps", "Other", "C", "Other_Letter", "Lo", "Other_Number", "No", "Other_Punctuation", "Po", "Other_Symbol", "So", "Paragraph_Separator", "Zp", "Private_Use", "Co", "Punctuation", "P", "punct", "Separator", "Z", "Space_Separator", "Zs", "Spacing_Mark", "Mc", "Surrogate", "Cs", "Symbol", "S", "Titlecase_Letter", "Lt", "Unassigned", "Cn", "Uppercase_Letter", "Lu"));
-    private static final HashSet<String> utf16ScriptCategoryValues = new HashSet<>(Arrays.asList("Adlam", "Adlm", "Ahom", "Anatolian_Hieroglyphs", "Hluw", "Arabic", "Arab", "Armenian", "Armn", "Avestan", "Avst", "Balinese", "Bali", "Bamum", "Bamu", "Bassa_Vah", "Bass", "Batak", "Batk", "Bengali", "Beng", "Bhaiksuki", "Bhks", "Bopomofo", "Bopo", "Brahmi", "Brah", "Braille", "Brai", "Buginese", "Bugi", "Buhid", "Buhd", "Canadian_Aboriginal", "Cans", "Carian", "Cari", "Caucasian_Albanian", "Aghb", "Chakma", "Cakm", "Cham", "Cherokee", "Cher", "Common", "Zyyy", "Coptic", "Copt", "Qaac", "Cuneiform", "Xsux", "Cypriot", "Cprt", "Cyrillic", "Cyrl", "Deseret", "Dsrt", "Devanagari", "Deva", "Dogra", "Dogr", "Duployan", "Dupl", "Egyptian_Hieroglyphs", "Egyp", "Elbasan", "Elba", "Ethiopic", "Ethi", "Georgian", "Geor", "Glagolitic", "Glag", "Gothic", "Goth", "Grantha", "Gran", "Greek", "Grek", "Gujarati", "Gujr", "Gunjala_Gondi", "Gong", "Gurmukhi", "Guru", "Han", "Hani", "Hangul", "Hang", "Hanifi_Rohingya", "Rohg", "Hanunoo", "Hano", "Hatran", "Hatr", "Hebrew", "Hebr", "Hiragana", "Hira", "Imperial_Aramaic", "Armi", "Inherited", "Zinh", "Qaai", "Inscriptional_Pahlavi", "Phli", "Inscriptional_Parthian", "Prti", "Javanese", "Java", "Kaithi", "Kthi", "Kannada", "Knda", "Katakana", "Kana", "Kayah_Li", "Kali", "Kharoshthi", "Khar", "Khmer", "Khmr", "Khojki", "Khoj", "Khudawadi", "Sind", "Lao", "Laoo", "Latin", "Latn", "Lepcha", "Lepc", "Limbu", "Limb", "Linear_A", "Lina", "Linear_B", "Linb", "Lisu", "Lycian", "Lyci", "Lydian", "Lydi", "Mahajani", "Mahj", "Makasar", "Maka", "Malayalam", "Mlym", "Mandaic", "Mand", "Manichaean", "Mani", "Marchen", "Marc", "Medefaidrin", "Medf", "Masaram_Gondi", "Gonm", "Meetei_Mayek", "Mtei", "Mende_Kikakui", "Mend", "Meroitic_Cursive", "Merc", "Meroitic_Hieroglyphs", "Mero", "Miao", "Plrd", "Modi", "Mongolian", "Mong", "Mro", "Mroo", "Multani", "Mult", "Myanmar", "Mymr", "Nabataean", "Nbat", "New_Tai_Lue", "Talu", "Newa", "Nko", "Nkoo", "Nushu", "Nshu", "Ogham", "Ogam", "Ol_Chiki", "Olck", "Old_Hungarian", "Hung", "Old_Italic", "Ital", "Old_North_Arabian", "Narb", "Old_Permic", "Perm", "Old_Persian", "Xpeo", "Old_Sogdian", "Sogo", "Old_South_Arabian", "Sarb", "Old_Turkic", "Orkh", "Oriya", "Orya", "Osage", "Osge", "Osmanya", "Osma", "Pahawh_Hmong", "Hmng", "Palmyrene", "Palm", "Pau_Cin_Hau", "Pauc", "Phags_Pa", "Phag", "Phoenician", "Phnx", "Psalter_Pahlavi", "Phlp", "Rejang", "Rjng", "Runic", "Runr", "Samaritan", "Samr", "Saurashtra", "Saur", "Sharada", "Shrd", "Shavian", "Shaw", "Siddham", "Sidd", "SignWriting", "Sgnw", "Sinhala", "Sinh", "Sogdian", "Sogd", "Sora_Sompeng", "Sora", "Soyombo", "Soyo", "Sundanese", "Sund", "Syloti_Nagri", "Sylo", "Syriac", "Syrc", "Tagalog", "Tglg", "Tagbanwa", "Tagb", "Tai_Le", "Tale", "Tai_Tham", "Lana", "Tai_Viet", "Tavt", "Takri", "Takr", "Tamil", "Taml", "Tangut", "Tang", "Telugu", "Telu", "Thaana", "Thaa", "Thai", "Tibetan", "Tibt", "Tifinagh", "Tfng", "Tirhuta", "Tirh", "Ugaritic", "Ugar", "Vai", "Vaii", "Warang_Citi", "Wara", "Yi", "Yiii", "Zanabazar_Square", "Zanb"));
-
-    private static HashSet<String> constructUtf16LonePropertyValues() {
-        HashSet<String> set = new HashSet<>(Arrays.asList("ASCII", "ASCII_Hex_Digit", "AHex", "Alphabetic", "Alpha", "Any", "Assigned", "Bidi_Control", "Bidi_C", "Bidi_Mirrored", "Bidi_M", "Case_Ignorable", "CI", "Cased", "Changes_When_Casefolded", "CWCF", "Changes_When_Casemapped", "CWCM", "Changes_When_Lowercased", "CWL", "Changes_When_NFKC_Casefolded", "CWKCF", "Changes_When_Titlecased", "CWT", "Changes_When_Uppercased", "CWU", "Dash", "Default_Ignorable_Code_Point", "DI", "Deprecated", "Dep", "Diacritic", "Dia", "Emoji", "Emoji_Component", "Emoji_Modifier", "Emoji_Modifier_Base", "Emoji_Presentation", "Extended_Pictographic", "Extender", "Ext", "Grapheme_Base", "Gr_Base", "Grapheme_Extend", "Gr_Ext", "Hex_Digit", "Hex", "IDS_Binary_Operator", "IDSB", "IDS_Trinary_Operator", "IDST", "ID_Continue", "IDC", "ID_Start", "IDS", "Ideographic", "Ideo", "Join_Control", "Join_C", "Logical_Order_Exception", "LOE", "Lowercase", "Lower", "Math", "Noncharacter_Code_Point", "NChar", "Pattern_Syntax", "Pat_Syn", "Pattern_White_Space", "Pat_WS", "Quotation_Mark", "QMark", "Radical", "Regional_Indicator", "RI", "Sentence_Terminal", "STerm", "Soft_Dotted", "SD", "Terminal_Punctuation", "Term", "Unified_Ideograph", "UIdeo", "Uppercase", "Upper", "Variation_Selector", "VS", "White_Space", "space", "XID_Continue", "XIDC", "XID_Start", "XIDS"));
-        set.addAll(utf16GeneralCategoryValues);
-        return set;
-    }
-
-    private static final HashSet<String> utf16LonePropertyValues = constructUtf16LonePropertyValues();
 
     private static HashMap<String, Integer> constructControlEscapeCharacterValues() {
         HashMap<String, Integer> map = new HashMap<>();
@@ -60,39 +42,20 @@ public class PatternAcceptor {
     private static final HashMap<String, Integer> controlEscapeCharacterValues = constructControlEscapeCharacterValues();
 
     private static final String[] controlEscapeCharacters = controlEscapeCharacterValues.keySet().toArray(new String[0]);
-
-    private static HashMap<String, HashSet<String>> constructUtf16NonBinaryPropertyNames() {
-        HashMap<String, HashSet<String>> map = new HashMap<>();
-        map.put("General_Category", utf16GeneralCategoryValues);
-        map.put("gc", utf16GeneralCategoryValues);
-        map.put("Script", utf16ScriptCategoryValues);
-        map.put("sc", utf16ScriptCategoryValues);
-        map.put("Script_Extensions", utf16ScriptCategoryValues);
-        map.put("scx", utf16ScriptCategoryValues);
-        return map;
-    }
-
-    private static final HashMap<String, HashSet<String>> utf16NonBinaryPropertyNames = constructUtf16NonBinaryPropertyNames();
-
-    private static class RegexException extends RuntimeException {
-        public RegexException(String message) {
-            super(message);
-        }
-    }
-
+    
     private class Context {
         private int index;
         private ImmutableSet<String> backreferenceNames;
         private ImmutableSet<String> groupingNames;
         private ImmutableSet<Integer> backreferences;
-        private int nParenthesis;
+        private int capturingGroups;
 
         private Context(@Nonnull Context context) {
             this.index = context.index;
             this.backreferenceNames = context.backreferenceNames;
             this.groupingNames = context.groupingNames;
             this.backreferences = context.backreferences;
-            this.nParenthesis = context.nParenthesis;
+            this.capturingGroups = context.capturingGroups;
         }
 
         public Context() {
@@ -100,11 +63,11 @@ public class PatternAcceptor {
             this.backreferenceNames = ImmutableSet.emptyUsingEquality();
             this.groupingNames = ImmutableSet.emptyUsingEquality();
             this.backreferences = ImmutableSet.emptyUsingEquality();
-            this.nParenthesis = 0;
+            this.capturingGroups = 0;
         }
 
         public boolean addGrouping() {
-            this.nParenthesis++;
+            this.capturingGroups++;
             return true;
         }
 
@@ -113,9 +76,9 @@ public class PatternAcceptor {
         }
 
         public boolean verifyBackreferences() {
-            if (uFlag) {
+            if (unicode) {
                 for (Integer backreference : this.backreferences) {
-                    if (backreference > nParenthesis) {
+                    if (backreference > capturingGroups) {
                         return false;
                     }
                 }
@@ -133,29 +96,21 @@ public class PatternAcceptor {
         }
 
         public boolean goDeeper(F<Context, Boolean> predicate) {
-            try {
-                Context context = this.goDeeper();
-                boolean accepted = predicate.apply(context);
-                if (accepted) {
-                    this.absorb(context);
-                }
-                return accepted;
-            } catch (RegexException e) {
-                return false;
+            Context context = this.goDeeper();
+            boolean accepted = predicate.apply(context);
+            if (accepted) {
+                this.absorb(context);
             }
+            return accepted;
         }
 
-        public <B> Maybe<B> goDeeperExtended(F<Context, Maybe<B>> predicate) {
-            try {
-                Context context = this.goDeeper();
-                Maybe<B> accepted = predicate.apply(context);
-                if (accepted.isJust()) {
-                    this.absorb(context);
-                }
-                return accepted;
-            } catch (RegexException e) {
-                return Maybe.empty();
+        public <B> Maybe<B> goDeeperMaybe(F<Context, Maybe<B>> predicate) {
+            Context context = this.goDeeper();
+            Maybe<B> accepted = predicate.apply(context);
+            if (accepted.isJust()) {
+                this.absorb(context);
             }
+            return accepted;
         }
 
         private void absorb(Context otherContext) {
@@ -163,7 +118,7 @@ public class PatternAcceptor {
             this.backreferenceNames = otherContext.backreferenceNames;
             this.backreferences = otherContext.backreferences;
             this.groupingNames = otherContext.groupingNames;
-            this.nParenthesis = otherContext.nParenthesis;
+            this.capturingGroups = otherContext.capturingGroups;
         }
 
         public Maybe<String> nextCodePoint() {
@@ -214,25 +169,19 @@ public class PatternAcceptor {
         public String collect(int limit, @Nonnull String[]... stringArrays) {
             StringBuilder stringBuilder = new StringBuilder();
 
-            masterLoop:
+            outer:
             for (int i = 0; limit < 0 || i < limit; i++) {
                 for (String[] strings : stringArrays) {
                     for (String string : strings) {
                         if (this.eat(string)) {
                             stringBuilder.append(string);
-                            continue masterLoop;
+                            continue outer;
                         }
                     }
                 }
                 break;
             }
             return stringBuilder.toString();
-        }
-
-        public void expect(@Nonnull String str) {
-            if (!this.eat(str)) {
-                throw new RegexException("Expected \"" + str + "\" at index " + this.index + ", not found");
-            }
         }
 
         public boolean match(@Nonnull String str) {
@@ -254,33 +203,26 @@ public class PatternAcceptor {
 
     }
 
-    private PatternAcceptor(@Nonnull String pattern, boolean gFlag, boolean iFlag, boolean mFlag, boolean yFlag, boolean uFlag) {
+    private PatternAcceptor(@Nonnull String pattern, boolean unicode) {
         this.pattern = pattern;
-        this.gFlag = gFlag;
-        this.iFlag = iFlag;
-        this.mFlag = mFlag;
-        this.yFlag = yFlag;
-        this.uFlag = uFlag;
+        this.unicode = unicode;
     }
 
-    public static boolean acceptRegex(@Nonnull String pattern, boolean gFlag, boolean iFlag, boolean mFlag, boolean yFlag, boolean uFlag) {
-        PatternAcceptor acceptor = new PatternAcceptor(pattern, gFlag, iFlag, mFlag, yFlag, uFlag);
+    public static boolean acceptRegex(@Nonnull String pattern, boolean uFlag) {
+        PatternAcceptor acceptor = new PatternAcceptor(pattern, uFlag);
         return acceptor.acceptRegex();
     }
 
     private boolean acceptRegex() {
         Context context = new Context();
-        try {
-            if (!acceptDisjunction(context, Maybe.empty())) {
-                return false;
-            }
-        } catch (RegexException e) {
+        if (!acceptDisjunction(context, Maybe.empty())) {
             return false;
         }
         return context.verifyBackreferences();
     }
 
-    private <B> F<Context, Maybe<B>> maybeLogicalOr(F<Context, Maybe<B>>... expressions) {
+    @SafeVarargs
+    private final <B> F<Context, Maybe<B>> maybeLogicalOr(F<Context, Maybe<B>>... expressions) {
         return context -> {
             for (F<Context, Maybe<B>> expression : expressions) {
                 Maybe<B> value = expression.apply(context);
@@ -304,7 +246,9 @@ public class PatternAcceptor {
             }
         } while(context.eat("|"));
         if (terminator.isJust()) {
-            context.expect(terminator.fromJust());
+            if (!context.eat(terminator.fromJust())) {
+                return false;
+            }
         }
         return true;
     }
@@ -320,7 +264,7 @@ public class PatternAcceptor {
 
     private boolean acceptTerm(Context context) {
         // non-quantified references are rolled into quantified accepts to improve performance significantly.
-        if (this.uFlag) {
+        if (this.unicode) {
             return acceptAssertion(context) ||
                     acceptQuantified(this::acceptAtom).apply(context);
         }
@@ -331,7 +275,9 @@ public class PatternAcceptor {
 
     private F<Context, Boolean> acceptLabeledGroup(F<Context, Boolean> predicate) {
         return currentContext -> currentContext.goDeeper(context -> {
-            context.expect("(");
+            if (!context.eat("(")) {
+                return false;
+            }
             if (predicate.apply(context)) {
                return acceptDisjunction(context, Maybe.of(")"));
             }
@@ -342,7 +288,7 @@ public class PatternAcceptor {
     private boolean acceptAssertion(Context context) {
         return context.eatAny("^", "$", "\\b", "\\B").isJust() ||
                 acceptLabeledGroup(subContext -> {
-                    if (uFlag) {
+                    if (unicode) {
                         return subContext.eatAny("?=", "?!").isJust();
                     }
                     return false;
@@ -364,7 +310,9 @@ public class PatternAcceptor {
             }
             if (context.match("{")) {
                 return context.goDeeper(subContext -> {
-                    subContext.expect("{");
+                    if (!subContext.eat("{")) {
+                        return false;
+                    }
                     String decimal1 = subContext.collect(decimalDigits);
                     if (decimal1.length() == 0) {
                         return false;
@@ -375,10 +323,12 @@ public class PatternAcceptor {
                             return false;
                         }
                     }
-                    subContext.expect("}");
+                    if (!subContext.eat("}")) {
+                        return false;
+                    }
                     subContext.eat("?");
                     return true;
-                }) || !uFlag;
+                }) || !unicode;
             } else if (context.eatAny("*", "+", "?").isJust()) {
                 context.eat("?");
             }
@@ -406,24 +356,27 @@ public class PatternAcceptor {
 
     private boolean acceptInvalidBracedQuantifier(Context context) {
         return context.goDeeper(subContext -> {
-            subContext.expect("{");
+            if (!subContext.eat("{")) {
+                return false;
+            }
             if (!acceptDecimal(subContext)) {
                 return false;
             }
             if (subContext.eat(",") && subContext.matchAny(decimalDigits) && !acceptDecimal(subContext)) {
                 return false;
             }
-            subContext.expect("}");
-            return true;
+            return subContext.eat("}");
         });
     }
 
     private boolean acceptAtom(Context context) {
-        if (this.uFlag) {
+        if (this.unicode) {
             return acceptPatternCharacter(context) ||
                     context.eat(".") ||
                     context.goDeeper(subContext -> {
-                        subContext.expect("\\");
+                        if (!subContext.eat("\\")) {
+                            return false;
+                        }
                         return acceptAtomEscape(subContext);
                     }) ||
                     acceptCharacterClass(context) ||
@@ -432,7 +385,9 @@ public class PatternAcceptor {
         }
         boolean matched = context.eat(".") ||
                 context.goDeeper(subContext -> {
-                    subContext.expect("\\");
+                    if (!subContext.eat("\\")) {
+                        return false;
+                    }
                     return acceptAtomEscape(subContext);
                 }) ||
                 acceptCharacterClass(context) ||
@@ -446,7 +401,9 @@ public class PatternAcceptor {
 
     private boolean acceptGrouping(Context superContext) {
         return superContext.goDeeper(context -> {
-            context.expect("(");
+            if (!context.eat("(")) {
+                return false;
+            }
             if (!acceptDisjunction(context, Maybe.of(")"))) {
                 return false;
             }
@@ -481,12 +438,17 @@ public class PatternAcceptor {
         return context.eatAny("d", "D", "s", "S", "w", "W").isJust();
     }
 
+    @Nonnull
     private Maybe<Integer> acceptUnicodeEscape(Context superContext) {
-        return superContext.goDeeperExtended(context -> {
-            context.expect("u");
-            if (uFlag && context.eat("{")) {
+        return superContext.goDeeperMaybe(context -> {
+            if (!context.eat("u")) {
+                return Maybe.empty();
+            }
+            if (unicode && context.eat("{")) {
                 String hex = context.collect(hexDigits);
-                context.expect("}");
+                if (!context.eat("}")) {
+                    return Maybe.empty();
+                }
                 int value = Integer.parseInt(hex, 16);
                 return value > 0x10FFFF ? Maybe.empty() : Maybe.of(value);
             }
@@ -497,8 +459,10 @@ public class PatternAcceptor {
             int value = Integer.parseInt(hex, 16);
 
             if (value >= 0xD800 && value <= 0xDBFF) {
-                Maybe<Integer> surrogatePairValue = context.goDeeperExtended(subContext -> {
-                    subContext.expect("\\u");
+                Maybe<Integer> surrogatePairValue = context.goDeeperMaybe(subContext -> {
+                    if (!subContext.eat("\\u")) {
+                        return Maybe.empty();
+                    }
                     String hex2 = subContext.collect(4, hexDigits);
                     if (hex2.length() != 4) {
                         return Maybe.empty();
@@ -526,23 +490,29 @@ public class PatternAcceptor {
                     }
                     return Maybe.of(controlEscapeCharacterValues.get(escaped.fromJust()));
                 },
-                context -> context.goDeeperExtended(subContext -> {
-                    subContext.expect("c");
+                context -> context.goDeeperMaybe(subContext -> {
+                    if (!subContext.eat("c")) {
+                        return Maybe.empty();
+                    }
                     Maybe<String> character = subContext.eatAny(controlCharacters);
                     if (character.isNothing()) {
                         return Maybe.empty();
                     }
                     return Maybe.of(character.fromJust().codePointAt(0) % 32);
                 }),
-                context -> context.goDeeperExtended(subContext -> {
-                    subContext.expect("0");
+                context -> context.goDeeperMaybe(subContext -> {
+                    if (!subContext.eat("0")) {
+                        return Maybe.empty();
+                    }
                     if (subContext.eatAny(decimalDigits).isJust()) {
                         return Maybe.empty();
                     }
                     return Maybe.of(0);
                 }),
-                context -> context.goDeeperExtended(subContext -> {
-                    subContext.expect("x");
+                context -> context.goDeeperMaybe(subContext -> {
+                    if (!subContext.eat("x")) {
+                        return Maybe.empty();
+                    }
                     String hex = subContext.collect(2, hexDigits);
                     if (hex.length() != 2) {
                         return Maybe.empty();
@@ -550,11 +520,11 @@ public class PatternAcceptor {
                     return Maybe.of(Integer.parseInt(hex, 16));
                 }),
                 this::acceptUnicodeEscape,
-                context -> context.goDeeperExtended(subContext -> {
-                    if (uFlag) {
+                context -> context.goDeeperMaybe(subContext -> {
+                    if (unicode) {
                         return Maybe.empty();
                     }
-                    F<Context, Maybe<Integer>> acceptOctalDigit = subContext2 -> subContext2.goDeeperExtended(subContext3 -> {
+                    F<Context, Maybe<Integer>> acceptOctalDigit = subContext2 -> subContext2.goDeeperMaybe(subContext3 -> {
                         Maybe<String> octal2 = subContext3.eatAny(octalDigits);
                         if (octal2.isNothing()) {
                             return Maybe.empty();
@@ -578,21 +548,21 @@ public class PatternAcceptor {
                         return Maybe.of(octal1.fromJust() << 3 | octal2.fromJust());
                     }
                 }),
-                context -> context.goDeeperExtended(subContext -> {
-                    if (!uFlag) {
+                context -> context.goDeeperMaybe(subContext -> {
+                    if (!unicode) {
                         return Maybe.empty();
                     }
                     Maybe<String> maybeCharacter = subContext.eatAny(syntaxCharacterArray);
                     return maybeCharacter.map(character -> character.codePointAt(0));
                 }),
                 context -> {
-                    if(uFlag && context.eat("/")) {
+                    if(unicode && context.eat("/")) {
                         return Maybe.of((int) "/".charAt(0));
                     }
                     return Maybe.empty();
                 },
-                context -> context.goDeeperExtended(subContext -> {
-                    if (uFlag) {
+                context -> context.goDeeperMaybe(subContext -> {
+                    if (unicode) {
                         return Maybe.empty();
                     }
                     Maybe<String> maybeCharacter = subContext.nextCodePoint();
@@ -607,18 +577,20 @@ public class PatternAcceptor {
 
     private Maybe<Integer> acceptClassEscape(Context superContext) {
         return this.maybeLogicalOr(
-                context -> context.goDeeperExtended(subContext -> {
-                    subContext.expect("b");
+                context -> context.goDeeperMaybe(subContext -> {
+                    if (!subContext.eat("b")) {
+                        return Maybe.empty();
+                    }
                     return Maybe.of(0x0008); // backspace
                 }),
                 context -> {
-                    if (uFlag && context.eat("-")) {
+                    if (unicode && context.eat("-")) {
                         return Maybe.of((int)"-".charAt(0));
                     }
                     return Maybe.empty();
                 },
-                context -> context.goDeeperExtended(subContext -> {
-                    if (uFlag || !subContext.eat("c")) {
+                context -> context.goDeeperMaybe(subContext -> {
+                    if (unicode || !subContext.eat("c")) {
                         return Maybe.empty();
                     }
                     return subContext.eatAny(decimalDigits, new String[]{"_"}).map(str -> str.codePointAt(0) % 32);
@@ -632,7 +604,7 @@ public class PatternAcceptor {
         if (context.eat("\\")) {
 			return this.maybeLogicalOr(
 					this::acceptClassEscape,
-					subContext -> subContext.goDeeperExtended(subContext2 -> {
+					subContext -> subContext.goDeeperMaybe(subContext2 -> {
 						if (subContext2.match("c")) {
 							return Maybe.of(0x005C); // reverse solidus
 						}
@@ -664,9 +636,9 @@ public class PatternAcceptor {
             if (otherAtom.isNothing()) {
                 return Maybe.empty();
             }
-            if (this.uFlag && (atom == -1 || otherAtom.fromJust() == -1)) {
+            if (this.unicode && (atom == -1 || otherAtom.fromJust() == -1)) {
                 return Maybe.empty();
-            } else if (!(!this.uFlag && (atom == -1 || otherAtom.fromJust() == -1)) && atom > otherAtom.fromJust()) {
+            } else if (!(!this.unicode && (atom == -1 || otherAtom.fromJust() == -1)) && atom > otherAtom.fromJust()) {
                 return Maybe.empty();
             } else if (context.match("]")) {
                 return Maybe.of(-1);
@@ -700,13 +672,17 @@ public class PatternAcceptor {
 
     private boolean acceptCharacterClass(Context superContext) {
         return superContext.goDeeper(context -> {
-            context.expect("[");
+            if (!context.eat("[")) {
+                return false;
+            }
             context.eat("^");
             if (context.eat("]")) {
                 return true;
             }
             if (acceptNonEmptyClassRanges(context).isJust()) {
-                context.expect("]");
+                if (!context.eat("]")) {
+                    return false;
+                }
                 return true;
             }
             return false;
