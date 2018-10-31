@@ -573,8 +573,14 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
             case CLASS:
                 throw this.createUnexpected(this.lookahead);
             default: {
-                if (this.lookaheadLexicalDeclaration()) {
-                    throw this.createUnexpected(this.lookahead);
+                TokenizerState tokenizerState = this.saveTokenizerState();
+                if (this.eat(TokenType.LET)) {
+                    if (this.match(TokenType.LBRACK)) {
+                        this.restoreTokenizerState(tokenizerState);
+                        System.out.println(this.lookahead);
+                        throw this.createUnexpected(this.lookahead);
+                    }
+                    this.restoreTokenizerState(tokenizerState);
                 }
                 Expression expr = this.parseExpression().left().fromJust();
                 if (expr instanceof IdentifierExpression && this.eat(TokenType.COLON)) {
