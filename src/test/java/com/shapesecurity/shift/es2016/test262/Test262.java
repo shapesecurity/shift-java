@@ -2,7 +2,6 @@ package com.shapesecurity.shift.es2016.test262;
 
 import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.shift.es2016.ast.Program;
-import com.shapesecurity.shift.es2016.ast.Script;
 import com.shapesecurity.shift.es2016.parser.EarlyError;
 import com.shapesecurity.shift.es2016.parser.EarlyErrorChecker;
 import com.shapesecurity.shift.es2016.parser.JsError;
@@ -329,12 +328,12 @@ public class Test262 {
 		}
 	}
 
-	private void runTest(@Nonnull Path path) throws IOException {
+	private void runTest(@Nonnull Path root, @Nonnull Path path) throws IOException {
 		if (Files.isDirectory(path) || !path.toString().endsWith(".js")) {
 			return;
 		}
 		String source = new String(Files.readAllBytes(path), StandardCharsets.UTF_8);
-		Test262Info info = extractTest262Info(path.toString(), source);
+		Test262Info info = extractTest262Info(root.relativize(path).toString(), source);
 		if (info == null) { // parse failure, probably a fixture
 			return;
 		}
@@ -346,12 +345,15 @@ public class Test262 {
 		}
 	}
 
+
+
 	@Test
 	public void testTest262() throws Exception {
 		LinkedList<Test262Exception> exceptions = new LinkedList<>();
-		Files.walk(Paths.get(testsDir)).forEach(path -> {
+		Path root = Paths.get(testsDir);
+		Files.walk(root).forEach(path -> {
 			try {
-				runTest(path);
+				runTest(root, path);
 			} catch (IOException e) {
 				Assert.fail(e.toString());
 			} catch (Test262Exception e) {
