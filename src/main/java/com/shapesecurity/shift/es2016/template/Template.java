@@ -16,6 +16,7 @@ import com.shapesecurity.shift.es2016.reducer.Director;
 import com.shapesecurity.shift.es2016.reducer.Flattener;
 import com.shapesecurity.shift.es2016.reducer.ReconstructingReducer;
 import com.shapesecurity.shift.es2016.reducer.Reducer;
+import com.shapesecurity.shift.es2016.reducer.ThunkedDirector;
 import com.shapesecurity.shift.es2016.reducer.WrappedReducer;
 import com.shapesecurity.shift.es2016.utils.WithLocation;
 import org.jetbrains.annotations.NotNull;
@@ -54,6 +55,10 @@ public class Template {
 
 	public Program apply(Map<String, F<Node, Node>> newNodes) {
 		return Template.applyTemplate(this, newNodes);
+	}
+
+	public Program applyStructured(ReduceStructured.TemplateValues values) {
+		return Template.applyStruturedTemplate(this.tree, this.namePairs, values);
 	}
 
 	public static class NodeInfo {
@@ -248,4 +253,30 @@ public class Template {
 				: Maybe.empty();
 		return replace(tree, getReplacement);
 	}
+
+	public static Program applyStruturedTemplate(Program tree, ImmutableList<NodeInfo> namePairs, ReduceStructured.TemplateValues values) {
+		IdentityHashMap<Node, List<ReduceStructured.Label>> nodeToLabels = new IdentityHashMap<>();
+		for (NodeInfo info : namePairs) {
+			if (!nodeToLabels.containsKey(info.node)) {
+				nodeToLabels.put(info.node, new ArrayList<>(1));
+			}
+			List<ReduceStructured.Label> labels = nodeToLabels.get(info.node);
+			if (info.name.startsWith("if ")) {
+				labels.add(new ReduceStructured.If(false, info.name.substring("if ".length()).trim()));
+			} else if (info.name.startsWith("unless ")) {
+				labels.add(new ReduceStructured.If(true, info.name.substring("unless ".length()).trim()));
+			} else if (info.name.startsWith("for each ")) {
+				String[] split = info.name.substring("for each ".length()).split(" of ");
+				if (split.length != 2) {
+					throw new RuntimeException("Couldn't parse label " + info.name);
+				}
+				labels.add(new ReduceStructured.Loop(split[0].trim(), split[1].trim()));
+			} else {
+				labels.add(new ReduceStructured.Bare(info.name));
+			}
+		}
+
+		return (Program) ThunkedDirector.reduceProgram(new ReduceStructured(nodeToLabels, values), tree);
+	}
+
 }
