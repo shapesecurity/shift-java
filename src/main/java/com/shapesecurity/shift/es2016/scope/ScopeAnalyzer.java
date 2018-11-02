@@ -19,42 +19,8 @@ package com.shapesecurity.shift.es2016.scope;
 import com.shapesecurity.functional.F2;
 import com.shapesecurity.functional.Pair;
 import com.shapesecurity.functional.data.*;
-import com.shapesecurity.shift.es2016.ast.ArrowExpression;
-import com.shapesecurity.shift.es2016.ast.AssignmentExpression;
-import com.shapesecurity.shift.es2016.ast.AssignmentTargetIdentifier;
-import com.shapesecurity.shift.es2016.ast.BindingIdentifier;
-import com.shapesecurity.shift.es2016.ast.BindingPropertyIdentifier;
-import com.shapesecurity.shift.es2016.ast.BindingWithDefault;
-import com.shapesecurity.shift.es2016.ast.Block;
-import com.shapesecurity.shift.es2016.ast.CallExpression;
-import com.shapesecurity.shift.es2016.ast.CatchClause;
-import com.shapesecurity.shift.es2016.ast.ClassDeclaration;
-import com.shapesecurity.shift.es2016.ast.ClassExpression;
-import com.shapesecurity.shift.es2016.ast.CompoundAssignmentExpression;
-import com.shapesecurity.shift.es2016.ast.ComputedMemberExpression;
-import com.shapesecurity.shift.es2016.ast.ForInStatement;
-import com.shapesecurity.shift.es2016.ast.ForOfStatement;
-import com.shapesecurity.shift.es2016.ast.ForStatement;
-import com.shapesecurity.shift.es2016.ast.FormalParameters;
-import com.shapesecurity.shift.es2016.ast.FunctionDeclaration;
-import com.shapesecurity.shift.es2016.ast.FunctionExpression;
-import com.shapesecurity.shift.es2016.ast.Getter;
-import com.shapesecurity.shift.es2016.ast.IdentifierExpression;
-import com.shapesecurity.shift.es2016.ast.IfStatement;
-import com.shapesecurity.shift.es2016.ast.Import;
-import com.shapesecurity.shift.es2016.ast.Method;
+import com.shapesecurity.shift.es2016.ast.*;
 import com.shapesecurity.shift.es2016.ast.Module;
-import com.shapesecurity.shift.es2016.ast.Node;
-import com.shapesecurity.shift.es2016.ast.Script;
-import com.shapesecurity.shift.es2016.ast.Setter;
-import com.shapesecurity.shift.es2016.ast.Statement;
-import com.shapesecurity.shift.es2016.ast.SwitchCase;
-import com.shapesecurity.shift.es2016.ast.SwitchDefault;
-import com.shapesecurity.shift.es2016.ast.UpdateExpression;
-import com.shapesecurity.shift.es2016.ast.VariableDeclaration;
-import com.shapesecurity.shift.es2016.ast.VariableDeclarationStatement;
-import com.shapesecurity.shift.es2016.ast.VariableDeclarator;
-import com.shapesecurity.shift.es2016.ast.WithStatement;
 import com.shapesecurity.shift.es2016.reducer.Director;
 import com.shapesecurity.shift.es2016.reducer.MonoidalReducer;
 import com.shapesecurity.shift.es2016.reducer.StrictnessReducer;
@@ -307,8 +273,15 @@ public final class ScopeAnalyzer extends MonoidalReducer<State> {
     }
 
     @Nonnull
+    @Override
     public State reduceImport(@Nonnull Import node, @Nonnull Maybe<State> defaultBinding, @Nonnull ImmutableList<State> namedImports) {
         return super.reduceImport(node, defaultBinding, namedImports).addDeclarations(Kind.Import);
+    }
+
+    @Nonnull
+    @Override
+    public State reduceImportNamespace(@Nonnull ImportNamespace node, @Nonnull Maybe<State> defaultBinding, @Nonnull State namespaceBinding) {
+        return super.reduceImportNamespace(node, defaultBinding, namespaceBinding).addDeclarations(Kind.Import);
     }
 
     @Nonnull
