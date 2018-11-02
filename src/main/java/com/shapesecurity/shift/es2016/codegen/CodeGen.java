@@ -883,7 +883,7 @@ public class CodeGen implements Reducer<CodeRep> {
     @Nonnull
     @Override
     public CodeRep reduceStaticPropertyName(@Nonnull StaticPropertyName node) {
-        if (isIdentifierNameES6(node.value) && !node.value.equals("Infinity")) {
+        if (isIdentifierNameES6(node.value) && !node.value.equals("Infinity") && !node.value.equals("default")) { // default is fine in non-strict code, however
             return factory.token(node.value);
         } else {
             try {
