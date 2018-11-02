@@ -1945,6 +1945,15 @@ public class ScopeTest extends TestCase {
     }
 
     @Test
+    public void testImportNamespace() throws JsError {
+        checkScopeSerialization(
+                "import * as ns from \"test.js\"",
+                "{\"node\": \"Module_0\", \"type\": \"Global\", \"isDynamic\": true, \"through\": [], \"variables\": [], \"children\": [{\"node\": \"Module_0\", \"type\": \"Module\", \"isDynamic\": false, \"through\": [], \"variables\": [{\"name\": \"ns\", \"references\": [], \"declarations\": [{\"node\": \"BindingIdentifier(ns)_2\", \"kind\": \"Import\"}]}], \"children\": []}]}",
+                false
+        );
+    }
+
+    @Test
     public void testClass() throws JsError {
         checkScopeSerialization(
                 "class C{}",
