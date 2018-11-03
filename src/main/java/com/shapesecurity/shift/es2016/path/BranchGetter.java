@@ -2,6 +2,7 @@ package com.shapesecurity.shift.es2016.path;
 
 import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.functional.data.Maybe;
+import com.shapesecurity.functional.data.NonEmptyImmutableList;
 import com.shapesecurity.shift.es2016.ast.Node;
 
 import java.util.Objects;
@@ -17,6 +18,10 @@ public class BranchGetter {
         this.directions = directions;
     }
 
+    public static BranchGetter of(Branch... branches) {
+        return new BranchGetter(ImmutableList.from(branches).reverse()); // extremely silly, but it works
+    }
+
     public BranchGetter d(Branch branch) {
         return new BranchGetter(this.directions.cons(branch));
     }
@@ -25,9 +30,9 @@ public class BranchGetter {
         ImmutableList<Branch> directions = this.directions.reverse(); // a bit silly, but it works
         Maybe<? extends Node> n = Maybe.of(node);
         while (n.isJust() && directions.isNotEmpty()) {
-            node = n.fromJust();
-            n = directions.maybeHead().fromJust().step(node);
-            directions = directions.maybeTail().fromJust();
+            NonEmptyImmutableList<Branch> nonEmptyDirections = (NonEmptyImmutableList<Branch>) directions;
+            n = n.flatMap(nonEmptyDirections.head::step);
+            directions = nonEmptyDirections.tail;
         }
         return n;
     }

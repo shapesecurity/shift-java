@@ -22,10 +22,12 @@ package com.shapesecurity.shift.es2016.path;
 import com.shapesecurity.functional.data.Maybe;
 import com.shapesecurity.shift.es2016.ast.*;
 
+import javax.annotation.Nonnull;
 import java.util.Objects;
 
 
 public abstract class Branch {
+	@Nonnull
 	abstract public Maybe<? extends Node> step(Node node);
 
 	abstract public String propertyName();
