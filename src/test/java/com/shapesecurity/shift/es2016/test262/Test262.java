@@ -24,9 +24,8 @@ import java.util.*;
 public class Test262 {
 
 	private static final Yaml yamlParser = new Yaml();
-	
-	private static final String testsDir = "src/test/resources/test262/test/";
 
+	private static final String testsDir = "src/test/resources/test262/test/";
 
 	@Nullable
 	private static Test262Info extractTest262Info(@Nonnull String path, @Nonnull String source) {
