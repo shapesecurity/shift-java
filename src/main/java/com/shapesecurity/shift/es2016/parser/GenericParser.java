@@ -577,7 +577,6 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
                 if (this.eat(TokenType.LET)) {
                     if (this.match(TokenType.LBRACK)) {
                         this.restoreTokenizerState(tokenizerState);
-                        System.out.println(this.lookahead);
                         throw this.createUnexpected(this.lookahead);
                     }
                     this.restoreTokenizerState(tokenizerState);

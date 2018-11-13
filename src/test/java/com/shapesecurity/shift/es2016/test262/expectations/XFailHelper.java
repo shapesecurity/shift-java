@@ -116,7 +116,6 @@ public class XFailHelper {
 		xfailFiles.addAll(Arrays.asList(Async.xfail));
 		xfailFiles.addAll(Arrays.asList(Regexp.xfail));
 		xfailFiles.addAll(Arrays.asList(ContextualKeywordEscapes.xfail));
-		xfailFiles.addAll(Arrays.asList(LetAutomaticSemicolonInsertion.xfail));
 	}
 
 	public static boolean isXFailed(@Nonnull Test262Info info, boolean shouldFail) {
