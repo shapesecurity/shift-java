@@ -79,6 +79,14 @@ public class EarlyTest {
 		"14eaa7e71c682461.js",
 		"aca911e336954a5b.js",
 
+		// functions with reserved names whose bodies are strict: https://github.com/tc39/ecma262/pull/1158
+		"050a006ae573e260.js",
+		"2c0f785914da9d0b.js",
+		"574ea84fc61bdc31.js",
+		"6c4fe38464c16309.js",
+		"8643da76fe7e95c7.js",
+		"e0c3d30b6fe96812.js",
+
 		"" // empty line to make git diffs nicer
 	));
 
