@@ -1346,6 +1346,11 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
 
         if (this.lookahead.type != TokenType.EXP) {
             return left;
+        } else if (left.isLeft()) {
+            Expression expression = left.left().fromJust();
+            if (expression instanceof UnaryExpression) {
+                throw this.createUnexpected(this.lookahead);
+            }
         }
         this.lex();
 
@@ -2247,7 +2252,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
             boolean isStatic = false;
             AdditionalStateT classElementStart = this.startNode();
             Either<PropertyName, MethodDefinition> methodOrKey = this.parseMethodDefinition();
-            if (methodOrKey.isLeft() && ((StaticPropertyName) methodOrKey.left().fromJust()).value.equals("static")) {
+            if (methodOrKey.isLeft() && methodOrKey.left().fromJust() instanceof StaticPropertyName && ((StaticPropertyName) methodOrKey.left().fromJust()).value.equals("static")) {
                 isStatic = true;
                 methodOrKey = this.parseMethodDefinition();
             }

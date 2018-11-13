@@ -1,11 +1,13 @@
 package com.shapesecurity.shift.es2016.test262;
 
 import com.shapesecurity.functional.data.ImmutableList;
+import com.shapesecurity.functional.data.ImmutableSet;
 import com.shapesecurity.shift.es2016.ast.Program;
 import com.shapesecurity.shift.es2016.parser.EarlyError;
 import com.shapesecurity.shift.es2016.parser.EarlyErrorChecker;
 import com.shapesecurity.shift.es2016.parser.JsError;
 import com.shapesecurity.shift.es2016.parser.Parser;
+import com.shapesecurity.shift.es2016.test262.expectations.XFailHelper;
 import org.junit.Assert;
 import org.junit.Test;
 import org.yaml.snakeyaml.Yaml;
@@ -23,6 +25,7 @@ public class Test262 {
 
 	private static final Yaml yamlParser = new Yaml();
 
+	/*
 	private static final HashSet<String> xfailParse = new HashSet<>(Arrays.asList(
 			// shift-java#198
 			"annexB/language/statements/for-in/nonstrict-initializer.js",
@@ -186,32 +189,10 @@ public class Test262 {
 			"language/module-code/instn-iee-err-not-found.js",
 			"language/module-code/instn-resolve-order-depth.js",
 			"language/module-code/instn-star-err-not-found.js"
-	));
+	));*/
 
 	private static final String testsDir = "src/test/resources/test262/test/";
 
-	private enum Test262Negative {
-		PARSE, EARLY, EXECUTE, NONE
-	}
-
-	private static final class Test262Info {
-		@Nonnull
-		public final String name;
-		public final Test262Negative negative;
-		public final boolean noStrict;
-		public final boolean onlyStrict;
-		public final boolean async;
-		public final boolean module;
-
-		public Test262Info(@Nonnull String name, @Nonnull Test262Negative negative, boolean noStrict, boolean onlyStrict, boolean async, boolean module) {
-			this.name = name;
-			this.negative = negative;
-			this.noStrict = noStrict;
-			this.onlyStrict = onlyStrict;
-			this.async = async;
-			this.module = module;
-		}
-	}
 
 	@Nullable
 	private static Test262Info extractTest262Info(@Nonnull String path, @Nonnull String source) {
@@ -233,7 +214,7 @@ public class Test262 {
 		Map<String, Object> parsedYaml = (Map<String, Object>) rawParsedYaml;
 		// extract flags and negative
 		Object rawNegative = parsedYaml.get("negative");
-		Test262Negative negativeEnum = Test262Negative.NONE;
+		Test262Info.Test262Negative negativeEnum = Test262Info.Test262Negative.NONE;
 		if (rawNegative != null) {
 			if (!(rawNegative instanceof Map)) {
 				return null;
@@ -245,13 +226,13 @@ public class Test262 {
 			}
 			switch (phase) {
 				case "parse":
-					negativeEnum = Test262Negative.PARSE;
+					negativeEnum = Test262Info.Test262Negative.PARSE;
 					break;
 				case "early":
-					negativeEnum = Test262Negative.EARLY;
+					negativeEnum = Test262Info.Test262Negative.EARLY;
 					break;
 				default:
-					negativeEnum = Test262Negative.EXECUTE;
+					negativeEnum = Test262Info.Test262Negative.EXECUTE;
 					break;
 			}
 		}
@@ -279,7 +260,15 @@ public class Test262 {
 				}
 			}
 		}
-		return new Test262Info(path, negativeEnum, noStrict, onlyStrict, async, module);
+		ImmutableSet<String> featureSet = ImmutableSet.emptyUsingEquality();
+		Object rawFeatures = parsedYaml.get("features");
+		if (rawFeatures != null) {
+			ArrayList<String> features = (ArrayList<String>) rawFeatures;
+			for (String feature : features) {
+				featureSet = featureSet.put(feature);
+			}
+		}
+		return new Test262Info(path, negativeEnum, noStrict, onlyStrict, async, module, featureSet);
 	}
 
 	private static final class Test262Exception extends RuntimeException {
@@ -299,7 +288,10 @@ public class Test262 {
 	}
 
 	private void runTest262Test(@Nonnull String source, @Nonnull Path path, @Nonnull Test262Info info, boolean strict) {
-		boolean xfailedParse = xfailParse.contains(info.name);
+		boolean shouldFail = info.negative == Test262Info.Test262Negative.PARSE || info.negative == Test262Info.Test262Negative.EARLY;
+		boolean xfailed = XFailHelper.isXFailed(info, shouldFail);
+		boolean failed;
+		Throwable failureReason;
 		try {
 			Program program;
 			if (info.module) {
@@ -309,21 +301,18 @@ public class Test262 {
 			} else {
 				program = Parser.parseScript(source);
 			}
-			if ((info.negative == Test262Negative.PARSE) != xfailedParse) {
-				throw new Test262Exception(info.name, "Parsed and should not have: " + path.toString());
-			}
-			boolean xfailedEarly = xfailEarlyErrors.contains(info.name);
 			ImmutableList<EarlyError> earlyErrors = EarlyErrorChecker.validate(program);
-			boolean passEarlyError = earlyErrors.length == 0;
-			if (passEarlyError && (info.negative == Test262Negative.EARLY) != xfailedEarly) {
-				throw new Test262Exception(info.name, "Passed early errors and should not have: " + path.toString());
-			} else if (!passEarlyError && ((info.negative == Test262Negative.EARLY) == xfailedEarly)) {
-				throw new Test262Exception(info.name, "Failed early errors and should not have: " + path.toString(),
-						new RuntimeException(earlyErrors.foldLeft((acc, error) -> error.message + "\n" + acc, "")));
-			}
+			failed = earlyErrors.length > 0;
+			failureReason = new RuntimeException("Early Errors: \n" + earlyErrors.foldLeft((str, error) -> error.message + ", " + str, ""));
 		} catch (JsError e) {
-			if ((info.negative == Test262Negative.PARSE) == xfailedParse && info.negative != Test262Negative.EARLY) { // we classify some early errors as parse errors
-				throw new Test262Exception(info.name, "Did not parse and should have: " + path.toString(), e);
+			failed = true;
+			failureReason = e;
+		}
+		if (xfailed && failed == shouldFail || !xfailed && failed != shouldFail) {
+			if (shouldFail != xfailed) {
+				throw new Test262Exception(info.name, "Parsed and should not have: " + path.toString());
+			} else {
+				throw new Test262Exception(info.name, "Did not parse and should have: " + path.toString(), failureReason);
 			}
 		}
 	}
