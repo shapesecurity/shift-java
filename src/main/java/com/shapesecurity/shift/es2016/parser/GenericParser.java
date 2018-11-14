@@ -1345,11 +1345,6 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
 
         if (this.lookahead.type != TokenType.EXP) {
             return left;
-        } else if (left.isLeft()) {
-            Expression expression = left.left().fromJust();
-            if (expression instanceof UnaryExpression) {
-                throw this.createUnexpected(this.lookahead);
-            }
         }
         this.lex();
 
@@ -1382,6 +1377,9 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
             }
             UnaryOperator operator = lookupUnaryOperator(operatorToken);
             assert operator != null;
+            if (this.match(TokenType.EXP)) {
+                throw this.createUnexpected(this.lookahead);
+            }
             return Either3.left(this.finishNode(startState, new UnaryExpression(operator, operand.left().fromJust())));
         } else if (operand.isMiddle()) {
             throw this.createError(ErrorMessages.UNEXPECTED_ARROW);

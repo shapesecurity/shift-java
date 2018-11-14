@@ -1,11 +1,8 @@
 package com.shapesecurity.shift.es2016.parser.expressions;
 
-import com.shapesecurity.shift.es2016.ast.AssignmentExpression;
-import com.shapesecurity.shift.es2016.ast.BinaryExpression;
-import com.shapesecurity.shift.es2016.ast.IdentifierExpression;
-import com.shapesecurity.shift.es2016.ast.LiteralNumericExpression;
+import com.shapesecurity.shift.es2016.ast.*;
 import com.shapesecurity.shift.es2016.ast.operators.BinaryOperator;
-import com.shapesecurity.shift.es2016.ast.AssignmentTargetIdentifier;
+import com.shapesecurity.shift.es2016.ast.operators.UnaryOperator;
 import com.shapesecurity.shift.es2016.parser.ParserTestCase;
 import com.shapesecurity.shift.es2016.parser.JsError;
 
@@ -189,5 +186,7 @@ public class BinaryExpressionTest extends ParserTestCase {
                 new IdentifierExpression("y")));
 
         testScript("(a, e=0)", new BinaryExpression(new IdentifierExpression("a"), BinaryOperator.Sequence, new AssignmentExpression(new AssignmentTargetIdentifier("e"), new LiteralNumericExpression(0.0))));
+
+        testScript("(-1) ** 2", new BinaryExpression(new UnaryExpression(UnaryOperator.Minus, new LiteralNumericExpression(1.0)), BinaryOperator.Exp, new LiteralNumericExpression(2.0)));
     }
 }
