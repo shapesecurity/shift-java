@@ -64,9 +64,14 @@ public class Test262 {
 				case "early":
 					negativeEnum = Test262Info.Test262Negative.EARLY;
 					break;
-				default:
-					negativeEnum = Test262Info.Test262Negative.EXECUTE;
+				case "runtime":
+					negativeEnum = Test262Info.Test262Negative.RUNTIME;
 					break;
+				case "resolution":
+					negativeEnum = Test262Info.Test262Negative.RESOLUTION;
+					break;
+				default:
+					throw new RuntimeException("Invalid negative phase: " + phase);
 			}
 		}
 		Object rawFlags = parsedYaml.get("flags");

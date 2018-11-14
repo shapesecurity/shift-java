@@ -7,7 +7,7 @@ import javax.annotation.Nonnull;
 public final class Test262Info {
 
 	public enum Test262Negative {
-		PARSE, EARLY, EXECUTE, NONE
+		PARSE, EARLY, RUNTIME, RESOLUTION, NONE
 	}
 
 	@Nonnull
