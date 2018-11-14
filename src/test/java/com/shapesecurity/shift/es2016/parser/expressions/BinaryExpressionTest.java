@@ -3,6 +3,7 @@ package com.shapesecurity.shift.es2016.parser.expressions;
 import com.shapesecurity.shift.es2016.ast.*;
 import com.shapesecurity.shift.es2016.ast.operators.BinaryOperator;
 import com.shapesecurity.shift.es2016.ast.operators.UnaryOperator;
+import com.shapesecurity.shift.es2016.ast.operators.UpdateOperator;
 import com.shapesecurity.shift.es2016.parser.ParserTestCase;
 import com.shapesecurity.shift.es2016.parser.JsError;
 
@@ -188,5 +189,9 @@ public class BinaryExpressionTest extends ParserTestCase {
         testScript("(a, e=0)", new BinaryExpression(new IdentifierExpression("a"), BinaryOperator.Sequence, new AssignmentExpression(new AssignmentTargetIdentifier("e"), new LiteralNumericExpression(0.0))));
 
         testScript("(-1) ** 2", new BinaryExpression(new UnaryExpression(UnaryOperator.Minus, new LiteralNumericExpression(1.0)), BinaryOperator.Exp, new LiteralNumericExpression(2.0)));
+
+        testScript("++a ** 2", new BinaryExpression(new UpdateExpression(true, UpdateOperator.Increment, new AssignmentTargetIdentifier("a")), BinaryOperator.Exp, new LiteralNumericExpression(2.0)));
+
+        testScript("a++ ** 2", new BinaryExpression(new UpdateExpression(false, UpdateOperator.Increment, new AssignmentTargetIdentifier("a")), BinaryOperator.Exp, new LiteralNumericExpression(2.0)));
     }
 }
