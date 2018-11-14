@@ -577,7 +577,6 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
                 if (this.eat(TokenType.LET)) {
                     if (this.match(TokenType.LBRACK)) {
                         this.restoreTokenizerState(tokenizerState);
-                        System.out.println(this.lookahead);
                         throw this.createUnexpected(this.lookahead);
                     }
                     this.restoreTokenizerState(tokenizerState);
@@ -1378,6 +1377,9 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
             }
             UnaryOperator operator = lookupUnaryOperator(operatorToken);
             assert operator != null;
+            if (this.match(TokenType.EXP)) {
+                throw this.createUnexpected(this.lookahead);
+            }
             return Either3.left(this.finishNode(startState, new UnaryExpression(operator, operand.left().fromJust())));
         } else if (operand.isMiddle()) {
             throw this.createError(ErrorMessages.UNEXPECTED_ARROW);
@@ -2247,7 +2249,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
             boolean isStatic = false;
             AdditionalStateT classElementStart = this.startNode();
             Either<PropertyName, MethodDefinition> methodOrKey = this.parseMethodDefinition();
-            if (methodOrKey.isLeft() && ((StaticPropertyName) methodOrKey.left().fromJust()).value.equals("static")) {
+            if (methodOrKey.isLeft() && methodOrKey.left().fromJust() instanceof StaticPropertyName && ((StaticPropertyName) methodOrKey.left().fromJust()).value.equals("static")) {
                 isStatic = true;
                 methodOrKey = this.parseMethodDefinition();
             }

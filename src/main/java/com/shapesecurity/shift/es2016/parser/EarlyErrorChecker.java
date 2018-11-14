@@ -255,7 +255,7 @@ public class EarlyErrorChecker extends MonoidalReducer<EarlyErrorState> {
     @Nonnull
     @Override
     public EarlyErrorState reduceClassDeclaration(@Nonnull ClassDeclaration node, @Nonnull EarlyErrorState name, @Nonnull Maybe<EarlyErrorState> _super, @Nonnull ImmutableList<EarlyErrorState> elements) {
-        EarlyErrorState s = name;
+        EarlyErrorState s = name.enforceStrictErrors();
         EarlyErrorState sElements = fold(elements).enforceStrictErrors();
         if (node._super.isJust()) {
             s = append(s, _super.fromJust().enforceStrictErrors());
@@ -284,7 +284,7 @@ public class EarlyErrorChecker extends MonoidalReducer<EarlyErrorState> {
     @Nonnull
     @Override
     public EarlyErrorState reduceClassExpression(@Nonnull ClassExpression node, @Nonnull Maybe<EarlyErrorState> name, @Nonnull Maybe<EarlyErrorState> _super, @Nonnull ImmutableList<EarlyErrorState> elements) {
-        EarlyErrorState s = name.orJust(new EarlyErrorState()); // todo use `identity`?
+        EarlyErrorState s = name.orJust(new EarlyErrorState()).enforceStrictErrors(); // todo use `identity`?
         EarlyErrorState sElements = fold(elements).enforceStrictErrors();
         if (node._super.isJust()) {
             s = append(s, _super.fromJust().enforceStrictErrors());

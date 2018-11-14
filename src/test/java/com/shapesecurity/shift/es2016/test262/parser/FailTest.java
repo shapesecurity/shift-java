@@ -1,4 +1,4 @@
-package com.shapesecurity.shift.es2016.Test262;
+package com.shapesecurity.shift.es2016.test262.parser;
 
 import com.shapesecurity.shift.es2016.parser.JsError;
 import com.shapesecurity.shift.es2016.parser.Parser;

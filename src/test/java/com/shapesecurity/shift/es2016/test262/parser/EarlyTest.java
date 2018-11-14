@@ -1,8 +1,6 @@
-package com.shapesecurity.shift.es2016.Test262;
+package com.shapesecurity.shift.es2016.test262.parser;
 
-import com.shapesecurity.shift.es2016.ast.Module;
 import com.shapesecurity.shift.es2016.ast.Program;
-import com.shapesecurity.shift.es2016.ast.Script;
 import com.shapesecurity.shift.es2016.parser.EarlyErrorChecker;
 import com.shapesecurity.shift.es2016.parser.JsError;
 import com.shapesecurity.shift.es2016.parser.Parser;
@@ -80,6 +78,14 @@ public class EarlyTest {
 		// https://github.com/tc39/test262-parser-tests/issues/15
 		"14eaa7e71c682461.js",
 		"aca911e336954a5b.js",
+
+		// functions with reserved names whose bodies are strict: https://github.com/tc39/ecma262/pull/1158
+		"050a006ae573e260.js",
+		"2c0f785914da9d0b.js",
+		"574ea84fc61bdc31.js",
+		"6c4fe38464c16309.js",
+		"8643da76fe7e95c7.js",
+		"e0c3d30b6fe96812.js",
 
 		"" // empty line to make git diffs nicer
 	));
