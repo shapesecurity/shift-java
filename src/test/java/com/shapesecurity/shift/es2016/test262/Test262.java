@@ -146,23 +146,29 @@ public class Test262 {
 			failed = true;
 			failureReason = e;
 		}
-		if (xfailed && failed == shouldFail || !xfailed && failed != shouldFail) {
-			if (shouldFail != xfailed) {
-				throw new Test262Exception(info.name, "Parsed and should not have: " + path.toString());
+		if (xfailed && failed == shouldFail) {
+			if (shouldFail) {
+				throw new Test262Exception(info.name, "Expected test to parse, when it should fail, however it failed to parse: " + path.toString(), failureReason);
 			} else {
-				throw new Test262Exception(info.name, "Did not parse and should have: " + path.toString(), failureReason);
+				throw new Test262Exception(info.name, "Expected test to fail to parse, when it should parse, however it did parse: " + path.toString());
+			}
+		} else if (!xfailed && failed != shouldFail) {
+			if (shouldFail) {
+				throw new Test262Exception(info.name, "Expected test to fail to parse, but it did not: " + path.toString());
+			} else {
+				throw new Test262Exception(info.name, "Expected test to parse, but it did not: " + path.toString(), failureReason);
 			}
 		}
 	}
 
 	private void runTest(@Nonnull Path root, @Nonnull Path path) throws IOException {
-		if (Files.isDirectory(path) || !path.toString().endsWith(".js")) {
+		if (Files.isDirectory(path) || !path.toString().endsWith(".js") || path.toString().endsWith("_FIXTURE.js")) {
 			return;
 		}
 		String source = new String(Files.readAllBytes(path), StandardCharsets.UTF_8);
 		Test262Info info = extractTest262Info(root.relativize(path).toString(), source);
-		if (info == null) { // parse failure, probably a fixture
-			return;
+		if (info == null) { // parse failure
+			throw new Test262Exception(path.toString(), "Failed to parse frontmatter");
 		}
 		if (!info.onlyStrict && !info.module) {
 			runTest262Test(source, path, info, false);
