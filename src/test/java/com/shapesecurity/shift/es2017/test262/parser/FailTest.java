@@ -22,7 +22,10 @@ public class FailTest {
 	static final String testsDir = "src/test/resources/test262-parser-tests/fail/";
 
 	static final Set<String> xfail = new HashSet<>(Arrays.asList(
-		"" // empty line to make git diffs nicer
+			// Invalid test
+			// https://github.com/tc39/test262-parser-tests/issues/21
+			"e3fbcf63d7e43ead.js",
+			"" // empty line to make git diffs nicer
 	));
 
 	static void check(String name) throws IOException {
