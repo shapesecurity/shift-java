@@ -47,6 +47,25 @@ public class ApplyTemplateTest extends TestCase {
 		checkSimpleApplication(source, new LiteralNullExpression(), expected);
 	}
 
+	public void testLaziness() throws JsError {
+		String source = "(/*# label #*/ 0); /*# untouched #*/ x + y; z + w;";
+		String expected = "null; x + y; z + w;";
+
+		HashMap<String, F<Node, Node>> newNodes = new HashMap<>();
+		newNodes.put("label", node -> new LiteralNullExpression());
+		newNodes.put("untouched", node -> node);
+
+		ParserWithLocation parserWithLocation = new ParserWithLocation();
+		Script tree = parserWithLocation.parseScript(source);
+		ImmutableList<Template.NodeInfo> namePairs = findNodes(tree, parserWithLocation, parserWithLocation.getComments());
+
+		Script result = (Script) Template.applyTemplate(tree, namePairs, newNodes);
+		assertEquals(Parser.parseScript(expected), result);
+
+		assertTrue("templates re-use replaced nodes if appropriate", result.statements.index(1).fromJust() == tree.statements.index(1).fromJust());
+		assertTrue("templates re-use unreplaced nodes", result.statements.index(2).fromJust() == tree.statements.index(2).fromJust());
+	}
+
 	public void testReusableAPI() throws JsError {
 		String source = "a + /*# label #*/ b";
 
