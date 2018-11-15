@@ -1175,7 +1175,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
         }
 
         AdditionalStateT startStateAsyncBinding = this.startNode();
-        Either3<Expression, FormalParameters, AssignmentTarget> expr = this.parseConditionalExpression();
+        Either3<Expression, Pair<FormalParameters, Boolean>, AssignmentTarget> expr = this.parseConditionalExpression();
 
         if (this.match(TokenType.ARROW)) {
             if (this.hasLineTerminatorBeforeNext) {
@@ -1184,13 +1184,14 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
             this.isBindingElement = this.isAssignmentTarget = false;
             this.firstExprError = null;
             if (expr.isMiddle()) {
-                return Either.left(this.parseArrowExpressionTail(expr.middle().fromJust(), ((FormalParametersWithAsync) expr.middle().fromJust()).isAsync, startState));
+                Pair<FormalParameters, Boolean> formalParametersWithAsync = expr.middle().fromJust();
+                return Either.left(this.parseArrowExpressionTail(formalParametersWithAsync.left, formalParametersWithAsync.right, startState));
             } else if (expr.isLeft()) {
                 Expression leftExpr = expr.left().fromJust();
                 if (!(leftExpr instanceof IdentifierExpression)) {
                     throw this.createUnexpected(this.lookahead);
                 }
-                return Either.left(this.parseArrowExpressionTail(this.finishNode(startStateAsyncBinding, new FormalParametersWithAsync(false, ImmutableList.of(this.bindingToParameter(this.targetToBinding(this.transformDestructuring(leftExpr)))), Maybe.empty())), false, startState));
+                return Either.left(this.parseArrowExpressionTail(this.finishNode(startStateAsyncBinding, new FormalParameters(ImmutableList.of(this.bindingToParameter(this.targetToBinding(this.transformDestructuring(leftExpr)))), Maybe.empty())), false, startState));
             } else {
                 throw this.createUnexpected(this.lookahead);
             }
@@ -1314,9 +1315,9 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
     }
 
     @Nonnull
-    protected Either3<Expression, FormalParameters, AssignmentTarget> parseConditionalExpression() throws JsError {
+    protected Either3<Expression, Pair<FormalParameters, Boolean>, AssignmentTarget> parseConditionalExpression() throws JsError {
         AdditionalStateT startState = this.startNode();
-        Either3<Expression, FormalParameters, AssignmentTarget> test = this.parseBinaryExpression();
+        Either3<Expression, Pair<FormalParameters, Boolean>, AssignmentTarget> test = this.parseBinaryExpression();
         if (this.firstExprError != null) {
             return test;
         }
@@ -1341,9 +1342,9 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
     }
 
     @Nonnull
-    protected Either3<Expression, FormalParameters, AssignmentTarget> parseBinaryExpression() throws JsError {
+    protected Either3<Expression, Pair<FormalParameters, Boolean>, AssignmentTarget> parseBinaryExpression() throws JsError {
         AdditionalStateT startState = this.startNode();
-        Either3<Expression, FormalParameters, AssignmentTarget> left = this.parseExponentiationExpression();
+        Either3<Expression, Pair<FormalParameters, Boolean>, AssignmentTarget> left = this.parseExponentiationExpression();
 
         if (this.firstExprError != null) {
             return left;
@@ -1361,7 +1362,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
             ImmutableList<ExprStackItem<AdditionalStateT>> stack = ImmutableList.empty();
             stack = stack.cons(new ExprStackItem<>(startState, left.left().fromJust(), operator));
             startState = this.startNode();
-            Either3<Expression, FormalParameters, AssignmentTarget> expr = this.isolateCoverGrammar(this::parseExponentiationExpression);
+            Either3<Expression, Pair<FormalParameters, Boolean>, AssignmentTarget> expr = this.isolateCoverGrammar(this::parseExponentiationExpression);
             if (expr.isMiddle()) {
                 throw this.createUnexpected(this.lookahead);
             }
@@ -1402,9 +1403,9 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
     }
 
     @Nonnull
-    protected Either3<Expression, FormalParameters, AssignmentTarget> parseExponentiationExpression() throws JsError {
+    protected Either3<Expression, Pair<FormalParameters, Boolean>, AssignmentTarget> parseExponentiationExpression() throws JsError {
         AdditionalStateT startState = this.startNode();
-        Either3<Expression, FormalParameters, AssignmentTarget> left = this.parseUnaryExpression();
+        Either3<Expression, Pair<FormalParameters, Boolean>, AssignmentTarget> left = this.parseUnaryExpression();
 
         if (this.lookahead.type != TokenType.EXP) {
             return left;
@@ -1418,7 +1419,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
     }
 
     @Nonnull
-    protected Either3<Expression, FormalParameters, AssignmentTarget> parseUnaryExpression() throws JsError {
+    protected Either3<Expression, Pair<FormalParameters, Boolean>, AssignmentTarget> parseUnaryExpression() throws JsError {
         if (this.lookahead.type.klass != TokenClass.Punctuator && this.lookahead.type.klass != TokenClass.Keyword) {
             return this.parseUpdateExpression();
         }
@@ -1426,7 +1427,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
         AdditionalStateT startState = this.startNode();
 
         if (this.allowAwaitExpression && this.eat(TokenType.AWAIT)) {
-            Either3<Expression, FormalParameters, AssignmentTarget> expression = this.isolateCoverGrammar(this::parseUnaryExpression);
+            Either3<Expression, Pair<FormalParameters, Boolean>, AssignmentTarget> expression = this.isolateCoverGrammar(this::parseUnaryExpression);
             return Either3.left(this.finishNode(startState, new AwaitExpression(expression.left().fromJust())));
         }
 
@@ -1437,7 +1438,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
 
         this.lex();
         this.isBindingElement = this.isAssignmentTarget = false;
-        Either3<Expression, FormalParameters, AssignmentTarget> operand = this.isolateCoverGrammar(this::parseUnaryExpression);
+        Either3<Expression, Pair<FormalParameters, Boolean>, AssignmentTarget> operand = this.isolateCoverGrammar(this::parseUnaryExpression);
 
         if (operand.isLeft()) {
             UpdateOperator updateOperator = lookupUpdateOperator(operatorToken);
@@ -1458,9 +1459,9 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
     }
 
     @Nonnull
-    protected Either3<Expression, FormalParameters, AssignmentTarget> parseUpdateExpression() throws JsError {
+    protected Either3<Expression, Pair<FormalParameters, Boolean>, AssignmentTarget> parseUpdateExpression() throws JsError {
         AdditionalStateT startState = this.startNode();
-        Either3<Expression, FormalParameters, AssignmentTarget> operand = this.parseLeftHandSideExpression(true).mapLeft(x -> (Expression) x);
+        Either3<Expression, Pair<FormalParameters, Boolean>, AssignmentTarget> operand = this.parseLeftHandSideExpression(true).mapLeft(x -> (Expression) x);
         if (this.firstExprError != null || this.hasLineTerminatorBeforeNext) {
             return operand;
         }
@@ -1512,12 +1513,12 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
     }
 
     @Nonnull
-    protected Either3<ExpressionSuper, FormalParameters, AssignmentTarget> parseLeftHandSideExpression(boolean allowCall) throws JsError {
+    protected Either3<ExpressionSuper, Pair<FormalParameters, Boolean>, AssignmentTarget> parseLeftHandSideExpression(boolean allowCall) throws JsError {
         AdditionalStateT startState = this.startNode();
         boolean previousAllowIn = this.allowIn;
         this.allowIn = true;
 
-        Either3<ExpressionSuper, FormalParameters, AssignmentTarget> expr;
+        Either3<ExpressionSuper, Pair<FormalParameters, Boolean>, AssignmentTarget> expr;
         Token token = this.lookahead;
 
         if (this.eat(TokenType.SUPER)) {
@@ -1554,7 +1555,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
                     this.allowAwaitExpression = true;
                     BindingIdentifier param = this.parseBindingIdentifier();
                     this.allowAwaitExpression = previousAwait;
-                    return Either3.middle(this.finishNode(afterAsyncStartState, new FormalParametersWithAsync(true, ImmutableList.of(param), Maybe.empty())));
+                    return Either3.middle(Pair.of(this.finishNode(afterAsyncStartState, new FormalParameters(ImmutableList.of(param), Maybe.empty())), true));
                 } else if (this.match(TokenType.LPAREN)) {
                     // the maximally obnoxious case: `async (`
                     AdditionalStateT afterAsyncStartState = this.startNode();
@@ -1588,7 +1589,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
                         if (error[0] != null) {
                             throw error[0];
                         }
-                        return Either3.middle(this.finishNode(afterAsyncStartState, new FormalParametersWithAsync(true, params, rest)));
+                        return Either3.middle(Pair.of(this.finishNode(afterAsyncStartState, new FormalParameters(params, rest)), true));
                     }
                     this.firstAwaitLocation = previousAwaitLocation == null ? this.firstAwaitLocation : previousAwaitLocation;
                     this.isBindingElement = this.isAssignmentTarget = false;
@@ -1692,7 +1693,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
             }
             return this.finishNode(startState, new NewTargetExpression());
         }
-        Either3<ExpressionSuper, FormalParameters, AssignmentTarget> fromParseLeftHandSideExpression = this.isolateCoverGrammar(
+        Either3<ExpressionSuper, Pair<FormalParameters, Boolean>, AssignmentTarget> fromParseLeftHandSideExpression = this.isolateCoverGrammar(
                 () -> this.parseLeftHandSideExpression(false));
         if (fromParseLeftHandSideExpression.isLeft()) {
             ExpressionSuper callee = fromParseLeftHandSideExpression.left().fromJust();
@@ -1758,7 +1759,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
     }
 
     @Nonnull
-    protected Either3<Expression, FormalParameters, AssignmentTarget> parsePrimaryExpression() throws JsError {
+    protected Either3<Expression, Pair<FormalParameters, Boolean>, AssignmentTarget> parsePrimaryExpression() throws JsError {
         if (this.match(TokenType.LPAREN)) {
             return this.parseGroupExpression();
         }
@@ -2067,7 +2068,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
     }
 
     @Nonnull
-    protected Either3<Expression, FormalParameters, AssignmentTarget> parseGroupExpression() throws JsError {
+    protected Either3<Expression, Pair<FormalParameters, Boolean>, AssignmentTarget> parseGroupExpression() throws JsError {
         AdditionalStateT preParenStartState = this.startNode();
         SourceLocation startLocation = this.getLocation();
 
@@ -2076,15 +2077,15 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
 
         if (this.match(TokenType.RPAREN)) {
             this.lex();
-            FormalParameters paramsNode = this.finishNode(preParenStartState, new FormalParametersWithAsync(false, ImmutableList.empty(), Maybe.empty()));
+            FormalParameters paramsNode = this.finishNode(preParenStartState, new FormalParameters(ImmutableList.empty(), Maybe.empty()));
             this.isBindingElement = this.isAssignmentTarget = false;
-            return Either3.middle(paramsNode);
+            return Either3.middle(Pair.of(paramsNode, false));
         } else if (this.eat(TokenType.ELLIPSIS)) {
             Maybe<Binding> rest = Maybe.of(this.parseBindingTarget());
             this.expect(TokenType.RPAREN);
-            FormalParameters paramsNode = this.finishNode(preParenStartState, new FormalParametersWithAsync(false, ImmutableList.empty(), rest));
+            FormalParameters paramsNode = this.finishNode(preParenStartState, new FormalParameters(ImmutableList.empty(), rest));
             this.isBindingElement = this.isAssignmentTarget = false;
-            return Either3.middle(paramsNode);
+            return Either3.middle(Pair.of(paramsNode, false));
         }
 
         Either<Expression, AssignmentTarget> group = this.inheritCoverGrammar(this::parseAssignmentExpressionOrTarget);
@@ -2109,8 +2110,8 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
                 this.lex();
                 Maybe<Binding> rest = Maybe.of(this.parseBindingTarget());
                 this.expect(TokenType.RPAREN);
-                FormalParameters paramsNode = this.finishNode(preParenStartState, new FormalParametersWithAsync(false, ImmutableList.from(params).map(this::bindingToParameter), rest));
-                return Either3.middle(paramsNode);
+                FormalParameters paramsNode = this.finishNode(preParenStartState, new FormalParameters(ImmutableList.from(params).map(this::bindingToParameter), rest));
+                return Either3.middle(Pair.of(paramsNode, false));
             }
 
             if (mustBeArrowParameterList) {
@@ -2142,8 +2143,8 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
                 throw this.createErrorWithLocation(startLocation, this.match(TokenType.ASSIGN) ? ErrorMessages.INVALID_LHS_IN_ASSIGNMENT : ErrorMessages.ILLEGAL_ARROW_FUNCTION_PARAMS);
             }
             this.isBindingElement = false;
-            FormalParameters paramsNode = this.finishNode(preParenStartState, new FormalParametersWithAsync(false, ImmutableList.from(params).map(this::bindingToParameter), Maybe.empty()));
-            return Either3.middle(paramsNode);
+            FormalParameters paramsNode = this.finishNode(preParenStartState, new FormalParameters(ImmutableList.from(params).map(this::bindingToParameter), Maybe.empty()));
+            return Either3.middle(Pair.of(paramsNode, false));
         } else {
             // Ensure assignment pattern:
             this.isBindingElement = false;
@@ -2355,7 +2356,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
         }
 
         if (this.eat(TokenType.EXTENDS)) {
-            Either3<ExpressionSuper, FormalParameters, AssignmentTarget> fromParseLeftHandSideExpression = this.isolateCoverGrammar(() -> this.parseLeftHandSideExpression(true));
+            Either3<ExpressionSuper, Pair<FormalParameters, Boolean>, AssignmentTarget> fromParseLeftHandSideExpression = this.isolateCoverGrammar(() -> this.parseLeftHandSideExpression(true));
             if (fromParseLeftHandSideExpression.isLeft()) {
                 heritage = Maybe.of((Expression) fromParseLeftHandSideExpression.left().fromJust());
             } else if (fromParseLeftHandSideExpression.isMiddle()) {
@@ -2408,7 +2409,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
         boolean previousParamYield = this.allowYieldExpression;
 
         if (this.eat(TokenType.EXTENDS)) {
-            Either3<ExpressionSuper, FormalParameters, AssignmentTarget> fromParseLeftHandSideExpression = this.isolateCoverGrammar(() -> this.parseLeftHandSideExpression(true));
+            Either3<ExpressionSuper, Pair<FormalParameters, Boolean>, AssignmentTarget> fromParseLeftHandSideExpression = this.isolateCoverGrammar(() -> this.parseLeftHandSideExpression(true));
             if (fromParseLeftHandSideExpression.isLeft()) {
                 heritage = Maybe.of((Expression) fromParseLeftHandSideExpression.left().fromJust());
             } else if (fromParseLeftHandSideExpression.isMiddle()) {

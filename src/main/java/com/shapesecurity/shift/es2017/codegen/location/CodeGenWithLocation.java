@@ -42,8 +42,8 @@ public class CodeGenWithLocation extends WrappedReducer<CodeRep> implements With
 				if (node instanceof ArrowExpression && !CodeGen.isComplexArrowHead(((ArrowExpression) node).params)) {
 					if (codeRep instanceof CodeRep.Seq && ((CodeRep.Seq) codeRep).children.length > 1) {
 						CodeRep[] children = ((CodeRep.Seq) codeRep).children;
-						CodeRep bindingRep = children[0];
-						CodeRep arrowToken = children[1];
+						CodeRep bindingRep = children[1];
+						CodeRep arrowToken = children[2];
 						if (bindingRep instanceof CodeRep.Token && arrowToken instanceof CodeRep.Token && "=>".equals(((CodeRep.Token) arrowToken).token)) {
 							// The default CodeGen replaces the CodeRep for a simple FormalParameters node of an ArrowExpression with a CodeRep for just the sole BindingIdentifier, so that it doesn't include parentheses.
 							// This test mostly confirms that the CodeRep looks like we expect in that case: a token for the BindingIdentifier, followed by a token for the arrow itself.
@@ -51,8 +51,9 @@ public class CodeGenWithLocation extends WrappedReducer<CodeRep> implements With
 							CodeRepWithLocation bindingRepWithLocation = new CodeRepWithLocation(bindingRep, ((ArrowExpression) node).params.items.maybeHead().fromJust(), this.meta);
 							CodeRepWithLocation paramsRepWithLocation = new CodeRepWithLocation(bindingRepWithLocation, ((ArrowExpression) node).params, this.meta);
 							CodeRep[] newChildren = new CodeRep[children.length];
-							newChildren[0] = paramsRepWithLocation;
-							System.arraycopy(children, 1, newChildren, 1, children.length - 1);
+							newChildren[0] = children[0]; // copy over prefix (i.e. async)
+							newChildren[1] = paramsRepWithLocation;
+							System.arraycopy(children, 2, newChildren, 2, children.length - 2);
 							codeRep = new CodeRep.Seq(newChildren);
 						}
 					}
