@@ -4,12 +4,12 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>com.shapesecurity.shift</groupId>
-	<artifactId>es2016</artifactId>
+	<artifactId>es2017</artifactId>
 	<version>1.5.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
 	<name>Shift AST</name>
-	<description>Shift format ECMAScript 2016 AST tooling</description>
+	<description>Shift format ECMAScript 2017 AST tooling</description>
 	<url>https://github.com/shapesecurity/shift-java</url>
 
 	<developers>
@@ -51,7 +51,6 @@
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<version>4.12</version>
-			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.intellij</groupId>
