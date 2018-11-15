@@ -29,8 +29,10 @@ public class ApplyStructuredTemplateTest extends TestCase {
 			"    /*# if x::include #*/" +
 			"      /*# for each y of x::ys #*/" +
 			"        /*# y::arg #*/ a" +
-			");";
-		String expected = "f(a_1, a_2, a_5, a_6);";
+			");" +
+			"/*# untouched #*/ x + y;" +
+			"z + w;";
+		String expected = "f(a_1, a_2, a_5, a_6); x + y; z + w;";
 
 		HashMap<String, Boolean> conditions = new HashMap<>();
 		HashMap<String, List<ReduceStructured.TemplateValues>> lists = new HashMap<String, List<ReduceStructured.TemplateValues>>() {{
@@ -78,7 +80,9 @@ public class ApplyStructuredTemplateTest extends TestCase {
 				)
 			));
 		}};
-		HashMap<String, F<Node, Node>> replacers = new HashMap<>();
+		HashMap<String, F<Node, Node>> replacers = new HashMap<String, F<Node, Node>>() {{
+			put("untouched", node -> node);
+		}};
 
 		ReduceStructured.TemplateValues values = new ReduceStructured.TemplateValues(conditions, lists, replacers);
 
@@ -88,7 +92,10 @@ public class ApplyStructuredTemplateTest extends TestCase {
 		Script tree = parserWithLocation.parseScript(source);
 		ImmutableList<Template.NodeInfo> namePairs = findNodes(tree, parserWithLocation, parserWithLocation.getComments());
 
-		Program result = Template.applyStruturedTemplate(tree, namePairs, values);
+		Script result = (Script) Template.applyStruturedTemplate(tree, namePairs, values);
 		assertEquals(Parser.parseScript(expected), result);
+
+		assertTrue("templates re-use replaced nodes if appropriate", result.statements.index(1).fromJust() == tree.statements.index(1).fromJust());
+		assertTrue("templates re-use unreplaced nodes", result.statements.index(2).fromJust() == tree.statements.index(2).fromJust());
 	}
 }
