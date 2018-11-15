@@ -14,6 +14,7 @@ import com.shapesecurity.shift.es2016.parser.ParserWithLocation;
 import com.shapesecurity.shift.es2016.parser.SourceSpan;
 import com.shapesecurity.shift.es2016.reducer.Director;
 import com.shapesecurity.shift.es2016.reducer.Flattener;
+import com.shapesecurity.shift.es2016.reducer.LazyReconstructingReducer;
 import com.shapesecurity.shift.es2016.reducer.ReconstructingReducer;
 import com.shapesecurity.shift.es2016.reducer.Reducer;
 import com.shapesecurity.shift.es2016.reducer.ThunkedDirector;
@@ -90,7 +91,7 @@ public class Template {
 	public static Program replace(Program tree, F2<Node, Node, Maybe<Node>> getReplacement) {
 		Reducer<Node> replacer = new WrappedReducer<>(
 			(originalNode, newNode) -> getReplacement.apply(newNode, originalNode).orJust(newNode),
-			new ReconstructingReducer() // TODO LazyCloneReducer
+			new LazyReconstructingReducer()
 		);
 		return (Program) Director.reduceProgram(replacer, tree);
 	}
