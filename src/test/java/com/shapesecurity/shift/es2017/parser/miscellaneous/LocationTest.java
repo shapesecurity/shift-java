@@ -275,4 +275,51 @@ public class LocationTest extends TestCase {
 		MethodDefinition method = element.method;
 		checkText(method, "method  ()   {}");
 	}
+
+	@Test
+	public void testAsync() throws JsError {
+		init(" async a => 0 ");
+		ArrowExpression arrowExpression = (ArrowExpression) ((ExpressionStatement) this.tree.items.maybeHead().fromJust()).expression;
+		checkText(arrowExpression, "async a => 0");
+		checkText(arrowExpression.params, "a");
+
+		init(" async (a) => 0 ");
+		arrowExpression = (ArrowExpression) ((ExpressionStatement) this.tree.items.maybeHead().fromJust()).expression;
+		checkText(arrowExpression, "async (a) => 0");
+		checkText(arrowExpression.params, "(a)");
+
+		init(" async function f() {} ; ");
+		FunctionDeclaration functionDeclaration = ((FunctionDeclaration) this.tree.items.maybeHead().fromJust());
+		checkText(functionDeclaration, "async function f() {}");
+
+		init(" (async function f() {}) ; ");
+		FunctionExpression functionExpression = (FunctionExpression) ((ExpressionStatement) this.tree.items.maybeHead().fromJust()).expression;
+		checkText(functionExpression, "async function f() {}");
+
+		init(" export async function f() {} ; ");
+		functionDeclaration = (FunctionDeclaration) ((Export) this.tree.items.maybeHead().fromJust()).declaration;
+		checkText(functionDeclaration, "async function f() {}");
+
+		init(" export default async function f() {} ; ");
+		functionDeclaration = (FunctionDeclaration) ((ExportDefault) this.tree.items.maybeHead().fromJust()).body;
+		checkText(functionDeclaration, "async function f() {}");
+
+		init(" class A { async m () {} } ");
+		ClassDeclaration classDeclaration = ((ClassDeclaration) this.tree.items.maybeHead().fromJust());
+		ClassElement element = classDeclaration.elements.maybeHead().fromJust();
+		Method method = (Method) element.method;
+		checkText(element, "async m () {}");
+		checkText(method, "async m () {}");
+
+		init(" class A { static async m () {} } ");
+		classDeclaration = ((ClassDeclaration) this.tree.items.maybeHead().fromJust());
+		element = classDeclaration.elements.maybeHead().fromJust();
+		method = (Method) element.method;
+		checkText(element, "static async m () {}");
+		checkText(method, "async m () {}");
+
+		init(" ({ async m () {} }) ");
+		method = (Method)  ((ObjectExpression) ((ExpressionStatement) this.tree.items.maybeHead().fromJust()).expression).properties.maybeHead().fromJust();
+		checkText(method, "async m () {}");
+	}
 }

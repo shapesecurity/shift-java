@@ -180,7 +180,7 @@ public class CodeGen implements Reducer<CodeRep> {
         if (node.body instanceof Expression) {
             body = p(node.body, Precedence.ASSIGNMENT, body);
         }
-        return seqVA(params, factory.token("=>"), body);
+        return seqVA(node.isAsync ? factory.token("async") : factory.empty(), params, factory.token("=>"), body);
     }
 
     @Override
@@ -628,13 +628,13 @@ public class CodeGen implements Reducer<CodeRep> {
     @Override
     @Nonnull
     public CodeRep reduceFunctionDeclaration(@Nonnull FunctionDeclaration node, @Nonnull CodeRep name, @Nonnull CodeRep params, @Nonnull CodeRep body) {
-        return seqVA(factory.token("function"), node.isGenerator ? factory.token("*") : factory.empty(), node.name.name.equals("*default*") ? factory.empty() : name, params, body);
+        return seqVA(node.isAsync ? factory.token("async") : factory.empty(), factory.token("function"), node.isGenerator ? factory.token("*") : factory.empty(), node.name.name.equals("*default*") ? factory.empty() : name, params, body);
     }
 
     @Override
     @Nonnull
     public CodeRep reduceFunctionExpression(@Nonnull FunctionExpression node, @Nonnull Maybe<CodeRep> name, @Nonnull CodeRep params, @Nonnull CodeRep body) {
-        CodeRep state = seqVA(factory.token("function"), node.isGenerator ? factory.token("*") : factory.empty(), name.isJust() ? name.fromJust() : factory.empty(), params, body);
+        CodeRep state = seqVA(node.isAsync ? factory.token("async") : factory.empty(), factory.token("function"), node.isGenerator ? factory.token("*") : factory.empty(), name.isJust() ? name.fromJust() : factory.empty(), params, body);
         state.setStartsWithFunctionOrClass(true);
         return state;
     }
@@ -765,7 +765,7 @@ public class CodeGen implements Reducer<CodeRep> {
     @Nonnull
     @Override
     public CodeRep reduceMethod(@Nonnull Method node, @Nonnull CodeRep name, @Nonnull CodeRep params, @Nonnull CodeRep body) {
-        return seqVA(node.isGenerator ? factory.token("*") : factory.empty(), name, params, body);
+        return seqVA(node.isAsync ? factory.token("async") : factory.empty(), node.isGenerator ? factory.token("*") : factory.empty(), name, params, body);
     }
 
     @Nonnull
