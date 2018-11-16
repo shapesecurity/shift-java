@@ -110,7 +110,6 @@ public class XFailHelper {
 				"language/literals/string/legacy-non-octal-escape-sequence-strict.js"
 		));
 		xfailFiles.addAll(Arrays.asList(Regexp.xfail));
-		xfailFiles.addAll(Arrays.asList(TrailingCommas.xfail));
 		xfailFiles.addAll(Arrays.asList(ContextualKeywordEscapes.xfail));
 	}
 

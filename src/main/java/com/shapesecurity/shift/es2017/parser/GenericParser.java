@@ -549,6 +549,9 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
                     break;
                 }
                 this.expect(TokenType.COMMA);
+                if (this.match(TokenType.RPAREN)) {
+                    break;
+                }
             }
         }
         this.expect(TokenType.RPAREN);
@@ -2099,6 +2102,14 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
         boolean mustBeArrowParameterList = false;
 
         while (this.eat(TokenType.COMMA)) {
+            if (this.match(TokenType.RPAREN)) {
+                if (!this.isBindingElement) {
+                    throw this.createUnexpected(this.lookahead);
+                }
+                this.firstExprError = this.firstExprError == null ? this.createUnexpected(this.lookahead) : this.firstExprError;
+                mustBeArrowParameterList = true;
+                break;
+            }
             this.isAssignmentTarget = false;
             if (this.match(TokenType.ELLIPSIS)) {
                 if (!this.isBindingElement) {
