@@ -341,7 +341,7 @@ public class PatternAcceptor {
         if (nextCodePoint.isNothing() || syntaxCharacters.contains(nextCodePoint.fromJust())) {
             return false;
         }
-        context.skip(nextCodePoint.orJust("").length());
+        context.skip(1);
         return true;
     }
 
@@ -350,7 +350,7 @@ public class PatternAcceptor {
         if (nextCodePoint.isNothing() || extendedSyntaxCharacters.contains(nextCodePoint.fromJust())) {
             return false;
         }
-        context.skip(nextCodePoint.orJust("").length());
+        context.skip(1);
         return true;
     }
 
@@ -616,7 +616,7 @@ public class PatternAcceptor {
         if (nextCodePoint.isNothing() || nextCodePoint.fromJust().equals("]") || nextCodePoint.fromJust().equals("-")) {
             return Maybe.empty();
         }
-        context.skip(nextCodePoint.fromJust().length());
+        context.skip(1);
         return Maybe.of(nextCodePoint.fromJust().codePointAt(0));
     }
 
