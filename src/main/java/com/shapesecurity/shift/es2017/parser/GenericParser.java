@@ -2178,7 +2178,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
                     return Either.right(this.finishNode(startState, toReturn));
                 }
                 if (!this.match(TokenType.COLON)) {
-                    if (token.type != TokenType.IDENTIFIER && token.type != TokenType.YIELD && token.type != TokenType.LET && token.type != TokenType.ASYNC) {
+                    if (token.type != TokenType.IDENTIFIER && token.type != TokenType.YIELD && token.type != TokenType.LET && token.type != TokenType.ASYNC && token.type != TokenType.AWAIT) {
                         throw this.createUnexpected(token);
                     }
                     ShorthandProperty toReturn = new ShorthandProperty(this.finishNode(startState, new IdentifierExpression(staticPropertyName.value)));

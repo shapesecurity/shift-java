@@ -78,6 +78,11 @@ public class AsyncAwaitTest {
 		testScript("(async function a() { await 0; })", new FunctionExpression(true, false, Maybe.of(new BindingIdentifier("a")), new FormalParameters(ImmutableList.empty(), Maybe.empty()), new FunctionBody(ImmutableList.empty(), ImmutableList.of(new ExpressionStatement(new AwaitExpression(new LiteralNumericExpression(0.0)))))));
 		testScript("async () => await 0", new ArrowExpression(true, new FormalParameters(ImmutableList.empty(), Maybe.empty()), new AwaitExpression(new LiteralNumericExpression(0.0))));
 		testScript("({ async a(){ await 0; } })", new ObjectExpression(ImmutableList.of(new Method(true, false, new StaticPropertyName("a"), new FormalParameters(ImmutableList.empty(), Maybe.empty()), new FunctionBody(ImmutableList.empty(), ImmutableList.of(new ExpressionStatement(new AwaitExpression(new LiteralNumericExpression(0.0)))))))));
+		testScript("var await; ({ await });", new Script(ImmutableList.empty(), ImmutableList.of(
+				new VariableDeclarationStatement(new VariableDeclaration(VariableDeclarationKind.Var, ImmutableList.of(new VariableDeclarator(new BindingIdentifier("await"), Maybe.empty())))),
+				new ExpressionStatement(new ObjectExpression(ImmutableList.of(new ShorthandProperty(new IdentifierExpression("await")))))
+		)));
+
 		testScriptFailure("await 0", 6, "Unexpected number");
 	}
 
