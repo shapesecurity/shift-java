@@ -233,7 +233,7 @@ public class LiteralRegExpExpressionTest extends ParserTestCase {
         testScript("/(?!.){0,}?/;", new LiteralRegExpExpression("(?!.){0,}?", false, false, false, false, false));
         testScriptFailure("/(?!.){0,}?/u", 13, "Invalid regular expression");
 
-        assertTrue(PatternAcceptor.acceptRegex("]", false, false, false, false, false));
+        assertTrue(PatternAcceptor.acceptRegex("]", false));
 
 
         for (String regex : expectedToPass) {
