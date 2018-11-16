@@ -17,7 +17,7 @@ public class ForInStatementTest extends ParserTestCase {
                 new IdentifierExpression("process"), ImmutableList.of(new IdentifierExpression("x"))))));
 
         testScript("for (var x in list) process(x);", new ForInStatement(new VariableDeclaration(
-			VariableDeclarationKind.Var,
+            VariableDeclarationKind.Var,
                 ImmutableList.of(new VariableDeclarator(new BindingIdentifier("x"), Maybe.empty()))),
                 new IdentifierExpression("list"), new ExpressionStatement(new CallExpression(
                 new IdentifierExpression("process"), ImmutableList.of(new IdentifierExpression("x"))))));
