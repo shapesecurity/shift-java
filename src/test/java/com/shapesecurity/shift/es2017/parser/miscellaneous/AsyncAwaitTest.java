@@ -45,6 +45,20 @@ public class AsyncAwaitTest {
 						)
 				)))
 		);
+		testScript("(function() {var async = 5;return async;})()", new CallExpression(new FunctionExpression(false, false, Maybe.empty(), new FormalParameters(ImmutableList.empty(), Maybe.empty()), new FunctionBody(
+				ImmutableList.empty(),
+				ImmutableList.of(
+						new VariableDeclarationStatement(new VariableDeclaration(VariableDeclarationKind.Var, ImmutableList.of(new VariableDeclarator(new BindingIdentifier("async"), Maybe.of(new LiteralNumericExpression(5.0)))))),
+						new ReturnStatement(Maybe.of(new IdentifierExpression("async")))
+				)
+		)), ImmutableList.empty()));
+		testScript("(function() {'use strict';var async = 5;return async;})()", new CallExpression(new FunctionExpression(false, false, Maybe.empty(), new FormalParameters(ImmutableList.empty(), Maybe.empty()), new FunctionBody(
+				ImmutableList.of(new Directive("use strict")),
+				ImmutableList.of(
+						new VariableDeclarationStatement(new VariableDeclaration(VariableDeclarationKind.Var, ImmutableList.of(new VariableDeclarator(new BindingIdentifier("async"), Maybe.of(new LiteralNumericExpression(5.0)))))),
+						new ReturnStatement(Maybe.of(new IdentifierExpression("async")))
+				)
+		)), ImmutableList.empty()));
 	}
 
 	@Test

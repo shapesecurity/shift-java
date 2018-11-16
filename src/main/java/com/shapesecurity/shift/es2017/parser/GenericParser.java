@@ -317,6 +317,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
             case LET:
             case YIELD:
             case AWAIT:
+            case ASYNC:
                 return this.parseBindingIdentifier();
             case LBRACK:
                 return this.parseArrayBinding();
