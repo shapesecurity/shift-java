@@ -550,7 +550,6 @@ public class CodeGenTest {
     @Test
     public void testLiteralNullExpression() throws JsError {
         test("null");
-        test("null", "nul\\u006c");
     }
 
     @Test
@@ -757,7 +756,6 @@ public class CodeGenTest {
         test("true");
         test("false");
         test("null");
-        test("null", "nul\\u006c");
         test("(function(){})");
     }
 

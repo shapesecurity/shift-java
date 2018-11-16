@@ -107,6 +107,7 @@ public enum TokenType {
     STRING(TokenClass.StringLiteral, "string"),
     REGEXP(TokenClass.RegularExpression, "regexp"),
     IDENTIFIER(TokenClass.Ident, "identifier"),
+    ESCAPED_KEYWORD(TokenClass.Ident, "escaped-keyword"),
     FUTURE_RESERVED_WORD(TokenClass.Keyword, "future-reserved-word"),
     FUTURE_STRICT_RESERVED_WORD(TokenClass.Keyword, "future-strict-reserved-word"),
     CONST(TokenClass.Keyword, "const"),

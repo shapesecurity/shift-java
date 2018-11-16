@@ -16,26 +16,14 @@
 
 package com.shapesecurity.shift.es2017.parser.token;
 
-import com.shapesecurity.shift.es2017.parser.TokenType;
 import com.shapesecurity.shift.es2017.parser.SourceRange;
+import com.shapesecurity.shift.es2017.parser.TokenType;
 
 import javax.annotation.Nonnull;
 
-public class IdentifierToken extends IdentifierLikeToken {
+public class EscapedKeywordToken extends IdentifierToken {
 
-    @Nonnull
-    private final CharSequence name;
-    public final boolean escaped;
-
-    public IdentifierToken(@Nonnull TokenType type, @Nonnull SourceRange slice, @Nonnull CharSequence name, boolean escaped) {
-        super(type, slice);
-        this.name = name;
-        this.escaped = escaped;
-    }
-
-    @Override
-    @Nonnull
-    public String toString() {
-        return String.valueOf(this.name);
+    public EscapedKeywordToken(@Nonnull SourceRange slice, @Nonnull CharSequence name, boolean escaped) {
+        super(TokenType.ESCAPED_KEYWORD, slice, name, escaped);
     }
 }

@@ -18,10 +18,7 @@ import com.shapesecurity.shift.es2017.ast.operators.CompoundAssignmentOperator;
 import com.shapesecurity.shift.es2017.ast.operators.Precedence;
 import com.shapesecurity.shift.es2017.ast.operators.UnaryOperator;
 import com.shapesecurity.shift.es2017.ast.operators.UpdateOperator;
-import com.shapesecurity.shift.es2017.parser.token.NumericLiteralToken;
-import com.shapesecurity.shift.es2017.parser.token.RegularExpressionLiteralToken;
-import com.shapesecurity.shift.es2017.parser.token.StringLiteralToken;
-import com.shapesecurity.shift.es2017.parser.token.TemplateToken;
+import com.shapesecurity.shift.es2017.parser.token.*;
 import com.shapesecurity.shift.es2017.utils.D2A;
 import com.shapesecurity.shift.es2017.utils.Either3;
 
@@ -74,7 +71,11 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
 
     protected boolean matchIdentifier() {
         switch(this.lookahead.type) {
-            case IDENTIFIER:
+			case ESCAPED_KEYWORD:
+				if (this.lookahead.toString().equals("await") && !this.moduleIsTheGoalSymbol && this.firstAwaitLocation == null) {
+					this.firstAwaitLocation = this.getLocation();
+				}
+			case IDENTIFIER:
             case LET:
             case YIELD:
             case ASYNC:
@@ -313,6 +314,11 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
     @Nonnull
     protected Binding parseBindingTarget() throws JsError {
         switch (this.lookahead.type) {
+            case ESCAPED_KEYWORD:
+                String value = this.lookahead.toString();
+                if (!value.equals("let") && !value.equals("static") && (!value.equals("yield") || this.allowYieldExpression) && (!value.equals("await") || this.allowAwaitExpression)) {
+                    throw this.createUnexpected(this.lookahead);
+                }
             case IDENTIFIER:
             case LET:
             case YIELD:
@@ -414,15 +420,17 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
     @Nonnull
     protected String parseIdentifier() throws JsError {
         if (this.matchIdentifier()) {
-            if (this.match(TokenType.YIELD) && this.allowYieldExpression) {
+			String value = this.lookahead.toString();
+			if (this.match(TokenType.YIELD) && this.allowYieldExpression || this.allowYieldExpression && this.match(TokenType.ESCAPED_KEYWORD) && value.equals("yield") && ((IdentifierToken) this.lookahead).escaped) {
                 throw this.createError(ErrorMessages.INVALID_TOKEN_CONTEXT, "yield");
-            } else if (this.match(TokenType.AWAIT) && (this.allowAwaitExpression || this.moduleIsTheGoalSymbol)) {
+            } else if ((this.allowAwaitExpression || this.moduleIsTheGoalSymbol) && (this.match(TokenType.AWAIT) || this.match(TokenType.ESCAPED_KEYWORD) && value.equals("await") && ((IdentifierToken) this.lookahead).escaped )) {
                 throw this.createError(ErrorMessages.INVALID_TOKEN_CONTEXT, "await");
             }
-            return this.lex().toString();
-        } else {
-            throw this.createUnexpected(this.lookahead);
+            if (!this.match(TokenType.ESCAPED_KEYWORD) || (value.equals("let") || value.equals("await") || value.equals("static") || value.equals("yield") || value.equals("async"))) {
+            	return this.lex().toString();
+			}
         }
+        throw this.createUnexpected(this.lookahead);
     }
 
     @Nonnull
@@ -853,10 +861,6 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
             return this.copyNode(node, new AssignmentTargetWithDefault(assignmentExpression.binding, assignmentExpression.expression));
         }
         return this.transformDestructuring(node);
-    }
-
-    protected boolean matchContextualKeyword(String keyword) {
-        return this.lookahead.type == TokenType.IDENTIFIER && keyword.equals(this.lookahead.toString());
     }
 
     @Nonnull
@@ -1308,6 +1312,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
             case YIELD:
             case ASYNC:
             case AWAIT:
+			case ESCAPED_KEYWORD:
                 return true;
         }
         return false;
@@ -1687,10 +1692,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
         AdditionalStateT startState = this.startNode();
         this.lex();
         if (this.eat(TokenType.PERIOD)) {
-            Token ident = this.expect(TokenType.IDENTIFIER);
-            if ((!ident.toString().equals("target"))) {
-                throw this.createUnexpected(ident);
-            }
+            Token ident = this.expectContextualKeyword("target");
             return this.finishNode(startState, new NewTargetExpression());
         }
         Either3<ExpressionSuper, Pair<FormalParameters, Boolean>, AssignmentTarget> fromParseLeftHandSideExpression = this.isolateCoverGrammar(
@@ -2216,7 +2218,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
 
         if (!isGenerator) {
             String tokenName = token.toString();
-            if (token.type == TokenType.IDENTIFIER && tokenName.length() == 3) {
+            if (token.type == TokenType.IDENTIFIER && tokenName.length() == 3 && !((IdentifierToken) token).escaped) {
                 // Property Assignment: Getter and Setter.
                 if (tokenName.equals("get") && this.lookaheadPropertyName()) {
                     name = this.parsePropertyName().left;
@@ -2382,8 +2384,9 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
             }
             boolean isStatic = false;
             AdditionalStateT classElementStart = this.startNode();
+            boolean isPotentiallyStatic = this.matchContextualKeyword("static");
             Either<PropertyName, MethodDefinition> methodOrKey = this.parseMethodDefinition();
-            if (methodOrKey.isLeft() && methodOrKey.left().fromJust() instanceof StaticPropertyName && ((StaticPropertyName) methodOrKey.left().fromJust()).value.equals("static")) {
+            if (isPotentiallyStatic && methodOrKey.isLeft() && methodOrKey.left().fromJust() instanceof StaticPropertyName && ((StaticPropertyName) methodOrKey.left().fromJust()).value.equals("static")) {
                 isStatic = true;
                 methodOrKey = this.parseMethodDefinition();
             }
@@ -2435,8 +2438,9 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
             }
             boolean isStatic = false;
             AdditionalStateT classElementStart = this.startNode();
+            boolean isPotentiallyStatic = this.matchContextualKeyword("static");
             Either<PropertyName, MethodDefinition> methodOrKey = this.parseMethodDefinition();
-            if (methodOrKey.isLeft() && methodOrKey.left().fromJust() instanceof StaticPropertyName && ((StaticPropertyName) methodOrKey.left().fromJust()).value.equals("static")) {
+            if (isPotentiallyStatic && methodOrKey.isLeft() && methodOrKey.left().fromJust() instanceof StaticPropertyName && ((StaticPropertyName) methodOrKey.left().fromJust()).value.equals("static")) {
                 isStatic = true;
                 methodOrKey = this.parseMethodDefinition();
             }
@@ -2521,11 +2525,15 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
 
     @Nullable
     protected Token eatContextualKeyword(String keyword) throws JsError {
-        if (this.lookahead.type == TokenType.IDENTIFIER && this.lookahead.toString().equals(keyword)) {
+        if (this.lookahead.type == TokenType.IDENTIFIER && this.lookahead.toString().equals(keyword) && !((IdentifierToken) this.lookahead).escaped) {
             return this.lex();
         } else {
             return null;
         }
+    }
+
+    protected boolean matchContextualKeyword(String keyword) {
+        return this.lookahead.type == TokenType.IDENTIFIER && keyword.equals(this.lookahead.toString()) && !((IdentifierToken) this.lookahead).escaped;
     }
 
     @Nonnull
@@ -2544,7 +2552,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
 
     @Nonnull
     protected Token expectContextualKeyword(String keyword) throws JsError {
-        if (this.lookahead.type == TokenType.IDENTIFIER && this.lookahead.toString().equals(keyword)) {
+        if (this.lookahead.type == TokenType.IDENTIFIER && this.lookahead.toString().equals(keyword) && !((IdentifierToken) this.lookahead).escaped) {
             return this.lex();
         } else {
             throw this.createUnexpected(this.lookahead);

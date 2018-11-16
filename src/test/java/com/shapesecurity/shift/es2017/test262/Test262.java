@@ -178,8 +178,6 @@ public class Test262 {
 		}
 	}
 
-
-
 	@Test
 	public void testTest262() throws Exception {
 		LinkedList<Test262Exception> exceptions = new LinkedList<>();
