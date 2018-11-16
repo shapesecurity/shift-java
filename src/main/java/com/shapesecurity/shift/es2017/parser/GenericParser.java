@@ -672,106 +672,102 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
                 right = this.parseExpression().left();
             }
             return new ForStatement(Maybe.empty(), test, right, this.getIteratorStatementEpilogue());
-        } else {
-            boolean startsWithLet = this.match(TokenType.LET);
-            boolean isForDecl = this.lookaheadLexicalDeclaration();
-            AdditionalStateT leftLocation = this.startNode();
-            if (this.match(TokenType.VAR) || isForDecl) {
-                boolean previousAllowIn = this.allowIn;
-                this.allowIn = false;
-                VariableDeclaration init = this.parseVariableDeclaration(false);
-                this.allowIn = previousAllowIn;
-                if (init.declarators.length == 1 && (this.match((TokenType.IN)) || this.matchContextualKeyword("of"))) {
-                    if (this.match(TokenType.IN)) {
-                        if (!(init.declarators.index(0).fromJust().init).equals(Maybe.empty())) {
-                            throw this.createError(ErrorMessages.INVALID_VAR_INIT_FOR_IN);
-                        }
-                        this.lex();
-                        right = this.parseExpression().left();
-                        Statement body = this.getIteratorStatementEpilogue();
-                        return new ForInStatement(init, right.fromJust(), body);
-                    } else {
-                        if (!(init.declarators.index(0).fromJust().init).equals(Maybe.empty())) {
-                            throw this.createError(ErrorMessages.INVALID_VAR_INIT_FOR_OF);
-                        }
-                        this.lex();
-                        right = this.parseAssignmentExpression().left();
-                        Statement body = this.getIteratorStatementEpilogue();
-                        return new ForOfStatement(init, right.fromJust(), body);
+        }
+        boolean startsWithLet = this.match(TokenType.LET);
+        boolean isForDecl = this.lookaheadLexicalDeclaration();
+        AdditionalStateT leftLocation = this.startNode();
+        if (this.match(TokenType.VAR) || isForDecl) {
+            boolean previousAllowIn = this.allowIn;
+            this.allowIn = false;
+            VariableDeclaration init = this.parseVariableDeclaration(false);
+            this.allowIn = previousAllowIn;
+            if (init.declarators.length == 1 && (this.match((TokenType.IN)) || this.matchContextualKeyword("of"))) {
+                VariableDeclarator declarator = init.declarators.maybeHead().fromJust();
+                if (this.match(TokenType.IN)) {
+                    if (declarator.init.isJust() && (this.strict || init.kind != VariableDeclarationKind.Var || !(declarator.binding instanceof BindingIdentifier))) {
+                        throw this.createError(ErrorMessages.INVALID_VAR_INIT_FOR_IN);
                     }
-                } else {
-                    this.expect(TokenType.SEMICOLON);
-                    if (init.declarators.exists(f -> (!(f.binding instanceof BindingIdentifier) && f.init.isNothing()))) {
-                        throw this.createError(ErrorMessages.UNINITIALIZED_BINDINGPATTERN_IN_FOR_INIT);
-                    }
-                    if (!this.match(TokenType.SEMICOLON)) {
-                        test = this.parseExpression().left();
-                    }
-                    this.expect(TokenType.SEMICOLON);
-                    if (!this.match(TokenType.RPAREN)) {
-                        right = this.parseExpression().left();
-                    }
-                    return new ForStatement(Maybe.of(init), test, right, this.getIteratorStatementEpilogue());
+                    this.lex();
+                    right = this.parseExpression().left();
+                    Statement body = this.getIteratorStatementEpilogue();
+                    return new ForInStatement(init, right.fromJust(), body);
                 }
+                if (declarator.init.isJust()) {
+                    throw this.createError(ErrorMessages.INVALID_VAR_INIT_FOR_OF);
+                }
+                this.lex();
+                right = this.parseAssignmentExpression().left();
+                Statement body = this.getIteratorStatementEpilogue();
+                return new ForOfStatement(init, right.fromJust(), body);
+            }
+            this.expect(TokenType.SEMICOLON);
+            if (init.declarators.exists(f -> (!(f.binding instanceof BindingIdentifier) && f.init.isNothing()))) {
+                throw this.createError(ErrorMessages.UNINITIALIZED_BINDINGPATTERN_IN_FOR_INIT);
+            }
+            if (!this.match(TokenType.SEMICOLON)) {
+                test = this.parseExpression().left();
+            }
+            this.expect(TokenType.SEMICOLON);
+            if (!this.match(TokenType.RPAREN)) {
+                right = this.parseExpression().left();
+            }
+            return new ForStatement(Maybe.of(init), test, right, this.getIteratorStatementEpilogue());
+        }
+        boolean previousAllowIn = this.allowIn;
+        this.allowIn = false;
+        Either<Expression, AssignmentTarget> fromParseAssignmentOrTarget = this.parseAssignmentExpressionOrTarget();
+        this.allowIn = previousAllowIn;
+        if (this.isAssignmentTarget && fromParseAssignmentOrTarget.left().map(expr -> !(expr instanceof AssignmentExpression)).orJust(true) && (this.match(TokenType.IN) || this.matchContextualKeyword("of"))) {
+            if (fromParseAssignmentOrTarget.isRight()) {
+                this.firstExprError = null;
+            }
+            AssignmentTarget target; // = fromParseAssignmentOrTarget.either(this::transformDestructuring, x -> x);
+            if (fromParseAssignmentOrTarget.isLeft()) {
+                target = transformDestructuring(fromParseAssignmentOrTarget.left().fromJust());
             } else {
-                boolean previousAllowIn = this.allowIn;
-                this.allowIn = false;
-                Either<Expression, AssignmentTarget> fromParseAssignmentOrTarget = this.parseAssignmentExpressionOrTarget();
-                this.allowIn = previousAllowIn;
-                if (this.isAssignmentTarget && fromParseAssignmentOrTarget.left().map(expr -> !(expr instanceof AssignmentExpression)).orJust(true) && (this.match(TokenType.IN) || this.matchContextualKeyword("of"))) {
-                    if (fromParseAssignmentOrTarget.isRight()) {
-                        this.firstExprError = null;
-                    }
-                    AssignmentTarget target; // = fromParseAssignmentOrTarget.either(this::transformDestructuring, x -> x);
-                    if (fromParseAssignmentOrTarget.isLeft()) {
-                        target = transformDestructuring(fromParseAssignmentOrTarget.left().fromJust());
-                    } else {
-                        target = fromParseAssignmentOrTarget.right().fromJust();
-                    }
-                    if (startsWithLet && this.matchContextualKeyword("of")) {
-                        throw this.createError(ErrorMessages.INVALID_LHS_IN_FOR_OF);
-                    }
-                    if (this.match(TokenType.IN)) {
-                        this.lex();
-                        right = this.parseExpression().left();
-                        return new ForInStatement(target, right.fromJust(), this.getIteratorStatementEpilogue());
-                    } else {
-                        this.lex();
-                        right = this.parseAssignmentExpression().left();
-                        return new ForOfStatement(target, right.fromJust(), this.getIteratorStatementEpilogue());
-                    }
-                } else {
-                    Expression expr;
-                    if (fromParseAssignmentOrTarget.isLeft()) {
-                        expr = fromParseAssignmentOrTarget.left().fromJust();
-                    } else {
-                        throw this.createError(ErrorMessages.ILLEGAL_PROPERTY);
-                    }
-                    if (this.firstExprError != null) {
-                        throw this.firstExprError;
-                    }
-                    while (this.eat(TokenType.COMMA)) {
-                        Expression rhs = this.parseAssignmentExpression().left().fromJust();
-                        expr = this.finishNode(leftLocation, new BinaryExpression(expr, BinaryOperator.Sequence, rhs));
-                    }
-                    if (this.match(TokenType.IN)) {
-                        throw this.createError(ErrorMessages.INVALID_LHS_IN_FOR_IN);
-                    }
-                    if (this.matchContextualKeyword("of")) {
-                        throw this.createError(ErrorMessages.INVALID_LHS_IN_FOR_OF);
-                    }
-                    this.expect(TokenType.SEMICOLON);
-                    if (!this.match(TokenType.SEMICOLON)) {
-                        test = this.parseExpression().left();
-                    }
-                    this.expect(TokenType.SEMICOLON);
-                    if (!this.match(TokenType.RPAREN)) {
-                        right = this.parseExpression().left();
-                    }
-                    return new ForStatement(Maybe.of(expr), test, right, this.getIteratorStatementEpilogue());
-                }
+                target = fromParseAssignmentOrTarget.right().fromJust();
+            }
+            if (startsWithLet && this.matchContextualKeyword("of")) {
+                throw this.createError(ErrorMessages.INVALID_LHS_IN_FOR_OF);
+            }
+            if (this.match(TokenType.IN)) {
+                this.lex();
+                right = this.parseExpression().left();
+                return new ForInStatement(target, right.fromJust(), this.getIteratorStatementEpilogue());
+            } else {
+                this.lex();
+                right = this.parseAssignmentExpression().left();
+                return new ForOfStatement(target, right.fromJust(), this.getIteratorStatementEpilogue());
             }
         }
+        Expression expr;
+        if (fromParseAssignmentOrTarget.isLeft()) {
+            expr = fromParseAssignmentOrTarget.left().fromJust();
+        } else {
+            throw this.createError(ErrorMessages.ILLEGAL_PROPERTY);
+        }
+        if (this.firstExprError != null) {
+            throw this.firstExprError;
+        }
+        while (this.eat(TokenType.COMMA)) {
+            Expression rhs = this.parseAssignmentExpression().left().fromJust();
+            expr = this.finishNode(leftLocation, new BinaryExpression(expr, BinaryOperator.Sequence, rhs));
+        }
+        if (this.match(TokenType.IN)) {
+            throw this.createError(ErrorMessages.INVALID_LHS_IN_FOR_IN);
+        }
+        if (this.matchContextualKeyword("of")) {
+            throw this.createError(ErrorMessages.INVALID_LHS_IN_FOR_OF);
+        }
+        this.expect(TokenType.SEMICOLON);
+        if (!this.match(TokenType.SEMICOLON)) {
+            test = this.parseExpression().left();
+        }
+        this.expect(TokenType.SEMICOLON);
+        if (!this.match(TokenType.RPAREN)) {
+            right = this.parseExpression().left();
+        }
+        return new ForStatement(Maybe.of(expr), test, right, this.getIteratorStatementEpilogue());
     }
 
     @Nonnull

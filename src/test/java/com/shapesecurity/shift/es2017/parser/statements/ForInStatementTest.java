@@ -17,7 +17,7 @@ public class ForInStatementTest extends ParserTestCase {
                 new IdentifierExpression("process"), ImmutableList.of(new IdentifierExpression("x"))))));
 
         testScript("for (var x in list) process(x);", new ForInStatement(new VariableDeclaration(
-			VariableDeclarationKind.Var,
+            VariableDeclarationKind.Var,
                 ImmutableList.of(new VariableDeclarator(new BindingIdentifier("x"), Maybe.empty()))),
                 new IdentifierExpression("list"), new ExpressionStatement(new CallExpression(
                 new IdentifierExpression("process"), ImmutableList.of(new IdentifierExpression("x"))))));
@@ -61,10 +61,23 @@ public class ForInStatementTest extends ParserTestCase {
                 new EmptyStatement()
         ));
 
+        testScript("for(var a = 0 in b, c);", new ForInStatement(
+                new VariableDeclaration(VariableDeclarationKind.Var, ImmutableList.of(
+                        new VariableDeclarator(new BindingIdentifier("a"), Maybe.of(new LiteralNumericExpression(0.0)))
+                )),
+                new BinaryExpression(new IdentifierExpression("b"), BinaryOperator.Sequence, new IdentifierExpression("c")),
+                new EmptyStatement()
+        ));
+
 
         testScriptFailure("for(let a = 0 in b);", 14, "Invalid variable declaration in for-in statement");
         testScriptFailure("for(const a = 0 in b);", 16, "Invalid variable declaration in for-in statement");
         testScriptFailure("for(let ? b : c in 0);", 16, "Invalid left-hand side in for-in");
+        testScriptFailure("for(var [] = 0 in b);", 15, "Invalid variable declaration in for-in statement");
+        testScriptFailure("for(var {} = 0 in b);", 15, "Invalid variable declaration in for-in statement");
+        testScriptFailure("for(let a = 0 in b);", 14, "Invalid variable declaration in for-in statement");
+        testScriptFailure("for(const a = 0 in b);", 16, "Invalid variable declaration in for-in statement");
+        testScriptFailure("\"use strict\"; for(var a = 0 in b);", 28, "Invalid variable declaration in for-in statement");
 
     }
 }

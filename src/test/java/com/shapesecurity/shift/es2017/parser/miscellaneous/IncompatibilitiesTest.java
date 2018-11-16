@@ -97,7 +97,7 @@ public class IncompatibilitiesTest extends ParserTestCase {
                 )))
         );
 
-        testScriptFailure("for(var x=1 in [1,2,3]) 0", 12, "Invalid variable declaration in for-in statement");
+        // ES2017: allows initializers only in for-in heads in sloppy mode, and only for var declarations with no destructuring
         testScriptFailure("for(let x=1 in [1,2,3]) 0", 12, "Invalid variable declaration in for-in statement");
         testScriptFailure("for(var x=1 of [1,2,3]) 0", 12, "Invalid variable declaration in for-of statement");
         testScriptFailure("for(let x=1 of [1,2,3]) 0", 12, "Invalid variable declaration in for-of statement");
