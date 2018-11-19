@@ -22,9 +22,7 @@ import com.shapesecurity.functional.Pair;
 import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.functional.data.Maybe;
 import com.shapesecurity.shift.es2017.ast.*;
-import com.shapesecurity.shift.es2017.ast.Module;
 import com.shapesecurity.shift.es2017.ast.SpreadElementExpression;
-
 import javax.annotation.Nonnull;
 
 import java.util.Iterator;
