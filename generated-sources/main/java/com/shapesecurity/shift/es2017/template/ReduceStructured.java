@@ -36,9 +36,9 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static com.shapesecurity.shift.es2016.reducer.LazyReconstructingReducer.listMaybeRefEquals;
-import static com.shapesecurity.shift.es2016.reducer.LazyReconstructingReducer.listRefEquals;
-import static com.shapesecurity.shift.es2016.reducer.LazyReconstructingReducer.maybeRefEquals;
+import static com.shapesecurity.shift.es2017.reducer.LazyReconstructingReducer.listMaybeRefEquals;
+import static com.shapesecurity.shift.es2017.reducer.LazyReconstructingReducer.listRefEquals;
+import static com.shapesecurity.shift.es2017.reducer.LazyReconstructingReducer.maybeRefEquals;
 
 
 public class ReduceStructured implements ThunkedReducer<Node> {

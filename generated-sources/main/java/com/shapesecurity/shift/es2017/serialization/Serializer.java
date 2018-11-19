@@ -16,7 +16,7 @@
  */
 
 
-package com.shapesecurity.shift.serialization;
+package com.shapesecurity.shift.es2017.serialization;
 
 import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.functional.data.Maybe;
@@ -26,7 +26,7 @@ import com.shapesecurity.shift.es2017.ast.operators.BinaryOperator;
 import com.shapesecurity.shift.es2017.ast.operators.CompoundAssignmentOperator;
 import com.shapesecurity.shift.es2017.ast.operators.UnaryOperator;
 import com.shapesecurity.shift.es2017.ast.operators.UpdateOperator;
-import com.shapesecurity.shift.utils.Utils;
+import com.shapesecurity.shift.es2017.utils.Utils;
 import com.shapesecurity.shift.es2017.reducer.Director;
 import com.shapesecurity.shift.es2017.reducer.Reducer;
 
@@ -56,7 +56,7 @@ public class Serializer implements Reducer<StringBuilder> {
         StringBuilder sb = new StringBuilder("[");
         NonEmptyImmutableList<StringBuilder> nel = (NonEmptyImmutableList<StringBuilder>) values;
         sb.append(nel.head);
-        nel.tail().foreach(s -> sb.append(",").append(s));
+        nel.tail().forEach(s -> sb.append(",").append(s));
         sb.append("]");
         return sb;
     }
