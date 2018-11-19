@@ -16,7 +16,7 @@
  */
 
 
-package com.shapesecurity.shift.serialization;
+package com.shapesecurity.shift.es2017.serialization;
 
 import com.google.gson.*;
 
@@ -38,10 +38,10 @@ public class Deserializer {
 
     public static Node deserialize(String toDeserialize) throws JSONException, IllegalAccessException, InstantiationException, ClassNotFoundException, NoSuchMethodException {
         JsonElement json = new JsonParser().parse(toDeserialize);
-        return deserializeNode(json);
+        return new Deserializer().deserializeNode(json);
     }
 
-    private static BinaryOperator deserializeBinaryOperator(JsonElement jsonElement) {
+    protected BinaryOperator deserializeBinaryOperator(JsonElement jsonElement) {
         String operatorString = jsonElement.getAsString();
         switch (operatorString) {
             case ",":
@@ -55,7 +55,7 @@ public class Deserializer {
             case "^":
                 return BinaryOperator.BitwiseXor;
             case "&":
-                return BinaryOperator.LogicalAnd;
+                return BinaryOperator.BitwiseAnd;
             case "+":
                 return BinaryOperator.Plus;
             case "-":
@@ -74,6 +74,8 @@ public class Deserializer {
                 return BinaryOperator.Div;
             case "%":
                 return BinaryOperator.Rem;
+            case "**":
+                return BinaryOperator.Exp;
             case "<":
                 return BinaryOperator.LessThan;
             case "<=":
@@ -93,11 +95,11 @@ public class Deserializer {
             case ">>>":
                 return BinaryOperator.UnsignedRight;
             default:
-                return null; // should not get here
+                throw new RuntimeException("unrecognized binary operator");
         }
     }
 
-    private static CompoundAssignmentOperator deserializeCompoundAssignmentOperator(JsonElement jsonElement) {
+    protected CompoundAssignmentOperator deserializeCompoundAssignmentOperator(JsonElement jsonElement) {
         String operatorString = jsonElement.getAsString();
         switch (operatorString) {
             case "+=":
@@ -110,6 +112,8 @@ public class Deserializer {
                 return CompoundAssignmentOperator.AssignDiv;
             case "%=":
                 return CompoundAssignmentOperator.AssignRem;
+            case "**=":
+                return CompoundAssignmentOperator.AssignExp;
             case "<<=":
                 return CompoundAssignmentOperator.AssignLeftShift;
             case ">>=":
@@ -123,11 +127,11 @@ public class Deserializer {
             case "&=":
                 return CompoundAssignmentOperator.AssignBitAnd;
             default:
-                return null; // should not get here
+                throw new RuntimeException("unrecognized compound assignment operator");
         }
     }
 
-    private static UnaryOperator deserializeUnaryOperator(JsonElement jsonElement) {
+    protected UnaryOperator deserializeUnaryOperator(JsonElement jsonElement) {
         String operatorString = jsonElement.getAsString();
         switch (operatorString) {
             case "+":
@@ -145,11 +149,11 @@ public class Deserializer {
             case "delete":
                 return UnaryOperator.Delete;
             default:
-                return null;
+                throw new RuntimeException("unrecognized unary operator");
         }
     }
 
-    private static UpdateOperator deserializeUpdateOperator(JsonElement jsonElement) {
+    protected UpdateOperator deserializeUpdateOperator(JsonElement jsonElement) {
         String operatorString = jsonElement.getAsString();
         switch (operatorString) {
             case "++":
@@ -157,11 +161,11 @@ public class Deserializer {
             case "--":
                 return UpdateOperator.Decrement;
             default:
-                return null;
+                throw new RuntimeException("unrecognized update operator");
         }
     }
 
-    private static VariableDeclarationKind deserializeVariableDeclarationKind(JsonElement jsonElement) {
+    protected VariableDeclarationKind deserializeVariableDeclarationKind(JsonElement jsonElement) {
         String kindString = jsonElement.getAsString();
         switch (kindString) {
             case "var":
@@ -171,86 +175,86 @@ public class Deserializer {
             case "let":
                 return VariableDeclarationKind.Let;
             default:
-                return null;
+                throw new RuntimeException("unrecognized variable declaration kind");
         }
     }
 
-    private static ImmutableList<Maybe<AssignmentTargetAssignmentTargetWithDefault>> deserializeListMaybeAssignmentTargetAssignmentTargetWithDefault(JsonElement jsonElement) throws ClassNotFoundException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+    protected ImmutableList<Maybe<AssignmentTargetAssignmentTargetWithDefault>> deserializeListMaybeAssignmentTargetAssignmentTargetWithDefault(JsonElement jsonElement) throws ClassNotFoundException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         JsonArray jsonArray = jsonElement.getAsJsonArray();
         if (jsonArray.size() == 0) {
-          return ImmutableList.nil();
+          return ImmutableList.empty();
         } else {
             ArrayList<Maybe<AssignmentTargetAssignmentTargetWithDefault>> deserializedElements = new ArrayList<>();
             for (JsonElement ele : jsonArray) {
                 if (ele.isJsonNull()) {
-                    deserializedElements.add(Maybe.nothing());
+                    deserializedElements.add(Maybe.empty());
                 } else {
-                    deserializedElements.add(Maybe.just((AssignmentTargetAssignmentTargetWithDefault) deserializeNode(ele)));
+                    deserializedElements.add(Maybe.of((AssignmentTargetAssignmentTargetWithDefault) deserializeNode(ele)));
                 }
             }
             return ImmutableList.from(deserializedElements);
         }
     }
 
-    private static Maybe<AssignmentTarget> deserializeMaybeAssignmentTarget(JsonElement jsonElement) throws ClassNotFoundException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+    protected Maybe<AssignmentTarget> deserializeMaybeAssignmentTarget(JsonElement jsonElement) throws ClassNotFoundException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         if (jsonElement.isJsonNull()) {
-            return Maybe.nothing();
+            return Maybe.empty();
         }
-        return Maybe.just((AssignmentTarget) deserializeNode(jsonElement));
+        return Maybe.of((AssignmentTarget) deserializeNode(jsonElement));
     }
 
-    private static ImmutableList<Maybe<BindingBindingWithDefault>> deserializeListMaybeBindingBindingWithDefault(JsonElement jsonElement) throws ClassNotFoundException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+    protected ImmutableList<Maybe<BindingBindingWithDefault>> deserializeListMaybeBindingBindingWithDefault(JsonElement jsonElement) throws ClassNotFoundException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         JsonArray jsonArray = jsonElement.getAsJsonArray();
         if (jsonArray.size() == 0) {
-          return ImmutableList.nil();
+          return ImmutableList.empty();
         } else {
             ArrayList<Maybe<BindingBindingWithDefault>> deserializedElements = new ArrayList<>();
             for (JsonElement ele : jsonArray) {
                 if (ele.isJsonNull()) {
-                    deserializedElements.add(Maybe.nothing());
+                    deserializedElements.add(Maybe.empty());
                 } else {
-                    deserializedElements.add(Maybe.just((BindingBindingWithDefault) deserializeNode(ele)));
+                    deserializedElements.add(Maybe.of((BindingBindingWithDefault) deserializeNode(ele)));
                 }
             }
             return ImmutableList.from(deserializedElements);
         }
     }
 
-    private static Maybe<Binding> deserializeMaybeBinding(JsonElement jsonElement) throws ClassNotFoundException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+    protected Maybe<Binding> deserializeMaybeBinding(JsonElement jsonElement) throws ClassNotFoundException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         if (jsonElement.isJsonNull()) {
-            return Maybe.nothing();
+            return Maybe.empty();
         }
-        return Maybe.just((Binding) deserializeNode(jsonElement));
+        return Maybe.of((Binding) deserializeNode(jsonElement));
     }
 
-    private static ImmutableList<Maybe<SpreadElementExpression>> deserializeListMaybeSpreadElementExpression(JsonElement jsonElement) throws ClassNotFoundException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+    protected ImmutableList<Maybe<SpreadElementExpression>> deserializeListMaybeSpreadElementExpression(JsonElement jsonElement) throws ClassNotFoundException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         JsonArray jsonArray = jsonElement.getAsJsonArray();
         if (jsonArray.size() == 0) {
-          return ImmutableList.nil();
+          return ImmutableList.empty();
         } else {
             ArrayList<Maybe<SpreadElementExpression>> deserializedElements = new ArrayList<>();
             for (JsonElement ele : jsonArray) {
                 if (ele.isJsonNull()) {
-                    deserializedElements.add(Maybe.nothing());
+                    deserializedElements.add(Maybe.empty());
                 } else {
-                    deserializedElements.add(Maybe.just((SpreadElementExpression) deserializeNode(ele)));
+                    deserializedElements.add(Maybe.of((SpreadElementExpression) deserializeNode(ele)));
                 }
             }
             return ImmutableList.from(deserializedElements);
         }
     }
 
-    private static Maybe<Expression> deserializeMaybeExpression(JsonElement jsonElement) throws ClassNotFoundException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+    protected Maybe<Expression> deserializeMaybeExpression(JsonElement jsonElement) throws ClassNotFoundException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         if (jsonElement.isJsonNull()) {
-            return Maybe.nothing();
+            return Maybe.empty();
         }
-        return Maybe.just((Expression) deserializeNode(jsonElement));
+        return Maybe.of((Expression) deserializeNode(jsonElement));
     }
 
-    private static ImmutableList<Statement> deserializeListStatement(JsonElement jsonElement) throws ClassNotFoundException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+    protected ImmutableList<Statement> deserializeListStatement(JsonElement jsonElement) throws ClassNotFoundException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         JsonArray jsonArray = jsonElement.getAsJsonArray();
         if (jsonArray.size() == 0) {
-          return ImmutableList.nil();
+          return ImmutableList.empty();
         } else {
             ArrayList<Statement> deserializedElements = new ArrayList<>();
             for (JsonElement ele : jsonArray) {
@@ -261,18 +265,18 @@ public class Deserializer {
         }
     }
 
-    private static Maybe<String> deserializeMaybeString(JsonElement jsonElement) {
+    protected Maybe<String> deserializeMaybeString(JsonElement jsonElement) {
         if (jsonElement.isJsonNull()) {
-            return Maybe.nothing();
+            return Maybe.empty();
         } else {
-            return Maybe.just(jsonElement.getAsString());
+            return Maybe.of(jsonElement.getAsString());
         }
     }
 
-    private static ImmutableList<SpreadElementExpression> deserializeListSpreadElementExpression(JsonElement jsonElement) throws ClassNotFoundException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+    protected ImmutableList<SpreadElementExpression> deserializeListSpreadElementExpression(JsonElement jsonElement) throws ClassNotFoundException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         JsonArray jsonArray = jsonElement.getAsJsonArray();
         if (jsonArray.size() == 0) {
-          return ImmutableList.nil();
+          return ImmutableList.empty();
         } else {
             ArrayList<SpreadElementExpression> deserializedElements = new ArrayList<>();
             for (JsonElement ele : jsonArray) {
@@ -283,10 +287,10 @@ public class Deserializer {
         }
     }
 
-    private static ImmutableList<ClassElement> deserializeListClassElement(JsonElement jsonElement) throws ClassNotFoundException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+    protected ImmutableList<ClassElement> deserializeListClassElement(JsonElement jsonElement) throws ClassNotFoundException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         JsonArray jsonArray = jsonElement.getAsJsonArray();
         if (jsonArray.size() == 0) {
-          return ImmutableList.nil();
+          return ImmutableList.empty();
         } else {
             ArrayList<ClassElement> deserializedElements = new ArrayList<>();
             for (JsonElement ele : jsonArray) {
@@ -297,17 +301,17 @@ public class Deserializer {
         }
     }
 
-    private static Maybe<BindingIdentifier> deserializeMaybeBindingIdentifier(JsonElement jsonElement) throws ClassNotFoundException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+    protected Maybe<BindingIdentifier> deserializeMaybeBindingIdentifier(JsonElement jsonElement) throws ClassNotFoundException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         if (jsonElement.isJsonNull()) {
-            return Maybe.nothing();
+            return Maybe.empty();
         }
-        return Maybe.just((BindingIdentifier) deserializeNode(jsonElement));
+        return Maybe.of((BindingIdentifier) deserializeNode(jsonElement));
     }
 
-    private static ImmutableList<ExportFromSpecifier> deserializeListExportFromSpecifier(JsonElement jsonElement) throws ClassNotFoundException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+    protected ImmutableList<ExportFromSpecifier> deserializeListExportFromSpecifier(JsonElement jsonElement) throws ClassNotFoundException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         JsonArray jsonArray = jsonElement.getAsJsonArray();
         if (jsonArray.size() == 0) {
-          return ImmutableList.nil();
+          return ImmutableList.empty();
         } else {
             ArrayList<ExportFromSpecifier> deserializedElements = new ArrayList<>();
             for (JsonElement ele : jsonArray) {
@@ -318,10 +322,10 @@ public class Deserializer {
         }
     }
 
-    private static ImmutableList<ExportLocalSpecifier> deserializeListExportLocalSpecifier(JsonElement jsonElement) throws ClassNotFoundException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+    protected ImmutableList<ExportLocalSpecifier> deserializeListExportLocalSpecifier(JsonElement jsonElement) throws ClassNotFoundException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         JsonArray jsonArray = jsonElement.getAsJsonArray();
         if (jsonArray.size() == 0) {
-          return ImmutableList.nil();
+          return ImmutableList.empty();
         } else {
             ArrayList<ExportLocalSpecifier> deserializedElements = new ArrayList<>();
             for (JsonElement ele : jsonArray) {
@@ -332,17 +336,17 @@ public class Deserializer {
         }
     }
 
-    private static Maybe<VariableDeclarationExpression> deserializeMaybeVariableDeclarationExpression(JsonElement jsonElement) throws ClassNotFoundException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+    protected Maybe<VariableDeclarationExpression> deserializeMaybeVariableDeclarationExpression(JsonElement jsonElement) throws ClassNotFoundException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         if (jsonElement.isJsonNull()) {
-            return Maybe.nothing();
+            return Maybe.empty();
         }
-        return Maybe.just((VariableDeclarationExpression) deserializeNode(jsonElement));
+        return Maybe.of((VariableDeclarationExpression) deserializeNode(jsonElement));
     }
 
-    private static ImmutableList<Parameter> deserializeListParameter(JsonElement jsonElement) throws ClassNotFoundException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+    protected ImmutableList<Parameter> deserializeListParameter(JsonElement jsonElement) throws ClassNotFoundException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         JsonArray jsonArray = jsonElement.getAsJsonArray();
         if (jsonArray.size() == 0) {
-          return ImmutableList.nil();
+          return ImmutableList.empty();
         } else {
             ArrayList<Parameter> deserializedElements = new ArrayList<>();
             for (JsonElement ele : jsonArray) {
@@ -353,10 +357,10 @@ public class Deserializer {
         }
     }
 
-    private static ImmutableList<Directive> deserializeListDirective(JsonElement jsonElement) throws ClassNotFoundException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+    protected ImmutableList<Directive> deserializeListDirective(JsonElement jsonElement) throws ClassNotFoundException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         JsonArray jsonArray = jsonElement.getAsJsonArray();
         if (jsonArray.size() == 0) {
-          return ImmutableList.nil();
+          return ImmutableList.empty();
         } else {
             ArrayList<Directive> deserializedElements = new ArrayList<>();
             for (JsonElement ele : jsonArray) {
@@ -367,17 +371,17 @@ public class Deserializer {
         }
     }
 
-    private static Maybe<Statement> deserializeMaybeStatement(JsonElement jsonElement) throws ClassNotFoundException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+    protected Maybe<Statement> deserializeMaybeStatement(JsonElement jsonElement) throws ClassNotFoundException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         if (jsonElement.isJsonNull()) {
-            return Maybe.nothing();
+            return Maybe.empty();
         }
-        return Maybe.just((Statement) deserializeNode(jsonElement));
+        return Maybe.of((Statement) deserializeNode(jsonElement));
     }
 
-    private static ImmutableList<ImportSpecifier> deserializeListImportSpecifier(JsonElement jsonElement) throws ClassNotFoundException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+    protected ImmutableList<ImportSpecifier> deserializeListImportSpecifier(JsonElement jsonElement) throws ClassNotFoundException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         JsonArray jsonArray = jsonElement.getAsJsonArray();
         if (jsonArray.size() == 0) {
-          return ImmutableList.nil();
+          return ImmutableList.empty();
         } else {
             ArrayList<ImportSpecifier> deserializedElements = new ArrayList<>();
             for (JsonElement ele : jsonArray) {
@@ -388,10 +392,10 @@ public class Deserializer {
         }
     }
 
-    private static ImmutableList<ImportDeclarationExportDeclarationStatement> deserializeListImportDeclarationExportDeclarationStatement(JsonElement jsonElement) throws ClassNotFoundException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+    protected ImmutableList<ImportDeclarationExportDeclarationStatement> deserializeListImportDeclarationExportDeclarationStatement(JsonElement jsonElement) throws ClassNotFoundException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         JsonArray jsonArray = jsonElement.getAsJsonArray();
         if (jsonArray.size() == 0) {
-          return ImmutableList.nil();
+          return ImmutableList.empty();
         } else {
             ArrayList<ImportDeclarationExportDeclarationStatement> deserializedElements = new ArrayList<>();
             for (JsonElement ele : jsonArray) {
@@ -402,10 +406,10 @@ public class Deserializer {
         }
     }
 
-    private static ImmutableList<AssignmentTargetProperty> deserializeListAssignmentTargetProperty(JsonElement jsonElement) throws ClassNotFoundException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+    protected ImmutableList<AssignmentTargetProperty> deserializeListAssignmentTargetProperty(JsonElement jsonElement) throws ClassNotFoundException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         JsonArray jsonArray = jsonElement.getAsJsonArray();
         if (jsonArray.size() == 0) {
-          return ImmutableList.nil();
+          return ImmutableList.empty();
         } else {
             ArrayList<AssignmentTargetProperty> deserializedElements = new ArrayList<>();
             for (JsonElement ele : jsonArray) {
@@ -416,10 +420,10 @@ public class Deserializer {
         }
     }
 
-    private static ImmutableList<BindingProperty> deserializeListBindingProperty(JsonElement jsonElement) throws ClassNotFoundException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+    protected ImmutableList<BindingProperty> deserializeListBindingProperty(JsonElement jsonElement) throws ClassNotFoundException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         JsonArray jsonArray = jsonElement.getAsJsonArray();
         if (jsonArray.size() == 0) {
-          return ImmutableList.nil();
+          return ImmutableList.empty();
         } else {
             ArrayList<BindingProperty> deserializedElements = new ArrayList<>();
             for (JsonElement ele : jsonArray) {
@@ -430,10 +434,10 @@ public class Deserializer {
         }
     }
 
-    private static ImmutableList<ObjectProperty> deserializeListObjectProperty(JsonElement jsonElement) throws ClassNotFoundException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+    protected ImmutableList<ObjectProperty> deserializeListObjectProperty(JsonElement jsonElement) throws ClassNotFoundException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         JsonArray jsonArray = jsonElement.getAsJsonArray();
         if (jsonArray.size() == 0) {
-          return ImmutableList.nil();
+          return ImmutableList.empty();
         } else {
             ArrayList<ObjectProperty> deserializedElements = new ArrayList<>();
             for (JsonElement ele : jsonArray) {
@@ -444,10 +448,10 @@ public class Deserializer {
         }
     }
 
-    private static ImmutableList<SwitchCase> deserializeListSwitchCase(JsonElement jsonElement) throws ClassNotFoundException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+    protected ImmutableList<SwitchCase> deserializeListSwitchCase(JsonElement jsonElement) throws ClassNotFoundException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         JsonArray jsonArray = jsonElement.getAsJsonArray();
         if (jsonArray.size() == 0) {
-          return ImmutableList.nil();
+          return ImmutableList.empty();
         } else {
             ArrayList<SwitchCase> deserializedElements = new ArrayList<>();
             for (JsonElement ele : jsonArray) {
@@ -458,10 +462,10 @@ public class Deserializer {
         }
     }
 
-    private static ImmutableList<ExpressionTemplateElement> deserializeListExpressionTemplateElement(JsonElement jsonElement) throws ClassNotFoundException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+    protected ImmutableList<ExpressionTemplateElement> deserializeListExpressionTemplateElement(JsonElement jsonElement) throws ClassNotFoundException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         JsonArray jsonArray = jsonElement.getAsJsonArray();
         if (jsonArray.size() == 0) {
-          return ImmutableList.nil();
+          return ImmutableList.empty();
         } else {
             ArrayList<ExpressionTemplateElement> deserializedElements = new ArrayList<>();
             for (JsonElement ele : jsonArray) {
@@ -472,17 +476,17 @@ public class Deserializer {
         }
     }
 
-    private static Maybe<CatchClause> deserializeMaybeCatchClause(JsonElement jsonElement) throws ClassNotFoundException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+    protected Maybe<CatchClause> deserializeMaybeCatchClause(JsonElement jsonElement) throws ClassNotFoundException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         if (jsonElement.isJsonNull()) {
-            return Maybe.nothing();
+            return Maybe.empty();
         }
-        return Maybe.just((CatchClause) deserializeNode(jsonElement));
+        return Maybe.of((CatchClause) deserializeNode(jsonElement));
     }
 
-    private static ImmutableList<VariableDeclarator> deserializeListVariableDeclarator(JsonElement jsonElement) throws ClassNotFoundException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+    protected ImmutableList<VariableDeclarator> deserializeListVariableDeclarator(JsonElement jsonElement) throws ClassNotFoundException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         JsonArray jsonArray = jsonElement.getAsJsonArray();
         if (jsonArray.size() == 0) {
-          return ImmutableList.nil();
+          return ImmutableList.empty();
         } else {
             ArrayList<VariableDeclarator> deserializedElements = new ArrayList<>();
             for (JsonElement ele : jsonArray) {
@@ -494,7 +498,7 @@ public class Deserializer {
     }
 
 
-    private static Node deserializeNode(JsonElement jsonElement) throws ClassNotFoundException, IllegalAccessException, InstantiationException, NoSuchMethodException {
+    protected Node deserializeNode(JsonElement jsonElement) throws ClassNotFoundException, IllegalAccessException, InstantiationException, NoSuchMethodException {
         if (jsonElement.isJsonObject()) {
             JsonObject jsonObject = jsonElement.getAsJsonObject();
             if (jsonObject.has("type")) {
@@ -697,6 +701,6 @@ public class Deserializer {
                 }
             }
         }
-        return null;
+        throw new RuntimeException("node has no type or unrecognized type");
     }
 }
