@@ -21,14 +21,11 @@ package com.shapesecurity.shift.es2017.path;
 
 import com.shapesecurity.functional.data.Maybe;
 import com.shapesecurity.shift.es2017.ast.*;
-import com.shapesecurity.shift.es2017.ast.Module;
 
-import javax.annotation.Nonnull;
 import java.util.Objects;
 
 
 public abstract class Branch {
-	@Nonnull
 	abstract public Maybe<? extends Node> step(Node node);
 
 	abstract public String propertyName();

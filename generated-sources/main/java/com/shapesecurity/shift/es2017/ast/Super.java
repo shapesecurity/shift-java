@@ -18,6 +18,7 @@
 
 package com.shapesecurity.shift.es2017.ast;
 
+import javax.annotation.Nonnull;
 import com.shapesecurity.functional.data.HashCodeBuilder;
 
 public class Super implements Node, ExpressionSuper {

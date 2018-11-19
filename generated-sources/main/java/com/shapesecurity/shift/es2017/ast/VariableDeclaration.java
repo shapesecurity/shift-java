@@ -21,6 +21,7 @@ package com.shapesecurity.shift.es2017.ast;
 import javax.annotation.Nonnull;
 import com.shapesecurity.functional.data.HashCodeBuilder;
 import com.shapesecurity.functional.data.ImmutableList;
+import com.shapesecurity.shift.es2017.ast.VariableDeclarationKind;
 
 public class VariableDeclaration implements Node, FunctionDeclarationClassDeclarationVariableDeclaration, VariableDeclarationAssignmentTarget, VariableDeclarationExpression {
     @Nonnull
