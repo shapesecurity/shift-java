@@ -23,6 +23,7 @@ import javax.annotation.Nonnull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Predicate;
 import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -36,21 +37,21 @@ public class WebSafeCodeGen extends CodeGen {
 	@Nonnull
 	public static String prettyCodeGen(@Nonnull Script script) {
 		StringBuilder sb = new StringBuilder();
-		Director.reduceScript(new WebSafeCodeGen(new FormattedCodeRepFactory()), script).emit(new WebSafeTokenStream(sb), false);
+		Director.reduceScript(new WebSafeCodeGen(new FormattedCodeRepFactory()), script).emit(new TokenStream(sb), false);
 		return sb.toString();
 	}
 
 	@Nonnull
 	public static String codeGen(@Nonnull Script script) {
 		StringBuilder sb = new StringBuilder();
-		Director.reduceScript(new WebSafeCodeGen(new CodeRepFactory()), script).emit(new WebSafeTokenStream(sb), false);
+		Director.reduceScript(new WebSafeCodeGen(new CodeRepFactory()), script).emit(new TokenStream(sb), false);
 		return sb.toString();
 	}
 
 	@Nonnull
 	public static String codeGen(@Nonnull Module module) {
 		StringBuilder sb = new StringBuilder();
-		Director.reduceModule(new WebSafeCodeGen(new CodeRepFactory()), module).emit(new WebSafeTokenStream(sb), false);
+		Director.reduceModule(new WebSafeCodeGen(new CodeRepFactory()), module).emit(new TokenStream(sb), false);
 		return sb.toString();
 	}
 
@@ -63,11 +64,13 @@ public class WebSafeCodeGen extends CodeGen {
 	@Override
 	@Nonnull
 	public CodeRep reduceLiteralRegExpExpression(@Nonnull LiteralRegExpExpression node) {
-		String safened = safe(node.pattern + "/");
-		if (!safened.equals(node.pattern + "/")) {
+		String safened = safe("/" + node.pattern + "/");
+		if (!safened.equals("/" + node.pattern + "/")) {
 			throw new RuntimeException("WebSafeCodegen cannot safely output ASTs containing regex literals which require escaping");
 		}
-		return factory.token("/" + safened + buildFlags(node));
+		// see https://html.spec.whatwg.org/multipage/scripting.html#restrictions-for-contents-of-script-elements
+		String maybeLeadingSpace = startsWithScript.test(node.pattern) ? " " : "";
+		return factory.token(maybeLeadingSpace + safened + buildFlags(node));
 	}
 
 	@Nonnull
@@ -233,4 +236,8 @@ public class WebSafeCodeGen extends CodeGen {
 		matcher.appendTail(output);
 		return output.toString();
 	}
+
+
+	@Nonnull
+	public static Predicate<String> startsWithScript = Pattern.compile("^[sS][cC][rR][iI][pP][tT]").asPredicate();
 }

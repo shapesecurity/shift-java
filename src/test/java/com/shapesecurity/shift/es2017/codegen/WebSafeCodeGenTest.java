@@ -48,10 +48,14 @@ public class WebSafeCodeGenTest {
 
 	@Test
 	public void testScriptTag() throws JsError {
-		test("a< script", "a<script ");
+		test("a<script", "a<script ");
 		test("a< /script/", "a</script/");
-		test("a<< script", "a<<script ");
+		test("a< /script type='javascript'/", "a</script type='javascript'/");
+		test("a< /sCRIPT/", "a</sCRIPT/");
+		test("a</notscript/", "a</notscript/");
+		test("a<<script", "a<<script ");
 		test("a<< /script/", "a<</script/");
+		test("a<< /sCRIPT/", "a<</sCRIPT/");
 		test("(\"<\\x73cript \")", "(\"<script \")");
 		test("(\"</\\x73cript \")", "(\"</script \")");
 		testWithoutEq("\"<\\x73cript \"", "\"<script \"");
