@@ -86,7 +86,7 @@ public class TokenStreamWithLocation extends TokenStream {
 			this.lastCodePoint = lastChar;
 		}
 		if ((lastCodePoint == '+' || lastCodePoint == '-') && lastCodePoint == rightCodePoint ||
-				Utils.isIdentifierPart(lastCodePoint) && Utils.isIdentifierPart(rightCodePoint) ||
+				Utils.isIdentifierPart(lastCodePoint) && (Utils.isIdentifierPart(rightCodePoint) || rightCodePoint == '\\') ||
 				lastCodePoint == '/' && (rightCodePoint == 'i' || rightCodePoint == '/')) {
 			this.writer.append(' ');
 		}
