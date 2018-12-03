@@ -25,12 +25,10 @@ public class IdentifierToken extends IdentifierLikeToken {
 
     @Nonnull
     private final CharSequence name;
-    public final boolean escaped;
 
-    public IdentifierToken(@Nonnull TokenType type, @Nonnull SourceRange slice, @Nonnull CharSequence name, boolean escaped) {
+    public IdentifierToken(@Nonnull TokenType type, @Nonnull SourceRange slice, @Nonnull CharSequence name) {
         super(type, slice);
         this.name = name;
-        this.escaped = escaped;
     }
 
     @Override

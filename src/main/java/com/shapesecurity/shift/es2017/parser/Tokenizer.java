@@ -724,13 +724,12 @@ public class Tokenizer {
         SourceRange slice = this.getSlice(start);
 
         TokenType subType = this.getKeyword(id);
-
+        if (escaped) {
+            return new IdentifierToken(TokenType.ESCAPED_IDENTIFIER, slice, id);
+        }
         if (subType == TokenType.IDENTIFIER) {
-            return new IdentifierToken(subType, slice, id, escaped);
+            return new IdentifierToken(subType, slice, id);
         } else {
-            if (escaped) {
-                return new EscapedKeywordToken(slice, id, true);
-            }
             return new KeywordToken(subType, slice, id);
         }
     }
