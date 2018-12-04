@@ -84,16 +84,16 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
                     return true;
                 }
                 return false;
-			case ESCAPED_KEYWORD:
-				String keyword = this.lookahead.toString();
-				if (keyword.equals("await") && !this.moduleIsTheGoalSymbol) {
-					if (this.firstAwaitLocation == null) {
-						this.firstAwaitLocation = this.getLocation();
-					}
-					return true;
-				}
-				return keyword.equals("let") || keyword.equals("yield") || keyword.equals("async");
-			default:
+            case ESCAPED_KEYWORD:
+                String keyword = this.lookahead.toString();
+                if (keyword.equals("await") && !this.moduleIsTheGoalSymbol) {
+                    if (this.firstAwaitLocation == null) {
+                        this.firstAwaitLocation = this.getLocation();
+                    }
+                    return true;
+                }
+                return keyword.equals("let") || keyword.equals("yield") || keyword.equals("async");
+            default:
                 return false;
         }
     }
@@ -319,7 +319,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
     @Nonnull
     protected Binding parseBindingTarget() throws JsError {
         switch (this.lookahead.type) {
-			case ESCAPED_KEYWORD:
+            case ESCAPED_KEYWORD:
             case IDENTIFIER:
             case LET:
             case YIELD:
