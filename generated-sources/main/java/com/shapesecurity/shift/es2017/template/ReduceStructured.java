@@ -70,11 +70,14 @@ public class ReduceStructured implements ThunkedReducer<Node> {
     }
 
     public static class TemplateValues { // TODO relocate to Template
+        @Nonnull
         public final Map<String, Boolean> conditions;
+        @Nonnull
         public final Map<String, List<TemplateValues>> lists;
+        @Nonnull
         public final Map<String, F<Node, Node>> replacers;
 
-        public TemplateValues(Map<String, Boolean> conditions, Map<String, List<TemplateValues>> lists, Map<String, F<Node, Node>> replacers) {
+        public TemplateValues(@Nonnull Map<String, Boolean> conditions, @Nonnull Map<String, List<TemplateValues>> lists, @Nonnull Map<String, F<Node, Node>> replacers) {
             this.conditions = conditions;
             this.lists = lists;
             this.replacers = replacers;
