@@ -27,7 +27,7 @@ public class EscapedKeywords {
     @Test
     public void testYieldKeyword() throws JsError {
         testScriptFailure("function *a(){yi\\u0065ld 0}",14, "\"yield\" may not be used as an identifier in this context");
-        testScriptFailure("function *a(){var yi\\u0065ld}",18, "Unexpected identifier");
+        testScriptFailure("function *a(){var yi\\u0065ld}",18, "\"yield\" may not be used as an identifier in this context");
         testScript("function *a(){({yi\\u0065ld: 0})}", new FunctionDeclaration(false, true, new BindingIdentifier("a"), new FormalParameters(ImmutableList.empty(), Maybe.empty()), new FunctionBody(
                 ImmutableList.empty(),
                 ImmutableList.of(new ExpressionStatement(new ObjectExpression(ImmutableList.of(new DataProperty(new StaticPropertyName("yield"), new LiteralNumericExpression(0.0)))))))
