@@ -727,7 +727,7 @@ public class Tokenizer {
         if (subType == TokenType.IDENTIFIER) {
             return new IdentifierToken(subType, slice, id, escaped);
         } else if (escaped) {
-            return new IdentifierToken(TokenType.ESCAPED_KEYWORD, slice, id, true);
+            return new KeywordToken(TokenType.ESCAPED_KEYWORD, slice, id);
         } else {
             return new KeywordToken(subType, slice, id);
         }
