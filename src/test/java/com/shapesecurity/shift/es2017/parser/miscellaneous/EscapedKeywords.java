@@ -12,8 +12,8 @@ public class EscapedKeywords {
 
     @Test
     public void testNormalKeywords() throws JsError {
-        testScriptFailure("i\\u0066 (0)",0, "Unexpected identifier");
-        testScriptFailure("var i\\u0066",4, "Unexpected identifier");
+        testScriptFailure("i\\u0066 (0)",0, "Unexpected token \"i\\u0066\"");
+        testScriptFailure("var i\\u0066",4, "Unexpected token \"i\\u0066\"");
         testScript("({i\\u0066: 0})", new ObjectExpression(ImmutableList.of(new DataProperty(new StaticPropertyName("if"), new LiteralNumericExpression(0.0)))));
     }
 
