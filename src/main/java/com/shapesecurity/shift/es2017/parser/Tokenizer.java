@@ -17,14 +17,7 @@
 package com.shapesecurity.shift.es2017.parser;
 
 import com.shapesecurity.functional.Pair;
-import com.shapesecurity.shift.es2017.parser.token.EOFToken;
-import com.shapesecurity.shift.es2017.parser.token.IdentifierToken;
-import com.shapesecurity.shift.es2017.parser.token.KeywordToken;
-import com.shapesecurity.shift.es2017.parser.token.NumericLiteralToken;
-import com.shapesecurity.shift.es2017.parser.token.PunctuatorToken;
-import com.shapesecurity.shift.es2017.parser.token.RegularExpressionLiteralToken;
-import com.shapesecurity.shift.es2017.parser.token.StringLiteralToken;
-import com.shapesecurity.shift.es2017.parser.token.TemplateToken;
+import com.shapesecurity.shift.es2017.parser.token.*;
 import com.shapesecurity.shift.es2017.utils.Utils;
 
 import javax.annotation.Nonnull;
@@ -688,7 +681,7 @@ public class Tokenizer {
     }
 
     @Nonnull
-    private CharSequence getIdentifier() throws JsError {
+    private Pair<CharSequence, Boolean> getIdentifier() throws JsError {
         int start = this.index;
         int l = this.source.length();
         int i = this.index;
@@ -699,31 +692,42 @@ public class Tokenizer {
             if (ch == '\\' || 0xD800 <= code && code <= 0xDBFF) {
                 // Go back and try the hard one.
                 this.index = start;
-                return this.getEscapedIdentifier();
+                return Pair.of(this.getEscapedIdentifier(), true);
             }
             if (!check.apply(code)) {
                 this.index = i;
-                return this.source.subSequence(start, i);
+                return Pair.of(this.source.subSequence(start, i), false);
             }
             ++i;
             check = Utils::isIdentifierPart;
         }
         this.index = i;
-        return this.source.subSequence(start, i);
+        return Pair.of(this.source.subSequence(start, i), false);
     }
 
     @Nonnull
     private Token scanIdentifier() throws JsError {
         int start = this.index;
 
+        boolean escaped = this.source.charAt(this.index) == '\\';
+
         // Backslash (U+005C) starts an escaped character.
-        CharSequence id = this.source.charAt(this.index) == '\\' ? this.getEscapedIdentifier() : this.getIdentifier();
+        CharSequence id;
+        if (escaped) {
+            id = this.getEscapedIdentifier();
+        } else {
+            Pair<CharSequence, Boolean> pair = this.getIdentifier();
+            id = pair.left;
+            escaped = pair.right;
+        }
 
         SourceRange slice = this.getSlice(start);
 
         TokenType subType = this.getKeyword(id);
         if (subType == TokenType.IDENTIFIER) {
-            return new IdentifierToken(slice, id);
+            return new IdentifierToken(slice, id, escaped);
+        } else if (escaped) {
+            return new KeywordToken(TokenType.ESCAPED_KEYWORD, slice, id);
         } else {
             return new KeywordToken(subType, slice, id);
         }

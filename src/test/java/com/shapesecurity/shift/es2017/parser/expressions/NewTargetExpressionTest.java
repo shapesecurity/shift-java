@@ -54,9 +54,7 @@ public class NewTargetExpressionTest extends ParserTestCase {
                 ImmutableList.empty(), ImmutableList.of(new ExpressionStatement(new NewTargetExpression())))
                 ))));
 
-        testScript("function f() { new.\\u0074arget; }", new FunctionDeclaration(false, false, new BindingIdentifier("f"),
-                new FormalParameters(ImmutableList.empty(), Maybe.empty()), new FunctionBody(ImmutableList.empty(),
-                ImmutableList.of(new ExpressionStatement(new NewTargetExpression())))));
+        testScriptFailure("function f() { new.\\u0074arget; }", 19, "Unexpected identifier");
 
         testScript("function f() { new new.target; }", new FunctionDeclaration(false, false, new BindingIdentifier("f"),
                 new FormalParameters(ImmutableList.empty(), Maybe.empty()), new FunctionBody(ImmutableList.empty(),
@@ -72,7 +70,7 @@ public class NewTargetExpressionTest extends ParserTestCase {
                 ImmutableList.of(new ExpressionStatement(new NewExpression(new ArrayExpression(ImmutableList.of(
                         Maybe.of(new LiteralStringExpression("target")))), ImmutableList.empty()))))));
 
-        testScriptFailure("function f() { new.anythingElse; }", 31, "Unexpected identifier");
+        testScriptFailure("function f() { new.anythingElse; }", 19, "Unexpected identifier");
         testScriptFailure("function f() { new..target; }", 19, "Unexpected token \".\"");
     }
 }
