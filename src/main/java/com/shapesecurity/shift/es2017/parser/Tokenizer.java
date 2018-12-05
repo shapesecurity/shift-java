@@ -725,7 +725,7 @@ public class Tokenizer {
 
         TokenType subType = this.getKeyword(id);
         if (subType == TokenType.IDENTIFIER) {
-            return new IdentifierToken(subType, slice, id, escaped);
+            return new IdentifierToken(slice, id, escaped);
         } else if (escaped) {
             return new KeywordToken(TokenType.ESCAPED_KEYWORD, slice, id);
         } else {
