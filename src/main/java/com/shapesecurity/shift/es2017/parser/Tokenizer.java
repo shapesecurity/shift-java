@@ -1104,6 +1104,9 @@ public class Tokenizer {
                             }
                             ch = this.source.charAt(this.index);
                         }
+                        if (code == 0 && octLen == 1 && (ch == '8' || ch == '9')) {
+                            octal = this.source.substring(octalStart, this.index + 1);
+                        }
                         cooked = fromCodePoint(code);
                     } else if (ch == '8' || ch == '9') {
                         throw this.createILLEGAL();

@@ -99,10 +99,8 @@ public class XFailHelper {
 				"language/statements/function/name-eval-strict-body.js",
 
 				// ES2018 invalid escapes in template literals: https://github.com/tc39/ecma262/pull/773
-				"language/expressions/tagged-template/invalid-escape-sequences.js",
+				"language/expressions/tagged-template/invalid-escape-sequences.js"
 
-				// invalid escape bug, shift-java#219
-				"language/literals/string/legacy-non-octal-escape-sequence-strict.js"
 		));
 		xfailFiles.addAll(Arrays.asList(Regexp.xfail));
 	}
