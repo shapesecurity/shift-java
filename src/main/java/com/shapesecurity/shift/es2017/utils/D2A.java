@@ -159,7 +159,7 @@ public final class D2A {
             }
             return "0"; // Not reached
         } else if (n % 1 == 0) {
-            if (n > 1e15 && n < Math.pow(2, 63)) {
+            if (n > 1e12 && n < Math.pow(2, 63)) {
                 long ln = (long) n;
                 return "0x" + Long.toHexString(ln).toUpperCase();
             }
