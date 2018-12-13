@@ -61,6 +61,8 @@ public class LiteralStringExpressionTest extends ParserTestCase {
         testScriptFailure("'use strict'; ('\\41')", 15, "Unexpected legacy octal escape sequence: \\41");
         testScriptFailure("'use strict'; ('\\01')", 15, "Unexpected legacy octal escape sequence: \\01");
         testScriptFailure("'use strict'; ('\\08')", 15, "Unexpected legacy octal escape sequence: \\08");
+        testScriptFailure("'use strict'; '\\08'", 14, "Unexpected legacy octal escape sequence: \\08");
+        testScriptFailure("'\\08'; 'use strict';", 7, "Unexpected legacy octal escape sequence: \\08");
         testScriptFailure("'use strict'; ('\\00')", 15, "Unexpected legacy octal escape sequence: \\00");
         testScriptFailure("'use strict'; ('\\001')", 15, "Unexpected legacy octal escape sequence: \\001");
         testScriptFailure("'use strict'; ('\\000')", 15, "Unexpected legacy octal escape sequence: \\000");
