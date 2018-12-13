@@ -30,5 +30,6 @@ public class YieldGeneratorExpressionTest extends ParserTestCase {
 
         testScriptFailure("function *a(){yield\n*a}", 2, 0, 20, "Unexpected token \"*\"");
         testScriptFailure("function *a(){yield*}", 20, "Unexpected token \"}\"");
+        testScriptFailure("function *a(){({yield} = {})}", 23, "Unexpected token \"yield\"");
     }
 }

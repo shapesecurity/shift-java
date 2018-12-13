@@ -798,6 +798,9 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
             return this.copyNode(dataProperty, new AssignmentTargetPropertyProperty(dataProperty.name, this.transformDestructuringWithDefault(dataProperty.expression)));
         } else if (objectProperty instanceof ShorthandProperty) {
             ShorthandProperty shorthandProperty = (ShorthandProperty) objectProperty;
+            if (this.allowYieldExpression && shorthandProperty.name.name.equals("yield")) {
+                throw this.createError(ErrorMessages.UNEXPECTED_TOKEN, "yield");
+            }
             return this.copyNode(shorthandProperty, new AssignmentTargetPropertyIdentifier(this.copyNode(shorthandProperty.name, new AssignmentTargetIdentifier(shorthandProperty.name.name)), Maybe.empty()));
         }
         throw this.createError(ErrorMessages.INVALID_LHS_IN_ASSIGNMENT);
@@ -839,6 +842,9 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
             }
 
         } else if (node instanceof IdentifierExpression) {
+            if (this.allowYieldExpression && ((IdentifierExpression) node).name.equals("yield")) {
+                throw this.createError(ErrorMessages.UNEXPECTED_TOKEN, "yield");
+            }
             return this.copyNode(node, new AssignmentTargetIdentifier(((IdentifierExpression) node).name));
         } else if (node instanceof ComputedMemberExpression) {
             ComputedMemberExpression expr = (ComputedMemberExpression) node;
@@ -851,7 +857,10 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
     }
 
     @Nonnull
-    protected AssignmentTargetIdentifier transformDestructuring(StaticPropertyName property) {
+    protected AssignmentTargetIdentifier transformDestructuring(StaticPropertyName property) throws JsError {
+        if (this.allowYieldExpression && property.value.equals("yield")) {
+            throw this.createError(ErrorMessages.UNEXPECTED_TOKEN, "yield");
+        }
         return this.copyNode(property, new AssignmentTargetIdentifier(property.value));
     }
 

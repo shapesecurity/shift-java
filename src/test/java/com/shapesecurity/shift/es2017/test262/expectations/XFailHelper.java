@@ -101,11 +101,6 @@ public class XFailHelper {
 				// ES2018 invalid escapes in template literals: https://github.com/tc39/ecma262/pull/773
 				"language/expressions/tagged-template/invalid-escape-sequences.js",
 
-				// yield bug, shift-java#212
-				"language/statements/for-of/dstr-obj-id-identifier-yield-expr.js",
-				"language/statements/for-in/dstr-obj-id-identifier-yield-expr.js",
-				"language/expressions/assignment/dstr-obj-id-identifier-yield-expr.js",
-
 				// invalid escape bug, shift-java#219
 				"language/literals/string/legacy-non-octal-escape-sequence-strict.js"
 		));
