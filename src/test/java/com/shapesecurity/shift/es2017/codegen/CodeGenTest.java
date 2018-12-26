@@ -589,6 +589,7 @@ public class CodeGenTest {
         test("1e-308");
         test("9223372036854775807");
         test("9223372036854780000");
+        test("0x7FFFFFFFFFFFFC00", "9223372036854774784");
     }
 
     @Test
