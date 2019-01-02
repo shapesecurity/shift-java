@@ -33,7 +33,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class Template {
-	final Script tree;
+	final Program tree;
 	final ImmutableList<NodeInfo> namePairs;
 
 	public Template(String source) {
@@ -48,12 +48,32 @@ public class Template {
 		}
 	}
 
+	public static Template fromModuleSource(String source) {
+		ParserWithLocation parserWithLocation = new ParserWithLocation();
+		try {
+			Program tree = parserWithLocation.parseModule(source);
+			ImmutableList<Template.NodeInfo> namePairs = findNodes(tree, parserWithLocation, parserWithLocation.getComments());
+			return new Template(tree, namePairs);
+		} catch (JsError e) {
+			throw new IllegalArgumentException("template failed to parse");
+		}
+	}
+
+	public static Template fromScriptSource(String source) {
+		return new Template(source);
+	}
+
+	public Template(Program tree, ImmutableList<NodeInfo> namePairs) {
+		this.tree = tree;
+		this.namePairs = namePairs;
+	}
+
 	public Program apply(Map<String, F<Node, Node>> newNodes) {
 		return Template.applyTemplate(this, newNodes);
 	}
 
 	public Program applyStructured(ReduceStructured.TemplateValues values) {
-		return Template.applyStruturedTemplate(this.tree, this.namePairs, values);
+		return Template.applyStructuredTemplate(this.tree, this.namePairs, values);
 	}
 
 	public static class NodeInfo {
@@ -249,7 +269,7 @@ public class Template {
 		return replace(tree, getReplacement);
 	}
 
-	public static Program applyStruturedTemplate(Program tree, ImmutableList<NodeInfo> namePairs, ReduceStructured.TemplateValues values) {
+	public static Program applyStructuredTemplate(Program tree, ImmutableList<NodeInfo> namePairs, ReduceStructured.TemplateValues values) {
 		IdentityHashMap<Node, List<ReduceStructured.Label>> nodeToLabels = new IdentityHashMap<>();
 		for (NodeInfo info : namePairs) {
 			if (!nodeToLabels.containsKey(info.node)) {
