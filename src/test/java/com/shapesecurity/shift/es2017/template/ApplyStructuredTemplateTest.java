@@ -3,6 +3,8 @@ package com.shapesecurity.shift.es2017.template;
 import com.shapesecurity.functional.F;
 import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.shift.es2017.ast.IdentifierExpression;
+import com.shapesecurity.shift.es2017.ast.LiteralNumericExpression;
+import com.shapesecurity.shift.es2017.ast.Module;
 import com.shapesecurity.shift.es2017.ast.Node;
 import com.shapesecurity.shift.es2017.ast.Program;
 import com.shapesecurity.shift.es2017.ast.Script;
@@ -84,7 +86,25 @@ public class ApplyStructuredTemplateTest extends TestCase {
 		Script tree = parserWithLocation.parseScript(source);
 		ImmutableList<Template.NodeInfo> namePairs = findNodes(tree, parserWithLocation, parserWithLocation.getComments());
 
-		Program result = Template.applyStruturedTemplate(tree, namePairs, values);
+		Program result = Template.applyStructuredTemplate(tree, namePairs, values);
 		assertEquals(Parser.parseScript(expected), result);
+	}
+
+
+	public void testModule() throws JsError {
+		String source = "\n" +
+			"/*# if foo #*/ import a from 'b';\n" +
+			"/*# unless foo #*/ import a from 'c';\n" +
+			"";
+		String expected = "import a from 'c';";
+
+		HashMap<String, Boolean> conditions = new HashMap<>();
+		conditions.put("foo", false);
+
+		ReduceStructured.TemplateValues values = new ReduceStructured.TemplateValues(conditions, new HashMap<>(), new HashMap<>());
+
+		Template moduleTemplate = Template.fromModuleSource(source);
+
+		assertEquals(Parser.parseModule(expected), moduleTemplate.applyStructured(values));
 	}
 }
