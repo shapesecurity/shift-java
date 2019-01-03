@@ -30,7 +30,7 @@ public class Declaration {
         FunctionB33(false),
         FunctionExpressionName(true),
         ClassDeclaration(true),
-        ClassName(true),
+        ClassName(false),
         Parameter(false),
         CatchParameter(true),
         Import(true);

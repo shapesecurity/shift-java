@@ -21,15 +21,8 @@ import com.shapesecurity.functional.Pair;
 import com.shapesecurity.functional.Unit;
 import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.functional.data.Maybe;
-import com.shapesecurity.shift.es2017.ast.AssignmentTargetIdentifier;
-import com.shapesecurity.shift.es2017.ast.BindingIdentifier;
-import com.shapesecurity.shift.es2017.ast.ClassDeclaration;
-import com.shapesecurity.shift.es2017.ast.ClassExpression;
-import com.shapesecurity.shift.es2017.ast.FunctionDeclaration;
-import com.shapesecurity.shift.es2017.ast.IdentifierExpression;
+import com.shapesecurity.shift.es2017.ast.*;
 import com.shapesecurity.shift.es2017.ast.Module;
-import com.shapesecurity.shift.es2017.ast.Node;
-import com.shapesecurity.shift.es2017.ast.Script;
 import com.shapesecurity.shift.es2017.parser.JsError;
 import com.shapesecurity.shift.es2017.parser.Parser;
 import com.shapesecurity.shift.es2017.reducer.Flattener;
@@ -39,6 +32,8 @@ import org.junit.Test;
 
 import java.util.LinkedList;
 import java.util.List;
+
+import static org.junit.Assert.assertEquals;
 
 public class ScopeLookupTest {
     private static void assertThrows(Effect<Unit> f) {
@@ -246,6 +241,12 @@ public class ScopeLookupTest {
         checkScopeLookupSanity("(class{});");
         checkScopeLookupSanity("(class C{}); C;");
         checkScopeLookupSanity("(class C extends (C, null) { f(){C;} }); C;");
+
+        Script script = Parser.parseScript("class test {}; new test();");
+        ScopeLookup lookup = new ScopeLookup(ScopeAnalyzer.analyze(script));
+        ClassDeclaration clas = (ClassDeclaration) script.statements.maybeHead().fromJust();
+        NewExpression newExpression = (NewExpression) ((ExpressionStatement) script.statements.maybeLast().fromJust()).expression;
+        assertEquals(lookup.findVariableDeclaredBy(clas.name).fromJust(), lookup.findVariableReferencedBy((IdentifierExpression) newExpression.callee));
     }
 
     @Test
