@@ -102,6 +102,7 @@ public class AsyncAwaitTest {
 		testScript("async ((a))", new CallExpression(new IdentifierExpression("async"), ImmutableList.of(new IdentifierExpression("a"))));
 		testScript("async function a(){}(0)", new Script(ImmutableList.empty(), ImmutableList.of(new FunctionDeclaration(true, false, new BindingIdentifier("a"),  new FormalParameters(ImmutableList.empty(), Maybe.empty()), new FunctionBody(ImmutableList.empty(), ImmutableList.empty())), new ExpressionStatement(new LiteralNumericExpression(0.0)))));
 		testScript("(async function a(){}(0))", new CallExpression(new FunctionExpression(true, false, Maybe.of(new BindingIdentifier("a")),  new FormalParameters(ImmutableList.empty(), Maybe.empty()), new FunctionBody(ImmutableList.empty(), ImmutableList.empty())), ImmutableList.of(new LiteralNumericExpression(0.0))));
+		testScript("(async function() { (await y); })", new FunctionExpression(true, false, Maybe.empty(), new FormalParameters(ImmutableList.empty(), Maybe.empty()), new FunctionBody(ImmutableList.empty(), ImmutableList.of(new ExpressionStatement(new AwaitExpression(new IdentifierExpression("y")))))));
 	}
 
 	@Test

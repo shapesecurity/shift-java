@@ -1442,6 +1442,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
         AdditionalStateT startState = this.startNode();
 
         if (this.allowAwaitExpression && this.eat(TokenType.AWAIT)) {
+            this.isBindingElement = this.isAssignmentTarget = false;
             Either3<Expression, Pair<FormalParameters, Boolean>, AssignmentTarget> expression = this.isolateCoverGrammar(this::parseUnaryExpression);
             return Either3.left(this.finishNode(startState, new AwaitExpression(expression.left().fromJust())));
         }
