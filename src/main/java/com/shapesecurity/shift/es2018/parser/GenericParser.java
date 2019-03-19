@@ -852,6 +852,12 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
                 properties.add(this.transformDestructuring(p));
 				++propertyIndex;
             }
+            if (rest.isJust()) {
+                AssignmentTarget restTarget = rest.fromJust();
+                if (restTarget instanceof ObjectAssignmentTarget || restTarget instanceof ArrayAssignmentTarget) {
+                    throw this.createError(ErrorMessages.INVALID_LHS_IN_ASSIGNMENT);
+                }
+            }
             return this.copyNode(node, new ObjectAssignmentTarget(ImmutableList.from(properties), rest));
         } else if (node instanceof ArrayExpression) {
             ArrayExpression arrayExpression = (ArrayExpression) node;
@@ -2046,6 +2052,10 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
                 Either<SpreadProperty, AssignmentTarget> spreadProperty = this.parseSpreadPropertyDefinition();
                 matchedSpreadProperty = true;
                 if (spreadProperty.isLeft()) {
+                    Expression spreadExpression = spreadProperty.left().fromJust().expression;
+                    if (spreadExpression instanceof ObjectExpression || spreadExpression instanceof ArrayExpression) {
+                        this.isBindingElement = this.isAssignmentTarget = false;
+                    }
                     fromParsePropertyDefinition = Either.left(spreadProperty.left().fromJust());
                 } else {
                     allExpressionsSoFar = false;
@@ -2082,7 +2092,6 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
                 if (matchedSpreadProperty) {
                     this.isBindingElement = this.isAssignmentTarget = false;
                 }
-
             }
         }
         this.expect(TokenType.RBRACE);
@@ -2090,6 +2099,12 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
         if (allExpressionsSoFar) {
             return Either.left(this.finishNode(startState, new ObjectExpression(ImmutableList.from(objectProperties))));
         } else {
+            if (rest.isJust()) {
+                AssignmentTarget restTarget = rest.fromJust();
+                if (restTarget instanceof ObjectAssignmentTarget || restTarget instanceof ArrayAssignmentTarget) {
+                    throw this.createError(ErrorMessages.INVALID_LHS_IN_ASSIGNMENT);
+                }
+            }
             return Either.right(this.finishNode(startState, new ObjectAssignmentTarget(ImmutableList.from(bindingProperties), rest)));
         }
     }
