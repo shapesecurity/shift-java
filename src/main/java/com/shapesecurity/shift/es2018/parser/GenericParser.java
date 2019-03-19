@@ -2388,7 +2388,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
 			this.allowYieldExpression = isGenerator;
 			this.allowAwaitExpression = true;
 			FormalParameters parameters = this.parseParams();
-			this.allowAwaitExpression = false;
+			this.allowYieldExpression = isGenerator;
 			this.allowAwaitExpression = true;
 			FunctionBody body = this.parseFunctionBody();
 			this.allowYieldExpression = previousYield;

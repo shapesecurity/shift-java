@@ -106,12 +106,17 @@ public class ObjectAssignmentTargetTest extends ParserTestCase {
             ))
         );
         testScript("({ ...(a) } = {})", new AssignmentExpression(
-            new ObjectAssignmentTarget(ImmutableList.empty(), Maybe.of(new AssignmentTargetIdentifier("a"))),
-            new ObjectExpression(ImmutableList.empty())
+                new ObjectAssignmentTarget(ImmutableList.empty(), Maybe.of(new AssignmentTargetIdentifier("a"))),
+                new ObjectExpression(ImmutableList.empty())
+        ));
+        testScript("({a = 5} = {})", new AssignmentExpression(
+                new ObjectAssignmentTarget(ImmutableList.of(new AssignmentTargetPropertyIdentifier(new AssignmentTargetIdentifier("a"), Maybe.of(new LiteralNumericExpression(5)))), Maybe.empty()),
+                new ObjectExpression(ImmutableList.empty())
         ));
 
 
 
+        testScriptFailure("({a = 5})", 2, "Illegal property initializer");
         testScriptFailure("({a, ...b, c} = {})", 14, "Invalid left-hand side in assignment");
         testScriptFailure("({ ...{a} } = {})", 12, "Invalid left-hand side in assignment");
         testScriptFailure("({b, c, d, ...{a} } = {})", 20, "Invalid left-hand side in assignment");
