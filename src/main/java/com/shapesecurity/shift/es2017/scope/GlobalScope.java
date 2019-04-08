@@ -23,16 +23,25 @@ import com.shapesecurity.functional.data.NonEmptyImmutableList;
 import com.shapesecurity.shift.es2017.ast.Node;
 
 import javax.annotation.Nonnull;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Spliterator;
+import java.util.Spliterators;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 public class GlobalScope extends Scope {
     GlobalScope(
             @Nonnull ImmutableList<Scope> children,
             @Nonnull ImmutableList<Variable> variables,
             @Nonnull HashTable<String, NonEmptyImmutableList<Reference>> through,
-            @Nonnull Node astNode) {
+            @Nonnull Node astNode,
+            @Nonnull ScopeAnalyzer.IdCounter counter) {
         super(children, variables, through, Type.Global, true, astNode);
-        for (Pair<String, NonEmptyImmutableList<Reference>> var : through.entries()) {
-            this.variables.put(var.left(), new Variable(var.left(), var.right(), ImmutableList.empty()));
+        List<Pair<String, NonEmptyImmutableList<Reference>>> throughSorted = StreamSupport.stream(Spliterators.spliteratorUnknownSize(through.iterator(), Spliterator.ORDERED), false)
+            .sorted(Comparator.comparing(o -> o.left)).collect(Collectors.toList());
+        for (Pair<String, NonEmptyImmutableList<Reference>> var : throughSorted) {
+            this.variables.put(var.left(), new Variable(var.left(), var.right(), ImmutableList.empty(), counter.next()));
         }
     }
 }

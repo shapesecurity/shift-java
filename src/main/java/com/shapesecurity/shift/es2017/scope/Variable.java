@@ -17,10 +17,11 @@
 package com.shapesecurity.shift.es2017.scope;
 
 import com.shapesecurity.functional.data.ImmutableList;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 
-public class Variable {
+public class Variable implements Comparable<Variable> {
     /**
      * Variable name *
      */
@@ -37,12 +38,24 @@ public class Variable {
     @Nonnull
     public final ImmutableList<Declaration> declarations;
 
+    /**
+     * counter used for deterministic ordering of variables
+     */
+    private final int variableIndex;
+
     public Variable(
             @Nonnull String name,
             @Nonnull ImmutableList<Reference> references,
-            @Nonnull ImmutableList<Declaration> declarations) {
+            @Nonnull ImmutableList<Declaration> declarations,
+            int variableIndex) {
         this.name = name;
         this.references = references;
         this.declarations = declarations;
+        this.variableIndex = variableIndex;
+    }
+
+    @Override
+    public int compareTo(@NotNull Variable o) {
+        return this.variableIndex - o.variableIndex;
     }
 }
