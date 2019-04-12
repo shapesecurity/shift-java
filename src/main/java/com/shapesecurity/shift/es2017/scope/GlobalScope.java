@@ -35,13 +35,12 @@ public class GlobalScope extends Scope {
             @Nonnull ImmutableList<Scope> children,
             @Nonnull ImmutableList<Variable> variables,
             @Nonnull HashTable<String, NonEmptyImmutableList<Reference>> through,
-            @Nonnull Node astNode,
-            @Nonnull ScopeAnalyzer.IdCounter counter) {
+            @Nonnull Node astNode) {
         super(children, variables, through, Type.Global, true, astNode);
         List<Pair<String, NonEmptyImmutableList<Reference>>> throughSorted = StreamSupport.stream(Spliterators.spliteratorUnknownSize(through.iterator(), Spliterator.ORDERED), false)
             .sorted(Comparator.comparing(o -> o.left)).collect(Collectors.toList());
         for (Pair<String, NonEmptyImmutableList<Reference>> var : throughSorted) {
-            this.variables.put(var.left(), new Variable(var.left(), var.right(), ImmutableList.empty(), counter.next()));
+            this.variables.put(var.left(), new Variable(var.left(), var.right(), ImmutableList.empty()));
         }
     }
 }
