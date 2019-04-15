@@ -29,7 +29,7 @@ import com.shapesecurity.shift.es2018.ast.Node;
 import com.shapesecurity.shift.es2018.ast.Super;
 import com.shapesecurity.shift.es2018.utils.Utils;
 
-interface ErrorMessages {
+public interface ErrorMessages {
 
     // error messages in error.js
     String UNEXPECTED_TOKEN = "Unexpected token \"%s\""; // TODO actual string escaping
@@ -44,6 +44,8 @@ interface ErrorMessages {
     String NEWLINE_AFTER_THROW = "Illegal newline after throw";
     String NEWLINE_AFTER_ARROW_PARAMS = "Illegal newline after arrow parameters";
     String UNTERMINATED_REGEXP = "Invalid regular expression: missing /";
+    String INVALID_REST_PARAMETERS_INITIALIZATION = "Rest parameter may not have a default initializer";
+    String INVALID_REST_PARAMETER = "Rest parameter must be last formal parameter";
     String INVALID_REGEXP_FLAGS = "Invalid regular expression flags";
     String INVALID_LHS_IN_ASSIGNMENT = "Invalid left-hand side in assignment";
     String INVALID_LHS_IN_FOR_IN = "Invalid left-hand side in for-in";

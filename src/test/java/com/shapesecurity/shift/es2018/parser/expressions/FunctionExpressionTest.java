@@ -23,6 +23,7 @@ import com.shapesecurity.shift.es2018.ast.operators.UnaryOperator;
 import com.shapesecurity.shift.es2018.ast.LabeledStatement;
 import com.shapesecurity.shift.es2018.parser.ParserTestCase;
 import com.shapesecurity.shift.es2018.parser.JsError;
+import com.shapesecurity.shift.es2018.parser.ErrorMessages;
 
 import org.junit.Test;
 
@@ -97,8 +98,12 @@ public class FunctionExpressionTest extends ParserTestCase {
                 new ExpressionStatement(new FunctionExpression(false, false, Maybe.of(new BindingIdentifier("yield")), new FormalParameters(ImmutableList.empty(), Maybe.empty()), new FunctionBody(ImmutableList.empty(), ImmutableList.empty())))
         ))));
 
-        testScriptFailure("(function(...a, b){})", 14, "Unexpected token \",\"");
+        testScriptFailure("(function(...a, b){})", 14, ErrorMessages.INVALID_REST_PARAMETER);
+        testScriptFailure("(function(...a, ...b){})", 14, ErrorMessages.INVALID_REST_PARAMETER);
+        testScriptFailure("(async function(...a, b){})", 20, ErrorMessages.INVALID_REST_PARAMETER);
+        testScriptFailure("(async function(...a, ...b){})", 20, ErrorMessages.INVALID_REST_PARAMETER);
         testScriptFailure("(function((a)){})", 10, "Unexpected token \"(\"");
-
+        testScriptFailure("(function(...x = []) {})", 15, ErrorMessages.INVALID_REST_PARAMETERS_INITIALIZATION);
+        testScriptFailure("(async function(...x = []) {})", 21, ErrorMessages.INVALID_REST_PARAMETERS_INITIALIZATION);
     }
 }

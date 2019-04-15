@@ -169,13 +169,20 @@ public class ObjectExpressionTest extends ParserTestCase {
                 new ShorthandProperty(new IdentifierExpression("a")),
                 new SpreadProperty(new IdentifierExpression("b"))
         )));
+
         testScript("({a, ...b, c})", new ObjectExpression(ImmutableList.of(
                 new ShorthandProperty(new IdentifierExpression("a")),
                 new SpreadProperty(new IdentifierExpression("b")),
                 new ShorthandProperty(new IdentifierExpression("c"))
         )));
+
         testScript("({...b})", new ObjectExpression(ImmutableList.of(
                 new SpreadProperty(new IdentifierExpression("b"))
         )));
+
+        testScript("({...b = []})", new ObjectExpression(ImmutableList.of(
+                new SpreadProperty(new AssignmentExpression(new AssignmentTargetIdentifier("b"), new ArrayExpression(ImmutableList.empty())) )
+        )));
+
     }
 }
