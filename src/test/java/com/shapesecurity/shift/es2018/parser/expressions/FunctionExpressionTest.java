@@ -98,6 +98,7 @@ public class FunctionExpressionTest extends ParserTestCase {
                 new ExpressionStatement(new FunctionExpression(false, false, Maybe.of(new BindingIdentifier("yield")), new FormalParameters(ImmutableList.empty(), Maybe.empty()), new FunctionBody(ImmutableList.empty(), ImmutableList.empty())))
         ))));
 
+        testScript("var b = []; function a(...x) {}; a(...b);");
         testScriptFailure("(function(...a, b){})", 14, ErrorMessages.INVALID_REST_PARAMETER);
         testScriptFailure("(function(...a, ...b){})", 14, ErrorMessages.INVALID_REST_PARAMETER);
         testScriptFailure("(async function(...a, b){})", 20, ErrorMessages.INVALID_REST_PARAMETER);

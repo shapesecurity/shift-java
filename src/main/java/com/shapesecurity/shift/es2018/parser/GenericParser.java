@@ -558,6 +558,9 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
                     if (TokenType.ASSIGN == this.lookahead.type) {
                         throw this.createError(ErrorMessages.INVALID_REST_PARAMETERS_INITIALIZATION);
                     }
+                    if (TokenType.COMMA == this.lookahead.type) {
+                        throw this.createError(ErrorMessages.INVALID_REST_PARAMETER);
+                    }
                     break;
                 }
                 items.add(this.parseParam());
@@ -570,9 +573,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
                 }
             }
         }
-        if (TokenType.COMMA == this.lookahead.type) {
-            throw this.createError(ErrorMessages.INVALID_REST_PARAMETER);
-        }
+
         this.expect(TokenType.RPAREN);
         return this.finishNode(startState, new FormalParameters(ImmutableList.from(items).map(this::bindingToParameter), Maybe.fromNullable(rest)));
     }
@@ -1811,9 +1812,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
                         return Pair.of(ImmutableList.from(args), locationFollowingFirstSpread);
                     }
                     locationFollowingFirstSpread = Maybe.of(this.getLocation());
-                    if (TokenType.COMMA == this.lookahead.type) {
-                        throw this.createError(ErrorMessages.INVALID_REST_PARAMETER);
-                    }
+                    this.expect(TokenType.COMMA);
                     continue;
                 }
             } else {
