@@ -105,10 +105,6 @@ public class EarlyErrorsTest extends ParserTestCase {
         // #sec-arrow-function-definitions-static-semantics-early-errors
         testScriptEarlyError("async function a(){ (a = await (0)) => {}; }", "Arrow parameters must not contain await expressions");
         // #sec-async-function-definitions-static-semantics-early-errors
-        // It is a Syntax Error if UniqueFormalParameters Contains AwaitExpression is true
-        testScriptEarlyError("async function a(b = await (0)) {}", "Async function parameters must not contain await expressions");
-        testScriptEarlyError("(async function(b = await (0)) {})", "Async function parameters must not contain await expressions");
-        testScriptEarlyError("({ async a(b = await (0)) {} })", "Async function parameters must not contain await expressions");
         // #sec-class-definitions-static-semantics-early-errors
         // It is a Syntax Error if PropName of MethodDefinition is "constructor" and SpecialMethod of MethodDefinition is true.
         testScriptEarlyError("(class { async constructor(){} })", "Constructors cannot be async, generators, getters or setters");

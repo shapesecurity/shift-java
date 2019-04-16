@@ -99,10 +99,10 @@ public class FunctionExpressionTest extends ParserTestCase {
         ))));
 
         testScript("var b = []; function a(...x) {}; a(...b);");
-        testScriptFailure("(function(...a, b){})", 14, ErrorMessages.INVALID_REST_PARAMETER);
-        testScriptFailure("(function(...a, ...b){})", 14, ErrorMessages.INVALID_REST_PARAMETER);
-        testScriptFailure("(async function(...a, b){})", 20, ErrorMessages.INVALID_REST_PARAMETER);
-        testScriptFailure("(async function(...a, ...b){})", 20, ErrorMessages.INVALID_REST_PARAMETER);
+        testScriptFailure("(function(...a, b){})", 14, ErrorMessages.INVALID_LAST_REST_PARAMETER);
+        testScriptFailure("(function(...a, ...b){})", 16, ErrorMessages.INVALID_LAST_REST_PARAMETER);
+        testScriptFailure("(async function(...a, b){})", 20, ErrorMessages.INVALID_LAST_REST_PARAMETER);
+        testScriptFailure("(async function(...a, ...b){})", 20, ErrorMessages.INVALID_LAST_REST_PARAMETER);
         testScriptFailure("(function((a)){})", 10, "Unexpected token \"(\"");
         testScriptFailure("(function(...x = []) {})", 15, ErrorMessages.INVALID_REST_PARAMETERS_INITIALIZATION);
         testScriptFailure("(async function(...x = []) {})", 21, ErrorMessages.INVALID_REST_PARAMETERS_INITIALIZATION);

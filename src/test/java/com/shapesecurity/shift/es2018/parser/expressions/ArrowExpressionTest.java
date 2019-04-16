@@ -72,10 +72,14 @@ public class ArrowExpressionTest extends ParserTestCase {
         testScriptFailure("() + 0", 3, "Unexpected token \"+\"");
         testScriptFailure("(10) => 0", 0, "Illegal arrow function parameter list");
         testScriptFailure("(10, 0, 20) => 0", 0, "Illegal arrow function parameter list");
-        testScriptFailure("(...a, b) => {}", 5, ErrorMessages.INVALID_REST_PARAMETER);
-        testScriptFailure("(...a, ...b) => {}", 5, ErrorMessages.INVALID_REST_PARAMETER);
-        testScriptFailure("(async (...a, b) => {})", 12, ErrorMessages.INVALID_REST_PARAMETER);
-        testScriptFailure("(async (...a, ...b) => {})", 12, ErrorMessages.INVALID_REST_PARAMETER);
-        testScriptFailure("(async (...x = []) => {});", 19, ErrorMessages.INVALID_REST_PARAMETERS_INITIALIZATION);
+        testScriptFailure("(...a, b) => {}", 5, ErrorMessages.INVALID_LAST_REST_PARAMETER);
+        testScriptFailure("(...a, ...b) => {}", 5, ErrorMessages.INVALID_LAST_REST_PARAMETER);
+        testScriptFailure("(a, ...b,) => {}", 8, ErrorMessages.INVALID_LAST_REST_PARAMETER);
+        testScriptFailure("(async (...a, b) => {})", 14, ErrorMessages.INVALID_LAST_REST_PARAMETER);
+        testScriptFailure("(async (...a, ...b) => {})", 14, ErrorMessages.INVALID_LAST_REST_PARAMETER);
+        testScriptFailure("(async (...x = []) => {});", 13, ErrorMessages.INVALID_REST_PARAMETERS_INITIALIZATION);
+        testScriptFailure("async function a(b = await (0)) {}", 21, "\"await\" may not be used as an identifier in this context");
+        testScriptFailure("(async function(b = await (0)) {})", 20, "\"await\" may not be used as an identifier in this context");
+        testScriptFailure("({ async a(b = await (0)) {} })", 15, "\"await\" may not be used as an identifier in this context");
     }
 }

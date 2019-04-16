@@ -45,7 +45,7 @@ public interface ErrorMessages {
     String NEWLINE_AFTER_ARROW_PARAMS = "Illegal newline after arrow parameters";
     String UNTERMINATED_REGEXP = "Invalid regular expression: missing /";
     String INVALID_REST_PARAMETERS_INITIALIZATION = "Rest parameter may not have a default initializer";
-    String INVALID_REST_PARAMETER = "Rest parameter must be last formal parameter";
+    String INVALID_LAST_REST_PARAMETER = "Rest parameter must be last formal parameter";
     String INVALID_REGEXP_FLAGS = "Invalid regular expression flags";
     String INVALID_LHS_IN_ASSIGNMENT = "Invalid left-hand side in assignment";
     String INVALID_LHS_IN_FOR_IN = "Invalid left-hand side in for-in";
@@ -61,7 +61,7 @@ public interface ErrorMessages {
     String ILLEGAL_PROPERTY = "Illegal property initializer";
     String UNEXPECTED_ARROW = "Arrows may not appear in this position";
     String UNINITIALIZED_BINDINGPATTERN_IN_FOR_INIT = "Binding pattern appears without initializer in for statement init";
-    String NO_AWAIT_IN_ASYNC_PARAMS = "Async arrow parameters may not contain \"await\"";
+    String NO_AWAIT_IN_ASYNC_PARAMS = "'await' is not a valid identifier name in an async function";
 
     // not in error.js, but already used in java version
     String STRICT_RESERVED_WORD = "Use of future reserved word in strict mode";

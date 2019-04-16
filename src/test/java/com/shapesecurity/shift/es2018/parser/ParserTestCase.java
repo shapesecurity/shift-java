@@ -108,6 +108,12 @@ public abstract class ParserTestCase extends TestCase {
         try {
             Parser.parseScript(source);
         } catch (JsError jsError) {
+            if (!error.equals(jsError.getDescription())
+                    || line != jsError.getLine()
+                    || column != jsError.getColumn()
+                    || index != jsError.getIndex()) {
+                jsError.printStackTrace();
+            }
             assertEquals(error, jsError.getDescription());
             assertEquals(line, jsError.getLine());
             assertEquals(column, jsError.getColumn());
