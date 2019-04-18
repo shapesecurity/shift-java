@@ -30,6 +30,7 @@ import org.junit.Test;
 public class FunctionExpressionTest extends ParserTestCase {
     @Test
     public void testFunctionExpression() throws JsError {
+        // test already exists in test262-parser-tests fa9eaf58f51d6926
         testScript("(function(){})", new FunctionExpression(false, false, Maybe.empty(), new FormalParameters(ImmutableList.empty(),
                 Maybe.empty()), new FunctionBody(ImmutableList.empty(), ImmutableList.empty())));
 
@@ -100,7 +101,7 @@ public class FunctionExpressionTest extends ParserTestCase {
 
         testScript("var b = []; function a(...x) {}; a(...b);");
         testScriptFailure("(function(...a, b){})", 14, ErrorMessages.INVALID_LAST_REST_PARAMETER);
-        testScriptFailure("(function(...a, ...b){})", 16, ErrorMessages.INVALID_LAST_REST_PARAMETER);
+        testScriptFailure("(function(...a, ...b){})", 14, ErrorMessages.INVALID_LAST_REST_PARAMETER);
         testScriptFailure("(async function(...a, b){})", 20, ErrorMessages.INVALID_LAST_REST_PARAMETER);
         testScriptFailure("(async function(...a, ...b){})", 20, ErrorMessages.INVALID_LAST_REST_PARAMETER);
         testScriptFailure("(function((a)){})", 10, "Unexpected token \"(\"");

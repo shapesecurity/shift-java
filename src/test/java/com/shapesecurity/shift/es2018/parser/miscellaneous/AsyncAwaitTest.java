@@ -19,7 +19,6 @@ public class AsyncAwaitTest {
 	public void testAsyncArrows() throws JsError {
 		testScript("async (a, b) => 0", new ArrowExpression(true, new FormalParameters(ImmutableList.of(new BindingIdentifier("a"), new BindingIdentifier("b")), Maybe.empty()), new LiteralNumericExpression(0.0)));
 		testScript("async (a, ...b) => 0", new ArrowExpression(true, new FormalParameters(ImmutableList.of(new BindingIdentifier("a")), Maybe.of(new BindingIdentifier("b"))), new LiteralNumericExpression(0.0)));
-		testScript("async (a, ...b,) => 0", new ArrowExpression(true, new FormalParameters(ImmutableList.of(new BindingIdentifier("a")), Maybe.of(new BindingIdentifier("b"))), new LiteralNumericExpression(0.0)));
 		testScript("async a => {}", new ArrowExpression(true, new FormalParameters(ImmutableList.of(new BindingIdentifier("a")), Maybe.empty()), new FunctionBody(ImmutableList.empty(), ImmutableList.empty())));
 		testScript("async () => {}", new ArrowExpression(true, new FormalParameters(ImmutableList.empty(), Maybe.empty()), new FunctionBody(ImmutableList.empty(), ImmutableList.empty())));
 		testScript("(async a => {})()", new CallExpression(new ArrowExpression(true, new FormalParameters(ImmutableList.of(new BindingIdentifier("a")), Maybe.empty()), new FunctionBody(ImmutableList.empty(), ImmutableList.empty())), ImmutableList.empty()));
@@ -144,7 +143,7 @@ public class AsyncAwaitTest {
 
 	@Test
 	public void testAsyncFailure() {
-		testScriptFailure("async (a, ...b, ...c) => {}", 16, "Rest parameter must be last formal parameter");
+		testScriptFailure("async (a, ...b, ...c) => {}", 14, "Rest parameter must be last formal parameter");
 		testScriptFailure("async\n(a, b) => {}", 2, 7, 13, "Unexpected token \"=>\"");
 		testScriptFailure("new async() => {}", 12, "Unexpected token \"=>\"");
 		testScriptFailure("({ async\nf(){} })", 2, 0, 9, "Unexpected identifier");

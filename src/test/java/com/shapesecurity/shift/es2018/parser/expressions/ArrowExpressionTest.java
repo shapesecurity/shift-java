@@ -51,6 +51,8 @@ public class ArrowExpressionTest extends ParserTestCase {
         testScript("yield => 0", new ArrowExpression(false, new FormalParameters(ImmutableList.of(new BindingIdentifier("yield")), Maybe.empty()), new LiteralNumericExpression(0.0)));
         testScript("let => 0", new ArrowExpression(false, new FormalParameters(ImmutableList.of(new BindingIdentifier("let")), Maybe.empty()), new LiteralNumericExpression(0.0)));
 
+        testScript("function(a = []) {}", new ArrowExpression(false, new FormalParameters(ImmutableList.of(new BindingIdentifier("let")), Maybe.empty()), new LiteralNumericExpression(0.0)));
+
         testScriptFailure("[]=>0", 2, "Unexpected token \"=>\"");
         testScriptFailure("() + 1", 3, "Unexpected token \"+\"");
         testScriptFailure("1 + ()", 6, "Unexpected end of input");
@@ -75,8 +77,8 @@ public class ArrowExpressionTest extends ParserTestCase {
         testScriptFailure("(...a, b) => {}", 5, ErrorMessages.INVALID_LAST_REST_PARAMETER);
         testScriptFailure("(...a, ...b) => {}", 5, ErrorMessages.INVALID_LAST_REST_PARAMETER);
         testScriptFailure("(a, ...b,) => {}", 8, ErrorMessages.INVALID_LAST_REST_PARAMETER);
-        testScriptFailure("(async (...a, b) => {})", 14, ErrorMessages.INVALID_LAST_REST_PARAMETER);
-        testScriptFailure("(async (...a, ...b) => {})", 14, ErrorMessages.INVALID_LAST_REST_PARAMETER);
+        testScriptFailure("(async (...a, b) => {})", 12, ErrorMessages.INVALID_LAST_REST_PARAMETER);
+        testScriptFailure("(async (...a, ...b) => {})", 12, ErrorMessages.INVALID_LAST_REST_PARAMETER);
         testScriptFailure("(async (...x = []) => {});", 13, ErrorMessages.INVALID_REST_PARAMETERS_INITIALIZATION);
         testScriptFailure("async function a(b = await (0)) {}", 21, "\"await\" may not be used as an identifier in this context");
         testScriptFailure("(async function(b = await (0)) {})", 20, "\"await\" may not be used as an identifier in this context");

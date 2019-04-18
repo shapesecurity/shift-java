@@ -452,7 +452,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
 
         boolean previousYield = this.allowYieldExpression;
         boolean previousAwait = this.allowAwaitExpression;
-        boolean previousYieldIdentifier = this.blockAwaitIdentifier;
+        boolean previousAwaitIdentifier = this.blockAwaitIdentifier;
         SourceLocation previousAwaitLocation = this.firstAwaitLocation;
         this.allowYieldExpression = false;
         this.allowAwaitExpression = isAsync;
@@ -462,7 +462,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
             body = this.match(TokenType.LBRACE) ? this.parseFunctionBody() : this.parseAssignmentExpression().left().fromJust();
         this.allowYieldExpression = previousYield;
         this.allowAwaitExpression = previousAwait;
-        this.blockAwaitIdentifier = previousYieldIdentifier;
+        this.blockAwaitIdentifier = previousAwaitIdentifier;
         this.firstAwaitLocation = previousAwaitLocation;
         return this.finishNode(startState, new ArrowExpression(isAsync, paramsNode, body));
     }
@@ -2394,7 +2394,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
                     FunctionBody body = this.parseFunctionBody();
                     this.allowYieldExpression = previousYield;
                     this.allowAwaitExpression = previousAwait;
-                    this.blockAwaitIdentifier = blockAwaitIdentifier;
+                    this.blockAwaitIdentifier = previousAwaitIdentifier;
                     this.firstAwaitLocation = previousAwaitLocation;
                     return Either.right(this.finishNode(startState, new Getter(name, body)));
                 } else if (tokenName.equals("set") && this.lookaheadPropertyName() && !((IdentifierToken) token).escaped) {
@@ -2413,7 +2413,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
                     FunctionBody body = this.parseFunctionBody();
                     this.allowYieldExpression = previousYield;
                     this.allowAwaitExpression = previousAwait;
-                    this.blockAwaitIdentifier = blockAwaitIdentifier;
+                    this.blockAwaitIdentifier = previousAwaitIdentifier;
                     this.firstAwaitLocation = previousAwaitLocation;
                     return Either.right(this.finishNode(startState, new Setter(name, bindingToParameter(param), body)));
                 }
