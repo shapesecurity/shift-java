@@ -56,5 +56,6 @@ public class ForAwaitStatementTest extends ParserTestCase {
         testScriptFailure("for await(var a = 0 of b);", 20, "Invalid variable declaration in for-await statement");
         testScriptFailure("for await(let a = 0 of b);", 20, "Invalid variable declaration in for-await statement");
         testScriptFailure("for await(const a = 0 of b);", 22, "Invalid variable declaration in for-await statement");
+        testScriptFailure("for await(let.x of a);", 16, "Invalid left-hand side in for-await");
     }
 }

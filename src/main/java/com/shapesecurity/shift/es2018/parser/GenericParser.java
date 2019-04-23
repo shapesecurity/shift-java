@@ -724,9 +724,9 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
             if (init.declarators.length == 1 && (this.match((TokenType.IN)) || this.matchContextualKeyword("of"))) {
                 VariableDeclarator declarator = init.declarators.maybeHead().fromJust();
                 if (this.match(TokenType.IN)) {
-					if (await) {
-						throw this.createUnexpected(this.lookahead);
-					}
+                    if (await) {
+                        throw this.createUnexpected(this.lookahead);
+                    }
                     if (declarator.init.isJust() && (this.strict || init.kind != VariableDeclarationKind.Var || !(declarator.binding instanceof BindingIdentifier))) {
                         throw this.createError(ErrorMessages.INVALID_VAR_INIT_FOR_IN);
                     }
@@ -742,14 +742,14 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
                 right = this.parseAssignmentExpression().left();
                 Statement body = this.getIteratorStatementEpilogue();
                 if (await) {
-                	return new ForAwaitStatement(init, right.fromJust(), body);
-				}
-				return new ForOfStatement(init, right.fromJust(), body);
+                    return new ForAwaitStatement(init, right.fromJust(), body);
+                }
+                return new ForOfStatement(init, right.fromJust(), body);
             } else if (await) {
-				throw this.createUnexpected(this.lookahead);
-			}
+                throw this.createUnexpected(this.lookahead);
+            }
 
-			this.expect(TokenType.SEMICOLON);
+            this.expect(TokenType.SEMICOLON);
             if (init.declarators.exists(f -> (!(f.binding instanceof BindingIdentifier) && f.init.isNothing()))) {
                 throw this.createError(ErrorMessages.UNINITIALIZED_BINDINGPATTERN_IN_FOR_INIT);
             }
@@ -780,9 +780,9 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
                 throw this.createError(await ? ErrorMessages.INVALID_LHS_IN_FOR_AWAIT : ErrorMessages.INVALID_LHS_IN_FOR_OF);
             }
             if (this.match(TokenType.IN)) {
-				if (await) {
+                if (await) {
                     throw this.createUnexpected(this.lookahead);
-				}
+                }
                 this.lex();
                 right = this.parseExpression().left();
                 return new ForInStatement(target, right.fromJust(), this.getIteratorStatementEpilogue());
@@ -790,13 +790,13 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
                 this.lex();
                 right = this.parseAssignmentExpression().left();
                 if (await) {
-					return new ForAwaitStatement(target, right.fromJust(), this.getIteratorStatementEpilogue());
-				}
+                    return new ForAwaitStatement(target, right.fromJust(), this.getIteratorStatementEpilogue());
+                }
                 return new ForOfStatement(target, right.fromJust(), this.getIteratorStatementEpilogue());
             }
         } else if (await) {
-			throw this.createError(ErrorMessages.INVALID_LHS_IN_FOR_AWAIT);
-		}
+            throw this.createError(ErrorMessages.INVALID_LHS_IN_FOR_AWAIT);
+        }
         Expression expr;
         if (fromParseAssignmentOrTarget.isLeft()) {
             expr = fromParseAssignmentOrTarget.left().fromJust();
@@ -858,18 +858,18 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
             ArrayList<AssignmentTargetProperty> properties = new ArrayList<>();
             Maybe<AssignmentTarget> rest = Maybe.empty();
             if (objectExpression.properties.length > 0) {
-				ObjectProperty last = objectExpression.properties.maybeLast().fromJust();
-				if (last instanceof SpreadProperty) {
-					rest = Maybe.of(this.transformDestructuring(((SpreadProperty) last).expression));
-				}
-			}
-			int propertyIndex = 0;
+                ObjectProperty last = objectExpression.properties.maybeLast().fromJust();
+                if (last instanceof SpreadProperty) {
+                    rest = Maybe.of(this.transformDestructuring(((SpreadProperty) last).expression));
+                }
+            }
+            int propertyIndex = 0;
             for (ObjectProperty p : objectExpression.properties) {
-				if (propertyIndex == objectExpression.properties.length - 1 && rest.isJust()) {
-					continue;
-				}
+                if (propertyIndex == objectExpression.properties.length - 1 && rest.isJust()) {
+                    continue;
+                }
                 properties.add(this.transformDestructuring(p));
-				++propertyIndex;
+                ++propertyIndex;
             }
             if (rest.isJust()) {
                 AssignmentTarget restTarget = rest.fromJust();
@@ -2360,17 +2360,17 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
         boolean isAsync = this.eat(TokenType.ASYNC);
 
         if (isAsync && this.hasLineTerminatorBeforeNext) {
-        	isAsync = false;
-        	this.restoreTokenizerState(preAsyncTokenState);
-		}
+            isAsync = false;
+            this.restoreTokenizerState(preAsyncTokenState);
+        }
 
         boolean isGenerator = this.eat(TokenType.MUL);
 
         if (isAsync && !this.lookaheadPropertyName()) {
-			isAsync = false;
-			this.restoreTokenizerState(preAsyncTokenState);
-			isGenerator = this.eat(TokenType.MUL);
-		}
+            isAsync = false;
+            this.restoreTokenizerState(preAsyncTokenState);
+            isGenerator = this.eat(TokenType.MUL);
+        }
 
         PropertyName name = this.parsePropertyName().left;
 
@@ -2420,22 +2420,22 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
             }
         }
 
-		if (isAsync) {
-			boolean previousYield = this.allowYieldExpression;
+        if (isAsync) {
+            boolean previousYield = this.allowYieldExpression;
             boolean previousAwait = this.allowAwaitExpression;
             boolean previousAwaitIdentifier = this.blockAwaitIdentifier;
-			this.allowYieldExpression = isGenerator;
+            this.allowYieldExpression = isGenerator;
             this.blockAwaitIdentifier = true;
-			FormalParameters parameters = this.parseParams();
-			this.allowYieldExpression = isGenerator;
+            FormalParameters parameters = this.parseParams();
+            this.allowYieldExpression = isGenerator;
             this.blockAwaitIdentifier = false;
             this.allowAwaitExpression = true;
-			FunctionBody body = this.parseFunctionBody();
-			this.allowYieldExpression = previousYield;
+            FunctionBody body = this.parseFunctionBody();
+            this.allowYieldExpression = previousYield;
             this.allowAwaitExpression = previousAwait;
             this.blockAwaitIdentifier = previousAwaitIdentifier;
-			return Either.right(this.finishNode(startState, new Method(true, isGenerator, name, parameters, body)));
-		}
+            return Either.right(this.finishNode(startState, new Method(true, isGenerator, name, parameters, body)));
+        }
 
         if (this.match(TokenType.LPAREN)) {
             boolean previousYield = this.allowYieldExpression;

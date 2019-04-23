@@ -55,5 +55,6 @@ public class ForOfStatementTest extends ParserTestCase {
         testScriptFailure("for(var a = 0 of b);", 14, "Invalid variable declaration in for-of statement");
         testScriptFailure("for(let a = 0 of b);", 14, "Invalid variable declaration in for-of statement");
         testScriptFailure("for(const a = 0 of b);", 16, "Invalid variable declaration in for-of statement");
+        testScriptFailure("for(let.x of a);", 10, "Invalid left-hand side in for-of");
     }
 }
