@@ -41,22 +41,22 @@ public class PatternAcceptor {
 
     private static final String[] controlEscapeCharacters = controlEscapeCharacterValues.keySet().toArray(new String[0]);
     
-    private class Context {
+    private class State {
         private int index;
         private ImmutableSet<String> backreferenceNames;
         private ImmutableSet<String> groupingNames;
         private int largestBackreference;
         private int capturingGroups;
 
-        private Context(@Nonnull Context context) {
-            this.index = context.index;
-            this.backreferenceNames = context.backreferenceNames;
-            this.groupingNames = context.groupingNames;
-            this.largestBackreference = context.largestBackreference;
-            this.capturingGroups = context.capturingGroups;
+        private State(@Nonnull State state) {
+            this.index = state.index;
+            this.backreferenceNames = state.backreferenceNames;
+            this.groupingNames = state.groupingNames;
+            this.largestBackreference = state.largestBackreference;
+            this.capturingGroups = state.capturingGroups;
         }
 
-        public Context() {
+        public State() {
             this.index = 0;
             this.backreferenceNames = ImmutableSet.emptyUsingEquality();
             this.groupingNames = ImmutableSet.emptyUsingEquality();
@@ -84,34 +84,34 @@ public class PatternAcceptor {
             return true;
         }
 
-        public Context backtrackOnFailure() {
-            return new Context(this);
+        public State backtrackOnFailure() {
+            return new State(this);
         }
 
-        public boolean backtrackOnFailure(F<Context, Boolean> predicate) {
-            Context context = this.backtrackOnFailure();
-            boolean accepted = predicate.apply(context);
+        public boolean backtrackOnFailure(F<State, Boolean> predicate) {
+            State state = this.backtrackOnFailure();
+            boolean accepted = predicate.apply(state);
             if (accepted) {
-                this.absorb(context);
+                this.absorb(state);
             }
             return accepted;
         }
 
-        public <B> Maybe<B> backtrackOnFailureMaybe(F<Context, Maybe<B>> predicate) {
-            Context context = this.backtrackOnFailure();
-            Maybe<B> accepted = predicate.apply(context);
+        public <B> Maybe<B> backtrackOnFailureMaybe(F<State, Maybe<B>> predicate) {
+            State state = this.backtrackOnFailure();
+            Maybe<B> accepted = predicate.apply(state);
             if (accepted.isJust()) {
-                this.absorb(context);
+                this.absorb(state);
             }
             return accepted;
         }
 
-        private void absorb(Context otherContext) {
-            this.index = otherContext.index;
-            this.backreferenceNames = otherContext.backreferenceNames;
-            this.largestBackreference = otherContext.largestBackreference;
-            this.groupingNames = otherContext.groupingNames;
-            this.capturingGroups = otherContext.capturingGroups;
+        private void absorb(State otherState) {
+            this.index = otherState.index;
+            this.backreferenceNames = otherState.backreferenceNames;
+            this.largestBackreference = otherState.largestBackreference;
+            this.groupingNames = otherState.groupingNames;
+            this.capturingGroups = otherState.capturingGroups;
         }
 
         public Maybe<String> nextCodePoint() {
@@ -208,18 +208,18 @@ public class PatternAcceptor {
     }
 
     private boolean acceptRegex() {
-        Context context = new Context();
-        if (!acceptDisjunction(context, Maybe.empty())) {
+        State state = new State();
+        if (!acceptDisjunction(state, Maybe.empty())) {
             return false;
         }
-        return context.verifyBackreferences();
+        return state.verifyBackreferences();
     }
 
     @SafeVarargs
-    private final <B> F<Context, Maybe<B>> maybeLogicalOr(F<Context, Maybe<B>>... expressions) {
-        return context -> {
-            for (F<Context, Maybe<B>> expression : expressions) {
-                Maybe<B> value = expression.apply(context);
+    private final <B> F<State, Maybe<B>> anyOf(F<State, Maybe<B>>... expressions) {
+        return state -> {
+            for (F<State, Maybe<B>> expression : expressions) {
+                Maybe<B> value = expression.apply(state);
                 if (value.isJust()) {
                     return value;
                 }
@@ -228,194 +228,194 @@ public class PatternAcceptor {
         };
     }
 
-    private boolean acceptDisjunction(Context context, Maybe<String> terminator) {
+    private boolean acceptDisjunction(State state, Maybe<String> terminator) {
         do {
-            if (terminator.isJust() && context.eat(terminator.fromJust())) {
+            if (terminator.isJust() && state.eat(terminator.fromJust())) {
                 return true;
-            } else if (context.match("|")) {
+            } else if (state.match("|")) {
                 continue;
             }
-            if (!acceptAlternative(context, terminator)) {
+            if (!acceptAlternative(state, terminator)) {
                 return false;
             }
-        } while(context.eat("|"));
+        } while(state.eat("|"));
         if (terminator.isJust()) {
-            if (!context.eat(terminator.fromJust())) {
+            if (!state.eat(terminator.fromJust())) {
                 return false;
             }
         }
         return true;
     }
 
-    private boolean acceptAlternative(Context context, Maybe<String> terminator) {
-        while (!context.match("|") && !context.empty() && (terminator.isNothing() || !context.match(terminator.fromJust()))) {
-            if (!acceptTerm(context)) {
+    private boolean acceptAlternative(State state, Maybe<String> terminator) {
+        while (!state.match("|") && !state.empty() && (terminator.isNothing() || !state.match(terminator.fromJust()))) {
+            if (!acceptTerm(state)) {
                 return false;
             }
         }
         return true;
     }
 
-    private boolean acceptTerm(Context context) {
+    private boolean acceptTerm(State state) {
         // non-quantified references are rolled into quantified accepts to improve performance significantly.
         if (this.unicode) {
-            return acceptAssertion(context) ||
-                    acceptQuantified(this::acceptAtom).apply(context);
+            return acceptAssertion(state) ||
+                    acceptQuantified(this::acceptAtom).apply(state);
         }
-        return acceptQuantified(this::acceptQuantifiableAssertion).apply(context) ||
-                acceptAssertion(context) ||
-                acceptQuantified(this::acceptAtom).apply(context);
+        return acceptQuantified(this::acceptQuantifiableAssertion).apply(state) ||
+                acceptAssertion(state) ||
+                acceptQuantified(this::acceptAtom).apply(state);
     }
 
-    private F<Context, Boolean> acceptLabeledGroup(F<Context, Boolean> predicate) {
-        return currentContext -> currentContext.backtrackOnFailure(context -> {
-            if (!context.eat("(")) {
+    private F<State, Boolean> acceptLabeledGroup(F<State, Boolean> predicate) {
+        return currentState -> currentState.backtrackOnFailure(state -> {
+            if (!state.eat("(")) {
                 return false;
             }
-            if (predicate.apply(context)) {
-               return acceptDisjunction(context, Maybe.of(")"));
+            if (predicate.apply(state)) {
+               return acceptDisjunction(state, Maybe.of(")"));
             }
             return false;
         });
     }
 
-    private boolean acceptAssertion(Context context) {
-        return context.eatAny("^", "$", "\\b", "\\B").isJust() ||
-                acceptLabeledGroup(subContext -> {
+    private boolean acceptAssertion(State state) {
+        return state.eatAny("^", "$", "\\b", "\\B").isJust() ||
+                acceptLabeledGroup(subState -> {
                     if (this.unicode) {
-                        return subContext.eatAny("?=", "?!").isJust();
+                        return subState.eatAny("?=", "?!").isJust();
                     }
                     return false;
-                }).apply(context);
+                }).apply(state);
     }
 
-    private boolean acceptQuantifiableAssertion(Context context) {
-        return acceptLabeledGroup(subContext -> subContext.eatAny("?=", "?!").isJust()).apply(context);
+    private boolean acceptQuantifiableAssertion(State state) {
+        return acceptLabeledGroup(subState -> subState.eatAny("?=", "?!").isJust()).apply(state);
     }
 
-    private boolean acceptDecimal(Context context) {
-        return context.collect(decimalDigits).length() > 0;
+    private boolean acceptDecimal(State state) {
+        return state.collect(decimalDigits).length() > 0;
     }
 
-    private F<Context, Boolean> acceptQuantified(F<Context, Boolean> acceptor) {
-        return superContext -> superContext.backtrackOnFailure(context ->{
-            if (!acceptor.apply(context)) {
+    private F<State, Boolean> acceptQuantified(F<State, Boolean> acceptor) {
+        return superState -> superState.backtrackOnFailure(state ->{
+            if (!acceptor.apply(state)) {
                 return false;
             }
-            if (context.match("{")) {
-                return context.backtrackOnFailure(subContext -> {
-                    if (!subContext.eat("{")) {
+            if (state.match("{")) {
+                return state.backtrackOnFailure(subState -> {
+                    if (!subState.eat("{")) {
                         return false;
                     }
-                    String decimal1 = subContext.collect(decimalDigits);
+                    String decimal1 = subState.collect(decimalDigits);
                     if (decimal1.length() == 0) {
                         return false;
                     }
-                    if (subContext.eat(",") && subContext.matchAny(decimalDigits)) {
-                        String decimal2 = subContext.collect(decimalDigits);
+                    if (subState.eat(",") && subState.matchAny(decimalDigits)) {
+                        String decimal2 = subState.collect(decimalDigits);
                         if (Integer.parseInt(decimal1) > Integer.parseInt(decimal2)) {
                             return false;
                         }
                     }
-                    if (!subContext.eat("}")) {
+                    if (!subState.eat("}")) {
                         return false;
                     }
-                    subContext.eat("?");
+                    subState.eat("?");
                     return true;
                 }) || !this.unicode;
-            } else if (context.eatAny("*", "+", "?").isJust()) {
-                context.eat("?");
+            } else if (state.eatAny("*", "+", "?").isJust()) {
+                state.eat("?");
             }
             return true;
         });
     }
 
-    private boolean acceptPatternCharacter(Context context) {
-        Maybe<String> nextCodePoint = context.nextCodePoint();
+    private boolean acceptPatternCharacter(State state) {
+        Maybe<String> nextCodePoint = state.nextCodePoint();
         if (nextCodePoint.isNothing() || syntaxCharacters.contains(nextCodePoint.fromJust())) {
             return false;
         }
-        context.skipCodePoint();
+        state.skipCodePoint();
         return true;
     }
 
-    private boolean acceptExtendedPatternCharacter(Context context) {
-        Maybe<String> nextCodePoint = context.nextCodePoint();
+    private boolean acceptExtendedPatternCharacter(State state) {
+        Maybe<String> nextCodePoint = state.nextCodePoint();
         if (nextCodePoint.isNothing() || extendedSyntaxCharacters.contains(nextCodePoint.fromJust())) {
             return false;
         }
-        context.skipCodePoint();
+        state.skipCodePoint();
         return true;
     }
 
-    private boolean acceptInvalidBracedQuantifier(Context context) {
-        return context.backtrackOnFailure(subContext -> {
-            if (!subContext.eat("{")) {
+    private boolean acceptInvalidBracedQuantifier(State state) {
+        return state.backtrackOnFailure(subState -> {
+            if (!subState.eat("{")) {
                 return false;
             }
-            if (!acceptDecimal(subContext)) {
+            if (!acceptDecimal(subState)) {
                 return false;
             }
-            if (subContext.eat(",") && subContext.matchAny(decimalDigits) && !acceptDecimal(subContext)) {
+            if (subState.eat(",") && subState.matchAny(decimalDigits) && !acceptDecimal(subState)) {
                 return false;
             }
-            return subContext.eat("}");
+            return subState.eat("}");
         });
     }
 
-    private boolean acceptAtom(Context context) {
+    private boolean acceptAtom(State state) {
         if (this.unicode) {
-            return acceptPatternCharacter(context) ||
-                    context.eat(".") ||
-                    context.backtrackOnFailure(subContext -> {
-                        if (!subContext.eat("\\")) {
+            return acceptPatternCharacter(state) ||
+                    state.eat(".") ||
+                    state.backtrackOnFailure(subState -> {
+                        if (!subState.eat("\\")) {
                             return false;
                         }
-                        return acceptAtomEscape(subContext);
+                        return acceptAtomEscape(subState);
                     }) ||
-                    acceptCharacterClass(context) ||
-                    acceptLabeledGroup(subContext -> subContext.eat("?:")).apply(context) ||
-                    acceptGrouping(context);
+                    acceptCharacterClass(state) ||
+                    acceptLabeledGroup(subState -> subState.eat("?:")).apply(state) ||
+                    acceptGrouping(state);
         }
-        boolean matched = context.eat(".") ||
-                context.backtrackOnFailure(subContext -> {
-                    if (!subContext.eat("\\")) {
+        boolean matched = state.eat(".") ||
+                state.backtrackOnFailure(subState -> {
+                    if (!subState.eat("\\")) {
                         return false;
                     }
-                    return acceptAtomEscape(subContext);
+                    return acceptAtomEscape(subState);
                 }) ||
-                acceptCharacterClass(context) ||
-                acceptLabeledGroup(subContext -> subContext.eat("?:")).apply(context) ||
-                acceptGrouping(context);
-        if (!matched && acceptInvalidBracedQuantifier(context)) {
+                acceptCharacterClass(state) ||
+                acceptLabeledGroup(subState -> subState.eat("?:")).apply(state) ||
+                acceptGrouping(state);
+        if (!matched && acceptInvalidBracedQuantifier(state)) {
             return false;
         }
-        return matched || acceptExtendedPatternCharacter(context);
+        return matched || acceptExtendedPatternCharacter(state);
     }
 
-    private boolean acceptGrouping(Context superContext) {
-        return superContext.backtrackOnFailure(context -> {
-            if (!context.eat("(")) {
+    private boolean acceptGrouping(State superState) {
+        return superState.backtrackOnFailure(state -> {
+            if (!state.eat("(")) {
                 return false;
             }
-            if (!acceptDisjunction(context, Maybe.of(")"))) {
+            if (!acceptDisjunction(state, Maybe.of(")"))) {
                 return false;
             }
-            ++context.capturingGroups;
+            ++state.capturingGroups;
             return true;
         });
     }
 
-    private boolean acceptAtomEscape(Context context) {
-        return acceptDecimalEscapeBackreference(context) ||
-                acceptCharacterClassEscape(context) ||
-                acceptCharacterEscape(context).map(i -> true).orJust(false);
+    private boolean acceptAtomEscape(State state) {
+        return acceptDecimalEscapeBackreference(state) ||
+                acceptCharacterClassEscape(state) ||
+                acceptCharacterEscape(state).map(i -> true).orJust(false);
     }
 
-    private boolean acceptDecimalEscapeBackreference(Context superContext) {
-        return superContext.backtrackOnFailure(context -> {
+    private boolean acceptDecimalEscapeBackreference(State superState) {
+        return superState.backtrackOnFailure(state -> {
             StringBuilder digits = new StringBuilder();
-            Maybe<String> firstDecimal = context.eatAny(decimalDigits);
+            Maybe<String> firstDecimal = state.eatAny(decimalDigits);
             if (firstDecimal.isNothing()) {
                 return false;
             }
@@ -424,19 +424,19 @@ public class PatternAcceptor {
             }
             digits.append(firstDecimal.fromJust());
             Maybe<String> digit;
-            while ((digit = context.eatAny(decimalDigits)).isJust()) {
+            while ((digit = state.eatAny(decimalDigits)).isJust()) {
                 digits.append(digit.fromJust());
             }
-            context.backreference(Integer.parseInt(digits.toString()));
+            state.backreference(Integer.parseInt(digits.toString()));
             return true;
         });
     }
 
     @Nonnull
-    private Maybe<Integer> acceptDecimalEscape(Context superContext) {
-        return superContext.backtrackOnFailureMaybe(context -> {
+    private Maybe<Integer> acceptDecimalEscape(State superState) {
+        return superState.backtrackOnFailureMaybe(state -> {
             StringBuilder digits = new StringBuilder();
-            Maybe<String> firstDigit = context.eatAny(decimalDigits);
+            Maybe<String> firstDigit = state.eatAny(decimalDigits);
             if (firstDigit.isNothing()) {
                 return Maybe.empty();
             }
@@ -447,15 +447,15 @@ public class PatternAcceptor {
                 return Maybe.empty();
             }
             digits.append(firstDigit.fromJust());
-            Maybe<String> digit = context.eatAny(decimalDigits);
+            Maybe<String> digit = state.eatAny(decimalDigits);
             if (digit.isJust()) {
                 String justDigit = digit.fromJust();
                 digits.append(justDigit);
                 if (firstDigit.fromJust().equals("1")) {
                     if (justDigit.equals("0") || justDigit.equals("1")) {
-                        context.eatAny(decimalDigits).foreach(digits::append);
+                        state.eatAny(decimalDigits).foreach(digits::append);
                     } else if (justDigit.equals("2")) {
-                        context.eatAny(octalDigits).foreach(digits::append);
+                        state.eatAny(octalDigits).foreach(digits::append);
                     }
                 }
             }
@@ -463,36 +463,36 @@ public class PatternAcceptor {
         });
     }
 
-    private boolean acceptCharacterClassEscape(Context context) {
-        return context.eatAny("d", "D", "s", "S", "w", "W").isJust();
+    private boolean acceptCharacterClassEscape(State state) {
+        return state.eatAny("d", "D", "s", "S", "w", "W").isJust();
     }
 
     @Nonnull
-    private Maybe<Integer> acceptUnicodeEscape(Context superContext) {
-        return superContext.backtrackOnFailureMaybe(context -> {
-            if (!context.eat("u")) {
+    private Maybe<Integer> acceptUnicodeEscape(State superState) {
+        return superState.backtrackOnFailureMaybe(state -> {
+            if (!state.eat("u")) {
                 return Maybe.empty();
             }
-            if (this.unicode && context.eat("{")) {
-                String hex = context.collect(hexDigits);
-                if (!context.eat("}")) {
+            if (this.unicode && state.eat("{")) {
+                String hex = state.collect(hexDigits);
+                if (!state.eat("}")) {
                     return Maybe.empty();
                 }
                 int value = Integer.parseInt(hex, 16);
                 return value > 0x10FFFF ? Maybe.empty() : Maybe.of(value);
             }
-            String hex = context.collect(Maybe.of(4), hexDigits);
+            String hex = state.collect(Maybe.of(4), hexDigits);
             if (hex.length() != 4) {
                 return Maybe.empty();
             }
             int value = Integer.parseInt(hex, 16);
 
             if (value >= 0xD800 && value <= 0xDBFF) {
-                Maybe<Integer> surrogatePairValue = context.backtrackOnFailureMaybe(subContext -> {
-                    if (!subContext.eat("\\u")) {
+                Maybe<Integer> surrogatePairValue = state.backtrackOnFailureMaybe(subState -> {
+                    if (!subState.eat("\\u")) {
                         return Maybe.empty();
                     }
-                    String hex2 = subContext.collect(Maybe.of(4), hexDigits);
+                    String hex2 = subState.collect(Maybe.of(4), hexDigits);
                     if (hex2.length() != 4) {
                         return Maybe.empty();
                     }
@@ -510,65 +510,65 @@ public class PatternAcceptor {
         });
     }
 
-    private Maybe<Integer> acceptCharacterEscape(Context superContext) {
-        return maybeLogicalOr(
-                context -> {
-                    Maybe<String> escaped = context.eatAny(controlEscapeCharacters);
+    private Maybe<Integer> acceptCharacterEscape(State superState) {
+        return anyOf(
+            state -> {
+                    Maybe<String> escaped = state.eatAny(controlEscapeCharacters);
                     if (escaped.isNothing() || !controlEscapeCharacterValues.containsKey(escaped.fromJust())) {
                         return Maybe.empty();
                     }
                     return Maybe.of(controlEscapeCharacterValues.get(escaped.fromJust()));
                 },
-                context -> context.backtrackOnFailureMaybe(subContext -> {
-                    if (!subContext.eat("c")) {
+            state -> state.backtrackOnFailureMaybe(subState -> {
+                    if (!subState.eat("c")) {
                         return Maybe.empty();
                     }
-                    Maybe<String> character = subContext.eatAny(controlCharacters);
+                    Maybe<String> character = subState.eatAny(controlCharacters);
                     if (character.isNothing()) {
                         return Maybe.empty();
                     }
                     return Maybe.of(character.fromJust().charAt(0) % 32);
                 }),
-                context -> context.backtrackOnFailureMaybe(subContext -> {
-                    if (!subContext.eat("0")) {
+            state -> state.backtrackOnFailureMaybe(subState -> {
+                    if (!subState.eat("0")) {
                         return Maybe.empty();
                     }
-                    if (subContext.eatAny(decimalDigits).isJust()) {
+                    if (subState.eatAny(decimalDigits).isJust()) {
                         return Maybe.empty();
                     }
                     return Maybe.of(0);
                 }),
-                context -> context.backtrackOnFailureMaybe(subContext -> {
-                    if (!subContext.eat("x")) {
+            state -> state.backtrackOnFailureMaybe(subState -> {
+                    if (!subState.eat("x")) {
                         return Maybe.empty();
                     }
-                    String hex = subContext.collect(Maybe.of(2), hexDigits);
+                    String hex = subState.collect(Maybe.of(2), hexDigits);
                     if (hex.length() != 2) {
                         return Maybe.empty();
                     }
                     return Maybe.of(Integer.parseInt(hex, 16));
                 }),
                 this::acceptUnicodeEscape,
-                context -> context.backtrackOnFailureMaybe(subContext -> {
+            state -> state.backtrackOnFailureMaybe(subState -> {
                     if (this.unicode) {
                         return Maybe.empty();
                     }
-                    F<Context, Maybe<Integer>> acceptOctalDigit = subContext2 -> subContext2.backtrackOnFailureMaybe(subContext3 -> {
-                        Maybe<String> octal2 = subContext3.eatAny(octalDigits);
+                    F<State, Maybe<Integer>> acceptOctalDigit = subState2 -> subState2.backtrackOnFailureMaybe(subState3 -> {
+                        Maybe<String> octal2 = subState3.eatAny(octalDigits);
                         if (octal2.isNothing()) {
                             return Maybe.empty();
                         }
                         return Maybe.of(Integer.parseInt(octal2.fromJust(), 8));
                     });
-                    Maybe<Integer> octal1 = acceptOctalDigit.apply(subContext);
+                    Maybe<Integer> octal1 = acceptOctalDigit.apply(subState);
                     if (octal1.isNothing()) {
                         return Maybe.empty();
                     }
-                    Maybe<Integer> octal2 = acceptOctalDigit.apply(subContext);
+                    Maybe<Integer> octal2 = acceptOctalDigit.apply(subState);
                     if (octal2.isNothing()) {
                         return octal1;
                     } else if (octal1.fromJust() < 4) {
-                        Maybe<Integer> octal3 = acceptOctalDigit.apply(subContext);
+                        Maybe<Integer> octal3 = acceptOctalDigit.apply(subState);
                         if (octal3.isNothing()) {
                             return Maybe.of(octal1.fromJust() << 3 | octal2.fromJust());
                         }
@@ -577,92 +577,92 @@ public class PatternAcceptor {
                         return Maybe.of(octal1.fromJust() << 3 | octal2.fromJust());
                     }
                 }),
-                context -> context.backtrackOnFailureMaybe(subContext -> {
+            state -> state.backtrackOnFailureMaybe(subState -> {
                     if (!this.unicode) {
                         return Maybe.empty();
                     }
-                    Maybe<String> maybeCharacter = subContext.eatAny(syntaxCharacterArray);
+                    Maybe<String> maybeCharacter = subState.eatAny(syntaxCharacterArray);
                     return maybeCharacter.map(character -> character.codePointAt(0));
                 }),
-                context -> {
-                    if(this.unicode && context.eat("/")) {
+            state -> {
+                    if(this.unicode && state.eat("/")) {
                         return Maybe.of((int) "/".charAt(0));
                     }
                     return Maybe.empty();
                 },
-                context -> context.backtrackOnFailureMaybe(subContext -> {
+            state -> state.backtrackOnFailureMaybe(subState -> {
                     if (this.unicode) {
                         return Maybe.empty();
                     }
-                    Maybe<String> maybeCharacter = subContext.nextCodePoint();
+                    Maybe<String> maybeCharacter = subState.nextCodePoint();
                     if (maybeCharacter.isJust() && !maybeCharacter.fromJust().equals("c")) {
-                        subContext.skipCodePoint();
+                        subState.skipCodePoint();
                         return Maybe.of(maybeCharacter.fromJust().codePointAt(0));
                     }
                     return Maybe.empty();
                 })
-        ).apply(superContext);
+        ).apply(superState);
     }
 
-    private Maybe<Maybe<Integer>> acceptClassEscape(Context superContext) {
-        return this.<Maybe<Integer>>maybeLogicalOr(
-                context -> context.backtrackOnFailureMaybe(subContext -> {
-                    if (!subContext.eat("b")) {
+    private Maybe<Maybe<Integer>> acceptClassEscape(State superState) {
+        return this.<Maybe<Integer>>anyOf(
+            state -> state.backtrackOnFailureMaybe(subState -> {
+                    if (!subState.eat("b")) {
                         return Maybe.empty();
                     }
                     return Maybe.of(0x0008); // backspace
                 }).map(Maybe::of),
-                context -> acceptDecimalEscape(context).map(Maybe::of),
-                context -> {
-                    if (this.unicode && context.eat("-")) {
+            state -> acceptDecimalEscape(state).map(Maybe::of),
+            state -> {
+                    if (this.unicode && state.eat("-")) {
                         return Maybe.of(Maybe.of((int)"-".charAt(0)));
                     }
                     return Maybe.empty();
                 },
-                context -> context.backtrackOnFailureMaybe(subContext -> {
-                    if (this.unicode || !subContext.eat("c")) {
+            state -> state.backtrackOnFailureMaybe(subState -> {
+                    if (this.unicode || !subState.eat("c")) {
                         return Maybe.empty();
                     }
-                    return subContext.eatAny(decimalDigits, new String[]{"_"}).map(str -> str.codePointAt(0) % 32);
+                    return subState.eatAny(decimalDigits, new String[]{"_"}).map(str -> str.codePointAt(0) % 32);
                 }).map(Maybe::of),
-                context -> acceptCharacterClassEscape(context) ? Maybe.of(Maybe.empty()) : Maybe.empty(),
-                context -> acceptCharacterEscape(context).map(Maybe::of)
-        ).apply(superContext);
+            state -> acceptCharacterClassEscape(state) ? Maybe.of(Maybe.empty()) : Maybe.empty(),
+            state -> acceptCharacterEscape(state).map(Maybe::of)
+        ).apply(superState);
     }
 
-    private Maybe<Maybe<Integer>> acceptClassAtomNoDash(Context context) {
-        if (context.eat("\\")) {
-			return this.maybeLogicalOr(
+    private Maybe<Maybe<Integer>> acceptClassAtomNoDash(State state) {
+        if (state.eat("\\")) {
+			return this.anyOf(
 					this::acceptClassEscape,
-					subContext -> subContext.backtrackOnFailureMaybe(subContext2 -> {
-						if (!this.unicode && subContext2.match("c")) {
+                subState -> subState.backtrackOnFailureMaybe(subState2 -> {
+						if (!this.unicode && subState2.match("c")) {
 							return Maybe.of(0x005C); // reverse solidus
 						}
 						return Maybe.empty();
 					}).map(Maybe::of)
-			).apply(context);
+			).apply(state);
         }
-        Maybe<String> nextCodePoint = context.nextCodePoint();
+        Maybe<String> nextCodePoint = state.nextCodePoint();
         if (nextCodePoint.isNothing() || nextCodePoint.fromJust().equals("]") || nextCodePoint.fromJust().equals("-")) {
             return Maybe.empty();
         }
-        context.skipCodePoint();
+        state.skipCodePoint();
         return Maybe.of(Maybe.of(nextCodePoint.fromJust().codePointAt(0)));
     }
 
-    private Maybe<Maybe<Integer>> acceptClassAtom(Context context) {
-        if (context.eat("-")) {
+    private Maybe<Maybe<Integer>> acceptClassAtom(State state) {
+        if (state.eat("-")) {
             return Maybe.of(Maybe.of((int)"-".charAt(0)));
         }
-        return acceptClassAtomNoDash(context);
+        return acceptClassAtomNoDash(state);
     }
 
-    private Maybe<Maybe<Integer>> finishClassRange(Context context, Maybe<Integer> atom) {
-        if (context.eat("-")) {
-            if (context.match("]")) {
+    private Maybe<Maybe<Integer>> finishClassRange(State state, Maybe<Integer> atom) {
+        if (state.eat("-")) {
+            if (state.match("]")) {
                 return Maybe.of(Maybe.empty()); // terminate gracefully
             }
-            Maybe<Maybe<Integer>> otherAtom = acceptClassAtom(context);
+            Maybe<Maybe<Integer>> otherAtom = acceptClassAtom(state);
             if (otherAtom.isNothing()) {
                 return Maybe.empty();
             }
@@ -671,48 +671,48 @@ public class PatternAcceptor {
                 return Maybe.empty();
             } else if (!(!this.unicode && (atom.isNothing() || justOtherAtom.isNothing())) && atom.fromJust() > justOtherAtom.fromJust()) {
                 return Maybe.empty();
-            } else if (context.match("]")) {
+            } else if (state.match("]")) {
                 return Maybe.of(Maybe.empty());
             }
-            return acceptNonEmptyClassRanges(context);
+            return acceptNonEmptyClassRanges(state);
         }
-        if (context.match("]")) {
+        if (state.match("]")) {
             return Maybe.of(Maybe.empty());
         }
-        return acceptNonEmptyClassRangesNoDash(context);
+        return acceptNonEmptyClassRangesNoDash(state);
     }
 
-    private Maybe<Maybe<Integer>> acceptNonEmptyClassRanges(Context context) {
-        Maybe<Maybe<Integer>> atom = acceptClassAtom(context);
+    private Maybe<Maybe<Integer>> acceptNonEmptyClassRanges(State state) {
+        Maybe<Maybe<Integer>> atom = acceptClassAtom(state);
         if (atom.isNothing()) {
             return Maybe.empty();
         }
-        return finishClassRange(context, atom.fromJust());
+        return finishClassRange(state, atom.fromJust());
     }
 
-    private Maybe<Maybe<Integer>> acceptNonEmptyClassRangesNoDash(Context context) {
-        if (context.eat("-") && !context.match("]")) {
+    private Maybe<Maybe<Integer>> acceptNonEmptyClassRangesNoDash(State state) {
+        if (state.eat("-") && !state.match("]")) {
             return Maybe.empty();
         }
-        Maybe<Maybe<Integer>> atom = acceptClassAtomNoDash(context);
+        Maybe<Maybe<Integer>> atom = acceptClassAtomNoDash(state);
         if (atom.isNothing()) {
             return Maybe.empty();
         }
-        return finishClassRange(context, atom.fromJust());
+        return finishClassRange(state, atom.fromJust());
     }
 
     // all `Maybe<Maybe<Integer>>` types represent matched, not terminating, and contain in the character value for ranges
-    private boolean acceptCharacterClass(Context superContext) {
-        return superContext.backtrackOnFailure(context -> {
-            if (!context.eat("[")) {
+    private boolean acceptCharacterClass(State superState) {
+        return superState.backtrackOnFailure(state -> {
+            if (!state.eat("[")) {
                 return false;
             }
-            context.eat("^");
-            if (context.eat("]")) {
+            state.eat("^");
+            if (state.eat("]")) {
                 return true;
             }
-            if (acceptNonEmptyClassRanges(context).isJust()) {
-                return context.eat("]");
+            if (acceptNonEmptyClassRanges(state).isJust()) {
+                return state.eat("]");
             }
             return false;
         });
