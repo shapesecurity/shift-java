@@ -159,14 +159,14 @@ public class PatternAcceptor {
         }
 
         public String collect(@Nonnull String[]... stringArrays) {
-            return collect(-1, stringArrays);
+            return collect(Maybe.empty(), stringArrays);
         }
 
-        public String collect(int limit, @Nonnull String[]... stringArrays) {
+        public String collect(Maybe<Integer> limit, @Nonnull String[]... stringArrays) {
             StringBuilder stringBuilder = new StringBuilder();
 
             outer:
-            for (int i = 0; limit < 0 || i < limit; ++i) {
+            for (int i = 0; limit.isNothing() || limit.fromJust() > i; ++i) {
                 for (String[] strings : stringArrays) {
                     for (String string : strings) {
                         if (this.eat(string)) {
@@ -483,7 +483,7 @@ public class PatternAcceptor {
                 int value = Integer.parseInt(hex, 16);
                 return value > 0x10FFFF ? Maybe.empty() : Maybe.of(value);
             }
-            String hex = context.collect(4, hexDigits);
+            String hex = context.collect(Maybe.of(4), hexDigits);
             if (hex.length() != 4) {
                 return Maybe.empty();
             }
@@ -494,7 +494,7 @@ public class PatternAcceptor {
                     if (!subContext.eat("\\u")) {
                         return Maybe.empty();
                     }
-                    String hex2 = subContext.collect(4, hexDigits);
+                    String hex2 = subContext.collect(Maybe.of(4), hexDigits);
                     if (hex2.length() != 4) {
                         return Maybe.empty();
                     }
@@ -544,7 +544,7 @@ public class PatternAcceptor {
                     if (!subContext.eat("x")) {
                         return Maybe.empty();
                     }
-                    String hex = subContext.collect(2, hexDigits);
+                    String hex = subContext.collect(Maybe.of(2), hexDigits);
                     if (hex.length() != 2) {
                         return Maybe.empty();
                     }
@@ -606,18 +606,18 @@ public class PatternAcceptor {
         ).apply(superContext);
     }
 
-    private Maybe<Integer> acceptClassEscape(Context superContext) {
-        return this.maybeLogicalOr(
+    private Maybe<Maybe<Integer>> acceptClassEscape(Context superContext) {
+        return this.<Maybe<Integer>>maybeLogicalOr(
                 context -> context.goDeeperMaybe(subContext -> {
                     if (!subContext.eat("b")) {
                         return Maybe.empty();
                     }
                     return Maybe.of(0x0008); // backspace
-                }),
-                PatternAcceptor.this::acceptDecimalEscape,
+                }).map(Maybe::of),
+                context -> acceptDecimalEscape(context).map(Maybe::of),
                 context -> {
                     if (this.unicode && context.eat("-")) {
-                        return Maybe.of((int)"-".charAt(0));
+                        return Maybe.of(Maybe.of((int)"-".charAt(0)));
                     }
                     return Maybe.empty();
                 },
@@ -626,13 +626,13 @@ public class PatternAcceptor {
                         return Maybe.empty();
                     }
                     return subContext.eatAny(decimalDigits, new String[]{"_"}).map(str -> str.codePointAt(0) % 32);
-                }),
-                context -> acceptCharacterClassEscape(context) ? Maybe.of(-1) : Maybe.empty(),
-                this::acceptCharacterEscape
+                }).map(Maybe::of),
+                context -> acceptCharacterClassEscape(context) ? Maybe.of(Maybe.empty()) : Maybe.empty(),
+                context -> acceptCharacterEscape(context).map(Maybe::of)
         ).apply(superContext);
     }
 
-    private Maybe<Integer> acceptClassAtomNoDash(Context context) {
+    private Maybe<Maybe<Integer>> acceptClassAtomNoDash(Context context) {
         if (context.eat("\\")) {
 			return this.maybeLogicalOr(
 					this::acceptClassEscape,
@@ -641,7 +641,7 @@ public class PatternAcceptor {
 							return Maybe.of(0x005C); // reverse solidus
 						}
 						return Maybe.empty();
-					})
+					}).map(Maybe::of)
 			).apply(context);
         }
         Maybe<String> nextCodePoint = context.nextCodePoint();
@@ -649,59 +649,61 @@ public class PatternAcceptor {
             return Maybe.empty();
         }
         context.skipCodePoint();
-        return Maybe.of(nextCodePoint.fromJust().codePointAt(0));
+        return Maybe.of(Maybe.of(nextCodePoint.fromJust().codePointAt(0)));
     }
 
-    private Maybe<Integer> acceptClassAtom(Context context) {
+    private Maybe<Maybe<Integer>> acceptClassAtom(Context context) {
         if (context.eat("-")) {
-            return Maybe.of((int)"-".charAt(0));
+            return Maybe.of(Maybe.of((int)"-".charAt(0)));
         }
         return acceptClassAtomNoDash(context);
     }
 
-    private Maybe<Integer> finishClassRange(Context context, int atom) {
+    private Maybe<Maybe<Integer>> finishClassRange(Context context, Maybe<Integer> atom) {
         if (context.eat("-")) {
             if (context.match("]")) {
-                return Maybe.of(-1); // termination sentinel
+                return Maybe.of(Maybe.empty()); // terminate gracefully
             }
-            Maybe<Integer> otherAtom = acceptClassAtom(context);
+            Maybe<Maybe<Integer>> otherAtom = acceptClassAtom(context);
             if (otherAtom.isNothing()) {
                 return Maybe.empty();
             }
-            if (this.unicode && (atom == -1 || otherAtom.fromJust() == -1)) {
+            Maybe<Integer> justOtherAtom = otherAtom.fromJust();
+            if (this.unicode && (atom.isNothing() || justOtherAtom.isNothing())) {
                 return Maybe.empty();
-            } else if (!(!this.unicode && (atom == -1 || otherAtom.fromJust() == -1)) && atom > otherAtom.fromJust()) {
+            } else if (!(!this.unicode && (atom.isNothing() || justOtherAtom.isNothing())) && atom.fromJust() > justOtherAtom.fromJust()) {
                 return Maybe.empty();
             } else if (context.match("]")) {
-                return Maybe.of(-1);
+                return Maybe.of(Maybe.empty());
             }
             return acceptNonEmptyClassRanges(context);
         }
         if (context.match("]")) {
-            return Maybe.of(-1);
+            return Maybe.of(Maybe.empty());
         }
         return acceptNonEmptyClassRangesNoDash(context);
     }
 
-    private Maybe<Integer> acceptNonEmptyClassRanges(Context context) {
-        Maybe<Integer> atom = acceptClassAtom(context);
+    private Maybe<Maybe<Integer>> acceptNonEmptyClassRanges(Context context) {
+        Maybe<Maybe<Integer>> atom = acceptClassAtom(context);
         if (atom.isNothing()) {
             return Maybe.empty();
         }
         return finishClassRange(context, atom.fromJust());
     }
 
-    private Maybe<Integer> acceptNonEmptyClassRangesNoDash(Context context) {
+    private Maybe<Maybe<Integer>> acceptNonEmptyClassRangesNoDash(Context context) {
         if (context.eat("-") && !context.match("]")) {
             return Maybe.empty();
         }
-        Maybe<Integer> atom = acceptClassAtomNoDash(context);
+        Maybe<Maybe<Integer>> atom = acceptClassAtomNoDash(context);
         if (atom.isNothing()) {
             return Maybe.empty();
         }
         return finishClassRange(context, atom.fromJust());
     }
 
+    // all `Maybe<Maybe<Integer>>` types represent matched, not terminating, and contain in the character value for ranges
     private boolean acceptCharacterClass(Context superContext) {
         return superContext.goDeeper(context -> {
             if (!context.eat("[")) {
@@ -712,10 +714,7 @@ public class PatternAcceptor {
                 return true;
             }
             if (acceptNonEmptyClassRanges(context).isJust()) {
-                if (!context.eat("]")) {
-                    return false;
-                }
-                return true;
+                return context.eat("]");
             }
             return false;
         });
