@@ -29,17 +29,15 @@ public class PatternAcceptor {
     private static final String extendedSyntaxCharacters = "^$.*+?()[|";
     private static final String[] controlCharacters = new String[]{"a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"};
 
-    private static HashMap<String, Integer> constructControlEscapeCharacterValues() {
-        HashMap<String, Integer> map = new HashMap<>();
-        map.put("f", (int) '\f');
-        map.put("n", (int) '\n');
-        map.put("r", (int) '\r');
-        map.put("t", (int) '\t');
-        map.put("v", 0x11); // \v in javascript
-        return map;
-    }
+    private static final HashMap<String, Integer> controlEscapeCharacterValues = new HashMap<>();
 
-    private static final HashMap<String, Integer> controlEscapeCharacterValues = constructControlEscapeCharacterValues();
+    static {
+        controlEscapeCharacterValues.put("f", (int) '\f');
+        controlEscapeCharacterValues.put("n", (int) '\n');
+        controlEscapeCharacterValues.put("r", (int) '\r');
+        controlEscapeCharacterValues.put("t", (int) '\t');
+        controlEscapeCharacterValues.put("v", 0x11); // \v in javascript
+    }
 
     private static final String[] controlEscapeCharacters = controlEscapeCharacterValues.keySet().toArray(new String[0]);
     
@@ -86,12 +84,12 @@ public class PatternAcceptor {
             return true;
         }
 
-        public Context goDeeper() {
+        public Context backtrackOnFailure() {
             return new Context(this);
         }
 
-        public boolean goDeeper(F<Context, Boolean> predicate) {
-            Context context = this.goDeeper();
+        public boolean backtrackOnFailure(F<Context, Boolean> predicate) {
+            Context context = this.backtrackOnFailure();
             boolean accepted = predicate.apply(context);
             if (accepted) {
                 this.absorb(context);
@@ -99,8 +97,8 @@ public class PatternAcceptor {
             return accepted;
         }
 
-        public <B> Maybe<B> goDeeperMaybe(F<Context, Maybe<B>> predicate) {
-            Context context = this.goDeeper();
+        public <B> Maybe<B> backtrackOnFailureMaybe(F<Context, Maybe<B>> predicate) {
+            Context context = this.backtrackOnFailure();
             Maybe<B> accepted = predicate.apply(context);
             if (accepted.isJust()) {
                 this.absorb(context);
@@ -270,7 +268,7 @@ public class PatternAcceptor {
     }
 
     private F<Context, Boolean> acceptLabeledGroup(F<Context, Boolean> predicate) {
-        return currentContext -> currentContext.goDeeper(context -> {
+        return currentContext -> currentContext.backtrackOnFailure(context -> {
             if (!context.eat("(")) {
                 return false;
             }
@@ -300,12 +298,12 @@ public class PatternAcceptor {
     }
 
     private F<Context, Boolean> acceptQuantified(F<Context, Boolean> acceptor) {
-        return superContext -> superContext.goDeeper(context ->{
+        return superContext -> superContext.backtrackOnFailure(context ->{
             if (!acceptor.apply(context)) {
                 return false;
             }
             if (context.match("{")) {
-                return context.goDeeper(subContext -> {
+                return context.backtrackOnFailure(subContext -> {
                     if (!subContext.eat("{")) {
                         return false;
                     }
@@ -351,7 +349,7 @@ public class PatternAcceptor {
     }
 
     private boolean acceptInvalidBracedQuantifier(Context context) {
-        return context.goDeeper(subContext -> {
+        return context.backtrackOnFailure(subContext -> {
             if (!subContext.eat("{")) {
                 return false;
             }
@@ -369,7 +367,7 @@ public class PatternAcceptor {
         if (this.unicode) {
             return acceptPatternCharacter(context) ||
                     context.eat(".") ||
-                    context.goDeeper(subContext -> {
+                    context.backtrackOnFailure(subContext -> {
                         if (!subContext.eat("\\")) {
                             return false;
                         }
@@ -380,7 +378,7 @@ public class PatternAcceptor {
                     acceptGrouping(context);
         }
         boolean matched = context.eat(".") ||
-                context.goDeeper(subContext -> {
+                context.backtrackOnFailure(subContext -> {
                     if (!subContext.eat("\\")) {
                         return false;
                     }
@@ -396,7 +394,7 @@ public class PatternAcceptor {
     }
 
     private boolean acceptGrouping(Context superContext) {
-        return superContext.goDeeper(context -> {
+        return superContext.backtrackOnFailure(context -> {
             if (!context.eat("(")) {
                 return false;
             }
@@ -415,7 +413,7 @@ public class PatternAcceptor {
     }
 
     private boolean acceptDecimalEscapeBackreference(Context superContext) {
-        return superContext.goDeeper(context -> {
+        return superContext.backtrackOnFailure(context -> {
             StringBuilder digits = new StringBuilder();
             Maybe<String> firstDecimal = context.eatAny(decimalDigits);
             if (firstDecimal.isNothing()) {
@@ -436,7 +434,7 @@ public class PatternAcceptor {
 
     @Nonnull
     private Maybe<Integer> acceptDecimalEscape(Context superContext) {
-        return superContext.goDeeperMaybe(context -> {
+        return superContext.backtrackOnFailureMaybe(context -> {
             StringBuilder digits = new StringBuilder();
             Maybe<String> firstDigit = context.eatAny(decimalDigits);
             if (firstDigit.isNothing()) {
@@ -471,7 +469,7 @@ public class PatternAcceptor {
 
     @Nonnull
     private Maybe<Integer> acceptUnicodeEscape(Context superContext) {
-        return superContext.goDeeperMaybe(context -> {
+        return superContext.backtrackOnFailureMaybe(context -> {
             if (!context.eat("u")) {
                 return Maybe.empty();
             }
@@ -490,7 +488,7 @@ public class PatternAcceptor {
             int value = Integer.parseInt(hex, 16);
 
             if (value >= 0xD800 && value <= 0xDBFF) {
-                Maybe<Integer> surrogatePairValue = context.goDeeperMaybe(subContext -> {
+                Maybe<Integer> surrogatePairValue = context.backtrackOnFailureMaybe(subContext -> {
                     if (!subContext.eat("\\u")) {
                         return Maybe.empty();
                     }
@@ -521,7 +519,7 @@ public class PatternAcceptor {
                     }
                     return Maybe.of(controlEscapeCharacterValues.get(escaped.fromJust()));
                 },
-                context -> context.goDeeperMaybe(subContext -> {
+                context -> context.backtrackOnFailureMaybe(subContext -> {
                     if (!subContext.eat("c")) {
                         return Maybe.empty();
                     }
@@ -531,7 +529,7 @@ public class PatternAcceptor {
                     }
                     return Maybe.of(character.fromJust().charAt(0) % 32);
                 }),
-                context -> context.goDeeperMaybe(subContext -> {
+                context -> context.backtrackOnFailureMaybe(subContext -> {
                     if (!subContext.eat("0")) {
                         return Maybe.empty();
                     }
@@ -540,7 +538,7 @@ public class PatternAcceptor {
                     }
                     return Maybe.of(0);
                 }),
-                context -> context.goDeeperMaybe(subContext -> {
+                context -> context.backtrackOnFailureMaybe(subContext -> {
                     if (!subContext.eat("x")) {
                         return Maybe.empty();
                     }
@@ -551,11 +549,11 @@ public class PatternAcceptor {
                     return Maybe.of(Integer.parseInt(hex, 16));
                 }),
                 this::acceptUnicodeEscape,
-                context -> context.goDeeperMaybe(subContext -> {
+                context -> context.backtrackOnFailureMaybe(subContext -> {
                     if (this.unicode) {
                         return Maybe.empty();
                     }
-                    F<Context, Maybe<Integer>> acceptOctalDigit = subContext2 -> subContext2.goDeeperMaybe(subContext3 -> {
+                    F<Context, Maybe<Integer>> acceptOctalDigit = subContext2 -> subContext2.backtrackOnFailureMaybe(subContext3 -> {
                         Maybe<String> octal2 = subContext3.eatAny(octalDigits);
                         if (octal2.isNothing()) {
                             return Maybe.empty();
@@ -579,7 +577,7 @@ public class PatternAcceptor {
                         return Maybe.of(octal1.fromJust() << 3 | octal2.fromJust());
                     }
                 }),
-                context -> context.goDeeperMaybe(subContext -> {
+                context -> context.backtrackOnFailureMaybe(subContext -> {
                     if (!this.unicode) {
                         return Maybe.empty();
                     }
@@ -592,7 +590,7 @@ public class PatternAcceptor {
                     }
                     return Maybe.empty();
                 },
-                context -> context.goDeeperMaybe(subContext -> {
+                context -> context.backtrackOnFailureMaybe(subContext -> {
                     if (this.unicode) {
                         return Maybe.empty();
                     }
@@ -608,7 +606,7 @@ public class PatternAcceptor {
 
     private Maybe<Maybe<Integer>> acceptClassEscape(Context superContext) {
         return this.<Maybe<Integer>>maybeLogicalOr(
-                context -> context.goDeeperMaybe(subContext -> {
+                context -> context.backtrackOnFailureMaybe(subContext -> {
                     if (!subContext.eat("b")) {
                         return Maybe.empty();
                     }
@@ -621,7 +619,7 @@ public class PatternAcceptor {
                     }
                     return Maybe.empty();
                 },
-                context -> context.goDeeperMaybe(subContext -> {
+                context -> context.backtrackOnFailureMaybe(subContext -> {
                     if (this.unicode || !subContext.eat("c")) {
                         return Maybe.empty();
                     }
@@ -636,7 +634,7 @@ public class PatternAcceptor {
         if (context.eat("\\")) {
 			return this.maybeLogicalOr(
 					this::acceptClassEscape,
-					subContext -> subContext.goDeeperMaybe(subContext2 -> {
+					subContext -> subContext.backtrackOnFailureMaybe(subContext2 -> {
 						if (!this.unicode && subContext2.match("c")) {
 							return Maybe.of(0x005C); // reverse solidus
 						}
@@ -705,7 +703,7 @@ public class PatternAcceptor {
 
     // all `Maybe<Maybe<Integer>>` types represent matched, not terminating, and contain in the character value for ranges
     private boolean acceptCharacterClass(Context superContext) {
-        return superContext.goDeeper(context -> {
+        return superContext.backtrackOnFailure(context -> {
             if (!context.eat("[")) {
                 return false;
             }
