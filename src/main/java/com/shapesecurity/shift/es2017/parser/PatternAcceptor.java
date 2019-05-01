@@ -162,9 +162,10 @@ public class PatternAcceptor {
 
         public String collect(Maybe<Integer> limit, @Nonnull String[]... stringArrays) {
             StringBuilder stringBuilder = new StringBuilder();
-
+            boolean isJust = limit.isJust();
+            int justLimit = limit.fromJust();
             outer:
-            for (int i = 0; limit.isNothing() || limit.fromJust() > i; ++i) {
+            for (int i = 0; !isJust || justLimit > i; ++i) {
                 for (String[] strings : stringArrays) {
                     for (String string : strings) {
                         if (this.eat(string)) {
