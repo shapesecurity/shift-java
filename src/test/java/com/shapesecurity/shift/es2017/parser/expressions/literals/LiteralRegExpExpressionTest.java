@@ -156,6 +156,8 @@ public class LiteralRegExpExpressionTest extends ParserTestCase {
         "/|.||.|/",
         "/|/",
         "/}*/",
+        "/[\\99-\\98]/",
+        "/[\\99-\\100]/",
     };
 
     private static final String[] expectedToFail = new String[] {
@@ -224,6 +226,7 @@ public class LiteralRegExpExpressionTest extends ParserTestCase {
         "/{5.}/u",
         "/{dfwfdf}/u",
         "/}*/u",
+        "/[\\100-\\99]/",
     };
 
     @Test

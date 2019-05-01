@@ -408,12 +408,12 @@ public class PatternAcceptor {
     }
 
     private boolean acceptAtomEscape(State state) {
-        return acceptDecimalEscapeBackreference(state) ||
+        return acceptDecimalEscape(state) ||
                 acceptCharacterClassEscape(state) ||
                 acceptCharacterEscape(state).map(i -> true).orJust(false);
     }
 
-    private boolean acceptDecimalEscapeBackreference(State superState) {
+    private boolean acceptDecimalEscape(State superState) {
         return superState.backtrackOnFailure(state -> {
             StringBuilder digits = new StringBuilder();
             Maybe<String> firstDecimal = state.eatAny(decimalDigits);
@@ -430,37 +430,6 @@ public class PatternAcceptor {
             }
             state.backreference(Integer.parseInt(digits.toString()));
             return true;
-        });
-    }
-
-    @Nonnull
-    private Maybe<Integer> acceptDecimalEscape(State superState) {
-        return superState.backtrackOnFailureMaybe(state -> {
-            Maybe<String> firstDigit = state.eatAny(decimalDigits);
-            if (firstDigit.isNothing()) {
-                return Maybe.empty();
-            }
-            if (firstDigit.isJust() && firstDigit.fromJust().equals("0")) {
-                return Maybe.of(0);
-            }
-            if (this.unicode) {
-                return Maybe.empty();
-            }
-            StringBuilder digits = new StringBuilder();
-            digits.append(firstDigit.fromJust());
-            Maybe<String> digit = state.eatAny(decimalDigits);
-            if (digit.isJust()) {
-                String justDigit = digit.fromJust();
-                digits.append(justDigit);
-                if (firstDigit.fromJust().equals("1")) {
-                    if (justDigit.equals("0") || justDigit.equals("1")) {
-                        state.eatAny(decimalDigits).foreach(digits::append);
-                    } else if (justDigit.equals("2")) {
-                        state.eatAny(octalDigits).foreach(digits::append);
-                    }
-                }
-            }
-            return Maybe.of(Integer.parseInt(digits.toString()));
         });
     }
 
@@ -573,7 +542,7 @@ public class PatternAcceptor {
                         if (octal3.isNothing()) {
                             return Maybe.of(octal1.fromJust() << 3 | octal2.fromJust());
                         }
-                        return Maybe.of(octal1.fromJust() << 6 | octal2.fromJust() << 3 | octal1.fromJust());
+                        return Maybe.of(octal1.fromJust() << 6 | octal2.fromJust() << 3 | octal3.fromJust());
                     } else {
                         return Maybe.of(octal1.fromJust() << 3 | octal2.fromJust());
                     }
@@ -613,7 +582,6 @@ public class PatternAcceptor {
                     }
                     return Maybe.of(0x0008); // backspace
                 }).map(Maybe::of),
-            state -> acceptDecimalEscape(state).map(Maybe::of),
             state -> {
                     if (this.unicode && state.eat("-")) {
                         return Maybe.of(Maybe.of((int)"-".charAt(0)));
