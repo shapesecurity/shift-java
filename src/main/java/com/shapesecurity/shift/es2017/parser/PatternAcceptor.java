@@ -163,7 +163,7 @@ public class PatternAcceptor {
         public String collect(Maybe<Integer> limit, @Nonnull String[]... stringArrays) {
             StringBuilder stringBuilder = new StringBuilder();
             boolean isJust = limit.isJust();
-            int justLimit = limit.fromJust();
+            int justLimit = limit.orJust(0);
             outer:
             for (int i = 0; !isJust || justLimit > i; ++i) {
                 for (String[] strings : stringArrays) {
@@ -436,7 +436,6 @@ public class PatternAcceptor {
     @Nonnull
     private Maybe<Integer> acceptDecimalEscape(State superState) {
         return superState.backtrackOnFailureMaybe(state -> {
-            StringBuilder digits = new StringBuilder();
             Maybe<String> firstDigit = state.eatAny(decimalDigits);
             if (firstDigit.isNothing()) {
                 return Maybe.empty();
@@ -447,6 +446,7 @@ public class PatternAcceptor {
             if (this.unicode) {
                 return Maybe.empty();
             }
+            StringBuilder digits = new StringBuilder();
             digits.append(firstDigit.fromJust());
             Maybe<String> digit = state.eatAny(decimalDigits);
             if (digit.isJust()) {
