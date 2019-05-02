@@ -2204,12 +2204,24 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
             if (propName instanceof StaticPropertyName) {
                 StaticPropertyName staticPropertyName = (StaticPropertyName) propName;
                 if (this.eat(TokenType.ASSIGN)) {
+					if (this.allowYieldExpression && token.type == TokenType.YIELD) {
+						throw this.createError(ErrorMessages.INVALID_TOKEN_CONTEXT, "yield");
+					}
+					if (this.allowAwaitExpression && token.type == TokenType.AWAIT) {
+						throw this.createError(ErrorMessages.INVALID_TOKEN_CONTEXT, "await");
+					}
                     Expression init = this.isolateCoverGrammar(this::parseAssignmentExpression).left().fromJust();
                     this.firstExprError = this.createErrorWithLocation(startLocation, ErrorMessages.ILLEGAL_PROPERTY);
                     AssignmentTargetPropertyIdentifier toReturn = new AssignmentTargetPropertyIdentifier(this.transformDestructuring(staticPropertyName), Maybe.of(init));
                     return Either.right(this.finishNode(startState, toReturn));
                 }
                 if (!this.match(TokenType.COLON)) {
+					if (this.allowYieldExpression && token.type == TokenType.YIELD) {
+						throw this.createError(ErrorMessages.INVALID_TOKEN_CONTEXT, "yield");
+					}
+					if (this.allowAwaitExpression && token.type == TokenType.AWAIT) {
+						throw this.createError(ErrorMessages.INVALID_TOKEN_CONTEXT, "await");
+					}
                     if (token.type != TokenType.IDENTIFIER && token.type != TokenType.YIELD && token.type != TokenType.LET && token.type != TokenType.ASYNC && token.type != TokenType.AWAIT) {
                         throw this.createUnexpected(token);
                     }
@@ -2311,8 +2323,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
         if (isGenerator && this.match(TokenType.COLON)) {
             throw this.createUnexpected(this.lookahead);
         }
-
-        return Either.left(name);
+		return Either.left(name);
     }
 
     protected boolean lookaheadPropertyName() {
@@ -2366,12 +2377,6 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
     @Nonnull
     protected String parseIdentifierName() throws JsError {
         if (isIdentifierName(this.lookahead.type.klass)) {
-			if (this.allowYieldExpression && this.match(TokenType.YIELD)) {
-				throw this.createError(ErrorMessages.INVALID_TOKEN_CONTEXT, "yield");
-			}
-			if (this.allowAwaitExpression && this.match(TokenType.AWAIT)) {
-				throw this.createError(ErrorMessages.INVALID_TOKEN_CONTEXT, "await");
-			}
 			return this.lex().toString();
         } else {
             throw this.createUnexpected(this.lookahead);

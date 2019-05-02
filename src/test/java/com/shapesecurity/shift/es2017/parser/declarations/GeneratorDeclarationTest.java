@@ -89,7 +89,7 @@ public class GeneratorDeclarationTest extends ParserTestCase {
 
         testScriptFailure("label: function* a(){}", 15, "Unexpected token \"*\"");
         testScriptFailure("function*g(yield){}", 11, "\"yield\" may not be used as an identifier in this context");
-        testScriptFailure("function*g({yield}){}", 12, "\"yield\" may not be used as an identifier in this context");
+        testScriptFailure("function*g({yield}){}", 17, "Unexpected token \"yield\"");
         testScriptFailure("function*g([yield]){}", 12, "\"yield\" may not be used as an identifier in this context");
         testScriptFailure("function*g({a: yield}){}", 15, "\"yield\" may not be used as an identifier in this context");
         testScriptFailure("function*g(yield = 0){}", 11, "\"yield\" may not be used as an identifier in this context");

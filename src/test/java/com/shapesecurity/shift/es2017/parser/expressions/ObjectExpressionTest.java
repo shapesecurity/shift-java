@@ -183,6 +183,6 @@ public class ObjectExpressionTest extends ParserTestCase {
                         new BindingIdentifier("b"), Maybe.of(new LiteralNumericExpression(0.0))))))), Maybe.empty()),
                 new FunctionBody(ImmutableList.empty(), ImmutableList.empty())))));
 
-        testScriptFailure("(function* (){return {yield = 5} = {}})", 22, "\"yield\" may not be used as an identifier in this context");
+        testScriptFailure("(function* (){return {yield = 5} = {}})", 30, "\"yield\" may not be used as an identifier in this context");
     }
 }
