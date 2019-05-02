@@ -574,6 +574,7 @@ public class PatternAcceptor {
         ).apply(superState);
     }
 
+    // all `Maybe<Maybe<Integer>>` types represent matched, not terminating, and contain in the character value for ranges
     private Maybe<Maybe<Integer>> acceptClassEscape(State superState) {
         return this.<Maybe<Integer>>anyOf(
             state -> state.backtrackOnFailureMaybe(subState -> {
@@ -601,15 +602,15 @@ public class PatternAcceptor {
 
     private Maybe<Maybe<Integer>> acceptClassAtomNoDash(State state) {
         if (state.eat("\\")) {
-			return this.anyOf(
-					this::acceptClassEscape,
+            return this.anyOf(
+                this::acceptClassEscape,
                 subState -> subState.backtrackOnFailureMaybe(subState2 -> {
-						if (!this.unicode && subState2.match("c")) {
-							return Maybe.of(0x005C); // reverse solidus
-						}
-						return Maybe.empty();
-					}).map(Maybe::of)
-			).apply(state);
+                        if (!this.unicode && subState2.match("c")) {
+                            return Maybe.of(0x005C); // reverse solidus
+                        }
+                        return Maybe.empty();
+                    }).map(Maybe::of)
+            ).apply(state);
         }
         Maybe<String> nextCodePoint = state.nextCodePoint();
         if (nextCodePoint.isNothing() || nextCodePoint.fromJust().equals("]") || nextCodePoint.fromJust().equals("-")) {
@@ -670,7 +671,6 @@ public class PatternAcceptor {
         return finishClassRange(state, atom.fromJust());
     }
 
-    // all `Maybe<Maybe<Integer>>` types represent matched, not terminating, and contain in the character value for ranges
     private boolean acceptCharacterClass(State superState) {
         return superState.backtrackOnFailure(state -> {
             if (!state.eat("[")) {
