@@ -41,6 +41,7 @@ interface ErrorMessages {
     String UNEXPECTED_RESERVED_WORD = "Unexpected reserved word";
     String UNEXPECTED_TEMPLATE = "Unexpected template";
     String UNEXPECTED_EOS = "Unexpected end of input";
+    String UNEXPECTED_REST_PARAMETERS_INITIALIZATION = "Rest parameter may not have a default initializer";
     String NEWLINE_AFTER_THROW = "Illegal newline after throw";
     String NEWLINE_AFTER_ARROW_PARAMS = "Illegal newline after arrow parameters";
     String UNTERMINATED_REGEXP = "Invalid regular expression: missing /";
