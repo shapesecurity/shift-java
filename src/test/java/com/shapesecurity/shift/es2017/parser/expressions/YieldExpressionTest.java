@@ -24,9 +24,11 @@ import com.shapesecurity.shift.es2017.ast.LiteralNullExpression;
 import com.shapesecurity.shift.es2017.ast.LiteralRegExpExpression;
 import com.shapesecurity.shift.es2017.ast.ObjectExpression;
 import com.shapesecurity.shift.es2017.ast.Setter;
+import com.shapesecurity.shift.es2017.parser.Parser;
 import com.shapesecurity.shift.es2017.parser.ParserTestCase;
 import com.shapesecurity.shift.es2017.parser.JsError;
 
+import com.shapesecurity.shift.es2017.serialization.Serializer;
 import org.junit.Test;
 
 public class YieldExpressionTest extends ParserTestCase {
@@ -101,5 +103,7 @@ public class YieldExpressionTest extends ParserTestCase {
                 new FormalParameters(ImmutableList.empty(), Maybe.empty()), new FunctionBody(ImmutableList.empty(),
                 ImmutableList.of(new ExpressionStatement(new YieldExpression(Maybe.of(new UpdateExpression(true,
                         UpdateOperator.Decrement, new AssignmentTargetIdentifier("a")))))))));
+        testScriptFailure("function *a({yield}){}", 18, "Unexpected token \"yield\"");
+        testScriptFailure("function *a({yield = 0}){}", 19, "Unexpected token \"yield\"");
     }
 }

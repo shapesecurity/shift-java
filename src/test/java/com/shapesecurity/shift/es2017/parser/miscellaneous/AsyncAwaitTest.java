@@ -131,9 +131,9 @@ public class AsyncAwaitTest {
 		testScriptFailure("async (a = (await) => {}) => {}", 12, "Async arrow parameters may not contain \"await\"");
 		testScriptFailure("async (a = aw\\u{61}it => {}) => {}", 11, "Async arrow parameters may not contain \"await\"");
 		testScriptFailure("async (a = (b = await (0)) => {}) => {}", 16, "Async arrow parameters may not contain \"await\"");
-		testScriptFailure("async ({await}) => 1",  13,"Async arrow parameters may not contain \"await\"");
-		testScriptFailure("async function x({await}) { return 1 }",  23,"Unexpected token \"}\"");
-		testScriptFailure("async function f() { return {await}; }",  34,"\"await\" may not be used as an identifier in this context");
-		testScriptFailure("async function f() { return {await = 0} = {}; }",  37,"\"await\" may not be used as an identifier in this context");
+		testScriptFailure("async ({await}) => 1",  13, "Async arrow parameters may not contain \"await\"");
+		testScriptFailure("async function x({await}) { return 1 }", 23, "Unexpected token \"}\"");
+		testScriptFailure("async function f() { return {await}; }", 34, "\"await\" may not be used as an identifier in this context");
+		testScriptFailure("async function f() { return {await = 0} = {}; }", 37, "\"await\" may not be used as an identifier in this context");
 	}
 }
