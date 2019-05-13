@@ -181,8 +181,26 @@ public class ObjectExpressionTest extends ParserTestCase {
         )));
 
         testScript("({...b = []})", new ObjectExpression(ImmutableList.of(
-                new SpreadProperty(new AssignmentExpression(new AssignmentTargetIdentifier("b"), new ArrayExpression(ImmutableList.empty())) )
+                new SpreadProperty(
+                    new AssignmentExpression(
+                        new AssignmentTargetIdentifier("b"),
+                            new ArrayExpression(ImmutableList.empty())) )
         )));
 
+        testScript("({...{}})", new ObjectExpression(ImmutableList.of(
+                new SpreadProperty(new ObjectExpression(ImmutableList.empty())))));
+
+        testScript("({...[], ...{}})", new ObjectExpression(ImmutableList.of(
+                new SpreadProperty(
+                    new ArrayExpression(ImmutableList.empty())
+                )
+                ,
+                new SpreadProperty(
+                    new ObjectExpression(ImmutableList.empty())
+                )
+        )));
+
+        testScript("({... a.b} = 0)", new AssignmentExpression(new ObjectAssignmentTarget(ImmutableList.empty(), Maybe.of(new StaticMemberAssignmentTarget(new IdentifierExpression("a"), "b"))), new LiteralNumericExpression(0.0)));
+        testScriptFailure("({a ...b})", 4, "Unexpected token \"...\"");
     }
 }
