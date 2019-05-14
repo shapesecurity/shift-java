@@ -364,14 +364,15 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
 
         if ((token.type == TokenType.IDENTIFIER || token.type == TokenType.LET || token.type == TokenType.YIELD) && name instanceof StaticPropertyName) {
             if (!this.match(TokenType.COLON)) {
+                if (token.type == TokenType.YIELD && this.allowYieldExpression) {
+                    throw this.createUnexpected(token);
+                }
                 Maybe<Expression> defaultValue = Maybe.empty();
                 if (this.eat(TokenType.ASSIGN)) {
                     boolean previousAllowYieldExpression = this.allowYieldExpression;
                     Either<Expression, AssignmentTarget> expr = this.parseAssignmentExpression();
                     defaultValue = expr.left();
                     this.allowYieldExpression = previousAllowYieldExpression;
-                } else if (token.type == TokenType.YIELD && this.allowYieldExpression) {
-                    throw this.createUnexpected(token);
                 }
                 return this.finishNode(startState, new BindingPropertyIdentifier((BindingIdentifier) binding.fromJust(), defaultValue));
             }
@@ -551,6 +552,11 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
             while (!this.eof()) {
                 if (this.eat(TokenType.ELLIPSIS)) {
                     rest = parseBindingTarget();
+                    if (this.match(TokenType.ASSIGN)) {
+                        throw this.createError(ErrorMessages.UNEXPECTED_REST_PARAMETERS_INITIALIZATION);
+                    } else if (this.match(TokenType.COMMA)) {
+                        throw this.createUnexpected(this.lookahead);
+                    }
                     break;
                 }
                 items.add(this.parseParam());
@@ -1589,7 +1595,11 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
                         Maybe<Binding> rest = Maybe.empty();
                         Maybe<SpreadElementExpression> lastArgument = arguments.maybeLast();
                         if (lastArgument.isJust() && lastArgument.fromJust() instanceof SpreadElement) {
-                            rest = Maybe.of(this.targetToBinding(this.transformDestructuring(((SpreadElement) lastArgument.fromJust()).expression)));
+                            BindingBindingWithDefault binding = this.targetToBindingPossiblyWithDefault(this.transformDestructuringWithDefault(((SpreadElement) lastArgument.fromJust()).expression));
+                            if (binding instanceof BindingWithDefault) {
+                                throw this.createError(ErrorMessages.UNEXPECTED_REST_PARAMETERS_INITIALIZATION);
+                            }
+                            rest = Maybe.of((Binding) binding);
                             arguments = arguments.take(arguments.length - 1);
                         }
                         // evil java hack
@@ -2191,16 +2201,31 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
             this.isBindingElement = this.isAssignmentTarget = false;
             return Either.left(keyOrMethod.right().fromJust());
         } else if (keyOrMethod.isLeft()) {
+            if (token.type == TokenType.AWAIT && this.firstAwaitLocation == null) {
+                this.firstAwaitLocation = this.getLocation();
+            }
             PropertyName propName = keyOrMethod.left().fromJust();
             if (propName instanceof StaticPropertyName) {
                 StaticPropertyName staticPropertyName = (StaticPropertyName) propName;
                 if (this.eat(TokenType.ASSIGN)) {
+                    if (this.allowYieldExpression && token.type == TokenType.YIELD) {
+                        throw this.createError(ErrorMessages.INVALID_TOKEN_CONTEXT, "yield");
+                    }
+                    if (this.allowAwaitExpression && token.type == TokenType.AWAIT) {
+                        throw this.createError(ErrorMessages.INVALID_TOKEN_CONTEXT, "await");
+                    }
                     Expression init = this.isolateCoverGrammar(this::parseAssignmentExpression).left().fromJust();
                     this.firstExprError = this.createErrorWithLocation(startLocation, ErrorMessages.ILLEGAL_PROPERTY);
                     AssignmentTargetPropertyIdentifier toReturn = new AssignmentTargetPropertyIdentifier(this.transformDestructuring(staticPropertyName), Maybe.of(init));
                     return Either.right(this.finishNode(startState, toReturn));
                 }
                 if (!this.match(TokenType.COLON)) {
+                    if (this.allowYieldExpression && token.type == TokenType.YIELD) {
+                        throw this.createError(ErrorMessages.INVALID_TOKEN_CONTEXT, "yield");
+                    }
+                    if (this.allowAwaitExpression && token.type == TokenType.AWAIT) {
+                        throw this.createError(ErrorMessages.INVALID_TOKEN_CONTEXT, "await");
+                    }
                     if (token.type != TokenType.IDENTIFIER && token.type != TokenType.YIELD && token.type != TokenType.LET && token.type != TokenType.ASYNC && token.type != TokenType.AWAIT) {
                         throw this.createUnexpected(token);
                     }
@@ -2302,7 +2327,6 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
         if (isGenerator && this.match(TokenType.COLON)) {
             throw this.createUnexpected(this.lookahead);
         }
-
         return Either.left(name);
     }
 
