@@ -654,6 +654,8 @@ public class Deserializer {
                         return new ShorthandProperty((IdentifierExpression) deserializeNode(jsonObject.get("name")));
                     case "SpreadElement":
                         return new SpreadElement((Expression) deserializeNode(jsonObject.get("expression")));
+                    case "SpreadProperty":
+                        return new SpreadProperty((Expression) deserializeNode(jsonObject.get("expression")));
                     case "StaticMemberAssignmentTarget":
                         return new StaticMemberAssignmentTarget((ExpressionSuper) deserializeNode(jsonObject.get("object")), jsonObject.get("property").getAsString());
                     case "StaticMemberExpression":

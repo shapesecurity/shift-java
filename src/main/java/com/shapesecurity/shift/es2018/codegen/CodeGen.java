@@ -863,6 +863,12 @@ public class CodeGen implements Reducer<CodeRep> {
 
     @Nonnull
     @Override
+    public CodeRep reduceSpreadProperty(@Nonnull SpreadProperty node, @Nonnull CodeRep expression) {
+        return null; // TODO
+    }
+
+    @Nonnull
+    @Override
     public CodeRep reduceStaticMemberAssignmentTarget(@Nonnull StaticMemberAssignmentTarget node, @Nonnull CodeRep object) {
         CodeRep state;
         if (node.object instanceof Expression) {

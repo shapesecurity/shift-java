@@ -458,6 +458,9 @@ public class BranchIterator implements Iterable<Pair<BranchGetter, Node>> {
 			} else if (node instanceof SpreadElement) {
 				SpreadElement spreadElement_ = (SpreadElement) node;
 				list = list.cons(Pair.of(path.d(Branch.SpreadElementExpression_()), spreadElement_.expression));
+			} else if (node instanceof SpreadProperty) {
+				SpreadProperty spreadProperty_ = (SpreadProperty) node;
+				list = list.cons(Pair.of(path.d(Branch.SpreadPropertyExpression_()), spreadProperty_.expression));
 			} else if (node instanceof StaticMemberAssignmentTarget) {
 				StaticMemberAssignmentTarget staticMemberAssignmentTarget_ = (StaticMemberAssignmentTarget) node;
 				list = list.cons(Pair.of(path.d(Branch.StaticMemberAssignmentTargetObject_()), staticMemberAssignmentTarget_.object));

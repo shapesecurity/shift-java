@@ -485,6 +485,10 @@ public abstract class Branch {
 		return new SpreadElementExpression();
 	}
 
+	public static SpreadPropertyExpression SpreadPropertyExpression_() {
+		return new SpreadPropertyExpression();
+	}
+
 	public static StaticMemberAssignmentTargetObject StaticMemberAssignmentTargetObject_() {
 		return new StaticMemberAssignmentTargetObject();
 	}
@@ -2042,6 +2046,18 @@ class SpreadElementExpression extends Branch {
 	public Maybe<? extends Node> step(Node node) {
 		if (!(node instanceof SpreadElement)) return Maybe.empty();
 		return Maybe.of(((SpreadElement) node).expression);
+	}
+
+	public String propertyName() {
+		return "expression";
+	}
+}
+
+class SpreadPropertyExpression extends Branch {
+	@Override
+	public Maybe<? extends Node> step(Node node) {
+		if (!(node instanceof SpreadProperty)) return Maybe.empty();
+		return Maybe.of(((SpreadProperty) node).expression);
 	}
 
 	public String propertyName() {

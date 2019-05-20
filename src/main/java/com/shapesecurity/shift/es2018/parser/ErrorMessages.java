@@ -29,7 +29,7 @@ import com.shapesecurity.shift.es2018.ast.Node;
 import com.shapesecurity.shift.es2018.ast.Super;
 import com.shapesecurity.shift.es2018.utils.Utils;
 
-interface ErrorMessages {
+public interface ErrorMessages {
 
     // error messages in error.js
     String UNEXPECTED_TOKEN = "Unexpected token \"%s\""; // TODO actual string escaping
@@ -41,24 +41,27 @@ interface ErrorMessages {
     String UNEXPECTED_RESERVED_WORD = "Unexpected reserved word";
     String UNEXPECTED_TEMPLATE = "Unexpected template";
     String UNEXPECTED_EOS = "Unexpected end of input";
-    String UNEXPECTED_REST_PARAMETERS_INITIALIZATION = "Rest parameter may not have a default initializer";
     String NEWLINE_AFTER_THROW = "Illegal newline after throw";
     String NEWLINE_AFTER_ARROW_PARAMS = "Illegal newline after arrow parameters";
     String UNTERMINATED_REGEXP = "Invalid regular expression: missing /";
+    String UNEXPECTED_REST_PARAMETERS_INITIALIZATION = "Rest parameter may not have a default initializer";
+    String INVALID_LAST_REST_PARAMETER = "Rest parameter must be last formal parameter";
     String INVALID_REGEXP_FLAGS = "Invalid regular expression flags";
     String INVALID_LHS_IN_ASSIGNMENT = "Invalid left-hand side in assignment";
     String INVALID_LHS_IN_FOR_IN = "Invalid left-hand side in for-in";
     String INVALID_LHS_IN_FOR_OF = "Invalid left-hand side in for-of";
+    String INVALID_LHS_IN_FOR_AWAIT = "Invalid left-hand side in for-await";
     String MULTIPLE_DEFAULTS_IN_SWITCH = "More than one default clause in switch statement";
     String NO_CATCH_OR_FINALLY = "Missing catch or finally after try";
     String ILLEGAL_RETURN = "Illegal return statement";
     String ILLEGAL_ARROW_FUNCTION_PARAMS = "Illegal arrow function parameter list";
     String INVALID_VAR_INIT_FOR_IN = "Invalid variable declaration in for-in statement";
     String INVALID_VAR_INIT_FOR_OF = "Invalid variable declaration in for-of statement";
+    String INVALID_VAR_INIT_FOR_AWAIT = "Invalid variable declaration in for-await statement";
     String ILLEGAL_PROPERTY = "Illegal property initializer";
     String UNEXPECTED_ARROW = "Arrows may not appear in this position";
     String UNINITIALIZED_BINDINGPATTERN_IN_FOR_INIT = "Binding pattern appears without initializer in for statement init";
-    String NO_AWAIT_IN_ASYNC_PARAMS = "Async arrow parameters may not contain \"await\"";
+    String NO_AWAIT_IN_ASYNC_PARAMS = "'await' is not a valid identifier name in an async function";
 
     // not in error.js, but already used in java version
     String STRICT_RESERVED_WORD = "Use of future reserved word in strict mode";
@@ -88,8 +91,13 @@ interface ErrorMessages {
     String STRICT_LHS_POSTFIX = "Postfix increment/decrement may not have eval or arguments operand in strict mode";
     String STRICT_LHS_PREFIX = "Prefix increment/decrement may not have eval or arguments operand in strict mode";
 
-    F<Super, EarlyError> SUPERCALL_ERROR = node -> new EarlyError(node, "Calls to super must be in the \"constructor\" method of a class expression or class declaration that has a superclass");
-    F<MemberExpression, EarlyError> SUPERPROPERTY_ERROR = node -> new EarlyError(node, "Member access on super must be in a method");
+    String INVALID_ID_BINDING_STRICT_MODE = "The identifier \"%s\" must not be in binding position in strict mode";
+    String ILLEGAL_ACCESS_SUPER_MEMBER = "Member access on super must be in a method";
+    String ILLEGAL_SUPER_CALL = "Calls to super must be in the \"constructor\" method of a class expression or class declaration that has a superclass";
+    String ILLEGAL_AWAIT_IN_ASYNC_PARAMS = "Async function parameters must not contain await expressions";
+
+    F<Super, EarlyError> SUPERCALL_ERROR = node -> new EarlyError(node, ILLEGAL_SUPER_CALL);
+    F<MemberExpression, EarlyError> SUPERPROPERTY_ERROR = node -> new EarlyError(node, ILLEGAL_ACCESS_SUPER_MEMBER);
     F<BindingIdentifier, EarlyError> DUPLICATE_BINDING = node -> new EarlyError(node, "Duplicate binding " + Utils.escapeStringLiteral(node.name));
     F<ContinueStatement, EarlyError> FREE_CONTINUE = node -> new EarlyError(node, "Continue statement must be nested within an iteration statement");
     F<ContinueStatement, EarlyError> UNBOUND_CONTINUE = node -> new EarlyError(node, "Continue statement must be nested within an iteration statement with label " + Utils.escapeStringLiteral(node.label.fromJust()));
@@ -104,6 +112,7 @@ interface ErrorMessages {
     F<Node, EarlyError> DO_WHILE_LABELED_FN = node -> new EarlyError(node, "The body of a do-while statement must not be a labeled function declaration");
     F<Node, EarlyError> FOR_IN_LABELED_FN = node -> new EarlyError(node, "The body of a for-in statement must not be a labeled function declaration");
     F<Node, EarlyError> FOR_OF_LABELED_FN = node -> new EarlyError(node, "The body of a for-of statement must not be a labeled function declaration");
+    F<Node, EarlyError> FOR_AWAIT_LABELED_FN = node -> new EarlyError(node, "The body of a for-await statement must not be a labeled function declaration");
     F<Node, EarlyError> FOR_LABELED_FN = node -> new EarlyError(node, "The body of a for statement must not be a labeled function declaration");
     F<Node, EarlyError> WHILE_LABELED_FN = node -> new EarlyError(node, "The body of a while statement must not be a labeled function declaration");
     F<Node, EarlyError> CONST_WITHOUT_INIT = node -> new EarlyError(node, "Constant lexical declarations must have an initialiser");
@@ -128,6 +137,6 @@ interface ErrorMessages {
     F<Node, EarlyError> YIELD_IN_GENERATOR_PARAMS = node -> new EarlyError(node, "Generator parameters must not contain yield expressions");
     F<Node, EarlyError> COMPLEX_PARAMS_WITH_USE_STRICT = node -> new EarlyError(node, "Functions with non-simple parameter lists may not contain a \"use strict\" directive");
     F<Node, EarlyError> AWAIT_IN_ARROW_PARAMS = node -> new EarlyError(node, "Arrow parameters must not contain await expressions");
-    F<Node, EarlyError> AWAIT_IN_ASYNC_PARAMS = node -> new EarlyError(node, "Async function parameters must not contain await expressions");
+    F<Node, EarlyError> AWAIT_IN_ASYNC_PARAMS = node -> new EarlyError(node, ILLEGAL_AWAIT_IN_ASYNC_PARAMS);
 
 }

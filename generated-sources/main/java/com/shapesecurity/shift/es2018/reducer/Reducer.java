@@ -420,6 +420,11 @@ public interface Reducer<State> {
             @Nonnull State expression);
 
     @Nonnull
+    State reduceSpreadProperty(
+            @Nonnull SpreadProperty node,
+            @Nonnull State expression);
+
+    @Nonnull
     State reduceStaticMemberAssignmentTarget(
             @Nonnull StaticMemberAssignmentTarget node,
             @Nonnull State object);

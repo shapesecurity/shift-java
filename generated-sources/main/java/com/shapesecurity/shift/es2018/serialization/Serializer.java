@@ -628,6 +628,12 @@ public class Serializer implements Reducer<StringBuilder> {
 
     @Nonnull
     @Override
+    public StringBuilder reduceSpreadProperty(@Nonnull SpreadProperty node, @Nonnull StringBuilder expression) {
+        return b("SpreadProperty").add("expression", expression).done();
+    }
+
+    @Nonnull
+    @Override
     public StringBuilder reduceStaticMemberAssignmentTarget(@Nonnull StaticMemberAssignmentTarget node, @Nonnull StringBuilder object) {
         return b("StaticMemberAssignmentTarget").add("object", object).add("property", node.property).done();
     }

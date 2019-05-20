@@ -1107,6 +1107,8 @@ public final class ThunkedDirector {
             return reduceNamedObjectProperty(reducer, (NamedObjectProperty) node);
         } else if (node instanceof ShorthandProperty) {
             return reduceShorthandProperty(reducer, (ShorthandProperty) node);
+        } else if (node instanceof SpreadProperty) {
+            return reduceSpreadProperty(reducer, (SpreadProperty) node);
         } else {
             throw new RuntimeException("Not reached");
         }
@@ -1210,6 +1212,13 @@ public final class ThunkedDirector {
         } else {
             throw new RuntimeException("Not reached");
         }
+    }
+
+    @Nonnull
+    public static <State> State reduceSpreadProperty(
+      @Nonnull ThunkedReducer<State> reducer,
+      @Nonnull SpreadProperty node) {
+        return reducer.reduceSpreadProperty(node, () -> reduceExpression(reducer, node.expression));
     }
 
     @Nonnull

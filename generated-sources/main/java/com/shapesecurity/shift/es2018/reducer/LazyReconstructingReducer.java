@@ -832,6 +832,17 @@ public class LazyReconstructingReducer implements Reducer<Node> {
 
     @Nonnull
     @Override
+    public ObjectProperty reduceSpreadProperty(
+            @Nonnull SpreadProperty node,
+            @Nonnull Node expression) {
+        if (node.expression == expression) {
+            return node;
+        }
+        return new SpreadProperty((Expression) expression);
+    }
+
+    @Nonnull
+    @Override
     public SimpleAssignmentTarget reduceStaticMemberAssignmentTarget(
             @Nonnull StaticMemberAssignmentTarget node,
             @Nonnull Node object) {

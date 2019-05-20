@@ -645,6 +645,14 @@ public class ReconstructingReducer implements Reducer<Node> {
 
     @Nonnull
     @Override
+    public ObjectProperty reduceSpreadProperty(
+            @Nonnull SpreadProperty node,
+            @Nonnull Node expression) {
+        return new SpreadProperty((Expression) expression);
+    }
+
+    @Nonnull
+    @Override
     public SimpleAssignmentTarget reduceStaticMemberAssignmentTarget(
             @Nonnull StaticMemberAssignmentTarget node,
             @Nonnull Node object) {

@@ -421,6 +421,11 @@ public interface ThunkedReducer<State> {
             @Nonnull Supplier<State> expression);
 
     @Nonnull
+    State reduceSpreadProperty(
+            @Nonnull SpreadProperty node,
+            @Nonnull Supplier<State> expression);
+
+    @Nonnull
     State reduceStaticMemberAssignmentTarget(
             @Nonnull StaticMemberAssignmentTarget node,
             @Nonnull Supplier<State> object);

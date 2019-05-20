@@ -744,6 +744,15 @@ public class Thunked <State, T extends Reducer<State>> implements ThunkedReducer
 
     @Override
     @Nonnull
+    public State reduceSpreadProperty(
+        @Nonnull SpreadProperty node,
+        @Nonnull Supplier<State> expression
+    ) {
+        return reducer.reduceSpreadProperty(node, expression.get());
+    }
+
+    @Override
+    @Nonnull
     public State reduceStaticMemberAssignmentTarget(
         @Nonnull StaticMemberAssignmentTarget node,
         @Nonnull Supplier<State> object

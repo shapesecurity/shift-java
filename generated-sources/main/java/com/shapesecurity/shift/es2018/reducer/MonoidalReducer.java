@@ -681,6 +681,14 @@ public class MonoidalReducer<State> implements Reducer<State> {
 
     @Nonnull
     @Override
+    public State reduceSpreadProperty(
+            @Nonnull SpreadProperty node,
+            @Nonnull State expression) {
+        return expression;
+    }
+
+    @Nonnull
+    @Override
     public State reduceStaticMemberAssignmentTarget(
             @Nonnull StaticMemberAssignmentTarget node,
             @Nonnull State object) {

@@ -526,6 +526,12 @@ public class RangeCheckerReducer extends MonoidalReducer<RangeCheckerReducer.Ran
 
     @Nonnull
     @Override
+    public RangeChecker reduceSpreadProperty(@Nonnull SpreadProperty node, @Nonnull RangeChecker expression) {
+      return accept(node, super.reduceSpreadProperty(node, expression));
+    }
+
+    @Nonnull
+    @Override
     public RangeChecker reduceStaticMemberAssignmentTarget(@Nonnull StaticMemberAssignmentTarget node, @Nonnull RangeChecker object) {
       return accept(node, super.reduceStaticMemberAssignmentTarget(node, object));
     }

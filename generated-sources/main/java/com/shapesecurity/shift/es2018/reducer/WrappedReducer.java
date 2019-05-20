@@ -488,6 +488,12 @@ public class WrappedReducer<T> implements Reducer<T> {
 
     @Nonnull
     @Override
+    public T reduceSpreadProperty(@Nonnull SpreadProperty node, @Nonnull T expression) {
+        return wrap.apply(node, reducer.reduceSpreadProperty(node, expression));
+    }
+
+    @Nonnull
+    @Override
     public T reduceStaticMemberAssignmentTarget(@Nonnull StaticMemberAssignmentTarget node, @Nonnull T object) {
         return wrap.apply(node, reducer.reduceStaticMemberAssignmentTarget(node, object));
     }

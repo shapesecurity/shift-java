@@ -1303,6 +1303,20 @@ public class ReduceStructured implements ThunkedReducer<Node> {
 
     @Override
     @Nonnull
+    public Node reduceSpreadProperty(
+        @Nonnull SpreadProperty node,
+        @Nonnull Supplier<Node> expressionThunk
+    ) {
+        enforceNoStrayStructuralLabels(node);
+        Expression expression = (Expression) expressionThunk.get();
+        Node newNode = node.expression == expression
+          ? node
+          : new SpreadProperty(expression);
+        return applyReplacer(this.nodeToLabels.get(node), newNode);
+    }
+
+    @Override
+    @Nonnull
     public Node reduceStaticMemberAssignmentTarget(
         @Nonnull StaticMemberAssignmentTarget node,
         @Nonnull Supplier<Node> objectThunk
