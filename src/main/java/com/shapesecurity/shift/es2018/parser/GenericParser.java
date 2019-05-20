@@ -837,10 +837,19 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
         if (node instanceof ObjectExpression) {
             ObjectExpression objectExpression = (ObjectExpression) node;
             ArrayList<AssignmentTargetProperty> properties = new ArrayList<>();
-            for (ObjectProperty p : objectExpression.properties) {
-                properties.add(this.transformDestructuring(p));
+            Maybe<AssignmentTarget> rest = Maybe.empty();
+            ImmutableList<ObjectProperty> objectProperties = objectExpression.properties;
+            if (objectProperties.length > 0) {
+                ObjectProperty last = ((NonEmptyImmutableList<ObjectProperty>) objectProperties).last();
+                if (last instanceof SpreadProperty) {
+                    rest = Maybe.of(this.transformDestructuring(((SpreadProperty) last).expression));
+                    objectProperties = ((NonEmptyImmutableList<ObjectProperty>) objectProperties).init();
+                }
+                for (ObjectProperty p : objectProperties) {
+                    properties.add(this.transformDestructuring(p));
+                }
             }
-            return this.copyNode(node, new ObjectAssignmentTarget(ImmutableList.from(properties), Maybe.empty()));
+            return this.copyNode(node, new ObjectAssignmentTarget(ImmutableList.from(properties), rest));
         } else if (node instanceof ArrayExpression) {
             ArrayExpression arrayExpression = (ArrayExpression) node;
             Maybe<SpreadElementExpression> last = Maybe.join(arrayExpression.elements.maybeLast());
@@ -2134,6 +2143,12 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
             return Either3.middle(Pair.of(paramsNode, false));
         } else if (this.eat(TokenType.ELLIPSIS)) {
             Maybe<Binding> rest = Maybe.of(this.parseBindingTarget());
+            if (this.match(TokenType.ASSIGN)) {
+                throw this.createError(ErrorMessages.UNEXPECTED_REST_PARAMETERS_INITIALIZATION);
+            }
+            if (this.match(TokenType.COMMA)) {
+                throw this.createError(ErrorMessages.INVALID_LAST_REST_PARAMETER);
+            }
             this.expect(TokenType.RPAREN);
             FormalParameters paramsNode = this.finishNode(preParenStartState, new FormalParameters(ImmutableList.empty(), rest));
             this.isBindingElement = this.isAssignmentTarget = false;
@@ -2169,6 +2184,12 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
                 }
                 this.lex();
                 Maybe<Binding> rest = Maybe.of(this.parseBindingTarget());
+                if (this.match(TokenType.ASSIGN)) {
+                    throw this.createError(ErrorMessages.UNEXPECTED_REST_PARAMETERS_INITIALIZATION);
+                }
+                if (this.match(TokenType.COMMA)) {
+                    throw this.createError(ErrorMessages.INVALID_LAST_REST_PARAMETER);
+                }
                 this.expect(TokenType.RPAREN);
                 FormalParameters paramsNode = this.finishNode(preParenStartState, new FormalParameters(ImmutableList.from(params).map(this::bindingToParameter), rest));
                 return Either3.middle(Pair.of(paramsNode, false));
