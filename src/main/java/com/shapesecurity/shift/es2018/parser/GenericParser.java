@@ -1791,7 +1791,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
         if (this.eat(TokenType.ASYNC)) {
             if (!this.hasLineTerminatorBeforeNext && this.match(TokenType.FUNCTION)) {
                 this.isBindingElement = this.isAssignmentTarget = false;
-                return Either3.left(this.finishNode(startState, this.parseFunctionExpression(false, true)));
+                return Either3.left(this.finishNode(startState, this.parseFunctionExpression(true, true)));
             }
             return Either3.left(this.finishNode(startState, new IdentifierExpression("async")));
         }
@@ -2632,7 +2632,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
             case ASYNC:
                 AdditionalStateT preAsyncStartState = this.startNode();
                 this.lex();
-                decl = new Export(this.finishNode(preAsyncStartState, (FunctionDeclaration) this.parseFunctionDeclaration(false, false, true)));
+                decl = new Export(this.finishNode(preAsyncStartState, (FunctionDeclaration) this.parseFunctionDeclaration(false, true, true)));
                 break;
             case DEFAULT:
                 this.lex();
@@ -2648,7 +2648,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
                         TokenizerState tokenizerState = this.saveTokenizerState();
                         this.lex();
                         if (!this.hasLineTerminatorBeforeNext && this.match(TokenType.FUNCTION)) {
-                            decl = new ExportDefault(this.finishNode(preDefaultAsyncStartState, (FunctionDeclaration) this.parseFunctionDeclaration(true, false, true)));
+                            decl = new ExportDefault(this.finishNode(preDefaultAsyncStartState, (FunctionDeclaration) this.parseFunctionDeclaration(true, true, true)));
                             break;
                         }
                         this.restoreTokenizerState(tokenizerState);

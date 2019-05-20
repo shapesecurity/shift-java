@@ -14,9 +14,7 @@ public class XFailHelper {
 
 	static {
 		xfailFeatures.addAll(Arrays.asList(
-				"async-iteration",
 				"BigInt",
-				"regexp-dotall",
 				"regexp-unicode-property-escapes",
 				"regexp-named-groups",
 				"regexp-lookbehind",
@@ -26,8 +24,6 @@ public class XFailHelper {
 				"class-static-fields-private",
 				"class-methods-private",
 				"class-static-methods-private",
-				"object-rest",
-				"object-spread",
 				"numeric-separator-literal",
 				"json-superset",
 				"export-star-as-namespace-from-module",
