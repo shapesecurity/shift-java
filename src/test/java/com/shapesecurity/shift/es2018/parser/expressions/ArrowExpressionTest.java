@@ -17,6 +17,7 @@ import com.shapesecurity.shift.es2018.ast.FunctionBody;
 import com.shapesecurity.shift.es2018.ast.LiteralNumericExpression;
 import com.shapesecurity.shift.es2018.ast.LiteralStringExpression;
 import com.shapesecurity.shift.es2018.ast.ObjectBinding;
+import com.shapesecurity.shift.es2018.parser.ErrorMessages;
 import com.shapesecurity.shift.es2018.parser.JsError;
 import com.shapesecurity.shift.es2018.parser.ParserTestCase;
 
@@ -50,6 +51,8 @@ public class ArrowExpressionTest extends ParserTestCase {
         testScript("yield => 0", new ArrowExpression(false, new FormalParameters(ImmutableList.of(new BindingIdentifier("yield")), Maybe.empty()), new LiteralNumericExpression(0.0)));
         testScript("let => 0", new ArrowExpression(false, new FormalParameters(ImmutableList.of(new BindingIdentifier("let")), Maybe.empty()), new LiteralNumericExpression(0.0)));
 
+        testScriptFailure("function(a = []) {}", 8, String.format(ErrorMessages.UNEXPECTED_TOKEN, "("));
+
         testScriptFailure("[]=>0", 2, "Unexpected token \"=>\"");
         testScriptFailure("() + 1", 3, "Unexpected token \"+\"");
         testScriptFailure("1 + ()", 6, "Unexpected end of input");
@@ -71,5 +74,11 @@ public class ArrowExpressionTest extends ParserTestCase {
         testScriptFailure("() + 0", 3, "Unexpected token \"+\"");
         testScriptFailure("(10) => 0", 0, "Illegal arrow function parameter list");
         testScriptFailure("(10, 0, 20) => 0", 0, "Illegal arrow function parameter list");
+        testScriptFailure("(...a, b) => {}", 5, ErrorMessages.INVALID_LAST_REST_PARAMETER);
+        testScriptFailure("(...a, ...b) => {}", 5, ErrorMessages.INVALID_LAST_REST_PARAMETER);
+        testScriptFailure("(a, ...b,) => {}", 8, ErrorMessages.INVALID_LAST_REST_PARAMETER);
+        testScriptFailure("(async (...a, b) => {})", 12, String.format(ErrorMessages.UNEXPECTED_TOKEN, ","));
+        testScriptFailure("(async (...a, ...b) => {})", 12, String.format(ErrorMessages.UNEXPECTED_TOKEN, ","));
+        testScriptFailure("(async (...x = []) => {});", 19, ErrorMessages.UNEXPECTED_REST_PARAMETERS_INITIALIZATION);
     }
 }

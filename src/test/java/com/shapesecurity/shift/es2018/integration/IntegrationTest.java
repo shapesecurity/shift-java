@@ -106,15 +106,23 @@ public class IntegrationTest {
         Program generated = Fuzzer.generate(new Random(seed), depth);
         String originalSerialized = Serializer.serialize(generated);
         if (generated instanceof Script) {
-            String code = CodeGen.codeGen((Script) generated);
-            Script parsed = Parser.parseScript(code);
-            String finalSerialized = Serializer.serialize(parsed);
-            assertEquals(originalSerialized, finalSerialized);
+            String code = CodeGen.codeGen(generated);
+            try {
+                Script parsed = Parser.parseScript(code);
+                String finalSerialized = Serializer.serialize(parsed);
+                assertEquals(originalSerialized, finalSerialized);
+            } catch (JsError e) {
+                throw new RuntimeException("Failed to parse script:\n" + code, e);
+            }
         } else {
-            String code = CodeGen.codeGen((Module) generated);
-            Module parsed = Parser.parseModule(code);
-            String finalSerialized = Serializer.serialize(parsed);
-            assertEquals(originalSerialized, finalSerialized);
+            String code = CodeGen.codeGen(generated);
+            try {
+                Module parsed = Parser.parseModule(code);
+                String finalSerialized = Serializer.serialize(parsed);
+                assertEquals(originalSerialized, finalSerialized);
+            } catch (JsError e) {
+                throw new RuntimeException("Failed to parse module:\n" + code, e);
+            }
         }
     }
 }

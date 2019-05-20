@@ -2,22 +2,7 @@ package com.shapesecurity.shift.es2018.parser.destructuring.binding_pattern;
 
 import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.functional.data.Maybe;
-import com.shapesecurity.shift.es2018.ast.ArrayBinding;
-import com.shapesecurity.shift.es2018.ast.ArrowExpression;
-import com.shapesecurity.shift.es2018.ast.BindingIdentifier;
-import com.shapesecurity.shift.es2018.ast.BindingPropertyIdentifier;
-import com.shapesecurity.shift.es2018.ast.BindingPropertyProperty;
-import com.shapesecurity.shift.es2018.ast.Block;
-import com.shapesecurity.shift.es2018.ast.CatchClause;
-import com.shapesecurity.shift.es2018.ast.FormalParameters;
-import com.shapesecurity.shift.es2018.ast.LiteralNumericExpression;
-import com.shapesecurity.shift.es2018.ast.ObjectBinding;
-import com.shapesecurity.shift.es2018.ast.StaticPropertyName;
-import com.shapesecurity.shift.es2018.ast.TryCatchStatement;
-import com.shapesecurity.shift.es2018.ast.VariableDeclaration;
-import com.shapesecurity.shift.es2018.ast.VariableDeclarationKind;
-import com.shapesecurity.shift.es2018.ast.VariableDeclarationStatement;
-import com.shapesecurity.shift.es2018.ast.VariableDeclarator;
+import com.shapesecurity.shift.es2018.ast.*;
 import com.shapesecurity.shift.es2018.parser.ParserTestCase;
 import com.shapesecurity.shift.es2018.parser.JsError;
 
@@ -83,5 +68,21 @@ public class ObjectBindingTest extends ParserTestCase {
         testScriptFailure("({*a({e: a.b}){}})", 10, "Unexpected token \".\"");
         testScriptFailure("({set a({e: a.b}){}})", 13, "Unexpected token \".\"");
         testScriptFailure("try {} catch ({e: x.a}) {}", 19, "Unexpected token \".\"");
+    }
+
+    @Test
+    public void testObjectBindingSpread() throws JsError {
+        testScript("var {a, ...b} = {};", new VariableDeclarationStatement(new VariableDeclaration(VariableDeclarationKind.Var, ImmutableList.of(
+                new VariableDeclarator(new ObjectBinding(ImmutableList.of(
+                        new BindingPropertyIdentifier(new BindingIdentifier("a"), Maybe.empty())
+                ), Maybe.of(new BindingIdentifier("b"))), Maybe.of(new ObjectExpression(ImmutableList.empty())))
+        ))));
+
+        testScript("var {...b} = {};", new VariableDeclarationStatement(new VariableDeclaration(VariableDeclarationKind.Var, ImmutableList.of(
+                new VariableDeclarator(new ObjectBinding(ImmutableList.empty()
+                        , Maybe.of(new BindingIdentifier("b"))), Maybe.of(new ObjectExpression(ImmutableList.empty())))
+        ))));
+
+        testScriptFailure("var {a, ...b, c} = {};", 12, "Unexpected token \",\"");
     }
 }

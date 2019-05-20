@@ -2,32 +2,7 @@ package com.shapesecurity.shift.es2018.parser.destructuring.assignment;
 
 import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.functional.data.Maybe;
-import com.shapesecurity.shift.es2018.ast.ArrayAssignmentTarget;
-import com.shapesecurity.shift.es2018.ast.AssignmentExpression;
-import com.shapesecurity.shift.es2018.ast.AssignmentTargetIdentifier;
-import com.shapesecurity.shift.es2018.ast.AssignmentTargetPropertyIdentifier;
-import com.shapesecurity.shift.es2018.ast.AssignmentTargetPropertyProperty;
-import com.shapesecurity.shift.es2018.ast.AssignmentTargetWithDefault;
-import com.shapesecurity.shift.es2018.ast.BindingIdentifier;
-import com.shapesecurity.shift.es2018.ast.BindingPropertyProperty;
-import com.shapesecurity.shift.es2018.ast.BindingWithDefault;
-import com.shapesecurity.shift.es2018.ast.CallExpression;
-import com.shapesecurity.shift.es2018.ast.ComputedPropertyName;
-import com.shapesecurity.shift.es2018.ast.ExpressionStatement;
-import com.shapesecurity.shift.es2018.ast.FormalParameters;
-import com.shapesecurity.shift.es2018.ast.FunctionBody;
-import com.shapesecurity.shift.es2018.ast.FunctionExpression;
-import com.shapesecurity.shift.es2018.ast.IdentifierExpression;
-import com.shapesecurity.shift.es2018.ast.LiteralNumericExpression;
-import com.shapesecurity.shift.es2018.ast.ObjectAssignmentTarget;
-import com.shapesecurity.shift.es2018.ast.ObjectBinding;
-import com.shapesecurity.shift.es2018.ast.StaticMemberAssignmentTarget;
-import com.shapesecurity.shift.es2018.ast.StaticPropertyName;
-import com.shapesecurity.shift.es2018.ast.VariableDeclaration;
-import com.shapesecurity.shift.es2018.ast.VariableDeclarationKind;
-import com.shapesecurity.shift.es2018.ast.VariableDeclarationStatement;
-import com.shapesecurity.shift.es2018.ast.VariableDeclarator;
-import com.shapesecurity.shift.es2018.ast.YieldExpression;
+import com.shapesecurity.shift.es2018.ast.*;
 import com.shapesecurity.shift.es2018.parser.ParserTestCase;
 import com.shapesecurity.shift.es2018.parser.JsError;
 
@@ -107,5 +82,45 @@ public class ObjectAssignmentTargetTest extends ParserTestCase {
         testScriptFailure("({var} = 0)", 5, "Unexpected token \"var\"");
         testScriptFailure("({a.b} = 0)", 3, "Unexpected token \".\"");
         testScriptFailure("({0} = 0)", 3, "Unexpected number"); // TODO: changed error from unexpected }
+    }
+
+    @Test
+    public void testObjectAssignmentSpread() throws JsError {
+        testScript("({a, ...b} = {})", new AssignmentExpression(
+                new ObjectAssignmentTarget(ImmutableList.of(
+                        new AssignmentTargetPropertyIdentifier(new AssignmentTargetIdentifier("a"), Maybe.empty())
+                ),
+                Maybe.of(new AssignmentTargetIdentifier("b")
+        )), new ObjectExpression(ImmutableList.empty())));
+
+        testScript("({...b} = {})", new AssignmentExpression(
+                new ObjectAssignmentTarget(ImmutableList.empty(), Maybe.of(new AssignmentTargetIdentifier("b"))),
+                new ObjectExpression(ImmutableList.empty())
+        ));
+        testScript("({b, c, d, ...{a} })",
+            new ObjectExpression(ImmutableList.of(
+                new ShorthandProperty(new IdentifierExpression("b")),
+                new ShorthandProperty(new IdentifierExpression("c")),
+                new ShorthandProperty(new IdentifierExpression("d")),
+                new SpreadProperty(new ObjectExpression(ImmutableList.of(new ShorthandProperty(new IdentifierExpression("a")))))
+            ))
+        );
+        testScript("({ ...(a) } = {})", new AssignmentExpression(
+                new ObjectAssignmentTarget(ImmutableList.empty(), Maybe.of(new AssignmentTargetIdentifier("a"))),
+                new ObjectExpression(ImmutableList.empty())
+        ));
+        testScript("({a = 5} = {})", new AssignmentExpression(
+                new ObjectAssignmentTarget(ImmutableList.of(new AssignmentTargetPropertyIdentifier(new AssignmentTargetIdentifier("a"), Maybe.of(new LiteralNumericExpression(5)))), Maybe.empty()),
+                new ObjectExpression(ImmutableList.empty())
+        ));
+
+
+
+        testScriptFailure("({a = 5})", 2, "Illegal property initializer");
+        testScriptFailure("({a, ...b, c} = {})", 14, "Invalid left-hand side in assignment");
+        testScriptFailure("({ ...{a} } = {})", 12, "Invalid left-hand side in assignment");
+        testScriptFailure("({b, c, d, ...{a} } = {})", 20, "Invalid left-hand side in assignment");
+        testScriptFailure("let { ...{a} } = {}", 9, "Unexpected token \"{\"");
+
     }
 }

@@ -104,24 +104,29 @@ public abstract class ParserTestCase extends TestCase {
         Director.reduceModule(new RangeCheckerReducer(parserWithLocation), node);
     }
 
+    public static void testScriptSuccess(@Nonnull String source) throws JsError {
+        Script node = Parser.parseScript(source);
+        assert (node.statements.isNotEmpty());
+
+        ParserWithLocation parserWithLocation = new ParserWithLocation();
+        node = parserWithLocation.parseScript(source);
+        assert (node.statements.isNotEmpty());
+    }
+
     public static void testScriptFailureML(@Nonnull String source, int line, int column, int index, @Nonnull String error) {
         try {
             Parser.parseScript(source);
         } catch (JsError jsError) {
+            if (!error.equals(jsError.getDescription())
+                    || line != jsError.getLine()
+                    || column != jsError.getColumn()
+                    || index != jsError.getIndex()) {
+                jsError.printStackTrace();
+            }
             assertEquals(error, jsError.getDescription());
             assertEquals(line, jsError.getLine());
             assertEquals(column, jsError.getColumn());
             assertEquals(index, jsError.getIndex());
-            return;
-        }
-        fail("Parsing error not found");
-    }
-
-    public static void testScriptFailure(@Nonnull String source, @Nonnull String error) {
-        try {
-            Parser.parseScript(source);
-        } catch (JsError jsError) {
-            assertEquals(error, jsError.getDescription());
             return;
         }
         fail("Parsing error not found");

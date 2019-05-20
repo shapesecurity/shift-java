@@ -6,6 +6,8 @@ public class EarlyErrorsTest extends ParserTestCase {
     @Test
     public void testEarlyGrammarErrors() throws JsError {
 
+        testScriptEarlyError("({async a(b = await (0)) {} })", "Async function parameters must not contain await expressions");
+
         // 12.2.5.1
         // Always throw a Syntax Error if code matches this production.
         testScriptFailure("({ a = 0 });", 3, "Illegal property initializer");
@@ -105,10 +107,6 @@ public class EarlyErrorsTest extends ParserTestCase {
         // #sec-arrow-function-definitions-static-semantics-early-errors
         testScriptEarlyError("async function a(){ (a = await (0)) => {}; }", "Arrow parameters must not contain await expressions");
         // #sec-async-function-definitions-static-semantics-early-errors
-        // It is a Syntax Error if UniqueFormalParameters Contains AwaitExpression is true
-        testScriptEarlyError("async function a(b = await (0)) {}", "Async function parameters must not contain await expressions");
-        testScriptEarlyError("(async function(b = await (0)) {})", "Async function parameters must not contain await expressions");
-        testScriptEarlyError("({ async a(b = await (0)) {} })", "Async function parameters must not contain await expressions");
         // #sec-class-definitions-static-semantics-early-errors
         // It is a Syntax Error if PropName of MethodDefinition is "constructor" and SpecialMethod of MethodDefinition is true.
         testScriptEarlyError("(class { async constructor(){} })", "Constructors cannot be async, generators, getters or setters");
@@ -762,6 +760,10 @@ public class EarlyErrorsTest extends ParserTestCase {
         // unless that element is only bound by a VariableStatement or the VariableDeclarationList of a for statement,
         // or the ForBinding of a for-in statement.
         testScriptEarlyError("try {} catch(e) { for(var e of 0); }", "Duplicate binding \"e\"");
+
+        // It is an early error to use 'await' as an expression in async parameters
+        testScriptEarlyError("async function a(b = await (0)) {}", "Async function parameters must not contain await expressions");
+        testScriptEarlyError("(async function(b = await (0)) {})", "Async function parameters must not contain await expressions");
 
     }
 
