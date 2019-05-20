@@ -678,9 +678,13 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
     @Nonnull
     protected Statement parseForStatement() throws JsError {
         this.lex();
+        boolean isAwait = this.allowAwaitExpression && this.eat(TokenType.AWAIT);
         this.expect(TokenType.LPAREN);
         Maybe<Expression> test = Maybe.empty();
         Maybe<Expression> right = Maybe.empty();
+        if (isAwait && this.match(TokenType.SEMICOLON)) {
+            throw this.createUnexpected(this.lookahead);
+        }
         if (this.eat(TokenType.SEMICOLON)) {
             if (!this.match(TokenType.SEMICOLON)) {
                 test = this.parseExpression().left();
@@ -702,13 +706,21 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
             if (init.declarators.length == 1 && (this.match((TokenType.IN)) || this.matchContextualKeyword("of"))) {
                 VariableDeclarator declarator = init.declarators.maybeHead().fromJust();
                 if (this.match(TokenType.IN)) {
+                    if (isAwait) {
+                        throw this.createUnexpected(this.lookahead);
+                    }
                     if (declarator.init.isJust() && (this.strict || init.kind != VariableDeclarationKind.Var || !(declarator.binding instanceof BindingIdentifier))) {
                         throw this.createError(ErrorMessages.INVALID_VAR_INIT_FOR_IN);
                     }
                     this.lex();
                     right = this.parseExpression().left();
                     Statement body = this.getIteratorStatementEpilogue();
-                    return new ForInStatement(init, right.fromJust(), body);
+                    if (isAwait) {
+                        return new ForAwaitStatement(init, right.fromJust(), body);
+                    }
+                    return new ForOfStatement(init, right.fromJust(), body);
+                } else if (isAwait) {
+                    throw this.createUnexpected(this.lookahead);
                 }
                 if (declarator.init.isJust()) {
                     throw this.createError(ErrorMessages.INVALID_VAR_INIT_FOR_OF);
@@ -746,17 +758,25 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
                 target = fromParseAssignmentOrTarget.right().fromJust();
             }
             if (startsWithLet && this.matchContextualKeyword("of")) {
-                throw this.createError(ErrorMessages.INVALID_LHS_IN_FOR_OF);
+                throw this.createError(isAwait ? ErrorMessages.INVALID_LHS_IN_FOR_AWAIT : ErrorMessages.INVALID_LHS_IN_FOR_OF);
             }
             if (this.match(TokenType.IN)) {
+                if (isAwait) {
+                    throw this.createUnexpected(this.lookahead);
+                }
                 this.lex();
                 right = this.parseExpression().left();
                 return new ForInStatement(target, right.fromJust(), this.getIteratorStatementEpilogue());
             } else {
                 this.lex();
                 right = this.parseAssignmentExpression().left();
+                if (isAwait) {
+                    return new ForAwaitStatement(target, right.fromJust(), this.getIteratorStatementEpilogue());
+                }
                 return new ForOfStatement(target, right.fromJust(), this.getIteratorStatementEpilogue());
             }
+        } else if (isAwait) {
+            throw this.createError(ErrorMessages.INVALID_LHS_IN_FOR_AWAIT);
         }
         Expression expr;
         if (fromParseAssignmentOrTarget.isLeft()) {
