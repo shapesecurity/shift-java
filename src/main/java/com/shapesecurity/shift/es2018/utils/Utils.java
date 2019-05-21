@@ -205,6 +205,7 @@ public final class Utils {
             case "implements":
             case "interface":
             case "let":
+            case "yield":
             case "package":
             case "private":
             case "protected":
