@@ -1787,27 +1787,32 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
 
 
         while (!this.eat(TokenType.RPAREN)) {
-            SpreadElementExpression arg;
-            AdditionalStateT startState = this.startNode();
-            if (this.eat(TokenType.ELLIPSIS)) {
-                arg = this.finishNode(startState, new SpreadElement(this.parseAssignmentExpression().left().fromJust()));
-                if (locationFollowingFirstSpread.isNothing()) {
-                    args.add(arg);
-                    if (this.eat(TokenType.RPAREN)) {
+            if (this.match(TokenType.ELLIPSIS)) {
+                AdditionalStateT startState = this.startNode();
+                this.lex();
+                SpreadElement spreadElement = this.finishNode(startState, new SpreadElement(this.parseAssignmentExpression().left().fromJust()));
+                if (this.eat(TokenType.RPAREN)) {
+                    if (allExpressionsSoFar) {
+                        args.add(spreadElement);
                         return Pair.of(ImmutableList.from(args), locationFollowingFirstSpread);
                     }
+                    throw new RuntimeException("unimplemented");
+                }
+                args.add(spreadElement);
+                // trailing commas are only allowed for call expressions, not formal parameters
+                this.isBindingElement = this.isAssignmentTarget = false;
+                if (locationFollowingFirstSpread.isNothing()) {
                     locationFollowingFirstSpread = Maybe.of(this.getLocation());
-                    this.expect(TokenType.COMMA);
-                    continue;
                 }
-            } else {
-                Maybe<Expression> assignmentExpression = this.inheritCoverGrammar(this::parseAssignmentExpressionOrTarget).left();
-                if (assignmentExpression.isNothing()) {
-                    throw this.createUnexpected(this.lookahead);
-                }
-                arg = assignmentExpression.fromJust();
+                this.expect(TokenType.COMMA);
+                continue;
             }
-            args.add(arg);
+
+            Maybe<Expression> assignmentExpression = this.inheritCoverGrammar(this::parseAssignmentExpressionOrTarget).left();
+            if (assignmentExpression.isNothing()) {
+                throw this.createUnexpected(this.lookahead);
+            }
+            args.add(assignmentExpression.fromJust());
             if (!this.match(TokenType.RPAREN)) {
                 this.expect(TokenType.COMMA);
             }
