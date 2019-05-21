@@ -78,7 +78,8 @@ public class XFailHelper {
 				"language/expressions/import.meta/not-accessible-from-direct-eval.js",
 				"language/expressions/import.meta/syntax/goal-function-params-or-body.js",
 				"language/expressions/import.meta/syntax/goal-generator-params-or-body.js",
-				"language/expressions/import.meta/syntax/goal-async-function-params-or-body.js"
+				"language/expressions/import.meta/syntax/goal-async-function-params-or-body.js",
+				"language/expressions/import.meta/syntax/goal-async-generator-params-or-body.js"
 		));
 		xpassDespiteFeatures.addAll(Arrays.asList(BigIntNoLiterals.xpass));
 		xpassDespiteFeatures.addAll(Arrays.asList(Regexp.xpass));

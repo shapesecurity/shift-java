@@ -39,13 +39,13 @@ public class TrailingCommaTest {
         testScriptFailure("async (a, ...b,) => 0", 14, String.format(ErrorMessages.UNEXPECTED_TOKEN, ","));
         testScriptFailure("function a(,) {}", 11, "Unexpected token \",\"");
         testScriptFailure("function a(b,,) {}", 13, "Unexpected token \",\"");
-        testScriptFailure("function a(b, ...c,) {}", 18, ErrorMessages.INVALID_LAST_REST_PARAMETER);
+        testScriptFailure("function a(b, ...c,) {}", 18, String.format(ErrorMessages.UNEXPECTED_TOKEN,","));
         testScriptFailure("(function (,) {})", 11, "Unexpected token \",\"");
         testScriptFailure("(function (a,,) {})", 13, "Unexpected token \",\"");
-        testScriptFailure("(function (a, ...b,) {})", 18, ErrorMessages.INVALID_LAST_REST_PARAMETER);
+        testScriptFailure("(function (a, ...b,) {})", 18, String.format(ErrorMessages.UNEXPECTED_TOKEN,","));
         testScriptFailure("({ a (,) {} })", 6, "Unexpected token \",\"");
         testScriptFailure("({ a (b,,) {} })", 8, "Unexpected token \",\"");
-        testScriptFailure("({ a (b, ...c,) {} })", 13, ErrorMessages.INVALID_LAST_REST_PARAMETER);
+        testScriptFailure("({ a (b, ...c,) {} })", 13, String.format(ErrorMessages.UNEXPECTED_TOKEN,","));
         testScriptFailure("({ set a (b,) {} })", 11, "Unexpected token \",\"");
         testScriptFailure("(a,)", 4, "Unexpected end of input");
         testScriptFailure("({a:1},)", 7, "Unexpected token \")\"");
