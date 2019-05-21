@@ -341,7 +341,12 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
         this.expect(TokenType.LBRACE);
 
         ArrayList<BindingProperty> properties = new ArrayList<>();
+        Maybe<Binding> rest = Maybe.empty();
         while (!this.match(TokenType.RBRACE)) {
+            if (this.eat(TokenType.ELLIPSIS)) {
+                rest = Maybe.of(this.parseBindingIdentifier());
+                break;
+            }
             properties.add(this.parseBindingProperty());
             if (!this.match(TokenType.RBRACE)) {
                 this.expect(TokenType.COMMA);
@@ -350,7 +355,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
 
         this.expect(TokenType.RBRACE);
 
-        return this.finishNode(startState, new ObjectBinding(ImmutableList.from(properties), Maybe.empty()));
+        return this.finishNode(startState, new ObjectBinding(ImmutableList.from(properties), rest));
     }
 
     @Nonnull
@@ -2329,11 +2334,25 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
         Token token = this.lookahead;
         AdditionalStateT startState = this.startNode();
 
+
+        TokenizerState preAsyncTokenState = this.saveTokenizerState();
+
+        boolean isAsync = this.eat(TokenType.ASYNC);
+        if (isAsync && this.hasLineTerminatorBeforeNext) {
+            isAsync = false;
+            this.restoreTokenizerState(preAsyncTokenState);
+        }
+
         boolean isGenerator = this.eat(TokenType.MUL);
+        if (isAsync && !this.lookaheadPropertyName()) {
+            isAsync = false;
+            isGenerator = false;
+            this.restoreTokenizerState(preAsyncTokenState);
+        }
 
         PropertyName name = this.parsePropertyName().left;
 
-        if (!isGenerator) {
+        if (!isGenerator && !isAsync) {
             String tokenName = token.toString();
             if (token.type == TokenType.IDENTIFIER && tokenName.length() == 3) {
                 // Property Assignment: Getter and Setter.
@@ -2369,20 +2388,20 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
                     this.firstAwaitLocation = previousAwaitLocation;
                     return Either.right(this.finishNode(startState, new Setter(name, bindingToParameter(param), body)));
                 }
-            } else if (token.type == TokenType.ASYNC && !this.hasLineTerminatorBeforeNext && this.lookaheadPropertyName()) {
-                name = this.parsePropertyName().left;
-                boolean previousYield = this.allowYieldExpression;
-                boolean previousAwait = this.allowAwaitExpression;
-                this.allowYieldExpression = false;
-                this.allowAwaitExpression = true;
-                FormalParameters parameters = this.parseParams();
-                this.allowAwaitExpression = false;
-                this.allowAwaitExpression = true;
-                FunctionBody body = this.parseFunctionBody();
-                this.allowYieldExpression = previousYield;
-                this.allowAwaitExpression = previousAwait;
-                return Either.right(this.finishNode(startState, new Method(true, false, name, parameters, body)));
             }
+        }
+        if (isAsync) {
+            boolean previousYield = this.allowYieldExpression;
+            boolean previousAwait = this.allowAwaitExpression;
+            this.allowYieldExpression = isGenerator;
+            this.allowAwaitExpression = true;
+            FormalParameters parameters = this.parseParams();
+            this.allowYieldExpression = isGenerator;
+            this.allowAwaitExpression = true;
+            FunctionBody body = this.parseFunctionBody();
+            this.allowYieldExpression = previousYield;
+            this.allowAwaitExpression = previousAwait;
+            return Either.right(this.finishNode(startState, new Method(true, isGenerator, name, parameters, body)));
         }
 
         if (this.match(TokenType.LPAREN)) {
