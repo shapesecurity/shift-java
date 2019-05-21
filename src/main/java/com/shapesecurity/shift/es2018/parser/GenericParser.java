@@ -1767,25 +1767,28 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
     }
 
     /**
-     * parse argument list
+     * parse argument list, including surrounding parentheses
      *
-     * @return a pair of `SpreadElementExpression` and potentially the SourceLocation after the first `SpreadElement`.
+     * @return either: a pair of `SpreadElementExpression` and potentially the SourceLocation after the first `SpreadElement`
+     *          or, if one of the "arguments" can only be parsed as an assignment target, a FormalParameters node (used for async arrow expressions)
+     *
+     *          // Either<Pair<ImmutableList<SpreadElementExpression>, Maybe<SourceLocation>>, FormalParameters>
      * @throws JsError parse error
      */
     @Nonnull
     protected Pair<ImmutableList<SpreadElementExpression>, Maybe<SourceLocation>> parseArgumentList() throws JsError {
         this.lex();
-        Pair<ImmutableList<SpreadElementExpression>, Maybe<SourceLocation>> pair = this.parseArguments();
-        this.expect(TokenType.RPAREN);
-        return pair;
-    }
-
-    @Nonnull
-    protected Pair<ImmutableList<SpreadElementExpression>, Maybe<SourceLocation>> parseArguments() throws JsError {
         ArrayList<SpreadElementExpression> args = new ArrayList<>();
+        ArrayList<Parameter> bindings = new ArrayList<>();
         Maybe<SourceLocation> locationFollowingFirstSpread = Maybe.empty();
+
+
+        boolean allExpressionsSoFar = true;
+
+
         while (true) {
             if (this.match(TokenType.RPAREN) || this.eof()) {
+                this.expect(TokenType.RPAREN);
                 return Pair.of(ImmutableList.from(args), locationFollowingFirstSpread);
             }
             SpreadElementExpression arg;
@@ -1794,7 +1797,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
                 arg = this.finishNode(startState, new SpreadElement(this.parseAssignmentExpression().left().fromJust()));
                 if (locationFollowingFirstSpread.isNothing()) {
                     args.add(arg);
-                    if (this.match(TokenType.RPAREN)) {
+                    if (this.eat(TokenType.RPAREN)) {
                         return Pair.of(ImmutableList.from(args), locationFollowingFirstSpread);
                     }
                     locationFollowingFirstSpread = Maybe.of(this.getLocation());
@@ -1813,6 +1816,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
                 break;
             }
         }
+        this.expect(TokenType.RPAREN);
         return Pair.of(ImmutableList.from(args), locationFollowingFirstSpread);
     }
 
