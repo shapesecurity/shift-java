@@ -255,7 +255,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
                 TokenizerState tokenizerState = this.saveTokenizerState();
                 this.lex();
                 if (!this.hasLineTerminatorBeforeNext && this.match(TokenType.FUNCTION)) {
-                    return this.finishNode(preAsyncStartState, this.parseFunctionDeclaration(true, false, true));
+                    return this.finishNode(preAsyncStartState, this.parseFunctionDeclaration(true, true, true));
                 }
                 this.restoreTokenizerState(tokenizerState);
                 return this.parseStatement();
