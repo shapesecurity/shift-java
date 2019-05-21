@@ -715,12 +715,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
                     this.lex();
                     right = this.parseExpression().left();
                     Statement body = this.getIteratorStatementEpilogue();
-                    if (isAwait) {
-                        return new ForAwaitStatement(init, right.fromJust(), body);
-                    }
-                    return new ForOfStatement(init, right.fromJust(), body);
-                } else if (isAwait) {
-                    throw this.createUnexpected(this.lookahead);
+                    return new ForInStatement(init, right.fromJust(), body);
                 }
                 if (declarator.init.isJust()) {
                     throw this.createError(ErrorMessages.INVALID_VAR_INIT_FOR_OF);
@@ -728,7 +723,12 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
                 this.lex();
                 right = this.parseAssignmentExpression().left();
                 Statement body = this.getIteratorStatementEpilogue();
+                if (isAwait) {
+                    return new ForAwaitStatement(init, right.fromJust(), body);
+                }
                 return new ForOfStatement(init, right.fromJust(), body);
+            } else if (isAwait) {
+                throw this.createUnexpected(this.lookahead);
             }
             this.expect(TokenType.SEMICOLON);
             if (init.declarators.exists(f -> (!(f.binding instanceof BindingIdentifier) && f.init.isNothing()))) {
