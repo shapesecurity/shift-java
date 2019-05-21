@@ -2,17 +2,8 @@ package com.shapesecurity.shift.es2018.parser.statements;
 
 import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.functional.data.Maybe;
-import com.shapesecurity.shift.es2018.ast.ArrayBinding;
-import com.shapesecurity.shift.es2018.ast.BindingIdentifier;
-import com.shapesecurity.shift.es2018.ast.Block;
-import com.shapesecurity.shift.es2018.ast.BlockStatement;
-import com.shapesecurity.shift.es2018.ast.LiteralNumericExpression;
-import com.shapesecurity.shift.es2018.ast.VariableDeclaration;
-import com.shapesecurity.shift.es2018.ast.VariableDeclarationKind;
-import com.shapesecurity.shift.es2018.ast.VariableDeclarationStatement;
-import com.shapesecurity.shift.es2018.ast.VariableDeclarator;
-import com.shapesecurity.shift.es2018.parser.ParserTestCase;
-import com.shapesecurity.shift.es2018.parser.JsError;
+import com.shapesecurity.shift.es2018.ast.*;
+import com.shapesecurity.shift.es2018.parser.*;
 
 import org.junit.Test;
 

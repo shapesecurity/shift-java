@@ -2058,6 +2058,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
                     }
                     return Either.right(this.finishNode(startState, new ObjectAssignmentTarget(ImmutableList.from(bindingProperties), Maybe.of(this.transformDestructuring(spreadProperty.expression)))));
                 }
+                objectProperties.add(spreadProperty);
                 // trailing commas are only allowed for object expressions, not assignment targets or bindings
                 this.isBindingElement = this.isAssignmentTarget = false;
                 this.expect(TokenType.COMMA);
