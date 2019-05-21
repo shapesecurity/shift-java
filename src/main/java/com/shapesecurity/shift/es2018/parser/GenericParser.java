@@ -1786,11 +1786,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
         boolean allExpressionsSoFar = true;
 
 
-        while (true) {
-            if (this.match(TokenType.RPAREN) || this.eof()) {
-                this.expect(TokenType.RPAREN);
-                return Pair.of(ImmutableList.from(args), locationFollowingFirstSpread);
-            }
+        while (!this.eat(TokenType.RPAREN)) {
             SpreadElementExpression arg;
             AdditionalStateT startState = this.startNode();
             if (this.eat(TokenType.ELLIPSIS)) {
@@ -1812,11 +1808,10 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
                 arg = assignmentExpression.fromJust();
             }
             args.add(arg);
-            if (!this.eat(TokenType.COMMA)) {
-                break;
+            if (!this.match(TokenType.RPAREN)) {
+                this.expect(TokenType.COMMA);
             }
         }
-        this.expect(TokenType.RPAREN);
         return Pair.of(ImmutableList.from(args), locationFollowingFirstSpread);
     }
 
