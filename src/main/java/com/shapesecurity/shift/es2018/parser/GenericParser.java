@@ -1201,7 +1201,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
      *  - If they encounter something which can only be the parameter list of an arrow, such as `()`,
      *     and an arrow can appear there, return an Either containing a FormalParameters node.
      *  - If they encounter something which can only be an AssignmentTarget, such as `{ a = 0 }`,
-     *     return an Either containing an AssignmentTarget.
+     *     return an Either containing an AssignmentTarget (and set firstExprError, if it is not already set)
      *  - Otherwise, return an Either containing an Expression. In some cases, like `a`, this might
      *     later be converted to an arrow head or AssignmentTarget once more context is read. In other
      *     cases, like `0`, no such conversion is possible, and parsing will fail if later context
@@ -1209,6 +1209,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
      *  - There is no case where something can be either an arrow head or AssignmentTarget but not
      *     an expression, so there's no need to represent that case.
      */
+    // TODO this should just return an Expression; it cannot return AssignmentTarget because isolateCoverGrammar throws firstExprError if it is nonnull
     @Nonnull
     protected Either<Expression, AssignmentTarget> parseAssignmentExpression() throws JsError {
         return this.isolateCoverGrammar(this::parseAssignmentExpressionOrTarget);
@@ -2043,6 +2044,20 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
         boolean allExpressionsSoFar = true;
 
         while (!this.match(TokenType.RBRACE)) {
+            if (this.match(TokenType.ELLIPSIS)) {
+                SpreadProperty spreadProperty = this.parseSpreadPropertyDefinition();
+                if (this.eat(TokenType.RBRACE)) {
+                    if (allExpressionsSoFar) {
+                        objectProperties.add(spreadProperty);
+                        return Either.left(this.finishNode(startState, new ObjectExpression(ImmutableList.from(objectProperties))));
+                    }
+                    return Either.right(this.finishNode(startState, new ObjectAssignmentTarget(ImmutableList.from(bindingProperties), Maybe.of(this.transformDestructuring(spreadProperty.expression)))));
+                }
+                // trailing commas are only allowed for object expressions, not assignment targets or bindings
+                this.isBindingElement = this.isAssignmentTarget = false;
+                this.expect(TokenType.COMMA);
+                continue;
+            }
             Either<ObjectProperty, AssignmentTargetProperty> fromParsePropertyDefinition = this.parsePropertyDefinition();
             if (allExpressionsSoFar) {
                 if (fromParsePropertyDefinition.isLeft()) {
@@ -2071,6 +2086,22 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
         } else {
             return Either.right(this.finishNode(startState, new ObjectAssignmentTarget(ImmutableList.from(bindingProperties), Maybe.empty())));
         }
+    }
+
+    @Nonnull
+    protected SpreadProperty parseSpreadPropertyDefinition() throws JsError {
+        AdditionalStateT startState = this.startNode();
+        this.expect(TokenType.ELLIPSIS);
+
+        // Object rests must be `a` or `a.b`, which look like Expressions, not AssignmentTargets, so we don't need parseAssignmentExpressionOrTarget here
+        Expression expression = this.parseAssignmentExpression().left().fromJust();
+
+        if (!isValidSimpleAssignmentTarget(expression)) {
+            this.isBindingElement = this.isAssignmentTarget = false;
+        } else if (!(expression instanceof IdentifierExpression)) {
+            this.isBindingElement = false;
+        }
+        return this.finishNode(startState, new SpreadProperty(expression));
     }
 
     @Nonnull // todo move this
