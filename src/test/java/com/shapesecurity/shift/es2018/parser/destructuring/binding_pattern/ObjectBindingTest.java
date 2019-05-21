@@ -84,5 +84,6 @@ public class ObjectBindingTest extends ParserTestCase {
         ))));
 
         testScriptFailure("var {a, ...b, c} = {};", 12, "Unexpected token \",\"");
+        testScriptFailure("let { ...{a} } = {}", 9, "Unexpected token \"{\"");
     }
 }

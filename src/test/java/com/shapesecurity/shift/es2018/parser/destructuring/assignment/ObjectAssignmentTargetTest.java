@@ -120,7 +120,6 @@ public class ObjectAssignmentTargetTest extends ParserTestCase {
         testScriptFailure("({a, ...b, c} = {})", 14, "Invalid left-hand side in assignment");
         testScriptFailure("({ ...{a} } = {})", 12, "Invalid left-hand side in assignment");
         testScriptFailure("({b, c, d, ...{a} } = {})", 20, "Invalid left-hand side in assignment");
-        testScriptFailure("let { ...{a} } = {}", 9, "Unexpected token \"{\"");
 
     }
 }
