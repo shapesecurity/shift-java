@@ -2210,7 +2210,8 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
                     properties.add(this.copyNode(atpp, new BindingPropertyProperty(atpp.name, this.targetToBindingPossiblyWithDefault(atpp.binding))));
                 }
             }
-            return this.copyNode(target, new ObjectBinding(ImmutableList.from(properties), Maybe.empty()));
+            Maybe<Binding> rest = oat.rest.isJust() ? Maybe.of(this.targetToBinding(oat.rest.fromJust())) : Maybe.empty(); // can't use Maybe.map because targetToBinding throws
+            return this.copyNode(target, new ObjectBinding(ImmutableList.from(properties), rest));
         }
     }
 
