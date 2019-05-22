@@ -11,11 +11,14 @@ import org.junit.Test;
 public class AsyncAwaitCoverInitTest {
 
     @Test
-    public void test() throws JsError{
+    public void test() throws JsError {
 
         // codeContainingCoverInitNameWithNoSyntaxError
         // CoverInitName in async arrow parameters
         testScriptSuccess("async ({a = 1}) => {}");
+        testScriptSuccess("async ({a = 1, b, ...c}) => 1");
+        testScriptSuccess("async (...{c = 0}) => 1");
+        testScriptSuccess("async (a = 1, b, ...{c = 0}) => 1");
         testScriptSuccess("async ({a = 1}, {b = 2}) => {}");
         testScriptSuccess("async ({a = 1}, {b = 2}, {c = 3}) => {}");
         testScriptSuccess("async ({a = 1} = {}, {b = 2}, {c = 3}) => {}");
@@ -33,6 +36,10 @@ public class AsyncAwaitCoverInitTest {
 
 
         // codeContainingCoverInitNameWithSyntaxError
+        testScriptFailure("async ({...{c = 0},})", 0, ErrorMessages.ILLEGAL_PROPERTY);
+        testScriptFailure("async (...c = 0)", 0, ErrorMessages.ILLEGAL_PROPERTY);
+        testScriptFailure("foo ({a = 1})", 0, ErrorMessages.ILLEGAL_PROPERTY);
+        testScriptFailure("foo ({a = 1}) => {}", 0, ErrorMessages.ILLEGAL_PROPERTY);
         testScriptFailure("obj.async({a = 1})", 0, ErrorMessages.ILLEGAL_PROPERTY);
         testScriptFailure("typeof async({a = 1}, {b = 2} = {}, {c = 3} = {})", 0, ErrorMessages.ILLEGAL_PROPERTY);
         testScriptFailure("NotAsync({a = 1})", 0, ErrorMessages.ILLEGAL_PROPERTY);

@@ -1584,7 +1584,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
 
             if (this.match(TokenType.LPAREN)) {
                 if (allowCall) {
-                    expr = Either3.left(this.finishNode(startState, new CallExpression(expr.left().fromJust(), this.parseArgumentList().left)));
+                    expr = Either3.left(this.finishNode(startState, new CallExpression(expr.left().fromJust(), this.parseArgumentList())));
                 } else {
                     throw this.createUnexpected(token);
                 }
@@ -1618,43 +1618,48 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
                     AdditionalStateT afterAsyncStartState = this.startNode();
                     SourceLocation previousAwaitLocation = this.firstAwaitLocation;
                     this.firstAwaitLocation = null;
-                    Pair<ImmutableList<SpreadElementExpression>, Maybe<SourceLocation>> argumentPair = this.parseArgumentList();
-                    ImmutableList<SpreadElementExpression> arguments = argumentPair.left;
+                    Either<Pair<ImmutableList<SpreadElementExpression>, Maybe<SourceLocation>>, FormalParameters> arguments = this.parseArgumentListOrAsyncArrowParameters();
                     if (this.isBindingElement && !this.hasLineTerminatorBeforeNext && this.match(TokenType.ARROW)) {
-                        if (argumentPair.right.isJust()) {
-                            throw this.createErrorWithLocation(argumentPair.right.fromJust(), ErrorMessages.UNEXPECTED_TOKEN, ",");
-                        }
                         if (this.firstAwaitLocation != null) {
                             throw this.createErrorWithLocation(this.firstAwaitLocation, ErrorMessages.NO_AWAIT_IN_ASYNC_PARAMS);
                         }
-                        Maybe<Binding> rest = Maybe.empty();
-                        Maybe<SpreadElementExpression> lastArgument = arguments.maybeLast();
-                        if (lastArgument.isJust() && lastArgument.fromJust() instanceof SpreadElement) {
-                            BindingBindingWithDefault binding = this.targetToBindingPossiblyWithDefault(this.transformDestructuringWithDefault(((SpreadElement) lastArgument.fromJust()).expression));
-                            if (binding instanceof BindingWithDefault) {
-                                throw this.createError(ErrorMessages.UNEXPECTED_REST_PARAMETERS_INITIALIZATION);
+                        // TODO consider dedpulicating this code with object expression and array expression parsing
+                        FormalParameters parameters;
+                        if (arguments.isLeft()) {
+                            Pair<ImmutableList<SpreadElementExpression>, Maybe<SourceLocation>> argPair = arguments.left().fromJust();
+                            if (argPair.right.isJust()) {
+                                throw this.createErrorWithLocation(argPair.right.fromJust(), ErrorMessages.UNEXPECTED_TOKEN, ",");
                             }
-                            rest = Maybe.of((Binding) binding);
-                            arguments = arguments.take(arguments.length - 1);
-                        }
-                        // evil java hack
-                        JsError[] error = new JsError[] {null};
-                        ImmutableList<Parameter> params = arguments.map(argument -> {
-                            try {
-                                return (Parameter) this.targetToBindingPossiblyWithDefault(this.transformDestructuringWithDefault((Expression) argument));
-                            } catch (JsError e) {
-                                error[0] = e;
-                                return new BindingIdentifier("");
+                            ArrayList<Parameter> convertedParameters = new ArrayList<>();
+                            Maybe<Binding> rest = Maybe.empty();
+                            ImmutableList<SpreadElementExpression> args = argPair.left;
+                            if (args.length > 0) {
+                                SpreadElementExpression last = ((NonEmptyImmutableList<SpreadElementExpression>) args).last();
+                                if (last instanceof SpreadElement) {
+                                    BindingBindingWithDefault binding = this.targetToBindingPossiblyWithDefault(this.transformDestructuringWithDefault(((SpreadElement) last).expression));
+                                    if (binding instanceof BindingWithDefault) {
+                                        throw this.createError(ErrorMessages.UNEXPECTED_REST_PARAMETERS_INITIALIZATION);
+                                    }
+                                    rest = Maybe.of((Binding) binding);
+                                    args = ((NonEmptyImmutableList<SpreadElementExpression>) args).init();
+                                }
+                                for (SpreadElementExpression arg : args) {
+                                    convertedParameters.add((Parameter) this.targetToBindingPossiblyWithDefault(this.transformDestructuringWithDefault((Expression) arg)));
+                                }
                             }
-                        });
-                        if (error[0] != null) {
-                            throw error[0];
+                            parameters = this.finishNode(afterAsyncStartState, new FormalParameters(ImmutableList.from(convertedParameters), rest));
+                        } else {
+                            parameters = arguments.right().fromJust();
                         }
-                        return Either3.middle(Pair.of(this.finishNode(afterAsyncStartState, new FormalParameters(params, rest)), true));
+                        return Either3.middle(Pair.of(this.finishNode(afterAsyncStartState, parameters), true));
+                    }
+                    if (arguments.isRight()) {
+                        assert this.firstExprError != null;
+                        throw this.firstExprError;
                     }
                     this.firstAwaitLocation = previousAwaitLocation == null ? this.firstAwaitLocation : previousAwaitLocation;
                     this.isBindingElement = this.isAssignmentTarget = false;
-                    expr = Either3.left(this.finishNode(startState, new CallExpression(expr.left().fromJust(), arguments)));
+                    expr = Either3.left(this.finishNode(startState, new CallExpression(expr.left().fromJust(), arguments.left().fromJust().left)));
                 }
             }
         } else {
@@ -1667,7 +1672,7 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
         while (true) {
             if (allowCall && this.match((TokenType.LPAREN))) {
                 this.isBindingElement = this.isAssignmentTarget = false;
-                expr = Either3.left(this.finishNode(startState, new CallExpression(expr.left().fromJust(), this.parseArgumentList().left)));
+                expr = Either3.left(this.finishNode(startState, new CallExpression(expr.left().fromJust(), this.parseArgumentList())));
             } else if (this.match(TokenType.TEMPLATE)) {
                 this.isBindingElement = this.isAssignmentTarget = false;
                 expr = Either3.left(this.finishNode(startState, new TemplateExpression(Maybe.of((Expression) expr.left().fromJust()), this.parseTemplateElements())));
@@ -1758,12 +1763,22 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
             if (!(callee instanceof Expression)) {
                 throw this.createUnexpected(this.lookahead);
             }
-            return this.finishNode(startState, new NewExpression((Expression) callee, this.match(TokenType.LPAREN) ? this.parseArgumentList().left : ImmutableList.empty()));
+            return this.finishNode(startState, new NewExpression((Expression) callee, this.match(TokenType.LPAREN) ? this.parseArgumentList() : ImmutableList.empty()));
         } else if (fromParseLeftHandSideExpression.isMiddle()) {
             throw this.createUnexpected(this.lookahead);
         } else {
             throw this.createError(ErrorMessages.UNEXPECTED_OBJECT_BINDING);
         }
+    }
+
+    @Nonnull
+    protected ImmutableList<SpreadElementExpression> parseArgumentList() throws JsError {
+        Either<Pair<ImmutableList<SpreadElementExpression>, Maybe<SourceLocation>>, FormalParameters> args = this.parseArgumentListOrAsyncArrowParameters();
+        if (args.isRight()) {
+            assert this.firstExprError != null;
+            throw this.firstExprError;
+        }
+        return args.left().fromJust().left;
     }
 
     /**
@@ -1776,7 +1791,9 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
      * @throws JsError parse error
      */
     @Nonnull
-    protected Pair<ImmutableList<SpreadElementExpression>, Maybe<SourceLocation>> parseArgumentList() throws JsError {
+    protected Either<Pair<ImmutableList<SpreadElementExpression>, Maybe<SourceLocation>>, FormalParameters> parseArgumentListOrAsyncArrowParameters() throws JsError {
+        AdditionalStateT preParenthesesStartState = this.startNode();
+
         this.lex();
         ArrayList<SpreadElementExpression> args = new ArrayList<>();
         ArrayList<Parameter> bindings = new ArrayList<>();
@@ -1790,13 +1807,28 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
             if (this.match(TokenType.ELLIPSIS)) {
                 AdditionalStateT startState = this.startNode();
                 this.lex();
-                SpreadElement spreadElement = this.finishNode(startState, new SpreadElement(this.parseAssignmentExpression().left().fromJust()));
+                Either<Expression, AssignmentTarget> followingSpread = this.inheritCoverGrammar(this::parseAssignmentExpressionOrTarget);
+                if (followingSpread.isRight()) {
+                    // in this case we must be parsing a parameter list, which means we are now done
+                    AssignmentTarget right = followingSpread.right().fromJust();
+                    if (right instanceof AssignmentExpression) {
+                        throw this.createError(ErrorMessages.UNEXPECTED_REST_PARAMETERS_INITIALIZATION);
+                    }
+                    this.expect(TokenType.RPAREN);
+                    return Either.right(this.finishNode(preParenthesesStartState, new FormalParameters(ImmutableList.from(bindings), Maybe.of(this.targetToBinding(followingSpread.right().fromJust())))));
+                }
+                Expression spreadExpression = followingSpread.left().fromJust();
+                SpreadElement spreadElement = this.finishNode(startState, new SpreadElement(spreadExpression));
+
                 if (this.eat(TokenType.RPAREN)) {
                     if (allExpressionsSoFar) {
                         args.add(spreadElement);
-                        return Pair.of(ImmutableList.from(args), locationFollowingFirstSpread);
+                        return Either.left(Pair.of(ImmutableList.from(args), locationFollowingFirstSpread));
                     }
-                    throw new RuntimeException("unimplemented");
+                    if (spreadExpression instanceof AssignmentExpression) {
+                        throw this.createError(ErrorMessages.UNEXPECTED_REST_PARAMETERS_INITIALIZATION);
+                    }
+                    return Either.right(this.finishNode(preParenthesesStartState, new FormalParameters(ImmutableList.from(bindings), Maybe.of(this.targetToBinding(this.transformDestructuring(spreadExpression))))));
                 }
                 args.add(spreadElement);
                 // trailing commas are only allowed for call expressions, not formal parameters
@@ -1808,16 +1840,38 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
                 continue;
             }
 
-            Maybe<Expression> assignmentExpression = this.inheritCoverGrammar(this::parseAssignmentExpressionOrTarget).left();
-            if (assignmentExpression.isNothing()) {
-                throw this.createUnexpected(this.lookahead);
+            Either<Expression, AssignmentTarget> arg = this.inheritCoverGrammar(this::parseAssignmentExpressionOrTarget);
+
+            if (allExpressionsSoFar) {
+                if (arg.isLeft()) {
+                    args.add(arg.left().fromJust());
+                } else {
+                    if (locationFollowingFirstSpread.isJust()) {
+                        assert this.firstExprError != null; // because arg is right, i.e., cannot be an expression
+                        throw this.firstExprError;
+                    }
+                    allExpressionsSoFar = false;
+                    for (SpreadElementExpression e : args) {
+                        bindings.add((Parameter) this.targetToBindingPossiblyWithDefault(this.transformDestructuringWithDefault((Expression) e))); // all expressions because otherwise locationFollowingFirstSpread would be set
+                    }
+                    bindings.add((Parameter) this.targetToBindingPossiblyWithDefault(arg.right().fromJust()));
+                }
+            } else {
+                if (arg.isLeft()) {
+                    bindings.add((Parameter) this.targetToBindingPossiblyWithDefault(this.transformDestructuringWithDefault(arg.left().fromJust())));
+                } else {
+                    bindings.add((Parameter) this.targetToBindingPossiblyWithDefault(arg.right().fromJust()));
+                }
             }
-            args.add(assignmentExpression.fromJust());
             if (!this.match(TokenType.RPAREN)) {
                 this.expect(TokenType.COMMA);
             }
         }
-        return Pair.of(ImmutableList.from(args), locationFollowingFirstSpread);
+        if (allExpressionsSoFar) {
+            return Either.left(Pair.of(ImmutableList.from(args), locationFollowingFirstSpread));
+        } else {
+            return Either.right(this.finishNode(preParenthesesStartState, new FormalParameters(ImmutableList.from(bindings), Maybe.empty())));
+        }
     }
 
     @Nonnull
