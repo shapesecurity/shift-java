@@ -143,7 +143,7 @@ public class AsyncAwaitTest {
 
 	@Test
 	public void testAsyncFailure() {
-		testScriptFailure("async (a, ...b, ...c) => {}", 14, String.format(ErrorMessages.UNEXPECTED_TOKEN, ","));
+		testScriptFailure("async (a, ...b, ...c) => {}", 22, String.format(ErrorMessages.UNEXPECTED_TOKEN, "=>"));
 		testScriptFailure("async\n(a, b) => {}", 2, 7, 13, "Unexpected token \"=>\"");
 		testScriptFailure("new async() => {}", 12, "Unexpected token \"=>\"");
 		testScriptFailure("({ async\nf(){} })", 2, 0, 9, "Unexpected identifier");

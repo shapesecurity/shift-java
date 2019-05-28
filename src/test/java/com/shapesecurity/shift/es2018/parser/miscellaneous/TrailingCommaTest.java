@@ -36,7 +36,7 @@ public class TrailingCommaTest {
         testScriptFailure("(a, ...b,) => 0", 8, ErrorMessages.INVALID_LAST_REST_PARAMETER);
         testScriptFailure("async (,) => 0", 7, "Unexpected token \",\"");
         testScriptFailure("async (a,,) => 0", 9, "Unexpected token \",\"");
-        testScriptFailure("async (a, ...b,) => 0", 14, String.format(ErrorMessages.UNEXPECTED_TOKEN, ","));
+        testScriptFailure("async (a, ...b,) => 0", 17, String.format(ErrorMessages.UNEXPECTED_TOKEN, "=>"));
         testScriptFailure("function a(,) {}", 11, "Unexpected token \",\"");
         testScriptFailure("function a(b,,) {}", 13, "Unexpected token \",\"");
         testScriptFailure("function a(b, ...c,) {}", 18, String.format(ErrorMessages.UNEXPECTED_TOKEN,","));

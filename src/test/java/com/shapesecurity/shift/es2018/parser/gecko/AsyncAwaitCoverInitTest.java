@@ -36,7 +36,7 @@ public class AsyncAwaitCoverInitTest {
 
 
         // codeContainingCoverInitNameWithSyntaxError
-        testScriptFailure("async ({...{c = 0},})", 0, ErrorMessages.ILLEGAL_PROPERTY);
+        testScriptFailure("async ({...{c = 0},})", 12, ErrorMessages.ILLEGAL_PROPERTY);
         testScriptFailure("async (...c = 0)", 0, ErrorMessages.ILLEGAL_PROPERTY);
         testScriptFailure("foo ({a = 1})", 0, ErrorMessages.ILLEGAL_PROPERTY);
         testScriptFailure("foo ({a = 1}) => {}", 0, ErrorMessages.ILLEGAL_PROPERTY);

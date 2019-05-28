@@ -77,8 +77,8 @@ public class ArrowExpressionTest extends ParserTestCase {
         testScriptFailure("(...a, b) => {}", 5, ErrorMessages.INVALID_LAST_REST_PARAMETER);
         testScriptFailure("(...a, ...b) => {}", 5, ErrorMessages.INVALID_LAST_REST_PARAMETER);
         testScriptFailure("(a, ...b,) => {}", 8, ErrorMessages.INVALID_LAST_REST_PARAMETER);
-        testScriptFailure("(async (...a, b) => {})", 12, String.format(ErrorMessages.UNEXPECTED_TOKEN, ","));
-        testScriptFailure("(async (...a, ...b) => {})", 12, String.format(ErrorMessages.UNEXPECTED_TOKEN, ","));
+        testScriptFailure("(async (...a, b) => {})", 17, String.format(ErrorMessages.UNEXPECTED_TOKEN, "=>"));
+        testScriptFailure("(async (...a, ...b) => {})", 20, String.format(ErrorMessages.UNEXPECTED_TOKEN, "=>"));
         testScriptFailure("(async (...x = []) => {});", 19, ErrorMessages.UNEXPECTED_REST_PARAMETERS_INITIALIZATION);
     }
 }
