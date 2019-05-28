@@ -564,7 +564,10 @@ public class CodeGen implements Reducer<CodeRep> {
     @Nonnull
     @Override
     public CodeRep reduceForAwaitStatement(@Nonnull ForAwaitStatement node, @Nonnull CodeRep left, @Nonnull CodeRep right, @Nonnull CodeRep body) {
-        return null; // TODO
+        left = node.left instanceof VariableDeclaration ? factory.noIn(factory.markContainsIn(left)) : left;
+        CodeRep toReturn = seqVA(factory.token("for"), factory.token("await"), factory.paren(seqVA(left.startsWithLet() ? factory.paren(left) : left, factory.token("of"), right)), body);
+        toReturn.setEndsWithMissingElse(body.endsWithMissingElse());
+        return toReturn;
     }
 
     @Nonnull
@@ -759,7 +762,7 @@ public class CodeGen implements Reducer<CodeRep> {
 
     @Nonnull
     protected static String buildFlags(@Nonnull LiteralRegExpExpression node) {
-        return (node.global ? "g" : "") + (node.ignoreCase ? "i" : "") + (node.multiLine ? "m" : "") + (node.unicode ? "u" : "") + (node.sticky ? "y" : "");
+        return (node.global ? "g" : "") + (node.ignoreCase ? "i" : "") + (node.multiLine ? "m" : "") + (node.dotAll ? "s" : "") + (node.unicode ? "u" : "") + (node.sticky ? "y" : "");
     }
 
     @Override
@@ -799,8 +802,11 @@ public class CodeGen implements Reducer<CodeRep> {
     @Nonnull
     @Override
     public CodeRep reduceObjectAssignmentTarget(@Nonnull ObjectAssignmentTarget node, @Nonnull ImmutableList<CodeRep> properties, @Nonnull Maybe<CodeRep> rest) {
-        // TODO codegen rest
-        CodeRep state = factory.brace(factory.commaSep(properties));
+        CodeRep content = factory.commaSep(properties);
+        if (rest.isJust()) {
+            content = seqVA(content, factory.token(","), factory.token("..."), rest.fromJust());
+        }
+        CodeRep state = factory.brace(content);
         state.startsWithObjectCurly(true);
         return state;
     }
@@ -808,8 +814,11 @@ public class CodeGen implements Reducer<CodeRep> {
     @Nonnull
     @Override
     public CodeRep reduceObjectBinding(@Nonnull ObjectBinding node, @Nonnull ImmutableList<CodeRep> properties, @Nonnull Maybe<CodeRep> rest) {
-        // TODO codegen rest
-        CodeRep state = factory.brace(factory.commaSep(properties));
+        CodeRep content = factory.commaSep(properties);
+        if (rest.isJust()) {
+            content = seqVA(content, factory.token(","), factory.token("..."), rest.fromJust());
+        }
+        CodeRep state = factory.brace(content);
         state.startsWithObjectCurly(true);
         return state;
     }
@@ -864,7 +873,7 @@ public class CodeGen implements Reducer<CodeRep> {
     @Nonnull
     @Override
     public CodeRep reduceSpreadProperty(@Nonnull SpreadProperty node, @Nonnull CodeRep expression) {
-        return null; // TODO
+        return seqVA(factory.token("..."), getAssignmentExpr(Maybe.of(expression)));
     }
 
     @Nonnull
