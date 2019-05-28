@@ -37,17 +37,16 @@ public class AsyncAwaitCoverInitTest {
 
         // codeContainingCoverInitNameWithSyntaxError
         testScriptFailure("async ({...{c = 0},})", 12, ErrorMessages.ILLEGAL_PROPERTY);
-        testScriptFailure("async (...c = 0)", 0, ErrorMessages.ILLEGAL_PROPERTY);
-        testScriptFailure("foo ({a = 1})", 0, ErrorMessages.ILLEGAL_PROPERTY);
-        testScriptFailure("foo ({a = 1}) => {}", 0, ErrorMessages.ILLEGAL_PROPERTY);
-        testScriptFailure("obj.async({a = 1})", 0, ErrorMessages.ILLEGAL_PROPERTY);
-        testScriptFailure("typeof async({a = 1}, {b = 2} = {}, {c = 3} = {})", 0, ErrorMessages.ILLEGAL_PROPERTY);
-        testScriptFailure("NotAsync({a = 1})", 0, ErrorMessages.ILLEGAL_PROPERTY);
-        testScriptFailure("NotAsync({a = 1}, {b = 2})", 0, ErrorMessages.ILLEGAL_PROPERTY);
-        testScriptFailure("NoAsync({a = 1}, {b = 2}, {c = 3})", 0, ErrorMessages.ILLEGAL_PROPERTY);
-        testScriptFailure("NoAsync({a = 1} = {}, {b = 2}, {c = 3})", 0, ErrorMessages.ILLEGAL_PROPERTY);
-        testScriptFailure("NoAsync({a = 1} = {}, {b = 2} = {}, {c = 3})", 0, ErrorMessages.ILLEGAL_PROPERTY);
-        testScriptFailure("NoAsync({a = 1}, {b = 2} = {}, {c = 3} = {})", 0, ErrorMessages.ILLEGAL_PROPERTY);
+        testScriptFailure("foo ({a = 1})", 6, ErrorMessages.ILLEGAL_PROPERTY);
+        testScriptFailure("foo ({a = 1}) => {}", 6, ErrorMessages.ILLEGAL_PROPERTY);
+        testScriptFailure("obj.async({a = 1})", 11, ErrorMessages.ILLEGAL_PROPERTY);
+        testScriptFailure("typeof async({a = 1}, {b = 2} = {}, {c = 3} = {})", 14, ErrorMessages.ILLEGAL_PROPERTY);
+        testScriptFailure("NotAsync({a = 1})", 10, ErrorMessages.ILLEGAL_PROPERTY);
+        testScriptFailure("NotAsync({a = 1}, {b = 2})", 10, ErrorMessages.ILLEGAL_PROPERTY);
+        testScriptFailure("NotAsync({a = 1}, {b = 2}, {c = 3})", 10, ErrorMessages.ILLEGAL_PROPERTY);
+        testScriptFailure("NotAsync({a = 1} = {}, {b = 2}, {c = 3})", 24, ErrorMessages.ILLEGAL_PROPERTY);
+        testScriptFailure("NotAsync({a = 1} = {}, {b = 2} = {}, {c = 3})", 38, ErrorMessages.ILLEGAL_PROPERTY);
+        testScriptFailure("NotAsync({a = 1}, {b = 2} = {}, {c = 3} = {})", 10, ErrorMessages.ILLEGAL_PROPERTY);
     }
 
 }
