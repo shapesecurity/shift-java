@@ -894,12 +894,12 @@ public class Fuzzer {
 
     @Nonnull
     private static ObjectBinding randomObjectBinding(@Nonnull GenCtx ctx, int depth) {
-        return new ObjectBinding(many(Fuzzer::randomBindingProperty).apply(ctx, depth - 1), Maybe.empty()); // TODO fuzz rest
+        return new ObjectBinding(many(Fuzzer::randomBindingProperty).apply(ctx, depth - 1), optional(Fuzzer::randomBinding).apply(ctx, depth - 1));
     }
 
     @Nonnull
     private static ObjectAssignmentTarget randomObjectAssignmentTarget(@Nonnull GenCtx ctx, int depth) {
-        return new ObjectAssignmentTarget(many(Fuzzer::randomAssignmentTargetProperty).apply(ctx, depth - 1), Maybe.empty()); // TODO fuzz rest
+        return new ObjectAssignmentTarget(many(Fuzzer::randomAssignmentTargetProperty).apply(ctx, depth - 1), optional(Fuzzer::randomAssignmentTarget).apply(ctx, depth - 1));
     }
 
     @Nonnull

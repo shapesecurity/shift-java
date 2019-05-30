@@ -1784,8 +1784,9 @@ public abstract class GenericParser<AdditionalStateT> extends Tokenizer {
     /**
      * parse argument list, including surrounding parentheses
      *
-     * @return either: a pair of `SpreadElementExpression` and potentially the SourceLocation after the first `SpreadElement`
-     *          or, if one of the "arguments" can only be parsed as an assignment target, a FormalParameters node (used for async arrow expressions)
+     * @return either:
+     *          If this can be parsed as an argument list, returns a pair representing those arguments and potentially the SourceLocation after the first SpreadElement.
+     *          Otherwise, if this can only be parsed as the formal parameters of an async arrow, returns a FormalParameters node holding them
      *
      *          // Either<Pair<ImmutableList<SpreadElementExpression>, Maybe<SourceLocation>>, FormalParameters>
      * @throws JsError parse error
