@@ -165,6 +165,7 @@ public class Test262 {
 		if (Files.isDirectory(path) || !path.toString().endsWith(".js") || path.toString().endsWith("_FIXTURE.js")) {
 			return;
 		}
+
 		String source = new String(Files.readAllBytes(path), StandardCharsets.UTF_8);
 		Test262Info info = extractTest262Info(root.relativize(path).toString(), source);
 		if (info == null) { // parse failure
