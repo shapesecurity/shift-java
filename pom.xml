@@ -4,12 +4,12 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>com.shapesecurity.shift</groupId>
-	<artifactId>es2017</artifactId>
-	<version>1.2.2-SNAPSHOT</version>
+	<artifactId>es2018</artifactId>
+	<version>1.0.0</version>
 	<packaging>jar</packaging>
 
 	<name>Shift AST</name>
-	<description>Shift format ECMAScript 2017 AST tooling</description>
+	<description>Shift format ECMAScript 2018 AST tooling</description>
 	<url>https://github.com/shapesecurity/shift-java</url>
 
 	<developers>
