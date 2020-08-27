@@ -1348,8 +1348,8 @@ public class ScopeTest extends TestCase {
         Script script = parse(js);
         GlobalScope globalScope = ScopeAnalyzer.analyze(script);
         Scope topLevelLexicalScope = globalScope.children.maybeHead().fromJust();
-        Scope catchScope = topLevelLexicalScope.children.maybeHead().fromJust();
-        Scope fScope = catchScope.children.maybeHead().fromJust();
+        Scope switchScope = topLevelLexicalScope.children.maybeHead().fromJust();
+        Scope fScope = switchScope.children.maybeHead().fromJust();
 
         final BindingIdentifier outside = bi(new BranchGetter().d(Branch.ScriptStatements_(0)).d(Branch.VariableDeclarationStatementDeclaration_()).d(Branch.VariableDeclarationDeclarators_(0)).d(Branch.VariableDeclaratorBinding_())
                 .apply(script));
@@ -1387,7 +1387,7 @@ public class ScopeTest extends TestCase {
             referenceTypes.put(outside, Accessibility.Write);
             referenceTypes.put(f, Accessibility.Read);
 
-            checkScope(catchScope, Scope.Type.Block, false, children, through, variables, referenceTypes);
+            checkScope(switchScope, Scope.Type.Block, false, children, through, variables, referenceTypes);
         }
     }
 
