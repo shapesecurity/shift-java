@@ -1335,7 +1335,6 @@ public class ScopeTest extends TestCase {
 
     @Test
     public void testSwitch() throws JsError {
-        /* String js = "try {" + "  alert('Welcome guest!');" + "} catch(err) {" + "  alert(err);" + '}'; */
         String js = "'use strict';\n" +
                 "\n" +
                 "let x = 'outside';\n" +
