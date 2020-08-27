@@ -1334,6 +1334,64 @@ public class ScopeTest extends TestCase {
     }
 
     @Test
+    public void testSwitch() throws JsError {
+        String js = "'use strict';\n" +
+                "\n" +
+                "let x = 'outside';\n" +
+                "\n" +
+                "switch (0) {\n" +
+                "  case null:\n" +
+                "    let x = 'inside';\n" +
+                "  default:\n" +
+                "    function f(){}\n" +
+                "}";
+        Script script = parse(js);
+        GlobalScope globalScope = ScopeAnalyzer.analyze(script);
+        Scope topLevelLexicalScope = globalScope.children.maybeHead().fromJust();
+        Scope switchScope = topLevelLexicalScope.children.maybeHead().fromJust();
+        Scope fScope = switchScope.children.maybeHead().fromJust();
+
+        final BindingIdentifier outside = bi(new BranchGetter().d(Branch.ScriptStatements_(0)).d(Branch.VariableDeclarationStatementDeclaration_()).d(Branch.VariableDeclarationDeclarators_(0)).d(Branch.VariableDeclaratorBinding_())
+                .apply(script));
+        final BindingIdentifier inside = bi(new BranchGetter().d(Branch.ScriptStatements_(1)).d(Branch.SwitchStatementWithDefaultPreDefaultCases_(0)).d(
+                Branch.SwitchCaseConsequent_(0)).d(Branch.VariableDeclarationStatementDeclaration_()).d(Branch.VariableDeclarationDeclarators_(0)).d(Branch.VariableDeclaratorBinding_())
+                .apply(script));
+        final BindingIdentifier f = bi(new BranchGetter().d(Branch.ScriptStatements_(1)).d(Branch.SwitchStatementWithDefaultDefaultCase_()).d(
+                Branch.SwitchDefaultConsequent_(0)).d(Branch.FunctionDeclarationName_())
+                .apply(script));
+        {
+
+            ImmutableList<Scope> children = ImmutableList.of(topLevelLexicalScope);
+
+            ImmutableList<String> through = ImmutableList.empty();
+
+            Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<VariableReference>>> variables = new HashMap<>();
+
+            Map<VariableReference, Accessibility> referenceTypes = new HashMap<>();
+            referenceTypes.put(outside, Accessibility.Read);
+
+            checkScope(globalScope, Scope.Type.Global, true, children, through, variables, referenceTypes);
+        }
+        {
+
+            ImmutableList<Scope> children = ImmutableList.of(fScope);
+
+            ImmutableList<String> through = ImmutableList.empty();
+
+            Map<String, Pair<ImmutableList<BindingIdentifier>, ImmutableList<VariableReference>>> variables = new HashMap<>();
+            variables.put("x", new Pair<>(ImmutableList.of(inside), ImmutableList.of(inside)));
+            variables.put("f", new Pair<>(ImmutableList.of(f), NO_REFERENCES));
+
+            Map<VariableReference, Accessibility> referenceTypes = new HashMap<>();
+            referenceTypes.put(inside, Accessibility.Read);
+            referenceTypes.put(outside, Accessibility.Write);
+            referenceTypes.put(f, Accessibility.Read);
+
+            checkScope(switchScope, Scope.Type.Block, false, children, through, variables, referenceTypes);
+        }
+    }
+
+    @Test
     public void testTryCatchStatement1() throws JsError {
         String js = "try {" + "  alert('Welcome guest!');" + "} catch(err) {" + "  alert(err);" + '}';
         Script script = parse(js);

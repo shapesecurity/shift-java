@@ -322,14 +322,28 @@ public final class ScopeAnalyzer extends MonoidalReducer<State> {
 
     @Nonnull
     @Override
-    public State reduceSwitchCase(@Nonnull SwitchCase node, @Nonnull State test, @Nonnull ImmutableList<State> consequent) {
-        return super.reduceSwitchCase(node, test, consequent).finish(node, Scope.Type.Block).withPotentialVarFunctions(getFunctionDeclarations(node.consequent));
+    public State reduceSwitchStatement(@Nonnull SwitchStatement node, @Nonnull State discriminant, @Nonnull ImmutableList<State> cases) {
+        ImmutableList<Statement> statements = ImmutableList.empty();
+        for (SwitchCase switchCase : node.cases) {
+            statements = statements.append(switchCase.consequent);
+        }
+        State casesState = this.fold(cases).finish(node, Scope.Type.Block).withPotentialVarFunctions(getFunctionDeclarations(statements));
+        return this.append(casesState, discriminant);
     }
 
     @Nonnull
     @Override
-    public State reduceSwitchDefault(@Nonnull SwitchDefault node, @Nonnull ImmutableList<State> consequent) {
-        return super.reduceSwitchDefault(node, consequent).finish(node, Scope.Type.Block).withPotentialVarFunctions(getFunctionDeclarations(node.consequent));
+    public State reduceSwitchStatementWithDefault(@Nonnull SwitchStatementWithDefault node, @Nonnull State discriminant, @Nonnull ImmutableList<State> preDefaultCases, @Nonnull State defaultCase, @Nonnull ImmutableList<State> postDefaultCases) {
+        ImmutableList<Statement> statements = ImmutableList.empty();
+        for (SwitchCase switchCase : node.preDefaultCases) {
+            statements = statements.append(switchCase.consequent);
+        }
+        statements = statements.append(node.defaultCase.consequent);
+        for (SwitchCase switchCase : node.postDefaultCases) {
+            statements = statements.append(switchCase.consequent);
+        }
+        State casesState = this.append(this.fold(preDefaultCases), defaultCase, this.fold(postDefaultCases)).finish(node, Scope.Type.Block).withPotentialVarFunctions(getFunctionDeclarations(statements));
+        return this.append(casesState, discriminant);
     }
 
     @Nonnull
