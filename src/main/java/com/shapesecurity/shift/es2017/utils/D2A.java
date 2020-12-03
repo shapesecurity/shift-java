@@ -150,7 +150,7 @@ public final class D2A {
             }
             for (int i = 0; i < s.length(); i++) {
                 if (s.charAt(s.length() - 1 - i) != '0') {
-                    if (i > 1) {
+                    if (i > 2) {
                         return s.substring(0, s.length() - i) + "e" + i;
                     } else {
                         return s;
