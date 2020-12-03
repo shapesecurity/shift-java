@@ -560,6 +560,9 @@ public class CodeGenTest {
         test("0", "0b0");
         test("1");
         test("2");
+        test("20");
+        test("200");
+        test("2e4");
         test("0x38D7EA4C68001", "1000000000000001");
         test("15e5", "1500000");
         test("155e3", "155000");
