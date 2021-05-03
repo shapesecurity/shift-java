@@ -14,9 +14,6 @@ jobs:
       - name: Enforce CLA signature
         run: curl https://raw.githubusercontent.com/shapesecurity/CLA/HEAD/cla-travis.sh | bash
 
-      - name: Compare pom.xml/package.json versions
-        run: scripts/check-version.sh
-
   test:
     name: Test
     runs-on: ubuntu-latest
