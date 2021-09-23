@@ -7,8 +7,6 @@ import java.util.Iterator;
 public abstract class ObjectPath<S, T> {
 	abstract Maybe<T> apply(Object source);
 
-	// abstract Maybe<T> strictApply(S source);
-
 	abstract public boolean equals(Object o);
 
 	abstract public int hashCode();
@@ -33,19 +31,12 @@ public abstract class ObjectPath<S, T> {
 			this.second = second;
 			// any associative operation would work here
 			this.hashCode = this.first.hashCode() + this.second.hashCode();
-			// this.size = (this.first instanceof Composed ? ((Composed) this.first).size : 1)
-			// 	+ (this.second instanceof Composed ? ((Composed) this.second).size : 1);
 		}
 
 		@Override
 		Maybe<T> apply(Object source) {
 			return this.first.apply(source).flatMap(this.second::apply);
 		}
-
-		// @Override
-		// Maybe<T> strictApply(S source) {
-		// 	return this.first.strictApply(source).flatMap(this.second::apply);
-		// }
 
 		// we do some extra work here to ensure `.then` is associative
 		// that is, `a.then(b).then(c)` is equal to `a.then(b.then(c))`
