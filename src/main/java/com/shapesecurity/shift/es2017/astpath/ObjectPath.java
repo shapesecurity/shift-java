@@ -11,15 +11,15 @@ public abstract class ObjectPath<S, T> {
 
 	abstract public int hashCode();
 
-	// if it is not possible for instances of T to be instances of S2
-	// then this will always return Nothing
-	// however, both `T extends S2` and `S2 extends T` are fine
-	// Java's type system does not allow expressing that constraint
-	public <S2, T2> ObjectPath<S, T2> then(ObjectPath<S2, T2> next) {
+	// in principle, there's nothing wrong with having your S2 be a supertype of T, rather than a subtype
+	// (just as `apply` takes an Object, the maximal supertype, and then checks that it is in fact an S)
+	// but in our actual ASTPath use case, the sources are never supertypes
+	// so we don't need to allow that case, and can express a more useful bound
+	public <S2 extends T, T2> ObjectPath<S, T2> then(ObjectPath<S2, T2> next) {
 		return new Composed<>(this, next);
 	}
 
-	public static class Composed<S, MS, MT, T> extends ObjectPath<S, T> {
+	public static class Composed<S, MS, MT extends MS, T> extends ObjectPath<S, T> {
 		private final ObjectPath<S, MS> first;
 		private final ObjectPath<MT, T> second;
 
