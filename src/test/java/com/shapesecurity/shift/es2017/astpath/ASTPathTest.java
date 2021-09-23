@@ -28,13 +28,13 @@ public class ASTPathTest {
 
 		ObjectPath<Script, SpreadElementExpression> getter =
 			ASTPath.Script_Statements(0)
-				.then(ASTPath.ExpressionStatement_Expression())
-				.then(ASTPath.BinaryExpression_Right())
+				.then(ASTPath.ExpressionStatement_Expression)
+				.then(ASTPath.BinaryExpression_Right)
 				.then(ASTPath.CallExpression_Arguments(1));
 
 		assertSame(bNode, getter.apply(tree).fromJust());
 
-		assertEquals("b", getter.then(ASTPath.LiteralStringExpression_Value()).apply(tree).fromJust());
+		assertEquals("b", getter.then(ASTPath.LiteralStringExpression_Value).apply(tree).fromJust());
 
 		assertEquals(Maybe.empty(), getter.apply(Parser.parseScript(";")));
 	}
@@ -43,15 +43,15 @@ public class ASTPathTest {
 	public void testEquals() {
 		ObjectPath<Script, SpreadElementExpression> getter1 =
 			ASTPath.Script_Statements(0)
-				.then(ASTPath.ExpressionStatement_Expression())
-				.then(ASTPath.BinaryExpression_Right())
+				.then(ASTPath.ExpressionStatement_Expression)
+				.then(ASTPath.BinaryExpression_Right)
 				.then(ASTPath.CallExpression_Arguments(1));
 
 		ObjectPath<Script, SpreadElementExpression> getter2 =
 			ASTPath.Script_Statements(0)
-				.then(ASTPath.ExpressionStatement_Expression())
+				.then(ASTPath.ExpressionStatement_Expression)
 				.then(
-					ASTPath.BinaryExpression_Right()
+					ASTPath.BinaryExpression_Right
 						.then(ASTPath.CallExpression_Arguments(1))
 				);
 
@@ -59,9 +59,9 @@ public class ASTPathTest {
 
 		ObjectPath<Script, SpreadElementExpression> different =
 			ASTPath.Script_Statements(0)
-				.then(ASTPath.ExpressionStatement_Expression())
+				.then(ASTPath.ExpressionStatement_Expression)
 				.then(
-					ASTPath.BinaryExpression_Right()
+					ASTPath.BinaryExpression_Right
 						.then(ASTPath.CallExpression_Arguments(2))
 				);
 		assertNotEquals(getter1, different);

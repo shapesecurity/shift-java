@@ -66,333 +66,187 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
     return new ArrayAssignmentTarget_Elements(index);
   }
 
-  public static ArrayAssignmentTarget_Rest ArrayAssignmentTarget_Rest() {
-    return new ArrayAssignmentTarget_Rest();
-  }
+  public static final ArrayAssignmentTarget_Rest ArrayAssignmentTarget_Rest = new ArrayAssignmentTarget_Rest();
 
   public static ArrayBinding_Elements ArrayBinding_Elements(int index) {
     return new ArrayBinding_Elements(index);
   }
 
-  public static ArrayBinding_Rest ArrayBinding_Rest() {
-    return new ArrayBinding_Rest();
-  }
+  public static final ArrayBinding_Rest ArrayBinding_Rest = new ArrayBinding_Rest();
 
   public static ArrayExpression_Elements ArrayExpression_Elements(int index) {
     return new ArrayExpression_Elements(index);
   }
 
-  public static ArrowExpression_IsAsync ArrowExpression_IsAsync() {
-    return new ArrowExpression_IsAsync();
-  }
+  public static final ArrowExpression_IsAsync ArrowExpression_IsAsync = new ArrowExpression_IsAsync();
 
-  public static ArrowExpression_Params ArrowExpression_Params() {
-    return new ArrowExpression_Params();
-  }
+  public static final ArrowExpression_Params ArrowExpression_Params = new ArrowExpression_Params();
 
-  public static ArrowExpression_Body ArrowExpression_Body() {
-    return new ArrowExpression_Body();
-  }
+  public static final ArrowExpression_Body ArrowExpression_Body = new ArrowExpression_Body();
 
-  public static AssignmentExpression_Binding AssignmentExpression_Binding() {
-    return new AssignmentExpression_Binding();
-  }
+  public static final AssignmentExpression_Binding AssignmentExpression_Binding = new AssignmentExpression_Binding();
 
-  public static AssignmentExpression_Expression AssignmentExpression_Expression() {
-    return new AssignmentExpression_Expression();
-  }
+  public static final AssignmentExpression_Expression AssignmentExpression_Expression = new AssignmentExpression_Expression();
 
-  public static AssignmentTargetIdentifier_Name AssignmentTargetIdentifier_Name() {
-    return new AssignmentTargetIdentifier_Name();
-  }
+  public static final AssignmentTargetIdentifier_Name AssignmentTargetIdentifier_Name = new AssignmentTargetIdentifier_Name();
 
-  public static AssignmentTargetPropertyIdentifier_Binding AssignmentTargetPropertyIdentifier_Binding() {
-    return new AssignmentTargetPropertyIdentifier_Binding();
-  }
+  public static final AssignmentTargetPropertyIdentifier_Binding AssignmentTargetPropertyIdentifier_Binding = new AssignmentTargetPropertyIdentifier_Binding();
 
-  public static AssignmentTargetPropertyIdentifier_Init AssignmentTargetPropertyIdentifier_Init() {
-    return new AssignmentTargetPropertyIdentifier_Init();
-  }
+  public static final AssignmentTargetPropertyIdentifier_Init AssignmentTargetPropertyIdentifier_Init = new AssignmentTargetPropertyIdentifier_Init();
 
-  public static AssignmentTargetPropertyProperty_Name AssignmentTargetPropertyProperty_Name() {
-    return new AssignmentTargetPropertyProperty_Name();
-  }
+  public static final AssignmentTargetPropertyProperty_Name AssignmentTargetPropertyProperty_Name = new AssignmentTargetPropertyProperty_Name();
 
-  public static AssignmentTargetPropertyProperty_Binding AssignmentTargetPropertyProperty_Binding() {
-    return new AssignmentTargetPropertyProperty_Binding();
-  }
+  public static final AssignmentTargetPropertyProperty_Binding AssignmentTargetPropertyProperty_Binding = new AssignmentTargetPropertyProperty_Binding();
 
-  public static AssignmentTargetWithDefault_Binding AssignmentTargetWithDefault_Binding() {
-    return new AssignmentTargetWithDefault_Binding();
-  }
+  public static final AssignmentTargetWithDefault_Binding AssignmentTargetWithDefault_Binding = new AssignmentTargetWithDefault_Binding();
 
-  public static AssignmentTargetWithDefault_Init AssignmentTargetWithDefault_Init() {
-    return new AssignmentTargetWithDefault_Init();
-  }
+  public static final AssignmentTargetWithDefault_Init AssignmentTargetWithDefault_Init = new AssignmentTargetWithDefault_Init();
 
-  public static AwaitExpression_Expression AwaitExpression_Expression() {
-    return new AwaitExpression_Expression();
-  }
+  public static final AwaitExpression_Expression AwaitExpression_Expression = new AwaitExpression_Expression();
 
-  public static BinaryExpression_Left BinaryExpression_Left() {
-    return new BinaryExpression_Left();
-  }
+  public static final BinaryExpression_Left BinaryExpression_Left = new BinaryExpression_Left();
 
-  public static BinaryExpression_Operator BinaryExpression_Operator() {
-    return new BinaryExpression_Operator();
-  }
+  public static final BinaryExpression_Operator BinaryExpression_Operator = new BinaryExpression_Operator();
 
-  public static BinaryExpression_Right BinaryExpression_Right() {
-    return new BinaryExpression_Right();
-  }
+  public static final BinaryExpression_Right BinaryExpression_Right = new BinaryExpression_Right();
 
-  public static BindingIdentifier_Name BindingIdentifier_Name() {
-    return new BindingIdentifier_Name();
-  }
+  public static final BindingIdentifier_Name BindingIdentifier_Name = new BindingIdentifier_Name();
 
-  public static BindingPropertyIdentifier_Binding BindingPropertyIdentifier_Binding() {
-    return new BindingPropertyIdentifier_Binding();
-  }
+  public static final BindingPropertyIdentifier_Binding BindingPropertyIdentifier_Binding = new BindingPropertyIdentifier_Binding();
 
-  public static BindingPropertyIdentifier_Init BindingPropertyIdentifier_Init() {
-    return new BindingPropertyIdentifier_Init();
-  }
+  public static final BindingPropertyIdentifier_Init BindingPropertyIdentifier_Init = new BindingPropertyIdentifier_Init();
 
-  public static BindingPropertyProperty_Name BindingPropertyProperty_Name() {
-    return new BindingPropertyProperty_Name();
-  }
+  public static final BindingPropertyProperty_Name BindingPropertyProperty_Name = new BindingPropertyProperty_Name();
 
-  public static BindingPropertyProperty_Binding BindingPropertyProperty_Binding() {
-    return new BindingPropertyProperty_Binding();
-  }
+  public static final BindingPropertyProperty_Binding BindingPropertyProperty_Binding = new BindingPropertyProperty_Binding();
 
-  public static BindingWithDefault_Binding BindingWithDefault_Binding() {
-    return new BindingWithDefault_Binding();
-  }
+  public static final BindingWithDefault_Binding BindingWithDefault_Binding = new BindingWithDefault_Binding();
 
-  public static BindingWithDefault_Init BindingWithDefault_Init() {
-    return new BindingWithDefault_Init();
-  }
+  public static final BindingWithDefault_Init BindingWithDefault_Init = new BindingWithDefault_Init();
 
   public static Block_Statements Block_Statements(int index) {
     return new Block_Statements(index);
   }
 
-  public static BlockStatement_Block BlockStatement_Block() {
-    return new BlockStatement_Block();
-  }
+  public static final BlockStatement_Block BlockStatement_Block = new BlockStatement_Block();
 
-  public static BreakStatement_Label BreakStatement_Label() {
-    return new BreakStatement_Label();
-  }
+  public static final BreakStatement_Label BreakStatement_Label = new BreakStatement_Label();
 
-  public static CallExpression_Callee CallExpression_Callee() {
-    return new CallExpression_Callee();
-  }
+  public static final CallExpression_Callee CallExpression_Callee = new CallExpression_Callee();
 
   public static CallExpression_Arguments CallExpression_Arguments(int index) {
     return new CallExpression_Arguments(index);
   }
 
-  public static CatchClause_Binding CatchClause_Binding() {
-    return new CatchClause_Binding();
-  }
+  public static final CatchClause_Binding CatchClause_Binding = new CatchClause_Binding();
 
-  public static CatchClause_Body CatchClause_Body() {
-    return new CatchClause_Body();
-  }
+  public static final CatchClause_Body CatchClause_Body = new CatchClause_Body();
 
-  public static ClassDeclaration_Name ClassDeclaration_Name() {
-    return new ClassDeclaration_Name();
-  }
+  public static final ClassDeclaration_Name ClassDeclaration_Name = new ClassDeclaration_Name();
 
-  public static ClassDeclaration_Super ClassDeclaration_Super() {
-    return new ClassDeclaration_Super();
-  }
+  public static final ClassDeclaration_Super ClassDeclaration_Super = new ClassDeclaration_Super();
 
   public static ClassDeclaration_Elements ClassDeclaration_Elements(int index) {
     return new ClassDeclaration_Elements(index);
   }
 
-  public static ClassElement_IsStatic ClassElement_IsStatic() {
-    return new ClassElement_IsStatic();
-  }
+  public static final ClassElement_IsStatic ClassElement_IsStatic = new ClassElement_IsStatic();
 
-  public static ClassElement_Method ClassElement_Method() {
-    return new ClassElement_Method();
-  }
+  public static final ClassElement_Method ClassElement_Method = new ClassElement_Method();
 
-  public static ClassExpression_Name ClassExpression_Name() {
-    return new ClassExpression_Name();
-  }
+  public static final ClassExpression_Name ClassExpression_Name = new ClassExpression_Name();
 
-  public static ClassExpression_Super ClassExpression_Super() {
-    return new ClassExpression_Super();
-  }
+  public static final ClassExpression_Super ClassExpression_Super = new ClassExpression_Super();
 
   public static ClassExpression_Elements ClassExpression_Elements(int index) {
     return new ClassExpression_Elements(index);
   }
 
-  public static CompoundAssignmentExpression_Binding CompoundAssignmentExpression_Binding() {
-    return new CompoundAssignmentExpression_Binding();
-  }
+  public static final CompoundAssignmentExpression_Binding CompoundAssignmentExpression_Binding = new CompoundAssignmentExpression_Binding();
 
-  public static CompoundAssignmentExpression_Operator CompoundAssignmentExpression_Operator() {
-    return new CompoundAssignmentExpression_Operator();
-  }
+  public static final CompoundAssignmentExpression_Operator CompoundAssignmentExpression_Operator = new CompoundAssignmentExpression_Operator();
 
-  public static CompoundAssignmentExpression_Expression CompoundAssignmentExpression_Expression() {
-    return new CompoundAssignmentExpression_Expression();
-  }
+  public static final CompoundAssignmentExpression_Expression CompoundAssignmentExpression_Expression = new CompoundAssignmentExpression_Expression();
 
-  public static ComputedMemberAssignmentTarget_Object ComputedMemberAssignmentTarget_Object() {
-    return new ComputedMemberAssignmentTarget_Object();
-  }
+  public static final ComputedMemberAssignmentTarget_Object ComputedMemberAssignmentTarget_Object = new ComputedMemberAssignmentTarget_Object();
 
-  public static ComputedMemberAssignmentTarget_Expression ComputedMemberAssignmentTarget_Expression() {
-    return new ComputedMemberAssignmentTarget_Expression();
-  }
+  public static final ComputedMemberAssignmentTarget_Expression ComputedMemberAssignmentTarget_Expression = new ComputedMemberAssignmentTarget_Expression();
 
-  public static ComputedMemberExpression_Object ComputedMemberExpression_Object() {
-    return new ComputedMemberExpression_Object();
-  }
+  public static final ComputedMemberExpression_Object ComputedMemberExpression_Object = new ComputedMemberExpression_Object();
 
-  public static ComputedMemberExpression_Expression ComputedMemberExpression_Expression() {
-    return new ComputedMemberExpression_Expression();
-  }
+  public static final ComputedMemberExpression_Expression ComputedMemberExpression_Expression = new ComputedMemberExpression_Expression();
 
-  public static ComputedPropertyName_Expression ComputedPropertyName_Expression() {
-    return new ComputedPropertyName_Expression();
-  }
+  public static final ComputedPropertyName_Expression ComputedPropertyName_Expression = new ComputedPropertyName_Expression();
 
-  public static ConditionalExpression_Test ConditionalExpression_Test() {
-    return new ConditionalExpression_Test();
-  }
+  public static final ConditionalExpression_Test ConditionalExpression_Test = new ConditionalExpression_Test();
 
-  public static ConditionalExpression_Consequent ConditionalExpression_Consequent() {
-    return new ConditionalExpression_Consequent();
-  }
+  public static final ConditionalExpression_Consequent ConditionalExpression_Consequent = new ConditionalExpression_Consequent();
 
-  public static ConditionalExpression_Alternate ConditionalExpression_Alternate() {
-    return new ConditionalExpression_Alternate();
-  }
+  public static final ConditionalExpression_Alternate ConditionalExpression_Alternate = new ConditionalExpression_Alternate();
 
-  public static ContinueStatement_Label ContinueStatement_Label() {
-    return new ContinueStatement_Label();
-  }
+  public static final ContinueStatement_Label ContinueStatement_Label = new ContinueStatement_Label();
 
-  public static DataProperty_Name DataProperty_Name() {
-    return new DataProperty_Name();
-  }
+  public static final DataProperty_Name DataProperty_Name = new DataProperty_Name();
 
-  public static DataProperty_Expression DataProperty_Expression() {
-    return new DataProperty_Expression();
-  }
+  public static final DataProperty_Expression DataProperty_Expression = new DataProperty_Expression();
 
-  public static Directive_RawValue Directive_RawValue() {
-    return new Directive_RawValue();
-  }
+  public static final Directive_RawValue Directive_RawValue = new Directive_RawValue();
 
-  public static DoWhileStatement_Body DoWhileStatement_Body() {
-    return new DoWhileStatement_Body();
-  }
+  public static final DoWhileStatement_Body DoWhileStatement_Body = new DoWhileStatement_Body();
 
-  public static DoWhileStatement_Test DoWhileStatement_Test() {
-    return new DoWhileStatement_Test();
-  }
+  public static final DoWhileStatement_Test DoWhileStatement_Test = new DoWhileStatement_Test();
 
-  public static Export_Declaration Export_Declaration() {
-    return new Export_Declaration();
-  }
+  public static final Export_Declaration Export_Declaration = new Export_Declaration();
 
-  public static ExportAllFrom_ModuleSpecifier ExportAllFrom_ModuleSpecifier() {
-    return new ExportAllFrom_ModuleSpecifier();
-  }
+  public static final ExportAllFrom_ModuleSpecifier ExportAllFrom_ModuleSpecifier = new ExportAllFrom_ModuleSpecifier();
 
-  public static ExportDefault_Body ExportDefault_Body() {
-    return new ExportDefault_Body();
-  }
+  public static final ExportDefault_Body ExportDefault_Body = new ExportDefault_Body();
 
   public static ExportFrom_NamedExports ExportFrom_NamedExports(int index) {
     return new ExportFrom_NamedExports(index);
   }
 
-  public static ExportFrom_ModuleSpecifier ExportFrom_ModuleSpecifier() {
-    return new ExportFrom_ModuleSpecifier();
-  }
+  public static final ExportFrom_ModuleSpecifier ExportFrom_ModuleSpecifier = new ExportFrom_ModuleSpecifier();
 
-  public static ExportFromSpecifier_Name ExportFromSpecifier_Name() {
-    return new ExportFromSpecifier_Name();
-  }
+  public static final ExportFromSpecifier_Name ExportFromSpecifier_Name = new ExportFromSpecifier_Name();
 
-  public static ExportFromSpecifier_ExportedName ExportFromSpecifier_ExportedName() {
-    return new ExportFromSpecifier_ExportedName();
-  }
+  public static final ExportFromSpecifier_ExportedName ExportFromSpecifier_ExportedName = new ExportFromSpecifier_ExportedName();
 
-  public static ExportLocalSpecifier_Name ExportLocalSpecifier_Name() {
-    return new ExportLocalSpecifier_Name();
-  }
+  public static final ExportLocalSpecifier_Name ExportLocalSpecifier_Name = new ExportLocalSpecifier_Name();
 
-  public static ExportLocalSpecifier_ExportedName ExportLocalSpecifier_ExportedName() {
-    return new ExportLocalSpecifier_ExportedName();
-  }
+  public static final ExportLocalSpecifier_ExportedName ExportLocalSpecifier_ExportedName = new ExportLocalSpecifier_ExportedName();
 
   public static ExportLocals_NamedExports ExportLocals_NamedExports(int index) {
     return new ExportLocals_NamedExports(index);
   }
 
-  public static ExpressionStatement_Expression ExpressionStatement_Expression() {
-    return new ExpressionStatement_Expression();
-  }
+  public static final ExpressionStatement_Expression ExpressionStatement_Expression = new ExpressionStatement_Expression();
 
-  public static ForInStatement_Left ForInStatement_Left() {
-    return new ForInStatement_Left();
-  }
+  public static final ForInStatement_Left ForInStatement_Left = new ForInStatement_Left();
 
-  public static ForInStatement_Right ForInStatement_Right() {
-    return new ForInStatement_Right();
-  }
+  public static final ForInStatement_Right ForInStatement_Right = new ForInStatement_Right();
 
-  public static ForInStatement_Body ForInStatement_Body() {
-    return new ForInStatement_Body();
-  }
+  public static final ForInStatement_Body ForInStatement_Body = new ForInStatement_Body();
 
-  public static ForOfStatement_Left ForOfStatement_Left() {
-    return new ForOfStatement_Left();
-  }
+  public static final ForOfStatement_Left ForOfStatement_Left = new ForOfStatement_Left();
 
-  public static ForOfStatement_Right ForOfStatement_Right() {
-    return new ForOfStatement_Right();
-  }
+  public static final ForOfStatement_Right ForOfStatement_Right = new ForOfStatement_Right();
 
-  public static ForOfStatement_Body ForOfStatement_Body() {
-    return new ForOfStatement_Body();
-  }
+  public static final ForOfStatement_Body ForOfStatement_Body = new ForOfStatement_Body();
 
-  public static ForStatement_Init ForStatement_Init() {
-    return new ForStatement_Init();
-  }
+  public static final ForStatement_Init ForStatement_Init = new ForStatement_Init();
 
-  public static ForStatement_Test ForStatement_Test() {
-    return new ForStatement_Test();
-  }
+  public static final ForStatement_Test ForStatement_Test = new ForStatement_Test();
 
-  public static ForStatement_Update ForStatement_Update() {
-    return new ForStatement_Update();
-  }
+  public static final ForStatement_Update ForStatement_Update = new ForStatement_Update();
 
-  public static ForStatement_Body ForStatement_Body() {
-    return new ForStatement_Body();
-  }
+  public static final ForStatement_Body ForStatement_Body = new ForStatement_Body();
 
   public static FormalParameters_Items FormalParameters_Items(int index) {
     return new FormalParameters_Items(index);
   }
 
-  public static FormalParameters_Rest FormalParameters_Rest() {
-    return new FormalParameters_Rest();
-  }
+  public static final FormalParameters_Rest FormalParameters_Rest = new FormalParameters_Rest();
 
   public static FunctionBody_Directives FunctionBody_Directives(int index) {
     return new FunctionBody_Directives(index);
@@ -402,165 +256,87 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
     return new FunctionBody_Statements(index);
   }
 
-  public static FunctionDeclaration_IsAsync FunctionDeclaration_IsAsync() {
-    return new FunctionDeclaration_IsAsync();
-  }
+  public static final FunctionDeclaration_IsAsync FunctionDeclaration_IsAsync = new FunctionDeclaration_IsAsync();
 
-  public static FunctionDeclaration_IsGenerator FunctionDeclaration_IsGenerator() {
-    return new FunctionDeclaration_IsGenerator();
-  }
+  public static final FunctionDeclaration_IsGenerator FunctionDeclaration_IsGenerator = new FunctionDeclaration_IsGenerator();
 
-  public static FunctionDeclaration_Name FunctionDeclaration_Name() {
-    return new FunctionDeclaration_Name();
-  }
+  public static final FunctionDeclaration_Name FunctionDeclaration_Name = new FunctionDeclaration_Name();
 
-  public static FunctionDeclaration_Params FunctionDeclaration_Params() {
-    return new FunctionDeclaration_Params();
-  }
+  public static final FunctionDeclaration_Params FunctionDeclaration_Params = new FunctionDeclaration_Params();
 
-  public static FunctionDeclaration_Body FunctionDeclaration_Body() {
-    return new FunctionDeclaration_Body();
-  }
+  public static final FunctionDeclaration_Body FunctionDeclaration_Body = new FunctionDeclaration_Body();
 
-  public static FunctionExpression_IsAsync FunctionExpression_IsAsync() {
-    return new FunctionExpression_IsAsync();
-  }
+  public static final FunctionExpression_IsAsync FunctionExpression_IsAsync = new FunctionExpression_IsAsync();
 
-  public static FunctionExpression_IsGenerator FunctionExpression_IsGenerator() {
-    return new FunctionExpression_IsGenerator();
-  }
+  public static final FunctionExpression_IsGenerator FunctionExpression_IsGenerator = new FunctionExpression_IsGenerator();
 
-  public static FunctionExpression_Name FunctionExpression_Name() {
-    return new FunctionExpression_Name();
-  }
+  public static final FunctionExpression_Name FunctionExpression_Name = new FunctionExpression_Name();
 
-  public static FunctionExpression_Params FunctionExpression_Params() {
-    return new FunctionExpression_Params();
-  }
+  public static final FunctionExpression_Params FunctionExpression_Params = new FunctionExpression_Params();
 
-  public static FunctionExpression_Body FunctionExpression_Body() {
-    return new FunctionExpression_Body();
-  }
+  public static final FunctionExpression_Body FunctionExpression_Body = new FunctionExpression_Body();
 
-  public static Getter_Name Getter_Name() {
-    return new Getter_Name();
-  }
+  public static final Getter_Name Getter_Name = new Getter_Name();
 
-  public static Getter_Body Getter_Body() {
-    return new Getter_Body();
-  }
+  public static final Getter_Body Getter_Body = new Getter_Body();
 
-  public static IdentifierExpression_Name IdentifierExpression_Name() {
-    return new IdentifierExpression_Name();
-  }
+  public static final IdentifierExpression_Name IdentifierExpression_Name = new IdentifierExpression_Name();
 
-  public static IfStatement_Test IfStatement_Test() {
-    return new IfStatement_Test();
-  }
+  public static final IfStatement_Test IfStatement_Test = new IfStatement_Test();
 
-  public static IfStatement_Consequent IfStatement_Consequent() {
-    return new IfStatement_Consequent();
-  }
+  public static final IfStatement_Consequent IfStatement_Consequent = new IfStatement_Consequent();
 
-  public static IfStatement_Alternate IfStatement_Alternate() {
-    return new IfStatement_Alternate();
-  }
+  public static final IfStatement_Alternate IfStatement_Alternate = new IfStatement_Alternate();
 
-  public static Import_DefaultBinding Import_DefaultBinding() {
-    return new Import_DefaultBinding();
-  }
+  public static final Import_DefaultBinding Import_DefaultBinding = new Import_DefaultBinding();
 
   public static Import_NamedImports Import_NamedImports(int index) {
     return new Import_NamedImports(index);
   }
 
-  public static Import_ModuleSpecifier Import_ModuleSpecifier() {
-    return new Import_ModuleSpecifier();
-  }
+  public static final Import_ModuleSpecifier Import_ModuleSpecifier = new Import_ModuleSpecifier();
 
-  public static ImportNamespace_DefaultBinding ImportNamespace_DefaultBinding() {
-    return new ImportNamespace_DefaultBinding();
-  }
+  public static final ImportNamespace_DefaultBinding ImportNamespace_DefaultBinding = new ImportNamespace_DefaultBinding();
 
-  public static ImportNamespace_NamespaceBinding ImportNamespace_NamespaceBinding() {
-    return new ImportNamespace_NamespaceBinding();
-  }
+  public static final ImportNamespace_NamespaceBinding ImportNamespace_NamespaceBinding = new ImportNamespace_NamespaceBinding();
 
-  public static ImportNamespace_ModuleSpecifier ImportNamespace_ModuleSpecifier() {
-    return new ImportNamespace_ModuleSpecifier();
-  }
+  public static final ImportNamespace_ModuleSpecifier ImportNamespace_ModuleSpecifier = new ImportNamespace_ModuleSpecifier();
 
-  public static ImportSpecifier_Name ImportSpecifier_Name() {
-    return new ImportSpecifier_Name();
-  }
+  public static final ImportSpecifier_Name ImportSpecifier_Name = new ImportSpecifier_Name();
 
-  public static ImportSpecifier_Binding ImportSpecifier_Binding() {
-    return new ImportSpecifier_Binding();
-  }
+  public static final ImportSpecifier_Binding ImportSpecifier_Binding = new ImportSpecifier_Binding();
 
-  public static LabeledStatement_Label LabeledStatement_Label() {
-    return new LabeledStatement_Label();
-  }
+  public static final LabeledStatement_Label LabeledStatement_Label = new LabeledStatement_Label();
 
-  public static LabeledStatement_Body LabeledStatement_Body() {
-    return new LabeledStatement_Body();
-  }
+  public static final LabeledStatement_Body LabeledStatement_Body = new LabeledStatement_Body();
 
-  public static LiteralBooleanExpression_Value LiteralBooleanExpression_Value() {
-    return new LiteralBooleanExpression_Value();
-  }
+  public static final LiteralBooleanExpression_Value LiteralBooleanExpression_Value = new LiteralBooleanExpression_Value();
 
-  public static LiteralNumericExpression_Value LiteralNumericExpression_Value() {
-    return new LiteralNumericExpression_Value();
-  }
+  public static final LiteralNumericExpression_Value LiteralNumericExpression_Value = new LiteralNumericExpression_Value();
 
-  public static LiteralRegExpExpression_Pattern LiteralRegExpExpression_Pattern() {
-    return new LiteralRegExpExpression_Pattern();
-  }
+  public static final LiteralRegExpExpression_Pattern LiteralRegExpExpression_Pattern = new LiteralRegExpExpression_Pattern();
 
-  public static LiteralRegExpExpression_Global LiteralRegExpExpression_Global() {
-    return new LiteralRegExpExpression_Global();
-  }
+  public static final LiteralRegExpExpression_Global LiteralRegExpExpression_Global = new LiteralRegExpExpression_Global();
 
-  public static LiteralRegExpExpression_IgnoreCase LiteralRegExpExpression_IgnoreCase() {
-    return new LiteralRegExpExpression_IgnoreCase();
-  }
+  public static final LiteralRegExpExpression_IgnoreCase LiteralRegExpExpression_IgnoreCase = new LiteralRegExpExpression_IgnoreCase();
 
-  public static LiteralRegExpExpression_MultiLine LiteralRegExpExpression_MultiLine() {
-    return new LiteralRegExpExpression_MultiLine();
-  }
+  public static final LiteralRegExpExpression_MultiLine LiteralRegExpExpression_MultiLine = new LiteralRegExpExpression_MultiLine();
 
-  public static LiteralRegExpExpression_Sticky LiteralRegExpExpression_Sticky() {
-    return new LiteralRegExpExpression_Sticky();
-  }
+  public static final LiteralRegExpExpression_Sticky LiteralRegExpExpression_Sticky = new LiteralRegExpExpression_Sticky();
 
-  public static LiteralRegExpExpression_Unicode LiteralRegExpExpression_Unicode() {
-    return new LiteralRegExpExpression_Unicode();
-  }
+  public static final LiteralRegExpExpression_Unicode LiteralRegExpExpression_Unicode = new LiteralRegExpExpression_Unicode();
 
-  public static LiteralStringExpression_Value LiteralStringExpression_Value() {
-    return new LiteralStringExpression_Value();
-  }
+  public static final LiteralStringExpression_Value LiteralStringExpression_Value = new LiteralStringExpression_Value();
 
-  public static Method_IsAsync Method_IsAsync() {
-    return new Method_IsAsync();
-  }
+  public static final Method_IsAsync Method_IsAsync = new Method_IsAsync();
 
-  public static Method_IsGenerator Method_IsGenerator() {
-    return new Method_IsGenerator();
-  }
+  public static final Method_IsGenerator Method_IsGenerator = new Method_IsGenerator();
 
-  public static Method_Name Method_Name() {
-    return new Method_Name();
-  }
+  public static final Method_Name Method_Name = new Method_Name();
 
-  public static Method_Params Method_Params() {
-    return new Method_Params();
-  }
+  public static final Method_Params Method_Params = new Method_Params();
 
-  public static Method_Body Method_Body() {
-    return new Method_Body();
-  }
+  public static final Method_Body Method_Body = new Method_Body();
 
   public static Module_Directives Module_Directives(int index) {
     return new Module_Directives(index);
@@ -570,9 +346,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
     return new Module_Items(index);
   }
 
-  public static NewExpression_Callee NewExpression_Callee() {
-    return new NewExpression_Callee();
-  }
+  public static final NewExpression_Callee NewExpression_Callee = new NewExpression_Callee();
 
   public static NewExpression_Arguments NewExpression_Arguments(int index) {
     return new NewExpression_Arguments(index);
@@ -590,9 +364,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
     return new ObjectExpression_Properties(index);
   }
 
-  public static ReturnStatement_Expression ReturnStatement_Expression() {
-    return new ReturnStatement_Expression();
-  }
+  public static final ReturnStatement_Expression ReturnStatement_Expression = new ReturnStatement_Expression();
 
   public static Script_Directives Script_Directives(int index) {
     return new Script_Directives(index);
@@ -602,49 +374,27 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
     return new Script_Statements(index);
   }
 
-  public static Setter_Name Setter_Name() {
-    return new Setter_Name();
-  }
+  public static final Setter_Name Setter_Name = new Setter_Name();
 
-  public static Setter_Param Setter_Param() {
-    return new Setter_Param();
-  }
+  public static final Setter_Param Setter_Param = new Setter_Param();
 
-  public static Setter_Body Setter_Body() {
-    return new Setter_Body();
-  }
+  public static final Setter_Body Setter_Body = new Setter_Body();
 
-  public static ShorthandProperty_Name ShorthandProperty_Name() {
-    return new ShorthandProperty_Name();
-  }
+  public static final ShorthandProperty_Name ShorthandProperty_Name = new ShorthandProperty_Name();
 
-  public static SpreadElement_Expression SpreadElement_Expression() {
-    return new SpreadElement_Expression();
-  }
+  public static final SpreadElement_Expression SpreadElement_Expression = new SpreadElement_Expression();
 
-  public static StaticMemberAssignmentTarget_Object StaticMemberAssignmentTarget_Object() {
-    return new StaticMemberAssignmentTarget_Object();
-  }
+  public static final StaticMemberAssignmentTarget_Object StaticMemberAssignmentTarget_Object = new StaticMemberAssignmentTarget_Object();
 
-  public static StaticMemberAssignmentTarget_Property StaticMemberAssignmentTarget_Property() {
-    return new StaticMemberAssignmentTarget_Property();
-  }
+  public static final StaticMemberAssignmentTarget_Property StaticMemberAssignmentTarget_Property = new StaticMemberAssignmentTarget_Property();
 
-  public static StaticMemberExpression_Object StaticMemberExpression_Object() {
-    return new StaticMemberExpression_Object();
-  }
+  public static final StaticMemberExpression_Object StaticMemberExpression_Object = new StaticMemberExpression_Object();
 
-  public static StaticMemberExpression_Property StaticMemberExpression_Property() {
-    return new StaticMemberExpression_Property();
-  }
+  public static final StaticMemberExpression_Property StaticMemberExpression_Property = new StaticMemberExpression_Property();
 
-  public static StaticPropertyName_Value StaticPropertyName_Value() {
-    return new StaticPropertyName_Value();
-  }
+  public static final StaticPropertyName_Value StaticPropertyName_Value = new StaticPropertyName_Value();
 
-  public static SwitchCase_Test SwitchCase_Test() {
-    return new SwitchCase_Test();
-  }
+  public static final SwitchCase_Test SwitchCase_Test = new SwitchCase_Test();
 
   public static SwitchCase_Consequent SwitchCase_Consequent(int index) {
     return new SwitchCase_Consequent(index);
@@ -654,129 +404,77 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
     return new SwitchDefault_Consequent(index);
   }
 
-  public static SwitchStatement_Discriminant SwitchStatement_Discriminant() {
-    return new SwitchStatement_Discriminant();
-  }
+  public static final SwitchStatement_Discriminant SwitchStatement_Discriminant = new SwitchStatement_Discriminant();
 
   public static SwitchStatement_Cases SwitchStatement_Cases(int index) {
     return new SwitchStatement_Cases(index);
   }
 
-  public static SwitchStatementWithDefault_Discriminant SwitchStatementWithDefault_Discriminant() {
-    return new SwitchStatementWithDefault_Discriminant();
-  }
+  public static final SwitchStatementWithDefault_Discriminant SwitchStatementWithDefault_Discriminant = new SwitchStatementWithDefault_Discriminant();
 
   public static SwitchStatementWithDefault_PreDefaultCases SwitchStatementWithDefault_PreDefaultCases(int index) {
     return new SwitchStatementWithDefault_PreDefaultCases(index);
   }
 
-  public static SwitchStatementWithDefault_DefaultCase SwitchStatementWithDefault_DefaultCase() {
-    return new SwitchStatementWithDefault_DefaultCase();
-  }
+  public static final SwitchStatementWithDefault_DefaultCase SwitchStatementWithDefault_DefaultCase = new SwitchStatementWithDefault_DefaultCase();
 
   public static SwitchStatementWithDefault_PostDefaultCases SwitchStatementWithDefault_PostDefaultCases(int index) {
     return new SwitchStatementWithDefault_PostDefaultCases(index);
   }
 
-  public static TemplateElement_RawValue TemplateElement_RawValue() {
-    return new TemplateElement_RawValue();
-  }
+  public static final TemplateElement_RawValue TemplateElement_RawValue = new TemplateElement_RawValue();
 
-  public static TemplateExpression_Tag TemplateExpression_Tag() {
-    return new TemplateExpression_Tag();
-  }
+  public static final TemplateExpression_Tag TemplateExpression_Tag = new TemplateExpression_Tag();
 
   public static TemplateExpression_Elements TemplateExpression_Elements(int index) {
     return new TemplateExpression_Elements(index);
   }
 
-  public static ThrowStatement_Expression ThrowStatement_Expression() {
-    return new ThrowStatement_Expression();
-  }
+  public static final ThrowStatement_Expression ThrowStatement_Expression = new ThrowStatement_Expression();
 
-  public static TryCatchStatement_Body TryCatchStatement_Body() {
-    return new TryCatchStatement_Body();
-  }
+  public static final TryCatchStatement_Body TryCatchStatement_Body = new TryCatchStatement_Body();
 
-  public static TryCatchStatement_CatchClause TryCatchStatement_CatchClause() {
-    return new TryCatchStatement_CatchClause();
-  }
+  public static final TryCatchStatement_CatchClause TryCatchStatement_CatchClause = new TryCatchStatement_CatchClause();
 
-  public static TryFinallyStatement_Body TryFinallyStatement_Body() {
-    return new TryFinallyStatement_Body();
-  }
+  public static final TryFinallyStatement_Body TryFinallyStatement_Body = new TryFinallyStatement_Body();
 
-  public static TryFinallyStatement_CatchClause TryFinallyStatement_CatchClause() {
-    return new TryFinallyStatement_CatchClause();
-  }
+  public static final TryFinallyStatement_CatchClause TryFinallyStatement_CatchClause = new TryFinallyStatement_CatchClause();
 
-  public static TryFinallyStatement_Finalizer TryFinallyStatement_Finalizer() {
-    return new TryFinallyStatement_Finalizer();
-  }
+  public static final TryFinallyStatement_Finalizer TryFinallyStatement_Finalizer = new TryFinallyStatement_Finalizer();
 
-  public static UnaryExpression_Operator UnaryExpression_Operator() {
-    return new UnaryExpression_Operator();
-  }
+  public static final UnaryExpression_Operator UnaryExpression_Operator = new UnaryExpression_Operator();
 
-  public static UnaryExpression_Operand UnaryExpression_Operand() {
-    return new UnaryExpression_Operand();
-  }
+  public static final UnaryExpression_Operand UnaryExpression_Operand = new UnaryExpression_Operand();
 
-  public static UpdateExpression_IsPrefix UpdateExpression_IsPrefix() {
-    return new UpdateExpression_IsPrefix();
-  }
+  public static final UpdateExpression_IsPrefix UpdateExpression_IsPrefix = new UpdateExpression_IsPrefix();
 
-  public static UpdateExpression_Operator UpdateExpression_Operator() {
-    return new UpdateExpression_Operator();
-  }
+  public static final UpdateExpression_Operator UpdateExpression_Operator = new UpdateExpression_Operator();
 
-  public static UpdateExpression_Operand UpdateExpression_Operand() {
-    return new UpdateExpression_Operand();
-  }
+  public static final UpdateExpression_Operand UpdateExpression_Operand = new UpdateExpression_Operand();
 
-  public static VariableDeclaration_Kind VariableDeclaration_Kind() {
-    return new VariableDeclaration_Kind();
-  }
+  public static final VariableDeclaration_Kind VariableDeclaration_Kind = new VariableDeclaration_Kind();
 
   public static VariableDeclaration_Declarators VariableDeclaration_Declarators(int index) {
     return new VariableDeclaration_Declarators(index);
   }
 
-  public static VariableDeclarationStatement_Declaration VariableDeclarationStatement_Declaration() {
-    return new VariableDeclarationStatement_Declaration();
-  }
+  public static final VariableDeclarationStatement_Declaration VariableDeclarationStatement_Declaration = new VariableDeclarationStatement_Declaration();
 
-  public static VariableDeclarator_Binding VariableDeclarator_Binding() {
-    return new VariableDeclarator_Binding();
-  }
+  public static final VariableDeclarator_Binding VariableDeclarator_Binding = new VariableDeclarator_Binding();
 
-  public static VariableDeclarator_Init VariableDeclarator_Init() {
-    return new VariableDeclarator_Init();
-  }
+  public static final VariableDeclarator_Init VariableDeclarator_Init = new VariableDeclarator_Init();
 
-  public static WhileStatement_Test WhileStatement_Test() {
-    return new WhileStatement_Test();
-  }
+  public static final WhileStatement_Test WhileStatement_Test = new WhileStatement_Test();
 
-  public static WhileStatement_Body WhileStatement_Body() {
-    return new WhileStatement_Body();
-  }
+  public static final WhileStatement_Body WhileStatement_Body = new WhileStatement_Body();
 
-  public static WithStatement_Object WithStatement_Object() {
-    return new WithStatement_Object();
-  }
+  public static final WithStatement_Object WithStatement_Object = new WithStatement_Object();
 
-  public static WithStatement_Body WithStatement_Body() {
-    return new WithStatement_Body();
-  }
+  public static final WithStatement_Body WithStatement_Body = new WithStatement_Body();
 
-  public static YieldExpression_Expression YieldExpression_Expression() {
-    return new YieldExpression_Expression();
-  }
+  public static final YieldExpression_Expression YieldExpression_Expression = new YieldExpression_Expression();
 
-  public static YieldGeneratorExpression_Expression YieldGeneratorExpression_Expression() {
-    return new YieldGeneratorExpression_Expression();
-  }
+  public static final YieldGeneratorExpression_Expression YieldGeneratorExpression_Expression = new YieldGeneratorExpression_Expression();
 
 
 
@@ -792,7 +490,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
     }
 
     public String propertyName() {
-      return "elements[" + Integer.toString(index) + "]";
+      return "elements[" + index + "]";
     }
   }
 
@@ -820,7 +518,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
     }
 
     public String propertyName() {
-      return "elements[" + Integer.toString(index) + "]";
+      return "elements[" + index + "]";
     }
   }
 
@@ -848,7 +546,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
     }
 
     public String propertyName() {
-      return "elements[" + Integer.toString(index) + "]";
+      return "elements[" + index + "]";
     }
   }
 
@@ -1140,7 +838,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
     }
 
     public String propertyName() {
-      return "statements[" + Integer.toString(index) + "]";
+      return "statements[" + index + "]";
     }
   }
 
@@ -1192,7 +890,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
     }
 
     public String propertyName() {
-      return "arguments[" + Integer.toString(index) + "]";
+      return "arguments[" + index + "]";
     }
   }
 
@@ -1256,7 +954,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
     }
 
     public String propertyName() {
-      return "elements[" + Integer.toString(index) + "]";
+      return "elements[" + index + "]";
     }
   }
 
@@ -1320,7 +1018,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
     }
 
     public String propertyName() {
-      return "elements[" + Integer.toString(index) + "]";
+      return "elements[" + index + "]";
     }
   }
 
@@ -1576,7 +1274,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
     }
 
     public String propertyName() {
-      return "namedExports[" + Integer.toString(index) + "]";
+      return "namedExports[" + index + "]";
     }
   }
 
@@ -1652,7 +1350,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
     }
 
     public String propertyName() {
-      return "namedExports[" + Integer.toString(index) + "]";
+      return "namedExports[" + index + "]";
     }
   }
 
@@ -1800,7 +1498,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
     }
 
     public String propertyName() {
-      return "items[" + Integer.toString(index) + "]";
+      return "items[" + index + "]";
     }
   }
 
@@ -1828,7 +1526,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
     }
 
     public String propertyName() {
-      return "directives[" + Integer.toString(index) + "]";
+      return "directives[" + index + "]";
     }
   }
 
@@ -1844,7 +1542,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
     }
 
     public String propertyName() {
-      return "statements[" + Integer.toString(index) + "]";
+      return "statements[" + index + "]";
     }
   }
 
@@ -2064,7 +1762,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
     }
 
     public String propertyName() {
-      return "namedImports[" + Integer.toString(index) + "]";
+      return "namedImports[" + index + "]";
     }
   }
 
@@ -2344,7 +2042,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
     }
 
     public String propertyName() {
-      return "directives[" + Integer.toString(index) + "]";
+      return "directives[" + index + "]";
     }
   }
 
@@ -2360,7 +2058,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
     }
 
     public String propertyName() {
-      return "items[" + Integer.toString(index) + "]";
+      return "items[" + index + "]";
     }
   }
 
@@ -2388,7 +2086,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
     }
 
     public String propertyName() {
-      return "arguments[" + Integer.toString(index) + "]";
+      return "arguments[" + index + "]";
     }
   }
 
@@ -2404,7 +2102,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
     }
 
     public String propertyName() {
-      return "properties[" + Integer.toString(index) + "]";
+      return "properties[" + index + "]";
     }
   }
 
@@ -2420,7 +2118,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
     }
 
     public String propertyName() {
-      return "properties[" + Integer.toString(index) + "]";
+      return "properties[" + index + "]";
     }
   }
 
@@ -2436,7 +2134,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
     }
 
     public String propertyName() {
-      return "properties[" + Integer.toString(index) + "]";
+      return "properties[" + index + "]";
     }
   }
 
@@ -2464,7 +2162,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
     }
 
     public String propertyName() {
-      return "directives[" + Integer.toString(index) + "]";
+      return "directives[" + index + "]";
     }
   }
 
@@ -2480,7 +2178,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
     }
 
     public String propertyName() {
-      return "statements[" + Integer.toString(index) + "]";
+      return "statements[" + index + "]";
     }
   }
 
@@ -2628,7 +2326,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
     }
 
     public String propertyName() {
-      return "consequent[" + Integer.toString(index) + "]";
+      return "consequent[" + index + "]";
     }
   }
 
@@ -2644,7 +2342,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
     }
 
     public String propertyName() {
-      return "consequent[" + Integer.toString(index) + "]";
+      return "consequent[" + index + "]";
     }
   }
 
@@ -2672,7 +2370,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
     }
 
     public String propertyName() {
-      return "cases[" + Integer.toString(index) + "]";
+      return "cases[" + index + "]";
     }
   }
 
@@ -2700,7 +2398,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
     }
 
     public String propertyName() {
-      return "preDefaultCases[" + Integer.toString(index) + "]";
+      return "preDefaultCases[" + index + "]";
     }
   }
 
@@ -2728,7 +2426,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
     }
 
     public String propertyName() {
-      return "postDefaultCases[" + Integer.toString(index) + "]";
+      return "postDefaultCases[" + index + "]";
     }
   }
 
@@ -2768,7 +2466,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
     }
 
     public String propertyName() {
-      return "elements[" + Integer.toString(index) + "]";
+      return "elements[" + index + "]";
     }
   }
 
@@ -2928,7 +2626,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
     }
 
     public String propertyName() {
-      return "declarators[" + Integer.toString(index) + "]";
+      return "declarators[" + index + "]";
     }
   }
 
