@@ -72,9 +72,5 @@ public class ASTPathTest {
 		assertEquals(ObjectPath.identity().then(ObjectPath.identity()), ObjectPath.identity());
 		assertEquals(ObjectPath.identity(), ObjectPath.identity().then(ObjectPath.identity()));
 		assertEquals(ObjectPath.identity().then(ObjectPath.identity()), ObjectPath.identity().then(ObjectPath.identity()));
-
-		ObjectPath.Identity<Integer> x = ObjectPath.identity();
-		Maybe<Integer> res = x.apply("asdf");
-		System.out.println(res);
 	}
 }
