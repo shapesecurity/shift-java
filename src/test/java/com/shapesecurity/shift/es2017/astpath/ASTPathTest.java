@@ -80,6 +80,5 @@ public class ASTPathTest {
 		ObjectPath<BinaryExpression, Expression> rightLeft = ASTPath.BinaryExpression_Right.then(ASTPath.BinaryExpression_Left);
 
 		assertNotEquals(leftRight, rightLeft);
-		assertNotEquals(leftRight.hashCode(), rightLeft.hashCode());
 	}
 }
