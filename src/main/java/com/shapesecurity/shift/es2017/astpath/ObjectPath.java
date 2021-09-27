@@ -19,7 +19,7 @@ public abstract class ObjectPath<S, T> {
 		return new Composed<>(this, next);
 	}
 
-	public static class Identity<S> extends ObjectPath<S, S> {
+	public static final class Identity<S> extends ObjectPath<S, S> {
 		private Identity() {}
 		private static Identity INSTANCE = new Identity();
 
@@ -52,14 +52,14 @@ public abstract class ObjectPath<S, T> {
 		return (Identity<S>) Identity.INSTANCE;
 	}
 
-	public static class Composed<S, MS, MT extends MS, T> extends ObjectPath<S, T> {
+	public static final class Composed<S, MS, MT extends MS, T> extends ObjectPath<S, T> {
 		private final ObjectPath<S, MS> first;
 		private final ObjectPath<MT, T> second;
 
 		// precompute to save time in .equals
 		private final int hashCode;
 
-		public Composed(ObjectPath<S, MS> first, ObjectPath<MT, T> second) {
+		private Composed(ObjectPath<S, MS> first, ObjectPath<MT, T> second) {
 			this.first = first;
 			this.second = second;
 			// any associative operation would work here
