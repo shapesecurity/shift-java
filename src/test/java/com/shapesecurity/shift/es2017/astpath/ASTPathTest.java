@@ -58,6 +58,7 @@ public class ASTPathTest {
 				.then(ObjectPath.identity());
 
 		assertEquals(getter1, getter2);
+		assertEquals(getter1.hashCode(), getter2.hashCode());
 
 		ObjectPath<Script, SpreadElementExpression> different =
 			ASTPath.Script_Statements(0)
@@ -67,6 +68,7 @@ public class ASTPathTest {
 						.then(ASTPath.CallExpression_Arguments(2))
 				);
 		assertNotEquals(getter1, different);
+		assertNotEquals(getter1.hashCode(), different.hashCode());
 
 		assertEquals(ObjectPath.identity(), ObjectPath.identity());
 		assertEquals(ObjectPath.identity().then(ObjectPath.identity()), ObjectPath.identity());

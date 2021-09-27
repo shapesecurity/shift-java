@@ -64,7 +64,11 @@ public abstract class ObjectPath<S, T> {
 			this.second = second;
 			// any associative operation would work here
 			// as long as Identity has as its hashCode the identity of that operation
-			this.hashCode = this.first.hashCode() + this.second.hashCode();
+			// a non-commutative operation is best, though
+			// so use the one from https://www.jstor.org/stable/3613855
+			int firstHash = this.first.hashCode();
+			int secondHash = this.second.hashCode();
+			this.hashCode = (firstHash & 1) == 0 ? firstHash + secondHash : firstHash - secondHash;
 		}
 
 		@Override
