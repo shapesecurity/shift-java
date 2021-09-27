@@ -30,7 +30,8 @@ public class ASTPathTest {
 			ASTPath.Script_Statements(0)
 				.then(ASTPath.ExpressionStatement_Expression)
 				.then(ASTPath.BinaryExpression_Right)
-				.then(ASTPath.CallExpression_Arguments(1));
+				.then(ASTPath.CallExpression_Arguments(1))
+				.then(ObjectPath.identity());
 
 		assertSame(bNode, getter.apply(tree).fromJust());
 
@@ -53,7 +54,8 @@ public class ASTPathTest {
 				.then(
 					ASTPath.BinaryExpression_Right
 						.then(ASTPath.CallExpression_Arguments(1))
-				);
+				)
+				.then(ObjectPath.identity());
 
 		assertEquals(getter1, getter2);
 
@@ -65,5 +67,10 @@ public class ASTPathTest {
 						.then(ASTPath.CallExpression_Arguments(2))
 				);
 		assertNotEquals(getter1, different);
+
+		assertEquals(ObjectPath.identity(), ObjectPath.identity());
+		assertEquals(ObjectPath.identity().then(ObjectPath.identity()), ObjectPath.identity());
+		assertEquals(ObjectPath.identity(), ObjectPath.identity().then(ObjectPath.identity()));
+		assertEquals(ObjectPath.identity().then(ObjectPath.identity()), ObjectPath.identity().then(ObjectPath.identity()));
 	}
 }

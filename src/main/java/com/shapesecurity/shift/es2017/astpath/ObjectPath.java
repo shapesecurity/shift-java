@@ -19,6 +19,39 @@ public abstract class ObjectPath<S, T> {
 		return new Composed<>(this, next);
 	}
 
+	public static class Identity<S> extends ObjectPath<S, S> {
+		private Identity() {}
+		private static Identity INSTANCE = new Identity();
+
+		@Override
+		Maybe<S> apply(Object source) {
+			return (Maybe<S>) Maybe.of(source);
+		}
+
+		@Override
+		public boolean equals(Object o) {
+			if (o == null) {
+				return false;
+			}
+			if (o == INSTANCE) {
+				return true;
+			}
+			if (o instanceof Composed) {
+				return o.equals(this);
+			}
+			return false;
+		}
+
+		@Override
+		public int hashCode() {
+			return 0;
+		}
+	}
+
+	public static <S> Identity<S> identity() {
+		return (Identity<S>) Identity.INSTANCE;
+	}
+
 	public static class Composed<S, MS, MT extends MS, T> extends ObjectPath<S, T> {
 		private final ObjectPath<S, MS> first;
 		private final ObjectPath<MT, T> second;
@@ -30,6 +63,7 @@ public abstract class ObjectPath<S, T> {
 			this.first = first;
 			this.second = second;
 			// any associative operation would work here
+			// as long as Identity has as its hashCode the identity of that operation
 			this.hashCode = this.first.hashCode() + this.second.hashCode();
 		}
 
@@ -43,6 +77,9 @@ public abstract class ObjectPath<S, T> {
 		@Override
 		public boolean equals(Object o) {
 			if (this == o) return true;
+			if (o == Identity.INSTANCE) {
+				return !(new PartsIterator(this)).hasNext();
+			}
 			if (o == null || getClass() != o.getClass()) return false;
 			Composed<?, ?, ?, ?> that = (Composed<?, ?, ?, ?>) o;
 
@@ -70,23 +107,42 @@ public abstract class ObjectPath<S, T> {
 		}
 
 		// this is just used for implementing .equals
+		// it skips Identity parts, and so might be totally empty
 		private static class PartsIterator implements Iterator<ObjectPath> {
 			final Composed base;
 			boolean doneFirst = false;
 			boolean doneSecond = false;
+			ObjectPath next = null;
 			Iterator<ObjectPath> innerIterator = null;
 
 			private PartsIterator(Composed base) {
 				this.base = base;
+				this.ensureNext();
 			}
 
 			@Override
 			public boolean hasNext() {
-				return !this.doneSecond;
+				return this.next != null;
 			}
 
 			@Override
 			public ObjectPath next() {
+				ObjectPath next = this.next;
+				this.next = null;
+				this.ensureNext();
+				return next;
+			}
+
+			private void ensureNext() {
+				if (this.next != null) {
+					return;
+				}
+				do {
+					this.next = rawNext();
+				} while (this.next != null && this.next == Identity.INSTANCE);
+			}
+
+			private ObjectPath rawNext() {
 				if (!this.doneFirst) {
 					if (!(this.base.first instanceof Composed)) {
 						this.doneFirst = true;
@@ -101,7 +157,7 @@ public abstract class ObjectPath<S, T> {
 						this.innerIterator = null;
 					}
 					return next;
-				} else {
+				} else if (!this.doneSecond) {
 					if (!(this.base.second instanceof Composed)) {
 						this.doneSecond = true;
 						return this.base.second;
@@ -115,6 +171,8 @@ public abstract class ObjectPath<S, T> {
 						this.innerIterator = null;
 					}
 					return next;
+				} else {
+					return null;
 				}
 			}
 		}
