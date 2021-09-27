@@ -3,6 +3,7 @@ package com.shapesecurity.shift.es2017.astpath;
 import com.shapesecurity.functional.data.Maybe;
 import com.shapesecurity.shift.es2017.ast.BinaryExpression;
 import com.shapesecurity.shift.es2017.ast.CallExpression;
+import com.shapesecurity.shift.es2017.ast.Expression;
 import com.shapesecurity.shift.es2017.ast.ExpressionStatement;
 import com.shapesecurity.shift.es2017.ast.LiteralStringExpression;
 import com.shapesecurity.shift.es2017.ast.Script;
@@ -74,5 +75,11 @@ public class ASTPathTest {
 		assertEquals(ObjectPath.identity().then(ObjectPath.identity()), ObjectPath.identity());
 		assertEquals(ObjectPath.identity(), ObjectPath.identity().then(ObjectPath.identity()));
 		assertEquals(ObjectPath.identity().then(ObjectPath.identity()), ObjectPath.identity().then(ObjectPath.identity()));
+
+		ObjectPath<BinaryExpression, Expression> leftRight = ASTPath.BinaryExpression_Left.then(ASTPath.BinaryExpression_Right);
+		ObjectPath<BinaryExpression, Expression> rightLeft = ASTPath.BinaryExpression_Right.then(ASTPath.BinaryExpression_Left);
+
+		assertNotEquals(leftRight, rightLeft);
+		assertNotEquals(leftRight.hashCode(), rightLeft.hashCode());
 	}
 }
