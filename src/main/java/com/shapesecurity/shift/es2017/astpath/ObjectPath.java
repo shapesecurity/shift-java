@@ -5,7 +5,7 @@ import com.shapesecurity.functional.data.Maybe;
 import java.util.Iterator;
 
 public abstract class ObjectPath<S, T> {
-	abstract Maybe<T> apply(Object source);
+	abstract public Maybe<T> apply(Object source);
 
 	abstract public boolean equals(Object o);
 
@@ -24,7 +24,7 @@ public abstract class ObjectPath<S, T> {
 		private static Identity INSTANCE = new Identity();
 
 		@Override
-		Maybe<S> apply(Object source) {
+		public Maybe<S> apply(Object source) {
 			return (Maybe<S>) Maybe.of(source);
 		}
 
@@ -72,7 +72,7 @@ public abstract class ObjectPath<S, T> {
 		}
 
 		@Override
-		Maybe<T> apply(Object source) {
+		public Maybe<T> apply(Object source) {
 			return this.first.apply(source).flatMap(this.second::apply);
 		}
 

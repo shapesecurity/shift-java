@@ -484,7 +484,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
     }
 
     @Override
-    Maybe<AssignmentTargetAssignmentTargetWithDefault> apply(Object source) {
+    public Maybe<AssignmentTargetAssignmentTargetWithDefault> apply(Object source) {
       if (!(source instanceof ArrayAssignmentTarget)) return Maybe.empty();
       return ((ArrayAssignmentTarget) source).elements.index(index).orJust(Maybe.empty());
     }
@@ -496,7 +496,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
 
   public static class ArrayAssignmentTarget_Rest extends ASTPath.TrivialPath<ArrayAssignmentTarget, AssignmentTarget> {
     @Override
-    Maybe<AssignmentTarget> apply(Object source) {
+    public Maybe<AssignmentTarget> apply(Object source) {
       if (!(source instanceof ArrayAssignmentTarget)) return Maybe.empty();
       return ((ArrayAssignmentTarget) source).rest;
     }
@@ -512,7 +512,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
     }
 
     @Override
-    Maybe<BindingBindingWithDefault> apply(Object source) {
+    public Maybe<BindingBindingWithDefault> apply(Object source) {
       if (!(source instanceof ArrayBinding)) return Maybe.empty();
       return ((ArrayBinding) source).elements.index(index).orJust(Maybe.empty());
     }
@@ -524,7 +524,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
 
   public static class ArrayBinding_Rest extends ASTPath.TrivialPath<ArrayBinding, Binding> {
     @Override
-    Maybe<Binding> apply(Object source) {
+    public Maybe<Binding> apply(Object source) {
       if (!(source instanceof ArrayBinding)) return Maybe.empty();
       return ((ArrayBinding) source).rest;
     }
@@ -540,7 +540,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
     }
 
     @Override
-    Maybe<SpreadElementExpression> apply(Object source) {
+    public Maybe<SpreadElementExpression> apply(Object source) {
       if (!(source instanceof ArrayExpression)) return Maybe.empty();
       return ((ArrayExpression) source).elements.index(index).orJust(Maybe.empty());
     }
@@ -552,7 +552,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
 
   public static class ArrowExpression_IsAsync extends ASTPath.TrivialPath<ArrowExpression, Boolean> {
     @Override
-    Maybe<Boolean> apply(Object source) {
+    public Maybe<Boolean> apply(Object source) {
       if (!(source instanceof ArrowExpression)) return Maybe.empty();
       return Maybe.of(((ArrowExpression) source).isAsync);
     }
@@ -564,7 +564,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
 
   public static class ArrowExpression_Params extends ASTPath.TrivialPath<ArrowExpression, FormalParameters> {
     @Override
-    Maybe<FormalParameters> apply(Object source) {
+    public Maybe<FormalParameters> apply(Object source) {
       if (!(source instanceof ArrowExpression)) return Maybe.empty();
       return Maybe.of(((ArrowExpression) source).params);
     }
@@ -576,7 +576,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
 
   public static class ArrowExpression_Body extends ASTPath.TrivialPath<ArrowExpression, FunctionBodyExpression> {
     @Override
-    Maybe<FunctionBodyExpression> apply(Object source) {
+    public Maybe<FunctionBodyExpression> apply(Object source) {
       if (!(source instanceof ArrowExpression)) return Maybe.empty();
       return Maybe.of(((ArrowExpression) source).body);
     }
@@ -588,7 +588,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
 
   public static class AssignmentExpression_Binding extends ASTPath.TrivialPath<AssignmentExpression, AssignmentTarget> {
     @Override
-    Maybe<AssignmentTarget> apply(Object source) {
+    public Maybe<AssignmentTarget> apply(Object source) {
       if (!(source instanceof AssignmentExpression)) return Maybe.empty();
       return Maybe.of(((AssignmentExpression) source).binding);
     }
@@ -600,7 +600,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
 
   public static class AssignmentExpression_Expression extends ASTPath.TrivialPath<AssignmentExpression, Expression> {
     @Override
-    Maybe<Expression> apply(Object source) {
+    public Maybe<Expression> apply(Object source) {
       if (!(source instanceof AssignmentExpression)) return Maybe.empty();
       return Maybe.of(((AssignmentExpression) source).expression);
     }
@@ -612,7 +612,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
 
   public static class AssignmentTargetIdentifier_Name extends ASTPath.TrivialPath<AssignmentTargetIdentifier, String> {
     @Override
-    Maybe<String> apply(Object source) {
+    public Maybe<String> apply(Object source) {
       if (!(source instanceof AssignmentTargetIdentifier)) return Maybe.empty();
       return Maybe.of(((AssignmentTargetIdentifier) source).name);
     }
@@ -624,7 +624,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
 
   public static class AssignmentTargetPropertyIdentifier_Binding extends ASTPath.TrivialPath<AssignmentTargetPropertyIdentifier, AssignmentTargetIdentifier> {
     @Override
-    Maybe<AssignmentTargetIdentifier> apply(Object source) {
+    public Maybe<AssignmentTargetIdentifier> apply(Object source) {
       if (!(source instanceof AssignmentTargetPropertyIdentifier)) return Maybe.empty();
       return Maybe.of(((AssignmentTargetPropertyIdentifier) source).binding);
     }
@@ -636,7 +636,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
 
   public static class AssignmentTargetPropertyIdentifier_Init extends ASTPath.TrivialPath<AssignmentTargetPropertyIdentifier, Expression> {
     @Override
-    Maybe<Expression> apply(Object source) {
+    public Maybe<Expression> apply(Object source) {
       if (!(source instanceof AssignmentTargetPropertyIdentifier)) return Maybe.empty();
       return ((AssignmentTargetPropertyIdentifier) source).init;
     }
@@ -648,7 +648,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
 
   public static class AssignmentTargetPropertyProperty_Name extends ASTPath.TrivialPath<AssignmentTargetPropertyProperty, PropertyName> {
     @Override
-    Maybe<PropertyName> apply(Object source) {
+    public Maybe<PropertyName> apply(Object source) {
       if (!(source instanceof AssignmentTargetPropertyProperty)) return Maybe.empty();
       return Maybe.of(((AssignmentTargetPropertyProperty) source).name);
     }
@@ -660,7 +660,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
 
   public static class AssignmentTargetPropertyProperty_Binding extends ASTPath.TrivialPath<AssignmentTargetPropertyProperty, AssignmentTargetAssignmentTargetWithDefault> {
     @Override
-    Maybe<AssignmentTargetAssignmentTargetWithDefault> apply(Object source) {
+    public Maybe<AssignmentTargetAssignmentTargetWithDefault> apply(Object source) {
       if (!(source instanceof AssignmentTargetPropertyProperty)) return Maybe.empty();
       return Maybe.of(((AssignmentTargetPropertyProperty) source).binding);
     }
@@ -672,7 +672,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
 
   public static class AssignmentTargetWithDefault_Binding extends ASTPath.TrivialPath<AssignmentTargetWithDefault, AssignmentTarget> {
     @Override
-    Maybe<AssignmentTarget> apply(Object source) {
+    public Maybe<AssignmentTarget> apply(Object source) {
       if (!(source instanceof AssignmentTargetWithDefault)) return Maybe.empty();
       return Maybe.of(((AssignmentTargetWithDefault) source).binding);
     }
@@ -684,7 +684,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
 
   public static class AssignmentTargetWithDefault_Init extends ASTPath.TrivialPath<AssignmentTargetWithDefault, Expression> {
     @Override
-    Maybe<Expression> apply(Object source) {
+    public Maybe<Expression> apply(Object source) {
       if (!(source instanceof AssignmentTargetWithDefault)) return Maybe.empty();
       return Maybe.of(((AssignmentTargetWithDefault) source).init);
     }
@@ -696,7 +696,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
 
   public static class AwaitExpression_Expression extends ASTPath.TrivialPath<AwaitExpression, Expression> {
     @Override
-    Maybe<Expression> apply(Object source) {
+    public Maybe<Expression> apply(Object source) {
       if (!(source instanceof AwaitExpression)) return Maybe.empty();
       return Maybe.of(((AwaitExpression) source).expression);
     }
@@ -708,7 +708,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
 
   public static class BinaryExpression_Left extends ASTPath.TrivialPath<BinaryExpression, Expression> {
     @Override
-    Maybe<Expression> apply(Object source) {
+    public Maybe<Expression> apply(Object source) {
       if (!(source instanceof BinaryExpression)) return Maybe.empty();
       return Maybe.of(((BinaryExpression) source).left);
     }
@@ -720,7 +720,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
 
   public static class BinaryExpression_Operator extends ASTPath.TrivialPath<BinaryExpression, com.shapesecurity.shift.es2017.ast.operators.BinaryOperator> {
     @Override
-    Maybe<com.shapesecurity.shift.es2017.ast.operators.BinaryOperator> apply(Object source) {
+    public Maybe<com.shapesecurity.shift.es2017.ast.operators.BinaryOperator> apply(Object source) {
       if (!(source instanceof BinaryExpression)) return Maybe.empty();
       return Maybe.of(((BinaryExpression) source).operator);
     }
@@ -732,7 +732,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
 
   public static class BinaryExpression_Right extends ASTPath.TrivialPath<BinaryExpression, Expression> {
     @Override
-    Maybe<Expression> apply(Object source) {
+    public Maybe<Expression> apply(Object source) {
       if (!(source instanceof BinaryExpression)) return Maybe.empty();
       return Maybe.of(((BinaryExpression) source).right);
     }
@@ -744,7 +744,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
 
   public static class BindingIdentifier_Name extends ASTPath.TrivialPath<BindingIdentifier, String> {
     @Override
-    Maybe<String> apply(Object source) {
+    public Maybe<String> apply(Object source) {
       if (!(source instanceof BindingIdentifier)) return Maybe.empty();
       return Maybe.of(((BindingIdentifier) source).name);
     }
@@ -756,7 +756,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
 
   public static class BindingPropertyIdentifier_Binding extends ASTPath.TrivialPath<BindingPropertyIdentifier, BindingIdentifier> {
     @Override
-    Maybe<BindingIdentifier> apply(Object source) {
+    public Maybe<BindingIdentifier> apply(Object source) {
       if (!(source instanceof BindingPropertyIdentifier)) return Maybe.empty();
       return Maybe.of(((BindingPropertyIdentifier) source).binding);
     }
@@ -768,7 +768,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
 
   public static class BindingPropertyIdentifier_Init extends ASTPath.TrivialPath<BindingPropertyIdentifier, Expression> {
     @Override
-    Maybe<Expression> apply(Object source) {
+    public Maybe<Expression> apply(Object source) {
       if (!(source instanceof BindingPropertyIdentifier)) return Maybe.empty();
       return ((BindingPropertyIdentifier) source).init;
     }
@@ -780,7 +780,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
 
   public static class BindingPropertyProperty_Name extends ASTPath.TrivialPath<BindingPropertyProperty, PropertyName> {
     @Override
-    Maybe<PropertyName> apply(Object source) {
+    public Maybe<PropertyName> apply(Object source) {
       if (!(source instanceof BindingPropertyProperty)) return Maybe.empty();
       return Maybe.of(((BindingPropertyProperty) source).name);
     }
@@ -792,7 +792,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
 
   public static class BindingPropertyProperty_Binding extends ASTPath.TrivialPath<BindingPropertyProperty, BindingBindingWithDefault> {
     @Override
-    Maybe<BindingBindingWithDefault> apply(Object source) {
+    public Maybe<BindingBindingWithDefault> apply(Object source) {
       if (!(source instanceof BindingPropertyProperty)) return Maybe.empty();
       return Maybe.of(((BindingPropertyProperty) source).binding);
     }
@@ -804,7 +804,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
 
   public static class BindingWithDefault_Binding extends ASTPath.TrivialPath<BindingWithDefault, Binding> {
     @Override
-    Maybe<Binding> apply(Object source) {
+    public Maybe<Binding> apply(Object source) {
       if (!(source instanceof BindingWithDefault)) return Maybe.empty();
       return Maybe.of(((BindingWithDefault) source).binding);
     }
@@ -816,7 +816,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
 
   public static class BindingWithDefault_Init extends ASTPath.TrivialPath<BindingWithDefault, Expression> {
     @Override
-    Maybe<Expression> apply(Object source) {
+    public Maybe<Expression> apply(Object source) {
       if (!(source instanceof BindingWithDefault)) return Maybe.empty();
       return Maybe.of(((BindingWithDefault) source).init);
     }
@@ -832,7 +832,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
     }
 
     @Override
-    Maybe<Statement> apply(Object source) {
+    public Maybe<Statement> apply(Object source) {
       if (!(source instanceof Block)) return Maybe.empty();
       return ((Block) source).statements.index(index);
     }
@@ -844,7 +844,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
 
   public static class BlockStatement_Block extends ASTPath.TrivialPath<BlockStatement, Block> {
     @Override
-    Maybe<Block> apply(Object source) {
+    public Maybe<Block> apply(Object source) {
       if (!(source instanceof BlockStatement)) return Maybe.empty();
       return Maybe.of(((BlockStatement) source).block);
     }
@@ -856,7 +856,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
 
   public static class BreakStatement_Label extends ASTPath.TrivialPath<BreakStatement, String> {
     @Override
-    Maybe<String> apply(Object source) {
+    public Maybe<String> apply(Object source) {
       if (!(source instanceof BreakStatement)) return Maybe.empty();
       return ((BreakStatement) source).label;
     }
@@ -868,7 +868,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
 
   public static class CallExpression_Callee extends ASTPath.TrivialPath<CallExpression, ExpressionSuper> {
     @Override
-    Maybe<ExpressionSuper> apply(Object source) {
+    public Maybe<ExpressionSuper> apply(Object source) {
       if (!(source instanceof CallExpression)) return Maybe.empty();
       return Maybe.of(((CallExpression) source).callee);
     }
@@ -884,7 +884,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
     }
 
     @Override
-    Maybe<SpreadElementExpression> apply(Object source) {
+    public Maybe<SpreadElementExpression> apply(Object source) {
       if (!(source instanceof CallExpression)) return Maybe.empty();
       return ((CallExpression) source).arguments.index(index);
     }
@@ -896,7 +896,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
 
   public static class CatchClause_Binding extends ASTPath.TrivialPath<CatchClause, Binding> {
     @Override
-    Maybe<Binding> apply(Object source) {
+    public Maybe<Binding> apply(Object source) {
       if (!(source instanceof CatchClause)) return Maybe.empty();
       return Maybe.of(((CatchClause) source).binding);
     }
@@ -908,7 +908,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
 
   public static class CatchClause_Body extends ASTPath.TrivialPath<CatchClause, Block> {
     @Override
-    Maybe<Block> apply(Object source) {
+    public Maybe<Block> apply(Object source) {
       if (!(source instanceof CatchClause)) return Maybe.empty();
       return Maybe.of(((CatchClause) source).body);
     }
@@ -920,7 +920,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
 
   public static class ClassDeclaration_Name extends ASTPath.TrivialPath<ClassDeclaration, BindingIdentifier> {
     @Override
-    Maybe<BindingIdentifier> apply(Object source) {
+    public Maybe<BindingIdentifier> apply(Object source) {
       if (!(source instanceof ClassDeclaration)) return Maybe.empty();
       return Maybe.of(((ClassDeclaration) source).name);
     }
@@ -932,7 +932,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
 
   public static class ClassDeclaration_Super extends ASTPath.TrivialPath<ClassDeclaration, Expression> {
     @Override
-    Maybe<Expression> apply(Object source) {
+    public Maybe<Expression> apply(Object source) {
       if (!(source instanceof ClassDeclaration)) return Maybe.empty();
       return ((ClassDeclaration) source)._super;
     }
@@ -948,7 +948,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
     }
 
     @Override
-    Maybe<ClassElement> apply(Object source) {
+    public Maybe<ClassElement> apply(Object source) {
       if (!(source instanceof ClassDeclaration)) return Maybe.empty();
       return ((ClassDeclaration) source).elements.index(index);
     }
@@ -960,7 +960,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
 
   public static class ClassElement_IsStatic extends ASTPath.TrivialPath<ClassElement, Boolean> {
     @Override
-    Maybe<Boolean> apply(Object source) {
+    public Maybe<Boolean> apply(Object source) {
       if (!(source instanceof ClassElement)) return Maybe.empty();
       return Maybe.of(((ClassElement) source).isStatic);
     }
@@ -972,7 +972,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
 
   public static class ClassElement_Method extends ASTPath.TrivialPath<ClassElement, MethodDefinition> {
     @Override
-    Maybe<MethodDefinition> apply(Object source) {
+    public Maybe<MethodDefinition> apply(Object source) {
       if (!(source instanceof ClassElement)) return Maybe.empty();
       return Maybe.of(((ClassElement) source).method);
     }
@@ -984,7 +984,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
 
   public static class ClassExpression_Name extends ASTPath.TrivialPath<ClassExpression, BindingIdentifier> {
     @Override
-    Maybe<BindingIdentifier> apply(Object source) {
+    public Maybe<BindingIdentifier> apply(Object source) {
       if (!(source instanceof ClassExpression)) return Maybe.empty();
       return ((ClassExpression) source).name;
     }
@@ -996,7 +996,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
 
   public static class ClassExpression_Super extends ASTPath.TrivialPath<ClassExpression, Expression> {
     @Override
-    Maybe<Expression> apply(Object source) {
+    public Maybe<Expression> apply(Object source) {
       if (!(source instanceof ClassExpression)) return Maybe.empty();
       return ((ClassExpression) source)._super;
     }
@@ -1012,7 +1012,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
     }
 
     @Override
-    Maybe<ClassElement> apply(Object source) {
+    public Maybe<ClassElement> apply(Object source) {
       if (!(source instanceof ClassExpression)) return Maybe.empty();
       return ((ClassExpression) source).elements.index(index);
     }
@@ -1024,7 +1024,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
 
   public static class CompoundAssignmentExpression_Binding extends ASTPath.TrivialPath<CompoundAssignmentExpression, SimpleAssignmentTarget> {
     @Override
-    Maybe<SimpleAssignmentTarget> apply(Object source) {
+    public Maybe<SimpleAssignmentTarget> apply(Object source) {
       if (!(source instanceof CompoundAssignmentExpression)) return Maybe.empty();
       return Maybe.of(((CompoundAssignmentExpression) source).binding);
     }
@@ -1036,7 +1036,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
 
   public static class CompoundAssignmentExpression_Operator extends ASTPath.TrivialPath<CompoundAssignmentExpression, com.shapesecurity.shift.es2017.ast.operators.CompoundAssignmentOperator> {
     @Override
-    Maybe<com.shapesecurity.shift.es2017.ast.operators.CompoundAssignmentOperator> apply(Object source) {
+    public Maybe<com.shapesecurity.shift.es2017.ast.operators.CompoundAssignmentOperator> apply(Object source) {
       if (!(source instanceof CompoundAssignmentExpression)) return Maybe.empty();
       return Maybe.of(((CompoundAssignmentExpression) source).operator);
     }
@@ -1048,7 +1048,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
 
   public static class CompoundAssignmentExpression_Expression extends ASTPath.TrivialPath<CompoundAssignmentExpression, Expression> {
     @Override
-    Maybe<Expression> apply(Object source) {
+    public Maybe<Expression> apply(Object source) {
       if (!(source instanceof CompoundAssignmentExpression)) return Maybe.empty();
       return Maybe.of(((CompoundAssignmentExpression) source).expression);
     }
@@ -1060,7 +1060,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
 
   public static class ComputedMemberAssignmentTarget_Object extends ASTPath.TrivialPath<ComputedMemberAssignmentTarget, ExpressionSuper> {
     @Override
-    Maybe<ExpressionSuper> apply(Object source) {
+    public Maybe<ExpressionSuper> apply(Object source) {
       if (!(source instanceof ComputedMemberAssignmentTarget)) return Maybe.empty();
       return Maybe.of(((ComputedMemberAssignmentTarget) source).object);
     }
@@ -1072,7 +1072,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
 
   public static class ComputedMemberAssignmentTarget_Expression extends ASTPath.TrivialPath<ComputedMemberAssignmentTarget, Expression> {
     @Override
-    Maybe<Expression> apply(Object source) {
+    public Maybe<Expression> apply(Object source) {
       if (!(source instanceof ComputedMemberAssignmentTarget)) return Maybe.empty();
       return Maybe.of(((ComputedMemberAssignmentTarget) source).expression);
     }
@@ -1084,7 +1084,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
 
   public static class ComputedMemberExpression_Object extends ASTPath.TrivialPath<ComputedMemberExpression, ExpressionSuper> {
     @Override
-    Maybe<ExpressionSuper> apply(Object source) {
+    public Maybe<ExpressionSuper> apply(Object source) {
       if (!(source instanceof ComputedMemberExpression)) return Maybe.empty();
       return Maybe.of(((ComputedMemberExpression) source).object);
     }
@@ -1096,7 +1096,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
 
   public static class ComputedMemberExpression_Expression extends ASTPath.TrivialPath<ComputedMemberExpression, Expression> {
     @Override
-    Maybe<Expression> apply(Object source) {
+    public Maybe<Expression> apply(Object source) {
       if (!(source instanceof ComputedMemberExpression)) return Maybe.empty();
       return Maybe.of(((ComputedMemberExpression) source).expression);
     }
@@ -1108,7 +1108,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
 
   public static class ComputedPropertyName_Expression extends ASTPath.TrivialPath<ComputedPropertyName, Expression> {
     @Override
-    Maybe<Expression> apply(Object source) {
+    public Maybe<Expression> apply(Object source) {
       if (!(source instanceof ComputedPropertyName)) return Maybe.empty();
       return Maybe.of(((ComputedPropertyName) source).expression);
     }
@@ -1120,7 +1120,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
 
   public static class ConditionalExpression_Test extends ASTPath.TrivialPath<ConditionalExpression, Expression> {
     @Override
-    Maybe<Expression> apply(Object source) {
+    public Maybe<Expression> apply(Object source) {
       if (!(source instanceof ConditionalExpression)) return Maybe.empty();
       return Maybe.of(((ConditionalExpression) source).test);
     }
@@ -1132,7 +1132,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
 
   public static class ConditionalExpression_Consequent extends ASTPath.TrivialPath<ConditionalExpression, Expression> {
     @Override
-    Maybe<Expression> apply(Object source) {
+    public Maybe<Expression> apply(Object source) {
       if (!(source instanceof ConditionalExpression)) return Maybe.empty();
       return Maybe.of(((ConditionalExpression) source).consequent);
     }
@@ -1144,7 +1144,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
 
   public static class ConditionalExpression_Alternate extends ASTPath.TrivialPath<ConditionalExpression, Expression> {
     @Override
-    Maybe<Expression> apply(Object source) {
+    public Maybe<Expression> apply(Object source) {
       if (!(source instanceof ConditionalExpression)) return Maybe.empty();
       return Maybe.of(((ConditionalExpression) source).alternate);
     }
@@ -1156,7 +1156,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
 
   public static class ContinueStatement_Label extends ASTPath.TrivialPath<ContinueStatement, String> {
     @Override
-    Maybe<String> apply(Object source) {
+    public Maybe<String> apply(Object source) {
       if (!(source instanceof ContinueStatement)) return Maybe.empty();
       return ((ContinueStatement) source).label;
     }
@@ -1168,7 +1168,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
 
   public static class DataProperty_Name extends ASTPath.TrivialPath<DataProperty, PropertyName> {
     @Override
-    Maybe<PropertyName> apply(Object source) {
+    public Maybe<PropertyName> apply(Object source) {
       if (!(source instanceof DataProperty)) return Maybe.empty();
       return Maybe.of(((DataProperty) source).name);
     }
@@ -1180,7 +1180,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
 
   public static class DataProperty_Expression extends ASTPath.TrivialPath<DataProperty, Expression> {
     @Override
-    Maybe<Expression> apply(Object source) {
+    public Maybe<Expression> apply(Object source) {
       if (!(source instanceof DataProperty)) return Maybe.empty();
       return Maybe.of(((DataProperty) source).expression);
     }
@@ -1192,7 +1192,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
 
   public static class Directive_RawValue extends ASTPath.TrivialPath<Directive, String> {
     @Override
-    Maybe<String> apply(Object source) {
+    public Maybe<String> apply(Object source) {
       if (!(source instanceof Directive)) return Maybe.empty();
       return Maybe.of(((Directive) source).rawValue);
     }
@@ -1204,7 +1204,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
 
   public static class DoWhileStatement_Body extends ASTPath.TrivialPath<DoWhileStatement, Statement> {
     @Override
-    Maybe<Statement> apply(Object source) {
+    public Maybe<Statement> apply(Object source) {
       if (!(source instanceof DoWhileStatement)) return Maybe.empty();
       return Maybe.of(((DoWhileStatement) source).body);
     }
@@ -1216,7 +1216,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
 
   public static class DoWhileStatement_Test extends ASTPath.TrivialPath<DoWhileStatement, Expression> {
     @Override
-    Maybe<Expression> apply(Object source) {
+    public Maybe<Expression> apply(Object source) {
       if (!(source instanceof DoWhileStatement)) return Maybe.empty();
       return Maybe.of(((DoWhileStatement) source).test);
     }
@@ -1228,7 +1228,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
 
   public static class Export_Declaration extends ASTPath.TrivialPath<Export, FunctionDeclarationClassDeclarationVariableDeclaration> {
     @Override
-    Maybe<FunctionDeclarationClassDeclarationVariableDeclaration> apply(Object source) {
+    public Maybe<FunctionDeclarationClassDeclarationVariableDeclaration> apply(Object source) {
       if (!(source instanceof Export)) return Maybe.empty();
       return Maybe.of(((Export) source).declaration);
     }
@@ -1240,7 +1240,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
 
   public static class ExportAllFrom_ModuleSpecifier extends ASTPath.TrivialPath<ExportAllFrom, String> {
     @Override
-    Maybe<String> apply(Object source) {
+    public Maybe<String> apply(Object source) {
       if (!(source instanceof ExportAllFrom)) return Maybe.empty();
       return Maybe.of(((ExportAllFrom) source).moduleSpecifier);
     }
@@ -1252,7 +1252,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
 
   public static class ExportDefault_Body extends ASTPath.TrivialPath<ExportDefault, FunctionDeclarationClassDeclarationExpression> {
     @Override
-    Maybe<FunctionDeclarationClassDeclarationExpression> apply(Object source) {
+    public Maybe<FunctionDeclarationClassDeclarationExpression> apply(Object source) {
       if (!(source instanceof ExportDefault)) return Maybe.empty();
       return Maybe.of(((ExportDefault) source).body);
     }
@@ -1268,7 +1268,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
     }
 
     @Override
-    Maybe<ExportFromSpecifier> apply(Object source) {
+    public Maybe<ExportFromSpecifier> apply(Object source) {
       if (!(source instanceof ExportFrom)) return Maybe.empty();
       return ((ExportFrom) source).namedExports.index(index);
     }
@@ -1280,7 +1280,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
 
   public static class ExportFrom_ModuleSpecifier extends ASTPath.TrivialPath<ExportFrom, String> {
     @Override
-    Maybe<String> apply(Object source) {
+    public Maybe<String> apply(Object source) {
       if (!(source instanceof ExportFrom)) return Maybe.empty();
       return Maybe.of(((ExportFrom) source).moduleSpecifier);
     }
@@ -1292,7 +1292,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
 
   public static class ExportFromSpecifier_Name extends ASTPath.TrivialPath<ExportFromSpecifier, String> {
     @Override
-    Maybe<String> apply(Object source) {
+    public Maybe<String> apply(Object source) {
       if (!(source instanceof ExportFromSpecifier)) return Maybe.empty();
       return Maybe.of(((ExportFromSpecifier) source).name);
     }
@@ -1304,7 +1304,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
 
   public static class ExportFromSpecifier_ExportedName extends ASTPath.TrivialPath<ExportFromSpecifier, String> {
     @Override
-    Maybe<String> apply(Object source) {
+    public Maybe<String> apply(Object source) {
       if (!(source instanceof ExportFromSpecifier)) return Maybe.empty();
       return ((ExportFromSpecifier) source).exportedName;
     }
@@ -1316,7 +1316,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
 
   public static class ExportLocalSpecifier_Name extends ASTPath.TrivialPath<ExportLocalSpecifier, IdentifierExpression> {
     @Override
-    Maybe<IdentifierExpression> apply(Object source) {
+    public Maybe<IdentifierExpression> apply(Object source) {
       if (!(source instanceof ExportLocalSpecifier)) return Maybe.empty();
       return Maybe.of(((ExportLocalSpecifier) source).name);
     }
@@ -1328,7 +1328,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
 
   public static class ExportLocalSpecifier_ExportedName extends ASTPath.TrivialPath<ExportLocalSpecifier, String> {
     @Override
-    Maybe<String> apply(Object source) {
+    public Maybe<String> apply(Object source) {
       if (!(source instanceof ExportLocalSpecifier)) return Maybe.empty();
       return ((ExportLocalSpecifier) source).exportedName;
     }
@@ -1344,7 +1344,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
     }
 
     @Override
-    Maybe<ExportLocalSpecifier> apply(Object source) {
+    public Maybe<ExportLocalSpecifier> apply(Object source) {
       if (!(source instanceof ExportLocals)) return Maybe.empty();
       return ((ExportLocals) source).namedExports.index(index);
     }
@@ -1356,7 +1356,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
 
   public static class ExpressionStatement_Expression extends ASTPath.TrivialPath<ExpressionStatement, Expression> {
     @Override
-    Maybe<Expression> apply(Object source) {
+    public Maybe<Expression> apply(Object source) {
       if (!(source instanceof ExpressionStatement)) return Maybe.empty();
       return Maybe.of(((ExpressionStatement) source).expression);
     }
@@ -1368,7 +1368,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
 
   public static class ForInStatement_Left extends ASTPath.TrivialPath<ForInStatement, VariableDeclarationAssignmentTarget> {
     @Override
-    Maybe<VariableDeclarationAssignmentTarget> apply(Object source) {
+    public Maybe<VariableDeclarationAssignmentTarget> apply(Object source) {
       if (!(source instanceof ForInStatement)) return Maybe.empty();
       return Maybe.of(((ForInStatement) source).left);
     }
@@ -1380,7 +1380,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
 
   public static class ForInStatement_Right extends ASTPath.TrivialPath<ForInStatement, Expression> {
     @Override
-    Maybe<Expression> apply(Object source) {
+    public Maybe<Expression> apply(Object source) {
       if (!(source instanceof ForInStatement)) return Maybe.empty();
       return Maybe.of(((ForInStatement) source).right);
     }
@@ -1392,7 +1392,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
 
   public static class ForInStatement_Body extends ASTPath.TrivialPath<ForInStatement, Statement> {
     @Override
-    Maybe<Statement> apply(Object source) {
+    public Maybe<Statement> apply(Object source) {
       if (!(source instanceof ForInStatement)) return Maybe.empty();
       return Maybe.of(((ForInStatement) source).body);
     }
@@ -1404,7 +1404,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
 
   public static class ForOfStatement_Left extends ASTPath.TrivialPath<ForOfStatement, VariableDeclarationAssignmentTarget> {
     @Override
-    Maybe<VariableDeclarationAssignmentTarget> apply(Object source) {
+    public Maybe<VariableDeclarationAssignmentTarget> apply(Object source) {
       if (!(source instanceof ForOfStatement)) return Maybe.empty();
       return Maybe.of(((ForOfStatement) source).left);
     }
@@ -1416,7 +1416,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
 
   public static class ForOfStatement_Right extends ASTPath.TrivialPath<ForOfStatement, Expression> {
     @Override
-    Maybe<Expression> apply(Object source) {
+    public Maybe<Expression> apply(Object source) {
       if (!(source instanceof ForOfStatement)) return Maybe.empty();
       return Maybe.of(((ForOfStatement) source).right);
     }
@@ -1428,7 +1428,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
 
   public static class ForOfStatement_Body extends ASTPath.TrivialPath<ForOfStatement, Statement> {
     @Override
-    Maybe<Statement> apply(Object source) {
+    public Maybe<Statement> apply(Object source) {
       if (!(source instanceof ForOfStatement)) return Maybe.empty();
       return Maybe.of(((ForOfStatement) source).body);
     }
@@ -1440,7 +1440,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
 
   public static class ForStatement_Init extends ASTPath.TrivialPath<ForStatement, VariableDeclarationExpression> {
     @Override
-    Maybe<VariableDeclarationExpression> apply(Object source) {
+    public Maybe<VariableDeclarationExpression> apply(Object source) {
       if (!(source instanceof ForStatement)) return Maybe.empty();
       return ((ForStatement) source).init;
     }
@@ -1452,7 +1452,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
 
   public static class ForStatement_Test extends ASTPath.TrivialPath<ForStatement, Expression> {
     @Override
-    Maybe<Expression> apply(Object source) {
+    public Maybe<Expression> apply(Object source) {
       if (!(source instanceof ForStatement)) return Maybe.empty();
       return ((ForStatement) source).test;
     }
@@ -1464,7 +1464,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
 
   public static class ForStatement_Update extends ASTPath.TrivialPath<ForStatement, Expression> {
     @Override
-    Maybe<Expression> apply(Object source) {
+    public Maybe<Expression> apply(Object source) {
       if (!(source instanceof ForStatement)) return Maybe.empty();
       return ((ForStatement) source).update;
     }
@@ -1476,7 +1476,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
 
   public static class ForStatement_Body extends ASTPath.TrivialPath<ForStatement, Statement> {
     @Override
-    Maybe<Statement> apply(Object source) {
+    public Maybe<Statement> apply(Object source) {
       if (!(source instanceof ForStatement)) return Maybe.empty();
       return Maybe.of(((ForStatement) source).body);
     }
@@ -1492,7 +1492,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
     }
 
     @Override
-    Maybe<Parameter> apply(Object source) {
+    public Maybe<Parameter> apply(Object source) {
       if (!(source instanceof FormalParameters)) return Maybe.empty();
       return ((FormalParameters) source).items.index(index);
     }
@@ -1504,7 +1504,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
 
   public static class FormalParameters_Rest extends ASTPath.TrivialPath<FormalParameters, Binding> {
     @Override
-    Maybe<Binding> apply(Object source) {
+    public Maybe<Binding> apply(Object source) {
       if (!(source instanceof FormalParameters)) return Maybe.empty();
       return ((FormalParameters) source).rest;
     }
@@ -1520,7 +1520,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
     }
 
     @Override
-    Maybe<Directive> apply(Object source) {
+    public Maybe<Directive> apply(Object source) {
       if (!(source instanceof FunctionBody)) return Maybe.empty();
       return ((FunctionBody) source).directives.index(index);
     }
@@ -1536,7 +1536,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
     }
 
     @Override
-    Maybe<Statement> apply(Object source) {
+    public Maybe<Statement> apply(Object source) {
       if (!(source instanceof FunctionBody)) return Maybe.empty();
       return ((FunctionBody) source).statements.index(index);
     }
@@ -1548,7 +1548,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
 
   public static class FunctionDeclaration_IsAsync extends ASTPath.TrivialPath<FunctionDeclaration, Boolean> {
     @Override
-    Maybe<Boolean> apply(Object source) {
+    public Maybe<Boolean> apply(Object source) {
       if (!(source instanceof FunctionDeclaration)) return Maybe.empty();
       return Maybe.of(((FunctionDeclaration) source).isAsync);
     }
@@ -1560,7 +1560,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
 
   public static class FunctionDeclaration_IsGenerator extends ASTPath.TrivialPath<FunctionDeclaration, Boolean> {
     @Override
-    Maybe<Boolean> apply(Object source) {
+    public Maybe<Boolean> apply(Object source) {
       if (!(source instanceof FunctionDeclaration)) return Maybe.empty();
       return Maybe.of(((FunctionDeclaration) source).isGenerator);
     }
@@ -1572,7 +1572,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
 
   public static class FunctionDeclaration_Name extends ASTPath.TrivialPath<FunctionDeclaration, BindingIdentifier> {
     @Override
-    Maybe<BindingIdentifier> apply(Object source) {
+    public Maybe<BindingIdentifier> apply(Object source) {
       if (!(source instanceof FunctionDeclaration)) return Maybe.empty();
       return Maybe.of(((FunctionDeclaration) source).name);
     }
@@ -1584,7 +1584,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
 
   public static class FunctionDeclaration_Params extends ASTPath.TrivialPath<FunctionDeclaration, FormalParameters> {
     @Override
-    Maybe<FormalParameters> apply(Object source) {
+    public Maybe<FormalParameters> apply(Object source) {
       if (!(source instanceof FunctionDeclaration)) return Maybe.empty();
       return Maybe.of(((FunctionDeclaration) source).params);
     }
@@ -1596,7 +1596,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
 
   public static class FunctionDeclaration_Body extends ASTPath.TrivialPath<FunctionDeclaration, FunctionBody> {
     @Override
-    Maybe<FunctionBody> apply(Object source) {
+    public Maybe<FunctionBody> apply(Object source) {
       if (!(source instanceof FunctionDeclaration)) return Maybe.empty();
       return Maybe.of(((FunctionDeclaration) source).body);
     }
@@ -1608,7 +1608,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
 
   public static class FunctionExpression_IsAsync extends ASTPath.TrivialPath<FunctionExpression, Boolean> {
     @Override
-    Maybe<Boolean> apply(Object source) {
+    public Maybe<Boolean> apply(Object source) {
       if (!(source instanceof FunctionExpression)) return Maybe.empty();
       return Maybe.of(((FunctionExpression) source).isAsync);
     }
@@ -1620,7 +1620,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
 
   public static class FunctionExpression_IsGenerator extends ASTPath.TrivialPath<FunctionExpression, Boolean> {
     @Override
-    Maybe<Boolean> apply(Object source) {
+    public Maybe<Boolean> apply(Object source) {
       if (!(source instanceof FunctionExpression)) return Maybe.empty();
       return Maybe.of(((FunctionExpression) source).isGenerator);
     }
@@ -1632,7 +1632,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
 
   public static class FunctionExpression_Name extends ASTPath.TrivialPath<FunctionExpression, BindingIdentifier> {
     @Override
-    Maybe<BindingIdentifier> apply(Object source) {
+    public Maybe<BindingIdentifier> apply(Object source) {
       if (!(source instanceof FunctionExpression)) return Maybe.empty();
       return ((FunctionExpression) source).name;
     }
@@ -1644,7 +1644,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
 
   public static class FunctionExpression_Params extends ASTPath.TrivialPath<FunctionExpression, FormalParameters> {
     @Override
-    Maybe<FormalParameters> apply(Object source) {
+    public Maybe<FormalParameters> apply(Object source) {
       if (!(source instanceof FunctionExpression)) return Maybe.empty();
       return Maybe.of(((FunctionExpression) source).params);
     }
@@ -1656,7 +1656,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
 
   public static class FunctionExpression_Body extends ASTPath.TrivialPath<FunctionExpression, FunctionBody> {
     @Override
-    Maybe<FunctionBody> apply(Object source) {
+    public Maybe<FunctionBody> apply(Object source) {
       if (!(source instanceof FunctionExpression)) return Maybe.empty();
       return Maybe.of(((FunctionExpression) source).body);
     }
@@ -1668,7 +1668,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
 
   public static class Getter_Name extends ASTPath.TrivialPath<Getter, PropertyName> {
     @Override
-    Maybe<PropertyName> apply(Object source) {
+    public Maybe<PropertyName> apply(Object source) {
       if (!(source instanceof Getter)) return Maybe.empty();
       return Maybe.of(((Getter) source).name);
     }
@@ -1680,7 +1680,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
 
   public static class Getter_Body extends ASTPath.TrivialPath<Getter, FunctionBody> {
     @Override
-    Maybe<FunctionBody> apply(Object source) {
+    public Maybe<FunctionBody> apply(Object source) {
       if (!(source instanceof Getter)) return Maybe.empty();
       return Maybe.of(((Getter) source).body);
     }
@@ -1692,7 +1692,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
 
   public static class IdentifierExpression_Name extends ASTPath.TrivialPath<IdentifierExpression, String> {
     @Override
-    Maybe<String> apply(Object source) {
+    public Maybe<String> apply(Object source) {
       if (!(source instanceof IdentifierExpression)) return Maybe.empty();
       return Maybe.of(((IdentifierExpression) source).name);
     }
@@ -1704,7 +1704,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
 
   public static class IfStatement_Test extends ASTPath.TrivialPath<IfStatement, Expression> {
     @Override
-    Maybe<Expression> apply(Object source) {
+    public Maybe<Expression> apply(Object source) {
       if (!(source instanceof IfStatement)) return Maybe.empty();
       return Maybe.of(((IfStatement) source).test);
     }
@@ -1716,7 +1716,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
 
   public static class IfStatement_Consequent extends ASTPath.TrivialPath<IfStatement, Statement> {
     @Override
-    Maybe<Statement> apply(Object source) {
+    public Maybe<Statement> apply(Object source) {
       if (!(source instanceof IfStatement)) return Maybe.empty();
       return Maybe.of(((IfStatement) source).consequent);
     }
@@ -1728,7 +1728,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
 
   public static class IfStatement_Alternate extends ASTPath.TrivialPath<IfStatement, Statement> {
     @Override
-    Maybe<Statement> apply(Object source) {
+    public Maybe<Statement> apply(Object source) {
       if (!(source instanceof IfStatement)) return Maybe.empty();
       return ((IfStatement) source).alternate;
     }
@@ -1740,7 +1740,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
 
   public static class Import_DefaultBinding extends ASTPath.TrivialPath<Import, BindingIdentifier> {
     @Override
-    Maybe<BindingIdentifier> apply(Object source) {
+    public Maybe<BindingIdentifier> apply(Object source) {
       if (!(source instanceof Import)) return Maybe.empty();
       return ((Import) source).defaultBinding;
     }
@@ -1756,7 +1756,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
     }
 
     @Override
-    Maybe<ImportSpecifier> apply(Object source) {
+    public Maybe<ImportSpecifier> apply(Object source) {
       if (!(source instanceof Import)) return Maybe.empty();
       return ((Import) source).namedImports.index(index);
     }
@@ -1768,7 +1768,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
 
   public static class Import_ModuleSpecifier extends ASTPath.TrivialPath<Import, String> {
     @Override
-    Maybe<String> apply(Object source) {
+    public Maybe<String> apply(Object source) {
       if (!(source instanceof Import)) return Maybe.empty();
       return Maybe.of(((Import) source).moduleSpecifier);
     }
@@ -1780,7 +1780,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
 
   public static class ImportNamespace_DefaultBinding extends ASTPath.TrivialPath<ImportNamespace, BindingIdentifier> {
     @Override
-    Maybe<BindingIdentifier> apply(Object source) {
+    public Maybe<BindingIdentifier> apply(Object source) {
       if (!(source instanceof ImportNamespace)) return Maybe.empty();
       return ((ImportNamespace) source).defaultBinding;
     }
@@ -1792,7 +1792,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
 
   public static class ImportNamespace_NamespaceBinding extends ASTPath.TrivialPath<ImportNamespace, BindingIdentifier> {
     @Override
-    Maybe<BindingIdentifier> apply(Object source) {
+    public Maybe<BindingIdentifier> apply(Object source) {
       if (!(source instanceof ImportNamespace)) return Maybe.empty();
       return Maybe.of(((ImportNamespace) source).namespaceBinding);
     }
@@ -1804,7 +1804,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
 
   public static class ImportNamespace_ModuleSpecifier extends ASTPath.TrivialPath<ImportNamespace, String> {
     @Override
-    Maybe<String> apply(Object source) {
+    public Maybe<String> apply(Object source) {
       if (!(source instanceof ImportNamespace)) return Maybe.empty();
       return Maybe.of(((ImportNamespace) source).moduleSpecifier);
     }
@@ -1816,7 +1816,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
 
   public static class ImportSpecifier_Name extends ASTPath.TrivialPath<ImportSpecifier, String> {
     @Override
-    Maybe<String> apply(Object source) {
+    public Maybe<String> apply(Object source) {
       if (!(source instanceof ImportSpecifier)) return Maybe.empty();
       return ((ImportSpecifier) source).name;
     }
@@ -1828,7 +1828,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
 
   public static class ImportSpecifier_Binding extends ASTPath.TrivialPath<ImportSpecifier, BindingIdentifier> {
     @Override
-    Maybe<BindingIdentifier> apply(Object source) {
+    public Maybe<BindingIdentifier> apply(Object source) {
       if (!(source instanceof ImportSpecifier)) return Maybe.empty();
       return Maybe.of(((ImportSpecifier) source).binding);
     }
@@ -1840,7 +1840,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
 
   public static class LabeledStatement_Label extends ASTPath.TrivialPath<LabeledStatement, String> {
     @Override
-    Maybe<String> apply(Object source) {
+    public Maybe<String> apply(Object source) {
       if (!(source instanceof LabeledStatement)) return Maybe.empty();
       return Maybe.of(((LabeledStatement) source).label);
     }
@@ -1852,7 +1852,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
 
   public static class LabeledStatement_Body extends ASTPath.TrivialPath<LabeledStatement, Statement> {
     @Override
-    Maybe<Statement> apply(Object source) {
+    public Maybe<Statement> apply(Object source) {
       if (!(source instanceof LabeledStatement)) return Maybe.empty();
       return Maybe.of(((LabeledStatement) source).body);
     }
@@ -1864,7 +1864,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
 
   public static class LiteralBooleanExpression_Value extends ASTPath.TrivialPath<LiteralBooleanExpression, Boolean> {
     @Override
-    Maybe<Boolean> apply(Object source) {
+    public Maybe<Boolean> apply(Object source) {
       if (!(source instanceof LiteralBooleanExpression)) return Maybe.empty();
       return Maybe.of(((LiteralBooleanExpression) source).value);
     }
@@ -1876,7 +1876,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
 
   public static class LiteralNumericExpression_Value extends ASTPath.TrivialPath<LiteralNumericExpression, Double> {
     @Override
-    Maybe<Double> apply(Object source) {
+    public Maybe<Double> apply(Object source) {
       if (!(source instanceof LiteralNumericExpression)) return Maybe.empty();
       return Maybe.of(((LiteralNumericExpression) source).value);
     }
@@ -1888,7 +1888,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
 
   public static class LiteralRegExpExpression_Pattern extends ASTPath.TrivialPath<LiteralRegExpExpression, String> {
     @Override
-    Maybe<String> apply(Object source) {
+    public Maybe<String> apply(Object source) {
       if (!(source instanceof LiteralRegExpExpression)) return Maybe.empty();
       return Maybe.of(((LiteralRegExpExpression) source).pattern);
     }
@@ -1900,7 +1900,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
 
   public static class LiteralRegExpExpression_Global extends ASTPath.TrivialPath<LiteralRegExpExpression, Boolean> {
     @Override
-    Maybe<Boolean> apply(Object source) {
+    public Maybe<Boolean> apply(Object source) {
       if (!(source instanceof LiteralRegExpExpression)) return Maybe.empty();
       return Maybe.of(((LiteralRegExpExpression) source).global);
     }
@@ -1912,7 +1912,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
 
   public static class LiteralRegExpExpression_IgnoreCase extends ASTPath.TrivialPath<LiteralRegExpExpression, Boolean> {
     @Override
-    Maybe<Boolean> apply(Object source) {
+    public Maybe<Boolean> apply(Object source) {
       if (!(source instanceof LiteralRegExpExpression)) return Maybe.empty();
       return Maybe.of(((LiteralRegExpExpression) source).ignoreCase);
     }
@@ -1924,7 +1924,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
 
   public static class LiteralRegExpExpression_MultiLine extends ASTPath.TrivialPath<LiteralRegExpExpression, Boolean> {
     @Override
-    Maybe<Boolean> apply(Object source) {
+    public Maybe<Boolean> apply(Object source) {
       if (!(source instanceof LiteralRegExpExpression)) return Maybe.empty();
       return Maybe.of(((LiteralRegExpExpression) source).multiLine);
     }
@@ -1936,7 +1936,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
 
   public static class LiteralRegExpExpression_Sticky extends ASTPath.TrivialPath<LiteralRegExpExpression, Boolean> {
     @Override
-    Maybe<Boolean> apply(Object source) {
+    public Maybe<Boolean> apply(Object source) {
       if (!(source instanceof LiteralRegExpExpression)) return Maybe.empty();
       return Maybe.of(((LiteralRegExpExpression) source).sticky);
     }
@@ -1948,7 +1948,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
 
   public static class LiteralRegExpExpression_Unicode extends ASTPath.TrivialPath<LiteralRegExpExpression, Boolean> {
     @Override
-    Maybe<Boolean> apply(Object source) {
+    public Maybe<Boolean> apply(Object source) {
       if (!(source instanceof LiteralRegExpExpression)) return Maybe.empty();
       return Maybe.of(((LiteralRegExpExpression) source).unicode);
     }
@@ -1960,7 +1960,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
 
   public static class LiteralStringExpression_Value extends ASTPath.TrivialPath<LiteralStringExpression, String> {
     @Override
-    Maybe<String> apply(Object source) {
+    public Maybe<String> apply(Object source) {
       if (!(source instanceof LiteralStringExpression)) return Maybe.empty();
       return Maybe.of(((LiteralStringExpression) source).value);
     }
@@ -1972,7 +1972,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
 
   public static class Method_IsAsync extends ASTPath.TrivialPath<Method, Boolean> {
     @Override
-    Maybe<Boolean> apply(Object source) {
+    public Maybe<Boolean> apply(Object source) {
       if (!(source instanceof Method)) return Maybe.empty();
       return Maybe.of(((Method) source).isAsync);
     }
@@ -1984,7 +1984,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
 
   public static class Method_IsGenerator extends ASTPath.TrivialPath<Method, Boolean> {
     @Override
-    Maybe<Boolean> apply(Object source) {
+    public Maybe<Boolean> apply(Object source) {
       if (!(source instanceof Method)) return Maybe.empty();
       return Maybe.of(((Method) source).isGenerator);
     }
@@ -1996,7 +1996,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
 
   public static class Method_Name extends ASTPath.TrivialPath<Method, PropertyName> {
     @Override
-    Maybe<PropertyName> apply(Object source) {
+    public Maybe<PropertyName> apply(Object source) {
       if (!(source instanceof Method)) return Maybe.empty();
       return Maybe.of(((Method) source).name);
     }
@@ -2008,7 +2008,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
 
   public static class Method_Params extends ASTPath.TrivialPath<Method, FormalParameters> {
     @Override
-    Maybe<FormalParameters> apply(Object source) {
+    public Maybe<FormalParameters> apply(Object source) {
       if (!(source instanceof Method)) return Maybe.empty();
       return Maybe.of(((Method) source).params);
     }
@@ -2020,7 +2020,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
 
   public static class Method_Body extends ASTPath.TrivialPath<Method, FunctionBody> {
     @Override
-    Maybe<FunctionBody> apply(Object source) {
+    public Maybe<FunctionBody> apply(Object source) {
       if (!(source instanceof Method)) return Maybe.empty();
       return Maybe.of(((Method) source).body);
     }
@@ -2036,7 +2036,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
     }
 
     @Override
-    Maybe<Directive> apply(Object source) {
+    public Maybe<Directive> apply(Object source) {
       if (!(source instanceof Module)) return Maybe.empty();
       return ((Module) source).directives.index(index);
     }
@@ -2052,7 +2052,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
     }
 
     @Override
-    Maybe<ImportDeclarationExportDeclarationStatement> apply(Object source) {
+    public Maybe<ImportDeclarationExportDeclarationStatement> apply(Object source) {
       if (!(source instanceof Module)) return Maybe.empty();
       return ((Module) source).items.index(index);
     }
@@ -2064,7 +2064,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
 
   public static class NewExpression_Callee extends ASTPath.TrivialPath<NewExpression, Expression> {
     @Override
-    Maybe<Expression> apply(Object source) {
+    public Maybe<Expression> apply(Object source) {
       if (!(source instanceof NewExpression)) return Maybe.empty();
       return Maybe.of(((NewExpression) source).callee);
     }
@@ -2080,7 +2080,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
     }
 
     @Override
-    Maybe<SpreadElementExpression> apply(Object source) {
+    public Maybe<SpreadElementExpression> apply(Object source) {
       if (!(source instanceof NewExpression)) return Maybe.empty();
       return ((NewExpression) source).arguments.index(index);
     }
@@ -2096,7 +2096,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
     }
 
     @Override
-    Maybe<AssignmentTargetProperty> apply(Object source) {
+    public Maybe<AssignmentTargetProperty> apply(Object source) {
       if (!(source instanceof ObjectAssignmentTarget)) return Maybe.empty();
       return ((ObjectAssignmentTarget) source).properties.index(index);
     }
@@ -2112,7 +2112,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
     }
 
     @Override
-    Maybe<BindingProperty> apply(Object source) {
+    public Maybe<BindingProperty> apply(Object source) {
       if (!(source instanceof ObjectBinding)) return Maybe.empty();
       return ((ObjectBinding) source).properties.index(index);
     }
@@ -2128,7 +2128,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
     }
 
     @Override
-    Maybe<ObjectProperty> apply(Object source) {
+    public Maybe<ObjectProperty> apply(Object source) {
       if (!(source instanceof ObjectExpression)) return Maybe.empty();
       return ((ObjectExpression) source).properties.index(index);
     }
@@ -2140,7 +2140,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
 
   public static class ReturnStatement_Expression extends ASTPath.TrivialPath<ReturnStatement, Expression> {
     @Override
-    Maybe<Expression> apply(Object source) {
+    public Maybe<Expression> apply(Object source) {
       if (!(source instanceof ReturnStatement)) return Maybe.empty();
       return ((ReturnStatement) source).expression;
     }
@@ -2156,7 +2156,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
     }
 
     @Override
-    Maybe<Directive> apply(Object source) {
+    public Maybe<Directive> apply(Object source) {
       if (!(source instanceof Script)) return Maybe.empty();
       return ((Script) source).directives.index(index);
     }
@@ -2172,7 +2172,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
     }
 
     @Override
-    Maybe<Statement> apply(Object source) {
+    public Maybe<Statement> apply(Object source) {
       if (!(source instanceof Script)) return Maybe.empty();
       return ((Script) source).statements.index(index);
     }
@@ -2184,7 +2184,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
 
   public static class Setter_Name extends ASTPath.TrivialPath<Setter, PropertyName> {
     @Override
-    Maybe<PropertyName> apply(Object source) {
+    public Maybe<PropertyName> apply(Object source) {
       if (!(source instanceof Setter)) return Maybe.empty();
       return Maybe.of(((Setter) source).name);
     }
@@ -2196,7 +2196,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
 
   public static class Setter_Param extends ASTPath.TrivialPath<Setter, Parameter> {
     @Override
-    Maybe<Parameter> apply(Object source) {
+    public Maybe<Parameter> apply(Object source) {
       if (!(source instanceof Setter)) return Maybe.empty();
       return Maybe.of(((Setter) source).param);
     }
@@ -2208,7 +2208,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
 
   public static class Setter_Body extends ASTPath.TrivialPath<Setter, FunctionBody> {
     @Override
-    Maybe<FunctionBody> apply(Object source) {
+    public Maybe<FunctionBody> apply(Object source) {
       if (!(source instanceof Setter)) return Maybe.empty();
       return Maybe.of(((Setter) source).body);
     }
@@ -2220,7 +2220,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
 
   public static class ShorthandProperty_Name extends ASTPath.TrivialPath<ShorthandProperty, IdentifierExpression> {
     @Override
-    Maybe<IdentifierExpression> apply(Object source) {
+    public Maybe<IdentifierExpression> apply(Object source) {
       if (!(source instanceof ShorthandProperty)) return Maybe.empty();
       return Maybe.of(((ShorthandProperty) source).name);
     }
@@ -2232,7 +2232,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
 
   public static class SpreadElement_Expression extends ASTPath.TrivialPath<SpreadElement, Expression> {
     @Override
-    Maybe<Expression> apply(Object source) {
+    public Maybe<Expression> apply(Object source) {
       if (!(source instanceof SpreadElement)) return Maybe.empty();
       return Maybe.of(((SpreadElement) source).expression);
     }
@@ -2244,7 +2244,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
 
   public static class StaticMemberAssignmentTarget_Object extends ASTPath.TrivialPath<StaticMemberAssignmentTarget, ExpressionSuper> {
     @Override
-    Maybe<ExpressionSuper> apply(Object source) {
+    public Maybe<ExpressionSuper> apply(Object source) {
       if (!(source instanceof StaticMemberAssignmentTarget)) return Maybe.empty();
       return Maybe.of(((StaticMemberAssignmentTarget) source).object);
     }
@@ -2256,7 +2256,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
 
   public static class StaticMemberAssignmentTarget_Property extends ASTPath.TrivialPath<StaticMemberAssignmentTarget, String> {
     @Override
-    Maybe<String> apply(Object source) {
+    public Maybe<String> apply(Object source) {
       if (!(source instanceof StaticMemberAssignmentTarget)) return Maybe.empty();
       return Maybe.of(((StaticMemberAssignmentTarget) source).property);
     }
@@ -2268,7 +2268,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
 
   public static class StaticMemberExpression_Object extends ASTPath.TrivialPath<StaticMemberExpression, ExpressionSuper> {
     @Override
-    Maybe<ExpressionSuper> apply(Object source) {
+    public Maybe<ExpressionSuper> apply(Object source) {
       if (!(source instanceof StaticMemberExpression)) return Maybe.empty();
       return Maybe.of(((StaticMemberExpression) source).object);
     }
@@ -2280,7 +2280,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
 
   public static class StaticMemberExpression_Property extends ASTPath.TrivialPath<StaticMemberExpression, String> {
     @Override
-    Maybe<String> apply(Object source) {
+    public Maybe<String> apply(Object source) {
       if (!(source instanceof StaticMemberExpression)) return Maybe.empty();
       return Maybe.of(((StaticMemberExpression) source).property);
     }
@@ -2292,7 +2292,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
 
   public static class StaticPropertyName_Value extends ASTPath.TrivialPath<StaticPropertyName, String> {
     @Override
-    Maybe<String> apply(Object source) {
+    public Maybe<String> apply(Object source) {
       if (!(source instanceof StaticPropertyName)) return Maybe.empty();
       return Maybe.of(((StaticPropertyName) source).value);
     }
@@ -2304,7 +2304,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
 
   public static class SwitchCase_Test extends ASTPath.TrivialPath<SwitchCase, Expression> {
     @Override
-    Maybe<Expression> apply(Object source) {
+    public Maybe<Expression> apply(Object source) {
       if (!(source instanceof SwitchCase)) return Maybe.empty();
       return Maybe.of(((SwitchCase) source).test);
     }
@@ -2320,7 +2320,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
     }
 
     @Override
-    Maybe<Statement> apply(Object source) {
+    public Maybe<Statement> apply(Object source) {
       if (!(source instanceof SwitchCase)) return Maybe.empty();
       return ((SwitchCase) source).consequent.index(index);
     }
@@ -2336,7 +2336,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
     }
 
     @Override
-    Maybe<Statement> apply(Object source) {
+    public Maybe<Statement> apply(Object source) {
       if (!(source instanceof SwitchDefault)) return Maybe.empty();
       return ((SwitchDefault) source).consequent.index(index);
     }
@@ -2348,7 +2348,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
 
   public static class SwitchStatement_Discriminant extends ASTPath.TrivialPath<SwitchStatement, Expression> {
     @Override
-    Maybe<Expression> apply(Object source) {
+    public Maybe<Expression> apply(Object source) {
       if (!(source instanceof SwitchStatement)) return Maybe.empty();
       return Maybe.of(((SwitchStatement) source).discriminant);
     }
@@ -2364,7 +2364,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
     }
 
     @Override
-    Maybe<SwitchCase> apply(Object source) {
+    public Maybe<SwitchCase> apply(Object source) {
       if (!(source instanceof SwitchStatement)) return Maybe.empty();
       return ((SwitchStatement) source).cases.index(index);
     }
@@ -2376,7 +2376,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
 
   public static class SwitchStatementWithDefault_Discriminant extends ASTPath.TrivialPath<SwitchStatementWithDefault, Expression> {
     @Override
-    Maybe<Expression> apply(Object source) {
+    public Maybe<Expression> apply(Object source) {
       if (!(source instanceof SwitchStatementWithDefault)) return Maybe.empty();
       return Maybe.of(((SwitchStatementWithDefault) source).discriminant);
     }
@@ -2392,7 +2392,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
     }
 
     @Override
-    Maybe<SwitchCase> apply(Object source) {
+    public Maybe<SwitchCase> apply(Object source) {
       if (!(source instanceof SwitchStatementWithDefault)) return Maybe.empty();
       return ((SwitchStatementWithDefault) source).preDefaultCases.index(index);
     }
@@ -2404,7 +2404,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
 
   public static class SwitchStatementWithDefault_DefaultCase extends ASTPath.TrivialPath<SwitchStatementWithDefault, SwitchDefault> {
     @Override
-    Maybe<SwitchDefault> apply(Object source) {
+    public Maybe<SwitchDefault> apply(Object source) {
       if (!(source instanceof SwitchStatementWithDefault)) return Maybe.empty();
       return Maybe.of(((SwitchStatementWithDefault) source).defaultCase);
     }
@@ -2420,7 +2420,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
     }
 
     @Override
-    Maybe<SwitchCase> apply(Object source) {
+    public Maybe<SwitchCase> apply(Object source) {
       if (!(source instanceof SwitchStatementWithDefault)) return Maybe.empty();
       return ((SwitchStatementWithDefault) source).postDefaultCases.index(index);
     }
@@ -2432,7 +2432,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
 
   public static class TemplateElement_RawValue extends ASTPath.TrivialPath<TemplateElement, String> {
     @Override
-    Maybe<String> apply(Object source) {
+    public Maybe<String> apply(Object source) {
       if (!(source instanceof TemplateElement)) return Maybe.empty();
       return Maybe.of(((TemplateElement) source).rawValue);
     }
@@ -2444,7 +2444,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
 
   public static class TemplateExpression_Tag extends ASTPath.TrivialPath<TemplateExpression, Expression> {
     @Override
-    Maybe<Expression> apply(Object source) {
+    public Maybe<Expression> apply(Object source) {
       if (!(source instanceof TemplateExpression)) return Maybe.empty();
       return ((TemplateExpression) source).tag;
     }
@@ -2460,7 +2460,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
     }
 
     @Override
-    Maybe<ExpressionTemplateElement> apply(Object source) {
+    public Maybe<ExpressionTemplateElement> apply(Object source) {
       if (!(source instanceof TemplateExpression)) return Maybe.empty();
       return ((TemplateExpression) source).elements.index(index);
     }
@@ -2472,7 +2472,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
 
   public static class ThrowStatement_Expression extends ASTPath.TrivialPath<ThrowStatement, Expression> {
     @Override
-    Maybe<Expression> apply(Object source) {
+    public Maybe<Expression> apply(Object source) {
       if (!(source instanceof ThrowStatement)) return Maybe.empty();
       return Maybe.of(((ThrowStatement) source).expression);
     }
@@ -2484,7 +2484,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
 
   public static class TryCatchStatement_Body extends ASTPath.TrivialPath<TryCatchStatement, Block> {
     @Override
-    Maybe<Block> apply(Object source) {
+    public Maybe<Block> apply(Object source) {
       if (!(source instanceof TryCatchStatement)) return Maybe.empty();
       return Maybe.of(((TryCatchStatement) source).body);
     }
@@ -2496,7 +2496,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
 
   public static class TryCatchStatement_CatchClause extends ASTPath.TrivialPath<TryCatchStatement, CatchClause> {
     @Override
-    Maybe<CatchClause> apply(Object source) {
+    public Maybe<CatchClause> apply(Object source) {
       if (!(source instanceof TryCatchStatement)) return Maybe.empty();
       return Maybe.of(((TryCatchStatement) source).catchClause);
     }
@@ -2508,7 +2508,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
 
   public static class TryFinallyStatement_Body extends ASTPath.TrivialPath<TryFinallyStatement, Block> {
     @Override
-    Maybe<Block> apply(Object source) {
+    public Maybe<Block> apply(Object source) {
       if (!(source instanceof TryFinallyStatement)) return Maybe.empty();
       return Maybe.of(((TryFinallyStatement) source).body);
     }
@@ -2520,7 +2520,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
 
   public static class TryFinallyStatement_CatchClause extends ASTPath.TrivialPath<TryFinallyStatement, CatchClause> {
     @Override
-    Maybe<CatchClause> apply(Object source) {
+    public Maybe<CatchClause> apply(Object source) {
       if (!(source instanceof TryFinallyStatement)) return Maybe.empty();
       return ((TryFinallyStatement) source).catchClause;
     }
@@ -2532,7 +2532,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
 
   public static class TryFinallyStatement_Finalizer extends ASTPath.TrivialPath<TryFinallyStatement, Block> {
     @Override
-    Maybe<Block> apply(Object source) {
+    public Maybe<Block> apply(Object source) {
       if (!(source instanceof TryFinallyStatement)) return Maybe.empty();
       return Maybe.of(((TryFinallyStatement) source).finalizer);
     }
@@ -2544,7 +2544,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
 
   public static class UnaryExpression_Operator extends ASTPath.TrivialPath<UnaryExpression, com.shapesecurity.shift.es2017.ast.operators.UnaryOperator> {
     @Override
-    Maybe<com.shapesecurity.shift.es2017.ast.operators.UnaryOperator> apply(Object source) {
+    public Maybe<com.shapesecurity.shift.es2017.ast.operators.UnaryOperator> apply(Object source) {
       if (!(source instanceof UnaryExpression)) return Maybe.empty();
       return Maybe.of(((UnaryExpression) source).operator);
     }
@@ -2556,7 +2556,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
 
   public static class UnaryExpression_Operand extends ASTPath.TrivialPath<UnaryExpression, Expression> {
     @Override
-    Maybe<Expression> apply(Object source) {
+    public Maybe<Expression> apply(Object source) {
       if (!(source instanceof UnaryExpression)) return Maybe.empty();
       return Maybe.of(((UnaryExpression) source).operand);
     }
@@ -2568,7 +2568,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
 
   public static class UpdateExpression_IsPrefix extends ASTPath.TrivialPath<UpdateExpression, Boolean> {
     @Override
-    Maybe<Boolean> apply(Object source) {
+    public Maybe<Boolean> apply(Object source) {
       if (!(source instanceof UpdateExpression)) return Maybe.empty();
       return Maybe.of(((UpdateExpression) source).isPrefix);
     }
@@ -2580,7 +2580,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
 
   public static class UpdateExpression_Operator extends ASTPath.TrivialPath<UpdateExpression, com.shapesecurity.shift.es2017.ast.operators.UpdateOperator> {
     @Override
-    Maybe<com.shapesecurity.shift.es2017.ast.operators.UpdateOperator> apply(Object source) {
+    public Maybe<com.shapesecurity.shift.es2017.ast.operators.UpdateOperator> apply(Object source) {
       if (!(source instanceof UpdateExpression)) return Maybe.empty();
       return Maybe.of(((UpdateExpression) source).operator);
     }
@@ -2592,7 +2592,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
 
   public static class UpdateExpression_Operand extends ASTPath.TrivialPath<UpdateExpression, SimpleAssignmentTarget> {
     @Override
-    Maybe<SimpleAssignmentTarget> apply(Object source) {
+    public Maybe<SimpleAssignmentTarget> apply(Object source) {
       if (!(source instanceof UpdateExpression)) return Maybe.empty();
       return Maybe.of(((UpdateExpression) source).operand);
     }
@@ -2604,7 +2604,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
 
   public static class VariableDeclaration_Kind extends ASTPath.TrivialPath<VariableDeclaration, VariableDeclarationKind> {
     @Override
-    Maybe<VariableDeclarationKind> apply(Object source) {
+    public Maybe<VariableDeclarationKind> apply(Object source) {
       if (!(source instanceof VariableDeclaration)) return Maybe.empty();
       return Maybe.of(((VariableDeclaration) source).kind);
     }
@@ -2620,7 +2620,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
     }
 
     @Override
-    Maybe<VariableDeclarator> apply(Object source) {
+    public Maybe<VariableDeclarator> apply(Object source) {
       if (!(source instanceof VariableDeclaration)) return Maybe.empty();
       return ((VariableDeclaration) source).declarators.index(index);
     }
@@ -2632,7 +2632,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
 
   public static class VariableDeclarationStatement_Declaration extends ASTPath.TrivialPath<VariableDeclarationStatement, VariableDeclaration> {
     @Override
-    Maybe<VariableDeclaration> apply(Object source) {
+    public Maybe<VariableDeclaration> apply(Object source) {
       if (!(source instanceof VariableDeclarationStatement)) return Maybe.empty();
       return Maybe.of(((VariableDeclarationStatement) source).declaration);
     }
@@ -2644,7 +2644,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
 
   public static class VariableDeclarator_Binding extends ASTPath.TrivialPath<VariableDeclarator, Binding> {
     @Override
-    Maybe<Binding> apply(Object source) {
+    public Maybe<Binding> apply(Object source) {
       if (!(source instanceof VariableDeclarator)) return Maybe.empty();
       return Maybe.of(((VariableDeclarator) source).binding);
     }
@@ -2656,7 +2656,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
 
   public static class VariableDeclarator_Init extends ASTPath.TrivialPath<VariableDeclarator, Expression> {
     @Override
-    Maybe<Expression> apply(Object source) {
+    public Maybe<Expression> apply(Object source) {
       if (!(source instanceof VariableDeclarator)) return Maybe.empty();
       return ((VariableDeclarator) source).init;
     }
@@ -2668,7 +2668,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
 
   public static class WhileStatement_Test extends ASTPath.TrivialPath<WhileStatement, Expression> {
     @Override
-    Maybe<Expression> apply(Object source) {
+    public Maybe<Expression> apply(Object source) {
       if (!(source instanceof WhileStatement)) return Maybe.empty();
       return Maybe.of(((WhileStatement) source).test);
     }
@@ -2680,7 +2680,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
 
   public static class WhileStatement_Body extends ASTPath.TrivialPath<WhileStatement, Statement> {
     @Override
-    Maybe<Statement> apply(Object source) {
+    public Maybe<Statement> apply(Object source) {
       if (!(source instanceof WhileStatement)) return Maybe.empty();
       return Maybe.of(((WhileStatement) source).body);
     }
@@ -2692,7 +2692,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
 
   public static class WithStatement_Object extends ASTPath.TrivialPath<WithStatement, Expression> {
     @Override
-    Maybe<Expression> apply(Object source) {
+    public Maybe<Expression> apply(Object source) {
       if (!(source instanceof WithStatement)) return Maybe.empty();
       return Maybe.of(((WithStatement) source).object);
     }
@@ -2704,7 +2704,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
 
   public static class WithStatement_Body extends ASTPath.TrivialPath<WithStatement, Statement> {
     @Override
-    Maybe<Statement> apply(Object source) {
+    public Maybe<Statement> apply(Object source) {
       if (!(source instanceof WithStatement)) return Maybe.empty();
       return Maybe.of(((WithStatement) source).body);
     }
@@ -2716,7 +2716,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
 
   public static class YieldExpression_Expression extends ASTPath.TrivialPath<YieldExpression, Expression> {
     @Override
-    Maybe<Expression> apply(Object source) {
+    public Maybe<Expression> apply(Object source) {
       if (!(source instanceof YieldExpression)) return Maybe.empty();
       return ((YieldExpression) source).expression;
     }
@@ -2728,7 +2728,7 @@ public abstract class ASTPath<S, T> extends ObjectPath<S, T> {
 
   public static class YieldGeneratorExpression_Expression extends ASTPath.TrivialPath<YieldGeneratorExpression, Expression> {
     @Override
-    Maybe<Expression> apply(Object source) {
+    public Maybe<Expression> apply(Object source) {
       if (!(source instanceof YieldGeneratorExpression)) return Maybe.empty();
       return Maybe.of(((YieldGeneratorExpression) source).expression);
     }
