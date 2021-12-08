@@ -1,25 +1,35 @@
 package com.shapesecurity.shift.es2017.astpath;
 
+import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.functional.data.Maybe;
 
 import java.util.Iterator;
+import java.util.Objects;
 
-public abstract class ObjectPath<S, T> {
-	abstract public Maybe<T> apply(Object source);
-
-	abstract public boolean equals(Object o);
-
-	abstract public int hashCode();
+public interface ObjectPath<S, T> {
+	Maybe<T> apply(Object source);
 
 	// in principle, there's nothing wrong with having your S2 be a supertype of T, rather than a subtype
 	// (just as `apply` takes an Object, the maximal supertype, and then checks that it is in fact an S)
 	// but in our actual ASTPath use case, the sources are never supertypes
 	// so we don't need to allow that case, and can express a more useful bound
-	public <S2 extends T, T2> ObjectPath<S, T2> then(ObjectPath<S2, T2> next) {
+	default <S2 extends T, T2> ObjectPath<S, T2> then(ObjectPath<S2, T2> next) {
 		return new Composed<>(this, next);
 	}
 
-	public static final class Identity<S> extends ObjectPath<S, S> {
+	static <S> Identity<S> identity() {
+		return (Identity<S>) Identity.INSTANCE;
+	}
+
+	static <S> Get<S> get() {
+		return (Get<S>) Get.INSTANCE;
+	}
+
+	static <S> Index<S> index(int index) {
+		return new Index<>(index);
+	}
+
+	final class Identity<S> implements ObjectPath<S, S> {
 		private Identity() {}
 		private static Identity INSTANCE = new Identity();
 
@@ -48,11 +58,75 @@ public abstract class ObjectPath<S, T> {
 		}
 	}
 
-	public static <S> Identity<S> identity() {
-		return (Identity<S>) Identity.INSTANCE;
+	final class Get<S> implements ObjectPath<Maybe<S>, S> {
+		private Get() {}
+		private static Get INSTANCE = new Get<>();
+
+		@Override
+		public Maybe<S> apply(Object source) {
+			if (!(source instanceof Maybe)) {
+				return Maybe.empty();
+			}
+			return (Maybe) source;
+		}
+
+		@Override
+		public boolean equals(Object o) {
+			if (o == null) {
+				return false;
+			}
+			if (o == INSTANCE) {
+				return true;
+			}
+			if (o instanceof Composed) {
+				return o.equals(this);
+			}
+			return false;
+		}
+
+		@Override
+		public int hashCode() {
+			return 0;
+		}
 	}
 
-	public static final class Composed<S, MS, MT extends MS, T> extends ObjectPath<S, T> {
+	final class Index<T> implements ObjectPath<ImmutableList<T>, T> {
+		final int index;
+
+		private Index(int index) {
+			this.index = index;
+		}
+
+		@Override
+		public Maybe<T> apply(Object source) {
+			if (!(source instanceof ImmutableList)) return Maybe.empty();
+			return ((ImmutableList<T>) source).index(this.index);
+		}
+
+		@Override
+		public boolean equals(Object o) {
+			if (o == null) {
+				return false;
+			}
+			if (o == this) {
+				return true;
+			}
+			if (o instanceof Composed) {
+				return o.equals(this);
+			}
+			if (getClass() != o.getClass()) {
+				return false;
+			}
+			return this.index == ((Index<?>) o).index;
+		}
+
+		@Override
+		public int hashCode() {
+			return Objects.hash(index);
+		}
+	}
+
+	final class Composed<S, MS, MT extends MS, T> implements ObjectPath<S, T> {
 		private final ObjectPath<S, MS> first;
 		private final ObjectPath<MT, T> second;
 
