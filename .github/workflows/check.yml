@@ -28,7 +28,7 @@ jobs:
 
     strategy:
       matrix:
-        java: [8]
+        java: [11]
 
     steps:
       - name: Checkout
