@@ -50,7 +50,8 @@
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>4.12</version>
+			<version>4.13.2</version>
+			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.intellij</groupId>
@@ -76,7 +77,7 @@
 		<dependency>
 			<groupId>com.shapesecurity</groupId>
 			<artifactId>shape-functional-java</artifactId>
-			<version>2.5.4</version>
+			<version>3.1.0</version>
 		</dependency>
         <dependency>
             <groupId>com.google.code.findbugs</groupId>
@@ -86,7 +87,7 @@
 		<dependency>
 			<groupId>org.yaml</groupId>
 			<artifactId>snakeyaml</artifactId>
-			<version>1.16</version>
+			<version>1.30</version>
 		</dependency>
     </dependencies>
 
