@@ -1,13 +1,13 @@
 {
   "private": true,
   "scripts": {
-    "build": "mkdir -p ../generated-sources && (for i in scripts/build/*; do node $i; done)",
+    "build": "for i in scripts/build/*; do node $i; done",
     "clean": "rm -rf ../generated-sources",
     "lint": "eslint ."
   },
   "dependencies": {
-    "shift-spec-idl": "2018.0.0",
-    "shift-spec": "2018.0.0",
+    "shift-spec-idl": "2018.0.1",
+    "shift-spec": "2018.0.2",
     "eslint": "^5.8.0",
     "shift-spec-consumer": "^1.0.1"
   }

@@ -289,7 +289,10 @@ package com.shapesecurity.shift.es${year}.ast;
 
 // actually generate the files
 // first, Java classes (abstract and concrete)
-for (let n of Array.from(nodes.keys()).filter(n => !isJavaInterfaceType(n))) {
+for (let n of nodes.keys()) {
+  if (isJavaInterfaceType(n)) {
+    continue;
+  }
   let node = nodes.get(n);
 
   let imp = node.parents.filter(isJavaInterfaceType);
@@ -359,7 +362,10 @@ ${hashCode}${extra}
 }
 
 // then, Java interfaces
-for (let n of Array.from(nodes.keys()).filter(isJavaInterfaceType)) {
+for (let n of nodes.keys()) {
+  if (!isJavaInterfaceType(n)) {
+    continue;
+  }
   let node = nodes.get(n);
 
   let extra = extraMethods.has(n) ? extraMethods.get(n) : '';
