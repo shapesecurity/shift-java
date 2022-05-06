@@ -5,17 +5,25 @@ on: [pull_request]
 jobs:
   pre:
     name: Prerequisites
+    if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
 
       - name: Enforce CLA signature
-        run: curl https://raw.githubusercontent.com/shapesecurity/CLA/HEAD/cla-travis.sh | bash
+        env:
+          COMMIT_RANGE: ${{ github.event.pull_request.base.sha }}...${{ github.event.pull_request.head.sha }}
+        run: curl https://raw.githubusercontent.com/shapesecurity/CLA/HEAD/cla-check.sh | bash
 
   test:
     name: Test
+    needs: pre
+    if: |
+      !cancelled() && !failure()
     runs-on: ubuntu-latest
 
     strategy:
