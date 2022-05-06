@@ -19,8 +19,8 @@
 let fs = require('fs');
 
 const { ensureDir, nodes, enums, makeHeader, year } = require('../lib/utilities.js');
+const { outDir } = require('../lib/out-dir.js');
 
-const outDir = 'out/';
 const astDir = 'ast/';
 ensureDir(outDir + astDir);
 

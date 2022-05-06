@@ -19,10 +19,10 @@
 let fs = require('fs');
 
 const { ensureDir, makeHeader, sanitize, year } = require('../lib/utilities.js');
+const { outDir } = require('../lib/out-dir.js');
 
 const spec = require('shift-spec').default;
 
-const outDir = 'out/';
 const reducerDir = 'reducer/';
 ensureDir(outDir + reducerDir);
 

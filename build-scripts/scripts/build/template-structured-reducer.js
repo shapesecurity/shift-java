@@ -20,8 +20,8 @@ let fs = require('fs');
 
 const { ensureDir, nodes, makeHeader, isStatefulType, sanitize, toJavaType, year } = require('../lib/utilities.js');
 const { makeEquals } = require('../lib/clone-utilities.js');
+const { outDir } = require('../lib/out-dir.js');
 
-const outDir = 'out/';
 const templateDir = 'template/';
 ensureDir(outDir + templateDir);
 

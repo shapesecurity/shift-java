@@ -4,8 +4,8 @@
 let fs = require('fs');
 
 const { ensureDir, nodes, makeHeader, sanitize, year } = require('../lib/utilities.js');
+const { outDir } = require('../lib/out-dir.js');
 
-const outDir = 'out/';
 const pathDir = 'astpath/';
 ensureDir(outDir + pathDir);
 

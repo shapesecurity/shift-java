@@ -78,9 +78,7 @@ function makeHeader(filename) {
 }
 
 function ensureDir(dir) {
-  try {
-    fs.mkdirSync(dir);
-  } catch (ignored) {}
+  fs.mkdirSync(dir, { recursive: true });
 }
 
 module.exports = {
