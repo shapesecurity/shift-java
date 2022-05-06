@@ -22,6 +22,7 @@ import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.functional.data.Maybe;
 import com.shapesecurity.functional.data.Monoid;
 import com.shapesecurity.shift.es2018.ast.*;
+import com.shapesecurity.shift.es2018.ast.Module;
 import com.shapesecurity.shift.es2018.reducer.MonoidalReducer;
 import javax.annotation.Nonnull;
 

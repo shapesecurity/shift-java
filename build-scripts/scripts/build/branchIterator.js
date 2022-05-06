@@ -41,6 +41,7 @@ import com.shapesecurity.functional.Pair;
 import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.functional.data.Maybe;
 import com.shapesecurity.shift.es${year}.ast.*;
+import com.shapesecurity.shift.es${year}.ast.Module;
 import com.shapesecurity.shift.es${year}.ast.SpreadElementExpression;
 import javax.annotation.Nonnull;
 

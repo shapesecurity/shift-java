@@ -34,6 +34,7 @@ import com.google.gson.*;
 import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.functional.data.Maybe;
 import com.shapesecurity.shift.es${year}.ast.*;
+import com.shapesecurity.shift.es${year}.ast.Module;
 import com.shapesecurity.shift.es${year}.ast.operators.BinaryOperator;
 import com.shapesecurity.shift.es${year}.ast.operators.CompoundAssignmentOperator;
 import com.shapesecurity.shift.es${year}.ast.operators.UnaryOperator;
