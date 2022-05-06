@@ -41,12 +41,27 @@ jobs:
         with:
           java-version: ${{ matrix.java }}
 
+      - name: Set up node
+        uses: actions/setup-node@v2
+        with:
+          node-version: 18
+
       - name: Cache Maven packages
         uses: actions/cache@v2
         with:
           path: ~/.m2
           key: ${{ runner.os }}-${{ matrix.java }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-${{ matrix.java }}-m2
+
+      - name: Build sources
+        working-directory: build-scripts
+        run: |
+          npm ci
+          npm run clean
+          npm run build
+
+      - name: Enforce git clean
+        run: if [ ! -z "$(git status --porcelain)" ]; then echo "repo is dirty:"; git status --porcelain; exit 1; fi
 
       - name: Build and test with Maven
         run: mvn --batch-mode --threads 8 clean verify

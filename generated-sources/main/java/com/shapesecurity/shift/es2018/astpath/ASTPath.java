@@ -332,6 +332,8 @@ public abstract class ASTPath<S, T> implements ObjectPath<S, T> {
 
   public static final SpreadElement_Expression SpreadElement_Expression = new SpreadElement_Expression();
 
+  public static final SpreadProperty_Expression SpreadProperty_Expression = new SpreadProperty_Expression();
+
   public static final StaticMemberAssignmentTarget_Object StaticMemberAssignmentTarget_Object = new StaticMemberAssignmentTarget_Object();
 
   public static final StaticMemberAssignmentTarget_Property StaticMemberAssignmentTarget_Property = new StaticMemberAssignmentTarget_Property();
@@ -2449,6 +2451,20 @@ public abstract class ASTPath<S, T> implements ObjectPath<S, T> {
     public Maybe<Expression> apply(Object source) {
       if (!(source instanceof SpreadElement)) return Maybe.empty();
       return Maybe.of(((SpreadElement) source).expression);
+    }
+
+    public String propertyName() {
+      return "expression";
+    }
+  }
+
+  public static class SpreadProperty_Expression extends ASTPath<SpreadProperty, Expression> {
+    private SpreadProperty_Expression() {}
+
+    @Override
+    public Maybe<Expression> apply(Object source) {
+      if (!(source instanceof SpreadProperty)) return Maybe.empty();
+      return Maybe.of(((SpreadProperty) source).expression);
     }
 
     public String propertyName() {
