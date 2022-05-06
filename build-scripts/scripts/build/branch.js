@@ -36,6 +36,7 @@ package com.shapesecurity.shift.es${year}.path;
 
 import com.shapesecurity.functional.data.Maybe;
 import com.shapesecurity.shift.es${year}.ast.*;
+import com.shapesecurity.shift.es${year}.ast.Module;
 
 import java.util.Objects;
 

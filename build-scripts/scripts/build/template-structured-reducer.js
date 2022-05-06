@@ -54,6 +54,7 @@ import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.functional.data.Maybe;
 import com.shapesecurity.functional.data.NonEmptyImmutableList;
 import com.shapesecurity.shift.es${year}.ast.*;
+import com.shapesecurity.shift.es${year}.ast.Module;
 import com.shapesecurity.shift.es${year}.reducer.ThunkedReducer;
 
 import javax.annotation.Nonnull;

@@ -50,13 +50,8 @@
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>4.12</version>
-		</dependency>
-		<dependency>
-			<groupId>com.intellij</groupId>
-			<artifactId>annotations</artifactId>
-			<version>5.1</version>
-			<scope>compile</scope>
+			<version>4.13.2</version>
+			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.google.guava</groupId>
@@ -76,7 +71,7 @@
 		<dependency>
 			<groupId>com.shapesecurity</groupId>
 			<artifactId>shape-functional-java</artifactId>
-			<version>2.5.4</version>
+			<version>3.1.0</version>
 		</dependency>
         <dependency>
             <groupId>com.google.code.findbugs</groupId>
@@ -86,12 +81,12 @@
 		<dependency>
 			<groupId>org.yaml</groupId>
 			<artifactId>snakeyaml</artifactId>
-			<version>1.16</version>
+			<version>1.30</version>
 		</dependency>
     </dependencies>
 
 	<properties>
-		<jdk.version>1.8</jdk.version>
+		<jdk.version>11</jdk.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<gpg.skip>true</gpg.skip>
 	</properties>
@@ -119,29 +114,6 @@
 						<phase>verify</phase>
 						<goals>
 							<goal>sign</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.jacoco</groupId>
-				<artifactId>jacoco-maven-plugin</artifactId>
-				<version>0.7.2.201409121644</version>
-				<executions>
-					<execution>
-						<id>pre-unit-test</id>
-						<goals>
-							<goal>prepare-agent</goal>
-						</goals>
-						<configuration>
-							<propertyName>JACOCO_AGENT_OPT</propertyName>
-						</configuration>
-					</execution>
-					<execution>
-						<id>post-unit-test</id>
-						<phase>test</phase>
-						<goals>
-							<goal>report</goal>
 						</goals>
 					</execution>
 				</executions>
@@ -193,7 +165,6 @@
 				<artifactId>maven-surefire-plugin</artifactId>
 				<version>2.17</version>
 				<configuration><!-- Sets the VM argument line used when unit tests are run. -->
-					<argLine>${JACOCO_AGENT_OPT}</argLine>
 					<excludes>
 						<exclude>**/BenchmarkTest.java</exclude>
 					</excludes>

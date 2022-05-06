@@ -21,6 +21,7 @@ package com.shapesecurity.shift.es2018.path;
 
 import com.shapesecurity.functional.data.Maybe;
 import com.shapesecurity.shift.es2018.ast.*;
+import com.shapesecurity.shift.es2018.ast.Module;
 
 import java.util.Objects;
 

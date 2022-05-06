@@ -25,6 +25,7 @@ import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.functional.data.Maybe;
 import com.shapesecurity.functional.data.NonEmptyImmutableList;
 import com.shapesecurity.shift.es2018.ast.*;
+import com.shapesecurity.shift.es2018.ast.Module;
 import com.shapesecurity.shift.es2018.reducer.ThunkedReducer;
 
 import javax.annotation.Nonnull;

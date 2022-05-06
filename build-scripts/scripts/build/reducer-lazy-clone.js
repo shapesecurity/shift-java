@@ -33,6 +33,7 @@ package com.shapesecurity.shift.es${year}.reducer;
 import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.functional.data.Maybe;
 import com.shapesecurity.shift.es${year}.ast.*;
+import com.shapesecurity.shift.es${year}.ast.Module;
 import javax.annotation.Nonnull;
 
 public class LazyReconstructingReducer implements Reducer<Node> {
