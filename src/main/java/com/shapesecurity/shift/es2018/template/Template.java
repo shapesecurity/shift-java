@@ -128,11 +128,15 @@ public class Template {
 		}
 	}
 
-	static final Pattern commentRegex = Pattern.compile("^# ([^#]+) (?:# ([^#]+) )?#$");
+	static final Pattern COMMENT_REGEX = Pattern.compile("^# ([^#]+) (?:# ([^#]+) )?#$");
+	static final Pattern SUSPICIOUS_COMMENT_REGEX = Pattern.compile("(^\\s*#)|(#\\s*$)");
 	@NotNull
 	private static Maybe<Pair<String, Predicate<Node>>> defaultParseComment(String text) {
-		Matcher matcher = commentRegex.matcher(text);
+		Matcher matcher = COMMENT_REGEX.matcher(text);
 		if (!matcher.matches()) {
+			if (SUSPICIOUS_COMMENT_REGEX.matcher(text).find()) {
+				throw new IllegalArgumentException("This comment looks kind of like a template comment, but not precisely; this is probably a bug.");
+			}
 			return Maybe.empty();
 		}
 

@@ -128,4 +128,11 @@ public class ApplyTemplateTest extends TestCase {
 
 		checkFails(source, newNodes);
 	}
+
+	public void testSuspiciousComment() throws JsError {
+		String source = " a + /*# label # */ b";
+		HashMap<String, F<Node, Node>> newNodes = new HashMap<>();
+
+		checkFails(source, newNodes);
+	}
 }
