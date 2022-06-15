@@ -14,6 +14,7 @@ import junit.framework.TestCase;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static com.shapesecurity.shift.es2018.template.Template.findNodes;
 
@@ -105,4 +106,38 @@ public class ApplyStructuredTemplateTest extends TestCase {
 
 		assertEquals(Parser.parseModule(expected), moduleTemplate.applyStructured(values));
 	}
+
+	public void testSimpleExample() throws JsError {
+		String source = "" +
+			"f(" +
+			"  /*# for each x of xs #*/" +
+			"    /*# x::arg #*/ replaceme," +
+			")";
+
+		Map<String, Boolean> conditions = Map.of();
+		Map<String, List<ReduceStructured.TemplateValues>> lists = Map.of(
+			"xs",
+			List.of(
+				new ReduceStructured.TemplateValues(
+					Map.of(),
+					Map.of(),
+					Map.of("arg", node -> new IdentifierExpression("x_1"))
+				),
+				new ReduceStructured.TemplateValues(
+					Map.of(),
+					Map.of(),
+					Map.of("arg", node -> new IdentifierExpression("x_2"))
+				)
+			)
+		);
+		Map<String, F<Node, Node>> replacers = Map.of();
+
+		ReduceStructured.TemplateValues values = new ReduceStructured.TemplateValues(conditions, lists, replacers);
+
+		Template moduleTemplate = Template.fromModuleSource(source);
+		Program result = moduleTemplate.applyStructured(values);
+
+		assertEquals(Parser.parseModule("f(x_1, x_2)"), result);
+	}
+
 }
