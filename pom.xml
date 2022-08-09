@@ -84,9 +84,9 @@
 			<version>1.30</version>
 		</dependency>
 		<dependency>
-			<groupId>org.graalvm.js</groupId>
-			<artifactId>js</artifactId>
-			<version>22.0.0.2</version>
+			<groupId>org.mozilla</groupId>
+			<artifactId>rhino</artifactId>
+			<version>1.7.14</version>
 		</dependency>
     </dependencies>
 

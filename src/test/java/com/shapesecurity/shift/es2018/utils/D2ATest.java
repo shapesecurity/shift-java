@@ -1,13 +1,10 @@
 package com.shapesecurity.shift.es2018.utils;
 
-import com.google.gson.Gson;
-import com.oracle.truffle.js.runtime.JSRuntime;
 import com.shapesecurity.shift.es2018.parser.JsError;
 import com.shapesecurity.shift.es2018.parser.Token;
 import com.shapesecurity.shift.es2018.parser.Tokenizer;
 import com.shapesecurity.shift.es2018.parser.token.EOFToken;
 import com.shapesecurity.shift.es2018.parser.token.NumericLiteralToken;
-import org.graalvm.polyglot.Context;
 import org.junit.Test;
 
 import java.util.concurrent.ThreadLocalRandom;
@@ -66,25 +63,10 @@ public class D2ATest {
 		}
 	}
 
-	@Test
-	public void testFoo() {
-		assertRoundTrips(938249922368853.2);
-		assertRoundTrips(2251799813685248.5);
-		assertRoundTrips(1.8446744073709552E19);
-		assertRoundTrips(1125899906842623.7);
-	}
-
 	void assertRoundTrips(double value) {
 		String rep = D2A.d2a(value);
 		double parsed = Double.parseDouble(rep);
 		assertEquals(value, parsed, 0.0);
-
-		// String graal;
-		// try (var ctx = Context.newBuilder("js").option("engine.WarnInterpreterOnly", "false").build()) {
-		// 	graal = ctx.eval("js", "String(" + value + ")").asString();
-		// }
-		//
-		// assertEquals("graal oracle", graal, rep);
 
 		String shortRep = D2A.shortD2a(value);
 		if (Double.isNaN(value)) {
