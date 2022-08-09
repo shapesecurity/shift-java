@@ -44,8 +44,8 @@ public final class D2A {
     }
 
     @Nonnull
-    private static String digitTrim(@Nonnull BigInteger value, @Nonnull String strValue, @Nonnull BigInteger err) {
-        if (err.signum() == 0) {
+    private static String digitTrim(@Nonnull BigInteger value, @Nonnull String strValue, @Nonnull BigInteger errBelow, BigInteger errAbove) {
+        if (errBelow.signum() == 0 && errAbove.signum() == 0) {
             return strValue;
         }
         for (BigInteger digit = BigInteger.TEN.pow((int) Math.ceil(value.bitLength() * 0.3010299956639812)), half =
@@ -54,8 +54,14 @@ public final class D2A {
              digit.signum() > 0; digit = digit.divide(BigInteger.TEN), half = digit.shiftRight(1)) {
             BigInteger addHalf = value.add(half);
             BigInteger mod = addHalf.mod(digit);
+
+            if (mod.signum() == 0 && addHalf.divide(digit).mod(BigInteger.TWO).signum() == 1) {
+                // roundTiesToEven
+                mod = digit;
+            }
             BigInteger trimmed = addHalf.subtract(mod);
-            if (trimmed.subtract(value).abs().compareTo(err) <= 0) {
+            BigInteger diff = trimmed.subtract(value);
+            if (diff.signum() == 0 || diff.signum() == -1 && diff.abs().compareTo(errBelow) <= 0 || diff.signum() == 1 && diff.compareTo(errAbove) <= 0) {
                 return trimmed.toString();
             }
         }
@@ -87,9 +93,11 @@ public final class D2A {
             err = err.multiply(power);
         }
         err = err.shiftRight(1);
+        BigInteger errAbove = err;
+        BigInteger errBelow = (p & ((1L << 52) - 1)) == 0 ? errAbove.shiftRight(1) : err;
         String original = bMantle.toString();
         int length = Math.min(0, exp) - 1 + original.length();
-        String trimmed = digitTrim(bMantle, original, err);
+        String trimmed = digitTrim(bMantle, original, errBelow, errAbove);
         return new DtoAInfo(trimmed, length + trimmed.length() - original.length());
     }
 
@@ -143,6 +151,19 @@ public final class D2A {
 
     @Nonnull
     public static String shortD2a(double n) {
+        if (Double.isNaN(n)) {
+            return "NaN";
+        }
+        if (n == 0) {
+            return "0";
+        }
+        if (n < 0) {
+            return '-' + shortD2a(-n);
+        }
+        if (Double.isInfinite(n)) {
+            return "2e308";
+        }
+
         String s = d2a(n);
         if (n >= 1e3 && n % 10 == 0) {
             if (s.indexOf('e') >= 0) {
