@@ -16,19 +16,17 @@
 
 package com.shapesecurity.shift.es2018.utils;
 
-import com.oracle.truffle.js.runtime.JSRuntime;
-import com.oracle.truffle.js.runtime.doubleconv.DoubleConversion;
+import org.mozilla.javascript.ScriptRuntime;
 
 import javax.annotation.Nonnull;
-public final class D2A {
 
+public final class D2A {
     private D2A() {
     }
 
-    @SuppressWarnings("StringContatenationInLoop")
     @Nonnull
     public static String d2a(double number) {
-        return JSRuntime.doubleToString(number, 10);
+        return ScriptRuntime.numberToString(number, 10);
     }
 
     @Nonnull
@@ -42,7 +40,7 @@ public final class D2A {
         if (Double.isInfinite(number)) {
             return number < 0 ? "-2e308" : "2e308";
         }
-        String s = DoubleConversion.toShortest(number);
+        String s = d2a(number);
         if (number >= 1e3 && number % 10 == 0) {
             if (s.indexOf('e') >= 0) {
                 return s.replaceAll("e\\+", "e");
