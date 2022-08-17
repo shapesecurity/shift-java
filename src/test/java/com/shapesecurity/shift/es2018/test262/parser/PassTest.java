@@ -25,7 +25,6 @@ import com.shapesecurity.shift.es2018.serialization.Serializer;
 import com.shapesecurity.shift.es2018.utils.WithLocation;
 import com.shapesecurity.shift.es2018.validator.ValidationError;
 import com.shapesecurity.shift.es2018.validator.Validator;
-import org.json.JSONException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -115,7 +114,7 @@ public class PassTest {
 		}
 	}
 
-	static void check(String name) throws JsError, IOException, ClassNotFoundException, NoSuchMethodException, InstantiationException, JSONException, IllegalAccessException {
+	static void check(String name) throws JsError, IOException, ClassNotFoundException, NoSuchMethodException, InstantiationException, IllegalAccessException {
 		String expectedJSON = new String(Files.readAllBytes(Paths.get(expectationsDir, name + "-tree.json")), StandardCharsets.UTF_8);
 		DeserializerWithLocation deserializer = new DeserializerWithLocation();
 		Program expected = (Program) deserializer.deserializeNode(new JsonParser().parse(expectedJSON));
