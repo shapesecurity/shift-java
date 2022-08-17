@@ -4,7 +4,6 @@ import com.shapesecurity.shift.es2018.ast.Program;
 import com.shapesecurity.shift.es2018.parser.EarlyErrorChecker;
 import com.shapesecurity.shift.es2018.parser.JsError;
 import com.shapesecurity.shift.es2018.parser.Parser;
-import org.json.JSONException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -90,7 +89,7 @@ public class EarlyTest {
 		"" // empty line to make git diffs nicer
 	));
 
-	static void check(String name) throws JsError, IOException, ClassNotFoundException, NoSuchMethodException, InstantiationException, JSONException, IllegalAccessException {
+	static void check(String name) throws IOException {
 		String src = new String(Files.readAllBytes(Paths.get(testsDir, name)), StandardCharsets.UTF_8);
 
 		boolean parsed = false;

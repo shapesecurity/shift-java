@@ -40,15 +40,13 @@ import com.shapesecurity.shift.es${year}.ast.operators.CompoundAssignmentOperato
 import com.shapesecurity.shift.es${year}.ast.operators.UnaryOperator;
 import com.shapesecurity.shift.es${year}.ast.operators.UpdateOperator;
 
-import org.json.JSONException;
-
 import java.util.ArrayList;
 
 public class Deserializer {
 
     protected Deserializer() {}
 
-    public static Node deserialize(String toDeserialize) throws JSONException, IllegalAccessException, InstantiationException, ClassNotFoundException, NoSuchMethodException {
+    public static Node deserialize(String toDeserialize) throws IllegalAccessException, InstantiationException, ClassNotFoundException, NoSuchMethodException {
         JsonElement json = new JsonParser().parse(toDeserialize);
         return new Deserializer().deserializeNode(json);
     }

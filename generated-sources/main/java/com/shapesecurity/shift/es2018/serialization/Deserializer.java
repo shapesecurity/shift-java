@@ -29,15 +29,13 @@ import com.shapesecurity.shift.es2018.ast.operators.CompoundAssignmentOperator;
 import com.shapesecurity.shift.es2018.ast.operators.UnaryOperator;
 import com.shapesecurity.shift.es2018.ast.operators.UpdateOperator;
 
-import org.json.JSONException;
-
 import java.util.ArrayList;
 
 public class Deserializer {
 
     protected Deserializer() {}
 
-    public static Node deserialize(String toDeserialize) throws JSONException, IllegalAccessException, InstantiationException, ClassNotFoundException, NoSuchMethodException {
+    public static Node deserialize(String toDeserialize) throws IllegalAccessException, InstantiationException, ClassNotFoundException, NoSuchMethodException {
         JsonElement json = new JsonParser().parse(toDeserialize);
         return new Deserializer().deserializeNode(json);
     }
